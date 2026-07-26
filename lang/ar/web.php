@@ -351,4 +351,19 @@ return [
         'new_password' => 'ضبط كلمة مرور جديدة',
         'set_new_password' => 'تعيين كلمة مرور جديدة'
     ],
+
+    // redesigned home page
+    'home_page' => [
+        'find_the_right_job' => 'اعثر على الوظيفة المناسبة',
+        'live_jobs' => 'الوظائف المتاحة',
+        'vacancies' => 'الوظائف الشاغرة',
+        'new_jobs' => 'وظائف جديدة',
+        'quick_links' => 'روابط سريعة',
+        'employer_list' => 'قائمة أصحاب العمل',
+        'deadline_tomorrow' => 'الموعد النهائي غدًا',
+        'find_jobs_across_category_industry' => 'اعثر على وظائف عبر الفئات والصناعات الشائعة',
+        'category' => 'الفئة',
+        'industry' => 'الصناعة',
+        'more' => 'المزيد',
+    ],
 ];

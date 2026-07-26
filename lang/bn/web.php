@@ -360,4 +360,19 @@ return [
         'new_password' => 'নতুন পাসওয়ার্ড সেটআপ',
         'set_new_password' => 'একটি নতুন পাসওয়ার্ড সেট করুন'
     ],
+
+    // redesigned home page
+    'home_page' => [
+        'find_the_right_job' => 'সঠিক চাকরি খুঁজুন',
+        'live_jobs' => 'চলমান চাকরি',
+        'vacancies' => 'খালি পদ',
+        'new_jobs' => 'নতুন চাকরি',
+        'quick_links' => 'দ্রুত লিংক',
+        'employer_list' => 'নিয়োগকর্তার তালিকা',
+        'deadline_tomorrow' => 'আগামীকাল শেষ তারিখ',
+        'find_jobs_across_category_industry' => 'জনপ্রিয় বিভাগ ও শিল্পে চাকরি খুঁজুন',
+        'category' => 'বিভাগ',
+        'industry' => 'শিল্প',
+        'more' => 'আরও',
+    ],
 ];

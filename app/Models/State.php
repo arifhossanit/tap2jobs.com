@@ -60,4 +60,9 @@ class State extends Model
     {
         return $this->hasMany(User::class, 'state_id');
     }
+
+    public function jobs(): HasMany
+    {
+        return $this->hasMany(Job::class, 'state_id');
+    }
 }

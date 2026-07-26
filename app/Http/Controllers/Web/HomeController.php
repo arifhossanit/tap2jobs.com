@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\Web;
 
 use App\Models\User;
+use App\Models\Job;
+use App\Models\State;
+use App\Models\JobType;
 use App\Models\Setting;
+use Carbon\Carbon;
 use Illuminate\View\View;
 use Laracasts\Flash\Flash;
 use App\Models\CmsServices;
@@ -35,11 +39,41 @@ class HomeController extends AppBaseController
      */
     public function index(): View
     {
+        $openJobs = static function ($query) {
+            return $query->whereStatus(Job::STATUS_OPEN)
+                ->whereIsSuspended(Job::NOT_SUSPENDED)
+                ->whereDate('job_expiry_date', '>=', Carbon::tomorrow()->toDateString());
+        };
+
         $data['testimonials'] = $this->homeRepository->getTestimonials();
         $data['dataCounts'] = $this->homeRepository->getDataCounts();
         $data['latestJobs'] = $this->homeRepository->getLatestJobs()->take(4);
+        $data['stateJobCounts'] = State::query()
+            ->withCount(['jobs' => $openJobs])
+            ->having('jobs_count', '>', 0)
+            ->orderByDesc('jobs_count')
+            ->orderBy('name')
+            ->take(8)
+            ->get();
+        $data['quickJobTypes'] = JobType::query()
+            ->withCount(['jobs' => $openJobs])
+            ->having('jobs_count', '>', 0)
+            ->orderByDesc('jobs_count')
+            ->orderBy('name')
+            ->take(4)
+            ->get();
+        $data['quickLinkCounts'] = [
+            'new_jobs' => $openJobs(Job::query())
+                ->whereDate('created_at', Carbon::today()->toDateString())
+                ->count(),
+            'deadline_tomorrow' => $openJobs(Job::query())
+                ->whereDate('job_expiry_date', Carbon::tomorrow()->toDateString())
+                ->count(),
+        ];
         $data['categories'] = $this->homeRepository->getCategories();
-        $data['jobCategories'] = $this->homeRepository->getAllJobCategories()->where('is_featured', 1)->take(8);
+        // The home directory presents a useful cross-section of the available job categories.
+        // Keep the count relationship so the category links can show live vacancy totals.
+        $data['jobCategories'] = $this->homeRepository->getAllJobCategories();
         $data['featuredCompanies'] = $this->homeRepository->getFeaturedCompanies();
         $data['allCompanies'] = $this->homeRepository->getAllCompanies();
         $data['featuredJobs'] = $this->homeRepository->getFeaturedJobs();

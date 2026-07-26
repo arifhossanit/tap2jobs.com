@@ -360,4 +360,19 @@ return [
         'new_password' => 'Setup New Password',
         'set_new_password' => 'Set a New Password'
     ],
+
+    // redesigned home page
+    'home_page' => [
+        'find_the_right_job' => 'Find The Right Job',
+        'live_jobs' => 'Live Jobs',
+        'vacancies' => 'Vacancies',
+        'new_jobs' => 'New Jobs',
+        'quick_links' => 'Quick Links',
+        'employer_list' => 'Employer List',
+        'deadline_tomorrow' => 'Deadline Tomorrow',
+        'find_jobs_across_category_industry' => 'Find Jobs Across Popular Category & Industry',
+        'category' => 'Category',
+        'industry' => 'Industry',
+        'more' => 'More',
+    ],
 ];

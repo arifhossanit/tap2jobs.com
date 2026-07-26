@@ -358,4 +358,19 @@ return [
         'new_password' => 'Установить новый пароль',
         'set_new_password' => 'Установить новый пароль',
     ],
+
+    // redesigned home page
+    'home_page' => [
+        'find_the_right_job' => 'Найдите подходящую работу',
+        'live_jobs' => 'Активные вакансии',
+        'vacancies' => 'Вакансии',
+        'new_jobs' => 'Новые вакансии',
+        'quick_links' => 'Быстрые ссылки',
+        'employer_list' => 'Список работодателей',
+        'deadline_tomorrow' => 'Срок завтра',
+        'find_jobs_across_category_industry' => 'Найдите вакансии по популярным категориям и отраслям',
+        'category' => 'Категория',
+        'industry' => 'Отрасль',
+        'more' => 'Больше',
+    ],
 ];

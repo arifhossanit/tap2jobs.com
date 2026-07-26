@@ -359,4 +359,19 @@ return [
         'new_password' => 'Yeni Şifre Belirle',
         'set_new_password' => 'Yeni Şifre Belirle',
     ],
+
+    // redesigned home page
+    'home_page' => [
+        'find_the_right_job' => 'Doğru işi bulun',
+        'live_jobs' => 'Aktif işler',
+        'vacancies' => 'Açık pozisyonlar',
+        'new_jobs' => 'Yeni işler',
+        'quick_links' => 'Hızlı bağlantılar',
+        'employer_list' => 'İşveren listesi',
+        'deadline_tomorrow' => 'Son tarih yarın',
+        'find_jobs_across_category_industry' => 'Popüler kategori ve sektörlerde iş bulun',
+        'category' => 'Kategori',
+        'industry' => 'Sektör',
+        'more' => 'Daha fazla',
+    ],
 ];

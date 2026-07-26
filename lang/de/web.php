@@ -358,4 +358,19 @@ return [
         'new_password' => 'Neues Passwort einrichten',
         'set_new_password' => 'Neues Passwort setzen'
     ],
+
+    // redesigned home page
+    'home_page' => [
+        'find_the_right_job' => 'Finden Sie den richtigen Job',
+        'live_jobs' => 'Aktive Stellen',
+        'vacancies' => 'Offene Stellen',
+        'new_jobs' => 'Neue Jobs',
+        'quick_links' => 'Schnelllinks',
+        'employer_list' => 'Arbeitgeberliste',
+        'deadline_tomorrow' => 'Frist morgen',
+        'find_jobs_across_category_industry' => 'Jobs in beliebten Kategorien und Branchen finden',
+        'category' => 'Kategorie',
+        'industry' => 'Branche',
+        'more' => 'Mehr',
+    ],
 ];

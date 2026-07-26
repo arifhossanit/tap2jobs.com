@@ -64,6 +64,9 @@ class JobSearch extends Component
         if (! empty($request->get('company'))) {
             $this->company = $request->get('company');
         }
+        if (! empty($request->get('job_type'))) {
+            $this->types = [(int) $request->get('job_type')];
+        }
 
         $this->featuredJob = $request->is_featured;
     }

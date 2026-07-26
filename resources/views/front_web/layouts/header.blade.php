@@ -28,7 +28,7 @@
                             <a class="header-navbar-color text-gray nav-link {{ Request::is('company-lists') || Request::is('company-details*') ? 'header-navbar-color-active' : '' }}"
                                 href="{{ route('front.company.lists') }}">{{ __('web.companies') }}</a>
                         </li>
-
+                        {{--
                         @auth
                             @role('Employer|Admin')
                                 <li class="nav-item">
@@ -37,19 +37,7 @@
                                 </li>
                             @endrole
                         @endauth
-
-                        <li class="nav-item">
-                            <a class="header-navbar-color text-gray nav-link {{ Request::is('about-us') ? 'header-navbar-color-active' : '' }}"
-                                href="{{ route('front.about.us') }}">{{ __('web.about_us') }}</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="header-navbar-color text-gray nav-link {{ Request::is('contact-us') ? 'header-navbar-color-active' : '' }}"
-                                href="{{ route('front.contact') }}">{{ __('web.contact_us') }}</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="header-navbar-color text-gray nav-link {{ Request::is('posts*') ? 'header-navbar-color-active' : '' }}"
-                                href="{{ route('front.post.lists') }}">{{ __('messages.post.blog') }}</a>
-                        </li>
+                        --}}
                         <li class="nav-item">
                             <div class="dropdown">
                                 <a class="nav-link text-gray dropdown-toggle language-dropdown-btn" type="button"

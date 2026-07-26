@@ -360,4 +360,19 @@ return [
         'new_password' => '设置新密码',
         'set_new_password' => '设置新密码',
     ],
+
+    // redesigned home page
+    'home_page' => [
+        'find_the_right_job' => '找到合适的工作',
+        'live_jobs' => '在招职位',
+        'vacancies' => '职位空缺',
+        'new_jobs' => '最新职位',
+        'quick_links' => '快速链接',
+        'employer_list' => '雇主列表',
+        'deadline_tomorrow' => '明天截止',
+        'find_jobs_across_category_industry' => '按热门类别和行业查找职位',
+        'category' => '类别',
+        'industry' => '行业',
+        'more' => '更多',
+    ],
 ];

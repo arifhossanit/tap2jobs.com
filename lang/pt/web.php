@@ -359,4 +359,19 @@ return [
         'new_password' => 'Definir Nova Senha',
         'set_new_password' => 'Configurar uma Nova Senha'
     ],
+
+    // redesigned home page
+    'home_page' => [
+        'find_the_right_job' => 'Encontre o emprego certo',
+        'live_jobs' => 'Vagas ativas',
+        'vacancies' => 'Vagas',
+        'new_jobs' => 'Novos empregos',
+        'quick_links' => 'Links rápidos',
+        'employer_list' => 'Lista de empregadores',
+        'deadline_tomorrow' => 'Prazo amanhã',
+        'find_jobs_across_category_industry' => 'Encontre empregos por categoria e setor populares',
+        'category' => 'Categoria',
+        'industry' => 'Setor',
+        'more' => 'Mais',
+    ],
 ];
