@@ -58,4 +58,8 @@ return [
         'redirect' => env('LINKEDIN_REDIRECT'),
     ],
 
+    'google_translate' => [
+        'api_key' => env('GOOGLE_TRANSLATE_API_KEY'),
+    ],
+
 ];

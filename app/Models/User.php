@@ -144,6 +144,7 @@ class User extends Authenticatable implements HasMedia
 
     const LANGUAGES = [
         'ar' => 'Arabic',
+        'bn' => 'Bangla',
         'zh' => 'Chinese',
         'en' => 'English',
         'fr' => 'French',
@@ -162,6 +163,7 @@ class User extends Authenticatable implements HasMedia
         'ru' => 'assets/img/russia.svg',
         'pt' => 'assets/img/portugal.svg',
         'ar' => 'assets/img/iraq.svg',
+        'bn' => 'assets/img/bangladesh.svg',
         'zh' => 'assets/img/china.svg',
         'tr' => 'assets/img/turkey.svg',
     ];
