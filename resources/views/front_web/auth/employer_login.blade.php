@@ -40,16 +40,12 @@
                             <div class="row">
                                 <div class="col-12 mb-4">
                                     <div class="form-group row">
-                                        <div class="col-sm-4 col-12">
-                                            <a href="{{ route('admin.login') }}" class="btn btn-light-primary d-block">
-                                                @lang('web.admin')</a>
-                                        </div>
-                                        <div class="col-sm-4 col-12 mb-3 mb-sm-0">
+                                        <div class="col-sm-6 col-12 mb-3 mb-sm-0">
                                             <a href="{{ route('front.candidate.login') }}"
                                                 class="btn btn-light-primary d-block">
                                                 {{ __('web.register_menu.candidate') }} </a>
                                         </div>
-                                        <div class="col-sm-4 col-12">
+                                        <div class="col-sm-6 col-12">
                                             <a href="{{ route('front.employee.login') }}" class="btn btn-primary  d-block">
                                                 {{ __('web.register_menu.employer') }} </a>
                                         </div>
