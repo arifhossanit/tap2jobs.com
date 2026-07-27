@@ -372,6 +372,7 @@ return [
         'deadline_tomorrow' => '明天截止',
         'find_jobs_across_category_industry' => '按热门类别和行业查找职位',
         'category' => '类别',
+        'type' => '类型',
         'industry' => '行业',
         'more' => '更多',
     ],

@@ -53,13 +53,13 @@
     .bd-stats { display:flex; justify-content:center; gap:50px; margin-bottom:16px; }.bd-stat { display:flex; align-items:center; gap:10px; color:#205b9d; }.bd-stat__icon { display:grid; place-items:center; border:3px solid #245d9b; border-radius:50%; width:53px; height:53px; font-size:18px; }.bd-stat span { font-size:14px; white-space:nowrap; }.bd-stat b { display:block; font-size:22px; }
     .bd-search { display:flex; gap:10px; background:#245b99; border-radius:4px; padding:15px; }.bd-search input,.bd-search select { height:36px; border:0; border-radius:4px; padding:0 11px; font-size:14px; color:#777; outline:0; }.bd-search input { flex:1.1; }.bd-search select { flex:.9; }.bd-search button { background:#b8dcb9; border:0; border-radius:4px; width:122px; color:#000; font-size:14px; }
     .find-job-section { width:100%; }.find-job-section > .row { justify-content:center; }
-    .bd-city-links { display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin-top:14px; }.bd-city-links a { color:#fff; font-size:12px; font-weight:bold; background:#648bb5; padding:6px 8px; border-radius:3px; text-decoration:none; }
-    .bd-quick-links { height:100%; width:263px; background:#2e609c; color:#fff; padding:0px 17px; }.bd-quick-links h2 { font-size:14px; margin:0 0 13px; }.bd-quick-links a { display:block; color:#fff; font-size:12px; margin:0 0 12px; }.bd-quick-links a::before { content:'» '; font-size:16px; }.bd-quick-links mark { background:#f6df35; border-radius:7px; padding:1px 5px; font-size:9px; }
-    .bd-directory { padding:21px 0 8px; }.bd-directory__layout { display:grid; grid-template-columns: 1fr 263px; gap:13px; }.bd-category-card { background:#fff; border:1px solid #d6dce3; border-radius:4px; padding:0 21px 12px; box-shadow:0 1px 2px rgba(0,0,0,.04); }.bd-category-card__title { display:flex; align-items:center; justify-content:space-between; padding:10px 4px 8px; color:#265997; font-size:16px; font-weight:bold; }.bd-tabs { border:1px solid #1967d2; border-radius:50px; overflow:hidden; font-size:12px; font-weight:normal; }.bd-tabs span { display:inline-block; padding:8px 15px; color:#637084; }.bd-tabs span:first-child { color:#fff; background:#666; }
-    .bd-category-grid { display:grid; grid-template-columns:repeat(3,1fr); column-gap:32px; }.bd-category-grid a { color:#4e4e4e; font-size:14px; display:block; padding:8px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }.bd-category-grid a::before { content:'›'; color:#3f4c58; font-size:25px; vertical-align:-2px; line-height:0; margin-right:7px; }.bd-more { float:right; color:#236b2a!important; font-size:13px!important; font-weight:bold; }
+    .bd-city-links { display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin-top:14px; }.bd-city-links a { color:#fff; font-size:12px; font-weight:bold; background:#1967d2; padding:6px 8px; border-radius:3px; text-decoration:none; }
+    .bd-quick-links { height:100%; width:263px; background:#1967d2; color:#fff; padding:0px 17px; }.bd-quick-links h2 { font-size:14px; margin:0 0 13px; }.bd-quick-links a { display:block; color:#fff; font-size:12px; margin:0 0 12px; }.bd-quick-links a::before { content:'» '; font-size:16px; }.bd-quick-links mark { background:#f6df35; border-radius:7px; padding:1px 5px; font-size:9px; }
+    .bd-directory { padding:21px 0 8px; }.bd-directory__layout { display:grid; grid-template-columns: 1fr 263px; gap:13px; }    .bd-category-card { background:#fff; border:1px solid #d6dce3; border-radius:4px; padding:0 21px 12px; box-shadow:0 1px 2px rgba(0,0,0,.04); }.bd-category-card__title { display:flex; align-items:center; justify-content:space-between; padding:10px 4px 8px; color:#265997; font-size:16px; font-weight:bold; }.bd-tabs { border:1px solid #1967d2; border-radius:50px; overflow:hidden; font-size:12px; font-weight:normal; }.bd-tabs button { display:inline-block; padding:8px 15px; color:#637084; background:transparent; border:0; cursor:pointer; font-size:inherit; line-height:inherit; }.bd-tabs button.active { color:#fff; background:#666; }
+    .bd-category-grid { display:grid; grid-template-columns:repeat(3,1fr); column-gap:32px; }.bd-category-grid a { color:#4e4e4e; font-size:14px; display:block; padding:8px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }.bd-category-grid a::before { content:'›'; color:#3f4c58; font-size:25px; vertical-align:-2px; line-height:0; margin-right:7px; }.bd-more { float:right; color:#236b2a!important; font-size:13px!important; font-weight:bold; }.bd-directory-panel[hidden] { display:none!important; }
     .bd-sidebar { display:flex; flex-direction:column; gap:10px; }.bd-side-card { background:#fff; border-radius:4px; padding:14px 12px; box-shadow:0 2px 5px rgba(0,0,0,.11); color:#555; }.bd-side-card--govt { background:#fffdef; }.bd-side-card h3 { color:#215895; font-size:15px; margin:0 0 7px; }.bd-side-card h3 i { margin-right:6px; }.bd-side-card p { font-size:13px; margin:5px 0; }.bd-side-card strong { font-size:15px; }.bd-side-card__view { color:#349446; font-size:12px; font-weight:bold; text-transform:uppercase; }.bd-side-card__arrows { float:right; color:#329443; font-size:24px; letter-spacing:8px; line-height:10px; }.bd-side-card--job { background:#eef7fc; }.bd-side-card--job h3 { color:#464646; }.bd-side-card--job small { font-size:11px; }.bd-side-banner { background:#f1fff2; border-top:10px solid #1ab350; min-height:226px; padding:24px 14px; text-align:center; color:#1770a7; }.bd-side-banner b { display:block; font-size:24px; }.bd-side-banner span { display:inline-block; margin-top:17px; background:#e94735; color:#fff; border-radius:20px; padding:7px 18px; font-weight:bold; }
     @media (max-width:991px) { .bd-promo { display:none; }.bd-nav-links { margin-left:20px; gap:10px; }.bd-nav-links a { font-size:13px; }.bd-profile-inner { grid-template-columns:1fr; gap:10px; padding:15px 0; }.bd-progress { border:0; padding:0; }.bd-hero__inner { padding-right:0; }.bd-quick-links { display:none; }.bd-directory__layout { grid-template-columns:1fr; }.bd-sidebar { display:none; } }
-    @media (max-width:700px) { .bd-utility__links,.bd-nav-links,.bd-account>a:not(.bd-login):not(.bd-join),.bd-utility__right a:last-child { display:none; }.bd-main-nav { height:64px; }.bd-logo { font-size:29px; }.bd-account { gap:8px; }.bd-hero__inner { padding-top:25px; }.bd-stats { gap:9px; overflow:auto; }.bd-stat__icon { width:42px; height:42px; }.bd-stat span { font-size:11px; }.bd-stat b { font-size:16px; }.bd-search { flex-wrap:wrap; }.bd-search input,.bd-search select { flex:1 0 100%; }.bd-search button { width:100%; height:36px; }.bd-city-links { margin-top:9px; }.bd-category-grid { grid-template-columns:1fr; }.bd-category-card { padding:0 13px 12px; }.bd-tabs { display:none; } }
+    @media (max-width:700px) { .bd-utility__links,.bd-nav-links,.bd-account>a:not(.bd-login):not(.bd-join),.bd-utility__right a:last-child { display:none; }.bd-main-nav { height:64px; }.bd-logo { font-size:29px; }.bd-account { gap:8px; }.bd-hero__inner { padding-top:25px; }.bd-stats { gap:9px; overflow:auto; }.bd-stat__icon { width:42px; height:42px; }.bd-stat span { font-size:11px; }.bd-stat b { font-size:16px; }.bd-search { flex-wrap:wrap; }.bd-search input,.bd-search select { flex:1 0 100%; }.bd-search button { width:100%; height:36px; }.bd-city-links { margin-top:9px; }.bd-category-grid { grid-template-columns:1fr; }.bd-category-card { padding:0 13px 12px; }.bd-category-card__title { flex-wrap:wrap; gap:8px; } }
     .find-job-section .find-job {
         top: 0px !important;
     }
@@ -69,6 +69,7 @@
 @section('content')
 @php
     $categoryColumns = $jobCategories->take(45)->values()->chunk((int) ceil(max($jobCategories->take(45)->count(), 1) / 3));
+    $typeColumns = $jobTypes->take(45)->values()->chunk((int) ceil(max($jobTypes->take(45)->count(), 1) / 3));
 @endphp
 <main class="bd-home">
     <section class="bd-hero">
@@ -149,23 +150,37 @@
     </section>
     <section class="bd-directory">
         <div class="bd-shell bd-directory__layout">
-            <div class="bd-category-card">
+            <div class="bd-category-card" id="bdDirectoryCard">
                 <div class="bd-category-card__title">@lang('web.home_page.find_jobs_across_category_industry')
-                    <div class="bd-tabs">
-                        <span class="btn-primary">@lang('web.home_page.category')</span>
-                        <span>@lang('web.home_page.industry')</span>
+                    <div class="bd-tabs" role="tablist">
+                        <button type="button" class="active" role="tab" aria-selected="true" data-bd-tab="category">@lang('web.home_page.category')</button>
+                        <button type="button" role="tab" aria-selected="false" data-bd-tab="type">@lang('web.home_page.type')</button>
                     </div>
                 </div>
-                <div class="bd-category-grid">
-                    @foreach($categoryColumns as $column)
-                    <div>
-                        @foreach($column as $category)
-                        <a href="{{ route('front.search.jobs', ['categories' => $category->id]) }}">{{ html_entity_decode($category->name) }} ({{ $category->jobs_count }})</a>
+                <div class="bd-directory-panel" data-bd-panel="category">
+                    <div class="bd-category-grid">
+                        @foreach($categoryColumns as $column)
+                        <div>
+                            @foreach($column as $category)
+                            <a href="{{ route('front.search.jobs', ['categories' => $category->id]) }}">{{ html_entity_decode($category->name) }} ({{ $category->jobs_count }})</a>
+                            @endforeach
+                        </div>
                         @endforeach
                     </div>
-                    @endforeach
+                    <a class="bd-more" href="{{ route('front.categories') }}">@lang('web.home_page.more')&nbsp; +</a>
                 </div>
-                <a class="bd-more" href="{{ route('front.categories') }}">@lang('web.home_page.more')&nbsp; +</a>
+                <div class="bd-directory-panel" data-bd-panel="type" hidden>
+                    <div class="bd-category-grid">
+                        @foreach($typeColumns as $column)
+                        <div>
+                            @foreach($column as $jobType)
+                            <a href="{{ route('front.search.jobs', ['job_type' => $jobType->id]) }}">{{ html_entity_decode($jobType->name) }} ({{ $jobType->jobs_count }})</a>
+                            @endforeach
+                        </div>
+                        @endforeach
+                    </div>
+                    <a class="bd-more" href="{{ route('front.search.jobs') }}">@lang('web.home_page.more')&nbsp; +</a>
+                </div>
             </div>
             <!-- <aside class="bd-sidebar"></aside> -->
             <aside class="bd-sidebar bd-quick-links">
@@ -181,4 +196,38 @@
     </section>
 </main>
 {{ Form::hidden('homeData', json_encode(getCountries()), ['id' => 'indexHomeData']) }}
+@endsection
+
+@section('page_scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var card = document.getElementById('bdDirectoryCard');
+        if (!card) {
+            return;
+        }
+
+        var tabs = card.querySelectorAll('[data-bd-tab]');
+        var panels = card.querySelectorAll('[data-bd-panel]');
+
+        tabs.forEach(function (tab) {
+            tab.addEventListener('click', function () {
+                var target = tab.getAttribute('data-bd-tab');
+
+                tabs.forEach(function (item) {
+                    var isActive = item === tab;
+                    item.classList.toggle('active', isActive);
+                    item.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                });
+
+                panels.forEach(function (panel) {
+                    if (panel.getAttribute('data-bd-panel') === target) {
+                        panel.removeAttribute('hidden');
+                    } else {
+                        panel.setAttribute('hidden', 'hidden');
+                    }
+                });
+            });
+        });
+    });
+</script>
 @endsection

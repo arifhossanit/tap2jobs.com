@@ -372,6 +372,7 @@ return [
         'deadline_tomorrow' => 'আগামীকাল শেষ তারিখ',
         'find_jobs_across_category_industry' => 'জনপ্রিয় বিভাগ ও শিল্পে চাকরি খুঁজুন',
         'category' => 'বিভাগ',
+        'type' => 'প্রকার',
         'industry' => 'শিল্প',
         'more' => 'আরও',
     ],

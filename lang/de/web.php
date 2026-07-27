@@ -370,6 +370,7 @@ return [
         'deadline_tomorrow' => 'Frist morgen',
         'find_jobs_across_category_industry' => 'Jobs in beliebten Kategorien und Branchen finden',
         'category' => 'Kategorie',
+        'type' => 'Typ',
         'industry' => 'Branche',
         'more' => 'Mehr',
     ],

@@ -363,6 +363,7 @@ return [
         'deadline_tomorrow' => 'الموعد النهائي غدًا',
         'find_jobs_across_category_industry' => 'اعثر على وظائف عبر الفئات والصناعات الشائعة',
         'category' => 'الفئة',
+        'type' => 'النوع',
         'industry' => 'الصناعة',
         'more' => 'المزيد',
     ],

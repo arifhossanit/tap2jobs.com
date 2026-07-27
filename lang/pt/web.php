@@ -371,6 +371,7 @@ return [
         'deadline_tomorrow' => 'Prazo amanhã',
         'find_jobs_across_category_industry' => 'Encontre empregos por categoria e setor populares',
         'category' => 'Categoria',
+        'type' => 'Tipo',
         'industry' => 'Setor',
         'more' => 'Mais',
     ],

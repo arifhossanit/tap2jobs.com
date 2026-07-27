@@ -371,6 +371,7 @@ return [
         'deadline_tomorrow' => 'Son tarih yarın',
         'find_jobs_across_category_industry' => 'Popüler kategori ve sektörlerde iş bulun',
         'category' => 'Kategori',
+        'type' => 'Tür',
         'industry' => 'Sektör',
         'more' => 'Daha fazla',
     ],

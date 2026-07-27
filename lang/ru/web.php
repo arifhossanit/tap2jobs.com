@@ -370,6 +370,7 @@ return [
         'deadline_tomorrow' => 'Срок завтра',
         'find_jobs_across_category_industry' => 'Найдите вакансии по популярным категориям и отраслям',
         'category' => 'Категория',
+        'type' => 'Тип',
         'industry' => 'Отрасль',
         'more' => 'Больше',
     ],

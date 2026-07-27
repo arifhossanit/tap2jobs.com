@@ -74,6 +74,7 @@ class HomeController extends AppBaseController
         // The home directory presents a useful cross-section of the available job categories.
         // Keep the count relationship so the category links can show live vacancy totals.
         $data['jobCategories'] = $this->homeRepository->getAllJobCategories();
+        $data['jobTypes'] = $this->homeRepository->getAllJobTypes();
         $data['featuredCompanies'] = $this->homeRepository->getFeaturedCompanies();
         $data['allCompanies'] = $this->homeRepository->getAllCompanies();
         $data['featuredJobs'] = $this->homeRepository->getFeaturedJobs();

@@ -372,6 +372,7 @@ return [
         'deadline_tomorrow' => 'Deadline Tomorrow',
         'find_jobs_across_category_industry' => 'Find Jobs Across Popular Category & Industry',
         'category' => 'Category',
+        'type' => 'Type',
         'industry' => 'Industry',
         'more' => 'More',
     ],

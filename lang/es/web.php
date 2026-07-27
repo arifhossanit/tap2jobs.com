@@ -370,6 +370,7 @@ return [
         'deadline_tomorrow' => 'Fecha límite mañana',
         'find_jobs_across_category_industry' => 'Encuentra empleos por categoría e industria populares',
         'category' => 'Categoría',
+        'type' => 'Tipo',
         'industry' => 'Industria',
         'more' => 'Más',
     ],

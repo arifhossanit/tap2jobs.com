@@ -147,6 +147,13 @@ window.IOInitSidebar = function () {
         $('body').toggleClass('collapsed-menu');
     }); // for responsive sidebar
 
+    $(document).on('show.bs.collapse', '.aside-submenu', function () {
+        $(this).closest('.aside-item-collapse').addClass('collapse-submenu');
+    });
+    $(document).on('hide.bs.collapse', '.aside-submenu', function () {
+        $(this).closest('.aside-item-collapse').removeClass('collapse-submenu');
+    });
+
     $(window).resize(function () {
         if ($(window).width() > 1200) {
             $('.aside-collapse-btn').click(function () {

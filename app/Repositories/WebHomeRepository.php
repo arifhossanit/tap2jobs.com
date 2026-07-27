@@ -14,6 +14,7 @@ use App\Models\Candidate;
 use App\Mail\ContactEmail;
 use App\Models\ImageSlider;
 use App\Models\JobCategory;
+use App\Models\JobType;
 use App\Models\Noticeboard;
 use App\Models\Testimonial;
 use App\Models\FrontSetting;
@@ -104,6 +105,18 @@ class WebHomeRepository
     public function getAllJobCategories(): \Illuminate\Support\Collection
     {
         return JobCategory::with('media','jobs')->withCount([
+            'jobs' => function (Builder $q) {
+                $q->whereStatus(Job::STATUS_OPEN)
+                    ->where('status', '!=', Job::STATUS_DRAFT)
+                    ->whereIsSuspended(Job::NOT_SUSPENDED)
+                    ->whereDate('job_expiry_date', '>=', Carbon::now()->toDateString());
+            },
+        ])->get();
+    }
+
+    public function getAllJobTypes(): \Illuminate\Support\Collection
+    {
+        return JobType::withCount([
             'jobs' => function (Builder $q) {
                 $q->whereStatus(Job::STATUS_OPEN)
                     ->where('status', '!=', Job::STATUS_DRAFT)
