@@ -136,7 +136,7 @@
         </div>
         <div class="card-desc d-flex flex-column justify-content-between h-100 mt-4">
             <div class="desc">
-                @if (!empty($company->location) || !empty($company->location2))
+                @if (!empty($company->industry?->name))
                     <div class="d-flex mb-2">
                         <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
                             <img src="{{ asset('img_template/briefcase.svg') }}" class="w-100" />
@@ -147,13 +147,22 @@
                         </p>
                     </div>
                 @endif
-                @if (!empty($company->industry->name))
+                @php
+                    $companyLocation = collect([
+                        $company->user->city_name ?? null,
+                        $company->user->country_name ?? null,
+                    ])->filter()->implode(', ');
+                    if ($companyLocation === '') {
+                        $companyLocation = collect([$company->location, $company->location2])->filter()->implode(', ');
+                    }
+                @endphp
+                @if ($companyLocation !== '')
                     <div class="d-flex mb-2">
                         <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
                             <img src=" {{ asset('img_template/location.svg') }} " class="w-100" />
                         </div>
                         <p class="fs-14 text-gray mb-0">
-                            {{ $company->user->city_name . ', ' . $company->user->country_name }}
+                            {{ $companyLocation }}
                         </p>
                     </div>
                 @endif
