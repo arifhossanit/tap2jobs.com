@@ -1654,3 +1654,9 @@ input, select
     background-color: #1967d2;
     border-color: #1967d2;
 }
+
+.register-side-ad__image {
+    border-radius: 10px;
+    object-fit: contain;
+    max-height: 420px;
+}

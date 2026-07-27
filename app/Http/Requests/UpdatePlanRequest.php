@@ -32,7 +32,7 @@ class UpdatePlanRequest extends FormRequest
         $plan = $this->route('plan');
         $rules = Plan::$rules;
         $rules['name'] = 'required|max:180|unique:plans,name,'.$plan->id;
-        $rules['amount'] = 'sometimes|required|numeric|min:1|max:99999';
+        $rules['amount'] = 'sometimes|required|numeric|min:0|max:99999';
 
         return $rules;
     }

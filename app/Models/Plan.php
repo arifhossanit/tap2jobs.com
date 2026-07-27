@@ -60,7 +60,7 @@ class Plan extends Model
      */
     public static $rules = [
         'name' => 'required|max:180|unique:plans,name',
-        'amount' => 'required|numeric|min:1|max:99999',
+        'amount' => 'required|numeric|min:0|max:99999',
         'allowed_jobs' => 'required|numeric|min:1|max:99999',
     ];
 

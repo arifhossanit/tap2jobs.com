@@ -152,7 +152,7 @@
         <div class="bd-shell bd-directory__layout">
             <div class="bd-category-card" id="bdDirectoryCard">
                 <div class="bd-category-card__title">@lang('web.home_page.find_jobs_across_category_industry')
-                    <div class="bd-tabs" role="tablist">
+                    <div class="bd-tabs d-none" role="tablist">
                         <button type="button" class="active" role="tab" aria-selected="true" data-bd-tab="category">@lang('web.home_page.category')</button>
                         <button type="button" role="tab" aria-selected="false" data-bd-tab="type">@lang('web.home_page.type')</button>
                     </div>

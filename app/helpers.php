@@ -1117,3 +1117,33 @@ if(!function_exists('getTranslatedData')) {
         return $translatedDataArr;
     }
 }
+
+if (! function_exists('getActiveAdsByPosition')) {
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    function getActiveAdsByPosition(string $position)
+    {
+        return \App\Models\Ad::with('media')
+            ->active()
+            ->forPosition($position)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get();
+    }
+}
+
+if (! function_exists('getActiveAdByPosition')) {
+    /**
+     * @return \App\Models\Ad|null
+     */
+    function getActiveAdByPosition(string $position)
+    {
+        return \App\Models\Ad::with('media')
+            ->active()
+            ->forPosition($position)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->first();
+    }
+}

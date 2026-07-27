@@ -8,7 +8,7 @@
     $countriesActive = Request::is('admin/countries*', 'admin/states*', 'admin/cities*');
     $generalActive = Request::is('admin/marital-status*', 'admin/skills*', 'admin/salary-periods*', 'admin/industries*', 'admin/company-sizes*', 'admin/functional-areas*', 'admin/career-levels*', 'admin/salary-currencies*', 'admin/ownership-types*', 'admin/languages*');
     $cmsActive = Request::is('admin/noticeboards*', 'admin/faqs*', 'admin/inquires*', 'admin/notification-settings*', 'admin/privacy-policy*', 'admin/front-settings*', 'admin/email-template*', 'admin/settings*');
-    $cmsSlidersActive = Request::is('admin/testimonials*', 'admin/branding-sliders*', 'admin/header-sliders*', 'admin/image-sliders*');
+    $cmsSlidersActive = Request::is('admin/testimonials*', 'admin/branding-sliders*', 'admin/header-sliders*', 'admin/image-sliders*', 'admin/ads*');
     $frontCmsActive = Request::is('admin/cms-services*', 'admin/cms-about-us*');
 @endphp
 
@@ -357,6 +357,11 @@
         <li class="nav-item {{ Request::is('admin/image-sliders*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('image-sliders.index') }}">
                 <span class="aside-menu-title">{{ __('messages.image_sliders') }}</span>
+            </a>
+        </li>
+        <li class="nav-item {{ Request::is('admin/ads*') ? 'active' : '' }}">
+            <a class="nav-link d-flex align-items-center py-2" href="{{ route('ads.index') }}">
+                <span class="aside-menu-title">{{ __('messages.ads') }}</span>
             </a>
         </li>
     </ul>

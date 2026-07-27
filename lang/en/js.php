@@ -16,6 +16,7 @@ return [
     'select_post_category' => 'Select Post Category',
     'enter_post_description' => 'Enter Post Description',
     'brand' => 'Brand',
+    'ad' => 'Ad',
     'applied_jobs' => 'Applied Jobs',
     'ok' => 'OK',
     'error' => 'Error',

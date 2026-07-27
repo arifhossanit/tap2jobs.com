@@ -16,6 +16,7 @@ return [
     'select_post_category' => 'পোস্ট বিভাগ নির্বাচন করুন',
     'enter_post_description' => 'পোস্ট বিবরণ লিখুন',
     'brand' => 'ব্র্যান্ড',
+    'ad' => 'বিজ্ঞাপন',
     'applied_jobs' => 'আবেদনকৃত চাকরি',
     'ok' => 'ঠিক আছে',
     'error' => 'ত্রুটি',

@@ -2,6 +2,7 @@
 
 namespace App\MediaLibrary;
 
+use App\Models\Ad;
 use App\Models\BrandingSliders;
 use App\Models\Candidate;
 use App\Models\FrontSetting;
@@ -22,7 +23,8 @@ class CustomPathGenerator implements PathGenerator
 {
     public function getPath(Media $media): string
     {
-        $path = '{PARENT_DIR}'.DIRECTORY_SEPARATOR.$media->id.DIRECTORY_SEPARATOR;
+        // Use forward slashes so generated media URLs work in browsers (esp. on Windows).
+        $path = '{PARENT_DIR}/'.$media->id.'/';
 
         switch ($media->collection_name) {
             case Setting::PATH:
@@ -45,9 +47,13 @@ class CustomPathGenerator implements PathGenerator
                 return str_replace('{PARENT_DIR}', FrontSetting::PATH, $path);
             case JobCategory::PATH:
                 return str_replace('{PARENT_DIR}', JobCategory::PATH, $path);
+            case Ad::PATH:
+                return str_replace('{PARENT_DIR}', Ad::PATH, $path);
             case 'default':
                 return '';
         }
+
+        return '';
     }
 
     public function getPathForConversions(Media $media): string

@@ -56,9 +56,21 @@
 
         <!-- start candidate login section -->
         <section class="py-100">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xl-6 col-lg-8 mx-auto">
+            <div class="p-4">
+                @php
+                    $registerLeftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT);
+                    $registerRightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT);
+                    $hasRegisterSideAds = $registerLeftAds->isNotEmpty() || $registerRightAds->isNotEmpty();
+                @endphp
+                <div class="row align-items-start justify-content-center">
+                    @if ($hasRegisterSideAds)
+                        <div class="col-xl-3 col-lg-3 d-none d-lg-block mb-4">
+                            @include('front_web.common.register_side_ad', ['ads' => $registerLeftAds])
+                        </div>
+                        <div class="col-xl-6 col-lg-6">
+                    @else
+                        <div class="col-xl-6 col-lg-8 mx-auto">
+                    @endif
                         @include('flash::message')
                         <form method="POST" action="{{ route('front.login') }}" id="addEmployerNewForm"
                             class="py-40 px-40 bg-gray">
@@ -195,6 +207,25 @@
                             </div>
                         </form>
                     </div>
+                    @if ($hasRegisterSideAds)
+                        <div class="col-xl-3 col-lg-3 d-none d-lg-block mb-4">
+                            @include('front_web.common.register_side_ad', ['ads' => $registerRightAds])
+                        </div>
+                        <div class="col-12 d-lg-none mt-4">
+                            <div class="row">
+                                @if ($registerLeftAds->isNotEmpty())
+                                    <div class="col-sm-6 mb-3">
+                                        @include('front_web.common.register_side_ad', ['ads' => $registerLeftAds])
+                                    </div>
+                                @endif
+                                @if ($registerRightAds->isNotEmpty())
+                                    <div class="col-sm-6 mb-3">
+                                        @include('front_web.common.register_side_ad', ['ads' => $registerRightAds])
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         </section>

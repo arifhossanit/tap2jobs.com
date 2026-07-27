@@ -1,0 +1,88 @@
+<div id="editAdsModal" tabindex="-1" class="modal fade" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">{{ __('messages.ad.edit_ad') }}</h3>
+                <button type="button" aria-label="Close" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            {{ Form::open(['id' => 'editAdForm', 'files' => true]) }}
+            <div class="modal-body">
+                <div class="alert alert-danger d-none" id="editValidationErrorsBox">
+                    <i class="fa-solid fa-face-frown me-5"></i>
+                </div>
+                {{ Form::hidden('adId', null, ['id' => 'adId']) }}
+                <div class="row">
+                    <div class="col-sm-12 mb-5" io-image-input="true">
+                        <label for="ad_image" class="form-label">
+                            {{ __('messages.ad.image') . ':' }}
+                            <span data-bs-toggle="tooltip" data-placement="top"
+                                  data-bs-original-title="{{ __('messages.ad.image_help') }}">
+                                <i class="fas fa-question-circle ml-1 general-question-mark"></i>
+                            </span>
+                        </label>
+                        <div class="d-block">
+                            <div class="image-picker">
+                                <div class="image previewImage" id="editPreviewImage"
+                                     style="background-image: url({{ asset('assets/img/infyom-logo.png') }})"></div>
+                                <span class="picker-edit rounded-circle text-gray-500 fs-small" data-bs-toggle="tooltip"
+                                      data-placement="top"
+                                      data-bs-original-title="{{ __('messages.tooltip.change_image') }}">
+                                    <label>
+                                        <i class="fa-solid fa-pen" id="profileImageIcon"></i>
+                                        {{ Form::file('ad_image', ['class' => 'image-upload d-none', 'accept' => '.png, .jpg, .jpeg']) }}
+                                    </label>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 mb-5">
+                        {{ Form::label('title', __('messages.candidate_profile.title') . ':', ['class' => 'form-label']) }}
+                        {{ Form::text('title', null, ['class' => 'form-control', 'id' => 'editTitle', 'placeholder' => __('messages.candidate_profile.title')]) }}
+                    </div>
+
+                    <div class="col-sm-6 mb-5">
+                        {{ Form::label('position', __('messages.ad.position') . ':', ['class' => 'form-label']) }}
+                        <span class="required"></span>
+                        {{ Form::select('position', $positions, null, ['class' => 'form-select', 'id' => 'editPosition', 'required', 'placeholder' => __('messages.ad.select_position')]) }}
+                    </div>
+
+                    <div class="col-sm-12 mb-5">
+                        {{ Form::label('description', __('messages.ad.description') . ':', ['class' => 'form-label']) }}
+                        {{ Form::textarea('description', null, ['class' => 'form-control', 'id' => 'editDescription', 'rows' => 3, 'placeholder' => __('messages.ad.description')]) }}
+                    </div>
+
+                    <div class="col-sm-6 mb-5">
+                        {{ Form::label('link_url', __('messages.ad.link_url') . ':', ['class' => 'form-label']) }}
+                        {{ Form::url('link_url', null, ['class' => 'form-control', 'id' => 'editLinkUrl', 'placeholder' => 'https://']) }}
+                    </div>
+
+                    <div class="col-sm-6 mb-5">
+                        {{ Form::label('cta_text', __('messages.ad.cta_text') . ':', ['class' => 'form-label']) }}
+                        {{ Form::text('cta_text', null, ['class' => 'form-control', 'id' => 'editCtaText', 'placeholder' => __('messages.ad.cta_text')]) }}
+                    </div>
+
+                    <div class="col-sm-6 mb-5">
+                        {{ Form::label('sort_order', __('messages.ad.sort_order') . ':', ['class' => 'form-label']) }}
+                        {{ Form::number('sort_order', 0, ['class' => 'form-control', 'id' => 'editSortOrder', 'min' => 0]) }}
+                    </div>
+
+                    <div class="col-sm-6 mb-5">
+                        <label class="form-label">{{ __('messages.common.status') . ':' }}</label>
+                        <label class="form-check form-switch form-switch-sm">
+                            <input type="checkbox" name="is_active" id="editIsActive"
+                                   class="form-check-input {{ checkLanguageSession() == 'ar' ? 'float-end' : 'float-start' }}">
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer pt-0">
+                {{ Form::button(__('messages.common.save'), ['type' => 'submit', 'class' => 'btn btn-primary m-0', 'id' => 'editAdSaveBtn', 'data-loading-text' => "<span class='spinner-border spinner-border-sm'></span> " . __('messages.common.process')]) }}
+                <button type="button"
+                        class="btn btn-secondary my-0 {{ checkLanguageSession() == 'ar' ? 'me-5' : 'ms-5' }} me-0"
+                        data-bs-dismiss="modal">{{ __('messages.common.cancel') }}</button>
+            </div>
+            {{ Form::close() }}
+        </div>
+    </div>
+</div>

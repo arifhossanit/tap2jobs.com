@@ -131,6 +131,7 @@ mix.js([
     'resources/assets/js/header_sliders/header_sliders.js',
     'resources/assets/js/privacy_policy/privacy_policy.js',
     'resources/assets/js/branding_sliders/branding_sliders.js',
+    'resources/assets/js/ads/ads.js',
     'resources/assets/js/home/home.js',
     'resources/assets/js/employer/dashboard.js',
     'resources/assets/js/employer/follower.js',

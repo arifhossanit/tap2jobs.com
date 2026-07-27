@@ -47,6 +47,7 @@ use App\Http\Controllers\MaritalStatusController;
 use App\Http\Controllers\OwnerShipTypeController;
 use App\Http\Controllers\PrivacyPolicyController;
 use App\Http\Controllers\BrandingSliderController;
+use App\Http\Controllers\AdController;
 use App\Http\Controllers\FunctionalAreaController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\SalaryCurrencyController;
@@ -444,6 +445,14 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
                   [BrandingSliderController::class, 'destroy']
          )->name('branding.sliders.destroy');
          Route::post('branding-sliders/{brandingSlider}/change-is-active', [BrandingSliderController::class, 'changeIsActive'])->name('branding-slider-change-is-active');
+
+         // Ads Routes
+         Route::get('ads', [AdController::class, 'index'])->name('ads.index');
+         Route::post('ads', [AdController::class, 'store'])->name('ads.store');
+         Route::get('ads/{ad}/edit', [AdController::class, 'edit'])->name('ads.edit');
+         Route::post('ads/{ad}/update', [AdController::class, 'update'])->name('ads.update');
+         Route::delete('ads/{ad}', [AdController::class, 'destroy'])->name('ads.destroy');
+         Route::post('ads/{ad}/change-is-active', [AdController::class, 'changeIsActive'])->name('ads.change-is-active');
 
          // Noticeboard Routes
          Route::get('noticeboards', [NoticeboardController::class, 'index'])->name('noticeboards.index');
