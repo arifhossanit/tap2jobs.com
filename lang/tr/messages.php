@@ -1514,7 +1514,7 @@ return [
         'comment_deleted' => 'Yorum başarıyla silindi.',
         'comment_edit' => 'Yorum başarıyla düzenlendi.',
         'comment_updated' => 'Yorum başarıyla güncellendi.',
-        'registration_done' => 'Kayıt başarıyla tamamlandı.',
+        'registration_done' => 'Kayıt başarıyla tamamlandı. Lütfen hesabınıza giriş yapın.',
         'subscribed' => 'Başarıyla abone olundu.',
         'session_created' => 'Oturum başarıyla oluşturuldu.',
         'job_make_featured' => 'İş Yapma Başarıyla Öne Çıktı.',

@@ -1517,7 +1517,7 @@ return [
         'comment_deleted' => 'Comentario eliminado con éxito.',
         'comment_edit' => 'Comentario editado con éxito.',
         'comment_updated' => 'Comentario actualizado con éxito.',
-        'registration_done' => 'Registro realizado con éxito.',
+        'registration_done' => 'Registro realizado con éxito. Por favor, inicie sesión en su cuenta.',
         'subscribed' => 'Suscrito con éxito.',
         'session_created' => 'Sesión creada con éxito.',
         'job_make_featured' => 'Job Make Destacado con éxito.',

@@ -1426,7 +1426,7 @@ return [
         'comment_deleted' => 'Comment deleted successfully.',
         'comment_edit' => 'Comment edit successfully.',
         'comment_updated' => 'Comment updated successfully.',
-        'registration_done' => 'Registration done successfully.',
+        'registration_done' => 'Registration done successfully. Please login to your account.',
         'subscribed' => 'Subscribed successfully.',
         'session_created' => 'Session created successfully.',
         'job_make_featured' => 'Job Make Featured successfully.',

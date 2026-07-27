@@ -43,6 +43,7 @@ class WebRegisterRepository
 
             $userInput = Arr::except($input, ['type']);
             $userInput['password'] = Hash::make($input['password']);
+            $userInput['email_verified_at'] = now();
             /** @var User $user */
             $user = User::create($userInput);
             $userRole = Role::where('name', ($input['type'] == 1) ? 'Candidate' : 'Employer')->first();

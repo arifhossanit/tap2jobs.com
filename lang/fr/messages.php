@@ -1512,7 +1512,7 @@ return [
         'comment_deleted' => 'Commentaire supprimé avec succès.',
         'comment_edit' => 'Commentaire modifié avec succès.',
         'comment_updated' => 'Commentaire mis à jour avec succès.',
-        'registration_done' => 'Inscription effectuée avec succès.',
+        'registration_done' => 'Inscription effectuée avec succès. Veuillez vous connecter à votre compte.',
         'subscribed' => 'Abonné avec succès.',
         'session_created' => 'Session créée avec succès.',
         'job_make_featured' => 'Job Make présenté avec succès.',

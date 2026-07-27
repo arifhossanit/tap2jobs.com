@@ -1517,7 +1517,7 @@ return [
         'comment_deleted' => 'تم حذف التعليق بنجاح.',
         'comment_edit' => 'تم تعديل التعليق بنجاح.',
         'comment_updated' => 'تم تحديث التعليق بنجاح.',
-        'registration_done' => 'تم التسجيل بنجاح.',
+        'registration_done' => 'تم التسجيل بنجاح. يرجى تسجيل الدخول إلى حسابك.',
         'subscribed' => 'تم الاشتراك بنجاح',
         'session_created' => 'تم إنشاء الجلسة بنجاح.',
         'job_make_featured' => 'جعل الوظيفة مميزة بنجاح.',

@@ -1512,7 +1512,7 @@ return [
         'comment_deleted' => '评论删除成功。',
         'comment_edit' => '评论编辑成功。',
         'comment_updated' => '评论更新成功。',
-        'registration_done' => '注册成功。',
+        'registration_done' => '注册成功。请登录您的账户。',
         'subscribed' => '订阅成功。',
         'session_created' => '会话创建成功。',
         'job_make_featured' => '工作使精选成功。',
