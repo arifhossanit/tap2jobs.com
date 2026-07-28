@@ -45,7 +45,7 @@ listenSubmit('#addCandidateNewForm', function (e) {
             if (result.success) {
                 displaySuccessMessage(result.message);
                 setTimeout(function () {
-                    Turbo.visit(route('front.candidate.login'))
+                    window.location.href = result.data.redirectUrl;
                 }, 1500);
             }
         },
@@ -75,7 +75,7 @@ listenSubmit('#addEmployerNewForm', function (e) {
             if (result.success) {
                 displaySuccessMessage(result.message);
                 setTimeout(function () {
-                    Turbo.visit(route('front.employee.login'))
+                    window.location.href = result.data.redirectUrl;
                 }, 1500);
             }
         },

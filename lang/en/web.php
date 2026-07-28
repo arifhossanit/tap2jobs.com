@@ -37,6 +37,7 @@ return [
     'no_positions' => 'No positions',
     'easy_to_find_your' => 'It’s Easy to Find Your',
     'admin' => 'Admin',
+    'add_post_job' => 'Post Job',
 
     //common keys
     'common' => [

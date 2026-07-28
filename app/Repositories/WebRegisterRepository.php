@@ -36,7 +36,7 @@ class WebRegisterRepository
     /**
      * @throws Throwable
      */
-    public function store(array $input): bool
+    public function store(array $input): User
     {
         try {
             DB::beginTransaction();
@@ -87,7 +87,7 @@ class WebRegisterRepository
 
             DB::commit();
 
-            return true;
+            return $user;
         } catch (Exception $e) {
             DB::rollBack();
 

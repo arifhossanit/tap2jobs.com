@@ -1147,3 +1147,74 @@ if (! function_exists('getActiveAdByPosition')) {
             ->first();
     }
 }
+
+if (! function_exists('isSameApplicationUrl')) {
+    /**
+     * Whether a URL belongs to this app (prevents open redirects).
+     */
+    function isSameApplicationUrl(string $url): bool
+    {
+        $appUrl = rtrim((string) config('app.url'), '/');
+        $appHost = parse_url($appUrl, PHP_URL_HOST);
+        $urlHost = parse_url($url, PHP_URL_HOST);
+
+        if ($urlHost === null) {
+            return str_starts_with($url, '/');
+        }
+
+        return strcasecmp((string) $appHost, (string) $urlHost) === 0;
+    }
+}
+
+if (! function_exists('userCanAccessIntendedUrl')) {
+    /**
+     * Role gate for session intended URLs (avoids 403 loops after wrong-role auth).
+     */
+    function userCanAccessIntendedUrl($user, string $url): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        $path = parse_url($url, PHP_URL_PATH) ?? '';
+
+        if ($user->hasRole('Admin')) {
+            return true;
+        }
+
+        if (str_starts_with($path, '/admin')) {
+            return false;
+        }
+
+        if (str_starts_with($path, '/employer')) {
+            return $user->hasRole('Employer');
+        }
+
+        if (str_starts_with($path, '/candidate')) {
+            return $user->hasRole('Candidate');
+        }
+
+        return true;
+    }
+}
+
+if (! function_exists('resolveIntendedRedirectUrl')) {
+    /**
+     * Pull url.intended from the session and return it when safe for the user; otherwise $default.
+     */
+    function resolveIntendedRedirectUrl(string $default, $user = null): string
+    {
+        $user = $user ?? Auth::user();
+        $intended = session()->pull('url.intended');
+
+        if (empty($intended) || ! isSameApplicationUrl($intended)) {
+            return url($default);
+        }
+
+        if (! userCanAccessIntendedUrl($user, $intended)) {
+            return url($default);
+        }
+
+        return $intended;
+    }
+}

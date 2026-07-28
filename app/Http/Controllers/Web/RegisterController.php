@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\AppBaseController;
 use App\Http\Requests\WebRegisterRequest;
+use App\Providers\RouteServiceProvider;
 use App\Repositories\WebRegisterRepository;
 use Flash;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class RegisterController extends AppBaseController
@@ -46,10 +48,21 @@ class RegisterController extends AppBaseController
     public function register(WebRegisterRequest $request): JsonResponse
     {
         $input = $request->all();
-        $this->webRegisterRepository->store($input);
+        $user = $this->webRegisterRepository->store($input);
+        Auth::login($user);
+
+        $defaultHome = ((int) $input['type'] === 1)
+            ? RouteServiceProvider::CANDIDATE_HOME
+            : RouteServiceProvider::EMPLOYER_HOME;
+
+        $redirectUrl = resolveIntendedRedirectUrl($defaultHome, $user);
+
         $userType = ($input['type'] == 1) ? __('messages.notification_settings.candidate') : __('messages.company.employer');
         Flash::success(__('messages.flash.register_success_mail_active'));
 
-        return $this->sendSuccess("{$userType} ".__('messages.flash.registration_done'));
+        return $this->sendResponse(
+            ['redirectUrl' => $redirectUrl],
+            "{$userType} ".__('messages.flash.registration_done')
+        );
     }
 }

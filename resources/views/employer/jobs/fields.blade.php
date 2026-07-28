@@ -51,11 +51,19 @@
         <span class="required"></span>
         {{ Form::text('salary_from', null, ['class' => 'form-control salary', 'id' => 'fromSalary', 'required', 'placeholder' => __('messages.job.salary_from')]) }}
     </div>
-    <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+    <div class="col-xl-5 col-md-5 col-sm-12 mb-5">
         {{ Form::label('salary_to', __('messages.job.salary_to').':', ['class' => 'form-label']) }}
         <span class="required"></span>
         {{ Form::text('salary_to', null, ['class' => 'form-control salary', 'id' => 'toSalary', 'required', 'placeholder' =>__('messages.job.salary_to')]) }}
         <span id="salaryToErrorMsg" class="text-danger"></span>
+    </div>
+    <div class="col-xl-1 col-md-1 col-sm-12 mb-5">
+        <label class="form-label">{{ __('messages.job.hide_salary').':' }}</label><br>
+        <label class="form-check form-switch form-switch-sm {{ checkLanguageSession() == 'ar' ? 'float-end' : 'float-start' }}">
+            <input type="checkbox" name="hide_salary" class="form-check-input"
+                   value="1"
+                   id="salary">
+        </label>
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('currency_id', __('messages.job.currency').':', ['class' => 'form-label']) }}
@@ -113,14 +121,6 @@
         {{ Form::label('experience', __('messages.job_experience.job_experience').':', ['class' => 'form-label']) }}
         <span class="required"></span>
         {{ Form::text('experience',  null, ['id'=>'experienceId','class' => 'form-control','placeholder' => __('messages.company.enter_experience_year'),'required', 'min' => 0, 'max' => 255, 'placeholder' => __('messages.job_experience.job_experience'), 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")']) }}
-    </div>
-    <div class="col-xl-3 col-md-3 col-sm-12 mb-5">
-        <label class="form-label">{{ __('messages.job.hide_salary').':' }}</label><br>
-        <label class="form-check form-switch form-switch-sm {{ checkLanguageSession() == 'ar' ? 'float-end' : 'float-start' }}">
-            <input type="checkbox" name="hide_salary" class="form-check-input"
-                   value="1"
-                   id="salary">
-        </label>
     </div>
     <div class="col-xl-3 col-md-3 col-sm-12 mb-5">
         <label class="form-label">{{ __('messages.job.is_freelance').':' }}</label><br>

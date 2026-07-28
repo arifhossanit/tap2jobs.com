@@ -29,11 +29,24 @@ class Authenticate extends Middleware
 
     /**
      * Get the path the user should be redirected to when they are not authenticated.
+     * Laravel stores the current URL as session url.intended via redirect()->guest().
      */
     protected function redirectTo($request)
     {
         if (! $request->expectsJson()) {
-            return route('front.home');
+            if ($request->is('admin') || $request->is('admin/*')) {
+                return route('admin.login');
+            }
+
+            if ($request->is('employer') || $request->is('employer/*')) {
+                return route('front.employee.login');
+            }
+
+            if ($request->is('candidate') || $request->is('candidate/*')) {
+                return route('front.candidate.login');
+            }
+
+            return route('front.candidate.login');
         }
     }
 }

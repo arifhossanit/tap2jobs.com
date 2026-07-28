@@ -28,6 +28,14 @@
                             <a class="header-navbar-color text-gray nav-link {{ Request::is('company-lists') || Request::is('company-details*') ? 'header-navbar-color-active' : '' }}"
                                 href="{{ route('front.company.lists') }}">{{ __('web.companies') }}</a>
                         </li>
+                        @auth
+                            @role('Employer')
+                                <li class="nav-item">
+                                    <a class="header-navbar-color text-gray nav-link {{ Request::is('company-lists') || Request::is('company-details*') ? 'header-navbar-color-active' : '' }}"
+                                        href="{{ route('job.create') }}">{{ __('web.add_post_job') }}</a>
+                                </li>
+                            @endrole
+                        @endauth
                         {{--
                         @auth
                             @role('Employer|Admin')

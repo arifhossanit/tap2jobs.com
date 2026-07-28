@@ -132,8 +132,8 @@
 </head>
 
 <body {{ $lang == 'pt' || $lang == 'fr' || $lang == 'es' ? 'languages' : '' }}>
-    <span class="header-padding"></span>
     @include('front_web.layouts.header_ad')
+    <span class="header-padding"></span>
     @include('front_web.layouts.header')
 
     @yield('content')

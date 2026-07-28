@@ -2,38 +2,42 @@
     $headerAd = getActiveAdByPosition(\App\Models\Ad::POSITION_HEADER);
 @endphp
 @if ($headerAd)
-    {{-- Always rendered visible above the navbar. No JS hide-on-load / localStorage dismiss. --}}
-    <div id="siteHeaderAd" class="site-header-ad" role="region" aria-label="{{ __('messages.ads') }}">
-        <div class="site-header-ad__bar">
-            <div class="container position-relative">
-                <button type="button" class="site-header-ad__close" id="siteHeaderAdClose" aria-label="Close"
-                        onclick="this.closest('#siteHeaderAd').classList.add('is-closed'); return false;">
+    {{--
+      IMPORTANT: Do NOT use id/class/aria containing "ad" / "ads" / "advert".
+      Browser ad blockers hide those selectors even when HTML is present.
+      Always visible above the navbar; no JS hide-on-load / localStorage dismiss.
+    --}}
+    <div id="siteTopBanner" class="site-top-banner" role="region" aria-label="Announcement">
+        <div class="site-top-banner__bar">
+            <div class="position-relative">
+                <button type="button" class="site-top-banner__close" id="siteTopBannerClose" aria-label="Close"
+                        onclick="this.closest('#siteTopBanner').classList.add('is-closed'); return false;">
                     <i class="fas fa-times"></i>
                 </button>
-                <div class="site-header-ad__inner">
+                <div class="site-top-banner__inner">
                     @if (!empty($headerAd->ad_image_url))
                         @if (!empty($headerAd->link_url))
                             <a href="{{ $headerAd->link_url }}" target="_blank" rel="noopener noreferrer"
-                               class="site-header-ad__image-link">
+                               class="site-top-banner__image-link">
                                 <img src="{{ $headerAd->ad_image_url }}" alt="{{ $headerAd->title }}"
-                                     class="site-header-ad__image">
+                                     class="site-top-banner__image">
                             </a>
                         @else
                             <img src="{{ $headerAd->ad_image_url }}" alt="{{ $headerAd->title }}"
-                                 class="site-header-ad__image">
+                                 class="site-top-banner__image">
                         @endif
                     @endif
                     @if (!empty($headerAd->title) || !empty($headerAd->description) || (!empty($headerAd->link_url) && !empty($headerAd->cta_text)))
-                        <div class="site-header-ad__content">
+                        <div class="site-top-banner__content">
                             @if (!empty($headerAd->title))
-                                <div class="site-header-ad__title">{{ $headerAd->title }}</div>
+                                <div class="site-top-banner__title">{{ $headerAd->title }}</div>
                             @endif
                             @if (!empty($headerAd->description))
-                                <div class="site-header-ad__desc">{{ $headerAd->description }}</div>
+                                <div class="site-top-banner__desc">{{ $headerAd->description }}</div>
                             @endif
                             @if (!empty($headerAd->link_url) && !empty($headerAd->cta_text))
                                 <a href="{{ $headerAd->link_url }}" target="_blank" rel="noopener noreferrer"
-                                   class="site-header-ad__cta">{{ $headerAd->cta_text }}</a>
+                                   class="site-top-banner__cta">{{ $headerAd->cta_text }}</a>
                             @endif
                         </div>
                     @endif
@@ -42,8 +46,8 @@
         </div>
     </div>
     <style>
-        /* Promo strip ABOVE navbar — always visible; never gated by JS. */
-        #siteHeaderAd.site-header-ad {
+        /* High-contrast promo strip ABOVE navbar — never gated by JS on load. */
+        #siteTopBanner.site-top-banner {
             display: block !important;
             visibility: visible !important;
             opacity: 1 !important;
@@ -51,113 +55,133 @@
             max-height: none !important;
             overflow: visible !important;
             position: relative !important;
-            z-index: 1050 !important;
+            z-index: 1100 !important;
             margin: 0 !important;
             padding: 0 !important;
             width: 100% !important;
+            clear: both !important;
+            float: none !important;
         }
-        /* Close is session-only (this page view). Never persisted; refresh shows ad again. */
-        #siteHeaderAd.site-header-ad.is-closed {
+        #siteTopBanner.site-top-banner.is-closed {
             display: none !important;
         }
-        #siteHeaderAd .site-header-ad__bar {
+        #siteTopBanner .site-top-banner__bar {
             display: block !important;
-            min-height: 84px;
-            background: #e8f8ea;
-            background-image: radial-gradient(circle at 50% -80%, #b8e0bc 0, transparent 50%);
-            border-bottom: 2px solid #12b751;
+            min-height: 88px;
+            background: #1967d2 !important;
+            background-image: none !important;
+            border-bottom: 2px solid #245d9b !important;
             box-sizing: border-box;
         }
-        #siteHeaderAd .site-header-ad__inner {
+        #siteTopBanner .site-top-banner__inner {
             display: flex !important;
             flex-wrap: wrap;
             align-items: center;
             justify-content: center;
             gap: 16px 28px;
-            min-height: 84px;
-            padding: 10px 36px 10px 12px;
+            min-height: 88px;
+            padding: 12px 40px 12px 12px;
             box-sizing: border-box;
         }
-        #siteHeaderAd .site-header-ad__close {
+        #siteTopBanner .site-top-banner__close {
             position: absolute;
-            top: 8px;
-            right: 8px;
+            top: 10px;
+            right: 10px;
             z-index: 2;
             border: 0;
-            background: rgba(255, 255, 255, 0.7);
-            color: #444;
-            width: 28px;
-            height: 28px;
+            background: #fff;
+            color: #0b7a44;
+            width: 30px;
+            height: 30px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             border-radius: 50%;
             line-height: 1;
+            box-shadow: 0 1px 3px rgba(0,0,0,.2);
         }
-        #siteHeaderAd .site-header-ad__close:hover {
+        #siteTopBanner .site-top-banner__close:hover {
             color: #1967d2;
-            background: #fff;
+            background: #f3f6fa;
         }
-        #siteHeaderAd .site-header-ad__image {
+        #siteTopBanner .site-top-banner__image {
             display: block !important;
             max-height: 64px;
             width: auto;
             max-width: min(100%, 920px);
             object-fit: contain;
+            background: #fff;
+            padding: 4px;
+            border-radius: 4px;
         }
-        #siteHeaderAd .site-header-ad__image-link {
+        #siteTopBanner .site-top-banner__image-link {
             display: inline-block;
             line-height: 0;
         }
-        #siteHeaderAd .site-header-ad__content {
+        #siteTopBanner .site-top-banner__content {
             text-align: center;
         }
-        #siteHeaderAd .site-header-ad__title {
-            color: #1764aa;
-            font-weight: 700;
-            font-size: 1.15rem;
+        #siteTopBanner .site-top-banner__title {
+            color: #fff !important;
+            font-weight: 800;
+            font-size: 1.25rem;
             line-height: 1.25;
+            text-shadow: 0 1px 0 rgba(0,0,0,.15);
         }
-        #siteHeaderAd .site-header-ad__desc {
-            color: #444;
-            font-size: 0.9rem;
+        #siteTopBanner .site-top-banner__desc {
+            color: #e8fff0 !important;
+            font-size: 0.95rem;
             margin-top: 2px;
         }
-        #siteHeaderAd .site-header-ad__cta {
+        #siteTopBanner .site-top-banner__cta {
             display: inline-block;
             margin-top: 6px;
-            background: #12b751;
-            color: #fff !important;
+            background: #fff;
+            color: #0b7a44 !important;
             font-size: 0.9rem;
-            font-weight: 700;
+            font-weight: 800;
             padding: 6px 14px;
             border-radius: 4px;
             text-decoration: none;
         }
+        /* Keep light-blue navbar below the banner in stacking order */
+        body > header.bg-gradient {
+            position: relative !important;
+            z-index: 1 !important;
+            margin-top: 0 !important;
+            top: auto !important;
+        }
         @media (min-width: 768px) {
-            #siteHeaderAd .site-header-ad__content {
+            #siteTopBanner .site-top-banner__content {
                 text-align: left;
             }
         }
         @media (max-width: 575.98px) {
-            #siteHeaderAd .site-header-ad__bar,
-            #siteHeaderAd .site-header-ad__inner {
-                min-height: 64px;
+            #siteTopBanner .site-top-banner__bar,
+            #siteTopBanner .site-top-banner__inner {
+                min-height: 72px;
             }
-            #siteHeaderAd .site-header-ad__image {
+            #siteTopBanner .site-top-banner__image {
                 max-height: 48px;
             }
-            #siteHeaderAd .site-header-ad__title {
-                font-size: 1rem;
+            #siteTopBanner .site-top-banner__title {
+                font-size: 1.05rem;
             }
         }
-        html[dir=rtl] #siteHeaderAd .site-header-ad__close {
+        html[dir=rtl] #siteTopBanner .site-top-banner__close {
             right: auto;
-            left: 8px;
+            left: 10px;
         }
-        html[dir=rtl] #siteHeaderAd .site-header-ad__inner {
-            padding: 10px 12px 10px 36px;
+        html[dir=rtl] #siteTopBanner .site-top-banner__inner {
+            padding: 12px 12px 12px 40px;
         }
     </style>
+    <script>
+        /* Clear legacy dismiss keys from older banner versions. Never hide on load. */
+        try {
+            localStorage.removeItem('jobsportal_header_ad_dismissed');
+            localStorage.removeItem('jobsportal_site_header_ad_dismissed');
+        } catch (e) {}
+    </script>
 @endif
