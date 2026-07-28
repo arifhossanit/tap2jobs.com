@@ -308,6 +308,7 @@ return [
         'no_found_record' => 'Keine übereinstimmenden Aufzeichnungen gefunden',
         'default_language' => 'Standardsprache',
         'select_language' => 'Sprache auswählen',
+        'default_country' => 'Standardland',
     ],
 
     'phone' => [

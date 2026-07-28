@@ -20,4 +20,5 @@
             {{Form::hidden('isEdit',true,['class'=>'isEdit'])}}
         </div>
     </div>
+    @include('jobs.modals.cities')
 @endsection

@@ -146,6 +146,7 @@ class SettingRepository extends BaseRepository
         if ($inputArr['sectionName'] == 'general') {
             $inputArr['enable_google_recaptcha'] = (! isset($inputArr['enable_google_recaptcha'])) ? false : $inputArr['enable_google_recaptcha'];
             $inputArr['job_approved'] = (! isset($inputArr['job_approved'])) ? 0 : 1;
+            $inputArr['default_country_id'] = $inputArr['default_country_id'] ?? '';
         }
         foreach ($inputArr as $key => $value) {
             /** @var Setting $setting */

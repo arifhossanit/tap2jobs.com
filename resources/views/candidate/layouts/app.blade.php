@@ -114,6 +114,7 @@
             </div>
             @include('candidate_profile.edit_profile_modal')
             @include('candidate_profile.change_password_modal')
+            @include('jobs.modals.cities')
         </div>
     </div>
     <script data-turbo-eval="false">

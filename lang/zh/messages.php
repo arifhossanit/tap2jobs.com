@@ -261,6 +261,7 @@ return [
         'no_found_record' => '未找到匹配的记录',
         'default_language' => '默认语言',
         'select_language' => '选择语言',
+        'default_country' => '默认国家',
     ],
 
     'phone' => [

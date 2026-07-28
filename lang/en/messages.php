@@ -268,6 +268,7 @@ return [
         'no_found_record' => 'No matching records found',
         'default_language' => 'Default Language',
         'select_language' => 'Select Language',
+        'default_country' => 'Default Country',
     ],
     'phone' => [
         'invalid_number' => 'Invalid number',

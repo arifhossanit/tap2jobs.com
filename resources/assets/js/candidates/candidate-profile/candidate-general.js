@@ -27,6 +27,10 @@ function loadCandidateGeneralData() {
             select2({
                 width: '100%',
         });
+        $('#createCityStateID').select2({
+            width: '100%',
+            dropdownParent: $('#createCityModal'),
+        });
     }
     if ($('#skillId').length && $('#languageId').length) {
         $('#skillId').select2({
@@ -141,6 +145,36 @@ $(document).on('keyup', '#googlePlusUrl', function () {
 });
 $(document).on('keyup', '#pinterestUrl', function () {
     this.value = this.value.toLowerCase();
+});
+
+// City modal handlers for candidate profile
+// (jobs/create-edit.js registers .createCityModal only on job forms)
+$(document).on('click', '.createCityModal', function () {
+    if (!$('#candidateProfileUpdate').length || !$('#createCityModal').length) {
+        return;
+    }
+
+    let $modalState = $('#createCityStateID');
+    let state = $('#stateId').val();
+
+    // Keep modal states in sync with the profile state dropdown (country-filtered)
+    if ($modalState.length && $('#stateId').length) {
+        $modalState.empty();
+        $('#stateId option').each(function () {
+            $modalState.append($(this).clone());
+        });
+        $modalState.val(state).trigger('change');
+    }
+
+    $('#createCityModal').appendTo('body').modal('show');
+});
+
+$(document).on('hidden.bs.modal', '#createCityModal', function () {
+    if (!$('#candidateProfileUpdate').length) {
+        return;
+    }
+    $('#createCityStateID').val('').trigger('change');
+    resetModalForm('#createCityForm', '#cityValidationErrorsBox');
 });
 
 $(document).on('submit', '#candidateProfileUpdate', function (e) {

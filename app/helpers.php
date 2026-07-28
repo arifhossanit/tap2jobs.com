@@ -245,6 +245,24 @@ if (! function_exists('getCountries')) {
 }
 
 /**
+ * Countries for job create/edit. When default_country_id is set, only that country is returned.
+ *
+ * @return array
+ */
+if (! function_exists('getJobCountries')) {
+    function getJobCountries()
+    {
+        $defaultCountryId = getSettingValue('default_country_id');
+
+        if (! empty($defaultCountryId)) {
+            return Country::where('id', $defaultCountryId)->orderBy('name')->pluck('name', 'id')->toArray();
+        }
+
+        return getCountries();
+    }
+}
+
+/**
  * @return array
  */
 if (! function_exists('getStates')) {

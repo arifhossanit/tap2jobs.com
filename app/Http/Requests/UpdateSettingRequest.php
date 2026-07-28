@@ -69,6 +69,7 @@ class UpdateSettingRequest extends FormRequest
 
         if ($this->input('sectionName') == 'general') {
             $rules['default_language'] = 'required';
+            $rules['default_country_id'] = 'nullable|exists:countries,id';
         }
 
         return $rules;

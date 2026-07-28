@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateJobRequest;
 use App\Http\Requests\UpdateJobRequest;
 use App\Jobs\CandidatesAlertJob;
-use App\Models\Country;
 use App\Models\FeaturedRecord;
 use App\Models\FrontSetting;
 use App\Models\Job;
@@ -66,8 +65,9 @@ class JobController extends AppBaseController
     public function create(): View
     {
         $data = $this->jobRepository->prepareData();
+        $states = \App\Models\State::toBase()->pluck('name', 'id');
 
-        return view('employer.jobs.create')->with('data', $data);
+        return view('employer.jobs.create', compact('data', 'states'));
     }
 
     /**
@@ -239,7 +239,7 @@ class JobController extends AppBaseController
     public function createJob(): View
     {
         $data = $this->jobRepository->prepareData();
-        $countries = Country::pluck('name', 'id');
+        $countries = $data['countries'];
         $states = State::toBase()->pluck('name', 'id');
 
         return view('jobs.create', compact('countries', 'states'))->with('data', $data);
@@ -284,7 +284,7 @@ class JobController extends AppBaseController
         if (isset($job->state_id)) {
             $cities = getCities($job->state_id);
         }
-        $countries = Country::pluck('name', 'id');
+        $countries = $data['countries'];
 
         return view('jobs.edit', compact('data', 'job', 'cities', 'states', 'countries'));
     }

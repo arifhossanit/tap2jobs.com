@@ -88,7 +88,7 @@
         {{ Form::label('country', __('messages.company.country').':', ['class' => 'form-label ']) }}<span
                 class="required"></span>
         <div class="input-group flex-nowrap">
-            {{ Form::select('country_id', $data['countries'], null, ['id'=>'countryId','class' => 'form-select','placeholder' => __('messages.company.select_country'),'required', 'data-control'=>'select2']) }}
+            {{ Form::select('country_id', $data['countries'], $data['default_country_id'] ?? null, ['id'=>'countryId','class' => 'form-select','placeholder' => __('messages.company.select_country'),'required', 'data-control'=>'select2']) }}
             <div class="input-group-text border-0">
                 <a href="javascript:void(0)" class="text-gray-500 createCountryModal"><i
                             class="fa fa-plus"></i></a>
@@ -99,7 +99,7 @@
         {{ Form::label('state', __('messages.company.state').':', ['class' => 'form-label ']) }}<span
                 class="required"></span>
         <div class="input-group flex-nowrap">
-            {{ Form::select('state_id', [], null, ['id'=>'stateId','class' => 'form-select','placeholder' => __('messages.company.select_state'),'required', 'data-control'=>'select2']) }}
+            {{ Form::select('state_id', $data['default_country_states'] ?? [], null, ['id'=>'stateId','class' => 'form-select','placeholder' => __('messages.company.select_state'),'required', 'data-control'=>'select2']) }}
             <div class="input-group-text border-0">
                 <a href="javascript:void(0)" class="text-gray-500 createStateModal"><i class="fa fa-plus"></i></a>
             </div>

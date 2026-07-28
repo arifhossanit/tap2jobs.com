@@ -166,12 +166,17 @@ function loadEmployeeCreateEditData() {
     $(
         "#jobTypeId,#jobCategoryId,#careerLevelsId,#jobShiftId,#countryId,#stateId,#cityId,#salaryPeriodsId,#requiredDegreeLevelId,#functionalAreaId"
     ).select2({
-        width: !$(".jobEmployeePanel").val() ? "calc(100% - 44px)" : "100%"
+        width: "calc(100% - 44px)"
     });
 
     $("#preferenceId,#currencyId,#createCityStateID").select2({
         width: "100%"
     });
+
+    // Auto-select default country on create and load its states
+    if ($("#details").length && $("#countryId").val()) {
+        $("#countryId").trigger("change");
+    }
 
     $("#jobCountryID").select2({
         width: "100%",

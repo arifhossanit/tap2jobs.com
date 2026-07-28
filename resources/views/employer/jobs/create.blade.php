@@ -22,4 +22,5 @@
     {{Form::hidden('employeeJobForm',true,['id'=>'employeeJobForm'])}}
     {{Form::hidden('employerPanel',true,['class'=>'jobEmployeePanel'])}}
     {{Form::hidden('isEdit',true,['class'=>'isEdit'])}}
+    @include('jobs.modals.cities')
 @endsection

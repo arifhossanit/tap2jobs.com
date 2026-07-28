@@ -263,6 +263,7 @@ return [
         'no_found_record' => 'Совпадающих записей не найдено',
         'default_language' => 'Язык по умолчанию',
         'select_language' => 'Выберите язык',
+        'default_country' => 'Страна по умолчанию',
     ],
 
     'phone' => [

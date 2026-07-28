@@ -80,7 +80,12 @@
     <div class="col-xl-4 col-md-4 col-sm-12 mb-5">
         {{ Form::label('city', __('messages.job.city').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{ Form::select('city_id', (isset($cities) && $cities!=null?$cities:[]), null, ['id'=>'cityId','class' => 'form-select','placeholder' => __('messages.company.select_city'),'data-control'=>'select2','required']) }}
+        <div class="input-group flex-nowrap">
+            {{ Form::select('city_id', (isset($cities) && $cities!=null?$cities:[]), null, ['id'=>'cityId','class' => 'form-select','placeholder' => __('messages.company.select_city'),'data-control'=>'select2','required']) }}
+            <div class="input-group-text border-0">
+                <a href="javascript:void(0)" class="text-gray-500 createCityModal"><i class="fa fa-plus"></i></a>
+            </div>
+        </div>
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('career_level_id', __('messages.job.career_level').':', ['class' => 'form-label']) }}

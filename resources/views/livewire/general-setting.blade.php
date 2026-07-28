@@ -118,6 +118,12 @@
             </div>
         </div>
         <div class="col-md-3 col-lg-3 col-sm-3 col-12">
+            <div class="form-group mb-3">
+                {{ Form::label('default_country_id', __('messages.common.default_country') . ':', ['class' => 'form-label']) }}
+                {{ Form::select('default_country_id', $countries ?? [], $setting['default_country_id'] ?? null, ['class' => 'form-select', 'data-control' => 'select2', 'data-allow-clear' => 'true', 'placeholder' => __('messages.company.select_country')]) }}
+            </div>
+        </div>
+        <div class="col-md-3 col-lg-3 col-sm-3 col-12">
             <div class="form-check form-switch">
                 {{ Form::label('job_approved', __('messages.pending_jobs.job_approved'), ['class' => 'form-label']) }}
                 <input class="form-check-input" name="job_approved" type="checkbox"

@@ -47,8 +47,9 @@ class SettingController extends AppBaseController
         $sectionName = ($request->section === null) ? 'general' : $request->section;
         $envSetting = EnvSetting::pluck('value', 'key')->toArray();
         $languages = Language::toBase()->pluck('language','iso_code');
+        $countries = getCountries();
 
-        return view("settings.$sectionName",compact('envData','setting', 'sectionName','envSetting','languages'));
+        return view("settings.$sectionName", compact('envData', 'setting', 'sectionName', 'envSetting', 'languages', 'countries'));
     }
 
     /**

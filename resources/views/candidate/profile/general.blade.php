@@ -91,7 +91,12 @@
                     </div>
                     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
                         {{ Form::label('city', __('messages.company.city') . ':', ['class' => 'form-label']) }}
-                        {{ Form::select('city_id', isset($cities) && $cities != null ? $cities : [], null, ['class' => 'form-select ', 'id' => 'cityId', 'placeholder' => __('messages.company.select_city')]) }}
+                        <div class="input-group flex-nowrap">
+                            {{ Form::select('city_id', isset($cities) && $cities != null ? $cities : [], null, ['class' => 'form-select ', 'id' => 'cityId', 'placeholder' => __('messages.company.select_city')]) }}
+                            <div class="input-group-text border-0">
+                                <a href="javascript:void(0)" class="text-gray-500 createCityModal"><i class="fa fa-plus"></i></a>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-sm-6 mb-5 mobile-itel-width">
                         {{ Form::label('phone', __('messages.candidate.phone') . ':', ['class' => 'form-label']) }}

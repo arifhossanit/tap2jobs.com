@@ -285,6 +285,7 @@ return [
         'no_found_record' => 'لم يتم العثور على سجلات مطابقة',
         'default_language' => 'اللغة الافتراضية',
         'select_language' => 'اختار اللغة',
+        'default_country' => 'البلد الافتراضي',
     ],
 
     'phone' => [

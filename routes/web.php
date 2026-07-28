@@ -601,7 +601,6 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
 
          // City routes
          Route::get('cities', [CityController::class, 'index'])->name('cities.index');
-         Route::post('cities', [CityController::class, 'store'])->name('cities.store');
          Route::get('cities/{city}/edit', [CityController::class, 'edit'])->name('cities.edit');
          Route::put('cities/{city}', [CityController::class, 'update'])->name('cities.update');
          Route::delete('cities/{city}', [CityController::class, 'destroy'])->name('cities.destroy');
@@ -621,6 +620,7 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
 Route::middleware('auth', 'role:Admin|Employer|Candidate', 'xss', 'verified.user')->group(function () {
     Route::get('states-list', [JobController::class, 'getStates'])->name('states-list');
     Route::get('cities-list', [JobController::class, 'getCities'])->name('cities-list');
+    Route::post('cities', [CityController::class, 'store'])->name('cities.store');
     Route::post('update-language', [UserController::class, 'updateLanguage'])->name('update-language');
 
     // Read notification
@@ -720,8 +720,8 @@ Route::middleware('auth', 'role:Employer', 'xss', 'verified.user')->prefix('empl
          Route::put('{company}', [CompanyController::class, 'updateCompany'])->name('company.update.form');
 
          // followers route
-         Route::get('followers', [CompanyController::class, 'getFollowers'])->name('followers.index');
-         Route::post('/report-to-candidate', [CandidateController::class, 'reportCandidate'])->name('report.to.candidate');
+          Route::get('followers', [CompanyController::class, 'getFollowers'])->name('followers.index');
+          Route::post('/report-to-candidate', [CandidateController::class, 'reportCandidate'])->name('report.to.candidate');
 
          Route::get('manage-subscription', [SubscriptionController::class, 'index'])->name('manage-subscription.index');
          Route::get('transactions', [TransactionController::class, 'index'])->name('transactions.index');

@@ -262,6 +262,7 @@ return [
         'no_found_record' => 'Aucun enregistrements correspondants trouvés',
         'default_language' => 'Langage par défaut',
         'select_language' => 'Choisir la langue',
+        'default_country' => 'Pays par défaut',
     ],
 
     'phone' => [

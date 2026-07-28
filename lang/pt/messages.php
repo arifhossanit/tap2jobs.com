@@ -299,6 +299,7 @@ return [
         'no_found_record' => 'Nenhum registro correspondente encontrado',
         'default_language' => 'Idioma padrão',
         'select_language' => 'Selecione o idioma',
+        'default_country' => 'País padrão',
     ],
 
     'phone' => [

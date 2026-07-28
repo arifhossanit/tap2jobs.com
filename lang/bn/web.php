@@ -136,7 +136,7 @@ return [
         'company_name' => 'কোম্পানির নাম',
         'job_expiry_date' => 'চাকরির মেয়াদ শেষের তারিখ',
         'country' => 'দেশ',
-        'state' => 'রাজ্য',
+        'state' => 'জেলা',
         'city' => 'শহর',
         'is_freelance' => 'ফ্রিল্যান্স',
         'hide_salary' => 'বেতন লুকান',

@@ -110,7 +110,12 @@ class JobRepository extends BaseRepository
         $data['jobSkill'] = Skill::pluck('name', 'id');
         $data['jobTag'] = Tag::pluck('name', 'id');
         $data['requiredDegreeLevel'] = RequiredDegreeLevel::pluck('name', 'id');
-        $data['countries'] = getCountries();
+        $data['countries'] = getJobCountries();
+        $defaultCountryId = getSettingValue('default_country_id');
+        $data['default_country_id'] = ! empty($defaultCountryId) ? (int) $defaultCountryId : null;
+        $data['default_country_states'] = $data['default_country_id']
+            ? getStates($data['default_country_id'])
+            : [];
         $data['companies'] = Company::with('user')->get()->where('user.is_active', '=', 1)
             ->pluck('user.full_name', 'id')->sort();
 

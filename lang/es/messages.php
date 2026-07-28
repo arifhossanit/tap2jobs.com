@@ -263,6 +263,7 @@ return [
         'no_found_record' => 'No se encontraron registros coincidentes',
         'default_language' => 'Idioma predeterminado',
         'select_language' => 'Seleccione el idioma',
+        'default_country' => 'País predeterminado',
     ],
 
     'phone' => [

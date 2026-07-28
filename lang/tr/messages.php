@@ -263,6 +263,7 @@ return [
         'no_found_record' => 'Hiçbir eşleşen kayıt bulunamadı',
         'default_language' => 'Varsayılan dil',
         'select_language' => 'Dil Seçin',
+        'default_country' => 'Varsayılan Ülke',
     ],
 
     'phone' => [
