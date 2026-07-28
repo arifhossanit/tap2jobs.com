@@ -93,13 +93,23 @@
                                     @include('layouts.errors')
                                 </div>
                                 <input type="hidden" name="type" value="2" />
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="form-group mb-md-4 mb-3 ">
                                         <label for="" class="fs-16 text-secondary mb-3">{{ __('web.common.name') }}
                                             <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control fs-14 text-gray bg-white  br-10 p-3"
                                             name="first_name" id="employerFirstName"
                                             placeholder="{{ __('web.register_menu.enter_first_name') }}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-md-4 mb-3 ">
+                                        <label for=""
+                                            class="fs-16 text-secondary mb-3">{{ __('web.common.phone') }}
+                                            <span class="text-danger">*</span></label>
+                                        <input type="tel" class="form-control fs-14 text-gray bg-white  br-10 p-3"
+                                            name="phone" id="employerPhone"
+                                            placeholder="{{ __('web.register_menu.enter_phone_number') }}" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">

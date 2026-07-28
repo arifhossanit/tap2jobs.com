@@ -17,7 +17,7 @@ class DefaultUserSeeder extends Seeder
         $input = [
             'first_name' => 'Super',
             'last_name' => 'Admin',
-            'email' => 'admin@infyjobs.com',
+            'email' => 'admin@gmail.com',
             'email_verified_at' => Carbon::now(),
             'password' => Hash::make('123456'),
             'phone' => '7878454512',

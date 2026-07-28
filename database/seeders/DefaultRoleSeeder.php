@@ -31,7 +31,7 @@ class DefaultRoleSeeder extends Seeder
         $adminRole = Role::whereName('Admin')->first();
 
         /** @var User $user */
-        $user = User::whereEmail('admin@infyjobs.com')->first();
+        $user = User::whereEmail('admin@gmail.com')->first();
         if ($user) {
             $user->assignRole($adminRole);
         }

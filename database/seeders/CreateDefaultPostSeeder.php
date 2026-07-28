@@ -61,7 +61,7 @@ class CreateDefaultPostSeeder extends Seeder
                 'is_default' => 1,
             ],
         ];
-        $userId = User::whereEmail('admin@infyjobs.com')->pluck('id');
+        $userId = User::whereEmail('admin@gmail.com')->pluck('id');
         Auth::loginUsingId($userId);
 
         foreach ($input as $data) {

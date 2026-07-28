@@ -22,6 +22,7 @@ class WebRegisterRequest extends FormRequest
         $rules = [
             'first_name' => 'required',
             'email' => 'required|email:filter|unique:users',
+            'phone' => 'required|numeric|unique:users,phone',
             'password' => 'nullable|same:password_confirmation|min:6',
             'privacyPolicy' => 'required',
         ];

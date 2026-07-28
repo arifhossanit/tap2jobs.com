@@ -91,6 +91,16 @@
                                 <div class="col-md-12">
                                     <div class="form-group mb-md-4 mb-3 ">
                                         <label for=""
+                                            class="fs-16 text-secondary mb-3">{{ __('web.common.phone') }}
+                                            <span class="text-danger">*</span></label>
+                                        <input type="tel" class="form-control fs-14 text-gray bg-white  br-10 p-3"
+                                            name="phone" id="candidatePhone"
+                                            placeholder="{{ __('web.register_menu.enter_phone_number') }}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group mb-md-4 mb-3 ">
+                                        <label for=""
                                             class="fs-16 text-secondary mb-3">{{ __('web.common.email') }}
                                             <span class="text-danger">*</span></label>
                                         <input type="email" class="form-control fs-14 text-gray bg-white  br-10 p-3"

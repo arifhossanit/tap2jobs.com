@@ -88,11 +88,12 @@
                                     </div>
                                     <div class="col-md-6 mb-4">
                                         <div class="form-group">
-                                            <label for=""
-                                                class="fs-16 text-secondary mb-2">{{ __('web.web_contact.your_phone_no') }}:</label>
+                                            <label for="" class="fs-16 text-secondary mb-2">{{ __('web.web_contact.your_phone_no') }}:
+                                                <span class="text-danger">*</span>
+                                            </label>
                                             <input class="form-control fs-14 text-gray br-10 d-block" type="tel"
                                                 name="phone_no" value="{{ old('phone_no') }}"
-                                                placeholder="@lang('web.web_contact.phone_number')" autocomplete="off" id='phoneNumber'>
+                                                placeholder="@lang('web.web_contact.phone_number')" autocomplete="off" id='phoneNumber' required>
                                             <input type="hidden" name="region_code" id="prefix_code">
                                             <p id="valid-msg" class="text-success d-none fw-400 fs-small mt-2">
                                                 {{ __('messages.phone.valid_number') }}</p>
