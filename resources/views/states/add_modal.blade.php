@@ -7,7 +7,7 @@
                 <button type="button" aria-label="Close" class="btn-close"
                         data-bs-dismiss="modal">
                 </button>
-            </div>
+            </div>    
             {{ Form::open(['id'=>'addStateForm']) }}
             <div class="modal-body">
                 <div class="alert alert-danger fs-4 text-white d-flex align-items-center  d-none"
