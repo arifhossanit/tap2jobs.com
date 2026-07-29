@@ -126,7 +126,7 @@
             <div class="col-12 text-center mt-lg-5 mt-4 copy-right">
                 <p class="pt-4 pb-4 text-gray fs-13">
                     &copy;{{ date('Y') }}
-                    <a href="{{ getSettingValue('company_url') }}" class="text-primary">
+                    <a href="{{ getSettingValue('company_url') }}" class="text-primary" target="_blank">
                         {{ html_entity_decode($settings['application_name']) }}</a>.
                     {{ __('web.footer.all_rights_reserved') }}.
                 </p>
