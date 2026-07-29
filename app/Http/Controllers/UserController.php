@@ -73,6 +73,10 @@ class UserController extends AppBaseController
 
     public function updateLanguage(Request $request): JsonResponse
     {
+        $request->validate([
+            'language' => 'required|in:en,bn',
+        ]);
+
         $language = $request->get('language');
 
         /** @var User $user */

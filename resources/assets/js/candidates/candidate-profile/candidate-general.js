@@ -5,6 +5,24 @@ function loadCandidateGeneralData() {
     if (!$('#birthDate').length && !$('#availableAt').length){
         return
     }
+    const $nationalityInput = $('#nationalityInput');
+    const $isBangladeshi = $('#isBangladeshi');
+
+    function syncNationalityInput () {
+        if (!$nationalityInput.length || !$isBangladeshi.length) {
+            return;
+        }
+
+        if ($isBangladeshi.prop('checked')) {
+            $nationalityInput.val('Bangladeshi').prop('readonly', true).addClass('candidate-readonly-cross');
+        } else {
+            $nationalityInput.prop('readonly', false).removeClass('candidate-readonly-cross');
+        }
+    }
+
+    syncNationalityInput();
+    $isBangladeshi.on('change', syncNationalityInput);
+
         $('#birthDate').flatpickr({
             format: 'YYYY-MM-DD',
             useCurrent: true,
@@ -21,11 +39,27 @@ function loadCandidateGeneralData() {
             minDate: new Date(),
         });
 
+        if ($('#passportIssueDate').length) {
+            $('#passportIssueDate').flatpickr({
+                format: 'YYYY-MM-DD',
+                useCurrent: false,
+                sideBySide: true,
+                "locale": getLoggedInUserLang,
+            });
+        }
+
 
     if ($('#candidateProfileUpdate').length){
-        $('#salaryCurrencyId,#countryId,#stateId,#cityId,#maritalStatusId,#industryId,#careerLevelId,#functionalAreaId').
+        $('#salaryCurrencyId,#countryId,#stateId,#cityId,#industryId,#careerLevelId,#functionalAreaId').
             select2({
                 width: '100%',
+        });
+        $('.candidate-preferred-select').each(function () {
+            $(this).select2({
+                width: '100%',
+                placeholder: $(this).data('placeholder') || '',
+                closeOnSelect: false,
+            });
         });
     }
     if ($('#skillId').length && $('#languageId').length) {
@@ -38,9 +72,83 @@ function loadCandidateGeneralData() {
             placeholder: Lang.get('js.select_language'),
         });
     }
+    $('.form-select').on('select2:open', function () {
+        $(this).next('.select2-container').addClass('select2-container--open-chevron');
+    }).on('select2:close', function () {
+        $(this).next('.select2-container').removeClass('select2-container--open-chevron');
+    });
+    $('.candidate-profile-accordion .form-select').not('[multiple]').on('mousedown', function () {
+        if ($(this).next('.select2-container').length) {
+            return;
+        }
+
+        $(this).addClass('candidate-select-open');
+    }).on('change blur', function () {
+        $(this).removeClass('candidate-select-open');
+    });
     setTimeout(function () {
         $('input[type=radio][name=immediate_available]').trigger('change');
     }, 300);
+
+    function renderPreferredCheckboxChips (target) {
+        const $target = $(target);
+        if (!$target.length) {
+            return;
+        }
+
+        $target.empty();
+        $('.candidate-preferred-checkbox[data-chip-target="' + target + '"]:checked').each(function () {
+            const $checkbox = $(this);
+            const $chip = $('<span class="candidate-preferred-chip"></span>');
+            $chip.text($checkbox.data('label'));
+            $('<button type="button" aria-label="Remove">&times;</button>').appendTo($chip).on('click', function () {
+                $checkbox.prop('checked', false).trigger('change');
+            });
+            $target.append($chip);
+        });
+    }
+
+    function renderPreferredSelectChips ($select) {
+        const target = $select.data('chip-target');
+        const $target = $(target);
+        if (!$target.length) {
+            return;
+        }
+
+        const $container = $select.next('.select2-container');
+        $container.find('.select2-selection__choice').remove();
+        $container.find('.select2-selection__rendered > li:not(.select2-search--inline)').remove();
+        $container.find('.select2-search__field').attr('placeholder', $select.data('placeholder') || '');
+
+        $target.empty();
+        $select.find('option:selected').each(function () {
+            const $option = $(this);
+            const $chip = $('<span class="candidate-preferred-chip"></span>');
+            $chip.text($option.text());
+            $('<button type="button" aria-label="Remove">&times;</button>').appendTo($chip).on('click', function () {
+                $option.prop('selected', false);
+                $select.trigger('change');
+            });
+            $target.append($chip);
+        });
+    }
+
+    $('.candidate-preferred-checkbox').each(function () {
+        renderPreferredCheckboxChips($(this).data('chip-target'));
+    }).on('change', function () {
+        renderPreferredCheckboxChips($(this).data('chip-target'));
+    });
+
+    $('.candidate-preferred-select').each(function () {
+        renderPreferredSelectChips($(this));
+    }).on('change', function () {
+        renderPreferredSelectChips($(this));
+    }).on('select2:select select2:unselect select2:open select2:close', function () {
+        const select = this;
+        setTimeout(function () {
+            renderPreferredSelectChips($(select));
+        }, 0);
+    });
 
     $('#countryId').on('change', function () {
         $.ajax({

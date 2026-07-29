@@ -143,16 +143,8 @@ class User extends Authenticatable implements HasMedia
     const ACTIVE = 1;
 
     const LANGUAGES = [
-        'ar' => 'Arabic',
-        'bn' => 'Bangla',
-        'zh' => 'Chinese',
         'en' => 'English',
-        'fr' => 'French',
-        'de' => 'German',
-        'pt' => 'Portuguese',
-        'ru' => 'Russian',
-        'es' => 'Spanish',
-        'tr' => 'Turkish',
+        'bn' => 'Bangla',
     ];
 
     const LANGUAGES_IMAGE = [

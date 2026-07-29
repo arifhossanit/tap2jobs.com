@@ -184,7 +184,7 @@ listenSubmit('#changeCandidateLanguageForm', function (event) {
         processData: false,
         contentType: false,
         success: function (result) {
-            $('#changePasswordModal').modal('hide');
+            $('#changeLanguageModal').modal('hide');
             displaySuccessMessage(result.message);
             setTimeout(function () {
                 location.reload();

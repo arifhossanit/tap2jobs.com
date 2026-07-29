@@ -69,6 +69,10 @@ class HomeController extends AppBaseController
 
     public function changeLanguage(Request $request): JsonResponse
     {
+        $request->validate([
+            'languageName' => 'required|in:en,bn',
+        ]);
+
         $language = $request->input('languageName');
 
         Session::put('languageName', $language);

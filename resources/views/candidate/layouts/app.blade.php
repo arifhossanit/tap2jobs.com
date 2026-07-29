@@ -2,7 +2,7 @@
     $settings = settings();
 @endphp
 <!DOCTYPE html>
-<html lang="en" {{ checkLanguageSession() == 'ar' ? 'dir=rtl' : '' }}>
+<html lang="{{ checkLanguageSession() }}" {{ checkLanguageSession() == 'ar' ? 'dir=rtl' : '' }}>
 
 <head>
     <base href="../">
@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/third-party.css') }}">
     @if (getLoggedInUser()->theme_mode)
-        <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/custom-dark.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ mix('assets/css/custom-dark.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.dark.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins.dark.css') }}">
     @else
@@ -22,7 +22,7 @@
         <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('css/custom.css') }}">
         @endif
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/custom.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ mix('assets/css/custom.css') }}">
     @livewireStyles
     <link rel="stylesheet" type="text/css" href="{{ asset('vendor/rappasoft/livewire-tables/css/laravel-livewire-tables.min.css') }}">
 

@@ -6,13 +6,17 @@ use App\Models\Candidate;
 use App\Models\CandidateEducation;
 use App\Models\CandidateExperience;
 use App\Models\CareerLevel;
+use App\Models\Country;
 use App\Models\FunctionalArea;
 use App\Models\Industry;
+use App\Models\JobCategory;
 use App\Models\JobType;
 use App\Models\Language;
 use App\Models\MaritalStatus;
+use App\Models\OwnerShipType;
 use App\Models\SalaryCurrency;
 use App\Models\Skill;
+use App\Models\State;
 use App\Models\User;
 use App\ReportedToCandidate;
 use App\Repositories\BaseRepository;
@@ -80,11 +84,20 @@ class CandidateRepository extends BaseRepository
         $data['countries'] = getCountries();
         $data['maritalStatus'] = MaritalStatus::toBase()->pluck('marital_status', 'id');
         $data['careerLevel'] = CareerLevel::toBase()->pluck('level_name', 'id');
+        $data['jobCategory'] = JobCategory::toBase()->orderBy('name', 'ASC')->pluck('name', 'id');
         $data['industry'] = Industry::toBase()->pluck('name', 'id');
         $data['functionalArea'] = FunctionalArea::toBase()->pluck('name', 'id');
         $data['skills'] = Skill::toBase()->orderBy('name', 'ASC')->pluck('name', 'id');
         $data['language'] = Language::toBase()->pluck('language', 'id');
         $data['currency'] = SalaryCurrency::toBase()->pluck('currency_name', 'id');
+        $bangladeshId = Country::where('short_code', 'BD')->orWhere('name', 'Bangladesh')->value('id');
+        $data['districts'] = State::when($bangladeshId, function ($query) use ($bangladeshId) {
+            $query->where('country_id', $bangladeshId);
+        })->toBase()->orderBy('name', 'ASC')->pluck('name', 'id');
+        $data['outsideCountries'] = Country::when($bangladeshId, function ($query) use ($bangladeshId) {
+            $query->where('id', '!=', $bangladeshId);
+        })->toBase()->orderBy('name', 'ASC')->pluck('name', 'id');
+        $data['organizationTypes'] = OwnerShipType::toBase()->orderBy('name', 'ASC')->pluck('name', 'id');
 
         return $data;
     }
@@ -174,6 +187,16 @@ class CandidateRepository extends BaseRepository
             $input['dob'] = (! empty($input['dob'])) ? $input['dob'] : null;
             $input['current_salary'] = removeCommaFromNumbers($input['current_salary']);
             $input['expected_salary'] = removeCommaFromNumbers($input['expected_salary']);
+            foreach ([
+                'preferred_functional_categories',
+                'preferred_special_skills',
+                'preferred_job_locations_inside',
+                'preferred_job_locations_outside',
+                'preferred_organization_types',
+            ] as $preferredField) {
+                $input[$preferredField] = $input[$preferredField] ?? [];
+            }
+            $input['has_disability_id'] = $input['has_disability_id'] ?? null;
 
             /** @var User $user */
             $user = Auth::user();
@@ -193,7 +216,9 @@ class CandidateRepository extends BaseRepository
                     ->toMediaCollection(User::PROFILE, config('app.media_disc'));
             }
 
-            $input['available_at'] = $input['immediate_available'] == 0 ? $input['available_at'] : null;
+            $input['available_at'] = isset($input['immediate_available']) && $input['immediate_available'] == 0
+                ? ($input['available_at'] ?? null)
+                : null;
             $user->candidate->update($input);
 
             //Update Candidate Skills
@@ -288,7 +313,9 @@ class CandidateRepository extends BaseRepository
         $input['city'] = (! empty($input['city'])) ? $input['city'] : null;
         $input['current_salary'] = removeCommaFromNumbers($input['current_salary']);
         $input['expected_salary'] = removeCommaFromNumbers($input['expected_salary']);
-        $input['available_at'] = $input['immediate_available'] == 0 ? $input['available_at'] : null;
+        $input['available_at'] = isset($input['immediate_available']) && $input['immediate_available'] == 0
+            ? ($input['available_at'] ?? null)
+            : null;
 
         /** @var User $user */
         $user = $candidate->user;
