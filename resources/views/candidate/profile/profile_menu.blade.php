@@ -32,30 +32,42 @@
     </div>
 
     <div class="candidate-profile-menu__sub overflow-auto">
-        <a class="candidate-profile-menu__sub-link active" href="#candidatePersonalDetails"
-           data-profile-section-link="candidatePersonalDetails">
-            {{ __('messages.candidate_profile.personal_details') }}
-        </a>
-        <a class="candidate-profile-menu__sub-link" href="#candidateAddressDetails"
-           data-profile-section-link="candidateAddressDetails">
-            {{ __('messages.candidate_profile.address_details') }}
-        </a>
-        <a class="candidate-profile-menu__sub-link" href="#candidateCareerApplication"
-           data-profile-section-link="candidateCareerApplication">
-            {{ __('messages.candidate_profile.career_and_application') }}
-        </a>
-        <a class="candidate-profile-menu__sub-link" href="#candidatePreferredArea"
-           data-profile-section-link="candidatePreferredArea">
-            {{ __('messages.candidate_profile.preferred_area') }}
-        </a>
-        <a class="candidate-profile-menu__sub-link" href="#candidateRelevantInformation"
-           data-profile-section-link="candidateRelevantInformation">
-            {{ __('messages.candidate_profile.relevant_information') }}
-        </a>
-        <a class="candidate-profile-menu__sub-link" href="#candidateDisabilityInformation"
-           data-profile-section-link="candidateDisabilityInformation">
-            {{ __('messages.candidate_profile.disability_information') }}
-        </a>
+        @if($sectionName == 'career-informations')
+            <a class="candidate-profile-menu__sub-link active" href="#candidateEducationDetails">
+                {{ __('messages.candidate_profile.education') }}
+            </a>
+            <a class="candidate-profile-menu__sub-link" href="#candidateTrainingDetails">
+                {{ __('messages.candidate_profile.training') }}
+            </a>
+            <a class="candidate-profile-menu__sub-link" href="#candidateProfessionalCertification">
+                {{ __('messages.candidate_profile.professional_certification') }}
+            </a>
+        @else
+            <a class="candidate-profile-menu__sub-link active" href="#candidatePersonalDetails"
+               data-profile-section-link="candidatePersonalDetails">
+                {{ __('messages.candidate_profile.personal_details') }}
+            </a>
+            <a class="candidate-profile-menu__sub-link" href="#candidateAddressDetails"
+               data-profile-section-link="candidateAddressDetails">
+                {{ __('messages.candidate_profile.address_details') }}
+            </a>
+            <a class="candidate-profile-menu__sub-link" href="#candidateCareerApplication"
+               data-profile-section-link="candidateCareerApplication">
+                {{ __('messages.candidate_profile.career_and_application') }}
+            </a>
+            <a class="candidate-profile-menu__sub-link" href="#candidatePreferredArea"
+               data-profile-section-link="candidatePreferredArea">
+                {{ __('messages.candidate_profile.preferred_area') }}
+            </a>
+            <a class="candidate-profile-menu__sub-link" href="#candidateRelevantInformation"
+               data-profile-section-link="candidateRelevantInformation">
+                {{ __('messages.candidate_profile.relevant_information') }}
+            </a>
+            <a class="candidate-profile-menu__sub-link" href="#candidateDisabilityInformation"
+               data-profile-section-link="candidateDisabilityInformation">
+                {{ __('messages.candidate_profile.disability_information') }}
+            </a>
+        @endif
     </div>
 </div>
 

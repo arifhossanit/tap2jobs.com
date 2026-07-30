@@ -148,6 +148,72 @@ function loadCandidateCareerInformationData() {
         });
     });
 
+    listenClick('[data-inline-education-add]', function () {
+        $('[data-education-edit-form]').addClass('d-none');
+        $('.candidate-education-container').addClass('d-none');
+        $('[data-education-add-form]').removeClass('d-none');
+        initEducationQuillEditors();
+    });
+
+    listenClick('[data-education-add-close], [data-education-edit-close]', function () {
+        $('[data-education-add-form], [data-education-edit-form]').addClass('d-none');
+        $('.candidate-education-container').removeClass('d-none');
+    });
+
+    const educationQuillEditors = [];
+
+    function initEducationQuillEditors() {
+        if (typeof Quill === 'undefined') {
+            return;
+        }
+
+        document.querySelectorAll('[data-quill-editor]').forEach(function (element) {
+            if (element.dataset.quillReady === 'true') {
+                return;
+            }
+
+            const input = element.closest('.candidate-education-editor').querySelector('[data-quill-input]');
+            const quill = new Quill(element, {
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic'],
+                        [{ list: 'bullet' }],
+                    ],
+                    keyboard: {
+                        bindings: {
+                            tab: 'disabled',
+                        },
+                    },
+                },
+                placeholder: element.dataset.placeholder || '',
+                theme: 'snow',
+            });
+
+            if (input && input.value) {
+                quill.root.innerHTML = input.value;
+            }
+
+            quill.on('text-change', function () {
+                if (input) {
+                    input.value = quill.getText().trim().length ? quill.root.innerHTML : '';
+                }
+            });
+
+            element.dataset.quillReady = 'true';
+            educationQuillEditors.push({ quill, input });
+        });
+    }
+
+    function syncEducationQuillEditors() {
+        educationQuillEditors.forEach(function (editor) {
+            if (editor.input) {
+                editor.input.value = editor.quill.getText().trim().length ? editor.quill.root.innerHTML : '';
+            }
+        });
+    }
+
+    initEducationQuillEditors();
+
     listenShowBsModal('#addEducationModal', function () {
         $(this).find('input:text').first().blur();
     });
@@ -281,7 +347,14 @@ function loadCandidateCareerInformationData() {
                     }, 2000);
                     $('#editResult').val(result.data.result);
                     $('#editYear').val(result.data.year).trigger('change');
-                    $('#editEducationModal').appendTo('body').modal('show');
+                    if ($('[data-education-edit-form]').length) {
+                        $('[data-education-add-form]').addClass('d-none');
+                        $('.candidate-education-container').addClass('d-none');
+                        $('[data-education-edit-form]').removeClass('d-none');
+                        initEducationQuillEditors();
+                    } else {
+                        $('#editEducationModal').appendTo('body').modal('show');
+                    }
                 }
             },
             error: function (result) {
@@ -483,6 +556,7 @@ function renderEducationTemplate(educationArray) {
 
 listenSubmit('#addNewEducationForm', function (e) {
     e.preventDefault();
+    syncEducationQuillEditors();
     processingBtn('#addNewEducationForm', '#btnEducationSave', 'loading');
     $.ajax({
         url: route('candidate.create-education'),
@@ -492,6 +566,10 @@ listenSubmit('#addNewEducationForm', function (e) {
             if (result.success) {
                 $('#notfoundEducation').addClass('d-none');
                 displaySuccessMessage(result.message);
+                if ($('[data-education-add-form]').length) {
+                    window.location.reload();
+                    return;
+                }
                 $('#addEducationModal').modal('hide');
                 renderEducationTemplate(result.data);
             }
@@ -507,6 +585,7 @@ listenSubmit('#addNewEducationForm', function (e) {
 
 listenSubmit('#editCareerEducationForm', function (event) {
     event.preventDefault();
+    syncEducationQuillEditors();
     processingBtn('#editCareerEducationForm', '#editEducationSave',
         'loading');
     const educationId = $('#educationId').val();
@@ -517,6 +596,10 @@ listenSubmit('#editCareerEducationForm', function (event) {
         success: function (result) {
             if (result.success) {
                 displaySuccessMessage(result.message);
+                if ($('[data-education-edit-form]').length) {
+                    window.location.reload();
+                    return;
+                }
                 $('#editEducationModal').modal('hide');
                 $('.candidate-education-container').load(location.href + " .candidate-education-container");
                 $('.candidate-education-container').children('.candidate-education').each(function () {
