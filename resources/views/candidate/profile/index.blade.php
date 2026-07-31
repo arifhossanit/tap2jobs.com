@@ -5,7 +5,7 @@
 @section('content')
     @include('flash::message')
     @include('layouts.errors')
-    <div class="mb-5 mb-xl-3">
+    <div class="mb-5 mb-xl-3 candidate-profile-menu-shell">
         <div class="py-0">
             @include('candidate.profile.profile_menu')
         </div>
