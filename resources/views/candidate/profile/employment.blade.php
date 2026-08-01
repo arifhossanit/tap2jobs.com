@@ -7,17 +7,54 @@
         $formatExperienceDate = function ($date) {
             return ! empty($date) ? \Carbon\Carbon::parse($date)->format('d M Y') : '';
         };
+        $candidateProfileNumber = function ($number) {
+            $number = (string) $number;
+
+            if (app()->getLocale() !== 'bn') {
+                return $number;
+            }
+
+            return strtr($number, [
+                '0' => '০',
+                '1' => '১',
+                '2' => '২',
+                '3' => '৩',
+                '4' => '৪',
+                '5' => '৫',
+                '6' => '৬',
+                '7' => '৭',
+                '8' => '৮',
+                '9' => '৯',
+            ]);
+        };
+        $retiredArmyEmployment = $data['candidateRetiredArmyEmployment'] ?? null;
+        $hasRetiredArmyEmployment = ! empty($retiredArmyEmployment);
+        $retiredArmyBaNo = $hasRetiredArmyEmployment
+            ? collect([$retiredArmyEmployment->ba_no_prefix, $retiredArmyEmployment->ba_no])->filter()->implode(' ')
+            : '';
         $locationText = function ($experience) {
             return collect([
+                $experience->company_location ?? null,
                 $experience->country ?? null,
             ])->filter()->implode(', ') ?: '---';
+        };
+        $expertiseText = function ($experience) {
+            if (! $experience->relationLoaded('expertises') || $experience->expertises->isEmpty()) {
+                return '---';
+            }
+
+            return $experience->expertises->map(function ($expertise) {
+                $duration = filled($expertise->duration_months) ? ' ('.$expertise->duration_months.' month(s))' : '';
+
+                return $expertise->name.$duration;
+            })->implode(', ');
         };
     @endphp
 
     <div class="mb-xl-8 candidate-employment-page">
         <div class="candidate-education-panel" id="candidateExperienceDetails">
             <div class="candidate-education-panel__header">
-                <h1>Job Experience</h1>
+                <h1>{{ __('messages.candidate_profile.job_experience') }}</h1>
                 <div class="candidate-education-panel__actions">
                     <a href="javascript:void(0)" class="candidate-education-add" data-employment-add-trigger data-employment-add-action>
                         <i class="fa-solid fa-plus"></i>
@@ -53,7 +90,7 @@
                                  data-experience-id="{{ $loop->index }}" data-id="{{ $candidateExperience->id }}">
                                 <div class="candidate-employment-summary" data-employment-summary>
                                     <div class="candidate-education-item__head">
-                                        <h2>{{ __('messages.candidate_profile.experience') }} {{ $loop->iteration }}</h2>
+                                        <h2>{{ __('messages.candidate_profile.experience') }} {{ $candidateProfileNumber($loop->iteration) }}</h2>
                                         <div class="candidate-education-item__actions candidate-experience-edit-delete">
                                             <a href="javascript:void(0)"
                                                class="candidate-education-action candidate-education-action--edit candidate-employment-edit-trigger"
@@ -73,45 +110,45 @@
                                     <div class="candidate-education-detail-grid candidate-employment-detail-grid">
                                         <div class="candidate-education-detail-column">
                                             <div class="candidate-education-detail">
-                                                <span>Company Name</span>
+                                                <span>{{ __('messages.candidate_profile.company_name') }}</span>
                                                 <strong>{{ $candidateExperience->company ?: '---' }}</strong>
                                             </div>
                                             <div class="candidate-education-detail">
-                                                <span>Designation</span>
+                                                <span>{{ __('messages.candidate_profile.designation') }}</span>
                                                 <strong>{{ $candidateExperience->experience_title ?: '---' }}</strong>
                                             </div>
                                             <div class="candidate-education-detail">
-                                                <span>Employment Period</span>
+                                                <span>{{ __('messages.candidate_profile.employment_period') }}</span>
                                                 <strong>{{ $startDate ?: '---' }} - {{ $endDate ?: '---' }}</strong>
                                             </div>
                                             <div class="candidate-education-detail">
-                                                <span>Responsibilities</span>
+                                                <span>{{ __('messages.candidate_profile.responsibility') }}</span>
                                                 <strong>{{ $candidateExperience->description ? Str::limit(strip_tags($candidateExperience->description), 225, '...') : '---' }}</strong>
                                             </div>
                                             <div class="candidate-education-detail">
-                                                <span>Company Location</span>
+                                                <span>{{ __('messages.candidate_profile.company_location') }}</span>
                                                 <strong>{{ $locationText($candidateExperience) }}</strong>
                                             </div>
                                             <div class="candidate-education-detail">
-                                                <span>Area of Expertise</span>
-                                                <strong>---</strong>
+                                                <span>{{ __('messages.candidate_profile.area_of_expertise') }}</span>
+                                                <strong>{{ $expertiseText($candidateExperience) }}</strong>
                                             </div>
                                         </div>
                                         <div class="candidate-education-detail-column">
                                             <div class="candidate-education-detail">
-                                                <span>Company Business</span>
-                                                <strong>---</strong>
+                                                <span>{{ __('messages.candidate_profile.company_business') }}</span>
+                                                <strong>{{ $candidateExperience->company_business ?: '---' }}</strong>
                                             </div>
                                             <div class="candidate-education-detail">
-                                                <span>Department</span>
-                                                <strong>---</strong>
+                                                <span>{{ __('messages.candidate_profile.department') }}</span>
+                                                <strong>{{ $candidateExperience->department ?: '---' }}</strong>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 {{ Form::open(['class' => 'candidate-employment-form candidate-employment-edit-form d-none', 'data-employment-form' => true, 'data-method' => 'PUT', 'data-action' => route('candidate.update-experience', $candidateExperience->id)]) }}
-                                    <h2>{{ __('messages.candidate_profile.experience') }} {{ $loop->iteration }}</h2>
+                                    <h2>{{ __('messages.candidate_profile.experience') }} {{ $candidateProfileNumber($loop->iteration) }}</h2>
                                     {{ Form::hidden('country_id', $candidateExperience->country_id ?? $fallbackCountryId) }}
                                     {{ Form::hidden('state_id', $candidateExperience->state_id) }}
                                     {{ Form::hidden('city_id', $candidateExperience->city_id) }}
@@ -128,7 +165,7 @@
                         <div class="candidate-education candidate-education-list-item candidate-employment-list-item candidate-employment-add-form-wrap d-none"
                              data-employment-add-form-wrap>
                             {{ Form::open(['class' => 'candidate-employment-form', 'id' => 'candidateEmploymentAddForm', 'data-employment-form' => true, 'data-method' => 'POST', 'data-action' => route('candidate.create-experience')]) }}
-                                <h2>{{ __('messages.candidate_profile.experience') }} {{ $candidateExperiences->count() + 1 }}</h2>
+                                <h2>{{ __('messages.candidate_profile.experience') }} {{ $candidateProfileNumber($candidateExperiences->count() + 1) }}</h2>
                                 {{ Form::hidden('country_id', $fallbackCountryId) }}
                                 @include('candidate.profile.partials.employment_experience_form_fields', [
                                     'experience' => null,
@@ -145,7 +182,7 @@
 
         <div class="candidate-education-panel" id="candidateRetiredArmyEmployment">
             <div class="candidate-education-panel__header collapsed">
-                <h1>Retired Army Experience</h1>
+                <h1>{{ __('messages.candidate_profile.army_experience') }}</h1>
                 <div class="candidate-education-panel__actions">
                     <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
                             data-bs-target="#candidateRetiredArmyEmploymentPanelBody" aria-expanded="false"
@@ -159,9 +196,9 @@
             </div>
             <div id="candidateRetiredArmyEmploymentPanelBody" class="collapse candidate-profile-section__collapse">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
-                    <div class="candidate-retired-army-summary" data-retired-army-summary>
+                    <div class="candidate-retired-army-summary {{ $hasRetiredArmyEmployment ? '' : 'd-none' }}" data-retired-army-summary>
                         <div class="candidate-education-item__head">
-                            <h2>Information</h2>
+                            <h2>{{ __('messages.candidate_profile.information') }}</h2>
                             <div class="candidate-education-item__actions">
                                 <a href="javascript:void(0)" class="candidate-education-action candidate-education-action--edit"
                                    data-retired-army-edit>
@@ -176,104 +213,105 @@
                             </div>
                         </div>
                         <div class="candidate-education-detail-grid candidate-retired-army-detail-grid">
-                            @foreach ([1, 2] as $retiredArmyItem)
-                                <div class="candidate-education-detail-column">
-                                    <div class="candidate-education-detail">
-                                        <span>BA No</span>
-                                        <strong data-retired-army-value="baNo">-</strong>
-                                    </div>
-                                    <div class="candidate-education-detail">
-                                        <span>Type</span>
-                                        <strong data-retired-army-value="type">{{ $retiredArmyItem === 1 ? '' : '---' }}</strong>
-                                    </div>
-                                    <div class="candidate-education-detail">
-                                        <span>Trade</span>
-                                        <strong data-retired-army-value="trade">---</strong>
-                                    </div>
-                                    <div class="candidate-education-detail">
-                                        <span>Date of Commission</span>
-                                        <strong data-retired-army-value="commissionDate">{{ $retiredArmyItem === 1 ? '' : '-' }}</strong>
-                                    </div>
+                            <div class="candidate-education-detail-column">
+                                <div class="candidate-education-detail">
+                                    <span>{{ __('messages.candidate_profile.ba_no') }}</span>
+                                    <strong data-retired-army-value="baNo">{{ $retiredArmyBaNo ?: '---' }}</strong>
                                 </div>
-                                <div class="candidate-education-detail-column">
-                                    <div class="candidate-education-detail">
-                                        <span>Ranks</span>
-                                        <strong data-retired-army-value="rank"></strong>
-                                    </div>
-                                    <div class="candidate-education-detail">
-                                        <span>Arms</span>
-                                        <strong data-retired-army-value="arms"></strong>
-                                    </div>
-                                    <div class="candidate-education-detail">
-                                        <span>Course</span>
-                                        <strong data-retired-army-value="course">---</strong>
-                                    </div>
-                                    <div class="candidate-education-detail">
-                                        <span>Date of Retirement</span>
-                                        <strong data-retired-army-value="retirementDate"></strong>
-                                    </div>
+                                <div class="candidate-education-detail">
+                                    <span>{{ __('messages.candidate_profile.type') }}</span>
+                                    <strong data-retired-army-value="type">{{ $retiredArmyEmployment->type ?? '---' }}</strong>
                                 </div>
-	                            @endforeach
+                                <div class="candidate-education-detail">
+                                    <span>{{ __('messages.candidate_profile.trade') }}</span>
+                                    <strong data-retired-army-value="trade">{{ $retiredArmyEmployment->trade ?? '---' }}</strong>
+                                </div>
+                                <div class="candidate-education-detail">
+                                    <span>{{ __('messages.candidate_profile.date_of_commission') }}</span>
+                                    <strong data-retired-army-value="commissionDate">{{ $hasRetiredArmyEmployment ? $formatExperienceDate($retiredArmyEmployment->date_of_commission) : '---' }}</strong>
+                                </div>
+                            </div>
+                            <div class="candidate-education-detail-column">
+                                <div class="candidate-education-detail">
+                                    <span>{{ __('messages.candidate_profile.ranks') }}</span>
+                                    <strong data-retired-army-value="rank">{{ $retiredArmyEmployment->rank ?? '---' }}</strong>
+                                </div>
+                                <div class="candidate-education-detail">
+                                    <span>{{ __('messages.candidate_profile.arms') }}</span>
+                                    <strong data-retired-army-value="arms">{{ $retiredArmyEmployment->arms ?? '---' }}</strong>
+                                </div>
+                                <div class="candidate-education-detail">
+                                    <span>{{ __('messages.candidate_profile.course') }}</span>
+                                    <strong data-retired-army-value="course">{{ $retiredArmyEmployment->course ?? '---' }}</strong>
+                                </div>
+                                <div class="candidate-education-detail">
+                                    <span>{{ __('messages.candidate_profile.date_of_retirement') }}</span>
+                                    <strong data-retired-army-value="retirementDate">{{ $hasRetiredArmyEmployment ? $formatExperienceDate($retiredArmyEmployment->date_of_retirement) : '---' }}</strong>
+                                </div>
+                            </div>
 	                        </div>
                             <button type="button" class="candidate-retired-army-add" data-retired-army-edit>
                                 <i class="fa-solid fa-plus"></i>
-                                <span>Add Experience at Bangladesh Army</span>
+                                <span>{{ __('messages.candidate_profile.add_experience_at_bangladesh_army') }}</span>
                             </button>
 	                    </div>
 
-                    <div class="candidate-retired-army-form d-none" data-retired-army-form>
-                        <h2>Information</h2>
+                    <form class="candidate-retired-army-form {{ $hasRetiredArmyEmployment ? 'd-none' : '' }}"
+                          data-retired-army-form
+                          data-action="{{ route('candidate.retired-army-employment.update') }}"
+                          data-delete-action="{{ route('candidate.retired-army-employment.destroy') }}">
+                        <h2>{{ __('messages.candidate_profile.information') }}</h2>
                         <div class="candidate-retired-army-grid">
                             <div class="candidate-education-form-field">
-                                {{ Form::label('ba_no_prefix', 'BA No', ['class' => 'form-label required']) }}
+                                {{ Form::label('ba_no_prefix', __('messages.candidate_profile.ba_no'), ['class' => 'form-label required']) }}
                                 <div class="candidate-retired-army-ba-group">
-                                    {{ Form::select('ba_no_prefix', ['' => 'Select your BA no', 'BA' => 'BA', 'BSS' => 'BSS', 'JC' => 'JC'], null, ['class' => 'form-select']) }}
-                                    {{ Form::text('ba_no', null, ['class' => 'form-control', 'placeholder' => 'Enter your Ba No']) }}
+                                    {{ Form::select('ba_no_prefix', ['' => __('messages.candidate_profile.select_ba_no'), 'BA' => 'BA', 'BSS' => 'BSS', 'JC' => 'JC'], $retiredArmyEmployment->ba_no_prefix ?? null, ['class' => 'form-select']) }}
+                                    {{ Form::text('ba_no', $retiredArmyEmployment->ba_no ?? null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_ba_no')]) }}
                                 </div>
                             </div>
                             <div class="candidate-education-form-field">
-                                {{ Form::label('army_rank', 'Ranks', ['class' => 'form-label required']) }}
-                                {{ Form::select('army_rank', ['' => 'Enter your Rank', 'Captain' => 'Captain', 'Major' => 'Major', 'Colonel' => 'Colonel'], null, ['class' => 'form-select']) }}
+                                {{ Form::label('rank', __('messages.candidate_profile.ranks'), ['class' => 'form-label required']) }}
+                                {{ Form::select('rank', ['' => __('messages.candidate_profile.enter_rank'), 'Captain' => 'Captain', 'Major' => 'Major', 'Colonel' => 'Colonel'], $retiredArmyEmployment->rank ?? null, ['class' => 'form-select', 'required']) }}
                             </div>
                             <div class="candidate-education-form-field">
-                                {{ Form::label('army_type', 'Type', ['class' => 'form-label required']) }}
-                                {{ Form::select('army_type', ['' => 'Enter your Type', 'Commissioned' => 'Commissioned', 'Non Commissioned' => 'Non Commissioned'], null, ['class' => 'form-select']) }}
+                                {{ Form::label('type', __('messages.candidate_profile.type'), ['class' => 'form-label required']) }}
+                                {{ Form::select('type', ['' => __('messages.candidate_profile.enter_type'), 'Commissioned' => 'Commissioned', 'Non Commissioned' => 'Non Commissioned'], $retiredArmyEmployment->type ?? null, ['class' => 'form-select', 'required']) }}
                             </div>
                             <div class="candidate-education-form-field">
-                                {{ Form::label('army_arms', 'Arms', ['class' => 'form-label required']) }}
-                                {{ Form::select('army_arms', ['' => 'Enter your Type', 'Infantry' => 'Infantry', 'Artillery' => 'Artillery', 'Signals' => 'Signals'], null, ['class' => 'form-select']) }}
+                                {{ Form::label('arms', __('messages.candidate_profile.arms'), ['class' => 'form-label required']) }}
+                                {{ Form::select('arms', ['' => __('messages.candidate_profile.enter_type'), 'Infantry' => 'Infantry', 'Artillery' => 'Artillery', 'Signals' => 'Signals'], $retiredArmyEmployment->arms ?? null, ['class' => 'form-select', 'required']) }}
                             </div>
                             <div class="candidate-education-form-field">
-                                {{ Form::label('army_trade', 'Trade', ['class' => 'form-label']) }}
-                                {{ Form::text('army_trade', null, ['class' => 'form-control', 'placeholder' => 'Enter your Type']) }}
+                                {{ Form::label('trade', __('messages.candidate_profile.trade'), ['class' => 'form-label']) }}
+                                {{ Form::text('trade', $retiredArmyEmployment->trade ?? null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_type')]) }}
                             </div>
                             <div class="candidate-education-form-field">
-                                {{ Form::label('army_course', 'Course', ['class' => 'form-label']) }}
-                                {{ Form::text('army_course', null, ['class' => 'form-control', 'placeholder' => 'Enter your Type']) }}
+                                {{ Form::label('course', __('messages.candidate_profile.course'), ['class' => 'form-label']) }}
+                                {{ Form::text('course', $retiredArmyEmployment->course ?? null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_type')]) }}
                             </div>
                             <div class="candidate-education-form-field">
-                                {{ Form::label('date_of_commission', 'Date of Commission', ['class' => 'form-label required']) }}
+                                {{ Form::label('date_of_commission', __('messages.candidate_profile.date_of_commission'), ['class' => 'form-label required']) }}
                                 <div class="candidate-employment-date-input">
                                     <i class="fa-regular fa-calendar candidate-employment-date-icon"></i>
-                                    {{ Form::text('date_of_commission', null, ['class' => 'form-control', 'placeholder' => 'mm/dd/yy', 'autocomplete' => 'off', 'data-employment-date' => 'start']) }}
+                                    {{ Form::text('date_of_commission', $hasRetiredArmyEmployment ? $formatExperienceDate($retiredArmyEmployment->date_of_commission) : null, ['class' => 'form-control', 'required', 'placeholder' => 'mm/dd/yy', 'autocomplete' => 'off', 'data-employment-date' => 'start']) }}
                                 </div>
                             </div>
                             <div class="candidate-education-form-field">
-                                {{ Form::label('date_of_retirement', 'Date of Retirement', ['class' => 'form-label required']) }}
+                                {{ Form::label('date_of_retirement', __('messages.candidate_profile.date_of_retirement'), ['class' => 'form-label required']) }}
                                 <div class="candidate-employment-date-input">
                                     <i class="fa-regular fa-calendar candidate-employment-date-icon"></i>
-                                    {{ Form::text('date_of_retirement', null, ['class' => 'form-control', 'placeholder' => 'mm/dd/yy', 'autocomplete' => 'off', 'data-employment-date' => 'end']) }}
+                                    {{ Form::text('date_of_retirement', $hasRetiredArmyEmployment ? $formatExperienceDate($retiredArmyEmployment->date_of_retirement) : null, ['class' => 'form-control', 'required', 'placeholder' => 'mm/dd/yy', 'autocomplete' => 'off', 'data-employment-date' => 'end']) }}
                                 </div>
                             </div>
                         </div>
                         <p class="candidate-retired-army-note">
-                            <strong>Note:</strong> Please, write your Military Service Information in Employment History.
+                            <strong>{{ __('messages.candidate_profile.note') }}:</strong> {{ __('messages.candidate_profile.military_service_note') }}
                         </p>
                         <div class="candidate-profile-section-actions candidate-employment-form-actions">
-                            <button type="button" class="btn btn-primary" data-retired-army-save>Save</button>
-                            <button type="button" class="btn btn-secondary" data-retired-army-close>Close</button>
+                            <button type="submit" class="btn btn-primary" data-retired-army-save>{{ __('messages.common.save') }}</button>
+                            <button type="button" class="btn btn-secondary" data-retired-army-close>{{ __('messages.common.close') }}</button>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -519,6 +557,7 @@
 
             const retiredArmySummary = document.querySelector('[data-retired-army-summary]');
             const retiredArmyForm = document.querySelector('[data-retired-army-form]');
+            let hasRetiredArmyEmployment = {{ $hasRetiredArmyEmployment ? 'true' : 'false' }};
             const showRetiredArmySummary = function () {
                 if (retiredArmySummary) {
                     retiredArmySummary.classList.remove('d-none');
@@ -540,6 +579,87 @@
                     element.textContent = value || (name === 'baNo' ? '-' : '---');
                 });
             };
+            const formatRetiredArmyDate = function (value) {
+                if (!value) {
+                    return '';
+                }
+
+                const match = String(value).match(/^(\d{4})-(\d{2})-(\d{2})/);
+                if (match) {
+                    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    return match[3] + ' ' + months[Number(match[2]) - 1] + ' ' + match[1];
+                }
+
+                const date = new Date(value);
+                if (Number.isNaN(date.getTime())) {
+                    return value;
+                }
+
+                return date.toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                }).replace(/ /g, ' ');
+            };
+            const setRetiredArmyFormValue = function (name, value) {
+                if (!retiredArmyForm) {
+                    return;
+                }
+
+                const field = retiredArmyForm.querySelector('[name="' + name + '"]');
+                if (field) {
+                    field.value = value || '';
+                }
+            };
+            const applyRetiredArmyEmployment = function (employment) {
+                const baNo = [employment.ba_no_prefix, employment.ba_no].filter(Boolean).join(' ');
+
+                setRetiredArmyValue('baNo', baNo);
+                setRetiredArmyValue('rank', employment.rank);
+                setRetiredArmyValue('type', employment.type);
+                setRetiredArmyValue('arms', employment.arms);
+                setRetiredArmyValue('trade', employment.trade);
+                setRetiredArmyValue('course', employment.course);
+                setRetiredArmyValue('commissionDate', formatRetiredArmyDate(employment.date_of_commission));
+                setRetiredArmyValue('retirementDate', formatRetiredArmyDate(employment.date_of_retirement));
+
+                setRetiredArmyFormValue('ba_no_prefix', employment.ba_no_prefix);
+                setRetiredArmyFormValue('ba_no', employment.ba_no);
+                setRetiredArmyFormValue('rank', employment.rank);
+                setRetiredArmyFormValue('type', employment.type);
+                setRetiredArmyFormValue('arms', employment.arms);
+                setRetiredArmyFormValue('trade', employment.trade);
+                setRetiredArmyFormValue('course', employment.course);
+                setRetiredArmyFormValue('date_of_commission', formatRetiredArmyDate(employment.date_of_commission));
+                setRetiredArmyFormValue('date_of_retirement', formatRetiredArmyDate(employment.date_of_retirement));
+            };
+            const employmentFormData = function (form) {
+                const formData = new FormData(form);
+
+                form.querySelectorAll('[data-employment-date]').forEach(function (input) {
+                    if (!input.name || !input._flatpickr || !input._flatpickr.selectedDates.length) {
+                        return;
+                    }
+
+                    const selectedDate = input._flatpickr.selectedDates[0];
+                    const year = selectedDate.getFullYear();
+                    const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+                    const day = String(selectedDate.getDate()).padStart(2, '0');
+                    formData.set(input.name, year + '-' + month + '-' + day);
+                });
+
+                return formData;
+            };
+            const resolveErrorMessage = function (data, fallback) {
+                if (data && data.errors) {
+                    const firstError = Object.values(data.errors)[0];
+                    if (Array.isArray(firstError) && firstError.length) {
+                        return firstError[0];
+                    }
+                }
+
+                return (data && data.message) || fallback;
+            };
 
             document.querySelectorAll('[data-retired-army-edit]').forEach(function (button) {
                 button.addEventListener('click', function (event) {
@@ -548,43 +668,118 @@
                 });
             });
 
-            document.querySelectorAll('[data-retired-army-save]').forEach(function (button) {
-                button.addEventListener('click', function () {
-                    if (!retiredArmyForm) {
-                        return;
-                    }
+            if (retiredArmyForm) {
+                retiredArmyForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
 
-                    const baPrefix = retiredArmyForm.querySelector('[name="ba_no_prefix"]');
-                    const baNo = retiredArmyForm.querySelector('[name="ba_no"]');
-                    const getValue = function (selector) {
-                        const field = retiredArmyForm.querySelector(selector);
-                        return field ? field.value.trim() : '';
-                    };
+                    const token = document.querySelector('meta[name="csrf-token"]');
+                    const formData = employmentFormData(retiredArmyForm);
+                    formData.append('_method', 'PUT');
 
-                    setRetiredArmyValue('baNo', [baPrefix ? baPrefix.value : '', baNo ? baNo.value : ''].filter(Boolean).join(' '));
-                    setRetiredArmyValue('rank', getValue('[name="army_rank"]'));
-                    setRetiredArmyValue('type', getValue('[name="army_type"]'));
-                    setRetiredArmyValue('arms', getValue('[name="army_arms"]'));
-                    setRetiredArmyValue('trade', getValue('[name="army_trade"]'));
-                    setRetiredArmyValue('course', getValue('[name="army_course"]'));
-                    setRetiredArmyValue('commissionDate', getValue('[name="date_of_commission"]'));
-                    setRetiredArmyValue('retirementDate', getValue('[name="date_of_retirement"]'));
-                    showRetiredArmySummary();
+                    fetch(retiredArmyForm.dataset.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': token ? token.content : '',
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                        },
+                        body: formData,
+                    }).then(function (response) {
+                        if (!response.ok) {
+                            return response.json().then(function (data) {
+                                throw new Error(resolveErrorMessage(data, 'Unable to save retired army experience.'));
+                            });
+                        }
+                        return response.json();
+                    }).then(function (data) {
+                        applyRetiredArmyEmployment(data.data || {});
+                        hasRetiredArmyEmployment = true;
+                        showRetiredArmySummary();
+                        if (typeof displaySuccessMessage === 'function') {
+                            displaySuccessMessage(data.message);
+                        }
+                    }).catch(function (error) {
+                        if (typeof displayErrorMessage === 'function') {
+                            displayErrorMessage(error.message);
+                        } else {
+                            alert(error.message);
+                        }
+                    });
                 });
-            });
+            }
 
             document.querySelectorAll('[data-retired-army-delete]').forEach(function (button) {
                 button.addEventListener('click', function (event) {
                     event.preventDefault();
-                    ['baNo', 'rank', 'type', 'arms', 'trade', 'course', 'commissionDate', 'retirementDate'].forEach(function (name) {
-                        setRetiredArmyValue(name, '');
-                    });
+
+                    if (!retiredArmyForm || !retiredArmyForm.dataset.deleteAction) {
+                        return;
+                    }
+
+                    const removeEmployment = function () {
+                        const token = document.querySelector('meta[name="csrf-token"]');
+                        fetch(retiredArmyForm.dataset.deleteAction, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': token ? token.content : '',
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                            },
+                            body: new URLSearchParams({ _method: 'DELETE' }),
+                        }).then(function (response) {
+                            if (!response.ok) {
+                                return response.json().then(function (data) {
+                                    throw new Error(resolveErrorMessage(data, 'Unable to delete retired army experience.'));
+                                });
+                            }
+                            return response.json();
+                        }).then(function (data) {
+                            ['baNo', 'rank', 'type', 'arms', 'trade', 'course', 'commissionDate', 'retirementDate'].forEach(function (name) {
+                                setRetiredArmyValue(name, '');
+                            });
+                            retiredArmyForm.reset();
+                            hasRetiredArmyEmployment = false;
+                            showRetiredArmyForm();
+                            if (typeof displaySuccessMessage === 'function') {
+                                displaySuccessMessage(data.message);
+                            }
+                        }).catch(function (error) {
+                            if (typeof displayErrorMessage === 'function') {
+                                displayErrorMessage(error.message);
+                            } else {
+                                alert(error.message);
+                            }
+                        });
+                    };
+
+                    if (typeof swal === 'function') {
+                        swal({
+                            title: '{{ __('messages.common.delete') }} !',
+                            text: '{{ __('messages.common.are_you_sure') }}',
+                            buttons: {
+                                confirm: '{{ __('messages.common.yes_delete') }}',
+                                cancel: '{{ __('messages.common.no_cancel') }}',
+                            },
+                            icon: 'warning',
+                        }).then(function (willDelete) {
+                            if (willDelete) {
+                                removeEmployment();
+                            }
+                        });
+                        return;
+                    }
+
+                    if (window.confirm('Are you sure want to delete this')) {
+                        removeEmployment();
+                    }
                 });
             });
 
             document.querySelectorAll('[data-retired-army-close]').forEach(function (button) {
                 button.addEventListener('click', function () {
-                    showRetiredArmySummary();
+                    if (hasRetiredArmyEmployment) {
+                        showRetiredArmySummary();
+                    }
                 });
             });
 
@@ -680,8 +875,16 @@
                     const formData = new FormData(form);
                     const method = (form.dataset.method || 'POST').toUpperCase();
                     const token = document.querySelector('meta[name="csrf-token"]');
-                    ['company_business', 'department', 'company_location', 'area_of_expertise[]', 'expertise_duration[]'].forEach(function (field) {
-                        formData.delete(field);
+                    form.querySelectorAll('[data-employment-date]').forEach(function (input) {
+                        if (!input.name || !input._flatpickr || !input._flatpickr.selectedDates.length) {
+                            return;
+                        }
+
+                        const selectedDate = input._flatpickr.selectedDates[0];
+                        const year = selectedDate.getFullYear();
+                        const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+                        const day = String(selectedDate.getDate()).padStart(2, '0');
+                        formData.set(input.name, year + '-' + month + '-' + day);
                     });
                     if (method !== 'POST') {
                         formData.append('_method', method);

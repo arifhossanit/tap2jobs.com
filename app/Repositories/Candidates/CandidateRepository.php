@@ -656,7 +656,7 @@ class CandidateRepository extends BaseRepository
         session()->push('user', getLoggedInUserId());
         $data['isReportedToCandidate'] = $this->isAlreadyReported($candidate);
         $data['candidateDetails'] = $candidateDetails;
-        $data['candidateExperiences'] = CandidateExperience::where('candidate_id', $candidate)->get();
+        $data['candidateExperiences'] = CandidateExperience::with('expertises')->where('candidate_id', $candidate)->get();
         foreach ($data['candidateExperiences'] as $experience) {
             $experience->country_name = getCountryName($experience->country_id);
         }

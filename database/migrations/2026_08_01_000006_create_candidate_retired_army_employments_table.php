@@ -8,6 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (Schema::hasTable('candidate_retired_army_employments')) {
+            return;
+        }
+
         Schema::create('candidate_retired_army_employments', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('candidate_id');
@@ -22,6 +26,7 @@ return new class extends Migration
             $table->date('date_of_retirement');
             $table->timestamps();
 
+            $table->unique('candidate_id');
             $table->foreign('candidate_id')->references('id')->on('candidates')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');

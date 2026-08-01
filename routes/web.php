@@ -820,6 +820,8 @@ Route::middleware('auth', 'role:Candidate', 'xss', 'verified.user')->prefix('can
         'candidate-experience/{candidateExperience}',
         [Candidates\CandidateProfileController::class, 'destroyExperience']
     )->name('experience.destroy');
+    Route::put('retired-army-employment', [Candidates\CandidateProfileController::class, 'updateRetiredArmyEmployment'])->name('candidate.retired-army-employment.update');
+    Route::delete('retired-army-employment', [Candidates\CandidateProfileController::class, 'destroyRetiredArmyEmployment'])->name('candidate.retired-army-employment.destroy');
 
     // candidate education
     Route::post('education', [Candidates\CandidateProfileController::class, 'createEducation'])->name('candidate.create-education');

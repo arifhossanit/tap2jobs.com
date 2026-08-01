@@ -48,53 +48,53 @@
         @elseif($sectionName == 'employment')
             <a class="candidate-profile-menu__sub-link active" href="#candidateExperienceDetails"
                data-employment-section-link="candidateExperienceDetails">
-                {{ __('messages.candidate_profile.experience') }}
+                {{ __('messages.candidate_profile.job_experience') }}
             </a>
             <a class="candidate-profile-menu__sub-link" href="#candidateRetiredArmyEmployment"
                data-employment-section-link="candidateRetiredArmyEmployment">
-                Employment History(For Retired Army Person)
+                {{ __('messages.candidate_profile.army_experience') }}
             </a>
         @elseif($sectionName == 'other-information')
             <a class="candidate-profile-menu__sub-link active" href="#candidateSkillInformation"
                data-other-section-link="candidateSkillInformation">
-                Skill
+                {{ __('messages.candidate_profile.skill') }}
             </a>
             <a class="candidate-profile-menu__sub-link" href="#candidateExtracurricularActivities"
                data-other-section-link="candidateExtracurricularActivities">
-                Extracurricular Activities
+                {{ __('messages.candidate_profile.extracurricular_activities') }}
             </a>
             <a class="candidate-profile-menu__sub-link" href="#candidateLanguageProficiency"
                data-other-section-link="candidateLanguageProficiency">
-                Language Proficiency
+                {{ __('messages.candidate_profile.language_proficiency') }}
             </a>
             <a class="candidate-profile-menu__sub-link" href="#candidateLinkAccount"
                data-other-section-link="candidateLinkAccount">
-                Link Account
+                {{ __('messages.candidate_profile.link_account') }}
             </a>
             <a class="candidate-profile-menu__sub-link" href="#candidateReference"
                data-other-section-link="candidateReference">
-                Reference
+                {{ __('messages.candidate_profile.reference') }}
             </a>
         @elseif($sectionName == 'accomplishment')
             <a class="candidate-profile-menu__sub-link active" href="#candidatePortfolioInformation"
                data-accomplishment-section-link="candidatePortfolioInformation">
-                Portfolio
+                {{ __('messages.candidate_profile.portfolio') }}
             </a>
             <a class="candidate-profile-menu__sub-link" href="#candidatePublicationInformation"
                data-accomplishment-section-link="candidatePublicationInformation">
-                Publication
+                {{ __('messages.candidate_profile.publication') }}
             </a>
             <a class="candidate-profile-menu__sub-link" href="#candidateAwardHonorInformation"
                data-accomplishment-section-link="candidateAwardHonorInformation">
-                Award/Honor
+                {{ __('messages.candidate_profile.award_honor') }}
             </a>
             <a class="candidate-profile-menu__sub-link" href="#candidateProjectInformation"
                data-accomplishment-section-link="candidateProjectInformation">
-                Project
+                {{ __('messages.candidate_profile.project') }}
             </a>
             <a class="candidate-profile-menu__sub-link" href="#candidateOtherAccomplishmentInformation"
                data-accomplishment-section-link="candidateOtherAccomplishmentInformation">
-                Other
+                {{ __('messages.candidate_profile.other') }}
             </a>
         @else
             <a class="candidate-profile-menu__sub-link active" href="#candidatePersonalDetails"

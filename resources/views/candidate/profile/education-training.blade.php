@@ -31,7 +31,7 @@
         };
 
         $educationBoardOptions = [
-            '' => 'Select your Board',
+            '' => __('messages.candidate_profile.select_board'),
             'Dhaka' => 'Dhaka',
             'Chattogram' => 'Chattogram',
             'Rajshahi' => 'Rajshahi',
@@ -183,13 +183,13 @@
                             {{ Form::select('degree_title', ['' => __('messages.candidate_profile.exam_degree_title')], null, ['class' => 'form-select', 'required', 'data-education-title-select' => true]) }}
                         </div>
                         <div class="candidate-education-form-field" data-education-board-field>
-                            {{ Form::label('board', 'Board', ['class' => 'form-label required']) }}
+                            {{ Form::label('board', __('messages.candidate_profile.board'), ['class' => 'form-label required']) }}
                             {{ Form::select('board', $educationBoardOptions, null, ['class' => 'form-select']) }}
                         </div>
                         <div></div>
                         <label class="candidate-education-check" data-education-summary-row>
                             {{ Form::checkbox('show_summary', 1, false, ['class' => 'form-check-input']) }}
-                            <span>Show this degree in summary view at employer's end</span>
+                            <span>{{ __('messages.candidate_profile.show_summary') }}</span>
                         </label>
                         <div></div>
                         <div class="candidate-education-form-field" data-education-major-field>
@@ -203,7 +203,7 @@
                         </div>
                         <label class="candidate-education-check candidate-education-form-field--full">
                             {{ Form::checkbox('foreign_institute', 1, false, ['class' => 'form-check-input']) }}
-                            <span>This is a foreign institute</span>
+                            <span>{{ __('messages.candidate_profile.foreign_institute') }}</span>
                         </label>
                         <div class="candidate-education-form-field" data-education-result-field>
                             {{ Form::label('result', __('messages.candidate_profile.result'), ['class' => 'form-label required']) }}
@@ -256,13 +256,13 @@
                             {{ Form::select('degree_title', ['' => __('messages.candidate_profile.exam_degree_title')], null, ['class' => 'form-select', 'required', 'id' => 'editDegreeTitle', 'data-education-title-select' => true]) }}
                         </div>
                         <div class="candidate-education-form-field" data-education-board-field>
-                            {{ Form::label('board', 'Board', ['class' => 'form-label required']) }}
+                            {{ Form::label('board', __('messages.candidate_profile.board'), ['class' => 'form-label required']) }}
                             {{ Form::select('board', $educationBoardOptions, null, ['class' => 'form-select']) }}
                         </div>
                         <div></div>
                         <label class="candidate-education-check" data-education-summary-row>
                             {{ Form::checkbox('show_summary', 1, false, ['class' => 'form-check-input']) }}
-                            <span>Show this degree in summary view at employer's end</span>
+                            <span>{{ __('messages.candidate_profile.show_summary') }}</span>
                         </label>
                         <div></div>
                         <div class="candidate-education-form-field" data-education-major-field>
@@ -276,7 +276,7 @@
                         </div>
                         <label class="candidate-education-check candidate-education-form-field--full">
                             {{ Form::checkbox('foreign_institute', 1, false, ['class' => 'form-check-input']) }}
-                            <span>This is a foreign institute</span>
+                            <span>{{ __('messages.candidate_profile.foreign_institute') }}</span>
                         </label>
                         <div class="candidate-education-form-field" data-education-result-field>
                             {{ Form::label('result', __('messages.candidate_profile.result'), ['class' => 'form-label required']) }}
@@ -351,7 +351,7 @@
                                         <strong class="education-degree-level">{{ $candidateEducation->degreeLevel->name ?? '---' }}</strong>
                                     </div>
                                     <div class="candidate-education-detail">
-                                        <span>{{ $candidateEducation->board ? 'Board' : __('messages.candidate_profile.concentration_major_group') }}</span>
+                                        <span>{{ $candidateEducation->board ? __('messages.candidate_profile.board') : __('messages.candidate_profile.concentration_major_group') }}</span>
                                         <strong>{{ $candidateEducation->board ?: ($candidateEducation->major ?: '---') }}</strong>
                                     </div>
                                     <div class="candidate-education-detail">
@@ -480,11 +480,11 @@
                                             <strong data-training-value="country">{{ $candidateTraining->country }}</strong>
                                         </div>
                                         <div class="candidate-education-detail">
-                                            <span>Training Year</span>
+                                            <span>{{ __('messages.candidate_profile.training_year') }}</span>
                                             <strong data-training-value="year">{{ $candidateTraining->year }}</strong>
                                         </div>
                                         <div class="candidate-education-detail">
-                                            <span>Duration</span>
+                                            <span>{{ __('messages.candidate_profile.duration') }}</span>
                                             <strong data-training-value="duration">{{ $candidateTraining->duration }}</strong>
                                         </div>
                                     </div>
@@ -499,32 +499,32 @@
                         {{ Form::hidden('training_index', null, ['data-training-field' => 'index']) }}
                         <div class="candidate-education-form-grid">
                             <div class="candidate-education-form-field">
-                                {{ Form::label('title', 'Training Title', ['class' => 'form-label required']) }}
-                                {{ Form::text('title', null, ['class' => 'form-control', 'required', 'placeholder' => 'Enter your training title', 'data-training-field' => 'title']) }}
+                                {{ Form::label('title', __('messages.candidate_profile.training_title'), ['class' => 'form-label required']) }}
+                                {{ Form::text('title', null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_training_title'), 'data-training-field' => 'title']) }}
                             </div>
                             <div class="candidate-education-form-field">
                                 {{ Form::label('country', __('messages.company.country'), ['class' => 'form-label required']) }}
-                                {{ Form::text('country', null, ['class' => 'form-control', 'required', 'placeholder' => 'Enter your Country', 'data-training-field' => 'country']) }}
+                                {{ Form::text('country', null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_country'), 'data-training-field' => 'country']) }}
                             </div>
                             <div class="candidate-education-form-field">
-                                {{ Form::label('topics', 'Topics Covered', ['class' => 'form-label']) }}
-                                {{ Form::text('topics', null, ['class' => 'form-control', 'placeholder' => 'Enter your Topics Covered', 'data-training-field' => 'topics']) }}
+                                {{ Form::label('topics', __('messages.candidate_profile.topics_covered'), ['class' => 'form-label']) }}
+                                {{ Form::text('topics', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_topics_covered'), 'data-training-field' => 'topics']) }}
                             </div>
                             <div class="candidate-education-form-field">
-                                {{ Form::label('year', 'Training Year', ['class' => 'form-label required']) }}
-                                {{ Form::selectRange('year', date('Y'), 2000, null, ['class' => 'form-select', 'required', 'placeholder' => 'Enter your Training Year', 'data-training-field' => 'year']) }}
+                                {{ Form::label('year', __('messages.candidate_profile.training_year'), ['class' => 'form-label required']) }}
+                                {{ Form::selectRange('year', date('Y'), 2000, null, ['class' => 'form-select', 'required', 'placeholder' => __('messages.candidate_profile.enter_training_year'), 'data-training-field' => 'year']) }}
                             </div>
                             <div class="candidate-education-form-field">
                                 {{ Form::label('institute', __('messages.candidate_profile.institute'), ['class' => 'form-label required']) }}
-                                {{ Form::text('institute', null, ['class' => 'form-control', 'required', 'placeholder' => 'Enter Institute name', 'data-training-field' => 'institute']) }}
+                                {{ Form::text('institute', null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_institute_name'), 'data-training-field' => 'institute']) }}
                             </div>
                             <div class="candidate-education-form-field">
-                                {{ Form::label('duration', 'Duration', ['class' => 'form-label required']) }}
-                                {{ Form::text('duration', null, ['class' => 'form-control', 'required', 'placeholder' => 'Select your duration month', 'data-training-field' => 'duration']) }}
+                                {{ Form::label('duration', __('messages.candidate_profile.duration'), ['class' => 'form-label required']) }}
+                                {{ Form::text('duration', null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_duration'), 'data-training-field' => 'duration']) }}
                             </div>
                             <div class="candidate-education-form-field candidate-education-form-field--full">
-                                {{ Form::label('location', 'Location', ['class' => 'form-label']) }}
-                                {{ Form::text('location', null, ['class' => 'form-control', 'placeholder' => 'Enter your location', 'data-training-field' => 'location']) }}
+                                {{ Form::label('location', __('messages.candidate_profile.location'), ['class' => 'form-label']) }}
+                                {{ Form::text('location', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_location'), 'data-training-field' => 'location']) }}
                             </div>
                         </div>
                         <div class="candidate-profile-section-actions">
@@ -585,11 +585,11 @@
                                 <div class="candidate-education-detail-grid">
                                     <div class="candidate-education-detail-column">
                                         <div class="candidate-education-detail">
-                                            <span>Certification</span>
+                                            <span>{{ __('messages.candidate_profile.certification') }}</span>
                                             <strong data-certification-value="certification">{{ $candidateCertification['certification'] }}</strong>
                                         </div>
                                         <div class="candidate-education-detail">
-                                            <span>Location</span>
+                                            <span>{{ __('messages.candidate_profile.location') }}</span>
                                             <strong data-certification-value="location">{{ $candidateCertification['location'] }}</strong>
                                         </div>
                                     </div>
@@ -600,7 +600,7 @@
                                             <strong data-certification-value="institute">{{ $candidateCertification['institute'] }}</strong>
                                         </div>
                                         <div class="candidate-education-detail">
-                                            <span>Duration</span>
+                                            <span>{{ __('messages.candidate_profile.duration') }}</span>
                                             <strong data-certification-value="duration">{{ $candidateCertification['duration'] }}</strong>
                                         </div>
                                     </div>
@@ -615,24 +615,24 @@
                         {{ Form::hidden('certification_index', null, ['data-certification-field' => 'index']) }}
                         <div class="candidate-education-form-grid">
                             <div class="candidate-education-form-field">
-                                {{ Form::label('certification_name', 'Certification', ['class' => 'form-label required']) }}
-                                {{ Form::text('certification_name', null, ['class' => 'form-control', 'required', 'placeholder' => 'Enter your certification', 'data-certification-field' => 'certification']) }}
+                                {{ Form::label('certification_name', __('messages.candidate_profile.certification'), ['class' => 'form-label required']) }}
+                                {{ Form::text('certification_name', null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_certification'), 'data-certification-field' => 'certification']) }}
                             </div>
                             <div class="candidate-education-form-field">
                                 {{ Form::label('certification_institute', __('messages.candidate_profile.institute'), ['class' => 'form-label required']) }}
-                                {{ Form::text('certification_institute', null, ['class' => 'form-control', 'required', 'placeholder' => 'Enter Institute name', 'data-certification-field' => 'institute']) }}
+                                {{ Form::text('certification_institute', null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_institute_name'), 'data-certification-field' => 'institute']) }}
                             </div>
                             <div class="candidate-education-form-field">
-                                {{ Form::label('certification_location', 'Location', ['class' => 'form-label']) }}
-                                {{ Form::text('certification_location', null, ['class' => 'form-control', 'placeholder' => 'Enter your location', 'data-certification-field' => 'location']) }}
+                                {{ Form::label('certification_location', __('messages.candidate_profile.location'), ['class' => 'form-label']) }}
+                                {{ Form::text('certification_location', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_location'), 'data-certification-field' => 'location']) }}
                             </div>
                             <div class="candidate-education-form-field">
-                                {{ Form::label('certification_duration', 'Duration', ['class' => 'form-label required candidate-certification-duration-label']) }}
+                                {{ Form::label('certification_duration', __('messages.candidate_profile.duration'), ['class' => 'form-label required candidate-certification-duration-label']) }}
                                 <div class="input-group candidate-certification-duration-input">
                                     <span class="input-group-text candidate-certification-duration-icon">
                                         <i class="fa-regular fa-calendar"></i>
                                     </span>
-                                    {{ Form::text('certification_duration', null, ['class' => 'form-control candidate-certification-duration-control', 'required', 'placeholder' => '31 Dec 2024 - 30 Oct 2025', 'data-certification-field' => 'duration']) }}
+                                    {{ Form::text('certification_duration', null, ['class' => 'form-control candidate-certification-duration-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_certification_duration'), 'data-certification-field' => 'duration']) }}
                                 </div>
                             </div>
                         </div>

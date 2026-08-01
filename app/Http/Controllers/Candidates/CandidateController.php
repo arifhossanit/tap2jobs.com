@@ -16,6 +16,7 @@ use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\UpdateCandidateProfileRequest;
 use App\Models\CandidateEducation;
 use App\Models\CandidateExperience;
+use App\Models\CandidateRetiredArmyEmployment;
 use App\Models\CandidateTraining;
 use App\Models\FavouriteCompany;
 use App\Models\FavouriteJob;
@@ -92,10 +93,13 @@ class CandidateController extends AppBaseController
         }
 
         if ($sectionName == 'education-training' || $sectionName == 'other-information' || $sectionName == 'employment') {
-            $data['candidateExperiences'] = CandidateExperience::where('candidate_id',
-                $user->owner_id)->orderByDesc('id')->get();
+            $data['candidateExperiences'] = CandidateExperience::with('expertises')->where('candidate_id',
+                $user->owner_id)->orderBy('sort_order')->orderByDesc('id')->get();
             foreach ($data['candidateExperiences'] as $experience) {
                 $experience->country = getCountryName($experience->country_id);
+            }
+            if ($sectionName == 'employment') {
+                $data['candidateRetiredArmyEmployment'] = CandidateRetiredArmyEmployment::where('candidate_id', $user->owner_id)->first();
             }
             if ($sectionName == 'education-training' || $sectionName == 'other-information') {
                 $data['candidateEducations'] = CandidateEducation::with('degreeLevel')->where('candidate_id',
@@ -307,8 +311,8 @@ class CandidateController extends AppBaseController
     {
         $user = Auth::user();
         $data['user'] = $user;
-        $data['candidateExperiences'] = CandidateExperience::where('candidate_id',
-            $user->owner_id)->orderByDesc('id')->get();
+        $data['candidateExperiences'] = CandidateExperience::with('expertises')->where('candidate_id',
+            $user->owner_id)->orderBy('sort_order')->orderByDesc('id')->get();
         foreach ($data['candidateExperiences'] as $experience) {
             $experience->country = getCountryName($experience->country_id);
         }

@@ -5,6 +5,7 @@ namespace App\Repositories\Candidates;
 use App\Models\Candidate;
 use App\Models\CandidateEducation;
 use App\Models\CandidateExperience;
+use App\Models\CandidateRetiredArmyEmployment;
 use App\Models\CandidateTraining;
 use App\Models\RequiredDegreeLevel;
 use App\Repositories\BaseRepository;
@@ -52,14 +53,27 @@ class CandidateProfileRepository extends BaseRepository
      */
     public function createExperience(array $input)
     {
-        $input['currently_working'] = isset($input['currently_working']) ? 1 : 0;
         $input['candidate_id'] = Auth::user()->owner_id;
-        $input['end_date'] = (! empty($input['end_date'])) ? $input['end_date'] : null;
+        $input = $this->normalizeExperienceInput($input);
+        $input['sort_order'] = CandidateExperience::where('candidate_id', $input['candidate_id'])->max('sort_order') + 1;
 
-        $candidateExperience = CandidateExperience::create($input);
+        $candidateExperience = CandidateExperience::create(Arr::only($input, $this->experienceFields()));
+        $this->syncExperienceExpertises($candidateExperience, $input);
         $candidateExperience->country = getCountryName($candidateExperience->country_id);
 
-        return $candidateExperience;
+        return $candidateExperience->load('expertises');
+    }
+
+    public function updateExperience(CandidateExperience $candidateExperience, array $input): CandidateExperience
+    {
+        $input['candidate_id'] = $candidateExperience->candidate_id;
+        $input = $this->normalizeExperienceInput($input);
+
+        $candidateExperience->update(Arr::only($input, $this->experienceFields()));
+        $this->syncExperienceExpertises($candidateExperience, $input);
+        $candidateExperience->country = getCountryName($candidateExperience->country_id);
+
+        return $candidateExperience->fresh()->load('expertises');
     }
 
     /**
@@ -142,6 +156,28 @@ class CandidateProfileRepository extends BaseRepository
         return $candidateTraining->fresh();
     }
 
+    public function updateRetiredArmyEmployment(array $input): CandidateRetiredArmyEmployment
+    {
+        $candidateId = Auth::user()->owner_id;
+        $input['candidate_id'] = $candidateId;
+
+        return CandidateRetiredArmyEmployment::updateOrCreate(
+            ['candidate_id' => $candidateId],
+            Arr::only($input, [
+                'candidate_id',
+                'ba_no_prefix',
+                'ba_no',
+                'rank',
+                'type',
+                'arms',
+                'trade',
+                'course',
+                'date_of_commission',
+                'date_of_retirement',
+            ])
+        );
+    }
+
     private function normalizeEducationInput(array $input): array
     {
         $levelType = $this->educationLevelType($input['degree_level_id'] ?? null);
@@ -180,5 +216,52 @@ class CandidateProfileRepository extends BaseRepository
         }
 
         return 'advanced';
+    }
+
+    private function normalizeExperienceInput(array $input): array
+    {
+        $input['currently_working'] = ! empty($input['currently_working']);
+        $input['end_date'] = $input['currently_working'] ? null : ($input['end_date'] ?? null);
+
+        return $input;
+    }
+
+    private function experienceFields(): array
+    {
+        return [
+            'candidate_id',
+            'experience_title',
+            'department',
+            'company',
+            'company_business',
+            'country_id',
+            'state_id',
+            'city_id',
+            'start_date',
+            'end_date',
+            'currently_working',
+            'description',
+            'company_location',
+            'sort_order',
+        ];
+    }
+
+    private function syncExperienceExpertises(CandidateExperience $candidateExperience, array $input): void
+    {
+        $candidateExperience->expertises()->delete();
+
+        $names = $input['area_of_expertise'] ?? [];
+        $durations = $input['expertise_duration'] ?? [];
+        foreach ($names as $index => $name) {
+            if (! filled($name)) {
+                continue;
+            }
+
+            $candidateExperience->expertises()->create([
+                'name' => $name,
+                'duration_months' => filled($durations[$index] ?? null) ? (int) $durations[$index] : null,
+                'sort_order' => $index + 1,
+            ]);
+        }
     }
 }
