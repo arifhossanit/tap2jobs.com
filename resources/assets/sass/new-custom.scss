@@ -34,6 +34,16 @@
   background: #1ed5484f;
 }
 
+.candidate-profile-menu-shell {
+  position: sticky;
+  top: 58px;
+  z-index: 99;
+
+  &:before {
+    display: none;
+  }
+}
+
 .candidate-profile-menu {
   --candidate-profile-menu-border: #dfe3ea;
   --candidate-profile-menu-text: #0f1b3d;
@@ -44,6 +54,7 @@
   font-size: 14px;
   margin-bottom: 12px;
   border-radius: 5px;
+  box-shadow: 0 6px 14px rgba(16, 24, 40, 0.06);
 
   a {
     text-decoration: none;
@@ -77,22 +88,22 @@
 
   &:hover,
   &.active {
-    color: var(--bs-primary);
+    color: var(--candidate-profile-menu-text);
 
     i {
-      color: var(--bs-primary);
+      color: var(--candidate-profile-menu-text);
     }
   }
 
   &.active {
-    background: #fff;
+    background: #f1f3f5;
     border-color: var(--candidate-profile-menu-border);
   }
 }
 
 .candidate-profile-menu__sub {
   align-items: center;
-  background: #fbfcfe;
+  background: #f3f4f6;
   border: 1px solid var(--candidate-profile-menu-border);
   border-radius: 0 0 8px 8px;
   display: flex;
@@ -124,15 +135,29 @@
 
   &:hover,
   &.active {
-    color: var(--bs-primary);
+    color: var(--candidate-profile-menu-text);
   }
 
   &.active:after {
-    background: var(--bs-primary);
+    background: #6b7280;
+  }
+
+  &.active {
+    background: #f3f4f6;
+    font-weight: 500;
   }
 }
 
+.candidate-profile-section,
+.candidate-education-panel {
+  scroll-margin-top: 150px;
+}
+
 @media (max-width: 991.98px) {
+  .candidate-profile-menu-shell {
+    top: 62px;
+  }
+
   .candidate-profile-menu__top,
   .candidate-profile-menu__sub {
     justify-content: flex-start;
@@ -542,6 +567,447 @@
     font-weight: 500;
     line-height: 1.35;
   }
+}
+
+.candidate-other-info-page {
+  margin-top: 18px;
+}
+
+.candidate-accomplishment-page {
+  margin-top: 18px;
+}
+
+.candidate-other-summary {
+  h2 {
+    color: #0f1b3d;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.35;
+    margin: 0 0 22px;
+  }
+
+  p {
+    color: #0f1b3d;
+    font-size: 15px;
+    line-height: 1.45;
+    margin: 0;
+  }
+}
+
+.candidate-skill-manager {
+  color: #0f1b3d;
+}
+
+.candidate-skill-list {
+  display: grid;
+  gap: 22px 88px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 22px;
+}
+
+.candidate-skill-item {
+  align-items: flex-start;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) auto;
+
+  strong {
+    color: #0f1b3d;
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.25;
+    margin-bottom: 7px;
+  }
+
+  span {
+    color: #52637a;
+    display: block;
+    font-size: 13px;
+    line-height: 1.25;
+  }
+}
+
+.candidate-skill-item__actions {
+  align-items: center;
+  display: inline-flex;
+  gap: 22px;
+  padding-top: 3px;
+
+  button {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    color: #52637a;
+    display: inline-flex;
+    font-size: 17px;
+    height: 22px;
+    justify-content: center;
+    line-height: 1;
+    padding: 0;
+    width: 22px;
+
+    &:hover,
+    &:focus {
+      color: #c43a97;
+    }
+  }
+}
+
+.candidate-skill-empty {
+  color: #0f1b3d;
+  font-size: 15px;
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.candidate-skill-form {
+  border-top: 1px solid #dfe3ea;
+  padding-top: 22px;
+}
+
+.candidate-skill-form__field {
+  margin-bottom: 24px;
+
+  label {
+    color: #0f1b3d;
+    display: block;
+    font-size: 14px;
+    line-height: 1.35;
+    margin-bottom: 10px;
+
+    span {
+      color: #302f2f;
+    }
+  }
+
+  .form-control {
+    border: 1px solid #cfd6e2;
+    border-radius: 6px;
+    color: #0f1b3d;
+    font-size: 14px;
+    height: 38px;
+    min-height: 38px;
+    padding: 0 12px;
+  }
+}
+
+.candidate-skill-source-list {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 15px;
+}
+
+.candidate-skill-source {
+  align-items: center;
+  color: #0f1b3d;
+  cursor: pointer;
+  display: inline-flex !important;
+  font-size: 14px !important;
+  gap: 7px;
+  line-height: 1.25;
+  margin: 0 !important;
+
+  input {
+    appearance: none;
+    border: 1px solid #cfd6e2;
+    border-radius: 4px;
+    height: 16px;
+    margin: 0;
+    position: relative;
+    width: 16px;
+
+    &:checked {
+      background: #c43a97;
+      border-color: #c43a97;
+
+      &:after {
+        color: #fff;
+        content: "\f00c";
+        font-family: "Font Awesome 6 Free";
+        font-size: 10px;
+        font-weight: 900;
+        left: 50%;
+        line-height: 1;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+  }
+}
+
+.candidate-skill-form__actions {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.candidate-skill-save,
+.candidate-skill-close {
+  align-items: center;
+  border-radius: 6px;
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 600;
+  height: 42px;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+.candidate-skill-save {
+  background: #c43a97;
+  border: 1px solid #c43a97;
+  color: #fff;
+  min-width: 139px;
+}
+
+.candidate-skill-close {
+  background: #fff;
+  border: 1px solid #cfd6e2;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.12);
+  color: #0f1b3d;
+  min-width: 82px;
+}
+
+.candidate-activity-form {
+  color: #0f1b3d;
+}
+
+.candidate-activity-summary {
+  color: #0f1b3d;
+  min-height: 24px;
+
+  p {
+    font-size: 15px;
+    line-height: 1.45;
+    margin: 0;
+  }
+}
+
+.candidate-activity-summary__content {
+  color: #0f1b3d;
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+
+  p {
+    margin-bottom: 8px;
+  }
+
+  ul {
+    margin-bottom: 8px;
+    padding-left: 20px;
+  }
+}
+
+.candidate-skill-inline-edit {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: #c43a97;
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 600;
+  gap: 7px;
+  line-height: 1;
+  padding: 0;
+}
+
+.candidate-activity-editor {
+  border: 1px solid #cfd6e2;
+  border-radius: 8px;
+  overflow: hidden;
+
+  .ql-toolbar.ql-snow {
+    border: 0;
+    border-bottom: 1px solid #dfe3ea;
+    min-height: 37px;
+    padding: 3px 8px;
+
+    .ql-formats {
+      margin-right: 0;
+    }
+
+    button {
+      height: 30px;
+      width: 32px;
+    }
+  }
+
+  .ql-container.ql-snow {
+    border: 0;
+    color: #0f1b3d;
+    font-family: inherit;
+    font-size: 14px;
+    min-height: 140px;
+  }
+
+  .ql-editor {
+    min-height: 140px;
+    padding: 14px;
+  }
+
+  .ql-editor.ql-blank:before {
+    color: #667085;
+    font-style: normal;
+    left: 14px;
+    right: 14px;
+  }
+}
+
+.candidate-activity-count {
+  color: #667085;
+  font-size: 14px;
+  line-height: 1.35;
+  margin: 10px 0 16px;
+
+  strong {
+    color: #0f1b3d;
+    font-weight: 700;
+  }
+}
+
+.candidate-activity-form__actions {
+  margin-top: 0;
+
+  .candidate-skill-save {
+    min-width: 76px;
+  }
+}
+
+.candidate-language-form {
+  border-top: 1px solid #dfe3ea;
+  padding-top: 22px;
+}
+
+.candidate-language-form-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.candidate-language-current {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  margin: -8px 0 20px;
+
+  .candidate-preferred-chip {
+    gap: 8px;
+
+    button {
+      align-items: center;
+      background: transparent;
+      border: 0;
+      color: #667085;
+      display: inline-flex;
+      font-size: 12px;
+      line-height: 1;
+      padding: 0;
+
+      &:hover,
+      &:focus {
+        color: #c43a97;
+      }
+    }
+  }
+}
+
+.candidate-link-list {
+  display: grid;
+  gap: 18px;
+}
+
+.candidate-link-item {
+  align-items: center;
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 180px minmax(0, 1fr) auto;
+
+  a {
+    color: #0f1b3d;
+    font-size: 14px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+  }
+}
+
+.candidate-link-platform {
+  align-items: center;
+  background: #f8fafc;
+  border-radius: 999px;
+  color: #0f1b3d;
+  display: inline-flex;
+  font-size: 14px;
+  gap: 8px;
+  line-height: 1;
+  padding: 7px 12px;
+  width: max-content;
+
+  i {
+    color: #1877f2;
+    font-size: 15px;
+  }
+
+  .fa-github {
+    color: #111827;
+  }
+
+  .fa-linkedin {
+    color: #0a66c2;
+  }
+
+  .fa-twitter {
+    color: #1d9bf0;
+  }
+
+  .fa-globe {
+    color: #667085;
+  }
+}
+
+.candidate-link-actions {
+  align-items: center;
+  display: inline-flex;
+  gap: 20px;
+
+  button {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    color: #0f1b3d;
+    display: inline-flex;
+    font-size: 14px;
+    font-weight: 600;
+    gap: 7px;
+    line-height: 1;
+    padding: 0;
+
+    &:first-child {
+      color: #c43a97;
+    }
+
+    i {
+      font-size: 14px;
+    }
+  }
+}
+
+.candidate-link-form {
+  border-top: 1px solid #dfe3ea;
+  grid-column: 1 / -1;
+  margin-top: 22px;
+  padding-top: 22px;
+  width: 100%;
+}
+
+.candidate-link-form-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 240px minmax(0, 1fr);
 }
 
 .candidate-preferred-summary-chips {
@@ -1054,10 +1520,221 @@
   }
 }
 
+.candidate-employment-page {
+  margin-top: 18px;
+}
+
+.candidate-employment-detail-grid {
+  .candidate-education-detail-column:first-child {
+    gap: 18px;
+  }
+}
+
+.candidate-employment-form {
+  h2 {
+    color: #1d2939;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0 0 28px;
+  }
+}
+
+.candidate-employment-form-grid {
+  display: grid;
+  gap: 24px 28px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 24px;
+}
+
+.candidate-employment-date-input {
+  align-items: center;
+  display: flex;
+  position: relative;
+
+  .candidate-employment-date-icon,
+  svg.candidate-employment-date-icon {
+    color: #667085;
+    font-size: 16px;
+    height: 16px;
+    left: 14px;
+    line-height: 1;
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    z-index: 2;
+  }
+
+  .form-control {
+    padding-left: 36px;
+    width: 100%;
+  }
+}
+
+.candidate-employment-working-check {
+  align-items: center;
+  color: #0f1b3d;
+  display: inline-flex;
+  font-size: 14px;
+  gap: 9px;
+  line-height: 1.3;
+  margin: 12px 0 0;
+
+  .form-check-input {
+    border-color: #c43a97;
+    height: 16px;
+    margin: 0;
+    width: 16px;
+
+    &:checked {
+      background-color: #c43a97;
+      border-color: #c43a97;
+    }
+  }
+}
+
+.candidate-employment-field-help {
+  color: #667085;
+  font-size: 12px;
+  line-height: 1.35;
+  margin: -6px 0 6px;
+}
+
+.candidate-employment-expertise-row {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.candidate-employment-expertise-name {
+  max-width: 226px;
+}
+
+.candidate-employment-month-field {
+  align-items: stretch;
+  display: flex;
+  height: 42px;
+  flex: 0 0 auto;
+
+  .form-control {
+    -moz-appearance: textfield;
+    border-color: #cfd6e2;
+    border-radius: 6px 0 0 6px !important;
+    color: #0f1b3d;
+    font-size: 14px;
+    height: 42px;
+    min-height: 42px;
+    padding: 0;
+    text-align: center;
+    width: 45px;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+
+  span {
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid #cfd6e2;
+    border-left: 0;
+    border-radius: 0 6px 6px 0;
+    color: #667085;
+    display: inline-flex;
+    font-size: 13px;
+    height: 42px;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 7px;
+    white-space: nowrap;
+  }
+}
+
+.candidate-employment-remove-expertise {
+  background: transparent;
+  border: 0;
+  color: #98a2b3;
+  font-size: 16px;
+  padding: 0;
+}
+
+.candidate-employment-add-new {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #f0a9d7;
+  border-radius: 6px;
+  color: #c43a97;
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 600;
+  gap: 10px;
+  min-height: 38px;
+  padding: 0 18px;
+}
+
+.candidate-employment-form-actions {
+  justify-content: flex-start;
+  margin-top: 8px;
+}
+
+.candidate-retired-army-form {
+  h2 {
+    color: #1d2939;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0 0 28px;
+  }
+}
+
+.candidate-retired-army-grid {
+  display: grid;
+  gap: 26px 28px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 22px;
+}
+
+.candidate-retired-army-ba-group {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.candidate-retired-army-note {
+  color: #0f1b3d;
+  font-size: 14px;
+  line-height: 1.45;
+  margin: 2px 0 20px;
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+.candidate-retired-army-add {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #f0a9d7;
+  border-radius: 6px;
+  color: #c43a97;
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 600;
+  gap: 10px;
+  margin-top: 24px;
+  min-height: 42px;
+  padding: 0 18px;
+}
+
 .candidate-education-panel {
   background: #fff;
   border: 1px solid #dfe3ea;
-  // border-radius: 8px;
+//   border-radius: 8px;
   color: #0f1b3d;
   margin-bottom: 16px;
   margin-top: 0;
@@ -1069,13 +1746,24 @@
 .candidate-education-panel__header {
   align-items: center;
   background: #fbfcfe;
-  border-bottom: 0;
-  border-radius: 8px 8px 0 0;
+  border: 0;
+  // border-radius: 8px 8px 0 0;
+  color: #0f1b3d;
   cursor: pointer;
   display: flex;
+  font-size: 20px;
+  font-weight: 500;
   justify-content: space-between;
+  line-height: 1.4;
   min-height: 70px;
   padding: 0 24px;
+  text-align: left;
+  width: 100%;
+
+  &:not(.collapsed) {
+    background: #fff;
+    border-bottom: 1px solid #dfe3ea;
+  }
 
   h1 {
     color: #0f1b3d;
@@ -1098,21 +1786,8 @@
   }
 }
 
-#candidateEducationPanelBody {
-  border-top: 1px solid #dfe3ea;
+.candidate-education-panel__body {
   padding: 24px;
-}
-
-#candidateEducationPanelBody:not(.show) {
-  border-top: 0;
-  padding: 0;
-}
-
-.candidate-education-panel--placeholder {
-  .collapse.show {
-    border-top: 1px solid #dfe3ea;
-    min-height: 1px;
-  }
 }
 
 .candidate-education-panel__actions {
@@ -1123,7 +1798,6 @@
 }
 
 .candidate-education-add,
-.candidate-education-collapse,
 .candidate-education-action {
   align-items: center;
   background: transparent;
@@ -1146,8 +1820,27 @@
 }
 
 .candidate-education-collapse {
+  align-items: center;
+  background: transparent;
+  border: 0;
   border-left: 1px solid #4b77c2;
+  color: var(--bs-primary);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 400;
+  gap: 8px;
+  line-height: 1;
+  padding: 0;
   padding-left: 18px;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover,
+  &:focus {
+    color: var(--bs-primary);
+    text-decoration: none;
+  }
 }
 
 .candidate-education-empty {
@@ -1171,6 +1864,259 @@
   }
 }
 
+.candidate-training-form--add {
+  border-top: 1px solid #dfe3ea;
+  margin-top: 26px;
+  padding-top: 26px;
+}
+
+.candidate-training-form--edit {
+  margin-bottom: 0;
+}
+
+.candidate-certification-footer-action {
+  margin-top: 26px;
+}
+
+.candidate-certification-add-outline {
+  align-items: center;
+  border: 1px solid rgba(200, 44, 145, 0.35);
+  border-radius: 8px;
+  color: var(--bs-primary);
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 600;
+  gap: 8px;
+  line-height: 1;
+  padding: 14px 20px;
+  text-decoration: none;
+
+  &:hover,
+  &:focus {
+    color: var(--bs-primary);
+    text-decoration: none;
+  }
+}
+
+.candidate-certification-duration-label:after {
+  color: #f79009;
+  content: "\f05a";
+  font-family: "Font Awesome 6 Free";
+  font-size: 12px;
+  font-weight: 900;
+  margin-left: 5px;
+}
+
+.candidate-certification-duration-input {
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #cfd6e2;
+  border-radius: 6px;
+  display: flex;
+  height: 38px;
+  min-height: 38px;
+  overflow: hidden;
+  width: 100%;
+
+  .candidate-certification-duration-icon {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    color: #667085;
+    display: inline-flex;
+    flex: 0 0 40px;
+    font-size: 16px;
+    height: 100%;
+    justify-content: center;
+    line-height: 1;
+    padding: 0;
+    width: 40px;
+  }
+
+  .candidate-certification-duration-control {
+    background-color: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    color: #667085;
+    flex: 1 1 auto;
+    font-size: 14px;
+    height: 38px;
+    line-height: 38px;
+    min-height: 38px;
+    padding: 0 14px 0 0;
+
+    &:focus {
+      background-color: transparent;
+      border: 0;
+      box-shadow: none;
+    }
+
+    &::placeholder {
+      color: #667085;
+      opacity: 1;
+    }
+  }
+}
+
+.candidate-certification-daterangepicker.daterangepicker {
+  border: 1px solid #dfe3ea;
+  border-radius: 8px;
+  box-shadow: 0 12px 28px rgba(16, 24, 40, 0.14);
+  color: #344054;
+  font-family: "Poppins", sans-serif;
+  margin-bottom: 34px;
+  margin-top: 10px;
+  padding: 12px 14px 14px;
+  width: 636px;
+
+  &:before,
+  &:after {
+    display: none;
+  }
+
+  .drp-calendar {
+    max-width: none;
+    width: 302px;
+    padding: 0 16px 0 0;
+
+    &.right {
+      border-left: 1px solid #d0d5dd;
+      padding-left: 16px;
+      padding-right: 0;
+    }
+  }
+
+  .calendar-table {
+    border: 0;
+
+    table {
+      border-collapse: separate;
+      border-spacing: 0 2px;
+      width: 100%;
+    }
+
+    th,
+    td {
+      border: 0;
+      color: #344054;
+      font-size: 14px;
+      height: 36px;
+      line-height: 36px;
+      min-width: 36px;
+      width: 36px;
+    }
+
+    th {
+      color: #667085;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    th.month {
+      color: #344054;
+      font-size: 16px;
+      font-weight: 500;
+      padding-bottom: 10px;
+    }
+
+    .prev,
+    .next {
+      color: #344054;
+      font-size: 16px;
+
+      span {
+        border-color: #344054;
+        padding: 4px;
+      }
+    }
+
+    td.available:hover,
+    th.available:hover {
+      background-color: #f2f4f7;
+      border-radius: 50%;
+      color: #344054;
+    }
+
+    td.off {
+      color: #98a2b3;
+    }
+
+    td.in-range {
+      background-color: #f2f4f7;
+      border-radius: 50%;
+      color: #344054;
+    }
+
+    td.start-date,
+    td.end-date,
+    td.active,
+    td.active:hover {
+      background-color: var(--bs-primary);
+      border-radius: 50%;
+      color: #fff;
+      font-weight: 600;
+    }
+  }
+
+  .drp-buttons {
+    border-top: 1px solid #eaecf0;
+    display: flex !important;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+    padding: 18px 14px 12px;
+
+    .drp-selected {
+      color: #344054;
+      flex: 1;
+      font-size: 14px;
+      padding: 0;
+      text-align: left;
+    }
+
+    .btn {
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1;
+      min-width: 80px;
+      padding: 12px 18px;
+    }
+
+    .cancelBtn {
+      background-color: #fff;
+      border: 1px solid #d0d5dd;
+      color: #344054;
+    }
+
+    .applyBtn {
+      background-color: var(--bs-primary);
+      border-color: var(--bs-primary);
+      color: #fff;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .candidate-certification-daterangepicker.daterangepicker {
+    width: calc(100vw - 24px);
+
+    .drp-calendar,
+    .drp-calendar.right {
+      border-left: 0;
+      padding-left: 0;
+      padding-right: 0;
+      width: 100%;
+    }
+
+    .drp-buttons {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+}
+
 .candidate-education-form-grid {
   display: grid;
   gap: 18px 28px;
@@ -1185,6 +2131,11 @@
     font-weight: 400;
     margin-bottom: 10px;
   }
+
+//   .candidate-education-form-field , .form-control {
+//     border-radius: 6px 0 0 6px;
+//   }
+
 
   .form-control,
   .form-select {
@@ -1390,6 +2341,31 @@
     grid-template-columns: 1fr;
   }
 
+  .candidate-skill-list {
+    gap: 18px;
+    grid-template-columns: 1fr;
+  }
+
+  .candidate-skill-source-list {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .candidate-language-form-grid {
+    gap: 0;
+    grid-template-columns: 1fr;
+  }
+
+  .candidate-link-item,
+  .candidate-link-form-grid {
+    gap: 12px;
+    grid-template-columns: 1fr;
+  }
+
+  .candidate-link-actions {
+    justify-content: flex-start;
+  }
+
   .candidate-relevant-head {
     display: block;
   }
@@ -1402,7 +2378,7 @@
     margin-top: 0;
   }
 
-  #candidateEducationPanelBody {
+  .candidate-education-panel__body {
     padding: 18px 16px;
   }
 
@@ -1429,6 +2405,27 @@
   .candidate-education-form-grid {
     gap: 16px;
     grid-template-columns: 1fr;
+  }
+
+  .candidate-employment-form-grid {
+    gap: 16px;
+    grid-template-columns: 1fr;
+  }
+
+  .candidate-retired-army-grid,
+  .candidate-retired-army-ba-group {
+    gap: 16px;
+    grid-template-columns: 1fr;
+  }
+
+  .candidate-employment-expertise-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .candidate-employment-expertise-name {
+    max-width: none;
+    width: 100%;
   }
 
   .candidate-education-form-field--full {

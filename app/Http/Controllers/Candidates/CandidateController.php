@@ -77,18 +77,20 @@ class CandidateController extends AppBaseController
         if ($sectionName == 'resume') {
         }
 
-        if ($sectionName == 'career-informations' || $sectionName == 'cv-builder') {
+        if ($sectionName == 'career-informations' || $sectionName == 'cv-builder' || $sectionName == 'employment') {
             $data['candidateExperiences'] = CandidateExperience::where('candidate_id',
                 $user->owner_id)->orderByDesc('id')->get();
             foreach ($data['candidateExperiences'] as $experience) {
                 $experience->country = getCountryName($experience->country_id);
             }
-            $data['candidateEducations'] = CandidateEducation::with('degreeLevel')->where('candidate_id',
-                $user->owner_id)->orderByDesc('id')->get();
-            foreach ($data['candidateEducations'] as $education) {
-                $education->country = getCountryName($education->country_id);
+            if ($sectionName == 'career-informations' || $sectionName == 'cv-builder') {
+                $data['candidateEducations'] = CandidateEducation::with('degreeLevel')->where('candidate_id',
+                    $user->owner_id)->orderByDesc('id')->get();
+                foreach ($data['candidateEducations'] as $education) {
+                    $education->country = getCountryName($education->country_id);
+                }
+                $data['degreeLevels'] = RequiredDegreeLevel::pluck('name', 'id');
             }
-            $data['degreeLevels'] = RequiredDegreeLevel::pluck('name', 'id');
         }
 
         return view("candidate.profile.$sectionName",

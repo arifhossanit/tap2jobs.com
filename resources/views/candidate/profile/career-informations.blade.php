@@ -8,6 +8,42 @@
         if ($defaultEducationCountryId === false) {
             $defaultEducationCountryId = collect($data['countries'] ?? [])->keys()->first();
         }
+
+        $candidateTrainingItems = [
+            [
+                'title' => 'Web Application Development with Laravel, React, Vue.js & WordPress',
+                'topics' => '---',
+                'institute' => 'IsDB-BISEW IT Scholarship Programme',
+                'location' => 'Agargaon, Dhaka',
+                'country' => 'Bangladesh',
+                'year' => '2025',
+                'duration' => '1 year',
+            ],
+            [
+                'title' => 'Shorthand and Computer Basic',
+                'topics' => '---',
+                'institute' => 'Joyti Commercial',
+                'location' => 'Malibag, Dhaka',
+                'country' => 'Bangladesh',
+                'year' => '2023',
+                'duration' => '1 year',
+            ],
+        ];
+
+        $candidateCertificationItems = [
+            [
+                'certification' => 'Web Application Development with Laravel, React, Vue.js & WordPress',
+                'institute' => 'IsDB-BISEW Scholarship',
+                'location' => 'Agargaon, Dhaka',
+                'duration' => '31 Dec 2024 to 30 Oct 2025',
+            ],
+            [
+                'certification' => 'Shorthand and Computer Basic',
+                'institute' => 'Joyti Commercial',
+                'location' => 'Malibag, Dhaka',
+                'duration' => '1 Jan 2024 to 28 Aug 2024',
+            ],
+        ];
     @endphp
     <div class="mb-xl-8 candidate-career-info-page">
         <div class="border-0 d-none">
@@ -81,25 +117,26 @@
         </div>
 
         <div class="candidate-education-panel" id="candidateEducationDetails">
-            <div class="candidate-education-panel__header collapsed" data-education-section-header>
+            <div class="candidate-education-panel__header" data-education-section-header>
                 <h1>{{ __('messages.candidate_profile.education') }}</h1>
                 <div class="candidate-education-panel__actions">
-                    <a href="javascript:void(0)" class="candidate-education-add d-none" data-inline-education-add>
+                    <a href="javascript:void(0)" class="candidate-education-add" data-inline-education-add data-panel-add-action>
                         <i class="fa-solid fa-plus"></i>
                         <span>{{ __('messages.candidate_profile.add_education') }}</span>
                     </a>
                     <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
-                        data-bs-target="#candidateEducationPanelBody" aria-expanded="false"
+                        data-bs-target="#candidateEducationPanelBody" aria-expanded="true"
                         aria-controls="candidateEducationPanelBody" data-education-panel-toggle
                         data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
                         data-expand-label="{{ __('messages.candidate_profile.expand') }}">
-                        <span>{{ __('messages.candidate_profile.expand') }}</span>
-                        <i class="fa-solid fa-chevron-down"></i>
+                        <span>{{ __('messages.candidate_profile.collapse') }}</span>
+                        <i class="fa-solid fa-chevron-up"></i>
                     </button>
                 </div>
             </div>
 
-            <div id="candidateEducationPanelBody" class="collapse">
+            <div id="candidateEducationPanelBody" class="collapse show candidate-profile-section__collapse">
+                <div class="candidate-profile-section__body candidate-education-panel__body">
                 <div class="candidate-education-inline-form d-none" data-education-add-form>
                     <h2>{{ __('messages.candidate_profile.education') }} 1</h2>
                     {{ Form::open(['id' => 'addNewEducationForm']) }}
@@ -315,37 +352,254 @@
                         </div>
                     @endforeach
                 </div>
+                </div>
             </div>
         </div>
 
-        <div class="candidate-education-panel candidate-education-panel--placeholder" id="candidateTrainingDetails">
+        <div class="candidate-education-panel" id="candidateTrainingDetails">
             <div class="candidate-education-panel__header collapsed">
                 <h1>{{ __('messages.candidate_profile.training') }}</h1>
                 <div class="candidate-education-panel__actions">
+                    <a href="javascript:void(0)" class="candidate-education-add d-none" data-panel-add-action>
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Add Training</span>
+                    </a>
                     <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
                         data-bs-target="#candidateTrainingPanelBody" aria-expanded="false"
-                        aria-controls="candidateTrainingPanelBody">
+                        aria-controls="candidateTrainingPanelBody"
+                        data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
+                        data-expand-label="{{ __('messages.candidate_profile.expand') }}">
                         <span>{{ __('messages.candidate_profile.expand') }}</span>
                         <i class="fa-solid fa-chevron-down"></i>
                     </button>
                 </div>
             </div>
-            <div id="candidateTrainingPanelBody" class="collapse"></div>
+            <div id="candidateTrainingPanelBody" class="collapse candidate-profile-section__collapse">
+                <div class="candidate-profile-section__body candidate-education-panel__body">
+                    <div class="candidate-training-container">
+                        @foreach ($candidateTrainingItems as $candidateTraining)
+                            <div class="candidate-education candidate-education-list-item" data-training-item
+                                data-training-index="{{ $loop->iteration }}"
+                                data-training-title="{{ $candidateTraining['title'] }}"
+                                data-training-topics="{{ $candidateTraining['topics'] }}"
+                                data-training-institute="{{ $candidateTraining['institute'] }}"
+                                data-training-location="{{ $candidateTraining['location'] }}"
+                                data-training-country="{{ $candidateTraining['country'] }}"
+                                data-training-year="{{ $candidateTraining['year'] }}"
+                                data-training-duration="{{ $candidateTraining['duration'] }}">
+                                <div class="candidate-education-item__head">
+                                    <h2>{{ __('messages.candidate_profile.training') }} {{ $loop->iteration }}</h2>
+                                    <div class="candidate-education-item__actions candidate-training-edit-delete">
+                                        <a href="javascript:void(0)"
+                                            class="candidate-education-action candidate-education-action--edit"
+                                            data-training-edit>
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                            <span>{{ __('messages.common.edit') }}</span>
+                                        </a>
+                                        <a href="javascript:void(0)"
+                                            class="candidate-education-action candidate-education-action--delete">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                            <span>{{ __('messages.common.delete') }}</span>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="candidate-education-detail-grid">
+                                    <div class="candidate-education-detail-column">
+                                        <div class="candidate-education-detail">
+                                            <span>Training Title</span>
+                                            <strong data-training-value="title">{{ $candidateTraining['title'] }}</strong>
+                                        </div>
+                                        <div class="candidate-education-detail">
+                                            <span>Topics Covered</span>
+                                            <strong data-training-value="topics">{{ $candidateTraining['topics'] }}</strong>
+                                        </div>
+                                        <div class="candidate-education-detail">
+                                            <span>{{ __('messages.candidate_profile.institute') }}</span>
+                                            <strong data-training-value="institute">{{ $candidateTraining['institute'] }}</strong>
+                                        </div>
+                                        <div class="candidate-education-detail">
+                                            <span>Location</span>
+                                            <strong data-training-value="location">{{ $candidateTraining['location'] }}</strong>
+                                        </div>
+                                    </div>
+
+                                    <div class="candidate-education-detail-column">
+                                        <div class="candidate-education-detail">
+                                            <span>{{ __('messages.company.country') }}</span>
+                                            <strong data-training-value="country">{{ $candidateTraining['country'] }}</strong>
+                                        </div>
+                                        <div class="candidate-education-detail">
+                                            <span>Training Year</span>
+                                            <strong data-training-value="year">{{ $candidateTraining['year'] }}</strong>
+                                        </div>
+                                        <div class="candidate-education-detail">
+                                            <span>Duration</span>
+                                            <strong data-training-value="duration">{{ $candidateTraining['duration'] }}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    <div class="candidate-education-inline-form d-none" data-training-form>
+                        <h2 data-training-form-title>{{ __('messages.candidate_profile.training') }} {{ count($candidateTrainingItems) + 1 }}</h2>
+                        {{ Form::open(['id' => 'candidateTrainingForm']) }}
+                        {{ Form::hidden('training_index', null, ['data-training-field' => 'index']) }}
+                        <div class="candidate-education-form-grid">
+                            <div class="candidate-education-form-field">
+                                {{ Form::label('training_title', 'Training Title', ['class' => 'form-label required']) }}
+                                {{ Form::text('training_title', null, ['class' => 'form-control', 'required', 'placeholder' => 'Enter your training title', 'data-training-field' => 'title']) }}
+                            </div>
+                            <div class="candidate-education-form-field">
+                                {{ Form::label('training_country', __('messages.company.country'), ['class' => 'form-label required']) }}
+                                {{ Form::text('training_country', null, ['class' => 'form-control', 'required', 'placeholder' => 'Enter your Country', 'data-training-field' => 'country']) }}
+                            </div>
+                            <div class="candidate-education-form-field">
+                                {{ Form::label('training_topics', 'Topics Covered', ['class' => 'form-label']) }}
+                                {{ Form::text('training_topics', null, ['class' => 'form-control', 'placeholder' => 'Enter your Topics Covered', 'data-training-field' => 'topics']) }}
+                            </div>
+                            <div class="candidate-education-form-field">
+                                {{ Form::label('training_year', 'Training Year', ['class' => 'form-label required']) }}
+                                {{ Form::selectRange('training_year', date('Y'), 2000, null, ['class' => 'form-select', 'required', 'placeholder' => 'Enter your Training Year', 'data-training-field' => 'year']) }}
+                            </div>
+                            <div class="candidate-education-form-field">
+                                {{ Form::label('training_institute', __('messages.candidate_profile.institute'), ['class' => 'form-label required']) }}
+                                {{ Form::text('training_institute', null, ['class' => 'form-control', 'required', 'placeholder' => 'Enter Institute name', 'data-training-field' => 'institute']) }}
+                            </div>
+                            <div class="candidate-education-form-field">
+                                {{ Form::label('training_duration', 'Duration', ['class' => 'form-label required']) }}
+                                {{ Form::text('training_duration', null, ['class' => 'form-control', 'required', 'placeholder' => 'Select your duration month', 'data-training-field' => 'duration']) }}
+                            </div>
+                            <div class="candidate-education-form-field candidate-education-form-field--full">
+                                {{ Form::label('training_location', 'Location', ['class' => 'form-label']) }}
+                                {{ Form::text('training_location', null, ['class' => 'form-control', 'placeholder' => 'Enter your location', 'data-training-field' => 'location']) }}
+                            </div>
+                        </div>
+                        <div class="candidate-profile-section-actions">
+                            {{ Form::button(__('messages.common.save'), ['type' => 'submit', 'class' => 'btn btn-primary']) }}
+                            <button type="button" class="btn btn-outline-secondary" data-training-close>{{ __('messages.common.close') }}</button>
+                        </div>
+                        {{ Form::close() }}
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="candidate-education-panel candidate-education-panel--placeholder" id="candidateProfessionalCertification">
+        <div class="candidate-education-panel" id="candidateProfessionalCertification">
             <div class="candidate-education-panel__header collapsed">
                 <h1>{{ __('messages.candidate_profile.professional_certification') }}</h1>
                 <div class="candidate-education-panel__actions">
+                    <a href="javascript:void(0)" class="candidate-education-add d-none" data-certification-add-action>
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Add Professional Certification</span>
+                    </a>
                     <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
                         data-bs-target="#candidateProfessionalCertificationPanelBody" aria-expanded="false"
-                        aria-controls="candidateProfessionalCertificationPanelBody">
+                        aria-controls="candidateProfessionalCertificationPanelBody"
+                        data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
+                        data-expand-label="{{ __('messages.candidate_profile.expand') }}">
                         <span>{{ __('messages.candidate_profile.expand') }}</span>
                         <i class="fa-solid fa-chevron-down"></i>
                     </button>
                 </div>
             </div>
-            <div id="candidateProfessionalCertificationPanelBody" class="collapse"></div>
+            <div id="candidateProfessionalCertificationPanelBody" class="collapse candidate-profile-section__collapse">
+                <div class="candidate-profile-section__body candidate-education-panel__body">
+                    <div class="candidate-certification-container">
+                        @foreach ($candidateCertificationItems as $candidateCertification)
+                            <div class="candidate-education candidate-education-list-item" data-certification-item
+                                data-certification-index="{{ $loop->iteration }}"
+                                data-certification-certification="{{ $candidateCertification['certification'] }}"
+                                data-certification-institute="{{ $candidateCertification['institute'] }}"
+                                data-certification-location="{{ $candidateCertification['location'] }}"
+                                data-certification-duration="{{ $candidateCertification['duration'] }}">
+                                <div class="candidate-education-item__head">
+                                    <h2>{{ __('messages.candidate_profile.professional_certification') }} {{ $loop->iteration }}</h2>
+                                    <div class="candidate-education-item__actions candidate-certification-edit-delete">
+                                        <a href="javascript:void(0)"
+                                            class="candidate-education-action candidate-education-action--edit"
+                                            data-certification-edit>
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                            <span>{{ __('messages.common.edit') }}</span>
+                                        </a>
+                                        <a href="javascript:void(0)"
+                                            class="candidate-education-action candidate-education-action--delete">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                            <span>{{ __('messages.common.delete') }}</span>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="candidate-education-detail-grid">
+                                    <div class="candidate-education-detail-column">
+                                        <div class="candidate-education-detail">
+                                            <span>Certification</span>
+                                            <strong data-certification-value="certification">{{ $candidateCertification['certification'] }}</strong>
+                                        </div>
+                                        <div class="candidate-education-detail">
+                                            <span>Location</span>
+                                            <strong data-certification-value="location">{{ $candidateCertification['location'] }}</strong>
+                                        </div>
+                                    </div>
+
+                                    <div class="candidate-education-detail-column">
+                                        <div class="candidate-education-detail">
+                                            <span>{{ __('messages.candidate_profile.institute') }}</span>
+                                            <strong data-certification-value="institute">{{ $candidateCertification['institute'] }}</strong>
+                                        </div>
+                                        <div class="candidate-education-detail">
+                                            <span>Duration</span>
+                                            <strong data-certification-value="duration">{{ $candidateCertification['duration'] }}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div class="candidate-education-inline-form d-none" data-certification-form>
+                        <h2 data-certification-form-title>{{ __('messages.candidate_profile.professional_certification') }} {{ count($candidateCertificationItems) + 1 }}</h2>
+                        {{ Form::open(['id' => 'candidateCertificationForm']) }}
+                        {{ Form::hidden('certification_index', null, ['data-certification-field' => 'index']) }}
+                        <div class="candidate-education-form-grid">
+                            <div class="candidate-education-form-field">
+                                {{ Form::label('certification_name', 'Certification', ['class' => 'form-label required']) }}
+                                {{ Form::text('certification_name', null, ['class' => 'form-control', 'required', 'placeholder' => 'Enter your certification', 'data-certification-field' => 'certification']) }}
+                            </div>
+                            <div class="candidate-education-form-field">
+                                {{ Form::label('certification_institute', __('messages.candidate_profile.institute'), ['class' => 'form-label required']) }}
+                                {{ Form::text('certification_institute', null, ['class' => 'form-control', 'required', 'placeholder' => 'Enter Institute name', 'data-certification-field' => 'institute']) }}
+                            </div>
+                            <div class="candidate-education-form-field">
+                                {{ Form::label('certification_location', 'Location', ['class' => 'form-label']) }}
+                                {{ Form::text('certification_location', null, ['class' => 'form-control', 'placeholder' => 'Enter your location', 'data-certification-field' => 'location']) }}
+                            </div>
+                            <div class="candidate-education-form-field">
+                                {{ Form::label('certification_duration', 'Duration', ['class' => 'form-label required candidate-certification-duration-label']) }}
+                                <div class="input-group candidate-certification-duration-input">
+                                    <span class="input-group-text candidate-certification-duration-icon">
+                                        <i class="fa-regular fa-calendar"></i>
+                                    </span>
+                                    {{ Form::text('certification_duration', null, ['class' => 'form-control candidate-certification-duration-control', 'required', 'placeholder' => '31 Dec 2024 - 30 Oct 2025', 'data-certification-field' => 'duration']) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="candidate-profile-section-actions">
+                            {{ Form::button(__('messages.common.save'), ['type' => 'submit', 'class' => 'btn btn-primary']) }}
+                            <button type="button" class="btn btn-outline-secondary" data-certification-close>{{ __('messages.common.close') }}</button>
+                        </div>
+                        {{ Form::close() }}
+                    </div>
+
+                    <div class="candidate-certification-footer-action">
+                        <a href="javascript:void(0)" class="candidate-certification-add-outline" data-certification-add-action>
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Add Professional Certification</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -425,31 +679,68 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const educationBody = document.getElementById('candidateEducationPanelBody');
-            const educationToggle = document.querySelector('[data-education-panel-toggle]');
+            const careerSectionLinks = document.querySelectorAll('[data-career-section-link]');
+            const careerSectionBodies = document.querySelectorAll('.candidate-education-panel .candidate-profile-section__collapse');
 
-            if (educationBody && educationToggle) {
-                const label = educationToggle.querySelector('span');
-                const icon = educationToggle.querySelector('i');
-                const header = educationToggle.closest('.candidate-education-panel__header');
-                const addAction = document.querySelector('[data-inline-education-add]');
-                const setEducationToggleState = (isOpen) => {
-                    educationToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-                    label.textContent = isOpen
-                        ? educationToggle.dataset.collapseLabel
-                        : educationToggle.dataset.expandLabel;
-                    icon.classList.toggle('fa-chevron-up', isOpen);
-                    icon.classList.toggle('fa-chevron-down', !isOpen);
-                    if (addAction) {
-                        addAction.classList.toggle('d-none', !isOpen);
+            const setActiveCareerSection = function (panelId) {
+                careerSectionLinks.forEach(function (link) {
+                    link.classList.toggle('active', link.dataset.careerSectionLink === panelId);
+                });
+            };
+
+            const closeOtherCareerSections = function (activeSection) {
+                if (typeof bootstrap === 'undefined') {
+                    return;
+                }
+
+                careerSectionBodies.forEach(function (section) {
+                    if (section !== activeSection) {
+                        bootstrap.Collapse.getOrCreateInstance(section, { toggle: false }).hide();
                     }
+                });
+            };
+
+            careerSectionBodies.forEach(function (section) {
+                const toggle = document.querySelector('[data-bs-target="#' + section.id + '"]');
+                if (!toggle) {
+                    return;
+                }
+
+                const label = toggle.querySelector('span');
+                const icon = toggle.querySelector('i');
+                const header = toggle.closest('.candidate-education-panel__header');
+                const panel = section.closest('.candidate-education-panel');
+                const addActions = panel
+                    ? panel.querySelectorAll('.candidate-education-panel__header [data-panel-add-action], .candidate-education-panel__header [data-certification-add-action]')
+                    : [];
+
+                const setPanelToggleState = function (isOpen) {
+                    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                    if (label) {
+                        label.textContent = isOpen
+                            ? (toggle.dataset.collapseLabel || '{{ __('messages.candidate_profile.collapse') }}')
+                            : (toggle.dataset.expandLabel || '{{ __('messages.candidate_profile.expand') }}');
+                    }
+                    if (icon) {
+                        icon.classList.toggle('fa-chevron-up', isOpen);
+                        icon.classList.toggle('fa-chevron-down', !isOpen);
+                    }
+                    addActions.forEach(function (addAction) {
+                        addAction.classList.toggle('d-none', !isOpen);
+                    });
                     if (header) {
                         header.classList.toggle('collapsed', !isOpen);
                     }
                 };
 
-                educationBody.addEventListener('shown.bs.collapse', () => setEducationToggleState(true));
-                educationBody.addEventListener('hidden.bs.collapse', () => setEducationToggleState(false));
+                section.addEventListener('shown.bs.collapse', function () {
+                    closeOtherCareerSections(section);
+                    setPanelToggleState(true);
+                    if (panel) {
+                        setActiveCareerSection(panel.id);
+                    }
+                });
+                section.addEventListener('hidden.bs.collapse', () => setPanelToggleState(false));
 
                 if (header) {
                     header.addEventListener('click', function (event) {
@@ -457,47 +748,364 @@
                             return;
                         }
 
-                        educationToggle.click();
-                    });
-                }
-            }
-
-            document.querySelectorAll('.candidate-education-panel--placeholder .collapse').forEach(function (section) {
-                const toggle = document.querySelector('[data-bs-target="#' + section.id + '"]');
-                if (!toggle) {
-                    return;
-                }
-
-                const icon = toggle.querySelector('i');
-                const header = toggle.closest('.candidate-education-panel__header');
-                section.addEventListener('shown.bs.collapse', function () {
-                    toggle.setAttribute('aria-expanded', 'true');
-                    toggle.querySelector('span').textContent = '{{ __('messages.candidate_profile.collapse') }}';
-                    icon.classList.remove('fa-chevron-down');
-                    icon.classList.add('fa-chevron-up');
-                    if (header) {
-                        header.classList.remove('collapsed');
-                    }
-                });
-                section.addEventListener('hidden.bs.collapse', function () {
-                    toggle.setAttribute('aria-expanded', 'false');
-                    toggle.querySelector('span').textContent = '{{ __('messages.candidate_profile.expand') }}';
-                    icon.classList.remove('fa-chevron-up');
-                    icon.classList.add('fa-chevron-down');
-                    if (header) {
-                        header.classList.add('collapsed');
-                    }
-                });
-                if (header) {
-                    header.addEventListener('click', function (event) {
-                        if (event.target.closest('button, a')) {
-                            return;
-                        }
-
                         toggle.click();
                     });
                 }
+
+                setPanelToggleState(section.classList.contains('show'));
             });
+
+            careerSectionLinks.forEach(function (link) {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const panel = document.getElementById(link.dataset.careerSectionLink);
+                    const section = panel ? panel.querySelector('.candidate-profile-section__collapse') : null;
+
+                    if (!panel || !section || typeof bootstrap === 'undefined') {
+                        return;
+                    }
+
+                    closeOtherCareerSections(section);
+                    bootstrap.Collapse.getOrCreateInstance(section, { toggle: false }).show();
+                    setActiveCareerSection(panel.id);
+                    panel.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                    });
+                });
+            });
+
+            const trainingPanel = document.getElementById('candidateTrainingDetails');
+            const trainingFormWrap = trainingPanel ? trainingPanel.querySelector('[data-training-form]') : null;
+            const trainingList = trainingPanel ? trainingPanel.querySelector('.candidate-training-container') : null;
+            const trainingAdd = trainingPanel ? trainingPanel.querySelector('[data-panel-add-action]') : null;
+            const trainingForm = document.getElementById('candidateTrainingForm');
+
+            if (trainingPanel && trainingFormWrap && trainingList && trainingForm) {
+                const trainingTitle = trainingFormWrap.querySelector('[data-training-form-title]');
+                let activeTrainingItem = null;
+                const fields = {
+                    index: trainingForm.querySelector('[data-training-field="index"]'),
+                    title: trainingForm.querySelector('[data-training-field="title"]'),
+                    country: trainingForm.querySelector('[data-training-field="country"]'),
+                    topics: trainingForm.querySelector('[data-training-field="topics"]'),
+                    year: trainingForm.querySelector('[data-training-field="year"]'),
+                    institute: trainingForm.querySelector('[data-training-field="institute"]'),
+                    duration: trainingForm.querySelector('[data-training-field="duration"]'),
+                    location: trainingForm.querySelector('[data-training-field="location"]'),
+                };
+
+                const getFormValue = function (value) {
+                    return value && value !== '---' ? value : '';
+                };
+
+                const closeTrainingForm = function () {
+                    if (activeTrainingItem) {
+                        activeTrainingItem.querySelector('.candidate-education-detail-grid').classList.remove('d-none');
+                        activeTrainingItem.querySelector('.candidate-education-item__actions').classList.remove('d-none');
+                        activeTrainingItem = null;
+                    }
+
+                    trainingList.classList.remove('d-none');
+                    trainingFormWrap.classList.add('d-none');
+                    trainingFormWrap.classList.remove('candidate-training-form--add', 'candidate-training-form--edit');
+                    trainingForm.reset();
+                    trainingList.insertAdjacentElement('afterend', trainingFormWrap);
+                };
+
+                const scrollToTrainingForm = function () {
+                    window.setTimeout(function () {
+                        trainingFormWrap.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start',
+                        });
+                    }, 50);
+                };
+
+                const setTrainingFormMode = function (item, shouldScroll) {
+                    closeTrainingForm();
+
+                    const index = item
+                        ? item.dataset.trainingIndex
+                        : String(trainingList.querySelectorAll('[data-training-item]').length + 1);
+
+                    trainingTitle.textContent = '{{ __('messages.candidate_profile.training') }} ' + index;
+                    fields.index.value = index;
+                    fields.title.value = item ? getFormValue(item.dataset.trainingTitle) : '';
+                    fields.country.value = item ? getFormValue(item.dataset.trainingCountry) : '';
+                    fields.topics.value = item ? getFormValue(item.dataset.trainingTopics) : '';
+                    fields.year.value = item ? getFormValue(item.dataset.trainingYear) : '';
+                    fields.institute.value = item ? getFormValue(item.dataset.trainingInstitute) : '';
+                    fields.duration.value = item ? getFormValue(item.dataset.trainingDuration) : '';
+                    fields.location.value = item ? getFormValue(item.dataset.trainingLocation) : '';
+
+                    if (item) {
+                        activeTrainingItem = item;
+                        trainingTitle.classList.add('d-none');
+                        trainingFormWrap.classList.add('candidate-training-form--edit');
+                        item.querySelector('.candidate-education-detail-grid').classList.add('d-none');
+                        item.querySelector('.candidate-education-item__actions').classList.add('d-none');
+                        item.querySelector('.candidate-education-item__head').insertAdjacentElement('afterend', trainingFormWrap);
+                    } else {
+                        trainingTitle.classList.remove('d-none');
+                        trainingFormWrap.classList.add('candidate-training-form--add');
+                        trainingList.insertAdjacentElement('afterend', trainingFormWrap);
+                    }
+
+                    trainingFormWrap.classList.remove('d-none');
+                    if (shouldScroll) {
+                        scrollToTrainingForm();
+                    }
+                };
+
+                trainingAdd.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    trainingForm.reset();
+                    setTrainingFormMode(null, true);
+                });
+
+                trainingPanel.addEventListener('click', function (event) {
+                    const editButton = event.target.closest('[data-training-edit]');
+                    if (!editButton) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    const item = editButton.closest('[data-training-item]');
+                    if (item) {
+                        setTrainingFormMode(item, false);
+                    }
+                });
+
+                trainingPanel.querySelector('[data-training-close]').addEventListener('click', function () {
+                    closeTrainingForm();
+                });
+
+                trainingForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    const index = fields.index.value;
+                    let item = trainingList.querySelector('[data-training-index="' + index + '"]');
+
+                    if (!item) {
+                        const sourceItem = trainingList.querySelector('[data-training-item]');
+                        if (!sourceItem) {
+                            return;
+                        }
+
+                        item = sourceItem.cloneNode(true);
+                        item.dataset.trainingIndex = index;
+                        item.querySelector('.candidate-education-item__head h2').textContent =
+                            '{{ __('messages.candidate_profile.training') }} ' + index;
+                        trainingList.appendChild(item);
+                    } else {
+                        item.querySelector('.candidate-education-detail-grid').classList.remove('d-none');
+                        item.querySelector('.candidate-education-item__actions').classList.remove('d-none');
+                    }
+
+                    ['title', 'topics', 'institute', 'location', 'country', 'year', 'duration'].forEach(function (field) {
+                        const value = fields[field].value || '---';
+                        item.dataset['training' + field.charAt(0).toUpperCase() + field.slice(1)] = value;
+                        item.querySelector('[data-training-value="' + field + '"]').textContent = value;
+                    });
+
+                    closeTrainingForm();
+                });
+            }
+
+            const certificationPanel = document.getElementById('candidateProfessionalCertification');
+            const certificationFormWrap = certificationPanel ? certificationPanel.querySelector('[data-certification-form]') : null;
+            const certificationList = certificationPanel ? certificationPanel.querySelector('.candidate-certification-container') : null;
+            const certificationForm = document.getElementById('candidateCertificationForm');
+                const certificationFooterAction = certificationPanel ? certificationPanel.querySelector('.candidate-certification-footer-action') : null;
+
+                if (certificationPanel && certificationFormWrap && certificationList && certificationForm) {
+                    const certificationTitle = certificationFormWrap.querySelector('[data-certification-form-title]');
+                    let activeCertificationItem = null;
+                    let certificationDurationPicker = null;
+                    const fields = {
+                        index: certificationForm.querySelector('[data-certification-field="index"]'),
+                        certification: certificationForm.querySelector('[data-certification-field="certification"]'),
+                        institute: certificationForm.querySelector('[data-certification-field="institute"]'),
+                        location: certificationForm.querySelector('[data-certification-field="location"]'),
+                    duration: certificationForm.querySelector('[data-certification-field="duration"]'),
+                };
+
+                    const getCertificationFormValue = function (value) {
+                        return value && value !== '---' ? value : '';
+                    };
+
+                    const parseCertificationDuration = function (duration) {
+                        if (!window.moment || !duration) {
+                            return null;
+                        }
+
+                        const dates = duration.split(/\s+(?:to|-)\s+/i);
+                        if (dates.length !== 2) {
+                            return null;
+                        }
+
+                        const startDate = moment(dates[0], 'DD MMM YYYY', true);
+                        const endDate = moment(dates[1], 'DD MMM YYYY', true);
+
+                        return startDate.isValid() && endDate.isValid()
+                            ? { startDate, endDate }
+                            : null;
+                    };
+
+                    const closeCertificationForm = function () {
+                        if (activeCertificationItem) {
+                            activeCertificationItem.querySelector('.candidate-education-detail-grid').classList.remove('d-none');
+                            activeCertificationItem.querySelector('.candidate-education-item__actions').classList.remove('d-none');
+                            activeCertificationItem = null;
+                    }
+
+                    certificationList.classList.remove('d-none');
+                    certificationFormWrap.classList.add('d-none');
+                    certificationFormWrap.classList.remove('candidate-training-form--add', 'candidate-training-form--edit');
+                    if (certificationFooterAction) {
+                        certificationFooterAction.classList.remove('d-none');
+                    }
+                    certificationForm.reset();
+                    certificationList.insertAdjacentElement('afterend', certificationFormWrap);
+                };
+
+                const scrollToCertificationForm = function () {
+                    window.setTimeout(function () {
+                        certificationFormWrap.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start',
+                        });
+                    }, 50);
+                };
+
+                const setCertificationFormMode = function (item, shouldScroll) {
+                    closeCertificationForm();
+
+                    const index = item
+                        ? item.dataset.certificationIndex
+                        : String(certificationList.querySelectorAll('[data-certification-item]').length + 1);
+
+                    certificationTitle.textContent = '{{ __('messages.candidate_profile.professional_certification') }} ' + index;
+                    fields.index.value = index;
+                    fields.certification.value = item ? getCertificationFormValue(item.dataset.certificationCertification) : '';
+                    fields.institute.value = item ? getCertificationFormValue(item.dataset.certificationInstitute) : '';
+                    fields.location.value = item ? getCertificationFormValue(item.dataset.certificationLocation) : '';
+                    fields.duration.value = item ? getCertificationFormValue(item.dataset.certificationDuration) : '';
+                    fields.duration.value = fields.duration.value.replace(/\s+to\s+/i, ' - ');
+                    const certificationDurationDates = parseCertificationDuration(fields.duration.value);
+
+                    if (certificationDurationPicker && certificationDurationDates) {
+                        certificationDurationPicker.setStartDate(certificationDurationDates.startDate);
+                        certificationDurationPicker.setEndDate(certificationDurationDates.endDate);
+                    }
+
+                    if (item) {
+                        activeCertificationItem = item;
+                        certificationTitle.classList.add('d-none');
+                        certificationFormWrap.classList.add('candidate-training-form--edit');
+                        item.querySelector('.candidate-education-detail-grid').classList.add('d-none');
+                        item.querySelector('.candidate-education-item__actions').classList.add('d-none');
+                        item.querySelector('.candidate-education-item__head').insertAdjacentElement('afterend', certificationFormWrap);
+                    } else {
+                        certificationTitle.classList.remove('d-none');
+                        certificationFormWrap.classList.add('candidate-training-form--add');
+                        certificationList.insertAdjacentElement('afterend', certificationFormWrap);
+                    }
+
+                    if (certificationFooterAction) {
+                        certificationFooterAction.classList.add('d-none');
+                    }
+                    certificationFormWrap.classList.remove('d-none');
+                    if (shouldScroll) {
+                        scrollToCertificationForm();
+                    }
+                };
+
+                certificationPanel.addEventListener('click', function (event) {
+                    const addButton = event.target.closest('[data-certification-add-action]');
+                    const editButton = event.target.closest('[data-certification-edit]');
+
+                    if (addButton) {
+                        event.preventDefault();
+                        certificationForm.reset();
+                        setCertificationFormMode(null, true);
+                        return;
+                    }
+
+                    if (editButton) {
+                        event.preventDefault();
+                        const item = editButton.closest('[data-certification-item]');
+                        if (item) {
+                            setCertificationFormMode(item, false);
+                        }
+                    }
+                });
+
+                certificationPanel.querySelector('[data-certification-close]').addEventListener('click', function () {
+                    closeCertificationForm();
+                });
+
+                certificationForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    const index = fields.index.value;
+                    let item = certificationList.querySelector('[data-certification-index="' + index + '"]');
+
+                    if (!item) {
+                        const sourceItem = certificationList.querySelector('[data-certification-item]');
+                        if (!sourceItem) {
+                            return;
+                        }
+
+                        item = sourceItem.cloneNode(true);
+                        item.dataset.certificationIndex = index;
+                        item.querySelector('.candidate-education-item__head h2').textContent =
+                            '{{ __('messages.candidate_profile.professional_certification') }} ' + index;
+                        certificationList.appendChild(item);
+                    } else {
+                        item.querySelector('.candidate-education-detail-grid').classList.remove('d-none');
+                        item.querySelector('.candidate-education-item__actions').classList.remove('d-none');
+                    }
+
+                    ['certification', 'institute', 'location', 'duration'].forEach(function (field) {
+                        const fieldValue = fields[field].value || '---';
+                        const value = field === 'duration'
+                            ? fieldValue.replace(/\s+-\s+/i, ' to ')
+                            : fieldValue;
+                        item.dataset['certification' + field.charAt(0).toUpperCase() + field.slice(1)] = value;
+                        item.querySelector('[data-certification-value="' + field + '"]').textContent = value;
+                    });
+
+                    closeCertificationForm();
+                });
+
+                if (window.jQuery && typeof jQuery.fn.daterangepicker === 'function' && window.moment) {
+                    const durationInput = jQuery(fields.duration);
+                    durationInput.daterangepicker({
+                        autoUpdateInput: false,
+                        drops: 'down',
+                        opens: 'center',
+                        parentEl: 'body',
+                        startDate: moment('2024-12-31'),
+                        endDate: moment('2025-10-30'),
+                        locale: {
+                            format: 'DD MMM YYYY',
+                            separator: ' - ',
+                            applyLabel: 'Apply',
+                            cancelLabel: 'Cancel',
+                        },
+                    });
+                    certificationDurationPicker = durationInput.data('daterangepicker');
+                    certificationDurationPicker.container.addClass('candidate-certification-daterangepicker');
+
+                    durationInput.on('apply.daterangepicker', function (event, picker) {
+                        fields.duration.value = picker.startDate.format('DD MMM YYYY') + ' - ' + picker.endDate.format('DD MMM YYYY');
+                    });
+
+                    durationInput.on('cancel.daterangepicker', function () {
+                        fields.duration.value = '';
+                    });
+                }
+            }
         });
 
         {{-- let addExperienceUrl = "{{ route('candidate.create-experience') }}"; --}}
