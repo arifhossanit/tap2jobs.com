@@ -148,10 +148,42 @@ function loadCandidateCareerInformationData() {
         });
     });
 
+    function getCandidateProfileNumber(number) {
+        const value = String(number);
+
+        if (!window.candidateProfileUseBanglaNumber) {
+            return value;
+        }
+
+        const banglaNumbers = {
+            0: '০',
+            1: '১',
+            2: '২',
+            3: '৩',
+            4: '৪',
+            5: '৫',
+            6: '৬',
+            7: '৭',
+            8: '৮',
+            9: '৯',
+        };
+
+        return value.replace(/[0-9]/g, function (digit) {
+            return banglaNumbers[digit];
+        });
+    }
+
+    function setEducationFormTitle(formSelector, number) {
+        const educationLabel = window.candidateProfileEducationLabel || 'Education';
+        $(formSelector).find('[data-education-form-title]').text(educationLabel + ' ' + getCandidateProfileNumber(number));
+    }
+
     listenClick('[data-inline-education-add]', function () {
         $('[data-education-edit-form]').addClass('d-none');
         $('.candidate-education-container').addClass('d-none');
         $('[data-education-add-form]').removeClass('d-none');
+        setEducationFormTitle('[data-education-add-form]', $('.candidate-education-container .candidate-education').length + 1);
+        updateEducationFormLayout('#addNewEducationForm');
         initEducationQuillEditors();
     });
 
@@ -212,7 +244,130 @@ function loadCandidateCareerInformationData() {
         });
     }
 
+    function setEducationQuillValue(formSelector, value) {
+        const input = document.querySelector(formSelector + ' [name="achievement"]');
+
+        if (!input) {
+            return;
+        }
+
+        input.value = value || '';
+        initEducationQuillEditors();
+
+        const editor = educationQuillEditors.find(function (educationEditor) {
+            return educationEditor.input === input;
+        });
+
+        if (editor) {
+            editor.quill.root.innerHTML = value || '';
+        }
+    }
+
     initEducationQuillEditors();
+
+    const educationExamTitleOptions = window.candidateEducationExamTitleOptions || {};
+    const hiddenEducationFieldSelectors = [
+        '[data-education-result-field]',
+        '[data-education-cgpa-field]',
+        '[data-education-scale-field]',
+        '[data-education-year-field]',
+        '[data-education-duration-field]',
+        '[data-education-achievement-field]',
+    ];
+
+    function getEducationLevelType(levelText) {
+        const value = (levelText || '').toLowerCase();
+
+        if (value.includes('psc') || value.includes('5 pass')) {
+            return 'psc';
+        }
+
+        if (value.includes('jsc') || value.includes('jdc') || value.includes('8 pass')) {
+            return 'jsc';
+        }
+
+        if (value.includes('higher secondary') || value.includes('hsc')) {
+            return 'higher_secondary';
+        }
+
+        if (value.includes('secondary') || value.includes('ssc')) {
+            return 'secondary';
+        }
+
+        if (value.includes('diploma')) {
+            return 'diploma';
+        }
+
+        if (value.includes('bachelor') || value.includes('honors')) {
+            return 'bachelor';
+        }
+
+        if (value.includes('master')) {
+            return 'masters';
+        }
+
+        if (value.includes('phd') || value.includes('ph.d')) {
+            return 'phd';
+        }
+
+        return 'default';
+    }
+
+    function setEducationFieldVisibility($field, isVisible) {
+        $field.toggleClass('d-none', !isVisible);
+        $field.find('input, select, textarea').prop('disabled', !isVisible);
+    }
+
+    function setEducationTitleOptions($form, levelType, selectedTitle) {
+        const $titleSelect = $form.find('[data-education-title-select]');
+        const options = educationExamTitleOptions[levelType] || educationExamTitleOptions.default || [];
+
+        $titleSelect.empty();
+        $titleSelect.append($('<option></option>').attr('value', '').text($titleSelect.data('placeholder') || 'Exam/Degree Title'));
+
+        options.forEach(function (title) {
+            $titleSelect.append($('<option></option>').attr('value', title).text(title));
+        });
+
+        const hasSelectedTitleOption = $titleSelect.find('option').filter(function () {
+            return this.value === selectedTitle;
+        }).length > 0;
+
+        if (selectedTitle && !hasSelectedTitleOption) {
+            $titleSelect.append($('<option></option>').attr('value', selectedTitle).text(selectedTitle));
+        }
+
+        $titleSelect.val(selectedTitle || '');
+    }
+
+    function updateEducationFormLayout(form, selectedTitle) {
+        const $form = $(form);
+        const $levelSelect = $form.find('[name="degree_level_id"]');
+        const levelType = getEducationLevelType($levelSelect.find('option:selected').text());
+        const isBoardLevel = ['psc', 'jsc'].includes(levelType);
+        const isAdvancedLevel = ['diploma', 'bachelor', 'masters', 'phd', 'default'].includes(levelType);
+        const hasLevel = !!$levelSelect.val();
+
+        setEducationTitleOptions($form, levelType, selectedTitle);
+        setEducationFieldVisibility($form.find('[data-education-board-field]'), hasLevel && isBoardLevel);
+        setEducationFieldVisibility($form.find('[data-education-major-field]'), hasLevel && !isBoardLevel);
+        setEducationFieldVisibility($form.find('[data-education-summary-row]'), hasLevel && isAdvancedLevel);
+
+        hiddenEducationFieldSelectors.forEach(function (selector) {
+            setEducationFieldVisibility($form.find(selector), false);
+        });
+
+        $form.find('[name="board"]').prop('required', hasLevel && isBoardLevel);
+        $form.find('[name="major"]').prop('required', hasLevel && !isBoardLevel);
+    }
+
+    $('[data-education-add-form] form, [data-education-edit-form] form').each(function () {
+        updateEducationFormLayout(this);
+    });
+
+    listenChange('#degreeLevelId, #editDegreeLevel', function (event) {
+        updateEducationFormLayout($(event.currentTarget).closest('form'));
+    });
 
     listenShowBsModal('#addEducationModal', function () {
         $(this).find('input:text').first().blur();
@@ -322,20 +477,28 @@ function loadCandidateCareerInformationData() {
 
     listenClick('.edit-candidate-education', function (event) {
         let educationId = $(event.currentTarget).data('id');
-        renderCandidateEducationData(educationId);
+        const educationNumber = $(event.currentTarget).closest('.candidate-education').data('education-id') + 1;
+        renderCandidateEducationData(educationId, educationNumber);
     });
 
-    function renderCandidateEducationData(educationId) {
+    function renderCandidateEducationData(educationId, educationNumber) {
         $.ajax({
             url: route('candidate.edit-education', educationId),
             type: 'GET',
             success: function (result) {
                 if (result.success) {
-                    console.log(result.data)
+                    const $editForm = $('#editCareerEducationForm');
                     $('#educationId').val(result.data.id);
-                    $('#editDegreeLevel').val(result.data.degree_level.id).trigger('change');
-                    $('#editDegreeTitle').val(result.data.degree_title);
+                    $('#editDegreeLevel').val(result.data.degree_level ? result.data.degree_level.id : '');
+                    updateEducationFormLayout($editForm, result.data.degree_title);
                     $('#editInstitute').val(result.data.institute);
+                    $editForm.find('[name="major"]').val(result.data.major || '');
+                    $editForm.find('[name="board"]').val(result.data.board || '');
+                    $editForm.find('[name="show_summary"]').prop('checked', !!result.data.show_summary);
+                    $editForm.find('[name="foreign_institute"]').prop('checked', !!result.data.foreign_institute);
+                    $editForm.find('[name="cgpa"]').val(result.data.cgpa || '');
+                    $editForm.find('[name="scale"]').val(result.data.scale || '');
+                    $editForm.find('[name="duration"]').val(result.data.duration || '');
 
                     $('#editEducationCountry').
                         val(result.data.country_id).trigger('change');
@@ -351,9 +514,12 @@ function loadCandidateCareerInformationData() {
                         $('[data-education-add-form]').addClass('d-none');
                         $('.candidate-education-container').addClass('d-none');
                         $('[data-education-edit-form]').removeClass('d-none');
+                        setEducationFormTitle('[data-education-edit-form]', educationNumber || 1);
                         initEducationQuillEditors();
+                        setEducationQuillValue('#editCareerEducationForm', result.data.achievement);
                     } else {
                         $('#editEducationModal').appendTo('body').modal('show');
+                        setEducationQuillValue('#editCareerEducationForm', result.data.achievement);
                     }
                 }
             },

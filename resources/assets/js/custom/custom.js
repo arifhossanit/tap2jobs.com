@@ -462,7 +462,11 @@ window.screenUnLock = function() {
 };
 
 window.urlValidation = function(value, regex) {
-    let urlCheck = value == "" ? true : value.match(regex) ? true : false;
+    if (!value) {
+        return true;
+    }
+
+    let urlCheck = value.match(regex) ? true : false;
     if (!urlCheck) {
         return false;
     }

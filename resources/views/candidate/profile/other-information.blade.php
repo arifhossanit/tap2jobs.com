@@ -329,6 +329,10 @@
             <div class="candidate-education-panel__header collapsed">
                 <h1>Reference</h1>
                 <div class="candidate-education-panel__actions">
+                    <button type="button" class="candidate-education-add d-none" data-reference-add-action>
+                        <i class="fa-solid fa-plus"></i>
+                        Add Reference
+                    </button>
                     <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
                             data-bs-target="#candidateReferencePanelBody" aria-expanded="false"
                             aria-controls="candidateReferencePanelBody"
@@ -341,9 +345,195 @@
             </div>
             <div id="candidateReferencePanelBody" class="collapse candidate-profile-section__collapse">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
-                    <div class="candidate-other-summary">
-                        <h2>Reference</h2>
-                        <p>---</p>
+                    <div class="candidate-reference-list" data-reference-list>
+                        <form class="candidate-reference-form d-none" data-reference-form>
+                            <input type="hidden" data-reference-editing-index>
+                            <div class="candidate-reference-item__header">
+                                <h2 data-reference-form-title>Reference</h2>
+                            </div>
+                            <div class="candidate-reference-form-grid">
+                                <div class="candidate-skill-form__field">
+                                    <label for="candidateReferenceName">Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="candidateReferenceName"
+                                           data-reference-field-input="name" required>
+                                </div>
+                                <div class="candidate-skill-form__field">
+                                    <label for="candidateReferenceDesignation">Designation <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="candidateReferenceDesignation"
+                                           data-reference-field-input="designation" required>
+                                </div>
+                                <div class="candidate-skill-form__field">
+                                    <label for="candidateReferenceOrganization">Organization <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="candidateReferenceOrganization"
+                                           data-reference-field-input="organization" required>
+                                </div>
+                                <div class="candidate-skill-form__field">
+                                    <label for="candidateReferenceEmail">Email</label>
+                                    <input type="email" class="form-control" id="candidateReferenceEmail"
+                                           data-reference-field-input="email">
+                                </div>
+                                <div class="candidate-skill-form__field">
+                                    <label for="candidateReferenceRelation">Relation</label>
+                                    <select class="form-control" id="candidateReferenceRelation" data-reference-field-input="relation">
+                                        <option value="">Select relation</option>
+                                        <option value="Relative">Relative</option>
+                                        <option value="Academic">Academic</option>
+                                        <option value="Professional">Professional</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="candidate-skill-form__field">
+                                    <label for="candidateReferenceMobile">Mobile</label>
+                                    <input type="text" class="form-control" id="candidateReferenceMobile"
+                                           data-reference-field-input="mobile">
+                                </div>
+                                <div class="candidate-skill-form__field">
+                                    <label for="candidateReferenceOfficePhone">Phone (Office)</label>
+                                    <input type="text" class="form-control" id="candidateReferenceOfficePhone"
+                                           data-reference-field-input="officePhone" placeholder="Enter your Phone (Office)">
+                                </div>
+                                <div class="candidate-skill-form__field">
+                                    <label for="candidateReferenceResidentialPhone">Phone (Residential)</label>
+                                    <input type="text" class="form-control" id="candidateReferenceResidentialPhone"
+                                           data-reference-field-input="residentialPhone" placeholder="Enter your Phone (Residential)">
+                                </div>
+                                <div class="candidate-skill-form__field candidate-reference-form-field--full">
+                                    <label for="candidateReferenceAddress">Address</label>
+                                    <textarea class="form-control" id="candidateReferenceAddress" rows="4"
+                                              data-reference-field-input="address"></textarea>
+                                </div>
+                            </div>
+                            <div class="candidate-skill-form__actions">
+                                <button type="submit" class="candidate-skill-save" data-reference-submit>Save</button>
+                                <button type="button" class="candidate-skill-close" data-reference-close>Close</button>
+                            </div>
+                        </form>
+
+                        <div class="candidate-reference-item" data-reference-item
+                             data-reference-name="Dr. Nadim Chowdhury"
+                             data-reference-designation="Associate Professor"
+                             data-reference-organization="BUET"
+                             data-reference-email="nadim@eee.buet.ac.bd"
+                             data-reference-relation="Relative"
+                             data-reference-mobile="01730725252"
+                             data-reference-office-phone="---"
+                             data-reference-residential-phone="---"
+                             data-reference-address="ECE Building, West Palashi Campus, Dhaka">
+                            <div class="candidate-reference-item__header">
+                                <h2>Reference 1</h2>
+                                <div class="candidate-reference-actions">
+                                    <button type="button" data-reference-edit>
+                                        <i class="fa-regular fa-pen-to-square"></i>
+                                        Edit
+                                    </button>
+                                    <button type="button" data-reference-delete>
+                                        <i class="fa-regular fa-trash-can"></i>
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="candidate-reference-detail-grid">
+                                <div class="candidate-reference-field">
+                                    <span>Name</span>
+                                    <strong data-reference-value="name">Dr. Nadim Chowdhury</strong>
+                                </div>
+                                <div class="candidate-reference-field">
+                                    <span>Designation</span>
+                                    <strong data-reference-value="designation">Associate Professor</strong>
+                                </div>
+                                <div class="candidate-reference-field">
+                                    <span>Organization</span>
+                                    <strong data-reference-value="organization">BUET</strong>
+                                </div>
+                                <div class="candidate-reference-field">
+                                    <span>Email</span>
+                                    <strong data-reference-value="email">nadim@eee.buet.ac.bd</strong>
+                                </div>
+                                <div class="candidate-reference-field">
+                                    <span>Relation</span>
+                                    <strong data-reference-value="relation">Relative</strong>
+                                </div>
+                                <div class="candidate-reference-field">
+                                    <span>Mobile</span>
+                                    <strong data-reference-value="mobile">01730725252</strong>
+                                </div>
+                                <div class="candidate-reference-field">
+                                    <span>Phone (Office)</span>
+                                    <strong data-reference-value="officePhone">---</strong>
+                                </div>
+                                <div class="candidate-reference-field">
+                                    <span>Phone (Residential)</span>
+                                    <strong data-reference-value="residentialPhone">---</strong>
+                                </div>
+                                <div class="candidate-reference-field candidate-reference-field--full">
+                                    <span>Address</span>
+                                    <strong data-reference-value="address">ECE Building, West Palashi Campus, Dhaka</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="candidate-reference-item" data-reference-item
+                             data-reference-name="Mohammed Saizuddin"
+                             data-reference-designation="Superintendent"
+                             data-reference-organization="Department of Immigration &amp; passports"
+                             data-reference-email="araman666@gmail.com"
+                             data-reference-relation="Relative"
+                             data-reference-mobile="01992588494"
+                             data-reference-office-phone="---"
+                             data-reference-residential-phone="---"
+                             data-reference-address="Joy Nogor, Mirpur-13, Dhaka">
+                            <div class="candidate-reference-item__header">
+                                <h2>Reference 2</h2>
+                                <div class="candidate-reference-actions">
+                                    <button type="button" data-reference-edit>
+                                        <i class="fa-regular fa-pen-to-square"></i>
+                                        Edit
+                                    </button>
+                                    <button type="button" data-reference-delete>
+                                        <i class="fa-regular fa-trash-can"></i>
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="candidate-reference-detail-grid">
+                                <div class="candidate-reference-field">
+                                    <span>Name</span>
+                                    <strong data-reference-value="name">Mohammed Saizuddin</strong>
+                                </div>
+                                <div class="candidate-reference-field">
+                                    <span>Designation</span>
+                                    <strong data-reference-value="designation">Superintendent</strong>
+                                </div>
+                                <div class="candidate-reference-field">
+                                    <span>Organization</span>
+                                    <strong data-reference-value="organization">Department of Immigration &amp; passports</strong>
+                                </div>
+                                <div class="candidate-reference-field">
+                                    <span>Email</span>
+                                    <strong data-reference-value="email">araman666@gmail.com</strong>
+                                </div>
+                                <div class="candidate-reference-field">
+                                    <span>Relation</span>
+                                    <strong data-reference-value="relation">Relative</strong>
+                                </div>
+                                <div class="candidate-reference-field">
+                                    <span>Mobile</span>
+                                    <strong data-reference-value="mobile">01992588494</strong>
+                                </div>
+                                <div class="candidate-reference-field">
+                                    <span>Phone (Office)</span>
+                                    <strong data-reference-value="officePhone">---</strong>
+                                </div>
+                                <div class="candidate-reference-field">
+                                    <span>Phone (Residential)</span>
+                                    <strong data-reference-value="residentialPhone">---</strong>
+                                </div>
+                                <div class="candidate-reference-field candidate-reference-field--full">
+                                    <span>Address</span>
+                                    <strong data-reference-value="address">Joy Nogor, Mirpur-13, Dhaka</strong>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -512,6 +702,209 @@
                 });
 
                 refreshLinkAddAction();
+            }
+
+            const referenceList = document.querySelector('[data-reference-list]');
+            const referenceForm = document.querySelector('[data-reference-form]');
+            const referenceAddAction = document.querySelector('[data-reference-add-action]');
+
+            if (referenceList && referenceForm) {
+                const referenceEditingIndex = referenceForm.querySelector('[data-reference-editing-index]');
+                const referenceInputs = referenceForm.querySelectorAll('[data-reference-field-input]');
+                const referenceFormTitle = referenceForm.querySelector('[data-reference-form-title]');
+                const referenceSubmit = referenceForm.querySelector('[data-reference-submit]');
+                const referenceClose = referenceForm.querySelector('[data-reference-close]');
+                let activeReferenceItem = null;
+
+                const referenceItems = function () {
+                    return Array.from(referenceList.querySelectorAll('[data-reference-item]'));
+                };
+
+                const referenceFields = [
+                    'name',
+                    'designation',
+                    'organization',
+                    'email',
+                    'relation',
+                    'mobile',
+                    'officePhone',
+                    'residentialPhone',
+                    'address',
+                ];
+
+                const displayReferenceValue = function (value) {
+                    return value && value.trim() ? value.trim() : '---';
+                };
+
+                const setReferenceInputValues = function (item) {
+                    referenceInputs.forEach(function (input) {
+                        const field = input.dataset.referenceFieldInput;
+                        const value = item ? (item.dataset['reference' + field.charAt(0).toUpperCase() + field.slice(1)] || '') : '';
+                        input.value = value === '---' ? '' : value;
+                    });
+                };
+
+                const collectReferenceValues = function () {
+                    const values = {};
+                    referenceInputs.forEach(function (input) {
+                        values[input.dataset.referenceFieldInput] = input.value.trim();
+                    });
+                    return values;
+                };
+
+                const renderReferenceNumbers = function () {
+                    referenceItems().forEach(function (item, index) {
+                        const title = item.querySelector('.candidate-reference-item__header h2');
+                        if (title) {
+                            title.textContent = 'Reference ' + (index + 1);
+                        }
+                    });
+                };
+
+                const syncReferenceItem = function (item, values) {
+                    referenceFields.forEach(function (field) {
+                        item.dataset['reference' + field.charAt(0).toUpperCase() + field.slice(1)] = displayReferenceValue(values[field]);
+                        const valueNode = item.querySelector('[data-reference-value="' + field + '"]');
+                        if (valueNode) {
+                            valueNode.textContent = displayReferenceValue(values[field]);
+                        }
+                    });
+                };
+
+                const makeReferenceItem = function (values) {
+                    const item = document.createElement('div');
+                    item.className = 'candidate-reference-item';
+                    item.dataset.referenceItem = '';
+                    item.innerHTML = [
+                        '<div class="candidate-reference-item__header">',
+                        '<h2></h2>',
+                        '<div class="candidate-reference-actions">',
+                        '<button type="button" data-reference-edit><i class="fa-regular fa-pen-to-square"></i> Edit</button>',
+                        '<button type="button" data-reference-delete><i class="fa-regular fa-trash-can"></i> Delete</button>',
+                        '</div>',
+                        '</div>',
+                        '<div class="candidate-reference-detail-grid">',
+                        '<div class="candidate-reference-field"><span>Name</span><strong data-reference-value="name"></strong></div>',
+                        '<div class="candidate-reference-field"><span>Designation</span><strong data-reference-value="designation"></strong></div>',
+                        '<div class="candidate-reference-field"><span>Organization</span><strong data-reference-value="organization"></strong></div>',
+                        '<div class="candidate-reference-field"><span>Email</span><strong data-reference-value="email"></strong></div>',
+                        '<div class="candidate-reference-field"><span>Relation</span><strong data-reference-value="relation"></strong></div>',
+                        '<div class="candidate-reference-field"><span>Mobile</span><strong data-reference-value="mobile"></strong></div>',
+                        '<div class="candidate-reference-field"><span>Phone (Office)</span><strong data-reference-value="officePhone"></strong></div>',
+                        '<div class="candidate-reference-field"><span>Phone (Residential)</span><strong data-reference-value="residentialPhone"></strong></div>',
+                        '<div class="candidate-reference-field candidate-reference-field--full"><span>Address</span><strong data-reference-value="address"></strong></div>',
+                        '</div>',
+                    ].join('');
+                    syncReferenceItem(item, values);
+                    return item;
+                };
+
+                const closeReferenceForm = function () {
+                    referenceForm.classList.add('d-none');
+                    referenceEditingIndex.value = '';
+                    setReferenceInputValues(null);
+                    if (referenceSubmit) {
+                        referenceSubmit.textContent = 'Save';
+                    }
+                    if (referenceClose) {
+                        referenceClose.textContent = 'Close';
+                    }
+                    if (referenceFormTitle) {
+                        referenceFormTitle.textContent = 'Reference';
+                    }
+                    if (activeReferenceItem) {
+                        activeReferenceItem.classList.remove('d-none');
+                        activeReferenceItem = null;
+                    }
+                    referenceList.insertBefore(referenceForm, referenceList.firstElementChild);
+                };
+
+                const openReferenceForm = function (item) {
+                    const section = document.getElementById('candidateReferencePanelBody');
+                    if (section && typeof bootstrap !== 'undefined') {
+                        bootstrap.Collapse.getOrCreateInstance(section, { toggle: false }).show();
+                    }
+
+                    closeReferenceForm();
+                    activeReferenceItem = item || null;
+                    referenceEditingIndex.value = item ? String(referenceItems().indexOf(item)) : '';
+                    setReferenceInputValues(item);
+                    referenceForm.classList.remove('d-none');
+                    if (referenceFormTitle) {
+                        const formIndex = item ? referenceItems().indexOf(item) + 1 : referenceItems().length + 1;
+                        referenceFormTitle.textContent = 'Reference ' + formIndex;
+                    }
+                    if (referenceSubmit) {
+                        referenceSubmit.textContent = item ? 'Update' : 'Save';
+                    }
+                    if (referenceClose) {
+                        referenceClose.textContent = item ? 'Cancel' : 'Close';
+                    }
+                    if (item) {
+                        item.insertAdjacentElement('beforebegin', referenceForm);
+                        item.classList.add('d-none');
+                    } else {
+                        referenceList.insertBefore(referenceForm, referenceList.firstElementChild);
+                    }
+                    referenceForm.querySelector('[data-reference-field-input="name"]')?.focus();
+                };
+
+                referenceAddAction?.addEventListener('click', function () {
+                    openReferenceForm(null);
+                });
+
+                referenceList.addEventListener('click', function (event) {
+                    const editButton = event.target.closest('[data-reference-edit]');
+                    const deleteButton = event.target.closest('[data-reference-delete]');
+                    const item = event.target.closest('[data-reference-item]');
+
+                    if (editButton && item) {
+                        openReferenceForm(item);
+                    }
+
+                    if (deleteButton && item) {
+                        item.remove();
+                        closeReferenceForm();
+                        renderReferenceNumbers();
+                    }
+                });
+
+                referenceClose?.addEventListener('click', function () {
+                    closeReferenceForm();
+                });
+
+                referenceForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    const values = collectReferenceValues();
+
+                    if (!values.name) {
+                        referenceForm.querySelector('[data-reference-field-input="name"]')?.focus();
+                        return;
+                    }
+
+                    if (!values.designation) {
+                        referenceForm.querySelector('[data-reference-field-input="designation"]')?.focus();
+                        return;
+                    }
+
+                    if (!values.organization) {
+                        referenceForm.querySelector('[data-reference-field-input="organization"]')?.focus();
+                        return;
+                    }
+
+                    if (activeReferenceItem) {
+                        syncReferenceItem(activeReferenceItem, values);
+                        activeReferenceItem.classList.remove('d-none');
+                    } else {
+                        referenceList.appendChild(makeReferenceItem(values));
+                    }
+
+                    closeReferenceForm();
+                    renderReferenceNumbers();
+                });
+
+                closeReferenceForm();
+                renderReferenceNumbers();
             }
 
             if (languageForm) {
@@ -1045,6 +1438,10 @@
                     if (linkAddAction) {
                         linkAddAction.dataset.sectionOpen = isOpen ? 'true' : 'false';
                         linkAddAction.classList.toggle('d-none', !isOpen || document.querySelectorAll('[data-link-item]').length >= 5);
+                    }
+                    const referenceAddAction = header ? header.querySelector('[data-reference-add-action]') : null;
+                    if (referenceAddAction) {
+                        referenceAddAction.classList.toggle('d-none', !isOpen);
                     }
                 };
 

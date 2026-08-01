@@ -793,6 +793,14 @@ Route::middleware('auth', 'role:Candidate', 'xss', 'verified.user')->prefix('can
 
     Route::get('/profile', [Candidates\CandidateController::class, 'editProfile'])->name('candidate.profile');
     Route::put('update-profile', [Candidates\CandidateController::class, 'updateProfile'])->name('candidate-profile.update');
+    Route::put('profile/personal-details', [Candidates\CandidateController::class, 'updatePersonalDetails'])->name('candidate-profile.personal-details.update');
+    Route::put('profile/address-details', [Candidates\CandidateController::class, 'updateAddressDetails'])->name('candidate-profile.address-details.update');
+    Route::put('profile/career-application', [Candidates\CandidateController::class, 'updateCareerApplication'])->name('candidate-profile.career-application.update');
+    Route::put('profile/preferred-area', [Candidates\CandidateController::class, 'updatePreferredArea'])->name('candidate-profile.preferred-area.update');
+    Route::put('profile/relevant-information', [Candidates\CandidateController::class, 'updateRelevantInformation'])->name('candidate-profile.relevant-information.update');
+    Route::put('profile/disability-information', [Candidates\CandidateController::class, 'updateDisabilityInformation'])->name('candidate-profile.disability-information.update');
+    Route::post('profile/image', [Candidates\CandidateController::class, 'updateProfileImage'])->name('candidate-profile.image.update');
+    Route::delete('profile/image', [Candidates\CandidateController::class, 'deleteProfileImage'])->name('candidate-profile.image.delete');
 
     Route::get('edit-profile', [Candidates\CandidateController::class, 'editCandidateProfile'])->name('candidate.edit.profile');
     Route::post('edit-change-password', [Candidates\CandidateController::class, 'changePassword'])->name('candidate.change-password');
@@ -824,6 +832,18 @@ Route::middleware('auth', 'role:Candidate', 'xss', 'verified.user')->prefix('can
         'candidate-education/{candidateEducation}',
         [Candidates\CandidateProfileController::class, 'destroyEducation']
     )->name('education.destroy');
+
+    // candidate training
+    Route::post('training', [Candidates\CandidateProfileController::class, 'createTraining'])->name('candidate.create-training');
+    Route::get(
+        '/{candidateTraining}/edit-training',
+        [Candidates\CandidateProfileController::class, 'editTraining']
+    )->name('candidate.edit-training');
+    Route::put('candidate-training/{candidateTraining}', [Candidates\CandidateProfileController::class, 'updateTraining'])->name('candidate.update-training');
+    Route::delete(
+        'candidate-training/{candidateTraining}',
+        [Candidates\CandidateProfileController::class, 'destroyTraining']
+    )->name('training.destroy');
 
     // favourite jobs listing routes.
     Route::get('favourite-jobs', [Candidates\CandidateController::class, 'showFavouriteJobs'])->name('favourite.jobs');

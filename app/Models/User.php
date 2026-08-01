@@ -13,8 +13,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Laravel\Cashier\Billable;
+use Spatie\Image\Manipulations;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -140,6 +142,8 @@ class User extends Authenticatable implements HasMedia
 
     const PROFILE = 'profile-pictures';
 
+    const PROFILE_WEBP_CONVERSION = 'profile-webp';
+
     const ACTIVE = 1;
 
     const LANGUAGES = [
@@ -160,11 +164,6 @@ class User extends Authenticatable implements HasMedia
         'tr' => 'assets/img/turkey.svg',
     ];
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'first_name',
         'last_name',
@@ -191,9 +190,6 @@ class User extends Authenticatable implements HasMedia
         'region_code',
     ];
 
-    /**
-     * @var array
-     */
     protected $appends = ['full_name', 'avatar', 'country_name', 'state_name', 'city_name'];
 
     protected $with = ['media', 'country', 'city', 'state'];
@@ -234,41 +230,35 @@ class User extends Authenticatable implements HasMedia
         }
     }
 
-    /**
-     * @return mixed
-     */
     public function getAvatarAttribute()
     {
         /** @var Media $media */
         $media = $this->getMedia(self::PROFILE)->first();
         if (! empty($media)) {
-            return $media->getFullUrl();
+            return $media->getAvailableFullUrl([self::PROFILE_WEBP_CONVERSION]);
         }
 
         return asset('assets/img/infyom-logo.png');
     }
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this->addMediaConversion(self::PROFILE_WEBP_CONVERSION)
+            ->performOnCollections(self::PROFILE)
+            ->fit(Manipulations::FIT_CROP, 300, 300)
+            ->quality(80)
+            ->format(Manipulations::FORMAT_WEBP)
+            ->nonQueued();
+    }
+
     protected $hidden = [
         'password', 'remember_token',
     ];
 
-    /**
-     * @var array
-     */
     public static $messages = [
         'email.regex' => 'Please enter valid email.',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
     protected $casts = [
         'first_name' => 'string',
         'last_name' => 'string',
@@ -339,9 +329,6 @@ class User extends Authenticatable implements HasMedia
         $this->notify(new UserVerifyNotification($this));  //pass the currently logged in user to the notification class
     }
 
-    /**
-     * Send the password reset notification.
-     */
     public function sendPasswordResetNotification($token): void
     {
         $this->notify(new PasswordReset($token));

@@ -62,11 +62,22 @@ class CandidateEducation extends Model
      * @var array
      */
     public static $rules = [
+        'degree_level_id' => 'required|exists:required_degree_levels,id',
         'degree_title' => 'required|max:150',
-        'country_id' => 'required',
+        'country_id' => 'required|exists:countries,id',
+        'state_id' => 'nullable|exists:states,id',
+        'city_id' => 'nullable|exists:cities,id',
+        'major' => 'nullable|max:150',
+        'board' => 'nullable|max:100',
         'institute' => 'required|max:150',
-        'result' => 'required|max:150',
-        'year' => 'required',
+        'foreign_institute' => 'nullable|boolean',
+        'show_summary' => 'nullable|boolean',
+        'result' => 'nullable|max:150',
+        'cgpa' => 'required_if:result,Grade|nullable|numeric|min:0|max:100',
+        'scale' => 'required_if:result,Grade|nullable|numeric|min:0|max:100',
+        'year' => 'nullable|integer|min:1900|max:2100',
+        'duration' => 'nullable|max:100',
+        'achievement' => 'nullable|max:3000',
     ];
 
     public $table = 'candidate_educations';
@@ -75,12 +86,21 @@ class CandidateEducation extends Model
         'candidate_id',
         'degree_level_id',
         'degree_title',
+        'major',
+        'board',
         'country_id',
         'state_id',
         'city_id',
         'institute',
+        'foreign_institute',
+        'show_summary',
         'result',
+        'cgpa',
+        'scale',
         'year',
+        'duration',
+        'achievement',
+        'sort_order',
     ];
 
     /**
@@ -92,12 +112,21 @@ class CandidateEducation extends Model
         'candidate_id' => 'integer',
         'degree_level_id' => 'integer',
         'degree_title' => 'string',
+        'major' => 'string',
+        'board' => 'string',
         'country_id' => 'integer',
         'state_id' => 'integer',
         'city_id' => 'integer',
         'institute' => 'string',
+        'foreign_institute' => 'boolean',
+        'show_summary' => 'boolean',
         'result' => 'string',
+        'cgpa' => 'decimal:2',
+        'scale' => 'decimal:2',
         'year' => 'integer',
+        'duration' => 'string',
+        'achievement' => 'string',
+        'sort_order' => 'integer',
     ];
 
     public function candidate(): BelongsTo

@@ -1,16 +1,16 @@
 @php
-    $sectionName = $data['sectionName'] ?? 'general';
+    $sectionName = $data['sectionName'] ?? 'personal-information';
 @endphp
 
 <div class="candidate-profile-menu">
     <div class="candidate-profile-menu__top overflow-auto">
-        <a class="candidate-profile-menu__main-link {{ $sectionName == 'general' ? 'active' : '' }}"
-           href="{{ route('candidate.profile', ['section' => 'general']) }}">
+        <a class="candidate-profile-menu__main-link {{ $sectionName == 'personal-information' ? 'active' : '' }}"
+           href="{{ route('candidate.profile', ['section' => 'personal-information']) }}">
             <i class="fa-regular fa-user"></i>
             <span>{{ __('messages.candidate_profile.personal_information') }}</span>
         </a>
-        <a class="candidate-profile-menu__main-link {{ $sectionName == 'career-informations' ? 'active' : '' }}"
-           href="{{ route('candidate.profile', ['section' => 'career-informations']) }}">
+        <a class="candidate-profile-menu__main-link {{ $sectionName == 'education-training' ? 'active' : '' }}"
+           href="{{ route('candidate.profile', ['section' => 'education-training']) }}">
             <i class="fa-solid fa-graduation-cap"></i>
             <span>{{ __('messages.candidate_profile.education_training') }}</span>
         </a>
@@ -19,20 +19,20 @@
             <i class="fa-solid fa-briefcase"></i>
             <span>{{ __('messages.candidate_profile.employment') }}</span>
         </a>
-        <a class="candidate-profile-menu__main-link {{ $sectionName == 'cv-builder' ? 'active' : '' }}"
-           href="{{ route('candidate.profile', ['section' => 'cv-builder']) }}">
+        <a class="candidate-profile-menu__main-link {{ $sectionName == 'other-information' ? 'active' : '' }}"
+           href="{{ route('candidate.profile', ['section' => 'other-information']) }}">
             <i class="fa-solid fa-table-cells-large"></i>
             <span>{{ __('messages.candidate_profile.other_information') }}</span>
         </a>
-        <a class="candidate-profile-menu__main-link {{ $sectionName == 'resume' ? 'active' : '' }}"
-           href="{{ route('candidate.profile', ['section' => 'resume']) }}">
+        <a class="candidate-profile-menu__main-link {{ $sectionName == 'accomplishment' ? 'active' : '' }}"
+           href="{{ route('candidate.profile', ['section' => 'accomplishment']) }}">
             <i class="fa-solid fa-award"></i>
             <span>{{ __('messages.candidate_profile.accomplishment') }}</span>
         </a>
     </div>
 
     <div class="candidate-profile-menu__sub overflow-auto">
-        @if($sectionName == 'career-informations')
+        @if($sectionName == 'education-training')
             <a class="candidate-profile-menu__sub-link active" href="#candidateEducationDetails"
                data-career-section-link="candidateEducationDetails">
                 {{ __('messages.candidate_profile.education') }}
@@ -54,7 +54,7 @@
                data-employment-section-link="candidateRetiredArmyEmployment">
                 Employment History(For Retired Army Person)
             </a>
-        @elseif($sectionName == 'cv-builder')
+        @elseif($sectionName == 'other-information')
             <a class="candidate-profile-menu__sub-link active" href="#candidateSkillInformation"
                data-other-section-link="candidateSkillInformation">
                 Skill
@@ -75,7 +75,7 @@
                data-other-section-link="candidateReference">
                 Reference
             </a>
-        @elseif($sectionName == 'resume')
+        @elseif($sectionName == 'accomplishment')
             <a class="candidate-profile-menu__sub-link active" href="#candidatePortfolioInformation"
                data-accomplishment-section-link="candidatePortfolioInformation">
                 Portfolio

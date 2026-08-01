@@ -108,6 +108,107 @@ function loadCandidateGeneralData() {
             .closest('.candidate-profile-section__header').removeClass('candidate-profile-section__header--editing');
     });
 
+    const loadAddressStates = function (countrySelector, stateSelector, citySelector, selectedState = null, statePlaceholder = 'Select your District') {
+        const country = $(countrySelector).val();
+        $(stateSelector).empty().append($('<option value=""></option>').text(statePlaceholder));
+        $(citySelector).empty().append($('<option value=""></option>').text('Select your Thana'));
+
+        if (!country) {
+            $(stateSelector).trigger('change.select2');
+            $(citySelector).trigger('change.select2');
+            return;
+        }
+
+        $.ajax({
+            url: route('states-list'),
+            type: 'get',
+            dataType: 'json',
+            data: { postal: country },
+            success: function (data) {
+                $.each(data.data, function (i, v) {
+                    $(stateSelector).append($('<option></option>').attr('value', i).text(v));
+                });
+                if (selectedState) {
+                    $(stateSelector).val(selectedState);
+                }
+                $(stateSelector).trigger('change.select2');
+            },
+        });
+    };
+
+    const togglePresentAddressMode = function (resetLocation = false) {
+        const type = $('input[name="present_address_type"]:checked').val();
+        const bangladeshId = $('#countryId').data('bangladesh-id');
+        const isOutside = type === 'outside';
+
+        $('.candidate-address-country-field').toggleClass('d-none', !isOutside);
+        $('.candidate-present-district-field').toggleClass('d-none', isOutside);
+        $('.candidate-present-state-text-field').toggleClass('d-none', !isOutside);
+        $('.candidate-present-thana-po-field').toggleClass('d-none', isOutside);
+
+        if (type === 'inside' && bangladeshId) {
+            $('#countryId').val(bangladeshId);
+            if (resetLocation) {
+                loadAddressStates('#countryId', '#stateId', '#cityId');
+            }
+            return;
+        }
+
+        $('#countryId').val($('#presentCountryDisplay').val());
+    };
+
+    let permanentAddressTypeChosen = $('.candidate-address-form').data('has-permanent-details') == 1;
+
+    const togglePermanentAddress = function () {
+        const sameAsPresent = $('#permanentSameAsPresent').is(':checked');
+        const type = $('input[name="permanent_address_type"]:checked').val();
+        const bangladeshId = $('#countryId').data('bangladesh-id');
+        const showPermanentFields = !sameAsPresent && permanentAddressTypeChosen;
+        const isOutside = type === 'outside';
+
+        $('.candidate-permanent-address-options').toggleClass('d-none', sameAsPresent);
+        $('.candidate-permanent-address-fields').toggleClass('d-none', !showPermanentFields);
+        $('.candidate-permanent-country-field').toggleClass('d-none', !showPermanentFields || !isOutside);
+        $('.candidate-permanent-district-field').toggleClass('d-none', showPermanentFields && isOutside);
+        $('.candidate-permanent-state-text-field').toggleClass('d-none', !showPermanentFields || !isOutside);
+        $('.candidate-permanent-thana-po-field').toggleClass('d-none', showPermanentFields && isOutside);
+
+        if (showPermanentFields && type === 'inside' && bangladeshId) {
+            $('#permanentCountryId').val(bangladeshId).trigger('change.select2');
+        }
+    };
+
+    togglePresentAddressMode(false);
+    togglePermanentAddress();
+
+    $('input[name="present_address_type"]').on('change', function () {
+        togglePresentAddressMode(true);
+    });
+
+    $('#presentCountryDisplay').on('change', function () {
+        $('#countryId').val($(this).val());
+    });
+
+    $('#permanentSameAsPresent').on('change', function () {
+        if ($(this).is(':checked')) {
+            permanentAddressTypeChosen = false;
+            $('#permanentAddressSelected').val('0');
+        }
+        togglePermanentAddress();
+    });
+
+    $('input[name="permanent_address_type"]').on('change', function () {
+        permanentAddressTypeChosen = true;
+        $('#permanentAddressSelected').val('1');
+        togglePermanentAddress();
+    });
+
+    $('#permanentCountryId').on('change', function () {
+        if ($('input[name="permanent_address_type"]:checked').val() !== 'outside') {
+            loadAddressStates('#permanentCountryId', '#permanentStateId', '#permanentCityId');
+        }
+    });
+
     $('[data-career-edit-toggle]').on('click', function (event) {
         event.preventDefault();
         event.stopPropagation();
@@ -173,24 +274,175 @@ function loadCandidateGeneralData() {
             .closest('.candidate-profile-section__header').removeClass('candidate-profile-section__header--editing');
     });
 
+    function syncDisabilityDetails() {
+        const showDetails = $('[data-disability-toggle]:checked').val() === '1';
+        const $details = $('[data-disability-details]');
+        const $detailInputs = $('[data-disability-detail-input]');
+
+        $details.toggleClass('d-none', !showDetails);
+        $('[data-disability-support]').toggleClass('d-none', showDetails);
+        $detailInputs.prop('disabled', !showDetails);
+
+        if (!showDetails) {
+            $detailInputs.each(function () {
+                if ($(this).is(':radio')) {
+                    $(this).prop('checked', $(this).val() === '1');
+                    return;
+                }
+
+                $(this).val('');
+            });
+        }
+    }
+
+    syncDisabilityDetails();
+    $('[data-disability-toggle]').on('change', syncDisabilityDetails);
+
     $('#candidatePersonalImageInput').on('change', function () {
+        const input = this;
         const file = this.files && this.files[0];
-        if (!file) {
+
+        if (!isValidFile($(this), '#validationErrors')) {
+            displayErrorMessage('The image must be a file of type: jpeg, jpg, png.');
+            $('.btnSave').prop('disabled', true);
             return;
         }
 
-        const reader = new FileReader();
-        reader.onload = function (event) {
-            $('#candidatePersonalAvatar').attr('src', event.target.result);
-        };
-        reader.readAsDataURL(file);
+        if (!file || !['image/jpeg', 'image/png'].includes(file.type) || file.size > 1024 * 1024) {
+            $(this).val('');
+            displayErrorMessage('Upload your Profile image JPG or PNG, 1MB max.');
+            $('.btnSave').prop('disabled', true);
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        $('.candidate-image-upload-modal__upload, [data-candidate-image-input-trigger]').prop('disabled', true);
+
+        $.ajax({
+            url: route('candidate-profile.image.update'),
+            type: 'post',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                const avatar = result.data && result.data.avatar ? result.data.avatar : null;
+                if (avatar) {
+                    $('#candidatePersonalAvatar')
+                        .attr('src', avatar)
+                        .attr('data-original-src', avatar)
+                        .data('original-src', avatar);
+                } else {
+                    displayPhoto(input, '#candidatePersonalAvatar');
+                }
+                closeCandidateImageModal();
+                displaySuccessMessage(result.message);
+            },
+            error: function (result) {
+                displayErrorMessage(result.responseJSON && result.responseJSON.message ? result.responseJSON.message : 'The image could not be uploaded.');
+            },
+            complete: function () {
+                $('#candidatePersonalImageInput').val('');
+                $('.candidate-image-upload-modal__upload, [data-candidate-image-input-trigger]').prop('disabled', false);
+                $('.btnSave').prop('disabled', false);
+            },
+        });
+    });
+
+    function openCandidateImageModal() {
+        $('#candidateImageUploadModal').removeClass('d-none').attr('aria-hidden', 'false');
+        $('body').addClass('candidate-image-upload-modal-open');
+    }
+
+    function closeCandidateImageModal() {
+        $('#candidateImageUploadModal').addClass('d-none').attr('aria-hidden', 'true');
+        $('body').removeClass('candidate-image-upload-modal-open');
+        $('[data-candidate-image-dropzone]').removeClass('candidate-image-upload-modal__dropzone--dragging');
+    }
+
+    $('[data-candidate-image-modal-open]').on('click', function (event) {
+        event.preventDefault();
+        openCandidateImageModal();
+    });
+
+    $('[data-candidate-image-modal-close]').on('click', function (event) {
+        event.preventDefault();
+        closeCandidateImageModal();
+    });
+
+    $('[data-candidate-image-input-trigger]').on('click', function (event) {
+        event.preventDefault();
+        $('#candidatePersonalImageInput').trigger('click');
+    });
+
+    $('[data-candidate-image-dropzone]').on('click', function (event) {
+        if ($(event.target).closest('[data-candidate-image-input-trigger]').length) {
+            return;
+        }
+
+        $('#candidatePersonalImageInput').trigger('click');
+    }).on('dragover', function (event) {
+        event.preventDefault();
+        $(this).addClass('candidate-image-upload-modal__dropzone--dragging');
+    }).on('dragleave drop', function (event) {
+        event.preventDefault();
+        $(this).removeClass('candidate-image-upload-modal__dropzone--dragging');
+
+        if (event.type !== 'drop') {
+            return;
+        }
+
+        const files = event.originalEvent.dataTransfer && event.originalEvent.dataTransfer.files;
+        if (!files || !files.length) {
+            return;
+        }
+
+        $('#candidatePersonalImageInput')[0].files = files;
+        $('#candidatePersonalImageInput').trigger('change');
     });
 
     $('.candidate-personal-delete').on('click', function (event) {
         event.preventDefault();
-        const $avatar = $('#candidatePersonalAvatar');
-        $('#candidatePersonalImageInput').val('');
-        $avatar.attr('src', $avatar.data('original-src'));
+        const $button = $(this);
+
+        swal({
+            title: Lang.get('js.delete') + ' !',
+            text: Lang.get('js.are_you_sure') + ' "Profile Image" ?',
+            buttons: {
+                confirm: Lang.get('js.yes_delete'),
+                cancel: Lang.get('js.no_cancel'),
+            },
+            reverseButtons: true,
+            icon: 'warning',
+            confirmButtonColor: '#F62947',
+        }).then(function (willDelete) {
+            if (!willDelete) {
+                return;
+            }
+
+            $button.prop('disabled', true);
+
+            $.ajax({
+                url: route('candidate-profile.image.delete'),
+                type: 'delete',
+                success: function (result) {
+                    const avatar = result.data && result.data.avatar ? result.data.avatar : $('#candidatePersonalAvatar').data('original-src');
+                    $('#candidatePersonalImageInput').val('');
+                    $('#candidatePersonalAvatar')
+                        .attr('src', avatar)
+                        .attr('data-original-src', avatar)
+                        .data('original-src', avatar);
+                    displaySuccessMessage(result.message);
+                },
+                error: function (result) {
+                    displayErrorMessage(result.responseJSON && result.responseJSON.message ? result.responseJSON.message : 'The image could not be deleted.');
+                },
+                complete: function () {
+                    $button.prop('disabled', false);
+                },
+            });
+        });
     });
 
         $('#birthDate').flatpickr({
@@ -220,7 +472,7 @@ function loadCandidateGeneralData() {
 
 
     if ($('#candidateProfileUpdate').length){
-        $('#salaryCurrencyId,#countryId,#stateId,#cityId,#industryId,#careerLevelId,#functionalAreaId').
+        $('#salaryCurrencyId,#stateId,#industryId,#careerLevelId,#functionalAreaId,#presentCountryDisplay,#permanentCountryId,#permanentStateId').
             select2({
                 width: '100%',
         });
@@ -344,6 +596,10 @@ function loadCandidateGeneralData() {
     });
 
     $('#stateId').on('change', function () {
+        if (!$('#cityId').length) {
+            return;
+        }
+
         $.ajax({
             url: route('cities-list'),
             type: 'get',
@@ -423,23 +679,24 @@ $(document).on('keyup', '#pinterestUrl', function () {
 
 $(document).on('submit', '#candidateProfileUpdate', function (e) {
     e.preventDefault();
+    const form = this;
+    const submitter = e.originalEvent && e.originalEvent.submitter ? e.originalEvent.submitter : null;
+    const submitAction = submitter && submitter.getAttribute('formaction') ? submitter.getAttribute('formaction') : null;
+    const submitMethod = submitter && submitter.getAttribute('formmethod') ? submitter.getAttribute('formmethod') : null;
+    const isScopedSectionSubmit = submitAction && submitAction !== form.getAttribute('action');
+    const isScopedAjaxSubmit = submitter && submitter.hasAttribute('data-scoped-ajax-submit');
+
     if (typeof window.syncRelevantQuillEditors === 'function') {
         window.syncRelevantQuillEditors();
     }
 
-    if ($('#error-msg').text() !== '') {
+    if (!isScopedSectionSubmit && !$('#error-msg').hasClass('d-none') && $('#error-msg').text() !== '') {
         $('#phoneNumber').focus();
         return false;
     }
     $('#candidateProfileUpdate').
         find('input:text:visible:first').
         focus();
-
-    let facebookUrl = $('#facebookUrl').val();
-    let twitterUrl = $('#twitterUrl').val();
-    let linkedInUrl = $('#linkedInUrl').val();
-    let googlePlusUrl = $('#googlePlusUrl').val();
-    let pinterestUrl = $('#pinterestUrl').val();
 
     let facebookExp = new RegExp(
         /^(https?:\/\/)?((m{1}\.)?)?((w{3}\.)?)facebook.[a-z]{2,3}\/?.*/i);
@@ -452,33 +709,81 @@ $(document).on('submit', '#candidateProfileUpdate', function (e) {
     let pinterestExp = new RegExp(
         /^(https?:\/\/)?((w{3}\.)?)pinterest\.[a-z]{2,3}\/?.*/i);
 
-    urlValidation(facebookUrl, facebookExp);
-    urlValidation(twitterUrl, twitterExp);
-    urlValidation(linkedInUrl, linkedInExp);
-    urlValidation(googlePlusUrl, googlePlusExp);
-    urlValidation(pinterestUrl, pinterestExp);
+    const validateOptionalUrl = function (selector, expression, message) {
+        const value = $(selector).length ? $(selector).val() : '';
+        if (!urlValidation(value, expression)) {
+            displayErrorMessage(message);
+            return false;
+        }
 
-    if (!urlValidation(facebookUrl, facebookExp)) {
-        displayErrorMessage(Lang.get('js.valid_facebook_url'));
+        return true;
+    };
+
+    if (!isScopedSectionSubmit) {
+        if (!validateOptionalUrl('#facebookUrl', facebookExp, Lang.get('js.valid_facebook_url'))) {
+            return false;
+        }
+        if (!validateOptionalUrl('#twitterUrl', twitterExp, Lang.get('js.valid_twitter_url'))) {
+            return false;
+        }
+        if (!validateOptionalUrl('#googlePlusUrl', googlePlusExp, Lang.get('js.valid_google_plus_url'))) {
+            return false;
+        }
+        if (!validateOptionalUrl('#linkedInUrl', linkedInExp, Lang.get('js.valid_linkedin_url'))) {
+            return false;
+        }
+        if (!validateOptionalUrl('#pinterestUrl', pinterestExp, Lang.get('js.valid_pinterest_url'))) {
+            return false;
+        }
+    }
+
+    if (isScopedAjaxSubmit) {
+        const formData = new FormData(form);
+        const $submitter = $(submitter);
+        $submitter.prop('disabled', true);
+
+        $.ajax({
+            url: submitAction,
+            type: 'post',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                Accept: 'application/json',
+            },
+            success: function (result) {
+                displaySuccessMessage(result.message);
+                setTimeout(function () {
+                    window.location.href = route('candidate.profile', {section: 'personal-information'});
+                }, 800);
+            },
+            error: function (result) {
+                let message = result.responseJSON && result.responseJSON.message ? result.responseJSON.message : Lang.get('js.error');
+
+                if (result.status === 422 && result.responseJSON && result.responseJSON.errors) {
+                    const firstErrorKey = Object.keys(result.responseJSON.errors)[0];
+                    if (firstErrorKey && result.responseJSON.errors[firstErrorKey][0]) {
+                        message = result.responseJSON.errors[firstErrorKey][0];
+                    }
+                }
+
+                displayErrorMessage(message);
+            },
+            complete: function () {
+                $submitter.prop('disabled', false);
+            },
+        });
+
         return false;
     }
-    if (!urlValidation(twitterUrl, twitterExp)) {
-        displayErrorMessage(Lang.get('js.valid_twitter_url'));
-        return false;
+
+    if (submitAction) {
+        form.setAttribute('action', submitAction);
     }
-    if (!urlValidation(googlePlusUrl, googlePlusExp)) {
-        displayErrorMessage(Lang.get('js.valid_google_plus_url'));
-        return false;
+    if (submitMethod) {
+        form.setAttribute('method', submitMethod);
     }
-    if (!urlValidation(linkedInUrl, linkedInExp)) {
-        displayErrorMessage(Lang.get('js.valid_linkedin_url'));
-        return false;
-    }
-    if (!urlValidation(pinterestUrl, pinterestExp)) {
-        displayErrorMessage(Lang.get('js.valid_pinterest_url'));
-        return false;
-    }
-    $('#candidateProfileUpdate')[0].submit();
+    form.submit();
 
     return true;
 });

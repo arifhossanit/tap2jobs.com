@@ -12,9 +12,26 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('candidates', function (Blueprint $table) {
-            $table->text('career_summary')->nullable()->after('preferred_organization_types');
-            $table->text('special_qualification')->nullable()->after('career_summary');
-            $table->text('keywords')->nullable()->after('special_qualification');
+            if (! Schema::hasColumn('candidates', 'career_summary')) {
+                $column = $table->text('career_summary')->nullable();
+                if (Schema::hasColumn('candidates', 'preferred_organization_types')) {
+                    $column->after('preferred_organization_types');
+                } elseif (Schema::hasColumn('candidates', 'job_nature')) {
+                    $column->after('job_nature');
+                }
+            }
+            if (! Schema::hasColumn('candidates', 'special_qualification')) {
+                $column = $table->text('special_qualification')->nullable();
+                if (Schema::hasColumn('candidates', 'career_summary')) {
+                    $column->after('career_summary');
+                }
+            }
+            if (! Schema::hasColumn('candidates', 'keywords')) {
+                $column = $table->text('keywords')->nullable();
+                if (Schema::hasColumn('candidates', 'special_qualification')) {
+                    $column->after('special_qualification');
+                }
+            }
         });
     }
 
@@ -24,11 +41,15 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('candidates', function (Blueprint $table) {
-            $table->dropColumn([
-                'career_summary',
-                'special_qualification',
-                'keywords',
+            $columns = array_filter([
+                Schema::hasColumn('candidates', 'career_summary') ? 'career_summary' : null,
+                Schema::hasColumn('candidates', 'special_qualification') ? 'special_qualification' : null,
+                Schema::hasColumn('candidates', 'keywords') ? 'keywords' : null,
             ]);
+
+            if ($columns) {
+                $table->dropColumn(array_values($columns));
+            }
         });
     }
 };

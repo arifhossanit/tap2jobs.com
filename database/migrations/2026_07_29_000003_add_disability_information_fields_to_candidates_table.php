@@ -12,8 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('candidates', function (Blueprint $table) {
-            $table->boolean('has_disability_id')->nullable()->after('keywords');
-            $table->string('disability_id_number')->nullable()->after('has_disability_id');
+            if (! Schema::hasColumn('candidates', 'has_disability_id')) {
+                $column = $table->boolean('has_disability_id')->nullable();
+                if (Schema::hasColumn('candidates', 'keywords')) {
+                    $column->after('keywords');
+                }
+            }
+            if (! Schema::hasColumn('candidates', 'disability_id_number')) {
+                $table->string('disability_id_number')->nullable()->after('has_disability_id');
+            }
         });
     }
 
@@ -23,10 +30,14 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('candidates', function (Blueprint $table) {
-            $table->dropColumn([
-                'has_disability_id',
-                'disability_id_number',
+            $columns = array_filter([
+                Schema::hasColumn('candidates', 'has_disability_id') ? 'has_disability_id' : null,
+                Schema::hasColumn('candidates', 'disability_id_number') ? 'disability_id_number' : null,
             ]);
+
+            if ($columns) {
+                $table->dropColumn(array_values($columns));
+            }
         });
     }
 };

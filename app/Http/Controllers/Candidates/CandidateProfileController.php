@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Candidates;
 use App\Http\Controllers\AppBaseController;
 use App\Http\Requests\CreateCandidateEducationRequest;
 use App\Http\Requests\CreateCandidateExperienceRequest;
+use App\Http\Requests\CreateCandidateTrainingRequest;
 use App\Models\CandidateEducation;
 use App\Models\CandidateExperience;
+use App\Models\CandidateTraining;
 use App\Repositories\Candidates\CandidateProfileRepository;
 
 class CandidateProfileController extends AppBaseController
@@ -96,7 +98,7 @@ class CandidateProfileController extends AppBaseController
      */
     public function createEducation(CreateCandidateEducationRequest $request)
     {
-        $input = $request->all();
+        $input = $request->validated();
 
         $candidateEducation = $this->candidateProfileRepository->createEducation($input);
         $candidateEducation->country = getCountryName($candidateEducation->country_id);
@@ -128,11 +130,14 @@ class CandidateProfileController extends AppBaseController
      */
     public function updateEducation(CandidateEducation $candidateEducation, CreateCandidateEducationRequest $request)
     {
-        $input = $request->all();
-        $data['id'] = $candidateEducation->id;
-        $candidateEducation->delete();
+        $candidateId = getLoggedInUser()->candidate->id;
 
-        $data['candidateEducation'] = $this->candidateProfileRepository->createEducation($input);
+        if ($candidateEducation->candidate_id !== $candidateId) {
+            return $this->sendError(__('messages.common.seems_message'));
+        }
+
+        $data['id'] = $candidateEducation->id;
+        $data['candidateEducation'] = $this->candidateProfileRepository->updateEducation($candidateEducation, $request->validated());
         $data['candidateEducation']->country = getCountryName($data['candidateEducation']->country_id);
 
         return $this->sendResponse($data, __('messages.flash.candidate_education_update'));
@@ -157,5 +162,46 @@ class CandidateProfileController extends AppBaseController
         $candidateEducation->delete();
 
         return $this->sendResponse($id, __('messages.flash.candidate_education_delete'));
+    }
+
+    public function createTraining(CreateCandidateTrainingRequest $request)
+    {
+        $candidateTraining = $this->candidateProfileRepository->createTraining($request->validated());
+
+        return $this->sendResponse($candidateTraining, __('messages.flash.candidate_training_save'));
+    }
+
+    public function editTraining(CandidateTraining $candidateTraining)
+    {
+        if ($candidateTraining->candidate_id !== getLoggedInUser()->candidate->id) {
+            return $this->sendError(__('messages.common.seems_message'));
+        }
+
+        return $this->sendResponse($candidateTraining, __('messages.flash.candidate_training_retrieved'));
+    }
+
+    public function updateTraining(CandidateTraining $candidateTraining, CreateCandidateTrainingRequest $request)
+    {
+        if ($candidateTraining->candidate_id !== getLoggedInUser()->candidate->id) {
+            return $this->sendError(__('messages.common.seems_message'));
+        }
+
+        $data['id'] = $candidateTraining->id;
+        $data['candidateTraining'] = $this->candidateProfileRepository->updateTraining($candidateTraining, $request->validated());
+
+        return $this->sendResponse($data, __('messages.flash.candidate_training_update'));
+    }
+
+    public function destroyTraining(CandidateTraining $candidateTraining)
+    {
+        $id = $candidateTraining->id;
+
+        if ($candidateTraining->candidate_id !== getLoggedInUser()->candidate->id) {
+            return $this->sendError(__('messages.common.seems_message'));
+        }
+
+        $candidateTraining->delete();
+
+        return $this->sendResponse($id, __('messages.flash.candidate_training_delete'));
     }
 }

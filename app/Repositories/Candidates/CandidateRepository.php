@@ -243,6 +243,270 @@ class CandidateRepository extends BaseRepository
     /**
      * @throws Throwable
      */
+    public function updatePersonalDetails(array $input): bool
+    {
+        try {
+            DB::beginTransaction();
+
+            $input['dob'] = ! empty($input['dob']) ? $input['dob'] : null;
+            $input['passport_issue_date'] = ! empty($input['passport_issue_date']) ? $input['passport_issue_date'] : null;
+
+            /** @var User $user */
+            $user = Auth::user();
+
+            $user->update(Arr::only($input, [
+                'first_name',
+                'last_name',
+                'email',
+                'phone',
+                'region_code',
+                'gender',
+                'dob',
+            ]));
+
+            if (isset($input['image'])) {
+                $user->clearMediaCollection(User::PROFILE);
+                $user->addMedia($input['image'])
+                    ->toMediaCollection(User::PROFILE, config('app.media_disc'));
+            }
+
+            $user->candidate->update(Arr::only($input, [
+                'father_name',
+                'mother_name',
+                'religion',
+                'marital_status_id',
+                'nationality',
+                'national_id_card',
+                'passport_number',
+                'passport_issue_date',
+                'secondary_mobile',
+                'alternate_email',
+                'emergency_contact',
+                'blood_group',
+                'height',
+                'weight',
+            ]));
+
+            DB::commit();
+
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function updateAddressDetails(array $input): bool
+    {
+        try {
+            DB::beginTransaction();
+
+            /** @var User $user */
+            $user = Auth::user();
+
+            foreach (['country_id', 'state_id', 'city_id', 'permanent_country_id', 'permanent_state_id', 'permanent_city_id'] as $locationField) {
+                if (array_key_exists($locationField, $input) && $input[$locationField] === '') {
+                    $input[$locationField] = null;
+                }
+            }
+
+            if (($input['present_address_type'] ?? null) === 'outside') {
+                $input['state_id'] = null;
+                $input['present_post_office'] = null;
+                $input['city_id'] = null;
+            } else {
+                $input['country_id'] = Country::where('short_code', 'BD')->orWhere('name', 'Bangladesh')->value('id') ?? $input['country_id'];
+                $input['present_state_division'] = null;
+            }
+
+            $input['permanent_same_as_present'] = ! empty($input['permanent_same_as_present']);
+            $hasPermanentAddressSelection = ! empty($input['permanent_address_selected']);
+            if ($input['permanent_same_as_present'] || ! $hasPermanentAddressSelection) {
+                $input['permanent_address_type'] = null;
+                $input['permanent_country_id'] = null;
+                $input['permanent_state_id'] = null;
+                $input['permanent_state_division'] = null;
+                $input['permanent_city_id'] = null;
+                $input['permanent_post_office'] = null;
+                $input['permanent_address'] = null;
+            } elseif (($input['permanent_address_type'] ?? null) === 'outside') {
+                $input['permanent_state_id'] = null;
+                $input['permanent_city_id'] = null;
+                $input['permanent_post_office'] = null;
+            } else {
+                $input['permanent_country_id'] = Country::where('short_code', 'BD')->orWhere('name', 'Bangladesh')->value('id') ?? $input['permanent_country_id'];
+                $input['permanent_state_division'] = null;
+            }
+
+            $user->update(Arr::only($input, [
+                'country_id',
+                'state_id',
+                'city_id',
+            ]));
+
+            $user->candidate->update(Arr::only($input, [
+                'present_address_type',
+                'present_post_office',
+                'present_state_division',
+                'permanent_same_as_present',
+                'permanent_address_type',
+                'permanent_country_id',
+                'permanent_state_id',
+                'permanent_state_division',
+                'permanent_city_id',
+                'permanent_post_office',
+                'permanent_address',
+                'address',
+            ]));
+
+            DB::commit();
+
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function updateCareerApplication(array $input): bool
+    {
+        try {
+            DB::beginTransaction();
+
+            /** @var User $user */
+            $user = Auth::user();
+
+            $user->candidate->update(Arr::only($input, [
+                'objective',
+                'current_salary',
+                'expected_salary',
+                'job_level',
+                'job_nature',
+            ]));
+
+            DB::commit();
+
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function updatePreferredArea(array $input): bool
+    {
+        try {
+            DB::beginTransaction();
+
+            /** @var User $user */
+            $user = Auth::user();
+
+            $preferredFields = [
+                'preferred_functional_categories',
+                'preferred_special_skills',
+                'preferred_job_locations_inside',
+                'preferred_job_locations_outside',
+                'preferred_organization_types',
+            ];
+
+            foreach ($preferredFields as $preferredField) {
+                $input[$preferredField] = array_values($input[$preferredField] ?? []);
+            }
+
+            $user->candidate->update(Arr::only($input, $preferredFields));
+
+            DB::commit();
+
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function updateRelevantInformation(array $input): bool
+    {
+        try {
+            DB::beginTransaction();
+
+            /** @var User $user */
+            $user = Auth::user();
+
+            $user->candidate->update(Arr::only($input, [
+                'career_summary',
+                'special_qualification',
+                'keywords',
+            ]));
+
+            DB::commit();
+
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function updateDisabilityInformation(array $input): bool
+    {
+        try {
+            DB::beginTransaction();
+
+            /** @var User $user */
+            $user = Auth::user();
+
+            if ((string) ($input['has_disability_id'] ?? '') === '0') {
+                $input['disability_id_number'] = null;
+                $input['disability_id_show_on_profile'] = null;
+                $input['disability_difficulty_seeing'] = null;
+                $input['disability_difficulty_hearing'] = null;
+                $input['disability_difficulty_remembering'] = null;
+                $input['disability_difficulty_walking'] = null;
+                $input['disability_difficulty_communicating'] = null;
+                $input['disability_difficulty_self_care'] = null;
+            } else {
+                $input['disability_id_show_on_profile'] = (bool) ($input['disability_id_show_on_profile'] ?? true);
+            }
+
+            $user->candidate->update(Arr::only($input, [
+                'has_disability_id',
+                'disability_id_number',
+                'disability_id_show_on_profile',
+                'disability_difficulty_seeing',
+                'disability_difficulty_hearing',
+                'disability_difficulty_remembering',
+                'disability_difficulty_walking',
+                'disability_difficulty_communicating',
+                'disability_difficulty_self_care',
+            ]));
+
+            DB::commit();
+
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    /**
+     * @throws Throwable
+     */
     public function updateGeneralInformation(array $input)
     {
         try {

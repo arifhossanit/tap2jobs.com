@@ -58,19 +58,18 @@
             <div id="candidatePersonalDetails" class="collapse show candidate-profile-section__collapse"
                  data-bs-parent="#candidateProfileAccordion">
                 <div class="candidate-profile-section__body">
-                    <div class="candidate-personal-summary">
-                        <div class="candidate-personal-image-row">
-                            <img src="{{ $user->avatar }}" data-original-src="{{ $user->avatar }}" alt="{{ __('messages.candidate_profile.personal_details') }}" class="candidate-personal-avatar" id="candidatePersonalAvatar">
-                            <div>
-                                <label class="candidate-personal-image-btn">
-                                    {{ __('messages.tooltip.change_image') }}
-                                    <input type="file" name="image" id="candidatePersonalImageInput" class="d-none" accept="image/png,image/jpeg,image/jpg">
-                                </label>
-                                <span class="candidate-personal-or">{{ __('messages.candidate_profile.or') }}</span>
-                                <button type="button" class="candidate-personal-delete">{{ __('messages.common.delete') }}</button>
-                                <p>{{ __('messages.candidate_profile.upload_profile_image_note') }}</p>
-                            </div>
+                    <div class="candidate-personal-image-row">
+                        <img src="{{ $user->avatar }}" data-original-src="{{ $user->avatar }}" alt="{{ __('messages.candidate_profile.personal_details') }}" class="candidate-personal-avatar" id="candidatePersonalAvatar">
+                        <div>
+                            <button type="button" class="candidate-personal-image-btn" data-candidate-image-modal-open>
+                                {{ __('messages.tooltip.change_image') }}
+                            </button>
+                            <span class="candidate-personal-or">{{ __('messages.candidate_profile.or') }}</span>
+                            <button type="button" class="candidate-personal-delete">{{ __('messages.common.delete') }}</button>
+                            <p>{{ __('messages.candidate_profile.upload_profile_image_note') }}</p>
                         </div>
+                    </div>
+                    <div class="candidate-personal-summary">
                         <div class="candidate-personal-summary-grid">
                             <div class="candidate-personal-summary-item">
                                 <span>{{ __('messages.candidate_profile.first_name') }}</span>
@@ -121,8 +120,7 @@
                                 <strong>{{ $passportIssueDate }}</strong>
                             </div>
                             <div class="candidate-personal-summary-item">
-                                <span>{{ __('messages.candidate_profile.primary_mobile') }}</span>
-                                <a href="javascript:void(0)" class="candidate-personal-change-user-id"><i class="fa-solid fa-plus"></i> {{ __('messages.candidate_profile.change_user_id') }}</a>
+                                <span>{{ __('messages.candidate_profile.primary_mobile') }}</span>                                
                                 <strong>{{ $profileDisplayValue($user->phone) }}</strong>
                             </div>
                             <div class="candidate-personal-summary-item">
@@ -175,7 +173,6 @@
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
                             {{ Form::label('dob', __('messages.candidate_profile.date_of_birth'), ['class' => 'form-label']) }}
-                            <span class="required"></span>
                             <input type="text" name="dob" id="birthDate"
                                    class="form-control {{ getLoggedInUser()->theme_mode ? 'bg-light' : 'bg-white' }}"
                                    autocomplete="off" placeholder="{{ __('messages.candidate_profile.enter_date_of_birth') }}"
@@ -197,7 +194,7 @@
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
                             <div class="candidate-nationality-label">
-                                <span>{{ Form::label('nationality', __('messages.candidate.nationality'), ['class' => 'form-label mb-0']) }} <span class="required"></span></span>
+                                <span>{{ Form::label('nationality', __('messages.candidate.nationality'), ['class' => 'form-label mb-0']) }}</span>
                                 <label class="candidate-nationality-check">
                                     {{ Form::checkbox('is_bangladeshi', '1', (isset($user->candidate->nationality) ? $user->candidate->nationality : 'Bangladeshi') == 'Bangladeshi', ['class' => 'form-check-input', 'id' => 'isBangladeshi']) }}
                                     <span>{{ __('messages.candidate_profile.bangladeshi') }}</span>
@@ -223,12 +220,10 @@
                         <div class="col-xl-6 col-md-6 col-sm-12 mb-5 mobile-itel-width">
                             {{ Form::label('phone', __('messages.candidate_profile.primary_mobile'), ['class' => 'form-label']) }}
                             <span class="candidate-field-note">({{ __('messages.candidate_profile.phone_note') }})</span>
-                            <span class="required"></span>
                             {{ Form::tel('phone', isset($user->phone) ? $user->phone : null, ['class' => 'form-control', 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")', 'id' => 'phoneNumber']) }}
                             {{ Form::hidden('region_code', null, ['id' => 'prefix_code']) }}
                             <span id="valid-msg" class="text-success d-block fw-400 fs-small mt-2 d-none">{{ __('messages.phone.valid_number') }}</span>
-                            <span id="error-msg" class="text-danger d-block fw-400 fs-small mt-2 d-none"></span>
-                            {{-- <a href="javascript:void(0)" class="candidate-change-user-id"><i class="fa-solid fa-plus"></i> Change User Id</a> --}}
+                            <span id="error-msg" class="text-danger d-block fw-400 fs-small mt-2 d-none"></span>                            
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
                             {{ Form::label('secondary_mobile', __('messages.candidate_profile.secondary_mobile'), ['class' => 'form-label']) }}
@@ -261,7 +256,7 @@
                         </div>
                         <div class="col-12">
                             <div class="candidate-profile-section-actions">
-                                {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary btnSave']) }}
+                                {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary btnSave', 'formaction' => route('candidate-profile.personal-details.update'), 'formnovalidate' => true]) }}
                                 <button type="button" class="btn btn-outline-secondary" data-personal-edit-close>{{ __('messages.common.close') }}</button>
                             </div>
                         </div>
@@ -291,16 +286,47 @@
                         $addressDisplayValue = function ($value) {
                             return filled($value) ? $value : '---';
                         };
+                        $bangladeshId = \App\Models\Country::where('short_code', 'BD')->orWhere('name', 'Bangladesh')->value('id');
+                        $presentAddressType = $user->candidate->present_address_type ?? (($bangladeshId && (int) $user->country_id === (int) $bangladeshId) ? 'inside' : 'inside');
+                        $permanentSameAsPresent = $user->candidate->permanent_same_as_present ?? true;
+                        $permanentAddressType = $user->candidate->permanent_address_type ?? null;
+                        $districtList = $data['districts'] ?? ($states ?? []);
+                        $permanentStates = ! empty($user->candidate->permanent_country_id) ? getStates($user->candidate->permanent_country_id) : ($bangladeshId ? getStates($bangladeshId) : []);
+                        $permanentCities = ! empty($user->candidate->permanent_state_id) ? getCities($user->candidate->permanent_state_id) : [];
                         $addressCountry = ($data['countries'] ?? [])[$user->country_id ?? null] ?? null;
                         $addressState = ($states ?? [])[$user->state_id ?? null] ?? null;
                         $addressCity = ($cities ?? [])[$user->city_id ?? null] ?? null;
+                        $presentStateDivision = $presentAddressType === 'outside'
+                            ? ($user->candidate->present_state_division ?? null)
+                            : $addressState;
                         $presentAddressParts = collect([
                             $user->candidate->address ?? null,
-                            $addressCity,
-                            $addressState,
+                            $user->candidate->present_post_office ?? null,
+                            $presentStateDivision,
                             $addressCountry,
                         ])->filter(fn ($value) => filled($value))->values();
                         $presentAddress = $presentAddressParts->isNotEmpty() ? $presentAddressParts->implode(', ') : '---';
+                        $permanentStateDivision = $permanentAddressType === 'outside'
+                            ? ($user->candidate->permanent_state_division ?? null)
+                            : (($permanentStates ?? [])[$user->candidate->permanent_state_id ?? null] ?? null);
+                        $permanentAddressParts = collect([
+                            $user->candidate->permanent_address ?? null,
+                            $user->candidate->permanent_post_office ?? null,
+                            $permanentStateDivision,
+                            ($data['countries'] ?? [])[$user->candidate->permanent_country_id ?? null] ?? null,
+                        ])->filter(fn ($value) => filled($value))->values();
+                        $permanentAddress = $permanentSameAsPresent
+                            ? __('messages.candidate_profile.same_as_present_address')
+                            : ($permanentAddressParts->isNotEmpty() ? $permanentAddressParts->implode(', ') : '---');
+                        $hasPermanentDetails = ! $permanentSameAsPresent && collect([
+                            $user->candidate->permanent_address_type ?? null,
+                            $user->candidate->permanent_country_id ?? null,
+                            $user->candidate->permanent_state_id ?? null,
+                            $user->candidate->permanent_state_division ?? null,
+                            $user->candidate->permanent_city_id ?? null,
+                            $user->candidate->permanent_post_office ?? null,
+                            $user->candidate->permanent_address ?? null,
+                        ])->contains(fn ($value) => filled($value));
                     @endphp
                     <div class="candidate-address-summary">
                         <div class="candidate-address-summary-item">
@@ -309,31 +335,94 @@
                         </div>
                         <div class="candidate-address-summary-item">
                             <span>{{ __('messages.candidate_profile.permanent_address') }}</span>
-                            <strong>{{ __('messages.candidate_profile.same_as_present_address') }}</strong>
+                            <strong>{{ $permanentAddress }}</strong>
                         </div>
                     </div>
-                    <div class="row candidate-address-form d-none">
-                        <div class="col-xl-4 col-md-6 col-sm-12 mb-5">
-                            {{ Form::label('country', __('messages.company.country') . ':', ['class' => 'form-label']) }}
-                            {{ Form::select('country_id', $data['countries'], $user->country_id ?? null, ['class' => 'form-select ', 'id' => 'countryId', 'placeholder' => __('messages.company.select_country')]) }}
+                    <div class="candidate-address-form d-none" data-has-permanent-details="{{ $hasPermanentDetails ? '1' : '0' }}">
+                        <input type="hidden" name="country_id" id="countryId" value="{{ $user->country_id ?? $bangladeshId }}" data-bangladesh-id="{{ $bangladeshId }}">
+                        <div class="candidate-address-heading">Present Address<span class="required"></span></div>
+                        <div class="candidate-address-choice-row">
+                            <label class="candidate-address-choice">
+                                <input type="radio" name="present_address_type" value="inside" {{ $presentAddressType === 'inside' ? 'checked' : '' }}>
+                                <span>Inside Bangladesh</span>
+                            </label>
+                            <label class="candidate-address-choice">
+                                <input type="radio" name="present_address_type" value="outside" {{ $presentAddressType === 'outside' ? 'checked' : '' }}>
+                                <span>Outside Bangladesh</span>
+                            </label>
                         </div>
-                        <div class="col-xl-4 col-md-6 col-sm-12 mb-5">
-                            {{ Form::label('state', __('messages.company.state') . ':', ['class' => 'form-label']) }}
-                            {{ Form::select('state_id', isset($states) && $states != null ? $states : [], $user->state_id ?? null, ['id' => 'stateId', 'class' => 'form-select', 'placeholder' => __('messages.company.select_state')]) }}
-                        </div>
-                        <div class="col-xl-4 col-md-6 col-sm-12 mb-5">
-                            {{ Form::label('city', __('messages.company.city') . ':', ['class' => 'form-label']) }}
-                            {{ Form::select('city_id', isset($cities) && $cities != null ? $cities : [], $user->city_id ?? null, ['class' => 'form-select ', 'id' => 'cityId', 'placeholder' => __('messages.company.select_city')]) }}
-                        </div>
-                        <div class="col-12 mb-5">
-                            {{ Form::label('address', __('messages.candidate.address') . ':', ['class' => 'form-label']) }}
-                            {{ Form::textarea('address', isset($user->candidate->address) ? $user->candidate->address : null, ['class' => 'form-control', 'rows' => '5', 'placeholder' => __('messages.candidate.address')]) }}
-                        </div>
-                        <div class="col-12">
-                            <div class="candidate-profile-section-actions">
-                                {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary btnSave']) }}
-                                <button type="button" class="btn btn-outline-secondary" data-address-edit-close>{{ __('messages.common.close') }}</button>
+                        <div class="candidate-address-grid">
+                            <input type="hidden" name="city_id" value="">
+                            <div class="candidate-address-field candidate-address-country-field d-none">
+                                {{ Form::label('country_id_display', 'Country', ['class' => 'form-label']) }}
+                                {{ Form::select('country_id_display', $data['countries'], $user->country_id ?? null, ['class' => 'form-select', 'id' => 'presentCountryDisplay', 'placeholder' => __('messages.company.select_country')]) }}
                             </div>
+                            <div class="candidate-address-field candidate-present-district-field {{ $presentAddressType === 'outside' ? 'd-none' : '' }}">
+                                {{ Form::label('state_id', 'District', ['class' => 'form-label required']) }}
+                                {{ Form::select('state_id', $districtList, $user->state_id ?? null, ['id' => 'stateId', 'class' => 'form-select', 'placeholder' => 'Select your District']) }}
+                            </div>
+                            <div class="candidate-address-field candidate-present-state-text-field {{ $presentAddressType === 'outside' ? '' : 'd-none' }}">
+                                {{ Form::label('present_state_division', 'State/Division', ['class' => 'form-label']) }}
+                                {{ Form::text('present_state_division', $user->candidate->present_state_division ?? null, ['class' => 'form-control', 'placeholder' => 'Enter your State/Division']) }}
+                            </div>
+                            <div class="candidate-address-field candidate-present-thana-po-field {{ $presentAddressType === 'outside' ? 'd-none' : '' }}">
+                                {{ Form::label('present_post_office', 'Thana/P.O', ['class' => 'form-label required']) }}
+                                {{ Form::text('present_post_office', $user->candidate->present_post_office ?? null, ['class' => 'form-control', 'placeholder' => 'Enter your Thana/P.O']) }}
+                            </div>
+                            <div class="candidate-address-field candidate-address-field--full">
+                                {{ Form::label('address', 'House No/Road/Village', ['class' => 'form-label required']) }}
+                                {{ Form::textarea('address', $user->candidate->address ?? null, ['class' => 'form-control candidate-address-textarea', 'rows' => 3, 'placeholder' => 'Enter your House No/Road/Village']) }}
+                            </div>
+                        </div>
+                        <div class="candidate-address-permanent-row">
+                            <h3>Permanent Address</h3>
+                            <label class="candidate-address-same-check">
+                                <input class="form-check-input" type="checkbox" name="permanent_same_as_present" value="1"
+                                       id="permanentSameAsPresent" {{ $permanentSameAsPresent ? 'checked' : '' }}>
+                                <span>Same as Present Address</span>
+                            </label>
+                        </div>
+                        <input type="hidden" name="permanent_address_selected" id="permanentAddressSelected" value="{{ $hasPermanentDetails ? '1' : '0' }}">
+                        <div class="candidate-permanent-address-options {{ $permanentSameAsPresent ? 'd-none' : '' }}">
+                            <div class="candidate-address-choice-row">
+                                <label class="candidate-address-choice">
+                                    <input type="radio" name="permanent_address_type" value="inside" {{ $permanentAddressType === 'inside' ? 'checked' : '' }}>
+                                    <span>Inside Bangladesh</span>
+                                </label>
+                                <label class="candidate-address-choice">
+                                    <input type="radio" name="permanent_address_type" value="outside" {{ $permanentAddressType === 'outside' ? 'checked' : '' }}>
+                                    <span>Outside Bangladesh</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="candidate-permanent-address-fields {{ $permanentSameAsPresent || ! $hasPermanentDetails ? 'd-none' : '' }}">
+                            <div class="candidate-address-grid">
+                                <input type="hidden" name="permanent_city_id" value="">
+                                <div class="candidate-address-field candidate-permanent-country-field d-none">
+                                    {{ Form::label('permanent_country_id', 'Country', ['class' => 'form-label']) }}
+                                    {{ Form::select('permanent_country_id', $data['countries'], $user->candidate->permanent_country_id ?? $bangladeshId, ['class' => 'form-select', 'id' => 'permanentCountryId', 'placeholder' => __('messages.company.select_country')]) }}
+                                </div>
+                                <div class="candidate-address-field candidate-permanent-district-field {{ $permanentAddressType === 'outside' ? 'd-none' : '' }}">
+                                    {{ Form::label('permanent_state_id', 'District', ['class' => 'form-label']) }}
+                                    {{ Form::select('permanent_state_id', $permanentStates, $user->candidate->permanent_state_id ?? null, ['id' => 'permanentStateId', 'class' => 'form-select', 'placeholder' => 'Select your District']) }}
+                                </div>
+                                <div class="candidate-address-field candidate-permanent-state-text-field {{ $permanentAddressType === 'outside' ? '' : 'd-none' }}">
+                                    {{ Form::label('permanent_state_division', 'State/Division', ['class' => 'form-label']) }}
+                                    {{ Form::text('permanent_state_division', $user->candidate->permanent_state_division ?? null, ['class' => 'form-control', 'placeholder' => 'Enter your State/Division']) }}
+                                </div>
+                                <div class="candidate-address-field candidate-permanent-thana-po-field {{ $permanentAddressType === 'outside' ? 'd-none' : '' }}">
+                                    {{ Form::label('permanent_post_office', 'Thana/P.O', ['class' => 'form-label']) }}
+                                    {{ Form::text('permanent_post_office', $user->candidate->permanent_post_office ?? null, ['class' => 'form-control', 'placeholder' => 'Enter your Thana/P.O']) }}
+                                </div>
+                                <div class="candidate-address-field candidate-address-field--full">
+                                    {{ Form::label('permanent_address', 'House No/Road/Village', ['class' => 'form-label']) }}
+                                    {{ Form::textarea('permanent_address', $user->candidate->permanent_address ?? null, ['class' => 'form-control candidate-address-textarea', 'rows' => 3, 'placeholder' => 'Enter your House No/Road/Village']) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="candidate-profile-section-actions candidate-address-actions">
+                            {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary btnSave', 'formaction' => route('candidate-profile.address-details.update'), 'formnovalidate' => true, 'data-scoped-ajax-submit' => true]) }}
+                            <button type="button" class="btn btn-outline-secondary" data-address-edit-close>{{ __('messages.common.close') }}</button>
                         </div>
                     </div>
                 </div>
@@ -493,7 +582,7 @@
                         </div>
                         <div class="col-12">
                             <div class="candidate-profile-section-actions">
-                                {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary']) }}
+                                {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary', 'formaction' => route('candidate-profile.career-application.update'), 'formnovalidate' => true, 'data-scoped-ajax-submit' => true]) }}
                                 <button type="button" class="btn btn-light btn-active-light-primary" data-career-edit-close>{{ __('messages.common.close') }}</button>
                             </div>
                         </div>
@@ -532,15 +621,6 @@
                         $preferredOutside = collect($user->candidate->preferred_job_locations_outside ?? [])->map(fn ($id) => (string) $id)->toArray();
                         $preferredOrganizations = collect($user->candidate->preferred_organization_types ?? [])->map(fn ($id) => (string) $id)->toArray();
 
-                        if (empty($preferredFunctional)) {
-                            $preferredFunctional = $functionalOptions->keys()->take(3)->map(fn ($id) => (string) $id)->toArray();
-                        }
-                        if (empty($preferredSkills)) {
-                            $preferredSkills = $specialSkillOptions->keys()->take(1)->map(fn ($id) => (string) $id)->toArray();
-                        }
-                        if (empty($preferredInside)) {
-                            $preferredInside = $districtOptions->keys()->take(3)->map(fn ($id) => (string) $id)->toArray();
-                        }
                         $preferredNames = function ($ids, $options) {
                             return collect($ids)->map(function ($id) use ($options) {
                                 return $options[$id] ?? null;
@@ -673,7 +753,7 @@
                         </div>
 
                         <div class="candidate-profile-section-actions">
-                            {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary']) }}
+                            {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary', 'formaction' => route('candidate-profile.preferred-area.update'), 'formnovalidate' => true, 'data-scoped-ajax-submit' => true]) }}
                             <button type="button" class="btn btn-light btn-active-light-primary" data-preferred-edit-close>{{ __('messages.common.close') }}</button>
                         </div>
                     </div>
@@ -715,11 +795,11 @@
                         </div>
                         <div class="candidate-relevant-summary-item">
                             <span>{{ __('messages.candidate_profile.special_qualification') }}</span>
-                            <strong>{!! nl2br(e($relevantDisplayValue($user->candidate->special_qualification ?? __('messages.candidate_profile.special_qualification_default')))) !!}</strong>
+                            <strong>{!! nl2br(e($relevantDisplayValue($user->candidate->special_qualification ?? null))) !!}</strong>
                         </div>
                         <div class="candidate-relevant-summary-item">
                             <span>{{ __('messages.candidate_profile.keywords') }}</span>
-                            <strong>{{ $relevantDisplayValue($user->candidate->keywords ?? __('messages.candidate_profile.keywords_default')) }}</strong>
+                            <strong>{{ $relevantDisplayValue($user->candidate->keywords ?? null) }}</strong>
                         </div>
                     </div>
                     <div class="candidate-relevant-area candidate-relevant-form d-none">
@@ -752,7 +832,7 @@
                                     <i class="fa-solid fa-circle-info"></i>
                                 </button> --}}
                             </div>
-                            {{ Form::textarea('special_qualification', $user->candidate->special_qualification ?? __('messages.candidate_profile.special_qualification_default'), ['class' => 'form-control candidate-relevant-textarea', 'rows' => 4]) }}
+                            {{ Form::textarea('special_qualification', $user->candidate->special_qualification ?? null, ['class' => 'form-control candidate-relevant-textarea', 'rows' => 4, 'placeholder' => __('messages.candidate_profile.special_qualification_default')]) }}
                         </div>
 
                         <div class="candidate-relevant-field">
@@ -767,11 +847,11 @@
                                     <i class="fa-solid fa-circle-info"></i>
                                 </button> --}}
                             </div>
-                            {{ Form::textarea('keywords', $user->candidate->keywords ?? __('messages.candidate_profile.keywords_default'), ['class' => 'form-control candidate-relevant-textarea', 'rows' => 4]) }}
+                            {{ Form::textarea('keywords', $user->candidate->keywords ?? null, ['class' => 'form-control candidate-relevant-textarea', 'rows' => 4, 'placeholder' => __('messages.candidate_profile.keywords_default'), 'required' => true]) }}
                         </div>
 
                         <div class="candidate-profile-section-actions">
-                            {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary']) }}
+                            {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary', 'formaction' => route('candidate-profile.relevant-information.update'), 'formnovalidate' => true, 'data-scoped-ajax-submit' => true]) }}
                             <button type="button" class="btn btn-light btn-active-light-primary" data-relevant-edit-close>{{ __('messages.common.close') }}</button>
                         </div>
                     </div>
@@ -796,13 +876,86 @@
             <div id="candidateDisabilityInformation" class="collapse candidate-profile-section__collapse"
                  data-bs-parent="#candidateProfileAccordion">
                 <div class="candidate-profile-section__body">
+                    @php
+                        $hasDisabilityId = $user->candidate->has_disability_id ?? null;
+                        $showDisabilityDetails = (string) $hasDisabilityId === '1';
+                        $disabilityShowOnProfile = $user->candidate->disability_id_show_on_profile ?? true;
+                        $difficultyOptions = [
+                            '' => __('messages.candidate_profile.select_your_difficulty'),
+                            'no_difficulty' => __('messages.candidate_profile.no_difficulty'),
+                            'some_difficulty' => __('messages.candidate_profile.some_difficulty'),
+                            'a_lot_of_difficulty' => __('messages.candidate_profile.a_lot_of_difficulty'),
+                            'cannot_do' => __('messages.candidate_profile.cannot_do'),
+                        ];
+                        $difficultySummaryOptions = [
+                            'no_difficulty' => __('messages.candidate_profile.no_difficulty'),
+                            'some_difficulty' => __('messages.candidate_profile.yes_some_difficulties'),
+                            'a_lot_of_difficulty' => __('messages.candidate_profile.yes_lot_of_difficulties'),
+                            'cannot_do' => __('messages.candidate_profile.cannot_do'),
+                        ];
+                        $disabilitySummaryItems = [
+                            [
+                                'label' => __('messages.candidate_profile.national_disability_id'),
+                                'value' => $user->candidate->disability_id_number ?? null,
+                            ],
+                            [
+                                'label' => __('messages.candidate_profile.show_on_profile'),
+                                'value' => $user->candidate->disability_id_show_on_profile === null ? null : ($user->candidate->disability_id_show_on_profile ? __('messages.common.yes') : __('messages.common.no')),
+                            ],
+                            [
+                                'label' => __('messages.candidate_profile.difficulty_to_see'),
+                                'value' => $difficultySummaryOptions[$user->candidate->disability_difficulty_seeing ?? null] ?? null,
+                            ],
+                            [
+                                'label' => __('messages.candidate_profile.difficulty_to_hear'),
+                                'value' => $difficultySummaryOptions[$user->candidate->disability_difficulty_hearing ?? null] ?? null,
+                            ],
+                            [
+                                'label' => __('messages.candidate_profile.difficulty_to_concentrate_or_remember'),
+                                'value' => $difficultySummaryOptions[$user->candidate->disability_difficulty_remembering ?? null] ?? null,
+                            ],
+                            [
+                                'label' => __('messages.candidate_profile.difficulty_to_sit_stand_walk'),
+                                'value' => $difficultySummaryOptions[$user->candidate->disability_difficulty_walking ?? null] ?? null,
+                            ],
+                            [
+                                'label' => __('messages.candidate_profile.difficulty_to_communicate'),
+                                'value' => $difficultySummaryOptions[$user->candidate->disability_difficulty_communicating ?? null] ?? null,
+                            ],
+                            [
+                                'label' => __('messages.candidate_profile.difficulty_of_taking_care'),
+                                'value' => $difficultySummaryOptions[$user->candidate->disability_difficulty_self_care ?? null] ?? null,
+                            ],
+                        ];
+                        $hasDisabilitySummary = $showDisabilityDetails && collect($disabilitySummaryItems)->contains(fn ($item) => filled($item['value']));
+                    @endphp
                     <div class="candidate-disability-summary">
-                        <p>{{ __('messages.candidate_profile.disability_id_not_mentioned') }}</p>
-                        <p>
-                            {{ __('messages.candidate_profile.disability_support_prefix') }}
-                            <a href="tel:+8801730369802">{{ __('messages.candidate_profile.disability_support_contact') }}</a>
-                            {{ __('messages.candidate_profile.disability_support_suffix') }}
-                        </p>
+                        @if($hasDisabilitySummary)
+                            <div class="candidate-disability-summary-grid">
+                                @foreach($disabilitySummaryItems as $summaryItem)
+                                    <div class="candidate-disability-summary-item">
+                                        <span>{{ $summaryItem['label'] }}</span>
+                                        <strong>{{ filled($summaryItem['value']) ? $summaryItem['value'] : '---' }}</strong>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <p>
+                                {{ __('messages.candidate_profile.have_disability_id_number') }}
+                                <strong>
+                                    @if($hasDisabilityId === null)
+                                        {{ __('messages.candidate_profile.disability_id_not_mentioned') }}
+                                    @else
+                                        {{ $hasDisabilityId ? __('messages.common.yes') : __('messages.common.no') }}
+                                    @endif
+                                </strong>
+                            </p>
+                            <p>
+                                {{ __('messages.candidate_profile.disability_support_prefix') }}
+                                {{-- <a href="tel:+8801730369802">{{ __('messages.candidate_profile.disability_support_contact') }}</a> --}}
+                                {{ __('messages.candidate_profile.disability_support_suffix') }}
+                            </p>
+                        @endif
                     </div>
                     <div class="candidate-disability-area candidate-disability-form d-none">
                         <div class="candidate-disability-question">
@@ -810,21 +963,66 @@
                         </div>
                         <div class="candidate-disability-options">
                             <label class="candidate-career-radio">
-                                {{ Form::radio('has_disability_id', '1', isset($user->candidate->has_disability_id) ? $user->candidate->has_disability_id == 1 : false, ['class' => 'form-check-input']) }}
+                                {{ Form::radio('has_disability_id', '1', $showDisabilityDetails, ['class' => 'form-check-input', 'data-disability-toggle' => true]) }}
                                 <span>{{ __('messages.common.yes') }}</span>
                             </label>
                             <label class="candidate-career-radio">
-                                {{ Form::radio('has_disability_id', '0', isset($user->candidate->has_disability_id) ? $user->candidate->has_disability_id == 0 : false, ['class' => 'form-check-input']) }}
+                                {{ Form::radio('has_disability_id', '0', isset($user->candidate->has_disability_id) ? $user->candidate->has_disability_id == 0 : false, ['class' => 'form-check-input', 'data-disability-toggle' => true]) }}
                                 <span>{{ __('messages.common.no') }}</span>
                             </label>
                         </div>
-                        <p class="candidate-disability-support">
+                        <div class="candidate-disability-details {{ $showDisabilityDetails ? '' : 'd-none' }}" data-disability-details>
+                            <div class="candidate-disability-grid">
+                                <div class="candidate-disability-field">
+                                    {{ Form::label('disability_id_number', __('messages.candidate_profile.national_id_number'), ['class' => 'form-label required']) }}
+                                    {{ Form::text('disability_id_number', $user->candidate->disability_id_number ?? null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_national_id_number'), 'data-disability-detail-input' => true]) }}
+                                </div>
+                                <div class="candidate-disability-field">
+                                    {{ Form::label('disability_id_show_on_profile', __('messages.candidate_profile.show_on_profile'), ['class' => 'form-label']) }}
+                                    <div class="candidate-disability-segmented">
+                                        <label>
+                                            {{ Form::radio('disability_id_show_on_profile', '1', (bool) $disabilityShowOnProfile, ['data-disability-detail-input' => true]) }}
+                                            <span>{{ __('messages.common.yes') }}</span>
+                                        </label>
+                                        <label>
+                                            {{ Form::radio('disability_id_show_on_profile', '0', ! (bool) $disabilityShowOnProfile, ['data-disability-detail-input' => true]) }}
+                                            <span>{{ __('messages.common.no') }}</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="candidate-disability-field">
+                                    {{ Form::label('disability_difficulty_seeing', __('messages.candidate_profile.difficulty_to_see'), ['class' => 'form-label']) }}
+                                    {{ Form::select('disability_difficulty_seeing', $difficultyOptions, $user->candidate->disability_difficulty_seeing ?? null, ['class' => 'form-select', 'data-disability-detail-input' => true]) }}
+                                </div>
+                                <div class="candidate-disability-field">
+                                    {{ Form::label('disability_difficulty_hearing', __('messages.candidate_profile.difficulty_to_hear'), ['class' => 'form-label']) }}
+                                    {{ Form::select('disability_difficulty_hearing', $difficultyOptions, $user->candidate->disability_difficulty_hearing ?? null, ['class' => 'form-select', 'data-disability-detail-input' => true]) }}
+                                </div>
+                                <div class="candidate-disability-field">
+                                    {{ Form::label('disability_difficulty_remembering', __('messages.candidate_profile.difficulty_to_concentrate_or_remember'), ['class' => 'form-label']) }}
+                                    {{ Form::select('disability_difficulty_remembering', $difficultyOptions, $user->candidate->disability_difficulty_remembering ?? null, ['class' => 'form-select', 'data-disability-detail-input' => true]) }}
+                                </div>
+                                <div class="candidate-disability-field">
+                                    {{ Form::label('disability_difficulty_walking', __('messages.candidate_profile.difficulty_to_sit_stand_walk'), ['class' => 'form-label']) }}
+                                    {{ Form::select('disability_difficulty_walking', $difficultyOptions, $user->candidate->disability_difficulty_walking ?? null, ['class' => 'form-select', 'data-disability-detail-input' => true]) }}
+                                </div>
+                                <div class="candidate-disability-field">
+                                    {{ Form::label('disability_difficulty_communicating', __('messages.candidate_profile.difficulty_to_communicate'), ['class' => 'form-label']) }}
+                                    {{ Form::select('disability_difficulty_communicating', $difficultyOptions, $user->candidate->disability_difficulty_communicating ?? null, ['class' => 'form-select', 'data-disability-detail-input' => true]) }}
+                                </div>
+                                <div class="candidate-disability-field">
+                                    {{ Form::label('disability_difficulty_self_care', __('messages.candidate_profile.difficulty_of_taking_care'), ['class' => 'form-label']) }}
+                                    {{ Form::select('disability_difficulty_self_care', $difficultyOptions, $user->candidate->disability_difficulty_self_care ?? null, ['class' => 'form-select', 'data-disability-detail-input' => true]) }}
+                                </div>
+                            </div>
+                        </div>
+                        <p class="candidate-disability-support {{ $showDisabilityDetails ? 'd-none' : '' }}" data-disability-support>
                             {{ __('messages.candidate_profile.disability_support_prefix') }}
                             <a href="tel:+8801730369802">{{ __('messages.candidate_profile.disability_support_contact') }}</a>
                             {{ __('messages.candidate_profile.disability_support_suffix') }}
                         </p>
                         <div class="candidate-profile-section-actions">
-                            {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary']) }}
+                            {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary', 'formaction' => route('candidate-profile.disability-information.update'), 'formnovalidate' => true, 'data-scoped-ajax-submit' => true]) }}
                             <button type="button" class="btn btn-light btn-active-light-primary" data-disability-edit-close>{{ __('messages.common.close') }}</button>
                         </div>
                     </div>
@@ -834,6 +1032,29 @@
 
     </div>
     {{ Form::close() }}
+    <input type="file" id="candidatePersonalImageInput" class="d-none" accept="image/png,image/jpeg,image/jpg">
+
+    <div class="candidate-image-upload-modal d-none" id="candidateImageUploadModal" aria-hidden="true">
+        <div class="candidate-image-upload-modal__backdrop" data-candidate-image-modal-close></div>
+        <div class="candidate-image-upload-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="candidateImageUploadTitle">
+            <button type="button" class="candidate-image-upload-modal__close" data-candidate-image-modal-close aria-label="{{ __('messages.common.close') }}">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="candidate-image-upload-modal__dropzone" data-candidate-image-dropzone>
+                <div class="candidate-image-upload-modal__icon">
+                    <i class="fa-regular fa-user"></i>
+                </div>
+                <p id="candidateImageUploadTitle">
+                    <button type="button" data-candidate-image-input-trigger>Click here</button>
+                    to upload or drop media here.
+                </p>
+                <span>Upload your Profile image JPG or PNG, 1MB max</span>
+                <button type="button" class="candidate-image-upload-modal__upload" data-candidate-image-input-trigger>
+                    Upload Image
+                </button>
+            </div>
+        </div>
+    </div>
 @endsection
 @push('scripts')
     <script>

@@ -3,13 +3,20 @@
 namespace App\Http\Controllers\Candidates;
 
 use App\Http\Controllers\AppBaseController;
+use App\Http\Requests\CandidateUpdateAddressDetailsRequest;
+use App\Http\Requests\CandidateUpdateCareerApplicationRequest;
+use App\Http\Requests\CandidateUpdateDisabilityInformationRequest;
 use App\Http\Requests\CandidateUpdateGeneralInformationRequest;
 use App\Http\Requests\CandidateUpdateOnlineProfileRequest;
+use App\Http\Requests\CandidateUpdatePersonalDetailsRequest;
+use App\Http\Requests\CandidateUpdatePreferredAreaRequest;
 use App\Http\Requests\CandidateUpdateProfileRequest;
+use App\Http\Requests\CandidateUpdateRelevantInformationRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\UpdateCandidateProfileRequest;
 use App\Models\CandidateEducation;
 use App\Models\CandidateExperience;
+use App\Models\CandidateTraining;
 use App\Models\FavouriteCompany;
 use App\Models\FavouriteJob;
 use App\Models\JobApplication;
@@ -64,9 +71,16 @@ class CandidateController extends AppBaseController
         }
         $candidateSkills = $user->candidateSkill()->pluck('skill_id')->toArray();
         $candidateLanguage = $user->candidateLanguage()->pluck('language_id')->toArray();
-        $sectionName = ($request->section === null) ? 'general' : $request->section;
+        $sectionAliases = [
+            'general' => 'personal-information',
+            'career-informations' => 'education-training',
+            'cv-builder' => 'other-information',
+            'resume' => 'accomplishment',
+        ];
+        $sectionName = ($request->section === null) ? 'personal-information' : $request->section;
+        $sectionName = $sectionAliases[$sectionName] ?? $sectionName;
         $data['sectionName'] = $sectionName;
-        if ($sectionName == 'general') {
+        if ($sectionName == 'personal-information') {
             if (! empty($user->country_id)) {
                 $states = getStates($user->country_id);
             }
@@ -74,22 +88,26 @@ class CandidateController extends AppBaseController
                 $cities = getCities($user->state_id);
             }
         }
-        if ($sectionName == 'resume') {
+        if ($sectionName == 'accomplishment') {
         }
 
-        if ($sectionName == 'career-informations' || $sectionName == 'cv-builder' || $sectionName == 'employment') {
+        if ($sectionName == 'education-training' || $sectionName == 'other-information' || $sectionName == 'employment') {
             $data['candidateExperiences'] = CandidateExperience::where('candidate_id',
                 $user->owner_id)->orderByDesc('id')->get();
             foreach ($data['candidateExperiences'] as $experience) {
                 $experience->country = getCountryName($experience->country_id);
             }
-            if ($sectionName == 'career-informations' || $sectionName == 'cv-builder') {
+            if ($sectionName == 'education-training' || $sectionName == 'other-information') {
                 $data['candidateEducations'] = CandidateEducation::with('degreeLevel')->where('candidate_id',
                     $user->owner_id)->orderByDesc('id')->get();
                 foreach ($data['candidateEducations'] as $education) {
                     $education->country = getCountryName($education->country_id);
                 }
                 $data['degreeLevels'] = RequiredDegreeLevel::pluck('name', 'id');
+                $data['candidateTrainings'] = CandidateTraining::where('candidate_id', $user->owner_id)
+                    ->orderBy('sort_order')
+                    ->orderByDesc('id')
+                    ->get();
             }
         }
 
@@ -131,6 +149,128 @@ class CandidateController extends AppBaseController
         Flash::success(__('messages.flash.candidate_profile'));
 
         return redirect(route('candidate.profile'));
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function updatePersonalDetails(CandidateUpdatePersonalDetailsRequest $request): RedirectResponse
+    {
+        $input = $request->validated();
+
+        if ($request->hasFile('image')) {
+            $input['image'] = $request->file('image');
+        }
+
+        $this->candidateRepository->updatePersonalDetails($input);
+
+        Flash::success(__('messages.flash.candidate_profile'));
+
+        return redirect(route('candidate.profile', ['section' => 'personal-information']));
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function updateAddressDetails(CandidateUpdateAddressDetailsRequest $request)
+    {
+        $this->candidateRepository->updateAddressDetails($request->validated());
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return $this->sendSuccess(__('messages.flash.candidate_profile'));
+        }
+
+        Flash::success(__('messages.flash.candidate_profile'));
+
+        return redirect(route('candidate.profile', ['section' => 'personal-information']));
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function updateCareerApplication(CandidateUpdateCareerApplicationRequest $request)
+    {
+        $this->candidateRepository->updateCareerApplication($request->validated());
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return $this->sendSuccess(__('messages.flash.candidate_profile'));
+        }
+
+        Flash::success(__('messages.flash.candidate_profile'));
+
+        return redirect(route('candidate.profile', ['section' => 'personal-information']));
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function updatePreferredArea(CandidateUpdatePreferredAreaRequest $request)
+    {
+        $this->candidateRepository->updatePreferredArea($request->validated());
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return $this->sendSuccess(__('messages.flash.candidate_profile'));
+        }
+
+        Flash::success(__('messages.flash.candidate_profile'));
+
+        return redirect(route('candidate.profile', ['section' => 'personal-information']));
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function updateRelevantInformation(CandidateUpdateRelevantInformationRequest $request)
+    {
+        $this->candidateRepository->updateRelevantInformation($request->validated());
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return $this->sendSuccess(__('messages.flash.candidate_profile'));
+        }
+
+        Flash::success(__('messages.flash.candidate_profile'));
+
+        return redirect(route('candidate.profile', ['section' => 'personal-information']));
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function updateDisabilityInformation(CandidateUpdateDisabilityInformationRequest $request)
+    {
+        $this->candidateRepository->updateDisabilityInformation($request->validated());
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return $this->sendSuccess(__('messages.flash.candidate_profile'));
+        }
+
+        Flash::success(__('messages.flash.candidate_profile'));
+
+        return redirect(route('candidate.profile', ['section' => 'personal-information']));
+    }
+
+    public function updateProfileImage(Request $request): JsonResponse
+    {
+        $request->validate([
+            'image' => 'required|mimes:jpeg,jpg,png|max:1024',
+        ]);
+
+        $this->candidateRepository->profileUpdate([
+            'image' => $request->file('image'),
+        ]);
+
+        return $this->sendResponse([
+            'avatar' => Auth::user()->fresh()->avatar,
+        ], __('messages.flash.candidate_profile'));
+    }
+
+    public function deleteProfileImage(): JsonResponse
+    {
+        Auth::user()->clearMediaCollection(User::PROFILE);
+
+        return $this->sendResponse([
+            'avatar' => Auth::user()->fresh()->avatar,
+        ], __('messages.flash.media_delete'));
     }
 
     /**

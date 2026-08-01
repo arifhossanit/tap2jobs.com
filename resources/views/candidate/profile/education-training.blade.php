@@ -9,26 +9,58 @@
             $defaultEducationCountryId = collect($data['countries'] ?? [])->keys()->first();
         }
 
-        $candidateTrainingItems = [
-            [
-                'title' => 'Web Application Development with Laravel, React, Vue.js & WordPress',
-                'topics' => '---',
-                'institute' => 'IsDB-BISEW IT Scholarship Programme',
-                'location' => 'Agargaon, Dhaka',
-                'country' => 'Bangladesh',
-                'year' => '2025',
-                'duration' => '1 year',
-            ],
-            [
-                'title' => 'Shorthand and Computer Basic',
-                'topics' => '---',
-                'institute' => 'Joyti Commercial',
-                'location' => 'Malibag, Dhaka',
-                'country' => 'Bangladesh',
-                'year' => '2023',
-                'duration' => '1 year',
-            ],
+        $candidateProfileNumber = function ($number) {
+            $number = (string) $number;
+
+            if (app()->getLocale() !== 'bn') {
+                return $number;
+            }
+
+            return strtr($number, [
+                '0' => '০',
+                '1' => '১',
+                '2' => '২',
+                '3' => '৩',
+                '4' => '৪',
+                '5' => '৫',
+                '6' => '৬',
+                '7' => '৭',
+                '8' => '৮',
+                '9' => '৯',
+            ]);
+        };
+
+        $educationBoardOptions = [
+            '' => 'Select your Board',
+            'Dhaka' => 'Dhaka',
+            'Chattogram' => 'Chattogram',
+            'Rajshahi' => 'Rajshahi',
+            'Khulna' => 'Khulna',
+            'Barishal' => 'Barishal',
+            'Sylhet' => 'Sylhet',
+            'Rangpur' => 'Rangpur',
+            'Mymensingh' => 'Mymensingh',
+            'Cumilla' => 'Cumilla',
+            'Dinajpur' => 'Dinajpur',
+            'Jessore' => 'Jessore',
+            'Madrasah' => 'Madrasah',
+            'Technical' => 'Technical',
+            'Others' => 'Others',
         ];
+
+        $educationExamTitleOptions = [
+            'psc' => ['PSC', 'Ebtedayee (Madrasah)', '5 Pass', 'Others'],
+            'jsc' => ['JSC', 'JDC (Madrasah)', '8 Pass', 'Others'],
+            'secondary' => ['SSC', 'O Level', 'Dakhil (Madrasah)', 'SSC (Vocational)', 'Others'],
+            'higher_secondary' => ['HSC', 'A Level', 'Alim (Madrasah)', 'HSC (Vocational)', 'Others'],
+            'diploma' => ['Diploma in Engineering', 'Diploma in Medical Technology', 'Diploma in Nursing', 'Diploma in Commerce', 'Diploma in Business Studies', 'Others'],
+            'bachelor' => ['Bachelor/Honors', 'Bachelor of Arts (B.A.)', 'Bachelor of Science (B.Sc.)', 'Bachelor of Business Administration (BBA)', 'Bachelor of Commerce (B.Com)', 'Bachelor of Social Science (BSS)', 'MBBS', 'LLB', 'Others'],
+            'masters' => ['Masters', 'Master of Arts (M.A.)', 'Master of Science (M.Sc.)', 'Master of Business Administration (MBA)', 'Master of Commerce (M.Com)', 'Master of Social Science (MSS)', 'LLM', 'Others'],
+            'phd' => ['PhD', 'Doctor of Philosophy (PhD)', 'MPhil', 'Others'],
+            'default' => ['Others'],
+        ];
+
+        $candidateTrainings = $data['candidateTrainings'] ?? collect();
 
         $candidateCertificationItems = [
             [
@@ -138,7 +170,7 @@
             <div id="candidateEducationPanelBody" class="collapse show candidate-profile-section__collapse">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                 <div class="candidate-education-inline-form d-none" data-education-add-form>
-                    <h2>{{ __('messages.candidate_profile.education') }} 1</h2>
+                    <h2 data-education-form-title>{{ __('messages.candidate_profile.education') }} {{ $candidateProfileNumber($data['candidateEducations']->count() + 1) }}</h2>
                     {{ Form::open(['id' => 'addNewEducationForm']) }}
                     {{ Form::hidden('country_id', $defaultEducationCountryId) }}
                     <div class="candidate-education-form-grid">
@@ -148,14 +180,19 @@
                         </div>
                         <div class="candidate-education-form-field">
                             {{ Form::label('degree_title', __('messages.candidate_profile.exam_degree_title'), ['class' => 'form-label required']) }}
-                            {{ Form::text('degree_title', null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.exam_degree_title')]) }}
+                            {{ Form::select('degree_title', ['' => __('messages.candidate_profile.exam_degree_title')], null, ['class' => 'form-select', 'required', 'data-education-title-select' => true]) }}
                         </div>
-                        <label class="candidate-education-check">
+                        <div class="candidate-education-form-field" data-education-board-field>
+                            {{ Form::label('board', 'Board', ['class' => 'form-label required']) }}
+                            {{ Form::select('board', $educationBoardOptions, null, ['class' => 'form-select']) }}
+                        </div>
+                        <div></div>
+                        <label class="candidate-education-check" data-education-summary-row>
                             {{ Form::checkbox('show_summary', 1, false, ['class' => 'form-check-input']) }}
                             <span>Show this degree in summary view at employer's end</span>
                         </label>
                         <div></div>
-                        <div class="candidate-education-form-field">
+                        <div class="candidate-education-form-field" data-education-major-field>
                             {{ Form::label('major', __('messages.candidate_profile.concentration_major_group'), ['class' => 'form-label required']) }}
                             {{ Form::text('major', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.concentration_major_group')]) }}
                         </div>
@@ -168,27 +205,27 @@
                             {{ Form::checkbox('foreign_institute', 1, false, ['class' => 'form-check-input']) }}
                             <span>This is a foreign institute</span>
                         </label>
-                        <div class="candidate-education-form-field">
+                        <div class="candidate-education-form-field" data-education-result-field>
                             {{ Form::label('result', __('messages.candidate_profile.result'), ['class' => 'form-label required']) }}
-                            {{ Form::select('result', ['Grade' => 'Grade', 'First Division/Class' => 'First Division/Class', 'Second Division/Class' => 'Second Division/Class'], null, ['class' => 'form-select', 'required', 'placeholder' => __('messages.candidate_profile.result')]) }}
+                            {{ Form::select('result', ['Grade' => 'Grade', 'First Division/Class' => 'First Division/Class', 'Second Division/Class' => 'Second Division/Class'], null, ['class' => 'form-select', 'placeholder' => __('messages.candidate_profile.result')]) }}
                         </div>
-                        <div class="candidate-education-form-field">
+                        <div class="candidate-education-form-field" data-education-cgpa-field>
                             {{ Form::label('cgpa', __('messages.candidate_profile.cgpa'), ['class' => 'form-label required']) }}
                             {{ Form::text('cgpa', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_cgpa')]) }}
                         </div>
-                        <div class="candidate-education-form-field">
+                        <div class="candidate-education-form-field" data-education-scale-field>
                             {{ Form::label('scale', __('messages.candidate_profile.scale'), ['class' => 'form-label required']) }}
                             {{ Form::text('scale', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.scale')]) }}
                         </div>
-                        <div class="candidate-education-form-field">
+                        <div class="candidate-education-form-field" data-education-year-field>
                             {{ Form::label('year', __('messages.candidate_profile.year_of_passing'), ['class' => 'form-label required']) }}
-                            {{ Form::selectRange('year', date('Y'), 2000, null, ['id' => 'educationYearId', 'class' => 'form-select', 'required', 'placeholder' => __('messages.candidate_profile.enter_year_of_passing')]) }}
+                            {{ Form::selectRange('year', date('Y'), 2000, null, ['id' => 'educationYearId', 'class' => 'form-select', 'placeholder' => __('messages.candidate_profile.enter_year_of_passing')]) }}
                         </div>
-                        <div class="candidate-education-form-field candidate-education-form-field--full">
+                        <div class="candidate-education-form-field candidate-education-form-field--full" data-education-duration-field>
                             {{ Form::label('duration', __('messages.candidate_profile.duration_years'), ['class' => 'form-label']) }}
                             {{ Form::text('duration', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.duration_years')]) }}
                         </div>
-                        <div class="candidate-education-form-field candidate-education-form-field--full">
+                        <div class="candidate-education-form-field candidate-education-form-field--full" data-education-achievement-field>
                             {{ Form::label('achievement', __('messages.candidate_profile.achievement'), ['class' => 'form-label']) }}
                             <div class="candidate-education-editor">
                                 {{ Form::textarea('achievement', null, ['class' => 'd-none', 'data-quill-input' => true]) }}
@@ -205,7 +242,7 @@
                 </div>
 
                 <div class="candidate-education-inline-form d-none" data-education-edit-form>
-                    <h2>{{ __('messages.candidate_profile.education') }} 1</h2>
+                    <h2 data-education-form-title>{{ __('messages.candidate_profile.education') }} {{ $candidateProfileNumber(1) }}</h2>
                     {{ Form::open(['id' => 'editCareerEducationForm']) }}
                     {{ Form::hidden('educationId', null, ['id' => 'educationId']) }}
                     {{ Form::hidden('country_id', $defaultEducationCountryId, ['id' => 'editEducationCountry']) }}
@@ -216,14 +253,19 @@
                         </div>
                         <div class="candidate-education-form-field">
                             {{ Form::label('degree_title', __('messages.candidate_profile.exam_degree_title'), ['class' => 'form-label required']) }}
-                            {{ Form::text('degree_title', null, ['class' => 'form-control', 'required', 'id' => 'editDegreeTitle', 'placeholder' => __('messages.candidate_profile.exam_degree_title')]) }}
+                            {{ Form::select('degree_title', ['' => __('messages.candidate_profile.exam_degree_title')], null, ['class' => 'form-select', 'required', 'id' => 'editDegreeTitle', 'data-education-title-select' => true]) }}
                         </div>
-                        <label class="candidate-education-check">
+                        <div class="candidate-education-form-field" data-education-board-field>
+                            {{ Form::label('board', 'Board', ['class' => 'form-label required']) }}
+                            {{ Form::select('board', $educationBoardOptions, null, ['class' => 'form-select']) }}
+                        </div>
+                        <div></div>
+                        <label class="candidate-education-check" data-education-summary-row>
                             {{ Form::checkbox('show_summary', 1, false, ['class' => 'form-check-input']) }}
                             <span>Show this degree in summary view at employer's end</span>
                         </label>
                         <div></div>
-                        <div class="candidate-education-form-field">
+                        <div class="candidate-education-form-field" data-education-major-field>
                             {{ Form::label('major', __('messages.candidate_profile.concentration_major_group'), ['class' => 'form-label required']) }}
                             {{ Form::text('major', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.concentration_major_group')]) }}
                         </div>
@@ -236,27 +278,27 @@
                             {{ Form::checkbox('foreign_institute', 1, false, ['class' => 'form-check-input']) }}
                             <span>This is a foreign institute</span>
                         </label>
-                        <div class="candidate-education-form-field">
+                        <div class="candidate-education-form-field" data-education-result-field>
                             {{ Form::label('result', __('messages.candidate_profile.result'), ['class' => 'form-label required']) }}
-                            {{ Form::select('result', ['Grade' => 'Grade', 'First Division/Class' => 'First Division/Class', 'Second Division/Class' => 'Second Division/Class'], null, ['class' => 'form-select', 'required', 'id' => 'editResult']) }}
+                            {{ Form::select('result', ['Grade' => 'Grade', 'First Division/Class' => 'First Division/Class', 'Second Division/Class' => 'Second Division/Class'], null, ['class' => 'form-select', 'id' => 'editResult']) }}
                         </div>
-                        <div class="candidate-education-form-field">
+                        <div class="candidate-education-form-field" data-education-cgpa-field>
                             {{ Form::label('cgpa', __('messages.candidate_profile.cgpa'), ['class' => 'form-label required']) }}
                             {{ Form::text('cgpa', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_cgpa')]) }}
                         </div>
-                        <div class="candidate-education-form-field">
+                        <div class="candidate-education-form-field" data-education-scale-field>
                             {{ Form::label('scale', __('messages.candidate_profile.scale'), ['class' => 'form-label required']) }}
                             {{ Form::text('scale', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.scale')]) }}
                         </div>
-                        <div class="candidate-education-form-field">
+                        <div class="candidate-education-form-field" data-education-year-field>
                             {{ Form::label('year', __('messages.candidate_profile.year_of_passing'), ['class' => 'form-label required']) }}
-                            {{ Form::selectRange('year', date('Y'), 2000, null, ['class' => 'form-select', 'required', 'placeholder' => __('messages.candidate_profile.enter_year_of_passing'), 'id' => 'editYear']) }}
+                            {{ Form::selectRange('year', date('Y'), 2000, null, ['class' => 'form-select', 'placeholder' => __('messages.candidate_profile.enter_year_of_passing'), 'id' => 'editYear']) }}
                         </div>
-                        <div class="candidate-education-form-field candidate-education-form-field--full">
+                        <div class="candidate-education-form-field candidate-education-form-field--full" data-education-duration-field>
                             {{ Form::label('duration', __('messages.candidate_profile.duration_years'), ['class' => 'form-label']) }}
                             {{ Form::text('duration', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.duration_years')]) }}
                         </div>
-                        <div class="candidate-education-form-field candidate-education-form-field--full">
+                        <div class="candidate-education-form-field candidate-education-form-field--full" data-education-achievement-field>
                             {{ Form::label('achievement', __('messages.candidate_profile.achievement'), ['class' => 'form-label']) }}
                             <div class="candidate-education-editor">
                                 {{ Form::textarea('achievement', null, ['class' => 'd-none', 'data-quill-input' => true]) }}
@@ -285,7 +327,7 @@
                         <div class="candidate-education candidate-education-list-item" data-education-id="{{ $loop->index }}"
                             data-id="{{ $candidateEducation->id }}">
                             <div class="candidate-education-item__head">
-                                <h2>{{ __('messages.candidate_profile.education') }} {{ $loop->iteration }}</h2>
+                                <h2>{{ __('messages.candidate_profile.education') }} {{ $candidateProfileNumber($loop->iteration) }}</h2>
                                 <div class="candidate-education-item__actions candidate-education-edit-delete">
                                     <a href="javascript:void(0)" class="candidate-education-action candidate-education-action--edit edit-candidate-education"
                                         title="{{ __('messages.common.edit') }}" data-bs-toggle="tooltip"
@@ -309,8 +351,8 @@
                                         <strong class="education-degree-level">{{ $candidateEducation->degreeLevel->name ?? '---' }}</strong>
                                     </div>
                                     <div class="candidate-education-detail">
-                                        <span>{{ __('messages.candidate_profile.concentration_major_group') }}</span>
-                                        <strong>---</strong>
+                                        <span>{{ $candidateEducation->board ? 'Board' : __('messages.candidate_profile.concentration_major_group') }}</span>
+                                        <strong>{{ $candidateEducation->board ?: ($candidateEducation->major ?: '---') }}</strong>
                                     </div>
                                     <div class="candidate-education-detail">
                                         <span>{{ __('messages.candidate_profile.result') }}</span>
@@ -318,15 +360,15 @@
                                     </div>
                                     <div class="candidate-education-detail">
                                         <span>{{ __('messages.candidate_profile.scale') }}</span>
-                                        <strong>---</strong>
+                                        <strong>{{ $candidateEducation->scale ?: '---' }}</strong>
                                     </div>
                                     <div class="candidate-education-detail">
                                         <span>{{ __('messages.candidate_profile.duration_years') }}</span>
-                                        <strong>---</strong>
+                                        <strong>{{ $candidateEducation->duration ?: '---' }}</strong>
                                     </div>
                                     <div class="candidate-education-detail">
                                         <span>{{ __('messages.candidate_profile.achievement') }}</span>
-                                        <strong>---</strong>
+                                        <strong>{!! filled($candidateEducation->achievement) ? $candidateEducation->achievement : '---' !!}</strong>
                                     </div>
                                 </div>
 
@@ -341,7 +383,7 @@
                                     </div>
                                     <div class="candidate-education-detail">
                                         <span>{{ __('messages.candidate_profile.cgpa') }}</span>
-                                        <strong>{{ is_numeric($candidateEducation->result) ? $candidateEducation->result : '---' }}</strong>
+                                        <strong>{{ $candidateEducation->cgpa ?: '---' }}</strong>
                                     </div>
                                     <div class="candidate-education-detail">
                                         <span>{{ __('messages.candidate_profile.year_of_passing') }}</span>
@@ -362,7 +404,7 @@
                 <div class="candidate-education-panel__actions">
                     <a href="javascript:void(0)" class="candidate-education-add d-none" data-panel-add-action>
                         <i class="fa-solid fa-plus"></i>
-                        <span>Add Training</span>
+                        <span>{{ __('messages.candidate_profile.add_training') }}</span>
                     </a>
                     <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
                         data-bs-target="#candidateTrainingPanelBody" aria-expanded="false"
@@ -377,18 +419,24 @@
             <div id="candidateTrainingPanelBody" class="collapse candidate-profile-section__collapse">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <div class="candidate-training-container">
-                        @foreach ($candidateTrainingItems as $candidateTraining)
+                        <div class="{{ $candidateTrainings->count() ? 'd-none' : '' }}" id="notfoundTraining">
+                            <h5 class="candidate-education-empty">
+                                {{ __('messages.candidate_profile.training_not_found') }}
+                            </h5>
+                        </div>
+                        @foreach ($candidateTrainings as $candidateTraining)
                             <div class="candidate-education candidate-education-list-item" data-training-item
+                                data-id="{{ $candidateTraining->id }}"
                                 data-training-index="{{ $loop->iteration }}"
-                                data-training-title="{{ $candidateTraining['title'] }}"
-                                data-training-topics="{{ $candidateTraining['topics'] }}"
-                                data-training-institute="{{ $candidateTraining['institute'] }}"
-                                data-training-location="{{ $candidateTraining['location'] }}"
-                                data-training-country="{{ $candidateTraining['country'] }}"
-                                data-training-year="{{ $candidateTraining['year'] }}"
-                                data-training-duration="{{ $candidateTraining['duration'] }}">
+                                data-training-title="{{ $candidateTraining->title }}"
+                                data-training-topics="{{ $candidateTraining->topics }}"
+                                data-training-institute="{{ $candidateTraining->institute }}"
+                                data-training-location="{{ $candidateTraining->location }}"
+                                data-training-country="{{ $candidateTraining->country }}"
+                                data-training-year="{{ $candidateTraining->year }}"
+                                data-training-duration="{{ $candidateTraining->duration }}">
                                 <div class="candidate-education-item__head">
-                                    <h2>{{ __('messages.candidate_profile.training') }} {{ $loop->iteration }}</h2>
+                                    <h2>{{ __('messages.candidate_profile.training') }} {{ $candidateProfileNumber($loop->iteration) }}</h2>
                                     <div class="candidate-education-item__actions candidate-training-edit-delete">
                                         <a href="javascript:void(0)"
                                             class="candidate-education-action candidate-education-action--edit"
@@ -397,7 +445,9 @@
                                             <span>{{ __('messages.common.edit') }}</span>
                                         </a>
                                         <a href="javascript:void(0)"
-                                            class="candidate-education-action candidate-education-action--delete">
+                                            class="candidate-education-action candidate-education-action--delete"
+                                            data-training-delete
+                                            data-id="{{ $candidateTraining->id }}">
                                             <i class="fa-solid fa-trash-can"></i>
                                             <span>{{ __('messages.common.delete') }}</span>
                                         </a>
@@ -407,35 +457,35 @@
                                 <div class="candidate-education-detail-grid">
                                     <div class="candidate-education-detail-column">
                                         <div class="candidate-education-detail">
-                                            <span>Training Title</span>
-                                            <strong data-training-value="title">{{ $candidateTraining['title'] }}</strong>
+                                            <span>{{ __('messages.candidate_profile.training') }}</span>
+                                            <strong data-training-value="title">{{ $candidateTraining->title }}</strong>
                                         </div>
                                         <div class="candidate-education-detail">
-                                            <span>Topics Covered</span>
-                                            <strong data-training-value="topics">{{ $candidateTraining['topics'] }}</strong>
+                                            <span>{{ __('messages.candidate_profile.topics_covered') }}</span>
+                                            <strong data-training-value="topics">{{ $candidateTraining->topics ?: '---' }}</strong>
                                         </div>
                                         <div class="candidate-education-detail">
                                             <span>{{ __('messages.candidate_profile.institute') }}</span>
-                                            <strong data-training-value="institute">{{ $candidateTraining['institute'] }}</strong>
+                                            <strong data-training-value="institute">{{ $candidateTraining->institute }}</strong>
                                         </div>
                                         <div class="candidate-education-detail">
-                                            <span>Location</span>
-                                            <strong data-training-value="location">{{ $candidateTraining['location'] }}</strong>
+                                            <span>{{ __('messages.candidate_profile.location') }}</span>
+                                            <strong data-training-value="location">{{ $candidateTraining->location ?: '---' }}</strong>
                                         </div>
                                     </div>
 
                                     <div class="candidate-education-detail-column">
                                         <div class="candidate-education-detail">
                                             <span>{{ __('messages.company.country') }}</span>
-                                            <strong data-training-value="country">{{ $candidateTraining['country'] }}</strong>
+                                            <strong data-training-value="country">{{ $candidateTraining->country }}</strong>
                                         </div>
                                         <div class="candidate-education-detail">
                                             <span>Training Year</span>
-                                            <strong data-training-value="year">{{ $candidateTraining['year'] }}</strong>
+                                            <strong data-training-value="year">{{ $candidateTraining->year }}</strong>
                                         </div>
                                         <div class="candidate-education-detail">
                                             <span>Duration</span>
-                                            <strong data-training-value="duration">{{ $candidateTraining['duration'] }}</strong>
+                                            <strong data-training-value="duration">{{ $candidateTraining->duration }}</strong>
                                         </div>
                                     </div>
                                 </div>
@@ -443,41 +493,42 @@
                         @endforeach
                     </div>
                     <div class="candidate-education-inline-form d-none" data-training-form>
-                        <h2 data-training-form-title>{{ __('messages.candidate_profile.training') }} {{ count($candidateTrainingItems) + 1 }}</h2>
+                        <h2 data-training-form-title>{{ __('messages.candidate_profile.training') }} {{ $candidateProfileNumber($candidateTrainings->count() + 1) }}</h2>
                         {{ Form::open(['id' => 'candidateTrainingForm']) }}
+                        {{ Form::hidden('training_id', null, ['data-training-field' => 'id']) }}
                         {{ Form::hidden('training_index', null, ['data-training-field' => 'index']) }}
                         <div class="candidate-education-form-grid">
                             <div class="candidate-education-form-field">
-                                {{ Form::label('training_title', 'Training Title', ['class' => 'form-label required']) }}
-                                {{ Form::text('training_title', null, ['class' => 'form-control', 'required', 'placeholder' => 'Enter your training title', 'data-training-field' => 'title']) }}
+                                {{ Form::label('title', 'Training Title', ['class' => 'form-label required']) }}
+                                {{ Form::text('title', null, ['class' => 'form-control', 'required', 'placeholder' => 'Enter your training title', 'data-training-field' => 'title']) }}
                             </div>
                             <div class="candidate-education-form-field">
-                                {{ Form::label('training_country', __('messages.company.country'), ['class' => 'form-label required']) }}
-                                {{ Form::text('training_country', null, ['class' => 'form-control', 'required', 'placeholder' => 'Enter your Country', 'data-training-field' => 'country']) }}
+                                {{ Form::label('country', __('messages.company.country'), ['class' => 'form-label required']) }}
+                                {{ Form::text('country', null, ['class' => 'form-control', 'required', 'placeholder' => 'Enter your Country', 'data-training-field' => 'country']) }}
                             </div>
                             <div class="candidate-education-form-field">
-                                {{ Form::label('training_topics', 'Topics Covered', ['class' => 'form-label']) }}
-                                {{ Form::text('training_topics', null, ['class' => 'form-control', 'placeholder' => 'Enter your Topics Covered', 'data-training-field' => 'topics']) }}
+                                {{ Form::label('topics', 'Topics Covered', ['class' => 'form-label']) }}
+                                {{ Form::text('topics', null, ['class' => 'form-control', 'placeholder' => 'Enter your Topics Covered', 'data-training-field' => 'topics']) }}
                             </div>
                             <div class="candidate-education-form-field">
-                                {{ Form::label('training_year', 'Training Year', ['class' => 'form-label required']) }}
-                                {{ Form::selectRange('training_year', date('Y'), 2000, null, ['class' => 'form-select', 'required', 'placeholder' => 'Enter your Training Year', 'data-training-field' => 'year']) }}
+                                {{ Form::label('year', 'Training Year', ['class' => 'form-label required']) }}
+                                {{ Form::selectRange('year', date('Y'), 2000, null, ['class' => 'form-select', 'required', 'placeholder' => 'Enter your Training Year', 'data-training-field' => 'year']) }}
                             </div>
                             <div class="candidate-education-form-field">
-                                {{ Form::label('training_institute', __('messages.candidate_profile.institute'), ['class' => 'form-label required']) }}
-                                {{ Form::text('training_institute', null, ['class' => 'form-control', 'required', 'placeholder' => 'Enter Institute name', 'data-training-field' => 'institute']) }}
+                                {{ Form::label('institute', __('messages.candidate_profile.institute'), ['class' => 'form-label required']) }}
+                                {{ Form::text('institute', null, ['class' => 'form-control', 'required', 'placeholder' => 'Enter Institute name', 'data-training-field' => 'institute']) }}
                             </div>
                             <div class="candidate-education-form-field">
-                                {{ Form::label('training_duration', 'Duration', ['class' => 'form-label required']) }}
-                                {{ Form::text('training_duration', null, ['class' => 'form-control', 'required', 'placeholder' => 'Select your duration month', 'data-training-field' => 'duration']) }}
+                                {{ Form::label('duration', 'Duration', ['class' => 'form-label required']) }}
+                                {{ Form::text('duration', null, ['class' => 'form-control', 'required', 'placeholder' => 'Select your duration month', 'data-training-field' => 'duration']) }}
                             </div>
                             <div class="candidate-education-form-field candidate-education-form-field--full">
-                                {{ Form::label('training_location', 'Location', ['class' => 'form-label']) }}
-                                {{ Form::text('training_location', null, ['class' => 'form-control', 'placeholder' => 'Enter your location', 'data-training-field' => 'location']) }}
+                                {{ Form::label('location', 'Location', ['class' => 'form-label']) }}
+                                {{ Form::text('location', null, ['class' => 'form-control', 'placeholder' => 'Enter your location', 'data-training-field' => 'location']) }}
                             </div>
                         </div>
                         <div class="candidate-profile-section-actions">
-                            {{ Form::button(__('messages.common.save'), ['type' => 'submit', 'class' => 'btn btn-primary']) }}
+                            {{ Form::button(__('messages.common.save'), ['type' => 'submit', 'class' => 'btn btn-primary', 'id' => 'candidateTrainingSave']) }}
                             <button type="button" class="btn btn-outline-secondary" data-training-close>{{ __('messages.common.close') }}</button>
                         </div>
                         {{ Form::close() }}
@@ -492,7 +543,7 @@
                 <div class="candidate-education-panel__actions">
                     <a href="javascript:void(0)" class="candidate-education-add d-none" data-certification-add-action>
                         <i class="fa-solid fa-plus"></i>
-                        <span>Add Professional Certification</span>
+                        <span>{{ __('messages.candidate_profile.add_professional_certification') }}</span>
                     </a>
                     <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
                         data-bs-target="#candidateProfessionalCertificationPanelBody" aria-expanded="false"
@@ -515,7 +566,7 @@
                                 data-certification-location="{{ $candidateCertification['location'] }}"
                                 data-certification-duration="{{ $candidateCertification['duration'] }}">
                                 <div class="candidate-education-item__head">
-                                    <h2>{{ __('messages.candidate_profile.professional_certification') }} {{ $loop->iteration }}</h2>
+                                    <h2>{{ __('messages.candidate_profile.professional_certification') }} {{ $candidateProfileNumber($loop->iteration) }}</h2>
                                     <div class="candidate-education-item__actions candidate-certification-edit-delete">
                                         <a href="javascript:void(0)"
                                             class="candidate-education-action candidate-education-action--edit"
@@ -559,7 +610,7 @@
                     </div>
 
                     <div class="candidate-education-inline-form d-none" data-certification-form>
-                        <h2 data-certification-form-title>{{ __('messages.candidate_profile.professional_certification') }} {{ count($candidateCertificationItems) + 1 }}</h2>
+                        <h2 data-certification-form-title>{{ __('messages.candidate_profile.professional_certification') }} {{ $candidateProfileNumber(count($candidateCertificationItems) + 1) }}</h2>
                         {{ Form::open(['id' => 'candidateCertificationForm']) }}
                         {{ Form::hidden('certification_index', null, ['data-certification-field' => 'index']) }}
                         <div class="candidate-education-form-grid">
@@ -592,12 +643,12 @@
                         {{ Form::close() }}
                     </div>
 
-                    <div class="candidate-certification-footer-action">
+                    {{-- <div class="candidate-certification-footer-action">
                         <a href="javascript:void(0)" class="candidate-certification-add-outline" data-certification-add-action>
                             <i class="fa-solid fa-plus"></i>
                             <span>Add Professional Certification</span>
                         </a>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>
@@ -678,7 +729,42 @@
 @endsection
 @push('scripts')
     <script>
+        window.candidateEducationExamTitleOptions = @json($educationExamTitleOptions);
+        window.candidateProfileUseBanglaNumber = @json(app()->getLocale() === 'bn');
+        window.candidateProfileEducationLabel = @json(__('messages.candidate_profile.education'));
+        window.candidateProfileTrainingLabel = @json(__('messages.candidate_profile.training'));
+        window.candidateProfileCertificationLabel = @json(__('messages.candidate_profile.professional_certification'));
+
         document.addEventListener('DOMContentLoaded', function () {
+            const formatCandidateProfileNumber = function (number) {
+                const value = String(number);
+
+                if (!window.candidateProfileUseBanglaNumber) {
+                    return value;
+                }
+
+                const banglaNumbers = {
+                    0: '০',
+                    1: '১',
+                    2: '২',
+                    3: '৩',
+                    4: '৪',
+                    5: '৫',
+                    6: '৬',
+                    7: '৭',
+                    8: '৮',
+                    9: '৯',
+                };
+
+                return value.replace(/[0-9]/g, function (digit) {
+                    return banglaNumbers[digit];
+                });
+            };
+
+            const getNumberedSectionTitle = function (label, number) {
+                return label + ' ' + formatCandidateProfileNumber(number);
+            };
+
             const careerSectionLinks = document.querySelectorAll('[data-career-section-link]');
             const careerSectionBodies = document.querySelectorAll('.candidate-education-panel .candidate-profile-section__collapse');
 
@@ -785,6 +871,7 @@
                 const trainingTitle = trainingFormWrap.querySelector('[data-training-form-title]');
                 let activeTrainingItem = null;
                 const fields = {
+                    id: trainingForm.querySelector('[data-training-field="id"]'),
                     index: trainingForm.querySelector('[data-training-field="index"]'),
                     title: trainingForm.querySelector('[data-training-field="title"]'),
                     country: trainingForm.querySelector('[data-training-field="country"]'),
@@ -829,7 +916,8 @@
                         ? item.dataset.trainingIndex
                         : String(trainingList.querySelectorAll('[data-training-item]').length + 1);
 
-                    trainingTitle.textContent = '{{ __('messages.candidate_profile.training') }} ' + index;
+                    trainingTitle.textContent = getNumberedSectionTitle(window.candidateProfileTrainingLabel, index);
+                    fields.id.value = item ? item.dataset.id : '';
                     fields.index.value = index;
                     fields.title.value = item ? getFormValue(item.dataset.trainingTitle) : '';
                     fields.country.value = item ? getFormValue(item.dataset.trainingCountry) : '';
@@ -866,14 +954,47 @@
 
                 trainingPanel.addEventListener('click', function (event) {
                     const editButton = event.target.closest('[data-training-edit]');
-                    if (!editButton) {
+                    const deleteButton = event.target.closest('[data-training-delete]');
+
+                    if (editButton) {
+                        event.preventDefault();
+                        const item = editButton.closest('[data-training-item]');
+                        if (item) {
+                            setTrainingFormMode(item, false);
+                        }
                         return;
                     }
 
-                    event.preventDefault();
-                    const item = editButton.closest('[data-training-item]');
-                    if (item) {
-                        setTrainingFormMode(item, false);
+                    if (deleteButton) {
+                        event.preventDefault();
+                        const trainingId = deleteButton.dataset.id;
+
+                        swal({
+                            title: Lang.get('js.delete') + ' !',
+                            text: Lang.get('js.are_you_sure') + ' "' + window.candidateProfileTrainingLabel + '" ?',
+                            buttons: {
+                                confirm: Lang.get('js.yes_delete'),
+                                cancel: Lang.get('js.no_cancel'),
+                            },
+                            reverseButtons: true,
+                            icon: 'warning',
+                        }).then(function (willDelete) {
+                            if (!willDelete) {
+                                return;
+                            }
+
+                            $.ajax({
+                                url: route('training.destroy', trainingId),
+                                type: 'DELETE',
+                                success: function (result) {
+                                    displaySuccessMessage(result.message);
+                                    window.location.reload();
+                                },
+                                error: function (result) {
+                                    displayErrorMessage(result.responseJSON.message);
+                                },
+                            });
+                        });
                     }
                 });
 
@@ -883,32 +1004,26 @@
 
                 trainingForm.addEventListener('submit', function (event) {
                     event.preventDefault();
-                    const index = fields.index.value;
-                    let item = trainingList.querySelector('[data-training-index="' + index + '"]');
+                    const trainingId = fields.id.value;
+                    const isUpdate = !!trainingId;
+                    const saveButton = $('#candidateTrainingSave');
 
-                    if (!item) {
-                        const sourceItem = trainingList.querySelector('[data-training-item]');
-                        if (!sourceItem) {
-                            return;
-                        }
-
-                        item = sourceItem.cloneNode(true);
-                        item.dataset.trainingIndex = index;
-                        item.querySelector('.candidate-education-item__head h2').textContent =
-                            '{{ __('messages.candidate_profile.training') }} ' + index;
-                        trainingList.appendChild(item);
-                    } else {
-                        item.querySelector('.candidate-education-detail-grid').classList.remove('d-none');
-                        item.querySelector('.candidate-education-item__actions').classList.remove('d-none');
-                    }
-
-                    ['title', 'topics', 'institute', 'location', 'country', 'year', 'duration'].forEach(function (field) {
-                        const value = fields[field].value || '---';
-                        item.dataset['training' + field.charAt(0).toUpperCase() + field.slice(1)] = value;
-                        item.querySelector('[data-training-value="' + field + '"]').textContent = value;
+                    saveButton.prop('disabled', true);
+                    $.ajax({
+                        url: isUpdate ? route('candidate.update-training', trainingId) : route('candidate.create-training'),
+                        type: isUpdate ? 'PUT' : 'POST',
+                        data: $(trainingForm).serialize(),
+                        success: function (result) {
+                            displaySuccessMessage(result.message);
+                            window.location.reload();
+                        },
+                        error: function (result) {
+                            displayErrorMessage(result.responseJSON.message);
+                        },
+                        complete: function () {
+                            saveButton.prop('disabled', false);
+                        },
                     });
-
-                    closeTrainingForm();
                 });
             }
 
@@ -985,7 +1100,7 @@
                         ? item.dataset.certificationIndex
                         : String(certificationList.querySelectorAll('[data-certification-item]').length + 1);
 
-                    certificationTitle.textContent = '{{ __('messages.candidate_profile.professional_certification') }} ' + index;
+                    certificationTitle.textContent = getNumberedSectionTitle(window.candidateProfileCertificationLabel, index);
                     fields.index.value = index;
                     fields.certification.value = item ? getCertificationFormValue(item.dataset.certificationCertification) : '';
                     fields.institute.value = item ? getCertificationFormValue(item.dataset.certificationInstitute) : '';
@@ -1059,7 +1174,7 @@
                         item = sourceItem.cloneNode(true);
                         item.dataset.certificationIndex = index;
                         item.querySelector('.candidate-education-item__head h2').textContent =
-                            '{{ __('messages.candidate_profile.professional_certification') }} ' + index;
+                            getNumberedSectionTitle(window.candidateProfileCertificationLabel, index);
                         certificationList.appendChild(item);
                     } else {
                         item.querySelector('.candidate-education-detail-grid').classList.remove('d-none');

@@ -2670,6 +2670,95 @@ function loadCandidateGeneralData() {
     $('.candidate-address-summary').removeClass('d-none');
     $('[data-address-edit-toggle]').removeClass('d-none').closest('.candidate-profile-section__header').removeClass('candidate-profile-section__header--editing');
   });
+  var loadAddressStates = function loadAddressStates(countrySelector, stateSelector, citySelector) {
+    var selectedState = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+    var statePlaceholder = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 'Select your District';
+    var country = $(countrySelector).val();
+    $(stateSelector).empty().append($('<option value=""></option>').text(statePlaceholder));
+    $(citySelector).empty().append($('<option value=""></option>').text('Select your Thana'));
+    if (!country) {
+      $(stateSelector).trigger('change.select2');
+      $(citySelector).trigger('change.select2');
+      return;
+    }
+    $.ajax({
+      url: route('states-list'),
+      type: 'get',
+      dataType: 'json',
+      data: {
+        postal: country
+      },
+      success: function success(data) {
+        $.each(data.data, function (i, v) {
+          $(stateSelector).append($('<option></option>').attr('value', i).text(v));
+        });
+        if (selectedState) {
+          $(stateSelector).val(selectedState);
+        }
+        $(stateSelector).trigger('change.select2');
+      }
+    });
+  };
+  var togglePresentAddressMode = function togglePresentAddressMode() {
+    var resetLocation = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+    var type = $('input[name="present_address_type"]:checked').val();
+    var bangladeshId = $('#countryId').data('bangladesh-id');
+    var isOutside = type === 'outside';
+    $('.candidate-address-country-field').toggleClass('d-none', !isOutside);
+    $('.candidate-present-district-field').toggleClass('d-none', isOutside);
+    $('.candidate-present-state-text-field').toggleClass('d-none', !isOutside);
+    $('.candidate-present-thana-po-field').toggleClass('d-none', isOutside);
+    if (type === 'inside' && bangladeshId) {
+      $('#countryId').val(bangladeshId);
+      if (resetLocation) {
+        loadAddressStates('#countryId', '#stateId', '#cityId');
+      }
+      return;
+    }
+    $('#countryId').val($('#presentCountryDisplay').val());
+  };
+  var permanentAddressTypeChosen = $('.candidate-address-form').data('has-permanent-details') == 1;
+  var togglePermanentAddress = function togglePermanentAddress() {
+    var sameAsPresent = $('#permanentSameAsPresent').is(':checked');
+    var type = $('input[name="permanent_address_type"]:checked').val();
+    var bangladeshId = $('#countryId').data('bangladesh-id');
+    var showPermanentFields = !sameAsPresent && permanentAddressTypeChosen;
+    var isOutside = type === 'outside';
+    $('.candidate-permanent-address-options').toggleClass('d-none', sameAsPresent);
+    $('.candidate-permanent-address-fields').toggleClass('d-none', !showPermanentFields);
+    $('.candidate-permanent-country-field').toggleClass('d-none', !showPermanentFields || !isOutside);
+    $('.candidate-permanent-district-field').toggleClass('d-none', showPermanentFields && isOutside);
+    $('.candidate-permanent-state-text-field').toggleClass('d-none', !showPermanentFields || !isOutside);
+    $('.candidate-permanent-thana-po-field').toggleClass('d-none', showPermanentFields && isOutside);
+    if (showPermanentFields && type === 'inside' && bangladeshId) {
+      $('#permanentCountryId').val(bangladeshId).trigger('change.select2');
+    }
+  };
+  togglePresentAddressMode(false);
+  togglePermanentAddress();
+  $('input[name="present_address_type"]').on('change', function () {
+    togglePresentAddressMode(true);
+  });
+  $('#presentCountryDisplay').on('change', function () {
+    $('#countryId').val($(this).val());
+  });
+  $('#permanentSameAsPresent').on('change', function () {
+    if ($(this).is(':checked')) {
+      permanentAddressTypeChosen = false;
+      $('#permanentAddressSelected').val('0');
+    }
+    togglePermanentAddress();
+  });
+  $('input[name="permanent_address_type"]').on('change', function () {
+    permanentAddressTypeChosen = true;
+    $('#permanentAddressSelected').val('1');
+    togglePermanentAddress();
+  });
+  $('#permanentCountryId').on('change', function () {
+    if ($('input[name="permanent_address_type"]:checked').val() !== 'outside') {
+      loadAddressStates('#permanentCountryId', '#permanentStateId', '#permanentCityId');
+    }
+  });
   $('[data-career-edit-toggle]').on('click', function (event) {
     event.preventDefault();
     event.stopPropagation();
@@ -2723,22 +2812,145 @@ function loadCandidateGeneralData() {
     $('.candidate-disability-summary').removeClass('d-none');
     $('[data-disability-edit-toggle]').removeClass('d-none').closest('.candidate-profile-section__header').removeClass('candidate-profile-section__header--editing');
   });
+  function syncDisabilityDetails() {
+    var showDetails = $('[data-disability-toggle]:checked').val() === '1';
+    var $details = $('[data-disability-details]');
+    var $detailInputs = $('[data-disability-detail-input]');
+    $details.toggleClass('d-none', !showDetails);
+    $('[data-disability-support]').toggleClass('d-none', showDetails);
+    $detailInputs.prop('disabled', !showDetails);
+    if (!showDetails) {
+      $detailInputs.each(function () {
+        if ($(this).is(':radio')) {
+          $(this).prop('checked', $(this).val() === '1');
+          return;
+        }
+        $(this).val('');
+      });
+    }
+  }
+  syncDisabilityDetails();
+  $('[data-disability-toggle]').on('change', syncDisabilityDetails);
   $('#candidatePersonalImageInput').on('change', function () {
+    var input = this;
     var file = this.files && this.files[0];
-    if (!file) {
+    if (!isValidFile($(this), '#validationErrors')) {
+      displayErrorMessage('The image must be a file of type: jpeg, jpg, png.');
+      $('.btnSave').prop('disabled', true);
       return;
     }
-    var reader = new FileReader();
-    reader.onload = function (event) {
-      $('#candidatePersonalAvatar').attr('src', event.target.result);
-    };
-    reader.readAsDataURL(file);
+    if (!file || !['image/jpeg', 'image/png'].includes(file.type) || file.size > 1024 * 1024) {
+      $(this).val('');
+      displayErrorMessage('Upload your Profile image JPG or PNG, 1MB max.');
+      $('.btnSave').prop('disabled', true);
+      return;
+    }
+    var formData = new FormData();
+    formData.append('image', file);
+    $('.candidate-image-upload-modal__upload, [data-candidate-image-input-trigger]').prop('disabled', true);
+    $.ajax({
+      url: route('candidate-profile.image.update'),
+      type: 'post',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function success(result) {
+        var avatar = result.data && result.data.avatar ? result.data.avatar : null;
+        if (avatar) {
+          $('#candidatePersonalAvatar').attr('src', avatar).attr('data-original-src', avatar).data('original-src', avatar);
+        } else {
+          displayPhoto(input, '#candidatePersonalAvatar');
+        }
+        closeCandidateImageModal();
+        displaySuccessMessage(result.message);
+      },
+      error: function error(result) {
+        displayErrorMessage(result.responseJSON && result.responseJSON.message ? result.responseJSON.message : 'The image could not be uploaded.');
+      },
+      complete: function complete() {
+        $('#candidatePersonalImageInput').val('');
+        $('.candidate-image-upload-modal__upload, [data-candidate-image-input-trigger]').prop('disabled', false);
+        $('.btnSave').prop('disabled', false);
+      }
+    });
+  });
+  function openCandidateImageModal() {
+    $('#candidateImageUploadModal').removeClass('d-none').attr('aria-hidden', 'false');
+    $('body').addClass('candidate-image-upload-modal-open');
+  }
+  function closeCandidateImageModal() {
+    $('#candidateImageUploadModal').addClass('d-none').attr('aria-hidden', 'true');
+    $('body').removeClass('candidate-image-upload-modal-open');
+    $('[data-candidate-image-dropzone]').removeClass('candidate-image-upload-modal__dropzone--dragging');
+  }
+  $('[data-candidate-image-modal-open]').on('click', function (event) {
+    event.preventDefault();
+    openCandidateImageModal();
+  });
+  $('[data-candidate-image-modal-close]').on('click', function (event) {
+    event.preventDefault();
+    closeCandidateImageModal();
+  });
+  $('[data-candidate-image-input-trigger]').on('click', function (event) {
+    event.preventDefault();
+    $('#candidatePersonalImageInput').trigger('click');
+  });
+  $('[data-candidate-image-dropzone]').on('click', function (event) {
+    if ($(event.target).closest('[data-candidate-image-input-trigger]').length) {
+      return;
+    }
+    $('#candidatePersonalImageInput').trigger('click');
+  }).on('dragover', function (event) {
+    event.preventDefault();
+    $(this).addClass('candidate-image-upload-modal__dropzone--dragging');
+  }).on('dragleave drop', function (event) {
+    event.preventDefault();
+    $(this).removeClass('candidate-image-upload-modal__dropzone--dragging');
+    if (event.type !== 'drop') {
+      return;
+    }
+    var files = event.originalEvent.dataTransfer && event.originalEvent.dataTransfer.files;
+    if (!files || !files.length) {
+      return;
+    }
+    $('#candidatePersonalImageInput')[0].files = files;
+    $('#candidatePersonalImageInput').trigger('change');
   });
   $('.candidate-personal-delete').on('click', function (event) {
     event.preventDefault();
-    var $avatar = $('#candidatePersonalAvatar');
-    $('#candidatePersonalImageInput').val('');
-    $avatar.attr('src', $avatar.data('original-src'));
+    var $button = $(this);
+    swal({
+      title: Lang.get('js.delete') + ' !',
+      text: Lang.get('js.are_you_sure') + ' "Profile Image" ?',
+      buttons: {
+        confirm: Lang.get('js.yes_delete'),
+        cancel: Lang.get('js.no_cancel')
+      },
+      reverseButtons: true,
+      icon: 'warning',
+      confirmButtonColor: '#F62947'
+    }).then(function (willDelete) {
+      if (!willDelete) {
+        return;
+      }
+      $button.prop('disabled', true);
+      $.ajax({
+        url: route('candidate-profile.image.delete'),
+        type: 'delete',
+        success: function success(result) {
+          var avatar = result.data && result.data.avatar ? result.data.avatar : $('#candidatePersonalAvatar').data('original-src');
+          $('#candidatePersonalImageInput').val('');
+          $('#candidatePersonalAvatar').attr('src', avatar).attr('data-original-src', avatar).data('original-src', avatar);
+          displaySuccessMessage(result.message);
+        },
+        error: function error(result) {
+          displayErrorMessage(result.responseJSON && result.responseJSON.message ? result.responseJSON.message : 'The image could not be deleted.');
+        },
+        complete: function complete() {
+          $button.prop('disabled', false);
+        }
+      });
+    });
   });
   $('#birthDate').flatpickr({
     format: 'YYYY-MM-DD',
@@ -2763,7 +2975,7 @@ function loadCandidateGeneralData() {
     });
   }
   if ($('#candidateProfileUpdate').length) {
-    $('#salaryCurrencyId,#countryId,#stateId,#cityId,#industryId,#careerLevelId,#functionalAreaId').select2({
+    $('#salaryCurrencyId,#stateId,#industryId,#careerLevelId,#functionalAreaId,#presentCountryDisplay,#permanentCountryId,#permanentStateId').select2({
       width: '100%'
     });
     $('.candidate-preferred-select').each(function () {
@@ -2876,6 +3088,9 @@ function loadCandidateGeneralData() {
     });
   });
   $('#stateId').on('change', function () {
+    if (!$('#cityId').length) {
+      return;
+    }
     $.ajax({
       url: route('cities-list'),
       type: 'get',
@@ -2949,50 +3164,94 @@ $(document).on('keyup', '#pinterestUrl', function () {
 });
 $(document).on('submit', '#candidateProfileUpdate', function (e) {
   e.preventDefault();
+  var form = this;
+  var submitter = e.originalEvent && e.originalEvent.submitter ? e.originalEvent.submitter : null;
+  var submitAction = submitter && submitter.getAttribute('formaction') ? submitter.getAttribute('formaction') : null;
+  var submitMethod = submitter && submitter.getAttribute('formmethod') ? submitter.getAttribute('formmethod') : null;
+  var isScopedSectionSubmit = submitAction && submitAction !== form.getAttribute('action');
+  var isScopedAjaxSubmit = submitter && submitter.hasAttribute('data-scoped-ajax-submit');
   if (typeof window.syncRelevantQuillEditors === 'function') {
     window.syncRelevantQuillEditors();
   }
-  if ($('#error-msg').text() !== '') {
+  if (!isScopedSectionSubmit && !$('#error-msg').hasClass('d-none') && $('#error-msg').text() !== '') {
     $('#phoneNumber').focus();
     return false;
   }
   $('#candidateProfileUpdate').find('input:text:visible:first').focus();
-  var facebookUrl = $('#facebookUrl').val();
-  var twitterUrl = $('#twitterUrl').val();
-  var linkedInUrl = $('#linkedInUrl').val();
-  var googlePlusUrl = $('#googlePlusUrl').val();
-  var pinterestUrl = $('#pinterestUrl').val();
   var facebookExp = new RegExp(/^(https?:\/\/)?((m{1}\.)?)?((w{3}\.)?)facebook.[a-z]{2,3}\/?.*/i);
   var twitterExp = new RegExp(/^(https?:\/\/)?((m{1}\.)?)?((w{3}\.)?)twitter\.[a-z]{2,3}\/?.*/i);
   var googlePlusExp = new RegExp(/^(https?:\/\/)?((w{3}\.)?)?(plus\.)?(google\.[a-z]{2,3})\/?(([a-zA-Z 0-9._])?).*/i);
   var linkedInExp = new RegExp(/^(https?:\/\/)?((w{3}\.)?)linkedin\.[a-z]{2,3}\/?.*/i);
   var pinterestExp = new RegExp(/^(https?:\/\/)?((w{3}\.)?)pinterest\.[a-z]{2,3}\/?.*/i);
-  urlValidation(facebookUrl, facebookExp);
-  urlValidation(twitterUrl, twitterExp);
-  urlValidation(linkedInUrl, linkedInExp);
-  urlValidation(googlePlusUrl, googlePlusExp);
-  urlValidation(pinterestUrl, pinterestExp);
-  if (!urlValidation(facebookUrl, facebookExp)) {
-    displayErrorMessage(Lang.get('js.valid_facebook_url'));
+  var validateOptionalUrl = function validateOptionalUrl(selector, expression, message) {
+    var value = $(selector).length ? $(selector).val() : '';
+    if (!urlValidation(value, expression)) {
+      displayErrorMessage(message);
+      return false;
+    }
+    return true;
+  };
+  if (!isScopedSectionSubmit) {
+    if (!validateOptionalUrl('#facebookUrl', facebookExp, Lang.get('js.valid_facebook_url'))) {
+      return false;
+    }
+    if (!validateOptionalUrl('#twitterUrl', twitterExp, Lang.get('js.valid_twitter_url'))) {
+      return false;
+    }
+    if (!validateOptionalUrl('#googlePlusUrl', googlePlusExp, Lang.get('js.valid_google_plus_url'))) {
+      return false;
+    }
+    if (!validateOptionalUrl('#linkedInUrl', linkedInExp, Lang.get('js.valid_linkedin_url'))) {
+      return false;
+    }
+    if (!validateOptionalUrl('#pinterestUrl', pinterestExp, Lang.get('js.valid_pinterest_url'))) {
+      return false;
+    }
+  }
+  if (isScopedAjaxSubmit) {
+    var formData = new FormData(form);
+    var $submitter = $(submitter);
+    $submitter.prop('disabled', true);
+    $.ajax({
+      url: submitAction,
+      type: 'post',
+      data: formData,
+      processData: false,
+      contentType: false,
+      headers: {
+        Accept: 'application/json'
+      },
+      success: function success(result) {
+        displaySuccessMessage(result.message);
+        setTimeout(function () {
+          window.location.href = route('candidate.profile', {
+            section: 'personal-information'
+          });
+        }, 800);
+      },
+      error: function error(result) {
+        var message = result.responseJSON && result.responseJSON.message ? result.responseJSON.message : Lang.get('js.error');
+        if (result.status === 422 && result.responseJSON && result.responseJSON.errors) {
+          var firstErrorKey = Object.keys(result.responseJSON.errors)[0];
+          if (firstErrorKey && result.responseJSON.errors[firstErrorKey][0]) {
+            message = result.responseJSON.errors[firstErrorKey][0];
+          }
+        }
+        displayErrorMessage(message);
+      },
+      complete: function complete() {
+        $submitter.prop('disabled', false);
+      }
+    });
     return false;
   }
-  if (!urlValidation(twitterUrl, twitterExp)) {
-    displayErrorMessage(Lang.get('js.valid_twitter_url'));
-    return false;
+  if (submitAction) {
+    form.setAttribute('action', submitAction);
   }
-  if (!urlValidation(googlePlusUrl, googlePlusExp)) {
-    displayErrorMessage(Lang.get('js.valid_google_plus_url'));
-    return false;
+  if (submitMethod) {
+    form.setAttribute('method', submitMethod);
   }
-  if (!urlValidation(linkedInUrl, linkedInExp)) {
-    displayErrorMessage(Lang.get('js.valid_linkedin_url'));
-    return false;
-  }
-  if (!urlValidation(pinterestUrl, pinterestExp)) {
-    displayErrorMessage(Lang.get('js.valid_pinterest_url'));
-    return false;
-  }
-  $('#candidateProfileUpdate')[0].submit();
+  form.submit();
   return true;
 });
 
@@ -3235,10 +3494,37 @@ function loadCandidateCareerInformationData() {
       dropdownParent: $('#addEducationModal')
     });
   });
+  function getCandidateProfileNumber(number) {
+    var value = String(number);
+    if (!window.candidateProfileUseBanglaNumber) {
+      return value;
+    }
+    var banglaNumbers = {
+      0: '০',
+      1: '১',
+      2: '২',
+      3: '৩',
+      4: '৪',
+      5: '৫',
+      6: '৬',
+      7: '৭',
+      8: '৮',
+      9: '৯'
+    };
+    return value.replace(/[0-9]/g, function (digit) {
+      return banglaNumbers[digit];
+    });
+  }
+  function setEducationFormTitle(formSelector, number) {
+    var educationLabel = window.candidateProfileEducationLabel || 'Education';
+    $(formSelector).find('[data-education-form-title]').text(educationLabel + ' ' + getCandidateProfileNumber(number));
+  }
   listenClick('[data-inline-education-add]', function () {
     $('[data-education-edit-form]').addClass('d-none');
     $('.candidate-education-container').addClass('d-none');
     $('[data-education-add-form]').removeClass('d-none');
+    setEducationFormTitle('[data-education-add-form]', $('.candidate-education-container .candidate-education').length + 1);
+    updateEducationFormLayout('#addNewEducationForm');
     initEducationQuillEditors();
   });
   listenClick('[data-education-add-close], [data-education-edit-close]', function () {
@@ -3291,7 +3577,94 @@ function loadCandidateCareerInformationData() {
       }
     });
   }
+  function setEducationQuillValue(formSelector, value) {
+    var input = document.querySelector(formSelector + ' [name="achievement"]');
+    if (!input) {
+      return;
+    }
+    input.value = value || '';
+    initEducationQuillEditors();
+    var editor = educationQuillEditors.find(function (educationEditor) {
+      return educationEditor.input === input;
+    });
+    if (editor) {
+      editor.quill.root.innerHTML = value || '';
+    }
+  }
   initEducationQuillEditors();
+  var educationExamTitleOptions = window.candidateEducationExamTitleOptions || {};
+  var hiddenEducationFieldSelectors = ['[data-education-result-field]', '[data-education-cgpa-field]', '[data-education-scale-field]', '[data-education-year-field]', '[data-education-duration-field]', '[data-education-achievement-field]'];
+  function getEducationLevelType(levelText) {
+    var value = (levelText || '').toLowerCase();
+    if (value.includes('psc') || value.includes('5 pass')) {
+      return 'psc';
+    }
+    if (value.includes('jsc') || value.includes('jdc') || value.includes('8 pass')) {
+      return 'jsc';
+    }
+    if (value.includes('higher secondary') || value.includes('hsc')) {
+      return 'higher_secondary';
+    }
+    if (value.includes('secondary') || value.includes('ssc')) {
+      return 'secondary';
+    }
+    if (value.includes('diploma')) {
+      return 'diploma';
+    }
+    if (value.includes('bachelor') || value.includes('honors')) {
+      return 'bachelor';
+    }
+    if (value.includes('master')) {
+      return 'masters';
+    }
+    if (value.includes('phd') || value.includes('ph.d')) {
+      return 'phd';
+    }
+    return 'default';
+  }
+  function setEducationFieldVisibility($field, isVisible) {
+    $field.toggleClass('d-none', !isVisible);
+    $field.find('input, select, textarea').prop('disabled', !isVisible);
+  }
+  function setEducationTitleOptions($form, levelType, selectedTitle) {
+    var $titleSelect = $form.find('[data-education-title-select]');
+    var options = educationExamTitleOptions[levelType] || educationExamTitleOptions["default"] || [];
+    $titleSelect.empty();
+    $titleSelect.append($('<option></option>').attr('value', '').text($titleSelect.data('placeholder') || 'Exam/Degree Title'));
+    options.forEach(function (title) {
+      $titleSelect.append($('<option></option>').attr('value', title).text(title));
+    });
+    var hasSelectedTitleOption = $titleSelect.find('option').filter(function () {
+      return this.value === selectedTitle;
+    }).length > 0;
+    if (selectedTitle && !hasSelectedTitleOption) {
+      $titleSelect.append($('<option></option>').attr('value', selectedTitle).text(selectedTitle));
+    }
+    $titleSelect.val(selectedTitle || '');
+  }
+  function updateEducationFormLayout(form, selectedTitle) {
+    var $form = $(form);
+    var $levelSelect = $form.find('[name="degree_level_id"]');
+    var levelType = getEducationLevelType($levelSelect.find('option:selected').text());
+    var isBoardLevel = ['psc', 'jsc'].includes(levelType);
+    var isAdvancedLevel = ['diploma', 'bachelor', 'masters', 'phd', 'default'].includes(levelType);
+    var hasLevel = !!$levelSelect.val();
+    setEducationTitleOptions($form, levelType, selectedTitle);
+    setEducationFieldVisibility($form.find('[data-education-board-field]'), hasLevel && isBoardLevel);
+    setEducationFieldVisibility($form.find('[data-education-major-field]'), hasLevel && !isBoardLevel);
+    setEducationFieldVisibility($form.find('[data-education-summary-row]'), hasLevel && isAdvancedLevel);
+    hiddenEducationFieldSelectors.forEach(function (selector) {
+      setEducationFieldVisibility($form.find(selector), false);
+    });
+    $form.find('[name="board"]').prop('required', hasLevel && isBoardLevel);
+    $form.find('[name="major"]').prop('required', hasLevel && !isBoardLevel);
+  }
+  $('[data-education-add-form] form, [data-education-edit-form] form').each(function () {
+    updateEducationFormLayout(this);
+  });
+  listenChange('#degreeLevelId, #editDegreeLevel', function (event) {
+    updateEducationFormLayout($(event.currentTarget).closest('form'));
+  });
   listenShowBsModal('#addEducationModal', function () {
     $(this).find('input:text').first().blur();
   });
@@ -3379,19 +3752,27 @@ function loadCandidateCareerInformationData() {
   });
   listenClick('.edit-candidate-education', function (event) {
     var educationId = $(event.currentTarget).data('id');
-    renderCandidateEducationData(educationId);
+    var educationNumber = $(event.currentTarget).closest('.candidate-education').data('education-id') + 1;
+    renderCandidateEducationData(educationId, educationNumber);
   });
-  function renderCandidateEducationData(educationId) {
+  function renderCandidateEducationData(educationId, educationNumber) {
     $.ajax({
       url: route('candidate.edit-education', educationId),
       type: 'GET',
       success: function success(result) {
         if (result.success) {
-          console.log(result.data);
+          var $editForm = $('#editCareerEducationForm');
           $('#educationId').val(result.data.id);
-          $('#editDegreeLevel').val(result.data.degree_level.id).trigger('change');
-          $('#editDegreeTitle').val(result.data.degree_title);
+          $('#editDegreeLevel').val(result.data.degree_level ? result.data.degree_level.id : '');
+          updateEducationFormLayout($editForm, result.data.degree_title);
           $('#editInstitute').val(result.data.institute);
+          $editForm.find('[name="major"]').val(result.data.major || '');
+          $editForm.find('[name="board"]').val(result.data.board || '');
+          $editForm.find('[name="show_summary"]').prop('checked', !!result.data.show_summary);
+          $editForm.find('[name="foreign_institute"]').prop('checked', !!result.data.foreign_institute);
+          $editForm.find('[name="cgpa"]').val(result.data.cgpa || '');
+          $editForm.find('[name="scale"]').val(result.data.scale || '');
+          $editForm.find('[name="duration"]').val(result.data.duration || '');
           $('#editEducationCountry').val(result.data.country_id).trigger('change');
           setTimeout(function () {
             $("#editEducationState").val(result.data.state_id).trigger('change');
@@ -3405,9 +3786,12 @@ function loadCandidateCareerInformationData() {
             $('[data-education-add-form]').addClass('d-none');
             $('.candidate-education-container').addClass('d-none');
             $('[data-education-edit-form]').removeClass('d-none');
+            setEducationFormTitle('[data-education-edit-form]', educationNumber || 1);
             initEducationQuillEditors();
+            setEducationQuillValue('#editCareerEducationForm', result.data.achievement);
           } else {
             $('#editEducationModal').appendTo('body').modal('show');
+            setEducationQuillValue('#editCareerEducationForm', result.data.achievement);
           }
         }
       },
@@ -6235,7 +6619,10 @@ window.screenUnLock = function () {
   $("#overlay-screen-lock").hide();
 };
 window.urlValidation = function (value, regex) {
-  var urlCheck = value == "" ? true : value.match(regex) ? true : false;
+  if (!value) {
+    return true;
+  }
+  var urlCheck = value.match(regex) ? true : false;
   if (!urlCheck) {
     return false;
   }
