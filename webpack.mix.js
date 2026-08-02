@@ -12,7 +12,7 @@ const mix = require('laravel-mix')
  */
 
 mix.copy('resources/assets/js/currency.js', 'public/js/currency.js')
-mix.js('resources/js/app.js', 'public/js').vue()
+mix.js('resources/js/app.js', 'public/js')
 mix.copy('node_modules/slick-carousel/slick/fonts', 'public/assets/css/fonts')
 mix.copy('node_modules/slick-carousel/slick/ajax-loader.gif',
     'public/assets/css/ajax-loader.gif')

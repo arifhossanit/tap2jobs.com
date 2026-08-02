@@ -118,7 +118,7 @@ return [
         'date_posted' => 'পোস্টের তারিখ',
         'job_skills' => 'চাকরির দক্ষতা',
         'salary' => 'বেতন',
-        'edit_draft' => 'খসড়া সম্পাদনা',
+        'edit_draft' => 'খসড়া এডিট',
         'apply_for_job' => 'চাকরির জন্য আবেদন',
         'already_applied' => 'ইতিমধ্যে আবেদন করা হয়েছে',
         'company_overview' => 'কোম্পানির ওভারভিউ',

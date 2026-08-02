@@ -270,7 +270,11 @@ if(isRTL){
 }
 
 window.displaySuccessMessage = function(message) {
-    toastr.success(message, Lang.get("js.success"));
+    let successTitle = Lang.get("js.success");
+    if (successTitle === "js.success") {
+        successTitle = typeof lancode !== 'undefined' && lancode === 'bn' ? 'সফল' : 'Successful';
+    }
+    toastr.success(message, successTitle);
 };
 
 window.displayErrorMessage = function(message) {
@@ -458,7 +462,11 @@ window.screenUnLock = function() {
 };
 
 window.urlValidation = function(value, regex) {
-    let urlCheck = value == "" ? true : value.match(regex) ? true : false;
+    if (!value) {
+        return true;
+    }
+
+    let urlCheck = value.match(regex) ? true : false;
     if (!urlCheck) {
         return false;
     }

@@ -802,6 +802,38 @@ Route::middleware('auth', 'role:Candidate', 'xss', 'verified.user')->prefix('can
 
     Route::get('/profile', [Candidates\CandidateController::class, 'editProfile'])->name('candidate.profile');
     Route::put('update-profile', [Candidates\CandidateController::class, 'updateProfile'])->name('candidate-profile.update');
+    Route::put('profile/personal-details', [Candidates\CandidateController::class, 'updatePersonalDetails'])->name('candidate-profile.personal-details.update');
+    Route::put('profile/address-details', [Candidates\CandidateController::class, 'updateAddressDetails'])->name('candidate-profile.address-details.update');
+    Route::put('profile/career-application', [Candidates\CandidateController::class, 'updateCareerApplication'])->name('candidate-profile.career-application.update');
+    Route::put('profile/preferred-area', [Candidates\CandidateController::class, 'updatePreferredArea'])->name('candidate-profile.preferred-area.update');
+    Route::put('profile/relevant-information', [Candidates\CandidateController::class, 'updateRelevantInformation'])->name('candidate-profile.relevant-information.update');
+    Route::put('profile/disability-information', [Candidates\CandidateController::class, 'updateDisabilityInformation'])->name('candidate-profile.disability-information.update');
+    Route::post('profile/extracurricular-activities', [Candidates\CandidateController::class, 'storeExtraCurricular'])->name('candidate-profile.extracurricular-activities.store');
+    Route::put('profile/extracurricular-activities/{candidateExtraCurricular}', [Candidates\CandidateController::class, 'updateExtraCurricular'])->name('candidate-profile.extracurricular-activities.update');
+    Route::delete('profile/extracurricular-activities/{candidateExtraCurricular}', [Candidates\CandidateController::class, 'destroyExtraCurricular'])->name('candidate-profile.extracurricular-activities.destroy');
+    Route::post('profile/links', [Candidates\CandidateController::class, 'storeLink'])->name('candidate-profile.links.store');
+    Route::put('profile/links/{candidateLink}', [Candidates\CandidateController::class, 'updateLink'])->name('candidate-profile.links.update');
+    Route::delete('profile/links/{candidateLink}', [Candidates\CandidateController::class, 'destroyLink'])->name('candidate-profile.links.destroy');
+    Route::post('profile/references', [Candidates\CandidateController::class, 'storeReference'])->name('candidate-profile.references.store');
+    Route::put('profile/references/{candidateReference}', [Candidates\CandidateController::class, 'updateReference'])->name('candidate-profile.references.update');
+    Route::delete('profile/references/{candidateReference}', [Candidates\CandidateController::class, 'destroyReference'])->name('candidate-profile.references.destroy');
+    Route::post('profile/portfolios', [Candidates\CandidateController::class, 'storePortfolio'])->name('candidate-profile.portfolios.store');
+    Route::put('profile/portfolios/{candidateAccomplishment}', [Candidates\CandidateController::class, 'updatePortfolio'])->name('candidate-profile.portfolios.update');
+    Route::delete('profile/portfolios/{candidateAccomplishment}', [Candidates\CandidateController::class, 'destroyPortfolio'])->name('candidate-profile.portfolios.destroy');
+    Route::post('profile/publications', [Candidates\CandidateController::class, 'storePublication'])->name('candidate-profile.publications.store');
+    Route::put('profile/publications/{candidateAccomplishment}', [Candidates\CandidateController::class, 'updatePublication'])->name('candidate-profile.publications.update');
+    Route::delete('profile/publications/{candidateAccomplishment}', [Candidates\CandidateController::class, 'destroyPublication'])->name('candidate-profile.publications.destroy');
+    Route::post('profile/awards', [Candidates\CandidateController::class, 'storeAward'])->name('candidate-profile.awards.store');
+    Route::put('profile/awards/{candidateAccomplishment}', [Candidates\CandidateController::class, 'updateAward'])->name('candidate-profile.awards.update');
+    Route::delete('profile/awards/{candidateAccomplishment}', [Candidates\CandidateController::class, 'destroyAward'])->name('candidate-profile.awards.destroy');
+    Route::post('profile/projects', [Candidates\CandidateController::class, 'storeProject'])->name('candidate-profile.projects.store');
+    Route::put('profile/projects/{candidateAccomplishment}', [Candidates\CandidateController::class, 'updateProject'])->name('candidate-profile.projects.update');
+    Route::delete('profile/projects/{candidateAccomplishment}', [Candidates\CandidateController::class, 'destroyProject'])->name('candidate-profile.projects.destroy');
+    Route::post('profile/others', [Candidates\CandidateController::class, 'storeOther'])->name('candidate-profile.others.store');
+    Route::put('profile/others/{candidateAccomplishment}', [Candidates\CandidateController::class, 'updateOther'])->name('candidate-profile.others.update');
+    Route::delete('profile/others/{candidateAccomplishment}', [Candidates\CandidateController::class, 'destroyOther'])->name('candidate-profile.others.destroy');
+    Route::post('profile/image', [Candidates\CandidateController::class, 'updateProfileImage'])->name('candidate-profile.image.update');
+    Route::delete('profile/image', [Candidates\CandidateController::class, 'deleteProfileImage'])->name('candidate-profile.image.delete');
 
     Route::get('edit-profile', [Candidates\CandidateController::class, 'editCandidateProfile'])->name('candidate.edit.profile');
     Route::post('edit-change-password', [Candidates\CandidateController::class, 'changePassword'])->name('candidate.change-password');
@@ -821,6 +853,8 @@ Route::middleware('auth', 'role:Candidate', 'xss', 'verified.user')->prefix('can
         'candidate-experience/{candidateExperience}',
         [Candidates\CandidateProfileController::class, 'destroyExperience']
     )->name('experience.destroy');
+    Route::put('retired-army-employment', [Candidates\CandidateProfileController::class, 'updateRetiredArmyEmployment'])->name('candidate.retired-army-employment.update');
+    Route::delete('retired-army-employment', [Candidates\CandidateProfileController::class, 'destroyRetiredArmyEmployment'])->name('candidate.retired-army-employment.destroy');
 
     // candidate education
     Route::post('education', [Candidates\CandidateProfileController::class, 'createEducation'])->name('candidate.create-education');
@@ -833,6 +867,18 @@ Route::middleware('auth', 'role:Candidate', 'xss', 'verified.user')->prefix('can
         'candidate-education/{candidateEducation}',
         [Candidates\CandidateProfileController::class, 'destroyEducation']
     )->name('education.destroy');
+
+    // candidate training
+    Route::post('training', [Candidates\CandidateProfileController::class, 'createTraining'])->name('candidate.create-training');
+    Route::get(
+        '/{candidateTraining}/edit-training',
+        [Candidates\CandidateProfileController::class, 'editTraining']
+    )->name('candidate.edit-training');
+    Route::put('candidate-training/{candidateTraining}', [Candidates\CandidateProfileController::class, 'updateTraining'])->name('candidate.update-training');
+    Route::delete(
+        'candidate-training/{candidateTraining}',
+        [Candidates\CandidateProfileController::class, 'destroyTraining']
+    )->name('training.destroy');
 
     // favourite jobs listing routes.
     Route::get('favourite-jobs', [Candidates\CandidateController::class, 'showFavouriteJobs'])->name('favourite.jobs');

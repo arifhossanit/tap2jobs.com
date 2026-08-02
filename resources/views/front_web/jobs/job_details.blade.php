@@ -171,7 +171,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="alert alert-warning" role="alert">
                                     {{ Session::get('warning') }}
-                                    <a href="{{ route('candidate.profile', ['section' => 'resume']) }}"
+                                    <a href="{{ route('candidate.profile', ['section' => 'accomplishment']) }}"
                                         class="alert-link ml-2 ">{{ __('web.job_details.click_here') }}</a>
                                     {{ __('web.job_details.to_upload_resume') }}
                                     .

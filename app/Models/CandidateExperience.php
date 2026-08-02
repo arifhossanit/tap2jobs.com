@@ -6,6 +6,7 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -63,9 +64,21 @@ class CandidateExperience extends Model
     public static $rules = [
         'experience_title' => 'required|max:150',
         'company' => 'required|max:150',
-        'country_id' => 'required',
+        'company_business' => 'required|max:150',
+        'department' => 'nullable|max:150',
+        'country_id' => 'required|exists:countries,id',
+        'state_id' => 'nullable|exists:states,id',
+        'city_id' => 'nullable|exists:cities,id',
         'start_date' => 'required|date',
-        'end_date' => 'nullable|date',
+        'end_date' => 'required_unless:currently_working,1|nullable|date|after_or_equal:start_date',
+        'currently_working' => 'nullable|boolean',
+        'description' => 'nullable|max:3000',
+        'company_location' => 'nullable|max:150',
+        'area_of_expertise' => 'required|array|max:10',
+        'area_of_expertise.0' => 'required|max:150',
+        'area_of_expertise.*' => 'nullable|max:150',
+        'expertise_duration' => 'nullable|array|max:10',
+        'expertise_duration.*' => 'nullable|integer|min:0|max:12',
     ];
 
     public $table = 'candidate_experiences';
@@ -73,7 +86,9 @@ class CandidateExperience extends Model
     public $fillable = [
         'candidate_id',
         'experience_title',
+        'department',
         'company',
+        'company_business',
         'country_id',
         'state_id',
         'city_id',
@@ -81,6 +96,8 @@ class CandidateExperience extends Model
         'end_date',
         'currently_working',
         'description',
+        'company_location',
+        'sort_order',
     ];
 
     /**
@@ -91,7 +108,9 @@ class CandidateExperience extends Model
     protected $casts = [
         'candidate_id' => 'integer',
         'experience_title' => 'string',
+        'department' => 'string',
         'company' => 'string',
+        'company_business' => 'string',
         'country_id' => 'integer',
         'state_id' => 'integer',
         'city_id' => 'integer',
@@ -99,10 +118,18 @@ class CandidateExperience extends Model
         'end_date' => 'date',
         'currently_working' => 'boolean',
         'description' => 'string',
+        'company_location' => 'string',
+        'sort_order' => 'integer',
     ];
 
     public function candidate(): BelongsTo
     {
         return $this->belongsTo(Candidate::class, 'candidate_id');
+    }
+
+    public function expertises(): HasMany
+    {
+        return $this->hasMany(CandidateExperienceExpertise::class, 'candidate_experience_id')
+            ->orderBy('sort_order');
     }
 }

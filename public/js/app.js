@@ -2325,7 +2325,6 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
       return target;
     };
-
     return _extends.apply(this, arguments);
   }
 

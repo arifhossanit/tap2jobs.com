@@ -62,11 +62,24 @@ class CandidateEducation extends Model
      * @var array
      */
     public static $rules = [
+        'degree_level_id' => 'required|exists:required_degree_levels,id',
         'degree_title' => 'required|max:150',
-        'country_id' => 'required',
+        'country_id' => 'required|exists:countries,id',
+        'state_id' => 'nullable|exists:states,id',
+        'city_id' => 'nullable|exists:cities,id',
+        'major' => 'nullable|max:150',
+        'board' => 'nullable|max:100',
         'institute' => 'required|max:150',
-        'result' => 'required|max:150',
-        'year' => 'required',
+        'foreign_institute' => 'nullable|boolean',
+        'foreign_university_country' => 'required_if:foreign_institute,1|nullable|max:120',
+        'show_summary' => 'nullable|boolean',
+        'result' => 'nullable|max:150',
+        'marks_percentage' => 'nullable|numeric|min:0|max:100',
+        'cgpa' => 'required_if:result,Grade|nullable|numeric|min:0|max:100',
+        'scale' => 'required_if:result,Grade|nullable|integer|min:1|max:100',
+        'year' => 'nullable|integer|min:1900|max:2100',
+        'duration' => 'nullable|max:100',
+        'achievement' => 'nullable|max:3000',
     ];
 
     public $table = 'candidate_educations';
@@ -75,12 +88,23 @@ class CandidateEducation extends Model
         'candidate_id',
         'degree_level_id',
         'degree_title',
+        'major',
+        'board',
         'country_id',
         'state_id',
         'city_id',
         'institute',
+        'foreign_institute',
+        'foreign_university_country',
+        'show_summary',
         'result',
+        'marks_percentage',
+        'cgpa',
+        'scale',
         'year',
+        'duration',
+        'achievement',
+        'sort_order',
     ];
 
     /**
@@ -92,12 +116,23 @@ class CandidateEducation extends Model
         'candidate_id' => 'integer',
         'degree_level_id' => 'integer',
         'degree_title' => 'string',
+        'major' => 'string',
+        'board' => 'string',
         'country_id' => 'integer',
         'state_id' => 'integer',
         'city_id' => 'integer',
         'institute' => 'string',
+        'foreign_institute' => 'boolean',
+        'foreign_university_country' => 'string',
+        'show_summary' => 'boolean',
         'result' => 'string',
+        'marks_percentage' => 'decimal:2',
+        'cgpa' => 'decimal:2',
+        'scale' => 'integer',
         'year' => 'integer',
+        'duration' => 'string',
+        'achievement' => 'string',
+        'sort_order' => 'integer',
     ];
 
     public function candidate(): BelongsTo

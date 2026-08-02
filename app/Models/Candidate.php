@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model as Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -121,9 +122,39 @@ class Candidate extends Model implements HasMedia
         'user_id',
         'unique_id',
         'father_name',
+        'mother_name',
+        'religion',
         'marital_status_id',
         'nationality',
         'national_id_card',
+        'passport_number',
+        'passport_issue_date',
+        'secondary_mobile',
+        'alternate_email',
+        'emergency_contact',
+        'blood_group',
+        'height',
+        'weight',
+        'objective',
+        'job_level',
+        'job_nature',
+        'preferred_functional_categories',
+        'preferred_special_skills',
+        'preferred_job_locations_inside',
+        'preferred_job_locations_outside',
+        'preferred_organization_types',
+        'career_summary',
+        'special_qualification',
+        'keywords',
+        'has_disability_id',
+        'disability_id_number',
+        'disability_id_show_on_profile',
+        'disability_difficulty_seeing',
+        'disability_difficulty_hearing',
+        'disability_difficulty_remembering',
+        'disability_difficulty_walking',
+        'disability_difficulty_communicating',
+        'disability_difficulty_self_care',
         'experience',
         'career_level_id',
         'industry_id',
@@ -132,6 +163,17 @@ class Candidate extends Model implements HasMedia
         'expected_salary',
         'salary_currency',
         'address',
+        'present_address_type',
+        'present_post_office',
+        'present_state_division',
+        'permanent_same_as_present',
+        'permanent_address_type',
+        'permanent_country_id',
+        'permanent_state_id',
+        'permanent_state_division',
+        'permanent_city_id',
+        'permanent_post_office',
+        'permanent_address',
         'immediate_available',
         'available_at',
         'last_change',
@@ -147,9 +189,39 @@ class Candidate extends Model implements HasMedia
         'user_id' => 'integer',
         'unique_id' => 'string',
         'father_name' => 'string',
+        'mother_name' => 'string',
+        'religion' => 'string',
         'marital_status_id' => 'integer',
         'nationality' => 'string',
         'national_id_card' => 'string',
+        'passport_number' => 'string',
+        'passport_issue_date' => 'date',
+        'secondary_mobile' => 'string',
+        'alternate_email' => 'string',
+        'emergency_contact' => 'string',
+        'blood_group' => 'string',
+        'height' => 'decimal:2',
+        'weight' => 'decimal:2',
+        'objective' => 'string',
+        'job_level' => 'string',
+        'job_nature' => 'string',
+        'preferred_functional_categories' => 'array',
+        'preferred_special_skills' => 'array',
+        'preferred_job_locations_inside' => 'array',
+        'preferred_job_locations_outside' => 'array',
+        'preferred_organization_types' => 'array',
+        'career_summary' => 'string',
+        'special_qualification' => 'string',
+        'keywords' => 'string',
+        'has_disability_id' => 'boolean',
+        'disability_id_number' => 'string',
+        'disability_id_show_on_profile' => 'boolean',
+        'disability_difficulty_seeing' => 'string',
+        'disability_difficulty_hearing' => 'string',
+        'disability_difficulty_remembering' => 'string',
+        'disability_difficulty_walking' => 'string',
+        'disability_difficulty_communicating' => 'string',
+        'disability_difficulty_self_care' => 'string',
         'experience' => 'integer',
         'career_level_id' => 'integer',
         'industry_id' => 'integer',
@@ -158,6 +230,17 @@ class Candidate extends Model implements HasMedia
         'expected_salary' => 'double',
         'salary_currency' => 'string',
         'address' => 'string',
+        'present_address_type' => 'string',
+        'present_post_office' => 'string',
+        'present_state_division' => 'string',
+        'permanent_same_as_present' => 'boolean',
+        'permanent_address_type' => 'string',
+        'permanent_country_id' => 'integer',
+        'permanent_state_id' => 'integer',
+        'permanent_state_division' => 'string',
+        'permanent_city_id' => 'integer',
+        'permanent_post_office' => 'string',
+        'permanent_address' => 'string',
         'immediate_available' => 'boolean',
         'available_at' => 'date',
         'last_change' => 'integer',
@@ -259,6 +342,26 @@ class Candidate extends Model implements HasMedia
     public function careerLevel(): BelongsTo
     {
         return $this->belongsTo(CareerLevel::class, 'career_level_id');
+    }
+
+    public function extraCurricular(): HasMany
+    {
+        return $this->hasMany(CandidateExtraCurricular::class);
+    }
+
+    public function links(): HasMany
+    {
+        return $this->hasMany(CandidateLink::class);
+    }
+
+    public function references(): HasMany
+    {
+        return $this->hasMany(CandidateReference::class);
+    }
+
+    public function accomplishments(): HasMany
+    {
+        return $this->hasMany(CandidateAccomplishment::class);
     }
 
     public function functionalArea(): BelongsTo

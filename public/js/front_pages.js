@@ -120,7 +120,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }), s.$slidesCache = s.$slides, s.reinit();
   }, e.prototype.animateHeight = function () {
     var i = this;
-
     if (1 === i.options.slidesToShow && !0 === i.options.adaptiveHeight && !1 === i.options.vertical) {
       var e = i.$slides.eq(i.currentSlide).outerHeight(!0);
       i.$list.animate({
@@ -268,7 +267,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var d = 0 === e.data.index ? 0 : e.data.index || l.index() * r.options.slidesToScroll;
         r.slideHandler(r.checkNavigable(d), !1, t), l.children().trigger("focus");
         break;
-
       default:
         return;
     }
@@ -279,7 +277,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         i = t;
         break;
       }
-
       t = e[o];
     }
     return i;
@@ -640,7 +637,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     });
   }, e.prototype.setHeight = function () {
     var i = this;
-
     if (1 === i.options.slidesToShow && !0 === i.options.adaptiveHeight && !1 === i.options.vertical) {
       var e = i.$slides.eq(i.currentSlide).outerHeight(!0);
       i.$list.css("height", e);
@@ -755,12 +751,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         case "down":
           e = o.options.swipeToSlide ? o.checkNavigable(o.currentSlide + o.getSlideCount()) : o.currentSlide + o.getSlideCount(), o.currentDirection = 0;
           break;
-
         case "right":
         case "up":
           e = o.options.swipeToSlide ? o.checkNavigable(o.currentSlide - o.getSlideCount()) : o.currentSlide - o.getSlideCount(), o.currentDirection = 1;
       }
-
       "vertical" != t && (o.slideHandler(e), o.touchObject = {}, o.$slider.trigger("swipe", [o, t]));
     } else o.touchObject.startX !== o.touchObject.curX && (o.slideHandler(o.currentSlide), o.touchObject = {});
   }, e.prototype.swipeHandler = function (i) {
@@ -841,7 +835,6 @@ function loadAutoFieldsData() {
     $('#password').val(password);
   };
 }
-
 listenClick('.admin-login', function () {
   changeCredentials('admin@infyjobs.com', '123456');
 });
@@ -906,7 +899,6 @@ function loadFrontCompanyData() {
       Livewire.dispatch('changeFilter', 'featured', data);
     });
   }
-
   if ($('#filter_status').length) {
     $('#filter_status').on('change', function (e) {
       var data = $('#filter_status').select2('val');
@@ -927,7 +919,6 @@ function loadFrontCompanyData() {
     var adminMakeFeaturedId = $(event.currentTarget).data('id');
     makeFeatured(adminMakeFeaturedId);
   });
-
   function makeFeatured(adminMakeFeaturedId) {
     $.ajax({
       url: route('mark-as-featured', adminMakeFeaturedId),
@@ -945,13 +936,11 @@ function loadFrontCompanyData() {
       }
     });
   }
-
   ;
   listenClick('.adminUnFeatured', function (event) {
     var adminUnFeaturedId = $(event.currentTarget).data('id');
     makeUnFeatured(adminUnFeaturedId);
   });
-
   function makeUnFeatured(adminUnFeaturedId) {
     $.ajax({
       url: route('mark-as-unfeatured', adminUnFeaturedId),
@@ -969,7 +958,6 @@ function loadFrontCompanyData() {
       }
     });
   }
-
   ;
   listenClick('.delete-btn', function (event) {
     var companyId = $(event.currentTarget).attr('data-id');
@@ -1001,7 +989,6 @@ function loadFrontCompanyData() {
     var companyId = $(event.currentTarget).data('id');
     activeIsFeatured(companyId);
   });
-
   function changeIsActive(isActiveId) {
     $.ajax({
       url: route('change.company.status', isActiveId),
@@ -1018,7 +1005,6 @@ function loadFrontCompanyData() {
       }
     });
   }
-
   ;
   listenChange('.is-email-verified', function (event) {
     if ($(this).is(':checked')) {
@@ -1029,7 +1015,6 @@ function loadFrontCompanyData() {
       return false;
     }
   });
-
   function changeEmailVerified(companyId) {
     $.ajax({
       url: route('company.verified.email', companyId),
@@ -1047,7 +1032,6 @@ function loadFrontCompanyData() {
       }
     });
   }
-
   ;
   listenClick('.send-email-verification', function (event) {
     var companyId = $(event.currentTarget).attr('data-id');
@@ -1095,7 +1079,6 @@ function loadFrontCompanyDetailsData() {
       $('.favouriteText').text(followText);
     }
   }
-
   $('#addToFavourite').on('click', function () {
     var userId = $(this).data('favorite-user-id');
     var companyId = $(this).data('favorite-company_id');
@@ -1118,7 +1101,6 @@ function loadFrontCompanyDetailsData() {
             $('.favouriteIcon').addClass('fa-regular fa-star');
             $('.favouriteText').text(followText);
           }
-
           displaySuccessMessage(result.message);
         }
       },
@@ -1356,7 +1338,6 @@ window.IOInitImageComponent = function () {
   if (!imagePicker) {
     return;
   }
-
   for (var i = 0; i < imagePicker.length; i++) {
     var box = imagePicker[i];
     IOInitDropEffect(box);
@@ -1364,13 +1345,11 @@ window.IOInitImageComponent = function () {
   }
 }; // Drop Effect according to the image size
 
-
 function IOInitDropEffect(box) {
   var area, drop, areaWidth, areaHeight, maxDistance, dropWidth, dropHeight, x, y; // get clickable area for drop effect
 
   area = box.querySelector('.previewImage');
   area.addEventListener('click', fireRipple);
-
   function fireRipple(e) {
     area = e.currentTarget; // create drop
 
@@ -1379,7 +1358,6 @@ function IOInitDropEffect(box) {
       drop.className = 'drop';
       this.appendChild(drop);
     } // reset animate class
-
 
     drop.className = 'drop'; // calculate dimensions of area (longest side)
 
@@ -1444,7 +1422,6 @@ function IOInitImageUpload(box) {
     }
   }
 } // every load initialize the Image component on document load
-
 
 window.IOInitSidebar = function () {
   $('.sidebar-btn').click(function () {
@@ -1580,7 +1557,6 @@ function loadPhoneNumberCountry() {
     },
     utilsScript: '../../public/assets/js/inttel/js/utils.min.js'
   });
-
   if (typeof phoneNo != 'undefined' && phoneNo !== '') {
     setTimeout(function () {
       $('#phoneNumber').trigger('change');
@@ -1594,7 +1570,6 @@ function loadPhoneNumberCountry() {
   var getPhoneNumber = $('#phoneNumber').val();
   var removeSpacePhoneNumber = getPhoneNumber.replace(/\s/g, '');
   $('#phoneNumber').val(removeSpacePhoneNumber);
-
   var reset = function reset() {
     input.classList.remove('error');
     errorMsg.innerHTML = '';
@@ -1627,7 +1602,6 @@ function loadPhoneNumberCountry() {
   } else {
     var flagClassLocal = window.localStorage.getItem('flagClassLocal');
     var dialCodeValLocal = window.localStorage.getItem('dialCodeValLocal');
-
     if (dialCodeValLocal) {
       $('.iti__selected-flag>.iti__flag').addClass(flagClassLocal);
       $('.iti__selected-dial-code').text(dialCodeValLocal);
@@ -1635,13 +1609,11 @@ function loadPhoneNumberCountry() {
       intl.setNumber(dialCodeValLocal + phoneEleVal);
     }
   }
-
   $('#phoneNumber').on('blur keyup change countrychange', function () {
     if (typeof phoneNo != 'undefined' && phoneNo !== '') {
       intl.setNumber('+' + phoneNo);
       phoneNo = '';
     }
-
     var getCode = intl.selectedCountryData['dialCode'];
     $('#prefix_code').val(getCode);
   });
@@ -1691,7 +1663,6 @@ listenSubmit('#addCandidateNewForm', function (e) {
   //         return true;
   //     }
   // }
-
   processingBtn('#addCandidateNewForm', '#btnCandidateSave', 'loading');
   $.ajax({
     url: route('front.save.register'),
@@ -1780,7 +1751,6 @@ function loadHomeData() {
   if (!$('#indexHomeData').length) {
     return;
   }
-
   $('.search-categories').on('click', function () {
     $('.dropdown-menu').css('z-index', '100');
   });
@@ -1792,7 +1762,6 @@ function loadHomeData() {
   $.each(locationData, function (i, v) {
     availableLocation.push(v);
   });
-
   if ($('#search-location').length) {
     $('#search-location').autocomplete({
       source: availableLocation
@@ -1810,7 +1779,6 @@ function loadHomeData() {
       return 2;
     }
   }
-
   function brandSlider(item) {
     var itemLength = $('#brandingSlider .item:not(.cloned)').length;
     return itemLength > item ? true : false;
@@ -1850,14 +1818,12 @@ function loadHomeData() {
       }
     });
   });
-
   if ($(window).width() > 1024) {
     // counting the number of classes named .item
     if ($('#brandingSlider .item').length < 6) {
       $('#brandingSlider.owl-carousel .owl-stage-outer').css('display', 'flex').css('justify-content', 'center');
     }
   }
-
   $('#brandingSlider .item').on('mouseover', function () {
     $(this).closest('.owl-carousel').trigger('stop.owl.autoplay');
   });
@@ -1908,12 +1874,10 @@ function loadHomeData() {
     slidesToScroll: 1
   });
 }
-
 function loadBrandSlider() {
   if (!$('#brandSlider').length) {
     return;
   }
-
   var isRTL = lancode === "ar";
   $('#brandSlider').slick({
     rtl: isRTL,
@@ -1943,12 +1907,10 @@ function loadBrandSlider() {
     }]
   });
 }
-
 function loadTestimonialSlider() {
   if (!$('.testimonial-slider').length) {
     return;
   }
-
   var isRTL = lancode == "ar" ? true : false;
   $(".testimonial-slider").slick({
     rtl: isRTL,
@@ -2012,7 +1974,6 @@ function loadApplyJobData() {
     e.preventDefault();
     submitForm('#applyJobForm', 'apply', '#applyJobSave', '#draftJobSave', '#g-recaptcha');
   });
-
   window.submitForm = function (formId, applicationType, loadingBtnId, disabledBtnId) {
     processingBtn(formId, loadingBtnId, 'loading');
     $(disabledBtnId).prop('disabled', true);
@@ -2057,7 +2018,6 @@ function loadJobDetailsData() {
   if (!$('#removeFromFavorite').length && !$('#addToFavorites').length) {
     return;
   }
-
   var isJobAddedToFavourite = $('#isJobAddedToFavourite').val();
   var removeFromFavorite = $('#removeFromFavorite').val();
   var addToFavorites = $('#addToFavorites').val();
@@ -2076,7 +2036,6 @@ function loadJobDetailsData() {
       },
       success: function success(result) {
         console.log('sd');
-
         if (result.success) {
           $('#favorite').empty();
           result.data ? $('#favorite').html('<i class="fa-solid fa-bookmark text-primary featured"></i>') : $('#favorite').html('<i class="fa-regular fa-bookmark text-primary"></i>');
@@ -2089,7 +2048,6 @@ function loadJobDetailsData() {
     });
   });
 }
-
 listenSubmit('#reportJobAbuse', function (e) {
   e.preventDefault();
   processingBtn('#reportJobAbuse', '#btnReportJobAbuse', 'loading');
@@ -2253,7 +2211,6 @@ function loadJobSearchData() {
     });
     salaryToSlider.addClass('irs-hidden-input');
   }
-
   if (input.length > 0 && input.location != '') {
     $('#searchByLocation').val(input.location);
     Livewire.dispatch('changeFilter', {
@@ -2261,7 +2218,6 @@ function loadJobSearchData() {
       value: input.location
     });
   }
-
   if (input.length > 0 && input.keywords != '') {
     Livewire.dispatch('changeFilter', {
       param: 'title',
@@ -2279,7 +2235,6 @@ function loadJobSearchData() {
       $('.job-post-sidebar').show();
     });
   }
-
   listenClick('.reset-filter', function (event) {
     event.preventDefault();
     Livewire.dispatch('resetFilter');
@@ -2304,13 +2259,11 @@ function loadJobSearchData() {
     $('.jobType').prop('checked', false);
   });
 }
-
 listenChange('.jobType', function () {
   var jobType = [];
   $('input:checkbox[name=job-type]:checked').each(function () {
     jobType.push($(this).val());
   });
-
   if (jobType.length > 0) {
     Livewire.dispatch('changeFilter', {
       param: 'types',
@@ -2410,12 +2363,10 @@ function loadFrontSettings() {
             $('#validationErrorsBox').html('The image must be of pixel 450 x 630').show();
             return false;
           }
-
           $(selector).attr('src', e.target.result);
           displayPreview = true;
         };
       };
-
       if (displayPreview) {
         reader.readAsDataURL(input.files[0]);
         $(selector).show();
@@ -2582,13 +2533,11 @@ listenClick('.delete-comment-btn', function (event) {
           var commentCount = $('.comments').find('.comment-card').length - 1;
           deletedCommentBtn.closest('.comment-card').remove();
           $('.comment-count').text('(0)');
-
           if ($('.comments').find('.comment-card').length !== 0) {
             $('.comment-count').text('(' + commentCount + ')');
           } else {
             postComment();
           }
-
           swal({
             title: Lang.get('js.deleted') + ' !',
             text: Lang.get('js.comment') + ' ' + Lang.get('js.has_been_deleted'),
@@ -2621,7 +2570,6 @@ listenClick('.edit-comment-btn', function (event) {
     }
   });
 });
-
 function addComment() {
   $.ajax({
     type: 'POST',
@@ -2633,20 +2581,17 @@ function addComment() {
         //     location.reload();
         // }, 5000);
         var commentCount = $('.comments').find('.comment-card').length + 1;
-
         if ($('.comments').find('.comment-card').length === 0) {
           $('.comment-count').text('(' + commentCount + ')');
         } else {
           $('.comment-count').text('');
           $('.comment-count').text('(' + commentCount + ')');
         }
-
         if (commentCount >= 0) {
           $('.comments').show();
           $('#post-comment').show();
           $('.comment-lable').removeClass('d-none');
         }
-
         var data = [{
           'image': !isEmpty(result.data.user) ? result.data.user.avatar : $('#defaultBlogImage').val(),
           'commentName': result.data.name,
@@ -2668,7 +2613,6 @@ function addComment() {
     }
   });
 }
-
 function updateComment() {
   var updateId = $('.comment-id').val();
   $.ajax({
@@ -2735,7 +2679,6 @@ window.manageFrontAjaxErrors = function (data) {
     printErrorMessage('#' + errorDivId, data);
   }
 };
-
 window.deleteFrontItem = function (url, tableId, header) {
   var callFunction = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
   var swalWithBootstrapButtons = Swal.mixin({
@@ -2762,7 +2705,6 @@ window.deleteFrontItem = function (url, tableId, header) {
     }
   });
 };
-
 function deleteFrontItemAjax(url, tableId, header) {
   var callFunction = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
   $.ajax({
@@ -2779,7 +2721,6 @@ function deleteFrontItemAjax(url, tableId, header) {
         confirmButtonColor: '#009ef7',
         timer: 2000
       });
-
       if (callFunction) {
         eval(callFunction);
       }

@@ -285,10 +285,11 @@ if (! function_exists('getStateFilter')) {
 if (! function_exists('getUserLanguages')) {
     function getUserLanguages(): array
     {
-        //    $languages = File::directories(base_path().'/lang');
-        $languages = Language::pluck('language', 'iso_code')->toArray();
+        $languages = Language::whereIn('iso_code', array_keys(User::LANGUAGES))
+            ->pluck('language', 'iso_code')
+            ->toArray();
 
-        return $languages;
+        return array_replace(User::LANGUAGES, array_intersect_key($languages, User::LANGUAGES));
         //    $languagesArr = file_get_contents(storage_path('languages.json'));
         //    $languagesArr = json_decode($languagesArr, true);
         //    $allLanguagesArr = [];
@@ -1090,36 +1091,38 @@ if (! function_exists('getCities')) {
         return City::where('state_id', $stateId)->orderBy('name')->pluck('name', 'id')->toArray();
     }
 }
-function getFrontSelectLanguage()
-{
-    // $langIdLanguage = empty(Session::get('languageName'));
+if (! function_exists('getFrontSelectLanguage')) {
+    function getFrontSelectLanguage()
+    {
+        // $langIdLanguage = empty(Session::get('languageName'));
 
-    // if ($langIdLanguage) {
-    //     $langId = settings()['default_language'];
-    // } else {
-    //     $langId = Session::get('languageName');
-    // }
+        // if ($langIdLanguage) {
+        //     $langId = settings()['default_language'];
+        // } else {
+        //     $langId = Session::get('languageName');
+        // }
 
-    // return $langId;
-    if (Auth::user()) {
-        $language = Language::whereIsoCode(Auth::user()->language)->first();
-        if ($language) {
-            return $language['iso_code'];
+        // return $langId;
+        if (Auth::user()) {
+            $language = Language::whereIsoCode(Auth::user()->language)->first();
+            if ($language) {
+                return $language['iso_code'];
+            }
         }
-    }
-    elseif (Session::has('languageName')) {
-        $language = Language::whereIsoCode(Session::get('languageName'))->first();
+        elseif (Session::has('languageName')) {
+            $language = Language::whereIsoCode(Session::get('languageName'))->first();
 
-        if ($language) {
-            return $language['iso_code'];
+            if ($language) {
+                return $language['iso_code'];
+            }
         }
-    }
-    else{
-        $default = Setting::where('key', '=', 'default_language')->first();
-        $language = $default->value;
+        else{
+            $default = Setting::where('key', '=', 'default_language')->first();
+            $language = $default->value;
 
-        if ($language) {
-            return $language;
+            if ($language) {
+                return $language;
+            }
         }
     }
 }
