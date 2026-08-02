@@ -3,8 +3,13 @@
 namespace App\Repositories\Candidates;
 
 use App\Models\Candidate;
+use App\Models\CandidateAccomplishment;
 use App\Models\CandidateEducation;
 use App\Models\CandidateExperience;
+use App\Models\CandidateExtraCurricular;
+use App\Models\CandidateLink;
+use App\Models\CandidateReference;
+use App\Models\CandidateSkill;
 use App\Models\CareerLevel;
 use App\Models\Country;
 use App\Models\FunctionalArea;
@@ -26,6 +31,7 @@ use DB;
 use Exception;
 use Hash;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 use PragmaRX\Countries\Package\Countries;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -522,9 +528,11 @@ class CandidateRepository extends BaseRepository
             ]);
             $user->update($userInput);
             $user->candidate->update($input);
-            //Update Candidate Skills
-            if (isset($input['candidateSkills']) && ! empty($input['candidateSkills'])) {
-                $user->candidateSkill()->sync($input['candidateSkills']);
+            if (! empty($input['candidateSkillsUpdated'])) {
+                $this->syncCandidateSkills($user, $input);
+            }
+            if (! empty($input['candidateLanguageUpdated'])) {
+                $this->syncCandidateLanguages($user, $input);
             }
             DB::commit();
 
@@ -533,6 +541,716 @@ class CandidateRepository extends BaseRepository
             DB::rollBack();
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
+    }
+
+    public function createExtraCurricular(array $input): CandidateExtraCurricular
+    {
+        try {
+            DB::beginTransaction();
+
+            /** @var User $user */
+            $user = Auth::user();
+            $description = $this->sanitizeRichText($input['description'] ?? null);
+
+            $extraCurricular = CandidateExtraCurricular::create([
+                'candidate_id' => $user->owner_id,
+                'description' => $description,
+            ]);
+
+            DB::commit();
+
+            return $extraCurricular;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    public function updateExtraCurricular(CandidateExtraCurricular $extraCurricular, array $input): CandidateExtraCurricular
+    {
+        try {
+            DB::beginTransaction();
+
+            $extraCurricular->update([
+                'description' => $this->sanitizeRichText($input['description'] ?? null),
+            ]);
+
+            DB::commit();
+
+            return $extraCurricular->fresh();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    public function candidateLinkCount(): int
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        return CandidateLink::where('candidate_id', $user->owner_id)->count();
+    }
+
+    public function candidateLinkPlatformExists(string $platform, ?int $ignoreId = null): bool
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        return CandidateLink::where('candidate_id', $user->owner_id)
+            ->where('platform', $platform)
+            ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
+            ->exists();
+    }
+
+    public function createLink(array $input): CandidateLink
+    {
+        try {
+            DB::beginTransaction();
+
+            /** @var User $user */
+            $user = Auth::user();
+            $sortOrder = CandidateLink::where('candidate_id', $user->owner_id)->max('sort_order');
+            $candidateLink = CandidateLink::create([
+                'candidate_id' => $user->owner_id,
+                'platform' => $input['platform'],
+                'url' => trim($input['url']),
+                'sort_order' => (int) $sortOrder + 1,
+            ]);
+            $this->syncUserSocialLink($user, $candidateLink->platform, $candidateLink->url);
+
+            DB::commit();
+
+            return $candidateLink;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    public function updateLink(CandidateLink $candidateLink, array $input): CandidateLink
+    {
+        try {
+            DB::beginTransaction();
+
+            /** @var User $user */
+            $user = Auth::user();
+            $oldPlatform = $candidateLink->platform;
+            $candidateLink->update([
+                'platform' => $input['platform'],
+                'url' => trim($input['url']),
+            ]);
+
+            if ($oldPlatform !== $candidateLink->platform) {
+                $this->syncUserSocialLink($user, $oldPlatform, null);
+            }
+            $this->syncUserSocialLink($user, $candidateLink->platform, $candidateLink->url);
+
+            DB::commit();
+
+            return $candidateLink->fresh();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    public function deleteLink(CandidateLink $candidateLink): void
+    {
+        try {
+            DB::beginTransaction();
+
+            /** @var User $user */
+            $user = Auth::user();
+            $platform = $candidateLink->platform;
+            $candidateLink->delete();
+            $this->syncUserSocialLink($user, $platform, null);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    private function syncUserSocialLink(User $user, string $platform, ?string $url): void
+    {
+        $columns = [
+            'Facebook' => 'facebook_url',
+            'Twitter' => 'twitter_url',
+            'LinkedIn' => 'linkedin_url',
+        ];
+
+        if (! isset($columns[$platform])) {
+            return;
+        }
+
+        $user->update([
+            $columns[$platform] => $url,
+        ]);
+    }
+
+    public function createReference(array $input): CandidateReference
+    {
+        try {
+            DB::beginTransaction();
+
+            /** @var User $user */
+            $user = Auth::user();
+            $sortOrder = CandidateReference::where('candidate_id', $user->owner_id)->max('sort_order');
+            $candidateReference = CandidateReference::create($this->referencePayload($input) + [
+                'candidate_id' => $user->owner_id,
+                'sort_order' => (int) $sortOrder + 1,
+            ]);
+
+            DB::commit();
+
+            return $candidateReference;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    public function updateReference(CandidateReference $candidateReference, array $input): CandidateReference
+    {
+        try {
+            DB::beginTransaction();
+
+            $candidateReference->update($this->referencePayload($input));
+
+            DB::commit();
+
+            return $candidateReference->fresh();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    public function deleteReference(CandidateReference $candidateReference): void
+    {
+        try {
+            DB::beginTransaction();
+
+            $candidateReference->delete();
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    private function referencePayload(array $input): array
+    {
+        return [
+            'name' => trim($input['name']),
+            'designation' => trim($input['designation']),
+            'organization' => trim($input['organization']),
+            'email' => filled($input['email'] ?? null) ? trim($input['email']) : null,
+            'relation' => filled($input['relation'] ?? null) ? $input['relation'] : null,
+            'mobile' => filled($input['mobile'] ?? null) ? trim($input['mobile']) : null,
+            'office_phone' => filled($input['office_phone'] ?? null) ? trim($input['office_phone']) : null,
+            'residential_phone' => filled($input['residential_phone'] ?? null) ? trim($input['residential_phone']) : null,
+            'address' => filled($input['address'] ?? null) ? trim($input['address']) : null,
+        ];
+    }
+
+    public function portfolioCount(): int
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        return CandidateAccomplishment::where('candidate_id', $user->owner_id)
+            ->where('type', CandidateAccomplishment::TYPE_PORTFOLIO)
+            ->count();
+    }
+
+    public function createPortfolio(array $input): CandidateAccomplishment
+    {
+        try {
+            DB::beginTransaction();
+
+            /** @var User $user */
+            $user = Auth::user();
+            $sortOrder = CandidateAccomplishment::where('candidate_id', $user->owner_id)
+                ->where('type', CandidateAccomplishment::TYPE_PORTFOLIO)
+                ->max('sort_order');
+            $portfolio = CandidateAccomplishment::create($this->portfolioPayload($input) + [
+                'candidate_id' => $user->owner_id,
+                'type' => CandidateAccomplishment::TYPE_PORTFOLIO,
+                'sort_order' => (int) $sortOrder + 1,
+            ]);
+
+            DB::commit();
+
+            return $portfolio;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    public function updatePortfolio(CandidateAccomplishment $portfolio, array $input): CandidateAccomplishment
+    {
+        try {
+            DB::beginTransaction();
+
+            $portfolio->update($this->portfolioPayload($input));
+
+            DB::commit();
+
+            return $portfolio->fresh();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    public function deletePortfolio(CandidateAccomplishment $portfolio): void
+    {
+        try {
+            DB::beginTransaction();
+
+            $portfolio->delete();
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    private function portfolioPayload(array $input): array
+    {
+        return [
+            'title' => trim($input['title']),
+            'url' => filled($input['url'] ?? null) ? trim($input['url']) : null,
+            'description' => $this->sanitizeRichText($input['description'] ?? null),
+        ];
+    }
+
+    public function publicationCount(): int
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        return CandidateAccomplishment::where('candidate_id', $user->owner_id)
+            ->where('type', CandidateAccomplishment::TYPE_PUBLICATION)
+            ->count();
+    }
+
+    public function createPublication(array $input): CandidateAccomplishment
+    {
+        try {
+            DB::beginTransaction();
+
+            /** @var User $user */
+            $user = Auth::user();
+            $sortOrder = CandidateAccomplishment::where('candidate_id', $user->owner_id)
+                ->where('type', CandidateAccomplishment::TYPE_PUBLICATION)
+                ->max('sort_order');
+            $publication = CandidateAccomplishment::create($this->publicationPayload($input) + [
+                'candidate_id' => $user->owner_id,
+                'type' => CandidateAccomplishment::TYPE_PUBLICATION,
+                'sort_order' => (int) $sortOrder + 1,
+            ]);
+
+            DB::commit();
+
+            return $publication;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    public function updatePublication(CandidateAccomplishment $publication, array $input): CandidateAccomplishment
+    {
+        try {
+            DB::beginTransaction();
+
+            $publication->update($this->publicationPayload($input));
+
+            DB::commit();
+
+            return $publication->fresh();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    public function deletePublication(CandidateAccomplishment $publication): void
+    {
+        try {
+            DB::beginTransaction();
+
+            $publication->delete();
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    private function publicationPayload(array $input): array
+    {
+        return [
+            'title' => trim($input['title']),
+            'issued_on' => Carbon::parse($input['issued_on'])->format('Y-m-d'),
+            'url' => filled($input['url'] ?? null) ? trim($input['url']) : null,
+            'description' => $this->sanitizeRichText($input['description'] ?? null),
+        ];
+    }
+
+    public function awardCount(): int
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        return CandidateAccomplishment::where('candidate_id', $user->owner_id)
+            ->where('type', CandidateAccomplishment::TYPE_AWARD)
+            ->count();
+    }
+
+    public function createAward(array $input): CandidateAccomplishment
+    {
+        try {
+            DB::beginTransaction();
+
+            /** @var User $user */
+            $user = Auth::user();
+            $sortOrder = CandidateAccomplishment::where('candidate_id', $user->owner_id)
+                ->where('type', CandidateAccomplishment::TYPE_AWARD)
+                ->max('sort_order');
+            $award = CandidateAccomplishment::create($this->awardPayload($input) + [
+                'candidate_id' => $user->owner_id,
+                'type' => CandidateAccomplishment::TYPE_AWARD,
+                'sort_order' => (int) $sortOrder + 1,
+            ]);
+
+            DB::commit();
+
+            return $award;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    public function updateAward(CandidateAccomplishment $award, array $input): CandidateAccomplishment
+    {
+        try {
+            DB::beginTransaction();
+
+            $award->update($this->awardPayload($input));
+
+            DB::commit();
+
+            return $award->fresh();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    public function deleteAward(CandidateAccomplishment $award): void
+    {
+        try {
+            DB::beginTransaction();
+
+            $award->delete();
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    private function awardPayload(array $input): array
+    {
+        return [
+            'title' => trim($input['title']),
+            'issued_on' => Carbon::parse($input['issued_on'])->format('Y-m-d'),
+            'url' => filled($input['url'] ?? null) ? trim($input['url']) : null,
+            'description' => $this->sanitizeRichText($input['description'] ?? null),
+        ];
+    }
+
+    public function projectCount(): int
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        return CandidateAccomplishment::where('candidate_id', $user->owner_id)
+            ->where('type', CandidateAccomplishment::TYPE_PROJECT)
+            ->count();
+    }
+
+    public function createProject(array $input): CandidateAccomplishment
+    {
+        try {
+            DB::beginTransaction();
+
+            /** @var User $user */
+            $user = Auth::user();
+            $sortOrder = CandidateAccomplishment::where('candidate_id', $user->owner_id)
+                ->where('type', CandidateAccomplishment::TYPE_PROJECT)
+                ->max('sort_order');
+            $project = CandidateAccomplishment::create($this->projectPayload($input) + [
+                'candidate_id' => $user->owner_id,
+                'type' => CandidateAccomplishment::TYPE_PROJECT,
+                'sort_order' => (int) $sortOrder + 1,
+            ]);
+
+            DB::commit();
+
+            return $project;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    public function updateProject(CandidateAccomplishment $project, array $input): CandidateAccomplishment
+    {
+        try {
+            DB::beginTransaction();
+
+            $project->update($this->projectPayload($input));
+
+            DB::commit();
+
+            return $project->fresh();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    public function deleteProject(CandidateAccomplishment $project): void
+    {
+        try {
+            DB::beginTransaction();
+
+            $project->delete();
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    private function projectPayload(array $input): array
+    {
+        return [
+            'title' => trim($input['title']),
+            'issued_on' => Carbon::parse($input['issued_on'])->format('Y-m-d'),
+            'url' => filled($input['url'] ?? null) ? trim($input['url']) : null,
+            'description' => $this->sanitizeRichText($input['description'] ?? null),
+        ];
+    }
+
+    public function otherCount(): int
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        return CandidateAccomplishment::where('candidate_id', $user->owner_id)
+            ->where('type', CandidateAccomplishment::TYPE_OTHER)
+            ->count();
+    }
+
+    public function createOther(array $input): CandidateAccomplishment
+    {
+        try {
+            DB::beginTransaction();
+
+            /** @var User $user */
+            $user = Auth::user();
+            $sortOrder = CandidateAccomplishment::where('candidate_id', $user->owner_id)
+                ->where('type', CandidateAccomplishment::TYPE_OTHER)
+                ->max('sort_order');
+            $other = CandidateAccomplishment::create($this->otherPayload($input) + [
+                'candidate_id' => $user->owner_id,
+                'type' => CandidateAccomplishment::TYPE_OTHER,
+                'sort_order' => (int) $sortOrder + 1,
+            ]);
+
+            DB::commit();
+
+            return $other;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    public function updateOther(CandidateAccomplishment $other, array $input): CandidateAccomplishment
+    {
+        try {
+            DB::beginTransaction();
+
+            $other->update($this->otherPayload($input));
+
+            DB::commit();
+
+            return $other->fresh();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    public function deleteOther(CandidateAccomplishment $other): void
+    {
+        try {
+            DB::beginTransaction();
+
+            $other->delete();
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    private function otherPayload(array $input): array
+    {
+        return [
+            'title' => trim($input['title']),
+            'issued_on' => Carbon::parse($input['issued_on'])->format('Y-m-d'),
+            'url' => filled($input['url'] ?? null) ? trim($input['url']) : null,
+            'description' => $this->sanitizeRichText($input['description'] ?? null),
+        ];
+    }
+
+    private function sanitizeRichText(?string $value): ?string
+    {
+        if (! filled($value)) {
+            return null;
+        }
+
+        $value = strip_tags($value, '<p><br><strong><b><em><i><ul><ol><li>');
+
+        return trim($value) !== '' ? trim($value) : null;
+    }
+
+    private function syncCandidateSkills(User $user, array $input): void
+    {
+        $skillIds = array_values($input['candidateSkills'] ?? []);
+        $skillNames = array_values($input['candidateSkillNames'] ?? []);
+        $skillSources = array_values($input['candidateSkillSources'] ?? []);
+        $allowedSources = ['Self', 'Job', 'Educational', 'Professional Training', 'NTVQF'];
+        $resolvedSkillIds = [];
+        $sourcesBySkillId = [];
+
+        foreach ($skillNames as $index => $skillName) {
+            $skillName = trim((string) $skillName);
+            if ($skillName === '') {
+                continue;
+            }
+
+            $skillId = (int) ($skillIds[$index] ?? 0);
+            $existingSkill = $skillId > 0 ? Skill::find($skillId) : null;
+
+            if (! $existingSkill || strcasecmp($existingSkill->name, $skillName) !== 0) {
+                $existingSkill = Skill::whereRaw('LOWER(name) = ?', [mb_strtolower($skillName)])->first();
+            }
+
+            $skill = $existingSkill ?: Skill::create([
+                'name' => $skillName,
+                'description' => null,
+                'is_default' => false,
+            ]);
+
+            $resolvedSkillIds[] = $skill->id;
+            $sources = array_values(array_intersect($skillSources[$index] ?? [], $allowedSources));
+            $sourcesBySkillId[$skill->id] = count($sources) ? $sources : ['Professional Training'];
+        }
+
+        $resolvedSkillIds = array_values(array_unique($resolvedSkillIds));
+        $user->candidateSkill()->sync($resolvedSkillIds);
+
+        if (! count($resolvedSkillIds) || ! Schema::hasTable('candidate_skill_sources')) {
+            return;
+        }
+
+        CandidateSkill::where('user_id', $user->id)
+            ->whereIn('skill_id', $resolvedSkillIds)
+            ->get()
+            ->each(function (CandidateSkill $candidateSkill) use ($sourcesBySkillId) {
+                $candidateSkill->sources()->delete();
+                foreach ($sourcesBySkillId[$candidateSkill->skill_id] ?? ['Professional Training'] as $source) {
+                    $candidateSkill->sources()->create(['source' => $source]);
+                }
+            });
+    }
+
+    private function syncCandidateLanguages(User $user, array $input): void
+    {
+        $languageIds = array_values($input['candidateLanguage'] ?? []);
+        $languageNames = array_values($input['candidateLanguageNames'] ?? []);
+        $languageLevels = array_values($input['candidateLanguageLevels'] ?? []);
+        $readingLevels = array_values($input['candidateLanguageReadingLevels'] ?? []);
+        $writingLevels = array_values($input['candidateLanguageWritingLevels'] ?? []);
+        $speakingLevels = array_values($input['candidateLanguageSpeakingLevels'] ?? []);
+        $allowedLevels = ['High', 'Medium', 'Low'];
+        $syncData = [];
+
+        foreach ($languageNames as $index => $languageName) {
+            $languageName = trim((string) $languageName);
+            $fallbackLevel = (string) ($languageLevels[$index] ?? '');
+            $readingLevel = (string) ($readingLevels[$index] ?? $fallbackLevel);
+            $writingLevel = (string) ($writingLevels[$index] ?? $fallbackLevel);
+            $speakingLevel = (string) ($speakingLevels[$index] ?? $fallbackLevel);
+
+            if (
+                $languageName === ''
+                || ! in_array($readingLevel, $allowedLevels, true)
+                || ! in_array($writingLevel, $allowedLevels, true)
+                || ! in_array($speakingLevel, $allowedLevels, true)
+            ) {
+                continue;
+            }
+
+            $languageId = (int) ($languageIds[$index] ?? 0);
+            $existingLanguage = $languageId > 0 ? Language::find($languageId) : null;
+
+            if (! $existingLanguage || strcasecmp($existingLanguage->language, $languageName) !== 0) {
+                $existingLanguage = Language::whereRaw('LOWER(language) = ?', [mb_strtolower($languageName)])->first();
+            }
+
+            $language = $existingLanguage ?: Language::create([
+                'language' => $languageName,
+                'iso_code' => null,
+                'is_default' => false,
+            ]);
+
+            $pivotData = [];
+            if (Schema::hasColumn('candidate_language', 'proficiency_level')) {
+                $pivotData['proficiency_level'] = $speakingLevel;
+            }
+            foreach ([
+                'reading_level' => $readingLevel,
+                'writing_level' => $writingLevel,
+                'speaking_level' => $speakingLevel,
+            ] as $column => $value) {
+                if (Schema::hasColumn('candidate_language', $column)) {
+                    $pivotData[$column] = $value;
+                }
+            }
+
+            $syncData[$language->id] = $pivotData;
+        }
+
+        $user->candidateLanguage()->sync($syncData);
     }
 
     public function uploadResume(array $input): bool

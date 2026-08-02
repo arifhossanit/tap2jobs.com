@@ -7,6 +7,7 @@ use App\Models\CandidateEducation;
 use App\Models\CandidateExperience;
 use App\Models\CandidateRetiredArmyEmployment;
 use App\Models\CandidateTraining;
+use App\Models\EducationMajorGroup;
 use App\Models\RequiredDegreeLevel;
 use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Builder;
@@ -89,6 +90,7 @@ class CandidateProfileRepository extends BaseRepository
 
         /** @var CandidateEducation $education */
         $education = CandidateEducation::create($input);
+        $this->storeCustomEducationMajor($education);
 
         return $this->getEducation($education);
     }
@@ -112,14 +114,17 @@ class CandidateProfileRepository extends BaseRepository
             'city_id',
             'institute',
             'foreign_institute',
+            'foreign_university_country',
             'show_summary',
             'result',
+            'marks_percentage',
             'cgpa',
             'scale',
             'year',
             'duration',
             'achievement',
         ]));
+        $this->storeCustomEducationMajor($candidateEducation);
 
         return $this->getEducation($candidateEducation);
     }
@@ -187,8 +192,29 @@ class CandidateProfileRepository extends BaseRepository
             $input['show_summary'] = false;
         }
 
-        if (in_array($levelType, ['secondary', 'higher_secondary', 'advanced'], true)) {
+        if (in_array($levelType, ['secondary', 'higher_secondary'], true)) {
+            $input['show_summary'] = false;
+        }
+
+        if (in_array($levelType, ['diploma', 'bachelor', 'masters', 'phd'], true)) {
             $input['board'] = null;
+        }
+
+        if ($levelType === 'phd') {
+            $input['show_summary'] = false;
+        }
+
+        if (! in_array($input['result'] ?? null, ['First Division/Class', 'Second Division/Class', 'Third Division/Class'], true)) {
+            $input['marks_percentage'] = null;
+        }
+
+        if (($input['result'] ?? null) !== 'Grade') {
+            $input['cgpa'] = null;
+            $input['scale'] = null;
+        }
+
+        if (empty($input['foreign_institute'])) {
+            $input['foreign_university_country'] = null;
         }
 
         return $input;
@@ -196,7 +222,12 @@ class CandidateProfileRepository extends BaseRepository
 
     private function educationLevelType($degreeLevelId): string
     {
-        $levelName = RequiredDegreeLevel::whereKey($degreeLevelId)->value('name') ?? '';
+        $level = RequiredDegreeLevel::whereKey($degreeLevelId)->first();
+        if ($level && filled($level->code)) {
+            return $level->code;
+        }
+
+        $levelName = $level->name ?? '';
         $levelName = strtolower($levelName);
 
         if (str_contains($levelName, 'psc') || str_contains($levelName, '5 pass')) {
@@ -215,7 +246,43 @@ class CandidateProfileRepository extends BaseRepository
             return 'secondary';
         }
 
-        return 'advanced';
+        if (str_contains($levelName, 'diploma')) {
+            return 'diploma';
+        }
+
+        if (str_contains($levelName, 'bachelor') || str_contains($levelName, 'honors')) {
+            return 'bachelor';
+        }
+
+        if (str_contains($levelName, 'master')) {
+            return 'masters';
+        }
+
+        if (str_contains($levelName, 'phd') || str_contains($levelName, 'ph.d')) {
+            return 'phd';
+        }
+
+        return 'default';
+    }
+
+    private function storeCustomEducationMajor(CandidateEducation $candidateEducation): void
+    {
+        if (! filled($candidateEducation->major) || ! filled($candidateEducation->degree_level_id)) {
+            return;
+        }
+
+        EducationMajorGroup::firstOrCreate(
+            [
+                'required_degree_level_id' => $candidateEducation->degree_level_id,
+                'name' => $candidateEducation->major,
+            ],
+            [
+                'is_custom' => true,
+                'created_by' => Auth::id(),
+                'sort_order' => 999,
+                'is_active' => true,
+            ]
+        );
     }
 
     private function normalizeExperienceInput(array $input): array

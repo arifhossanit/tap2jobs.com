@@ -1,5 +1,12 @@
 @extends('candidate.profile.index')
 @section('section')
+    @php
+        $candidatePortfolios = $data['candidatePortfolios'] ?? collect();
+        $candidatePublications = $data['candidatePublications'] ?? collect();
+        $candidateAwards = $data['candidateAwards'] ?? collect();
+        $candidateProjects = $data['candidateProjects'] ?? collect();
+        $candidateOthers = $data['candidateOthers'] ?? collect();
+    @endphp
     <div class="mb-xl-8 candidate-accomplishment-page">
         <div class="candidate-education-panel" id="candidatePortfolioInformation">
             <div class="candidate-education-panel__header">
@@ -22,22 +29,24 @@
             <div id="candidatePortfolioInformationPanelBody" class="collapse show candidate-profile-section__collapse">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <div class="candidate-portfolio-list" data-portfolio-list>
-                        <form class="candidate-portfolio-form d-none" data-portfolio-form>
+                        <form class="candidate-portfolio-form d-none" data-portfolio-form
+                              data-store-url="{{ route('candidate-profile.portfolios.store') }}">
+                            @csrf
                             <h2 data-portfolio-form-title>Portfolio</h2>
-                            <input type="hidden" data-portfolio-editing-index>
+                            <input type="hidden" data-portfolio-editing-id>
                             <div class="candidate-skill-form__field">
                                 <label for="candidatePortfolioTitle">Title <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="candidatePortfolioTitle"
+                                <input type="text" class="form-control" id="candidatePortfolioTitle" name="title"
                                        data-portfolio-title-input placeholder="Enter your title name" required>
                             </div>
                             <div class="candidate-skill-form__field">
                                 <label for="candidatePortfolioUrl">URL</label>
-                                <input type="url" class="form-control" id="candidatePortfolioUrl"
+                                <input type="url" class="form-control" id="candidatePortfolioUrl" name="url"
                                        data-portfolio-url-input placeholder="Enter your URL">
                             </div>
                             <div class="candidate-skill-form__field">
                                 <label>Description <span class="text-danger">*</span></label>
-                                <input type="hidden" data-portfolio-description-input>
+                                <input type="hidden" name="description" data-portfolio-description-input>
                                 <div class="candidate-portfolio-editor">
                                     <div class="candidate-portfolio-quill" data-portfolio-description-editor
                                          data-placeholder="Enter your writing texts..."></div>
@@ -52,39 +61,54 @@
                             </div>
                         </form>
 
-                        <div class="candidate-portfolio-item" data-portfolio-item
-                             data-portfolio-title="Moynul Islam Shimanto"
-                             data-portfolio-url="https://shimzo.online/"
-                             data-portfolio-description="I'm a Laravel developer. My technical skills include PHP, Laravel, JavaScript, ReactJS, VueJS, HTML, CSS, Tailwind CSS, Bootstrap, WordPress, and MySQL. I have developed several projects such as an e-commerce platform, HRM system, hospital management system, smart parking system, inventory etc.">
-                            <div class="candidate-portfolio-item__header">
-                                <h2>1. Moynul Islam Shimanto</h2>
-                                <div class="candidate-portfolio-actions">
-                                    <button type="button" data-portfolio-edit>
-                                        <i class="fa-regular fa-pen-to-square"></i>
-                                        Edit
-                                    </button>
-                                    <button type="button" data-portfolio-delete>
-                                        <i class="fa-regular fa-trash-can"></i>
-                                        Delete
-                                    </button>
+                        @forelse($candidatePortfolios as $portfolio)
+                            @php
+                                $portfolioDescription = strip_tags((string) $portfolio->description, '<p><br><strong><b><em><i><ul><ol><li>');
+                            @endphp
+                            <div class="candidate-portfolio-item" data-portfolio-item
+                                 data-portfolio-id="{{ $portfolio->id }}"
+                                 data-portfolio-title="{{ $portfolio->title }}"
+                                 data-portfolio-url="{{ $portfolio->url }}"
+                                 data-update-url="{{ route('candidate-profile.portfolios.update', $portfolio) }}"
+                                 data-delete-url="{{ route('candidate-profile.portfolios.destroy', $portfolio) }}">
+                                <div class="candidate-portfolio-item__header">
+                                    <h2>{{ $loop->iteration }}. {{ $portfolio->title }}</h2>
+                                    <div class="candidate-portfolio-actions">
+                                        <button type="button" data-portfolio-edit>
+                                            <i class="fa-regular fa-pen-to-square"></i>
+                                            Edit
+                                        </button>
+                                        <button type="button" data-portfolio-delete>
+                                            <i class="fa-regular fa-trash-can"></i>
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="candidate-portfolio-field">
+                                    <span>URL</span>
+                                    @if(filled($portfolio->url))
+                                        <a href="{{ addLinkHttpUrl($portfolio->url) }}" target="_blank" rel="noopener" data-portfolio-url-text>{{ $portfolio->url }}</a>
+                                        <strong class="d-none" data-portfolio-url-empty>---</strong>
+                                    @else
+                                        <a href="#" target="_blank" rel="noopener" class="d-none" data-portfolio-url-text></a>
+                                        <strong data-portfolio-url-empty>---</strong>
+                                    @endif
+                                </div>
+
+                                <div class="candidate-portfolio-field">
+                                    <span>Description</span>
+                                    <div data-portfolio-description-text>{!! $portfolioDescription ?: '---' !!}</div>
                                 </div>
                             </div>
+                        @empty
+                            <p class="candidate-skill-empty candidate-portfolio-empty" data-portfolio-empty>---</p>
+                        @endforelse
 
-                            <div class="candidate-portfolio-field">
-                                <span>URL</span>
-                                <a href="https://shimzo.online/" target="_blank" rel="noopener" data-portfolio-url-text>https://shimzo.online/</a>
-                            </div>
-
-                            <div class="candidate-portfolio-field">
-                                <span>Description</span>
-                                <div data-portfolio-description-text>I'm a Laravel developer. My technical skills include PHP, Laravel, JavaScript, ReactJS, VueJS, HTML, CSS, Tailwind CSS, Bootstrap, WordPress, and MySQL. I have developed several projects such as an e-commerce platform, HRM system, hospital management system, smart parking system, inventory etc.</div>
-                            </div>
-                        </div>
-
-                        <button type="button" class="candidate-portfolio-add-outline" data-portfolio-add-action>
+                        {{-- <button type="button" class="candidate-portfolio-add-outline" data-portfolio-add-action>
                             <i class="fa-solid fa-plus"></i>
                             Add Portfolio
-                        </button>
+                        </button> --}}
                     </div>
                 </div>
             </div>
@@ -111,30 +135,33 @@
             <div id="candidatePublicationInformationPanelBody" class="collapse candidate-profile-section__collapse">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <div class="candidate-publication-list" data-publication-list>
-                        <form class="candidate-publication-form d-none" data-publication-form>
+                        <form class="candidate-publication-form d-none" data-publication-form
+                              data-store-url="{{ route('candidate-profile.publications.store') }}">
+                            @csrf
                             <h2 data-publication-form-title>Publication</h2>
-                            <input type="hidden" data-publication-editing-index>
+                            <input type="hidden" data-publication-editing-id>
                             <div class="candidate-skill-form__field">
                                 <label for="candidatePublicationTitle">Title <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="candidatePublicationTitle"
+                                <input type="text" class="form-control" id="candidatePublicationTitle" name="title"
                                        data-publication-title-input placeholder="Enter your title name" required>
                             </div>
                             <div class="candidate-skill-form__field">
                                 <label for="candidatePublicationIssuedOn">Issued On <span class="text-danger">*</span></label>
-                                <div class="candidate-publication-date-field">
-                                    <i class="fa-regular fa-calendar"></i>
-                                    <input type="text" class="form-control" id="candidatePublicationIssuedOn"
-                                           data-publication-issued-input placeholder="MM/DD/YY" required>
+                                <div class="candidate-publication-date-field" style="position: relative; width: 100%; height: 38px;">
+                                    <i class="fa-regular fa-calendar" style="align-items: center; bottom: 0; color: #52637a; display: flex; font-size: 16px; height: 38px; justify-content: center; left: 14px; line-height: 1; pointer-events: none; position: absolute; top: 0; width: 16px; z-index: 2;"></i>
+                                    <input type="text" class="form-control" id="candidatePublicationIssuedOn" name="issued_on"
+                                           data-publication-issued-input placeholder="MM/DD/YY" required
+                                           style="height: 38px; padding-left: 38px; width: 100%;">
                                 </div>
                             </div>
                             <div class="candidate-skill-form__field">
                                 <label for="candidatePublicationUrl">URL</label>
-                                <input type="url" class="form-control" id="candidatePublicationUrl"
+                                <input type="url" class="form-control" id="candidatePublicationUrl" name="url"
                                        data-publication-url-input placeholder="Enter your URL">
                             </div>
                             <div class="candidate-skill-form__field">
-                                <label>Description<span class="text-danger">*</span></label>
-                                <input type="hidden" data-publication-description-input>
+                                <label>Description <span class="text-danger">*</span></label>
+                                <input type="hidden" name="description" data-publication-description-input>
                                 <div class="candidate-publication-editor">
                                     <div class="candidate-publication-quill" data-publication-description-editor
                                          data-placeholder="Enter your writing texts..."></div>
@@ -149,12 +176,61 @@
                             </div>
                         </form>
 
-                        <p class="candidate-publication-empty" data-publication-empty>---</p>
+                        @forelse($candidatePublications as $publication)
+                            @php
+                                $publicationDescription = strip_tags((string) $publication->description, '<p><br><strong><b><em><i><ul><ol><li>');
+                            @endphp
+                            <div class="candidate-publication-item" data-publication-item
+                                 data-publication-id="{{ $publication->id }}"
+                                 data-publication-title="{{ $publication->title }}"
+                                 data-publication-issued="{{ optional($publication->issued_on)->format('d M Y') }}"
+                                 data-publication-issued-value="{{ optional($publication->issued_on)->format('Y-m-d') }}"
+                                 data-publication-url="{{ $publication->url }}"
+                                 data-update-url="{{ route('candidate-profile.publications.update', $publication) }}"
+                                 data-delete-url="{{ route('candidate-profile.publications.destroy', $publication) }}">
+                                <div class="candidate-publication-item__header">
+                                    <h2>{{ $loop->iteration }}. {{ $publication->title }}</h2>
+                                    <div class="candidate-publication-actions">
+                                        <button type="button" data-publication-edit>
+                                            <i class="fa-regular fa-pen-to-square"></i>
+                                            Edit
+                                        </button>
+                                        <button type="button" data-publication-delete>
+                                            <i class="fa-regular fa-trash-can"></i>
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
 
-                        <button type="button" class="candidate-publication-add-outline" data-publication-add-action>
+                                <div class="candidate-publication-field">
+                                    <span>Issued On</span>
+                                    <strong data-publication-issued-text>{{ optional($publication->issued_on)->format('d M Y') ?: '---' }}</strong>
+                                </div>
+
+                                <div class="candidate-publication-field">
+                                    <span>URL</span>
+                                    @if(filled($publication->url))
+                                        <a href="{{ addLinkHttpUrl($publication->url) }}" target="_blank" rel="noopener" data-publication-url-text>{{ $publication->url }}</a>
+                                        <strong class="d-none" data-publication-url-empty>---</strong>
+                                    @else
+                                        <a href="#" target="_blank" rel="noopener" class="d-none" data-publication-url-text></a>
+                                        <strong data-publication-url-empty>---</strong>
+                                    @endif
+                                </div>
+
+                                <div class="candidate-publication-field">
+                                    <span>Description</span>
+                                    <div data-publication-description-text>{!! $publicationDescription ?: '---' !!}</div>
+                                </div>
+                            </div>
+                        @empty
+                            <p class="candidate-skill-empty candidate-publication-empty" data-publication-empty>---</p>
+                        @endforelse
+
+                        {{-- <button type="button" class="candidate-publication-add-outline" data-publication-add-action>
                             <i class="fa-solid fa-plus"></i>
                             Add Publication
-                        </button>
+                        </button> --}}
                     </div>
                 </div>
             </div>
@@ -181,30 +257,33 @@
             <div id="candidateAwardHonorInformationPanelBody" class="collapse candidate-profile-section__collapse">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <div class="candidate-publication-list" data-award-list>
-                        <form class="candidate-publication-form d-none" data-award-form>
+                        <form class="candidate-publication-form d-none" data-award-form
+                              data-store-url="{{ route('candidate-profile.awards.store') }}">
+                            @csrf
                             <h2 data-award-form-title>Award</h2>
-                            <input type="hidden" data-award-editing-index>
+                            <input type="hidden" data-award-editing-id>
                             <div class="candidate-skill-form__field">
                                 <label for="candidateAwardTitle">Title <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="candidateAwardTitle"
+                                <input type="text" class="form-control" id="candidateAwardTitle" name="title"
                                        data-award-title-input placeholder="Enter your title name" required>
                             </div>
                             <div class="candidate-skill-form__field">
                                 <label for="candidateAwardIssuedOn">Issued On <span class="text-danger">*</span></label>
-                                <div class="candidate-publication-date-field">
-                                    <i class="fa-regular fa-calendar"></i>
-                                    <input type="text" class="form-control" id="candidateAwardIssuedOn"
-                                           data-award-issued-input placeholder="MM/DD/YY" required>
+                                <div class="candidate-publication-date-field" style="position: relative; width: 100%; height: 38px;">
+                                    <i class="fa-regular fa-calendar" style="align-items: center; bottom: 0; color: #52637a; display: flex; font-size: 16px; height: 38px; justify-content: center; left: 14px; line-height: 1; pointer-events: none; position: absolute; top: 0; width: 16px; z-index: 2;"></i>
+                                    <input type="text" class="form-control" id="candidateAwardIssuedOn" name="issued_on"
+                                           data-award-issued-input placeholder="MM/DD/YY" required
+                                           style="height: 38px; padding-left: 38px; width: 100%;">
                                 </div>
                             </div>
                             <div class="candidate-skill-form__field">
                                 <label for="candidateAwardUrl">URL</label>
-                                <input type="url" class="form-control" id="candidateAwardUrl"
+                                <input type="url" class="form-control" id="candidateAwardUrl" name="url"
                                        data-award-url-input placeholder="Enter your URL">
                             </div>
                             <div class="candidate-skill-form__field">
                                 <label>Description <span class="text-danger">*</span></label>
-                                <input type="hidden" data-award-description-input>
+                                <input type="hidden" name="description" data-award-description-input>
                                 <div class="candidate-publication-editor">
                                     <div class="candidate-award-quill" data-award-description-editor
                                          data-placeholder="Enter your writing texts..."></div>
@@ -219,12 +298,61 @@
                             </div>
                         </form>
 
-                        <p class="candidate-publication-empty" data-award-empty>---</p>
+                        @forelse($candidateAwards as $award)
+                            @php
+                                $awardDescription = strip_tags((string) $award->description, '<p><br><strong><b><em><i><ul><ol><li>');
+                            @endphp
+                            <div class="candidate-publication-item" data-award-item
+                                 data-award-id="{{ $award->id }}"
+                                 data-award-title="{{ $award->title }}"
+                                 data-award-issued="{{ optional($award->issued_on)->format('d M Y') }}"
+                                 data-award-issued-value="{{ optional($award->issued_on)->format('Y-m-d') }}"
+                                 data-award-url="{{ $award->url }}"
+                                 data-update-url="{{ route('candidate-profile.awards.update', $award) }}"
+                                 data-delete-url="{{ route('candidate-profile.awards.destroy', $award) }}">
+                                <div class="candidate-publication-item__header">
+                                    <h2>{{ $loop->iteration }}. {{ $award->title }}</h2>
+                                    <div class="candidate-publication-actions">
+                                        <button type="button" data-award-edit>
+                                            <i class="fa-regular fa-pen-to-square"></i>
+                                            Edit
+                                        </button>
+                                        <button type="button" data-award-delete>
+                                            <i class="fa-regular fa-trash-can"></i>
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
 
-                        <button type="button" class="candidate-publication-add-outline" data-award-add-action>
+                                <div class="candidate-publication-field">
+                                    <span>Issued On</span>
+                                    <strong data-award-issued-text>{{ optional($award->issued_on)->format('d M Y') ?: '---' }}</strong>
+                                </div>
+
+                                <div class="candidate-publication-field">
+                                    <span>URL</span>
+                                    @if(filled($award->url))
+                                        <a href="{{ addLinkHttpUrl($award->url) }}" target="_blank" rel="noopener" data-award-url-text>{{ $award->url }}</a>
+                                        <strong class="d-none" data-award-url-empty>---</strong>
+                                    @else
+                                        <a href="#" target="_blank" rel="noopener" class="d-none" data-award-url-text></a>
+                                        <strong data-award-url-empty>---</strong>
+                                    @endif
+                                </div>
+
+                                <div class="candidate-publication-field">
+                                    <span>Description</span>
+                                    <div data-award-description-text>{!! $awardDescription ?: '---' !!}</div>
+                                </div>
+                            </div>
+                        @empty
+                            <p class="candidate-skill-empty candidate-publication-empty" data-award-empty>---</p>
+                        @endforelse
+
+                        {{-- <button type="button" class="candidate-publication-add-outline" data-award-add-action>
                             <i class="fa-solid fa-plus"></i>
                             Add Award
-                        </button>
+                        </button> --}}
                     </div>
                 </div>
             </div>
@@ -251,29 +379,32 @@
             <div id="candidateProjectInformationPanelBody" class="collapse candidate-profile-section__collapse">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <div class="candidate-project-list" data-project-list>
-                        <form class="candidate-project-form d-none" data-project-form>
-                            <input type="hidden" data-project-editing-index>
+                        <form class="candidate-project-form d-none" data-project-form
+                              data-store-url="{{ route('candidate-profile.projects.store') }}">
+                            @csrf
+                            <input type="hidden" data-project-editing-id>
                             <div class="candidate-skill-form__field">
                                 <label for="candidateProjectTitle">Title <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="candidateProjectTitle"
+                                <input type="text" class="form-control" id="candidateProjectTitle" name="title"
                                        data-project-title-input placeholder="Enter your title name" required>
                             </div>
                             <div class="candidate-skill-form__field">
                                 <label for="candidateProjectIssuedOn">Issued On <span class="text-danger">*</span></label>
-                                <div class="candidate-publication-date-field">
-                                    <i class="fa-regular fa-calendar"></i>
-                                    <input type="text" class="form-control" id="candidateProjectIssuedOn"
-                                           data-project-issued-input placeholder="MM/DD/YY" required>
+                                <div class="candidate-publication-date-field" style="position: relative; width: 100%; height: 38px;">
+                                    <i class="fa-regular fa-calendar" style="align-items: center; bottom: 0; color: #52637a; display: flex; font-size: 16px; height: 38px; justify-content: center; left: 14px; line-height: 1; pointer-events: none; position: absolute; top: 0; width: 16px; z-index: 2;"></i>
+                                    <input type="text" class="form-control" id="candidateProjectIssuedOn" name="issued_on"
+                                           data-project-issued-input placeholder="MM/DD/YY" required
+                                           style="height: 38px; padding-left: 38px; width: 100%;">
                                 </div>
                             </div>
                             <div class="candidate-skill-form__field">
                                 <label for="candidateProjectUrl">URL</label>
-                                <input type="url" class="form-control" id="candidateProjectUrl"
+                                <input type="url" class="form-control" id="candidateProjectUrl" name="url"
                                        data-project-url-input placeholder="Enter your URL">
                             </div>
                             <div class="candidate-skill-form__field">
                                 <label>Description <span class="text-danger">*</span></label>
-                                <input type="hidden" data-project-description-input>
+                                <input type="hidden" name="description" data-project-description-input>
                                 <div class="candidate-project-editor">
                                     <div class="candidate-project-quill" data-project-description-editor
                                          data-placeholder="Enter your writing texts..."></div>
@@ -288,76 +419,58 @@
                             </div>
                         </form>
 
-                        <div class="candidate-project-item" data-project-item
-                             data-project-title="Inventory System"
-                             data-project-issued="21 Aug 2025"
-                             data-project-url="https://vue.shimzo.online/"
-                             data-project-description="Project topics: 1. Inventory management, 2. Employees, 3. Salary, 4. Expenses. Visit: https://vue.shimzo.online/">
-                            <div class="candidate-project-item__header">
-                                <h2>1. Inventory System</h2>
-                                <div class="candidate-project-actions">
-                                    <button type="button" data-project-edit>
-                                        <i class="fa-regular fa-pen-to-square"></i>
-                                        Edit
-                                    </button>
-                                    <button type="button" data-project-delete>
-                                        <i class="fa-regular fa-trash-can"></i>
-                                        Delete
-                                    </button>
+                        @forelse($candidateProjects as $project)
+                            @php
+                                $projectDescription = strip_tags((string) $project->description, '<p><br><strong><b><em><i><ul><ol><li>');
+                            @endphp
+                            <div class="candidate-project-item" data-project-item
+                                 data-project-id="{{ $project->id }}"
+                                 data-project-title="{{ $project->title }}"
+                                 data-project-issued="{{ optional($project->issued_on)->format('d M Y') }}"
+                                 data-project-issued-value="{{ optional($project->issued_on)->format('Y-m-d') }}"
+                                 data-project-url="{{ $project->url }}"
+                                 data-update-url="{{ route('candidate-profile.projects.update', $project) }}"
+                                 data-delete-url="{{ route('candidate-profile.projects.destroy', $project) }}">
+                                <div class="candidate-project-item__header">
+                                    <h2>{{ $loop->iteration }}. {{ $project->title }}</h2>
+                                    <div class="candidate-project-actions">
+                                        <button type="button" data-project-edit>
+                                            <i class="fa-regular fa-pen-to-square"></i>
+                                            Edit
+                                        </button>
+                                        <button type="button" data-project-delete>
+                                            <i class="fa-regular fa-trash-can"></i>
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="candidate-project-field">
+                                    <span>Issued On:</span>
+                                    <strong data-project-issued-text>{{ optional($project->issued_on)->format('d M Y') ?: '---' }}</strong>
+                                </div>
+                                <div class="candidate-project-field">
+                                    <span>URL</span>
+                                    @if(filled($project->url))
+                                        <a href="{{ addLinkHttpUrl($project->url) }}" target="_blank" rel="noopener" data-project-url-text>{{ $project->url }}</a>
+                                        <strong class="d-none" data-project-url-empty>---</strong>
+                                    @else
+                                        <a href="#" target="_blank" rel="noopener" class="d-none" data-project-url-text></a>
+                                        <strong data-project-url-empty>---</strong>
+                                    @endif
+                                </div>
+                                <div class="candidate-project-field">
+                                    <span>Description</span>
+                                    <div data-project-description-text>{!! $projectDescription ?: '---' !!}</div>
                                 </div>
                             </div>
-                            <div class="candidate-project-field">
-                                <span>Issued On:</span>
-                                <strong data-project-issued-text>21 Aug 2025</strong>
-                            </div>
-                            <div class="candidate-project-field">
-                                <span>URL</span>
-                                <a href="https://vue.shimzo.online/" target="_blank" rel="noopener" data-project-url-text>https://vue.shimzo.online/</a>
-                            </div>
-                            <div class="candidate-project-field">
-                                <span>Description</span>
-                                <div data-project-description-text>Project topics: 1. Inventory management, 2. Employees, 3. Salary, 4. Expenses. Visit: https://vue.shimzo.online/</div>
-                            </div>
-                        </div>
+                        @empty
+                            <div class="candidate-project-empty" data-project-empty>---</div>
+                        @endforelse
 
-                        <div class="candidate-project-item" data-project-item
-                             data-project-title="E-commerce"
-                             data-project-issued="2 Jan 2026"
-                             data-project-url="https://gadgetbd.shimzo.online/"
-                             data-project-description="Project topics: 1. Variant wise gadget buy, 2. Cash on delivery &amp; others. Visit: https://gadgetbd.shimzo.online/">
-                            <div class="candidate-project-item__header">
-                                <h2>2. E-commerce</h2>
-                                <div class="candidate-project-actions">
-                                    <button type="button" data-project-edit>
-                                        <i class="fa-regular fa-pen-to-square"></i>
-                                        Edit
-                                    </button>
-                                    <button type="button" data-project-delete>
-                                        <i class="fa-regular fa-trash-can"></i>
-                                        Delete
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="candidate-project-field">
-                                <span>Issued On:</span>
-                                <strong data-project-issued-text>2 Jan 2026</strong>
-                            </div>
-                            <div class="candidate-project-field">
-                                <span>URL</span>
-                                <a href="https://gadgetbd.shimzo.online/" target="_blank" rel="noopener" data-project-url-text>https://gadgetbd.shimzo.online/</a>
-                            </div>
-                            <div class="candidate-project-field">
-                                <span>Description</span>
-                                <div data-project-description-text>Project topics: 1. Variant wise gadget buy, 2. Cash on delivery &amp; others. Visit: https://gadgetbd.shimzo.online/</div>
-                            </div>
-                        </div>
-
-                        <p class="candidate-project-empty d-none" data-project-empty>---</p>
-
-                        <button type="button" class="candidate-project-add-outline" data-project-add-action>
+                        {{-- <button type="button" class="candidate-project-add-outline" data-project-add-action>
                             <i class="fa-solid fa-plus"></i>
                             Add Project
-                        </button>
+                        </button> --}}
                     </div>
                 </div>
             </div>
@@ -384,30 +497,33 @@
             <div id="candidateOtherAccomplishmentInformationPanelBody" class="collapse candidate-profile-section__collapse">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <div class="candidate-other-list" data-other-list>
-                        <form class="candidate-other-form d-none" data-other-form>
+                        <form class="candidate-other-form d-none" data-other-form
+                              data-store-url="{{ route('candidate-profile.others.store') }}">
+                            @csrf
                             <h2 data-other-form-title>Other Accomplishment</h2>
-                            <input type="hidden" data-other-editing-index>
+                            <input type="hidden" data-other-editing-id>
                             <div class="candidate-skill-form__field">
                                 <label for="candidateOtherTitle">Title <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="candidateOtherTitle"
+                                <input type="text" class="form-control" id="candidateOtherTitle" name="title"
                                        data-other-title-input placeholder="Enter your title name" required>
                             </div>
                             <div class="candidate-skill-form__field">
                                 <label for="candidateOtherIssuedOn">Issued On <span class="text-danger">*</span></label>
-                                <div class="candidate-publication-date-field">
-                                    <i class="fa-regular fa-calendar"></i>
-                                    <input type="text" class="form-control" id="candidateOtherIssuedOn"
-                                           data-other-issued-input placeholder="MM/DD/YY" required>
+                                <div class="candidate-publication-date-field" style="position: relative; width: 100%; height: 38px;">
+                                    <i class="fa-regular fa-calendar" style="align-items: center; bottom: 0; color: #52637a; display: flex; font-size: 16px; height: 38px; justify-content: center; left: 14px; line-height: 1; pointer-events: none; position: absolute; top: 0; width: 16px; z-index: 2;"></i>
+                                    <input type="text" class="form-control" id="candidateOtherIssuedOn" name="issued_on"
+                                           data-other-issued-input placeholder="MM/DD/YY" required
+                                           style="height: 38px; padding-left: 38px; width: 100%;">
                                 </div>
                             </div>
                             <div class="candidate-skill-form__field">
                                 <label for="candidateOtherUrl">URL</label>
-                                <input type="url" class="form-control" id="candidateOtherUrl"
+                                <input type="url" class="form-control" id="candidateOtherUrl" name="url"
                                        data-other-url-input placeholder="Enter your URL">
                             </div>
                             <div class="candidate-skill-form__field">
                                 <label>Description <span class="text-danger">*</span></label>
-                                <input type="hidden" data-other-description-input>
+                                <input type="hidden" name="description" data-other-description-input>
                                 <div class="candidate-other-editor">
                                     <div class="candidate-other-quill" data-other-description-editor
                                          data-placeholder="Enter your writing texts..."></div>
@@ -422,12 +538,58 @@
                             </div>
                         </form>
 
-                        <p class="candidate-other-empty" data-other-empty>---</p>
+                        @forelse($candidateOthers as $other)
+                            @php
+                                $otherDescription = strip_tags((string) $other->description, '<p><br><strong><b><em><i><ul><ol><li>');
+                            @endphp
+                            <div class="candidate-other-item" data-other-item
+                                 data-other-id="{{ $other->id }}"
+                                 data-other-title="{{ $other->title }}"
+                                 data-other-issued="{{ optional($other->issued_on)->format('d M Y') }}"
+                                 data-other-issued-value="{{ optional($other->issued_on)->format('Y-m-d') }}"
+                                 data-other-url="{{ $other->url }}"
+                                 data-update-url="{{ route('candidate-profile.others.update', $other) }}"
+                                 data-delete-url="{{ route('candidate-profile.others.destroy', $other) }}">
+                                <div class="candidate-other-item__header">
+                                    <h2>{{ $loop->iteration }}. {{ $other->title }}</h2>
+                                    <div class="candidate-other-actions">
+                                        <button type="button" data-other-edit>
+                                            <i class="fa-regular fa-pen-to-square"></i>
+                                            Edit
+                                        </button>
+                                        <button type="button" data-other-delete>
+                                            <i class="fa-regular fa-trash-can"></i>
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="candidate-other-field">
+                                    <span>Issued On:</span>
+                                    <strong data-other-issued-text>{{ optional($other->issued_on)->format('d M Y') ?: '---' }}</strong>
+                                </div>
+                                <div class="candidate-other-field">
+                                    <span>URL</span>
+                                    @if(filled($other->url))
+                                        <a href="{{ addLinkHttpUrl($other->url) }}" target="_blank" rel="noopener" data-other-url-text>{{ $other->url }}</a>
+                                        <strong class="d-none" data-other-url-empty>---</strong>
+                                    @else
+                                        <a href="#" target="_blank" rel="noopener" class="d-none" data-other-url-text></a>
+                                        <strong data-other-url-empty>---</strong>
+                                    @endif
+                                </div>
+                                <div class="candidate-other-field">
+                                    <span>Description</span>
+                                    <div data-other-description-text>{!! $otherDescription ?: '---' !!}</div>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="candidate-other-empty" data-other-empty>---</div>
+                        @endforelse
 
-                        <button type="button" class="candidate-other-add-outline" data-other-add-action>
+                        {{-- <button type="button" class="candidate-other-add-outline" data-other-add-action>
                             <i class="fa-solid fa-plus"></i>
                             Add Other
-                        </button>
+                        </button> --}}
                     </div>
                 </div>
             </div>
@@ -460,6 +622,241 @@
             const otherAddActions = document.querySelectorAll('[data-other-add-action]');
             const maxOtherItems = 5;
 
+            const initAccomplishmentDatePicker = function (input) {
+                if (!input || input.dataset.flatpickrReady === 'true') {
+                    return;
+                }
+
+                if (typeof flatpickr !== 'undefined') {
+                    const resizeCalendar = function (calendar) {
+                        const field = input.closest('.candidate-skill-form__field') || input.closest('.candidate-publication-date-field');
+                        const width = field ? Math.round(field.getBoundingClientRect().width) : 0;
+
+                        calendar.classList.add('candidate-accomplishment-calendar');
+                        if (width > 0) {
+                            calendar.style.setProperty('width', width + 'px', 'important');
+                        }
+                    };
+
+                    const applyHeaderDropdowns = function (instance) {
+                        const calendar = instance.calendarContainer;
+                        const monthSelect = calendar.querySelector('.flatpickr-current-month .flatpickr-monthDropdown-months');
+                        const yearWrapper = calendar.querySelector('.flatpickr-current-month .numInputWrapper');
+                        const monthNames = instance.l10n.months.longhand;
+
+                        const closeMenus = function (exceptMenu) {
+                            calendar.querySelectorAll('.candidate-accomplishment-picker-menu').forEach(function (menu) {
+                                if (menu !== exceptMenu) {
+                                    menu.classList.add('d-none');
+                                    menu.previousElementSibling?.setAttribute('aria-expanded', 'false');
+                                }
+                            });
+                        };
+
+                        const bindMenu = function (button, menu) {
+                            button.addEventListener('click', function (event) {
+                                event.preventDefault();
+                                event.stopPropagation();
+
+                                if (menu.classList.contains('d-none')) {
+                                    closeMenus(menu);
+                                    menu.classList.remove('d-none');
+                                    button.setAttribute('aria-expanded', 'true');
+                                    menu.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'center' });
+                                } else {
+                                    closeMenus();
+                                }
+                            });
+                        };
+
+                        if (monthSelect && monthSelect.dataset.monthDropdownReady !== 'true') {
+                            const monthWrapper = document.createElement('span');
+                            const monthButton = document.createElement('button');
+                            const monthMenu = document.createElement('div');
+
+                            monthWrapper.className = 'candidate-accomplishment-month-wrapper';
+                            monthButton.type = 'button';
+                            monthButton.className = 'candidate-accomplishment-month-select';
+                            monthButton.textContent = monthNames[instance.currentMonth];
+                            monthButton.setAttribute('aria-haspopup', 'listbox');
+                            monthButton.setAttribute('aria-expanded', 'false');
+                            monthMenu.className = 'candidate-accomplishment-picker-menu candidate-accomplishment-month-menu d-none';
+                            monthMenu.setAttribute('role', 'listbox');
+
+                            monthNames.forEach(function (month, index) {
+                                const option = document.createElement('button');
+                                option.type = 'button';
+                                option.className = 'candidate-accomplishment-picker-option';
+                                option.dataset.month = String(index);
+                                option.textContent = month;
+                                option.setAttribute('role', 'option');
+                                option.setAttribute('aria-selected', index === instance.currentMonth ? 'true' : 'false');
+                                monthMenu.appendChild(option);
+                            });
+
+                            bindMenu(monthButton, monthMenu);
+                            monthMenu.addEventListener('click', function (event) {
+                                const option = event.target.closest('[data-month]');
+                                if (!option) {
+                                    return;
+                                }
+
+                                event.preventDefault();
+                                event.stopPropagation();
+                                instance.changeMonth(Number(option.dataset.month), false);
+                                monthButton.textContent = option.textContent;
+                                monthMenu.querySelectorAll('[aria-selected="true"]').forEach(function (selected) {
+                                    selected.setAttribute('aria-selected', 'false');
+                                });
+                                option.setAttribute('aria-selected', 'true');
+                                closeMenus();
+                            });
+
+                            monthWrapper.appendChild(monthButton);
+                            monthWrapper.appendChild(monthMenu);
+                            monthSelect.classList.add('d-none');
+                            monthSelect.dataset.monthDropdownReady = 'true';
+                            monthSelect.insertAdjacentElement('afterend', monthWrapper);
+                        }
+
+                        if (yearWrapper && yearWrapper.dataset.yearDropdownReady !== 'true') {
+                            const yearInput = yearWrapper.querySelector('.cur-year');
+                            const yearButton = document.createElement('button');
+                            const yearMenu = document.createElement('div');
+                            const selectedYear = instance.currentYear || new Date().getFullYear();
+                            const currentYear = new Date().getFullYear();
+
+                            yearButton.type = 'button';
+                            yearButton.className = 'candidate-accomplishment-year-select';
+                            yearButton.textContent = String(selectedYear);
+                            yearButton.setAttribute('aria-haspopup', 'listbox');
+                            yearButton.setAttribute('aria-expanded', 'false');
+                            yearMenu.className = 'candidate-accomplishment-picker-menu candidate-accomplishment-year-menu d-none';
+                            yearMenu.setAttribute('role', 'listbox');
+
+                            for (let year = currentYear; year >= 1970; year--) {
+                                const option = document.createElement('button');
+                                option.type = 'button';
+                                option.className = 'candidate-accomplishment-picker-option';
+                                option.dataset.year = String(year);
+                                option.textContent = String(year);
+                                option.setAttribute('role', 'option');
+                                option.setAttribute('aria-selected', year === selectedYear ? 'true' : 'false');
+                                yearMenu.appendChild(option);
+                            }
+
+                            bindMenu(yearButton, yearMenu);
+                            yearMenu.addEventListener('click', function (event) {
+                                const option = event.target.closest('[data-year]');
+                                if (!option) {
+                                    return;
+                                }
+
+                                event.preventDefault();
+                                event.stopPropagation();
+                                instance.changeYear(Number(option.dataset.year));
+                                yearButton.textContent = option.dataset.year;
+                                yearMenu.querySelectorAll('[aria-selected="true"]').forEach(function (selected) {
+                                    selected.setAttribute('aria-selected', 'false');
+                                });
+                                option.setAttribute('aria-selected', 'true');
+                                closeMenus();
+                            });
+
+                            yearWrapper.innerHTML = '';
+                            yearWrapper.appendChild(yearButton);
+                            yearWrapper.appendChild(yearMenu);
+                            yearWrapper.dataset.yearDropdownReady = 'true';
+                            yearWrapper.classList.add('candidate-accomplishment-year-wrapper');
+
+                            if (yearInput) {
+                                yearInput.setAttribute('aria-hidden', 'true');
+                            }
+                        }
+
+                        if (calendar.dataset.headerDropdownCloseReady !== 'true') {
+                            calendar.addEventListener('click', function (event) {
+                                if (!event.target.closest('.candidate-accomplishment-month-wrapper, .candidate-accomplishment-year-wrapper')) {
+                                    closeMenus();
+                                }
+                            });
+                            calendar.dataset.headerDropdownCloseReady = 'true';
+                        }
+                    };
+
+                    flatpickr(input, {
+                        allowInput: true,
+                        clickOpens: true,
+                        dateFormat: 'm/d/y',
+                        locale: typeof getLoggedInUserLang !== 'undefined' ? getLoggedInUserLang : 'default',
+                        onOpen: function (selectedDates, dateStr, instance) {
+                            resizeCalendar(instance.calendarContainer);
+                            applyHeaderDropdowns(instance);
+                        },
+                        onReady: function (selectedDates, dateStr, instance) {
+                            resizeCalendar(instance.calendarContainer);
+                            applyHeaderDropdowns(instance);
+                        },
+                        onMonthChange: function (selectedDates, dateStr, instance) {
+                            applyHeaderDropdowns(instance);
+                            const monthButton = instance.calendarContainer.querySelector('.candidate-accomplishment-month-select');
+                            const monthMenu = instance.calendarContainer.querySelector('.candidate-accomplishment-month-menu');
+                            if (monthButton) {
+                                monthButton.textContent = instance.l10n.months.longhand[instance.currentMonth];
+                            }
+                            if (monthMenu) {
+                                monthMenu.querySelectorAll('[aria-selected="true"]').forEach(function (selected) {
+                                    selected.setAttribute('aria-selected', 'false');
+                                });
+                                monthMenu.querySelector('[data-month="' + instance.currentMonth + '"]')?.setAttribute('aria-selected', 'true');
+                            }
+                        },
+                        onYearChange: function (selectedDates, dateStr, instance) {
+                            const yearButton = instance.calendarContainer.querySelector('.candidate-accomplishment-year-select');
+                            const yearMenu = instance.calendarContainer.querySelector('.candidate-accomplishment-year-menu');
+                            if (yearButton) {
+                                yearButton.textContent = String(instance.currentYear);
+                            }
+                            if (yearMenu) {
+                                yearMenu.querySelectorAll('[aria-selected="true"]').forEach(function (selected) {
+                                    selected.setAttribute('aria-selected', 'false');
+                                });
+                                yearMenu.querySelector('[data-year="' + instance.currentYear + '"]')?.setAttribute('aria-selected', 'true');
+                            }
+                        },
+                    });
+
+                    input.dataset.flatpickrReady = 'true';
+                }
+            };
+
+            const setAccomplishmentDateValue = function (input, value) {
+                if (!input) {
+                    return;
+                }
+
+                if (input._flatpickr) {
+                    if (value) {
+                        const parsedDate = value instanceof Date ? value : new Date(value);
+                        input._flatpickr.setDate(isNaN(parsedDate.getTime()) ? value : parsedDate, true);
+                    } else {
+                        input._flatpickr.clear();
+                    }
+
+                    return;
+                }
+
+                input.value = value || '';
+            };
+
+            document.querySelectorAll('[data-publication-issued-input], [data-award-issued-input], [data-project-issued-input], [data-other-issued-input]').forEach(function (input) {
+                initAccomplishmentDatePicker(input);
+                input.closest('.candidate-publication-date-field')?.addEventListener('click', function () {
+                    input.focus();
+                    input._flatpickr?.open();
+                });
+            });
+
             const setActiveAccomplishmentSection = function (panelId) {
                 accomplishmentSectionLinks.forEach(function (link) {
                     link.classList.toggle('active', link.dataset.accomplishmentSectionLink === panelId);
@@ -483,16 +880,29 @@
                 const portfolioUrlInput = portfolioForm.querySelector('[data-portfolio-url-input]');
                 const portfolioDescriptionInput = portfolioForm.querySelector('[data-portfolio-description-input]');
                 const portfolioDescriptionEditor = portfolioForm.querySelector('[data-portfolio-description-editor]');
-                const portfolioEditingIndex = portfolioForm.querySelector('[data-portfolio-editing-index]');
+                const portfolioEditingId = portfolioForm.querySelector('[data-portfolio-editing-id]');
                 const portfolioFormTitle = portfolioForm.querySelector('[data-portfolio-form-title]');
                 const portfolioCounter = portfolioForm.querySelector('[data-portfolio-character-count]');
                 const portfolioSubmit = portfolioForm.querySelector('[data-portfolio-submit]');
                 const portfolioClose = portfolioForm.querySelector('[data-portfolio-close]');
+                const portfolioToken = portfolioForm.querySelector('input[name="_token"]')?.value || '';
                 let activePortfolioItem = null;
                 let portfolioQuill = null;
+                const portfolioFormHome = document.createElement('div');
+                portfolioForm.after(portfolioFormHome);
 
                 const portfolioItems = function () {
                     return Array.from(portfolioList.querySelectorAll('[data-portfolio-item]'));
+                };
+
+                const portfolioEmpty = function () {
+                    return portfolioList.querySelector('[data-portfolio-empty]');
+                };
+
+                const portfolioMessage = function (error) {
+                    return error && error.message
+                        ? error.message
+                        : (error && error.errors ? Object.values(error.errors).flat().shift() : null);
                 };
 
                 const portfolioDescriptionText = function () {
@@ -514,12 +924,14 @@
                 };
 
                 const renderPortfolioNumbers = function () {
-                    portfolioItems().forEach(function (item, index) {
+                    const items = portfolioItems();
+                    items.forEach(function (item, index) {
                         const title = item.querySelector('.candidate-portfolio-item__header h2');
                         if (title) {
                             title.textContent = (index + 1) + '. ' + (item.dataset.portfolioTitle || '---');
                         }
                     });
+                    portfolioEmpty()?.classList.toggle('d-none', items.length > 0);
                 };
 
                 const refreshPortfolioAddActions = function () {
@@ -534,28 +946,34 @@
                 const setPortfolioFormValues = function (item) {
                     portfolioTitleInput.value = item ? (item.dataset.portfolioTitle || '') : '';
                     portfolioUrlInput.value = item ? (item.dataset.portfolioUrl || '') : '';
+                    const description = item ? (item.querySelector('[data-portfolio-description-text]')?.innerHTML || '') : '';
                     if (portfolioQuill) {
-                        portfolioQuill.root.innerHTML = item ? (item.dataset.portfolioDescription || '') : '';
+                        portfolioQuill.root.innerHTML = description;
                     } else if (portfolioDescriptionEditor) {
-                        portfolioDescriptionEditor.textContent = item ? (item.dataset.portfolioDescription || '') : '';
+                        portfolioDescriptionEditor.innerHTML = description;
                     }
                     refreshPortfolioCounter();
                 };
 
                 const syncPortfolioItem = function (item, values) {
+                    item.dataset.portfolioId = values.id || item.dataset.portfolioId || '';
                     item.dataset.portfolioTitle = values.title || '---';
                     item.dataset.portfolioUrl = values.url || '';
-                    item.dataset.portfolioDescription = values.descriptionHtml || values.description || '---';
+                    item.dataset.updateUrl = values.update_url || item.dataset.updateUrl || '';
+                    item.dataset.deleteUrl = values.delete_url || item.dataset.deleteUrl || '';
                     const urlNode = item.querySelector('[data-portfolio-url-text]');
+                    const urlEmptyNode = item.querySelector('[data-portfolio-url-empty]');
                     const descriptionNode = item.querySelector('[data-portfolio-description-text]');
                     if (urlNode) {
-                        urlNode.textContent = values.url || '---';
-                        urlNode.href = values.url
-                            ? (/^https?:\/\//i.test(values.url) ? values.url : 'https://' + values.url)
-                            : '#';
+                        urlNode.textContent = values.url || '';
+                        urlNode.href = values.url ? (/^https?:\/\//i.test(values.url) ? values.url : 'https://' + values.url) : '#';
+                        urlNode.classList.toggle('d-none', !values.url);
+                    }
+                    if (urlEmptyNode) {
+                        urlEmptyNode.classList.toggle('d-none', Boolean(values.url));
                     }
                     if (descriptionNode) {
-                        descriptionNode.innerHTML = values.descriptionHtml || values.description || '---';
+                        descriptionNode.innerHTML = values.description || values.descriptionHtml || '---';
                     }
                 };
 
@@ -571,7 +989,7 @@
                         '<button type="button" data-portfolio-delete><i class="fa-regular fa-trash-can"></i> Delete</button>',
                         '</div>',
                         '</div>',
-                        '<div class="candidate-portfolio-field"><span>URL</span><a target="_blank" rel="noopener" data-portfolio-url-text></a></div>',
+                        '<div class="candidate-portfolio-field"><span>URL</span><a target="_blank" rel="noopener" data-portfolio-url-text></a><strong data-portfolio-url-empty>---</strong></div>',
                         '<div class="candidate-portfolio-field"><span>Description</span><div data-portfolio-description-text></div></div>',
                     ].join('');
                     syncPortfolioItem(item, values);
@@ -580,7 +998,9 @@
 
                 const closePortfolioForm = function () {
                     portfolioForm.classList.add('d-none');
-                    portfolioEditingIndex.value = '';
+                    if (portfolioEditingId) {
+                        portfolioEditingId.value = '';
+                    }
                     setPortfolioFormValues(null);
                     if (portfolioFormTitle) {
                         portfolioFormTitle.textContent = 'Portfolio';
@@ -595,8 +1015,10 @@
                         activePortfolioItem.classList.remove('d-none');
                         activePortfolioItem = null;
                     }
-                    portfolioList.insertBefore(portfolioForm, portfolioList.firstElementChild);
+                    portfolioForm.classList.remove('candidate-portfolio-form--inline');
+                    portfolioFormHome.appendChild(portfolioForm);
                     refreshPortfolioAddActions();
+                    renderPortfolioNumbers();
                 };
 
                 const openPortfolioForm = function (item) {
@@ -612,7 +1034,9 @@
 
                     closePortfolioForm();
                     activePortfolioItem = item || null;
-                    portfolioEditingIndex.value = item ? String(portfolioItems().indexOf(item)) : '';
+                    if (portfolioEditingId) {
+                        portfolioEditingId.value = item ? (item.dataset.portfolioId || '') : '';
+                    }
                     setPortfolioFormValues(item);
                     portfolioForm.classList.remove('d-none');
                     if (portfolioFormTitle) {
@@ -625,9 +1049,11 @@
                         portfolioClose.textContent = item ? 'Cancel' : 'Close';
                     }
                     if (item) {
+                        portfolioForm.classList.add('candidate-portfolio-form--inline');
                         item.insertAdjacentElement('beforebegin', portfolioForm);
                         item.classList.add('d-none');
                     } else {
+                        portfolioForm.classList.remove('candidate-portfolio-form--inline');
                         const footerAdd = portfolioList.querySelector('.candidate-portfolio-add-outline');
                         portfolioList.insertBefore(portfolioForm, footerAdd || null);
                     }
@@ -656,9 +1082,53 @@
                     }
 
                     if (deleteButton && item) {
-                        item.remove();
-                        closePortfolioForm();
-                        renderPortfolioNumbers();
+                        if (!window.confirm('Are you sure you want to delete this portfolio?')) {
+                            return;
+                        }
+
+                        const formData = new FormData();
+                        formData.append('_method', 'DELETE');
+                        if (portfolioToken) {
+                            formData.append('_token', portfolioToken);
+                        }
+
+                        fetch(item.dataset.deleteUrl, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                        }).then(function (response) {
+                            return response.json().then(function (body) {
+                                if (!response.ok) {
+                                    throw body;
+                                }
+
+                                return body;
+                            });
+                        }).then(function (response) {
+                            if (activePortfolioItem === item) {
+                                closePortfolioForm();
+                            }
+                            item.remove();
+                            if (!portfolioItems().length && !portfolioEmpty()) {
+                                const empty = document.createElement('p');
+                                empty.className = 'candidate-skill-empty candidate-portfolio-empty';
+                                empty.dataset.portfolioEmpty = '';
+                                empty.textContent = '---';
+                                portfolioList.insertBefore(empty, portfolioList.querySelector('.candidate-portfolio-add-outline') || null);
+                            }
+                            renderPortfolioNumbers();
+                            refreshPortfolioAddActions();
+                            if (response && response.message && typeof displaySuccessMessage === 'function') {
+                                displaySuccessMessage(response.message);
+                            }
+                        }).catch(function (error) {
+                            const message = portfolioMessage(error);
+                            if (message && typeof displayErrorMessage === 'function') {
+                                displayErrorMessage(message);
+                            }
+                        });
                     }
                 });
 
@@ -692,7 +1162,6 @@
                         title: portfolioTitleInput.value.trim(),
                         url: portfolioUrlInput.value.trim(),
                         description: portfolioDescriptionText(),
-                        descriptionHtml: portfolioQuill && portfolioDescriptionText() ? portfolioQuill.root.innerHTML : '',
                     };
 
                     if (!values.title) {
@@ -705,20 +1174,54 @@
                         return;
                     }
 
-                    if (values.description.length > 300) {
-                        values.description = values.description.slice(0, 300);
+                    if (portfolioQuill && portfolioDescriptionText()) {
+                        portfolioDescriptionInput.value = portfolioQuill.root.innerHTML;
                     }
 
+                    const formData = new FormData(portfolioForm);
+                    const requestUrl = activePortfolioItem ? activePortfolioItem.dataset.updateUrl : portfolioForm.dataset.storeUrl;
                     if (activePortfolioItem) {
-                        syncPortfolioItem(activePortfolioItem, values);
-                        activePortfolioItem.classList.remove('d-none');
-                    } else {
-                        const footerAdd = portfolioList.querySelector('.candidate-portfolio-add-outline');
-                        portfolioList.insertBefore(makePortfolioItem(values), footerAdd || null);
+                        formData.append('_method', 'PUT');
                     }
 
-                    closePortfolioForm();
-                    renderPortfolioNumbers();
+                    fetch(requestUrl, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                    }).then(function (response) {
+                        return response.json().then(function (body) {
+                            if (!response.ok) {
+                                throw body;
+                            }
+
+                            return body;
+                        });
+                    }).then(function (response) {
+                        const portfolio = response && response.data ? response.data : values;
+
+                        if (activePortfolioItem) {
+                            syncPortfolioItem(activePortfolioItem, portfolio);
+                            activePortfolioItem.classList.remove('d-none');
+                        } else {
+                            portfolioEmpty()?.remove();
+                            const footerAdd = portfolioList.querySelector('.candidate-portfolio-add-outline');
+                            portfolioList.insertBefore(makePortfolioItem(portfolio), footerAdd || null);
+                        }
+
+                        closePortfolioForm();
+                        renderPortfolioNumbers();
+                        refreshPortfolioAddActions();
+                        if (response && response.message && typeof displaySuccessMessage === 'function') {
+                            displaySuccessMessage(response.message);
+                        }
+                    }).catch(function (error) {
+                        const message = portfolioMessage(error);
+                        if (message && typeof displayErrorMessage === 'function') {
+                            displayErrorMessage(message);
+                        }
+                    });
                 });
 
                 closePortfolioForm();
@@ -731,17 +1234,29 @@
                 const publicationUrlInput = publicationForm.querySelector('[data-publication-url-input]');
                 const publicationDescriptionInput = publicationForm.querySelector('[data-publication-description-input]');
                 const publicationDescriptionEditor = publicationForm.querySelector('[data-publication-description-editor]');
-                const publicationEditingIndex = publicationForm.querySelector('[data-publication-editing-index]');
+                const publicationEditingId = publicationForm.querySelector('[data-publication-editing-id]');
                 const publicationFormTitle = publicationForm.querySelector('[data-publication-form-title]');
                 const publicationCounter = publicationForm.querySelector('[data-publication-character-count]');
                 const publicationSubmit = publicationForm.querySelector('[data-publication-submit]');
                 const publicationClose = publicationForm.querySelector('[data-publication-close]');
-                const publicationEmpty = publicationList.querySelector('[data-publication-empty]');
+                const publicationToken = publicationForm.querySelector('input[name="_token"]')?.value || '';
                 let activePublicationItem = null;
                 let publicationQuill = null;
+                const publicationFormHome = document.createElement('div');
+                publicationForm.after(publicationFormHome);
 
                 const publicationItems = function () {
                     return Array.from(publicationList.querySelectorAll('[data-publication-item]'));
+                };
+
+                const publicationEmpty = function () {
+                    return publicationList.querySelector('[data-publication-empty]');
+                };
+
+                const publicationMessage = function (error) {
+                    return error && error.message
+                        ? error.message
+                        : (error && error.errors ? Object.values(error.errors).flat().shift() : null);
                 };
 
                 const publicationDescriptionText = function () {
@@ -763,18 +1278,14 @@
                 };
 
                 const renderPublicationNumbers = function () {
-                    publicationItems().forEach(function (item, index) {
+                    const items = publicationItems();
+                    items.forEach(function (item, index) {
                         const title = item.querySelector('.candidate-publication-item__header h2');
                         if (title) {
                             title.textContent = (index + 1) + '. ' + (item.dataset.publicationTitle || '---');
                         }
                     });
-                };
-
-                const refreshPublicationEmpty = function () {
-                    if (publicationEmpty) {
-                        publicationEmpty.classList.toggle('d-none', Boolean(publicationItems().length) || !publicationForm.classList.contains('d-none'));
-                    }
+                    publicationEmpty()?.classList.toggle('d-none', items.length > 0);
                 };
 
                 const refreshPublicationAddActions = function () {
@@ -788,35 +1299,42 @@
 
                 const setPublicationFormValues = function (item) {
                     publicationTitleInput.value = item ? (item.dataset.publicationTitle || '') : '';
-                    publicationIssuedInput.value = item ? (item.dataset.publicationIssued || '') : '';
+                    setAccomplishmentDateValue(publicationIssuedInput, item ? (item.dataset.publicationIssuedValue || item.dataset.publicationIssued || '') : '');
                     publicationUrlInput.value = item ? (item.dataset.publicationUrl || '') : '';
+                    const description = item ? (item.querySelector('[data-publication-description-text]')?.innerHTML || '') : '';
                     if (publicationQuill) {
-                        publicationQuill.root.innerHTML = item ? (item.dataset.publicationDescription || '') : '';
+                        publicationQuill.root.innerHTML = description;
                     } else if (publicationDescriptionEditor) {
-                        publicationDescriptionEditor.textContent = item ? (item.dataset.publicationDescription || '') : '';
+                        publicationDescriptionEditor.innerHTML = description;
                     }
                     refreshPublicationCounter();
                 };
 
                 const syncPublicationItem = function (item, values) {
+                    item.dataset.publicationId = values.id || item.dataset.publicationId || '';
                     item.dataset.publicationTitle = values.title || '---';
-                    item.dataset.publicationIssued = values.issued || '---';
+                    item.dataset.publicationIssued = values.issued_on || values.issued || '---';
+                    item.dataset.publicationIssuedValue = values.issued_on_value || values.issued_on || values.issued || '';
                     item.dataset.publicationUrl = values.url || '';
-                    item.dataset.publicationDescription = values.descriptionHtml || values.description || '---';
+                    item.dataset.updateUrl = values.update_url || item.dataset.updateUrl || '';
+                    item.dataset.deleteUrl = values.delete_url || item.dataset.deleteUrl || '';
                     const issuedNode = item.querySelector('[data-publication-issued-text]');
                     const urlNode = item.querySelector('[data-publication-url-text]');
+                    const urlEmptyNode = item.querySelector('[data-publication-url-empty]');
                     const descriptionNode = item.querySelector('[data-publication-description-text]');
                     if (issuedNode) {
-                        issuedNode.textContent = values.issued || '---';
+                        issuedNode.textContent = values.issued_on || values.issued || '---';
                     }
                     if (urlNode) {
-                        urlNode.textContent = values.url || '---';
-                        urlNode.href = values.url
-                            ? (/^https?:\/\//i.test(values.url) ? values.url : 'https://' + values.url)
-                            : '#';
+                        urlNode.textContent = values.url || '';
+                        urlNode.href = values.url ? (/^https?:\/\//i.test(values.url) ? values.url : 'https://' + values.url) : '#';
+                        urlNode.classList.toggle('d-none', !values.url);
+                    }
+                    if (urlEmptyNode) {
+                        urlEmptyNode.classList.toggle('d-none', Boolean(values.url));
                     }
                     if (descriptionNode) {
-                        descriptionNode.innerHTML = values.descriptionHtml || values.description || '---';
+                        descriptionNode.innerHTML = values.description || values.descriptionHtml || '---';
                     }
                 };
 
@@ -833,7 +1351,7 @@
                         '</div>',
                         '</div>',
                         '<div class="candidate-publication-field"><span>Issued On</span><strong data-publication-issued-text></strong></div>',
-                        '<div class="candidate-publication-field"><span>URL</span><a target="_blank" rel="noopener" data-publication-url-text></a></div>',
+                        '<div class="candidate-publication-field"><span>URL</span><a target="_blank" rel="noopener" data-publication-url-text></a><strong data-publication-url-empty>---</strong></div>',
                         '<div class="candidate-publication-field"><span>Description</span><div data-publication-description-text></div></div>',
                     ].join('');
                     syncPublicationItem(item, values);
@@ -842,7 +1360,9 @@
 
                 const closePublicationForm = function () {
                     publicationForm.classList.add('d-none');
-                    publicationEditingIndex.value = '';
+                    if (publicationEditingId) {
+                        publicationEditingId.value = '';
+                    }
                     setPublicationFormValues(null);
                     if (publicationFormTitle) {
                         publicationFormTitle.textContent = 'Publication';
@@ -857,9 +1377,10 @@
                         activePublicationItem.classList.remove('d-none');
                         activePublicationItem = null;
                     }
-                    publicationList.insertBefore(publicationForm, publicationList.firstElementChild);
-                    refreshPublicationEmpty();
+                    publicationForm.classList.remove('candidate-publication-form--inline');
+                    publicationFormHome.appendChild(publicationForm);
                     refreshPublicationAddActions();
+                    renderPublicationNumbers();
                 };
 
                 const openPublicationForm = function (item) {
@@ -875,7 +1396,9 @@
 
                     closePublicationForm();
                     activePublicationItem = item || null;
-                    publicationEditingIndex.value = item ? String(publicationItems().indexOf(item)) : '';
+                    if (publicationEditingId) {
+                        publicationEditingId.value = item ? (item.dataset.publicationId || '') : '';
+                    }
                     setPublicationFormValues(item);
                     publicationForm.classList.remove('d-none');
                     if (publicationFormTitle) {
@@ -888,14 +1411,15 @@
                         publicationClose.textContent = item ? 'Cancel' : 'Close';
                     }
                     if (item) {
+                        publicationForm.classList.add('candidate-publication-form--inline');
                         item.insertAdjacentElement('beforebegin', publicationForm);
                         item.classList.add('d-none');
                     } else {
+                        publicationForm.classList.remove('candidate-publication-form--inline');
                         const footerAdd = publicationList.querySelector('.candidate-publication-add-outline');
                         publicationList.insertBefore(publicationForm, footerAdd || null);
                     }
                     publicationTitleInput.focus();
-                    refreshPublicationEmpty();
                     refreshPublicationAddActions();
                 };
 
@@ -915,10 +1439,53 @@
                     }
 
                     if (deleteButton && item) {
-                        item.remove();
-                        closePublicationForm();
-                        renderPublicationNumbers();
-                        refreshPublicationEmpty();
+                        if (!window.confirm('Are you sure you want to delete this publication?')) {
+                            return;
+                        }
+
+                        const formData = new FormData();
+                        formData.append('_method', 'DELETE');
+                        if (publicationToken) {
+                            formData.append('_token', publicationToken);
+                        }
+
+                        fetch(item.dataset.deleteUrl, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                        }).then(function (response) {
+                            return response.json().then(function (body) {
+                                if (!response.ok) {
+                                    throw body;
+                                }
+
+                                return body;
+                            });
+                        }).then(function (response) {
+                            if (activePublicationItem === item) {
+                                closePublicationForm();
+                            }
+                            item.remove();
+                            if (!publicationItems().length && !publicationEmpty()) {
+                                const empty = document.createElement('p');
+                                empty.className = 'candidate-skill-empty candidate-publication-empty';
+                                empty.dataset.publicationEmpty = '';
+                                empty.textContent = '---';
+                                publicationList.insertBefore(empty, publicationList.querySelector('.candidate-publication-add-outline') || null);
+                            }
+                            renderPublicationNumbers();
+                            refreshPublicationAddActions();
+                            if (response && response.message && typeof displaySuccessMessage === 'function') {
+                                displaySuccessMessage(response.message);
+                            }
+                        }).catch(function (error) {
+                            const message = publicationMessage(error);
+                            if (message && typeof displayErrorMessage === 'function') {
+                                displayErrorMessage(message);
+                            }
+                        });
                     }
                 });
 
@@ -973,22 +1540,59 @@
                         values.description = values.description.slice(0, 300);
                     }
 
+                    if (publicationQuill && publicationDescriptionText()) {
+                        publicationDescriptionInput.value = publicationQuill.root.innerHTML;
+                    }
+                    refreshPublicationCounter();
+
+                    const formData = new FormData(publicationForm);
+                    const requestUrl = activePublicationItem ? activePublicationItem.dataset.updateUrl : publicationForm.dataset.storeUrl;
                     if (activePublicationItem) {
-                        syncPublicationItem(activePublicationItem, values);
-                        activePublicationItem.classList.remove('d-none');
-                    } else {
-                        const footerAdd = publicationList.querySelector('.candidate-publication-add-outline');
-                        publicationList.insertBefore(makePublicationItem(values), footerAdd || null);
+                        formData.append('_method', 'PUT');
                     }
 
-                    closePublicationForm();
-                    renderPublicationNumbers();
-                    refreshPublicationEmpty();
+                    fetch(requestUrl, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                    }).then(function (response) {
+                        return response.json().then(function (body) {
+                            if (!response.ok) {
+                                throw body;
+                            }
+
+                            return body;
+                        });
+                    }).then(function (response) {
+                        const publication = response && response.data ? response.data : values;
+
+                        if (activePublicationItem) {
+                            syncPublicationItem(activePublicationItem, publication);
+                            activePublicationItem.classList.remove('d-none');
+                        } else {
+                            publicationEmpty()?.remove();
+                            const footerAdd = publicationList.querySelector('.candidate-publication-add-outline');
+                            publicationList.insertBefore(makePublicationItem(publication), footerAdd || null);
+                        }
+
+                        closePublicationForm();
+                        renderPublicationNumbers();
+                        refreshPublicationAddActions();
+                        if (response && response.message && typeof displaySuccessMessage === 'function') {
+                            displaySuccessMessage(response.message);
+                        }
+                    }).catch(function (error) {
+                        const message = publicationMessage(error);
+                        if (message && typeof displayErrorMessage === 'function') {
+                            displayErrorMessage(message);
+                        }
+                    });
                 });
 
                 closePublicationForm();
                 renderPublicationNumbers();
-                refreshPublicationEmpty();
             }
 
             if (awardList && awardForm) {
@@ -997,16 +1601,28 @@
                 const awardUrlInput = awardForm.querySelector('[data-award-url-input]');
                 const awardDescriptionInput = awardForm.querySelector('[data-award-description-input]');
                 const awardDescriptionEditor = awardForm.querySelector('[data-award-description-editor]');
-                const awardEditingIndex = awardForm.querySelector('[data-award-editing-index]');
+                const awardEditingId = awardForm.querySelector('[data-award-editing-id]');
                 const awardCounter = awardForm.querySelector('[data-award-character-count]');
                 const awardSubmit = awardForm.querySelector('[data-award-submit]');
                 const awardClose = awardForm.querySelector('[data-award-close]');
-                const awardEmpty = awardList.querySelector('[data-award-empty]');
+                const awardToken = awardForm.querySelector('input[name="_token"]')?.value || '';
                 let activeAwardItem = null;
                 let awardQuill = null;
+                const awardFormHome = document.createElement('div');
+                awardForm.after(awardFormHome);
 
                 const awardItems = function () {
                     return Array.from(awardList.querySelectorAll('[data-award-item]'));
+                };
+
+                const awardEmpty = function () {
+                    return awardList.querySelector('[data-award-empty]');
+                };
+
+                const awardMessage = function (error) {
+                    return error && error.message
+                        ? error.message
+                        : (error && error.errors ? Object.values(error.errors).flat().shift() : null);
                 };
 
                 const awardDescriptionText = function () {
@@ -1026,18 +1642,18 @@
                 };
 
                 const renderAwardNumbers = function () {
-                    awardItems().forEach(function (item, index) {
+                    const items = awardItems();
+                    items.forEach(function (item, index) {
                         const title = item.querySelector('.candidate-publication-item__header h2');
                         if (title) {
                             title.textContent = (index + 1) + '. ' + (item.dataset.awardTitle || '---');
                         }
                     });
+                    awardEmpty()?.classList.toggle('d-none', items.length > 0);
                 };
 
                 const refreshAwardEmpty = function () {
-                    if (awardEmpty) {
-                        awardEmpty.classList.toggle('d-none', Boolean(awardItems().length) || !awardForm.classList.contains('d-none'));
-                    }
+                    awardEmpty()?.classList.toggle('d-none', Boolean(awardItems().length));
                 };
 
                 const refreshAwardAddActions = function () {
@@ -1051,33 +1667,42 @@
 
                 const setAwardFormValues = function (item) {
                     awardTitleInput.value = item ? (item.dataset.awardTitle || '') : '';
-                    awardIssuedInput.value = item ? (item.dataset.awardIssued || '') : '';
+                    setAccomplishmentDateValue(awardIssuedInput, item ? (item.dataset.awardIssuedValue || item.dataset.awardIssued || '') : '');
                     awardUrlInput.value = item ? (item.dataset.awardUrl || '') : '';
+                    const description = item ? (item.querySelector('[data-award-description-text]')?.innerHTML || '') : '';
                     if (awardQuill) {
-                        awardQuill.root.innerHTML = item ? (item.dataset.awardDescription || '') : '';
+                        awardQuill.root.innerHTML = description;
                     } else if (awardDescriptionEditor) {
-                        awardDescriptionEditor.textContent = item ? (item.dataset.awardDescription || '') : '';
+                        awardDescriptionEditor.innerHTML = description;
                     }
                     refreshAwardCounter();
                 };
 
                 const syncAwardItem = function (item, values) {
+                    item.dataset.awardId = values.id || item.dataset.awardId || '';
                     item.dataset.awardTitle = values.title || '---';
-                    item.dataset.awardIssued = values.issued || '---';
+                    item.dataset.awardIssued = values.issued_on || values.issued || '---';
+                    item.dataset.awardIssuedValue = values.issued_on_value || values.issued_on || values.issued || '';
                     item.dataset.awardUrl = values.url || '';
-                    item.dataset.awardDescription = values.descriptionHtml || values.description || '---';
+                    item.dataset.updateUrl = values.update_url || item.dataset.updateUrl || '';
+                    item.dataset.deleteUrl = values.delete_url || item.dataset.deleteUrl || '';
                     const issuedNode = item.querySelector('[data-award-issued-text]');
                     const urlNode = item.querySelector('[data-award-url-text]');
+                    const urlEmptyNode = item.querySelector('[data-award-url-empty]');
                     const descriptionNode = item.querySelector('[data-award-description-text]');
                     if (issuedNode) {
-                        issuedNode.textContent = values.issued || '---';
+                        issuedNode.textContent = values.issued_on || values.issued || '---';
                     }
                     if (urlNode) {
-                        urlNode.textContent = values.url || '---';
+                        urlNode.textContent = values.url || '';
                         urlNode.href = values.url ? (/^https?:\/\//i.test(values.url) ? values.url : 'https://' + values.url) : '#';
+                        urlNode.classList.toggle('d-none', !values.url);
+                    }
+                    if (urlEmptyNode) {
+                        urlEmptyNode.classList.toggle('d-none', Boolean(values.url));
                     }
                     if (descriptionNode) {
-                        descriptionNode.innerHTML = values.descriptionHtml || values.description || '---';
+                        descriptionNode.innerHTML = values.description || values.descriptionHtml || '---';
                     }
                 };
 
@@ -1094,7 +1719,7 @@
                         '</div>',
                         '</div>',
                         '<div class="candidate-publication-field"><span>Issued On</span><strong data-award-issued-text></strong></div>',
-                        '<div class="candidate-publication-field"><span>URL</span><a target="_blank" rel="noopener" data-award-url-text></a></div>',
+                        '<div class="candidate-publication-field"><span>URL</span><a target="_blank" rel="noopener" data-award-url-text></a><strong data-award-url-empty>---</strong></div>',
                         '<div class="candidate-publication-field"><span>Description</span><div data-award-description-text></div></div>',
                     ].join('');
                     syncAwardItem(item, values);
@@ -1103,7 +1728,9 @@
 
                 const closeAwardForm = function () {
                     awardForm.classList.add('d-none');
-                    awardEditingIndex.value = '';
+                    if (awardEditingId) {
+                        awardEditingId.value = '';
+                    }
                     setAwardFormValues(null);
                     if (awardSubmit) {
                         awardSubmit.textContent = 'Save';
@@ -1115,9 +1742,10 @@
                         activeAwardItem.classList.remove('d-none');
                         activeAwardItem = null;
                     }
-                    awardList.insertBefore(awardForm, awardList.firstElementChild);
-                    refreshAwardEmpty();
+                    awardForm.classList.remove('candidate-publication-form--inline');
+                    awardFormHome.appendChild(awardForm);
                     refreshAwardAddActions();
+                    renderAwardNumbers();
                 };
 
                 const openAwardForm = function (item) {
@@ -1131,7 +1759,9 @@
                     }
                     closeAwardForm();
                     activeAwardItem = item || null;
-                    awardEditingIndex.value = item ? String(awardItems().indexOf(item)) : '';
+                    if (awardEditingId) {
+                        awardEditingId.value = item ? (item.dataset.awardId || '') : '';
+                    }
                     setAwardFormValues(item);
                     awardForm.classList.remove('d-none');
                     if (awardSubmit) {
@@ -1141,9 +1771,11 @@
                         awardClose.textContent = item ? 'Cancel' : 'Close';
                     }
                     if (item) {
+                        awardForm.classList.add('candidate-publication-form--inline');
                         item.insertAdjacentElement('beforebegin', awardForm);
                         item.classList.add('d-none');
                     } else {
+                        awardForm.classList.remove('candidate-publication-form--inline');
                         const footerAdd = awardList.querySelector('.candidate-publication-add-outline');
                         awardList.insertBefore(awardForm, footerAdd || null);
                     }
@@ -1166,10 +1798,53 @@
                         openAwardForm(item);
                     }
                     if (deleteButton && item) {
-                        item.remove();
-                        closeAwardForm();
-                        renderAwardNumbers();
-                        refreshAwardEmpty();
+                        if (!window.confirm('Are you sure you want to delete this award?')) {
+                            return;
+                        }
+
+                        const formData = new FormData();
+                        formData.append('_method', 'DELETE');
+                        if (awardToken) {
+                            formData.append('_token', awardToken);
+                        }
+
+                        fetch(item.dataset.deleteUrl, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                        }).then(function (response) {
+                            return response.json().then(function (body) {
+                                if (!response.ok) {
+                                    throw body;
+                                }
+
+                                return body;
+                            });
+                        }).then(function (response) {
+                            if (activeAwardItem === item) {
+                                closeAwardForm();
+                            }
+                            item.remove();
+                            if (!awardItems().length && !awardEmpty()) {
+                                const empty = document.createElement('p');
+                                empty.className = 'candidate-skill-empty candidate-publication-empty';
+                                empty.dataset.awardEmpty = '';
+                                empty.textContent = '---';
+                                awardList.insertBefore(empty, awardList.querySelector('.candidate-publication-add-outline') || null);
+                            }
+                            renderAwardNumbers();
+                            refreshAwardAddActions();
+                            if (response && response.message && typeof displaySuccessMessage === 'function') {
+                                displaySuccessMessage(response.message);
+                            }
+                        }).catch(function (error) {
+                            const message = awardMessage(error);
+                            if (message && typeof displayErrorMessage === 'function') {
+                                displayErrorMessage(message);
+                            }
+                        });
                     }
                 });
 
@@ -1218,21 +1893,58 @@
                     if (values.description.length > 300) {
                         values.description = values.description.slice(0, 300);
                     }
-                    if (activeAwardItem) {
-                        syncAwardItem(activeAwardItem, values);
-                        activeAwardItem.classList.remove('d-none');
-                    } else {
-                        const footerAdd = awardList.querySelector('.candidate-publication-add-outline');
-                        awardList.insertBefore(makeAwardItem(values), footerAdd || null);
+                    if (awardQuill && awardDescriptionText()) {
+                        awardDescriptionInput.value = awardQuill.root.innerHTML;
                     }
-                    closeAwardForm();
-                    renderAwardNumbers();
-                    refreshAwardEmpty();
+
+                    const formData = new FormData(awardForm);
+                    const requestUrl = activeAwardItem ? activeAwardItem.dataset.updateUrl : awardForm.dataset.storeUrl;
+                    if (activeAwardItem) {
+                        formData.append('_method', 'PUT');
+                    }
+
+                    fetch(requestUrl, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                    }).then(function (response) {
+                        return response.json().then(function (body) {
+                            if (!response.ok) {
+                                throw body;
+                            }
+
+                            return body;
+                        });
+                    }).then(function (response) {
+                        const award = response && response.data ? response.data : values;
+
+                        if (activeAwardItem) {
+                            syncAwardItem(activeAwardItem, award);
+                            activeAwardItem.classList.remove('d-none');
+                        } else {
+                            awardEmpty()?.remove();
+                            const footerAdd = awardList.querySelector('.candidate-publication-add-outline');
+                            awardList.insertBefore(makeAwardItem(award), footerAdd || null);
+                        }
+
+                        closeAwardForm();
+                        renderAwardNumbers();
+                        refreshAwardAddActions();
+                        if (response && response.message && typeof displaySuccessMessage === 'function') {
+                            displaySuccessMessage(response.message);
+                        }
+                    }).catch(function (error) {
+                        const message = awardMessage(error);
+                        if (message && typeof displayErrorMessage === 'function') {
+                            displayErrorMessage(message);
+                        }
+                    });
                 });
 
                 closeAwardForm();
                 renderAwardNumbers();
-                refreshAwardEmpty();
             }
 
             if (projectList) {
@@ -1242,16 +1954,30 @@
                 const projectUrlInput = projectForm ? projectForm.querySelector('[data-project-url-input]') : null;
                 const projectDescriptionInput = projectForm ? projectForm.querySelector('[data-project-description-input]') : null;
                 const projectDescriptionEditor = projectForm ? projectForm.querySelector('[data-project-description-editor]') : null;
-                const projectEditingIndex = projectForm ? projectForm.querySelector('[data-project-editing-index]') : null;
+                const projectEditingId = projectForm ? projectForm.querySelector('[data-project-editing-id]') : null;
                 const projectCounter = projectForm ? projectForm.querySelector('[data-project-character-count]') : null;
                 const projectSubmit = projectForm ? projectForm.querySelector('[data-project-submit]') : null;
                 const projectClose = projectForm ? projectForm.querySelector('[data-project-close]') : null;
-                const projectEmpty = projectList.querySelector('[data-project-empty]');
+                const projectToken = projectForm ? (projectForm.querySelector('input[name="_token"]')?.value || '') : '';
                 let activeProjectItem = null;
                 let projectQuill = null;
+                const projectFormHome = document.createElement('div');
+                if (projectForm) {
+                    projectForm.after(projectFormHome);
+                }
 
                 const projectItems = function () {
                     return Array.from(projectList.querySelectorAll('[data-project-item]'));
+                };
+
+                const projectEmpty = function () {
+                    return projectList.querySelector('[data-project-empty]');
+                };
+
+                const projectMessage = function (error) {
+                    return error && error.message
+                        ? error.message
+                        : (error && error.errors ? Object.values(error.errors).flat().shift() : null);
                 };
 
                 const projectDescriptionText = function () {
@@ -1271,18 +1997,18 @@
                 };
 
                 const renderProjectNumbers = function () {
-                    projectItems().forEach(function (item, index) {
+                    const items = projectItems();
+                    items.forEach(function (item, index) {
                         const title = item.querySelector('.candidate-project-item__header h2');
                         if (title) {
                             title.textContent = (index + 1) + '. ' + (item.dataset.projectTitle || '---');
                         }
                     });
+                    projectEmpty()?.classList.toggle('d-none', items.length > 0);
                 };
 
                 const refreshProjectEmpty = function () {
-                    if (projectEmpty) {
-                        projectEmpty.classList.toggle('d-none', Boolean(projectItems().length) || (projectForm && !projectForm.classList.contains('d-none')));
-                    }
+                    projectEmpty()?.classList.toggle('d-none', Boolean(projectItems().length));
                 };
 
                 const refreshProjectAddActions = function () {
@@ -1299,33 +2025,42 @@
                         return;
                     }
                     projectTitleInput.value = item ? (item.dataset.projectTitle || '') : '';
-                    projectIssuedInput.value = item ? (item.dataset.projectIssued || '') : '';
+                    setAccomplishmentDateValue(projectIssuedInput, item ? (item.dataset.projectIssuedValue || item.dataset.projectIssued || '') : '');
                     projectUrlInput.value = item ? (item.dataset.projectUrl || '') : '';
+                    const description = item ? (item.querySelector('[data-project-description-text]')?.innerHTML || '') : '';
                     if (projectQuill) {
-                        projectQuill.root.innerHTML = item ? (item.dataset.projectDescription || '') : '';
+                        projectQuill.root.innerHTML = description;
                     } else if (projectDescriptionEditor) {
-                        projectDescriptionEditor.textContent = item ? (item.dataset.projectDescription || '') : '';
+                        projectDescriptionEditor.innerHTML = description;
                     }
                     refreshProjectCounter();
                 };
 
                 const syncProjectItem = function (item, values) {
+                    item.dataset.projectId = values.id || item.dataset.projectId || '';
                     item.dataset.projectTitle = values.title || '---';
-                    item.dataset.projectIssued = values.issued || '---';
+                    item.dataset.projectIssued = values.issued_on || values.issued || '---';
+                    item.dataset.projectIssuedValue = values.issued_on_value || values.issued_on || values.issued || '';
                     item.dataset.projectUrl = values.url || '';
-                    item.dataset.projectDescription = values.descriptionHtml || values.description || '---';
+                    item.dataset.updateUrl = values.update_url || item.dataset.updateUrl || '';
+                    item.dataset.deleteUrl = values.delete_url || item.dataset.deleteUrl || '';
                     const issuedNode = item.querySelector('[data-project-issued-text]');
                     const urlNode = item.querySelector('[data-project-url-text]');
+                    const urlEmptyNode = item.querySelector('[data-project-url-empty]');
                     const descriptionNode = item.querySelector('[data-project-description-text]');
                     if (issuedNode) {
-                        issuedNode.textContent = values.issued || '---';
+                        issuedNode.textContent = values.issued_on || values.issued || '---';
                     }
                     if (urlNode) {
-                        urlNode.textContent = values.url || '---';
+                        urlNode.textContent = values.url || '';
                         urlNode.href = values.url ? (/^https?:\/\//i.test(values.url) ? values.url : 'https://' + values.url) : '#';
+                        urlNode.classList.toggle('d-none', !values.url);
+                    }
+                    if (urlEmptyNode) {
+                        urlEmptyNode.classList.toggle('d-none', Boolean(values.url));
                     }
                     if (descriptionNode) {
-                        descriptionNode.innerHTML = values.descriptionHtml || values.description || '---';
+                        descriptionNode.innerHTML = values.description || values.descriptionHtml || '---';
                     }
                 };
 
@@ -1342,7 +2077,7 @@
                         '</div>',
                         '</div>',
                         '<div class="candidate-project-field"><span>Issued On:</span><strong data-project-issued-text></strong></div>',
-                        '<div class="candidate-project-field"><span>URL</span><a target="_blank" rel="noopener" data-project-url-text></a></div>',
+                        '<div class="candidate-project-field"><span>URL</span><a target="_blank" rel="noopener" data-project-url-text></a><strong data-project-url-empty>---</strong></div>',
                         '<div class="candidate-project-field"><span>Description</span><div data-project-description-text></div></div>',
                     ].join('');
                     syncProjectItem(item, values);
@@ -1354,7 +2089,9 @@
                         return;
                     }
                     projectForm.classList.add('d-none');
-                    projectEditingIndex.value = '';
+                    if (projectEditingId) {
+                        projectEditingId.value = '';
+                    }
                     setProjectFormValues(null);
                     if (projectSubmit) {
                         projectSubmit.textContent = 'Save';
@@ -1366,9 +2103,10 @@
                         activeProjectItem.classList.remove('d-none');
                         activeProjectItem = null;
                     }
-                    projectList.insertBefore(projectForm, projectList.firstElementChild);
-                    refreshProjectEmpty();
+                    projectForm.classList.remove('candidate-project-form--inline');
+                    projectFormHome.appendChild(projectForm);
                     refreshProjectAddActions();
+                    renderProjectNumbers();
                 };
 
                 const openProjectForm = function (item) {
@@ -1385,7 +2123,9 @@
                     }
                     closeProjectForm();
                     activeProjectItem = item || null;
-                    projectEditingIndex.value = item ? String(projectItems().indexOf(item)) : '';
+                    if (projectEditingId) {
+                        projectEditingId.value = item ? (item.dataset.projectId || '') : '';
+                    }
                     setProjectFormValues(item);
                     projectForm.classList.remove('d-none');
                     if (projectSubmit) {
@@ -1395,9 +2135,11 @@
                         projectClose.textContent = item ? 'Cancel' : 'Close';
                     }
                     if (item) {
+                        projectForm.classList.add('candidate-project-form--inline');
                         item.insertAdjacentElement('beforebegin', projectForm);
                         item.classList.add('d-none');
                     } else {
+                        projectForm.classList.remove('candidate-project-form--inline');
                         const footerAdd = projectList.querySelector('.candidate-project-add-outline');
                         projectList.insertBefore(projectForm, footerAdd || null);
                     }
@@ -1422,11 +2164,53 @@
                     }
 
                     if (deleteButton && item) {
-                        item.remove();
-                        closeProjectForm();
-                        renderProjectNumbers();
-                        refreshProjectEmpty();
-                        refreshProjectAddActions();
+                        if (!window.confirm('Are you sure you want to delete this project?')) {
+                            return;
+                        }
+
+                        const formData = new FormData();
+                        formData.append('_method', 'DELETE');
+                        if (projectToken) {
+                            formData.append('_token', projectToken);
+                        }
+
+                        fetch(item.dataset.deleteUrl, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                        }).then(function (response) {
+                            return response.json().then(function (body) {
+                                if (!response.ok) {
+                                    throw body;
+                                }
+
+                                return body;
+                            });
+                        }).then(function (response) {
+                            if (activeProjectItem === item) {
+                                closeProjectForm();
+                            }
+                            item.remove();
+                            if (!projectItems().length && !projectEmpty()) {
+                                const empty = document.createElement('p');
+                                empty.className = 'candidate-project-empty';
+                                empty.dataset.projectEmpty = '';
+                                empty.textContent = '---';
+                                projectList.insertBefore(empty, projectList.querySelector('.candidate-project-add-outline') || null);
+                            }
+                            renderProjectNumbers();
+                            refreshProjectAddActions();
+                            if (response && response.message && typeof displaySuccessMessage === 'function') {
+                                displaySuccessMessage(response.message);
+                            }
+                        }).catch(function (error) {
+                            const message = projectMessage(error);
+                            if (message && typeof displayErrorMessage === 'function') {
+                                displayErrorMessage(message);
+                            }
+                        });
                     }
                 });
 
@@ -1475,21 +2259,58 @@
                     if (values.description.length > 300) {
                         values.description = values.description.slice(0, 300);
                     }
-                    if (activeProjectItem) {
-                        syncProjectItem(activeProjectItem, values);
-                        activeProjectItem.classList.remove('d-none');
-                    } else {
-                        const footerAdd = projectList.querySelector('.candidate-project-add-outline');
-                        projectList.insertBefore(makeProjectItem(values), footerAdd || null);
+                    if (projectQuill && projectDescriptionText()) {
+                        projectDescriptionInput.value = projectQuill.root.innerHTML;
                     }
-                    closeProjectForm();
-                    renderProjectNumbers();
-                    refreshProjectEmpty();
+
+                    const formData = new FormData(projectForm);
+                    const requestUrl = activeProjectItem ? activeProjectItem.dataset.updateUrl : projectForm.dataset.storeUrl;
+                    if (activeProjectItem) {
+                        formData.append('_method', 'PUT');
+                    }
+
+                    fetch(requestUrl, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                    }).then(function (response) {
+                        return response.json().then(function (body) {
+                            if (!response.ok) {
+                                throw body;
+                            }
+
+                            return body;
+                        });
+                    }).then(function (response) {
+                        const project = response && response.data ? response.data : values;
+
+                        if (activeProjectItem) {
+                            syncProjectItem(activeProjectItem, project);
+                            activeProjectItem.classList.remove('d-none');
+                        } else {
+                            projectEmpty()?.remove();
+                            const footerAdd = projectList.querySelector('.candidate-project-add-outline');
+                            projectList.insertBefore(makeProjectItem(project), footerAdd || null);
+                        }
+
+                        closeProjectForm();
+                        renderProjectNumbers();
+                        refreshProjectAddActions();
+                        if (response && response.message && typeof displaySuccessMessage === 'function') {
+                            displaySuccessMessage(response.message);
+                        }
+                    }).catch(function (error) {
+                        const message = projectMessage(error);
+                        if (message && typeof displayErrorMessage === 'function') {
+                            displayErrorMessage(message);
+                        }
+                    });
                 });
 
                 closeProjectForm();
                 renderProjectNumbers();
-                refreshProjectEmpty();
                 refreshProjectAddActions();
             }
 
@@ -1499,17 +2320,29 @@
                 const otherUrlInput = otherForm.querySelector('[data-other-url-input]');
                 const otherDescriptionInput = otherForm.querySelector('[data-other-description-input]');
                 const otherDescriptionEditor = otherForm.querySelector('[data-other-description-editor]');
-                const otherEditingIndex = otherForm.querySelector('[data-other-editing-index]');
+                const otherEditingId = otherForm.querySelector('[data-other-editing-id]');
                 const otherFormTitle = otherForm.querySelector('[data-other-form-title]');
                 const otherCounter = otherForm.querySelector('[data-other-character-count]');
                 const otherSubmit = otherForm.querySelector('[data-other-submit]');
                 const otherClose = otherForm.querySelector('[data-other-close]');
-                const otherEmpty = otherList.querySelector('[data-other-empty]');
+                const otherToken = otherForm.querySelector('input[name="_token"]')?.value || '';
                 let activeOtherItem = null;
                 let otherQuill = null;
+                const otherFormHome = document.createElement('div');
+                otherForm.after(otherFormHome);
 
                 const otherItems = function () {
                     return Array.from(otherList.querySelectorAll('[data-other-item]'));
+                };
+
+                const otherEmpty = function () {
+                    return otherList.querySelector('[data-other-empty]');
+                };
+
+                const otherMessage = function (error) {
+                    return error && error.message
+                        ? error.message
+                        : (error && error.errors ? Object.values(error.errors).flat().shift() : null);
                 };
 
                 const otherDescriptionText = function () {
@@ -1529,18 +2362,18 @@
                 };
 
                 const renderOtherNumbers = function () {
-                    otherItems().forEach(function (item, index) {
+                    const items = otherItems();
+                    items.forEach(function (item, index) {
                         const title = item.querySelector('.candidate-other-item__header h2');
                         if (title) {
                             title.textContent = (index + 1) + '. ' + (item.dataset.otherTitle || '---');
                         }
                     });
+                    otherEmpty()?.classList.toggle('d-none', items.length > 0);
                 };
 
                 const refreshOtherEmpty = function () {
-                    if (otherEmpty) {
-                        otherEmpty.classList.toggle('d-none', Boolean(otherItems().length) || !otherForm.classList.contains('d-none'));
-                    }
+                    otherEmpty()?.classList.toggle('d-none', Boolean(otherItems().length));
                 };
 
                 const refreshOtherAddActions = function () {
@@ -1554,33 +2387,42 @@
 
                 const setOtherFormValues = function (item) {
                     otherTitleInput.value = item ? (item.dataset.otherTitle || '') : '';
-                    otherIssuedInput.value = item ? (item.dataset.otherIssued || '') : '';
+                    setAccomplishmentDateValue(otherIssuedInput, item ? (item.dataset.otherIssuedValue || item.dataset.otherIssued || '') : '');
                     otherUrlInput.value = item ? (item.dataset.otherUrl || '') : '';
+                    const description = item ? (item.querySelector('[data-other-description-text]')?.innerHTML || '') : '';
                     if (otherQuill) {
-                        otherQuill.root.innerHTML = item ? (item.dataset.otherDescription || '') : '';
+                        otherQuill.root.innerHTML = description;
                     } else if (otherDescriptionEditor) {
-                        otherDescriptionEditor.textContent = item ? (item.dataset.otherDescription || '') : '';
+                        otherDescriptionEditor.innerHTML = description;
                     }
                     refreshOtherCounter();
                 };
 
                 const syncOtherItem = function (item, values) {
+                    item.dataset.otherId = values.id || item.dataset.otherId || '';
                     item.dataset.otherTitle = values.title || '---';
-                    item.dataset.otherIssued = values.issued || '---';
+                    item.dataset.otherIssued = values.issued_on || values.issued || '---';
+                    item.dataset.otherIssuedValue = values.issued_on_value || values.issued_on || values.issued || '';
                     item.dataset.otherUrl = values.url || '';
-                    item.dataset.otherDescription = values.descriptionHtml || values.description || '---';
+                    item.dataset.updateUrl = values.update_url || item.dataset.updateUrl || '';
+                    item.dataset.deleteUrl = values.delete_url || item.dataset.deleteUrl || '';
                     const issuedNode = item.querySelector('[data-other-issued-text]');
                     const urlNode = item.querySelector('[data-other-url-text]');
+                    const urlEmptyNode = item.querySelector('[data-other-url-empty]');
                     const descriptionNode = item.querySelector('[data-other-description-text]');
                     if (issuedNode) {
-                        issuedNode.textContent = values.issued || '---';
+                        issuedNode.textContent = values.issued_on || values.issued || '---';
                     }
                     if (urlNode) {
-                        urlNode.textContent = values.url || '---';
+                        urlNode.textContent = values.url || '';
                         urlNode.href = values.url ? (/^https?:\/\//i.test(values.url) ? values.url : 'https://' + values.url) : '#';
+                        urlNode.classList.toggle('d-none', !values.url);
+                    }
+                    if (urlEmptyNode) {
+                        urlEmptyNode.classList.toggle('d-none', Boolean(values.url));
                     }
                     if (descriptionNode) {
-                        descriptionNode.innerHTML = values.descriptionHtml || values.description || '---';
+                        descriptionNode.innerHTML = values.description || values.descriptionHtml || '---';
                     }
                 };
 
@@ -1597,7 +2439,7 @@
                         '</div>',
                         '</div>',
                         '<div class="candidate-other-field"><span>Issued On:</span><strong data-other-issued-text></strong></div>',
-                        '<div class="candidate-other-field"><span>URL</span><a target="_blank" rel="noopener" data-other-url-text></a></div>',
+                        '<div class="candidate-other-field"><span>URL</span><a target="_blank" rel="noopener" data-other-url-text></a><strong data-other-url-empty>---</strong></div>',
                         '<div class="candidate-other-field"><span>Description</span><div data-other-description-text></div></div>',
                     ].join('');
                     syncOtherItem(item, values);
@@ -1606,7 +2448,9 @@
 
                 const closeOtherForm = function () {
                     otherForm.classList.add('d-none');
-                    otherEditingIndex.value = '';
+                    if (otherEditingId) {
+                        otherEditingId.value = '';
+                    }
                     setOtherFormValues(null);
                     if (otherFormTitle) {
                         otherFormTitle.textContent = 'Other Accomplishment';
@@ -1621,9 +2465,10 @@
                         activeOtherItem.classList.remove('d-none');
                         activeOtherItem = null;
                     }
-                    otherList.insertBefore(otherForm, otherList.firstElementChild);
-                    refreshOtherEmpty();
+                    otherForm.classList.remove('candidate-other-form--inline');
+                    otherFormHome.appendChild(otherForm);
                     refreshOtherAddActions();
+                    renderOtherNumbers();
                 };
 
                 const openOtherForm = function (item) {
@@ -1637,7 +2482,9 @@
                     }
                     closeOtherForm();
                     activeOtherItem = item || null;
-                    otherEditingIndex.value = item ? String(otherItems().indexOf(item)) : '';
+                    if (otherEditingId) {
+                        otherEditingId.value = item ? (item.dataset.otherId || '') : '';
+                    }
                     setOtherFormValues(item);
                     otherForm.classList.remove('d-none');
                     if (otherSubmit) {
@@ -1647,9 +2494,11 @@
                         otherClose.textContent = item ? 'Cancel' : 'Close';
                     }
                     if (item) {
+                        otherForm.classList.add('candidate-other-form--inline');
                         item.insertAdjacentElement('beforebegin', otherForm);
                         item.classList.add('d-none');
                     } else {
+                        otherForm.classList.remove('candidate-other-form--inline');
                         const footerAdd = otherList.querySelector('.candidate-other-add-outline');
                         otherList.insertBefore(otherForm, footerAdd || null);
                     }
@@ -1672,11 +2521,53 @@
                         openOtherForm(item);
                     }
                     if (deleteButton && item) {
-                        item.remove();
-                        closeOtherForm();
-                        renderOtherNumbers();
-                        refreshOtherEmpty();
-                        refreshOtherAddActions();
+                        if (!window.confirm('Are you sure you want to delete this other accomplishment?')) {
+                            return;
+                        }
+
+                        const formData = new FormData();
+                        formData.append('_method', 'DELETE');
+                        if (otherToken) {
+                            formData.append('_token', otherToken);
+                        }
+
+                        fetch(item.dataset.deleteUrl, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                        }).then(function (response) {
+                            return response.json().then(function (body) {
+                                if (!response.ok) {
+                                    throw body;
+                                }
+
+                                return body;
+                            });
+                        }).then(function (response) {
+                            if (activeOtherItem === item) {
+                                closeOtherForm();
+                            }
+                            item.remove();
+                            if (!otherItems().length && !otherEmpty()) {
+                                const empty = document.createElement('p');
+                                empty.className = 'candidate-other-empty';
+                                empty.dataset.otherEmpty = '';
+                                empty.textContent = '---';
+                                otherList.insertBefore(empty, otherList.querySelector('.candidate-other-add-outline') || null);
+                            }
+                            renderOtherNumbers();
+                            refreshOtherAddActions();
+                            if (response && response.message && typeof displaySuccessMessage === 'function') {
+                                displaySuccessMessage(response.message);
+                            }
+                        }).catch(function (error) {
+                            const message = otherMessage(error);
+                            if (message && typeof displayErrorMessage === 'function') {
+                                displayErrorMessage(message);
+                            }
+                        });
                     }
                 });
 
@@ -1725,21 +2616,58 @@
                     if (values.description.length > 300) {
                         values.description = values.description.slice(0, 300);
                     }
-                    if (activeOtherItem) {
-                        syncOtherItem(activeOtherItem, values);
-                        activeOtherItem.classList.remove('d-none');
-                    } else {
-                        const footerAdd = otherList.querySelector('.candidate-other-add-outline');
-                        otherList.insertBefore(makeOtherItem(values), footerAdd || null);
+                    if (otherQuill && otherDescriptionText()) {
+                        otherDescriptionInput.value = otherQuill.root.innerHTML;
                     }
-                    closeOtherForm();
-                    renderOtherNumbers();
-                    refreshOtherEmpty();
+
+                    const formData = new FormData(otherForm);
+                    const requestUrl = activeOtherItem ? activeOtherItem.dataset.updateUrl : otherForm.dataset.storeUrl;
+                    if (activeOtherItem) {
+                        formData.append('_method', 'PUT');
+                    }
+
+                    fetch(requestUrl, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                    }).then(function (response) {
+                        return response.json().then(function (body) {
+                            if (!response.ok) {
+                                throw body;
+                            }
+
+                            return body;
+                        });
+                    }).then(function (response) {
+                        const other = response && response.data ? response.data : values;
+
+                        if (activeOtherItem) {
+                            syncOtherItem(activeOtherItem, other);
+                            activeOtherItem.classList.remove('d-none');
+                        } else {
+                            otherEmpty()?.remove();
+                            const footerAdd = otherList.querySelector('.candidate-other-add-outline');
+                            otherList.insertBefore(makeOtherItem(other), footerAdd || null);
+                        }
+
+                        closeOtherForm();
+                        renderOtherNumbers();
+                        refreshOtherAddActions();
+                        if (response && response.message && typeof displaySuccessMessage === 'function') {
+                            displaySuccessMessage(response.message);
+                        }
+                    }).catch(function (error) {
+                        const message = otherMessage(error);
+                        if (message && typeof displayErrorMessage === 'function') {
+                            displayErrorMessage(message);
+                        }
+                    });
                 });
 
                 closeOtherForm();
                 renderOtherNumbers();
-                refreshOtherEmpty();
                 refreshOtherAddActions();
             }
 

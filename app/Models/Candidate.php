@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model as Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -341,6 +342,26 @@ class Candidate extends Model implements HasMedia
     public function careerLevel(): BelongsTo
     {
         return $this->belongsTo(CareerLevel::class, 'career_level_id');
+    }
+
+    public function extraCurricular(): HasMany
+    {
+        return $this->hasMany(CandidateExtraCurricular::class);
+    }
+
+    public function links(): HasMany
+    {
+        return $this->hasMany(CandidateLink::class);
+    }
+
+    public function references(): HasMany
+    {
+        return $this->hasMany(CandidateReference::class);
+    }
+
+    public function accomplishments(): HasMany
+    {
+        return $this->hasMany(CandidateAccomplishment::class);
     }
 
     public function functionalArea(): BelongsTo

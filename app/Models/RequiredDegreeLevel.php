@@ -39,6 +39,11 @@ class RequiredDegreeLevel extends Model
 
     public $fillable = [
         'name',
+        'code',
+        'show_board',
+        'show_major',
+        'show_summary_checkbox',
+        'sort_order',
         'is_default',
     ];
 
@@ -50,6 +55,11 @@ class RequiredDegreeLevel extends Model
     protected $casts = [
         'id' => 'integer',
         'name' => 'string',
+        'code' => 'string',
+        'show_board' => 'boolean',
+        'show_major' => 'boolean',
+        'show_summary_checkbox' => 'boolean',
+        'sort_order' => 'integer',
         'is_default' => 'boolean',
     ];
 }

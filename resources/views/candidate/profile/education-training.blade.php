@@ -1,6 +1,42 @@
 @extends('candidate.profile.index')
 @push('css')
     <link rel="stylesheet" href="{{ asset('css/bootstrap-datetimepicker.css') }}">
+    <style>
+        .candidate-education-form-field[data-education-major-field] {
+            position: relative;
+        }
+
+        .candidate-education-major-menu {
+            background: #fff;
+            border: 1px solid #d0d5dd;
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(15, 27, 61, .16);
+            left: 0;
+            max-height: 180px;
+            overflow-y: auto;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 8px);
+            z-index: 30;
+        }
+
+        .candidate-education-major-option {
+            background: transparent;
+            border: 0;
+            color: #0f1b3d;
+            display: block;
+            font-size: 14px;
+            padding: 12px 16px;
+            text-align: left;
+            width: 100%;
+        }
+
+        .candidate-education-major-option:hover,
+        .candidate-education-major-option:focus {
+            background: #f5f7fb;
+            outline: 0;
+        }
+    </style>
 @endpush
 @section('section')
     @php
@@ -30,35 +66,13 @@
             ]);
         };
 
-        $educationBoardOptions = [
-            '' => __('messages.candidate_profile.select_board'),
-            'Dhaka' => 'Dhaka',
-            'Chattogram' => 'Chattogram',
-            'Rajshahi' => 'Rajshahi',
-            'Khulna' => 'Khulna',
-            'Barishal' => 'Barishal',
-            'Sylhet' => 'Sylhet',
-            'Rangpur' => 'Rangpur',
-            'Mymensingh' => 'Mymensingh',
-            'Cumilla' => 'Cumilla',
-            'Dinajpur' => 'Dinajpur',
-            'Jessore' => 'Jessore',
-            'Madrasah' => 'Madrasah',
-            'Technical' => 'Technical',
-            'Others' => 'Others',
-        ];
-
-        $educationExamTitleOptions = [
-            'psc' => ['PSC', 'Ebtedayee (Madrasah)', '5 Pass', 'Others'],
-            'jsc' => ['JSC', 'JDC (Madrasah)', '8 Pass', 'Others'],
-            'secondary' => ['SSC', 'O Level', 'Dakhil (Madrasah)', 'SSC (Vocational)', 'Others'],
-            'higher_secondary' => ['HSC', 'A Level', 'Alim (Madrasah)', 'HSC (Vocational)', 'Others'],
-            'diploma' => ['Diploma in Engineering', 'Diploma in Medical Technology', 'Diploma in Nursing', 'Diploma in Commerce', 'Diploma in Business Studies', 'Others'],
-            'bachelor' => ['Bachelor/Honors', 'Bachelor of Arts (B.A.)', 'Bachelor of Science (B.Sc.)', 'Bachelor of Business Administration (BBA)', 'Bachelor of Commerce (B.Com)', 'Bachelor of Social Science (BSS)', 'MBBS', 'LLB', 'Others'],
-            'masters' => ['Masters', 'Master of Arts (M.A.)', 'Master of Science (M.Sc.)', 'Master of Business Administration (MBA)', 'Master of Commerce (M.Com)', 'Master of Social Science (MSS)', 'LLM', 'Others'],
-            'phd' => ['PhD', 'Doctor of Philosophy (PhD)', 'MPhil', 'Others'],
-            'default' => ['Others'],
-        ];
+        $educationBoardOptions = ['' => 'Select your Board'];
+        foreach (($data['educationBoardOptions'] ?? collect())->toArray() as $boardName) {
+            $educationBoardOptions[$boardName] = $boardName;
+        }
+        $educationExamTitleOptions = ($data['educationDegreeTitleOptions'] ?? collect())->toArray();
+        $educationMajorGroupOptions = ($data['educationMajorGroupOptions'] ?? collect())->toArray();
+        $educationLevelMeta = ($data['educationLevelMeta'] ?? collect())->toArray();
 
         $candidateTrainings = $data['candidateTrainings'] ?? collect();
 
@@ -176,54 +190,66 @@
                     <div class="candidate-education-form-grid">
                         <div class="candidate-education-form-field">
                             {{ Form::label('degree_level_id', __('messages.candidate_profile.level_of_education'), ['class' => 'form-label required']) }}
-                            {{ Form::select('degree_level_id', $data['degreeLevels'], null, ['class' => 'form-select', 'required', 'id' => 'degreeLevelId', 'placeholder' => __('messages.company.select_degree_level')]) }}
+                            {{ Form::select('degree_level_id', $data['degreeLevels'], null, ['class' => 'form-select', 'required', 'id' => 'degreeLevelId', 'placeholder' => 'Select your Level of Education']) }}
                         </div>
                         <div class="candidate-education-form-field">
                             {{ Form::label('degree_title', __('messages.candidate_profile.exam_degree_title'), ['class' => 'form-label required']) }}
-                            {{ Form::select('degree_title', ['' => __('messages.candidate_profile.exam_degree_title')], null, ['class' => 'form-select', 'required', 'data-education-title-select' => true]) }}
+                            {{ Form::select('degree_title', ['' => 'Select your Exam/Degree Title'], null, ['class' => 'form-select', 'required', 'data-education-title-select' => true, 'data-placeholder' => 'Select your Exam/Degree Title']) }}
+                        </div>
+                        <label class="candidate-education-check candidate-education-form-field--full" data-education-summary-row>
+                            {{ Form::checkbox('show_summary', 1, false, ['class' => 'form-check-input']) }}
+                            <span>{{ __('messages.candidate_profile.show_summary') }}</span>
+                        </label>
+                        <div class="candidate-education-form-field" data-education-major-field>
+                            {{ Form::label('major', __('messages.candidate_profile.concentration_major_group'), ['class' => 'form-label required']) }}
+                            {{ Form::text('major', null, ['class' => 'form-control', 'placeholder' => 'Enter your Concentration/ Major/Group', 'data-education-major-input' => true]) }}
+                            <div class="candidate-education-major-menu d-none" data-education-major-menu></div>
+                            <div class="input-group d-none" data-education-major-select-row>
+                                {{ Form::select('major', ['' => __('messages.candidate_profile.concentration_major_group')], null, ['class' => 'form-select', 'data-education-major-select' => true]) }}
+                                <button type="button" class="btn btn-outline-secondary" data-education-major-add>
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="candidate-education-form-field" data-education-board-field>
                             {{ Form::label('board', __('messages.candidate_profile.board'), ['class' => 'form-label required']) }}
                             {{ Form::select('board', $educationBoardOptions, null, ['class' => 'form-select']) }}
                         </div>
-                        <div></div>
-                        <label class="candidate-education-check" data-education-summary-row>
-                            {{ Form::checkbox('show_summary', 1, false, ['class' => 'form-check-input']) }}
-                            <span>{{ __('messages.candidate_profile.show_summary') }}</span>
-                        </label>
-                        <div></div>
-                        <div class="candidate-education-form-field" data-education-major-field>
-                            {{ Form::label('major', __('messages.candidate_profile.concentration_major_group'), ['class' => 'form-label required']) }}
-                            {{ Form::text('major', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.concentration_major_group')]) }}
-                        </div>
-                        <div></div>
                         <div class="candidate-education-form-field candidate-education-form-field--full">
                             {{ Form::label('institute', __('messages.candidate_profile.institute_name'), ['class' => 'form-label required']) }}
-                            {{ Form::text('institute', null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.institute_name')]) }}
+                            {{ Form::text('institute', null, ['class' => 'form-control', 'required', 'placeholder' => 'Enter your Institute Name']) }}
                         </div>
                         <label class="candidate-education-check candidate-education-form-field--full">
                             {{ Form::checkbox('foreign_institute', 1, false, ['class' => 'form-check-input']) }}
                             <span>{{ __('messages.candidate_profile.foreign_institute') }}</span>
                         </label>
+                        <div class="candidate-education-form-field candidate-education-form-field--full" data-education-foreign-country-field>
+                            {{ Form::label('foreign_university_country', 'Country of Foreign University', ['class' => 'form-label required']) }}
+                            {{ Form::text('foreign_university_country', null, ['class' => 'form-control', 'placeholder' => 'Enter country name']) }}
+                        </div>
                         <div class="candidate-education-form-field" data-education-result-field>
                             {{ Form::label('result', __('messages.candidate_profile.result'), ['class' => 'form-label required']) }}
-                            {{ Form::select('result', ['Grade' => 'Grade', 'First Division/Class' => 'First Division/Class', 'Second Division/Class' => 'Second Division/Class'], null, ['class' => 'form-select', 'placeholder' => __('messages.candidate_profile.result')]) }}
+                            {{ Form::select('result', ['First Division/Class' => 'First Division/Class', 'Second Division/Class' => 'Second Division/Class', 'Third Division/Class' => 'Third Division/Class', 'Grade' => 'Grade', 'Appeared' => 'Appeared', 'Enrolled' => 'Enrolled', 'Awarded' => 'Awarded', 'Do not mention' => 'Do not mention', 'Pass' => 'Pass'], null, ['class' => 'form-select', 'required', 'placeholder' => 'Enter your Result', 'data-education-result-select' => true]) }}
+                        </div>
+                        <div class="candidate-education-form-field" data-education-marks-field>
+                            {{ Form::label('marks_percentage', 'Marks(%)', ['class' => 'form-label required']) }}
+                            {{ Form::text('marks_percentage', null, ['class' => 'form-control', 'placeholder' => 'Enter your Marks(%)', 'inputmode' => 'decimal', 'data-education-decimal-input' => true]) }}
                         </div>
                         <div class="candidate-education-form-field" data-education-cgpa-field>
                             {{ Form::label('cgpa', __('messages.candidate_profile.cgpa'), ['class' => 'form-label required']) }}
-                            {{ Form::text('cgpa', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_cgpa')]) }}
+                            {{ Form::text('cgpa', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_cgpa'), 'inputmode' => 'decimal', 'data-education-decimal-input' => true]) }}
                         </div>
                         <div class="candidate-education-form-field" data-education-scale-field>
                             {{ Form::label('scale', __('messages.candidate_profile.scale'), ['class' => 'form-label required']) }}
-                            {{ Form::text('scale', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.scale')]) }}
+                            {{ Form::text('scale', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.scale'), 'inputmode' => 'numeric', 'data-education-integer-input' => true]) }}
                         </div>
                         <div class="candidate-education-form-field" data-education-year-field>
-                            {{ Form::label('year', __('messages.candidate_profile.year_of_passing'), ['class' => 'form-label required']) }}
-                            {{ Form::selectRange('year', date('Y'), 2000, null, ['id' => 'educationYearId', 'class' => 'form-select', 'placeholder' => __('messages.candidate_profile.enter_year_of_passing')]) }}
+                            {{ Form::label('year', __('messages.candidate_profile.year_of_passing'), ['class' => 'form-label required', 'data-education-year-label' => true]) }}
+                            {{ Form::selectRange('year', date('Y') + 10, 1970, null, ['id' => 'educationYearId', 'class' => 'form-select', 'required', 'placeholder' => 'Enter your Year of Passing']) }}
                         </div>
                         <div class="candidate-education-form-field candidate-education-form-field--full" data-education-duration-field>
-                            {{ Form::label('duration', __('messages.candidate_profile.duration_years'), ['class' => 'form-label']) }}
-                            {{ Form::text('duration', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.duration_years')]) }}
+                            {{ Form::label('duration', 'Duration (Years)', ['class' => 'form-label']) }}
+                            {{ Form::text('duration', null, ['class' => 'form-control', 'placeholder' => 'Enter your Duration (Years)']) }}
                         </div>
                         <div class="candidate-education-form-field candidate-education-form-field--full" data-education-achievement-field>
                             {{ Form::label('achievement', __('messages.candidate_profile.achievement'), ['class' => 'form-label']) }}
@@ -249,54 +275,66 @@
                     <div class="candidate-education-form-grid">
                         <div class="candidate-education-form-field">
                             {{ Form::label('degree_level_id', __('messages.candidate_profile.level_of_education'), ['class' => 'form-label required']) }}
-                            {{ Form::select('degree_level_id', $data['degreeLevels'], null, ['class' => 'form-select', 'required', 'id' => 'editDegreeLevel']) }}
+                            {{ Form::select('degree_level_id', $data['degreeLevels'], null, ['class' => 'form-select', 'required', 'id' => 'editDegreeLevel', 'placeholder' => 'Select your Level of Education']) }}
                         </div>
                         <div class="candidate-education-form-field">
                             {{ Form::label('degree_title', __('messages.candidate_profile.exam_degree_title'), ['class' => 'form-label required']) }}
-                            {{ Form::select('degree_title', ['' => __('messages.candidate_profile.exam_degree_title')], null, ['class' => 'form-select', 'required', 'id' => 'editDegreeTitle', 'data-education-title-select' => true]) }}
+                            {{ Form::select('degree_title', ['' => 'Select your Exam/Degree Title'], null, ['class' => 'form-select', 'required', 'id' => 'editDegreeTitle', 'data-education-title-select' => true, 'data-placeholder' => 'Select your Exam/Degree Title']) }}
+                        </div>
+                        <label class="candidate-education-check candidate-education-form-field--full" data-education-summary-row>
+                            {{ Form::checkbox('show_summary', 1, false, ['class' => 'form-check-input']) }}
+                            <span>{{ __('messages.candidate_profile.show_summary') }}</span>
+                        </label>
+                        <div class="candidate-education-form-field" data-education-major-field>
+                            {{ Form::label('major', __('messages.candidate_profile.concentration_major_group'), ['class' => 'form-label required']) }}
+                            {{ Form::text('major', null, ['class' => 'form-control', 'placeholder' => 'Enter your Concentration/ Major/Group', 'data-education-major-input' => true]) }}
+                            <div class="candidate-education-major-menu d-none" data-education-major-menu></div>
+                            <div class="input-group d-none" data-education-major-select-row>
+                                {{ Form::select('major', ['' => __('messages.candidate_profile.concentration_major_group')], null, ['class' => 'form-select', 'data-education-major-select' => true]) }}
+                                <button type="button" class="btn btn-outline-secondary" data-education-major-add>
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="candidate-education-form-field" data-education-board-field>
                             {{ Form::label('board', __('messages.candidate_profile.board'), ['class' => 'form-label required']) }}
                             {{ Form::select('board', $educationBoardOptions, null, ['class' => 'form-select']) }}
                         </div>
-                        <div></div>
-                        <label class="candidate-education-check" data-education-summary-row>
-                            {{ Form::checkbox('show_summary', 1, false, ['class' => 'form-check-input']) }}
-                            <span>{{ __('messages.candidate_profile.show_summary') }}</span>
-                        </label>
-                        <div></div>
-                        <div class="candidate-education-form-field" data-education-major-field>
-                            {{ Form::label('major', __('messages.candidate_profile.concentration_major_group'), ['class' => 'form-label required']) }}
-                            {{ Form::text('major', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.concentration_major_group')]) }}
-                        </div>
-                        <div></div>
                         <div class="candidate-education-form-field candidate-education-form-field--full">
                             {{ Form::label('institute', __('messages.candidate_profile.institute_name'), ['class' => 'form-label required']) }}
-                            {{ Form::text('institute', null, ['class' => 'form-control', 'required', 'id' => 'editInstitute', 'placeholder' => __('messages.candidate_profile.institute_name')]) }}
+                            {{ Form::text('institute', null, ['class' => 'form-control', 'required', 'id' => 'editInstitute', 'placeholder' => 'Enter your Institute Name']) }}
                         </div>
                         <label class="candidate-education-check candidate-education-form-field--full">
                             {{ Form::checkbox('foreign_institute', 1, false, ['class' => 'form-check-input']) }}
                             <span>{{ __('messages.candidate_profile.foreign_institute') }}</span>
                         </label>
+                        <div class="candidate-education-form-field candidate-education-form-field--full" data-education-foreign-country-field>
+                            {{ Form::label('foreign_university_country', 'Country of Foreign University', ['class' => 'form-label required']) }}
+                            {{ Form::text('foreign_university_country', null, ['class' => 'form-control', 'placeholder' => 'Enter country name']) }}
+                        </div>
                         <div class="candidate-education-form-field" data-education-result-field>
                             {{ Form::label('result', __('messages.candidate_profile.result'), ['class' => 'form-label required']) }}
-                            {{ Form::select('result', ['Grade' => 'Grade', 'First Division/Class' => 'First Division/Class', 'Second Division/Class' => 'Second Division/Class'], null, ['class' => 'form-select', 'id' => 'editResult']) }}
+                            {{ Form::select('result', ['First Division/Class' => 'First Division/Class', 'Second Division/Class' => 'Second Division/Class', 'Third Division/Class' => 'Third Division/Class', 'Grade' => 'Grade', 'Appeared' => 'Appeared', 'Enrolled' => 'Enrolled', 'Awarded' => 'Awarded', 'Do not mention' => 'Do not mention', 'Pass' => 'Pass'], null, ['class' => 'form-select', 'required', 'id' => 'editResult', 'placeholder' => 'Enter your Result', 'data-education-result-select' => true]) }}
+                        </div>
+                        <div class="candidate-education-form-field" data-education-marks-field>
+                            {{ Form::label('marks_percentage', 'Marks(%)', ['class' => 'form-label required']) }}
+                            {{ Form::text('marks_percentage', null, ['class' => 'form-control', 'placeholder' => 'Enter your Marks(%)', 'inputmode' => 'decimal', 'data-education-decimal-input' => true]) }}
                         </div>
                         <div class="candidate-education-form-field" data-education-cgpa-field>
                             {{ Form::label('cgpa', __('messages.candidate_profile.cgpa'), ['class' => 'form-label required']) }}
-                            {{ Form::text('cgpa', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_cgpa')]) }}
+                            {{ Form::text('cgpa', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_cgpa'), 'inputmode' => 'decimal', 'data-education-decimal-input' => true]) }}
                         </div>
                         <div class="candidate-education-form-field" data-education-scale-field>
                             {{ Form::label('scale', __('messages.candidate_profile.scale'), ['class' => 'form-label required']) }}
-                            {{ Form::text('scale', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.scale')]) }}
+                            {{ Form::text('scale', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.scale'), 'inputmode' => 'numeric', 'data-education-integer-input' => true]) }}
                         </div>
                         <div class="candidate-education-form-field" data-education-year-field>
-                            {{ Form::label('year', __('messages.candidate_profile.year_of_passing'), ['class' => 'form-label required']) }}
-                            {{ Form::selectRange('year', date('Y'), 2000, null, ['class' => 'form-select', 'placeholder' => __('messages.candidate_profile.enter_year_of_passing'), 'id' => 'editYear']) }}
+                            {{ Form::label('year', __('messages.candidate_profile.year_of_passing'), ['class' => 'form-label required', 'data-education-year-label' => true]) }}
+                            {{ Form::selectRange('year', date('Y') + 10, 1970, null, ['class' => 'form-select', 'required', 'placeholder' => 'Enter your Year of Passing', 'id' => 'editYear']) }}
                         </div>
                         <div class="candidate-education-form-field candidate-education-form-field--full" data-education-duration-field>
-                            {{ Form::label('duration', __('messages.candidate_profile.duration_years'), ['class' => 'form-label']) }}
-                            {{ Form::text('duration', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.duration_years')]) }}
+                            {{ Form::label('duration', 'Duration (Years)', ['class' => 'form-label']) }}
+                            {{ Form::text('duration', null, ['class' => 'form-control', 'placeholder' => 'Enter your Duration (Years)']) }}
                         </div>
                         <div class="candidate-education-form-field candidate-education-form-field--full" data-education-achievement-field>
                             {{ Form::label('achievement', __('messages.candidate_profile.achievement'), ['class' => 'form-label']) }}
@@ -346,50 +384,86 @@
 
                             <div class="candidate-education-detail-grid">
                                 <div class="candidate-education-detail-column">
-                                    <div class="candidate-education-detail">
-                                        <span>{{ __('messages.candidate_profile.level_of_education') }}</span>
-                                        <strong class="education-degree-level">{{ $candidateEducation->degreeLevel->name ?? '---' }}</strong>
-                                    </div>
-                                    <div class="candidate-education-detail">
-                                        <span>{{ $candidateEducation->board ? __('messages.candidate_profile.board') : __('messages.candidate_profile.concentration_major_group') }}</span>
-                                        <strong>{{ $candidateEducation->board ?: ($candidateEducation->major ?: '---') }}</strong>
-                                    </div>
-                                    <div class="candidate-education-detail">
-                                        <span>{{ __('messages.candidate_profile.result') }}</span>
-                                        <strong>{{ $candidateEducation->result ?: '---' }}</strong>
-                                    </div>
-                                    <div class="candidate-education-detail">
-                                        <span>{{ __('messages.candidate_profile.scale') }}</span>
-                                        <strong>{{ $candidateEducation->scale ?: '---' }}</strong>
-                                    </div>
-                                    <div class="candidate-education-detail">
-                                        <span>{{ __('messages.candidate_profile.duration_years') }}</span>
-                                        <strong>{{ $candidateEducation->duration ?: '---' }}</strong>
-                                    </div>
-                                    <div class="candidate-education-detail">
-                                        <span>{{ __('messages.candidate_profile.achievement') }}</span>
-                                        <strong>{!! filled($candidateEducation->achievement) ? $candidateEducation->achievement : '---' !!}</strong>
-                                    </div>
+                                    @if(filled($candidateEducation->degreeLevel?->name))
+                                        <div class="candidate-education-detail">
+                                            <span>{{ __('messages.candidate_profile.level_of_education') }}</span>
+                                            <strong class="education-degree-level">{{ $candidateEducation->degreeLevel->name }}</strong>
+                                        </div>
+                                    @endif
+                                    @if(filled($candidateEducation->major))
+                                        <div class="candidate-education-detail">
+                                            <span>{{ __('messages.candidate_profile.concentration_major_group') }}</span>
+                                            <strong>{{ $candidateEducation->major }}</strong>
+                                        </div>
+                                    @endif
+                                    @if(filled($candidateEducation->board))
+                                        <div class="candidate-education-detail">
+                                            <span>{{ __('messages.candidate_profile.board') }}</span>
+                                            <strong>{{ $candidateEducation->board }}</strong>
+                                        </div>
+                                    @endif
+                                    @if(filled($candidateEducation->result))
+                                        <div class="candidate-education-detail">
+                                            <span>{{ __('messages.candidate_profile.result') }}</span>
+                                            <strong>{{ $candidateEducation->result }}</strong>
+                                        </div>
+                                    @endif
+                                    @if(filled($candidateEducation->marks_percentage))
+                                        <div class="candidate-education-detail">
+                                            <span>Marks(%)</span>
+                                            <strong>{{ $candidateEducation->marks_percentage }}</strong>
+                                        </div>
+                                    @endif
+                                    @if(filled($candidateEducation->scale))
+                                        <div class="candidate-education-detail">
+                                            <span>{{ __('messages.candidate_profile.scale') }}</span>
+                                            <strong>{{ $candidateEducation->scale }}</strong>
+                                        </div>
+                                    @endif
+                                    @if(filled($candidateEducation->duration))
+                                        <div class="candidate-education-detail">
+                                            <span>{{ __('messages.candidate_profile.duration_years') }}</span>
+                                            <strong>{{ $candidateEducation->duration }}</strong>
+                                        </div>
+                                    @endif
                                 </div>
 
                                 <div class="candidate-education-detail-column">
-                                    <div class="candidate-education-detail">
-                                        <span>{{ __('messages.candidate_profile.exam_degree_title') }}</span>
-                                        <strong>{{ $candidateEducation->degree_title ?: '---' }}</strong>
-                                    </div>
-                                    <div class="candidate-education-detail">
-                                        <span>{{ __('messages.candidate_profile.institute_name') }}</span>
-                                        <strong>{{ $candidateEducation->institute ?: '---' }}</strong>
-                                    </div>
-                                    <div class="candidate-education-detail">
-                                        <span>{{ __('messages.candidate_profile.cgpa') }}</span>
-                                        <strong>{{ $candidateEducation->cgpa ?: '---' }}</strong>
-                                    </div>
-                                    <div class="candidate-education-detail">
-                                        <span>{{ __('messages.candidate_profile.year_of_passing') }}</span>
-                                        <strong>{{ $candidateEducation->year ?: '---' }}</strong>
-                                    </div>
+                                    @if(filled($candidateEducation->degree_title))
+                                        <div class="candidate-education-detail">
+                                            <span>{{ __('messages.candidate_profile.exam_degree_title') }}</span>
+                                            <strong>{{ $candidateEducation->degree_title }}</strong>
+                                        </div>
+                                    @endif
+                                    @if(filled($candidateEducation->institute))
+                                        <div class="candidate-education-detail">
+                                            <span>{{ __('messages.candidate_profile.institute_name') }}</span>
+                                            <strong>{{ $candidateEducation->institute }}</strong>
+                                        </div>
+                                    @endif
+                                    @if(filled($candidateEducation->foreign_university_country))
+                                        <div class="candidate-education-detail">
+                                            <span>Country of Foreign University</span>
+                                            <strong>{{ $candidateEducation->foreign_university_country }}</strong>
+                                        </div>
+                                    @endif
+                                    @if(filled($candidateEducation->cgpa))
+                                        <div class="candidate-education-detail">
+                                            <span>{{ __('messages.candidate_profile.cgpa') }}</span>
+                                            <strong>{{ $candidateEducation->cgpa }}</strong>
+                                        </div>
+                                    @endif
+                                    @if(filled($candidateEducation->year))
+                                        <div class="candidate-education-detail">
+                                            <span>{{ __('messages.candidate_profile.year_of_passing') }}</span>
+                                            <strong>{{ $candidateEducation->year }}</strong>
+                                        </div>
+                                    @endif
                                 </div>
+                            </div>
+                            <div class="candidate-education-detail candidate-education-detail--full pt-5">
+                                <span>{{ __('messages.candidate_profile.achievement') }}</span>
+                                <strong>{!! filled($candidateEducation->achievement) ? $candidateEducation->achievement : '---' !!}</strong>
                             </div>
                         </div>
                     @endforeach
@@ -730,6 +804,8 @@
 @push('scripts')
     <script>
         window.candidateEducationExamTitleOptions = @json($educationExamTitleOptions);
+        window.candidateEducationMajorGroupOptions = @json($educationMajorGroupOptions);
+        window.candidateEducationLevelMeta = @json($educationLevelMeta);
         window.candidateProfileUseBanglaNumber = @json(app()->getLocale() === 'bn');
         window.candidateProfileEducationLabel = @json(__('messages.candidate_profile.education'));
         window.candidateProfileTrainingLabel = @json(__('messages.candidate_profile.training'));
