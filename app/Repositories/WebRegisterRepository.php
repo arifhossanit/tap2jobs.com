@@ -36,13 +36,16 @@ class WebRegisterRepository
     /**
      * @throws Throwable
      */
-    public function store(array $input): bool
+    public function store(array $input): User
     {
         try {
             DB::beginTransaction();
 
             $userInput = Arr::except($input, ['type']);
             $userInput['password'] = Hash::make($input['password']);
+            if ($input['type'] == 1) {
+                $userInput['email_verified_at'] = now();
+            }
             /** @var User $user */
             $user = User::create($userInput);
             $userRole = Role::where('name', ($input['type'] == 1) ? 'Candidate' : 'Employer')->first();
@@ -82,11 +85,13 @@ class WebRegisterRepository
                 $subscriptionRepo->createStripeCustomer($user);
             }
 
-            $user->sendEmailVerificationNotification();
+            if ($input['type'] != 1) {
+                $user->sendEmailVerificationNotification();
+            }
 
             DB::commit();
 
-            return true;
+            return $user;
         } catch (Exception $e) {
             DB::rollBack();
 

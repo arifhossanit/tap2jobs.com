@@ -1528,6 +1528,13 @@ function loadPhoneNumberCountry() {
 () {
 
 document.addEventListener('DOMContentLoaded', loadFrontRegisterData);
+function visitRegisterRedirect(url) {
+  if (window.Turbo && typeof window.Turbo.visit === 'function') {
+    window.Turbo.visit(url);
+    return;
+  }
+  window.location.href = url;
+}
 function loadFrontRegisterData() {
   if (!$('#addEmployerNewForm').length && !$('#addCandidateNewForm').length) {
     return;
@@ -1570,7 +1577,8 @@ listenSubmit('#addCandidateNewForm', function (e) {
       if (result.success) {
         displaySuccessMessage(result.message);
         setTimeout(function () {
-          Turbo.visit(route('front.candidate.login'));
+          var redirectUrl = result.data && result.data.redirect_url ? result.data.redirect_url : route('front.candidate.login');
+          visitRegisterRedirect(redirectUrl);
         }, 1500);
       }
     },
@@ -1599,7 +1607,8 @@ listenSubmit('#addEmployerNewForm', function (e) {
       if (result.success) {
         displaySuccessMessage(result.message);
         setTimeout(function () {
-          Turbo.visit(route('front.employee.login'));
+          var redirectUrl = result.data && result.data.redirect_url ? result.data.redirect_url : route('front.employee.login');
+          visitRegisterRedirect(redirectUrl);
         }, 1500);
       }
     },

@@ -98,8 +98,7 @@
                         </div>
                         <ul class="pt-4 pe-0">
                             <li>
-                                <a href="javascript:void(0)" class="dropdown-item text-gray-900 editProfileModal {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}"
-                                   data-id="{{ getLoggedInUserId() }}">
+                                <a href="{{ route('company.edit.form', \Illuminate\Support\Facades\Auth::user()->owner_id) }}" class="dropdown-item text-gray-900 {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}">
                                      <span class="dropdown-icon {{ checkLanguageSession() == 'ar' ? 'ms-4' : 'me-4' }} text-gray-600">
                                         <i class="fa-solid fa-user"></i>
                                      </span> {{ __('messages.user.edit_profile') }}</a>
