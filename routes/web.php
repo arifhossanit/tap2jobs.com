@@ -707,6 +707,8 @@ Route::middleware('auth', 'role:Employer', 'xss', 'verified.user')->prefix('empl
          Route::delete('job-stages/{jobStage}', [JobStageController::class, 'destroy'])->name('job.stage.destroy');
          Route::get('job-stage-show/{jobStage?}', [JobStageController::class, 'show'])->name('job.stage.show');
 
+         Route::post('industries', [IndustryController::class, 'storeForEmployer'])->name('employer.industry.store');
+
          Route::get('{company}/edit', [CompanyController::class, 'editCompany'])->name('company.edit.form');
          Route::put('{company}', [CompanyController::class, 'updateCompany'])->name('company.update.form');
 

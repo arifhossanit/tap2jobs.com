@@ -511,7 +511,7 @@ return [
         'employers' => 'Employers',
         'reported_by' => 'Reported By',
         'reported_on' => 'Reported On',
-        'edit_company' => 'Edit Company',
+        'edit_company' => 'Edit Company Information',
         'company_details' => 'Company Details',
         'contact_details' => 'Contact Details',
         'company_name' => 'Company Name',
@@ -1178,7 +1178,7 @@ return [
     'employer_dashboard' => [
         'dashboard' => 'Dashboard',
         'manage_jobs' => 'Manage your jobs, applications, and recruiter profile from one place.',
-        'profile_subtitle' => 'Set up your recruiter presence and hiring needs.',
+        'profile_subtitle' => 'Set up your tap2jobs recruiter presence and hiring needs.',
         'upload_company_logo' => 'Upload your Company logo',
         'open_jobs' => 'Open Jobs',
         'followers' => 'Followers',
