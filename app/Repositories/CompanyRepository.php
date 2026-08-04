@@ -6,6 +6,7 @@ use App\Models\Company;
 use App\Models\CompanySize;
 use App\Models\FavouriteCompany;
 use App\Models\Industry;
+use App\Models\IndustryType;
 use App\Models\Job;
 use App\Models\Notification;
 use App\Models\NotificationSetting;
@@ -66,7 +67,15 @@ class CompanyRepository extends BaseRepository
     public function prepareData()
     {
         $countries = new Countries();
-        $data['industries'] = Industry::pluck('name', 'id');
+        $industryQuery = Industry::orderBy('name');
+        if (Auth::check() && Auth::user()->hasRole('Employer')) {
+            $industryQuery->where(function (Builder $query) {
+                $query->whereNull('created_by')->orWhere('created_by', Auth::id());
+            });
+        }
+        $data['industryRecords'] = $industryQuery->get(['id', 'name', 'industry_type_id']);
+        $data['industries'] = $data['industryRecords']->pluck('name', 'id');
+        $data['industryTypes'] = IndustryType::orderBy('sort_order')->pluck('name', 'id');
         $data['ownerShipTypes'] = OwnerShipType::pluck('name', 'id');
         $data['companySize'] = CompanySize::pluck('size', 'id');
         $data['countries'] = getCountries();
@@ -149,6 +158,16 @@ class CompanyRepository extends BaseRepository
     {
         try {
             DB::beginTransaction();
+
+            if (array_key_exists('has_disability_facilities', $input)) {
+                if (! (bool) $input['has_disability_facilities']) {
+                    $input['disability_inclusion_policy'] = null;
+                    $input['disability_inclusion_training'] = null;
+                    $input['disability_facilities'] = [];
+                } else {
+                    $input['disability_facilities'] = array_values(array_unique($input['disability_facilities'] ?? []));
+                }
+            }
 
             $company->update($input);
 

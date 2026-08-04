@@ -6,6 +6,19 @@
     <link rel="stylesheet" href="{{ asset('assets/css/daterangepicker.css') }}">
 @endpush
 @section('content')
+    <div class="employer-dashboard-hero">
+        <div>
+            <span class="employer-dashboard-hero__eyebrow">{{ __('messages.employer_dashboard.dashboard') }}</span>
+            <h1>{{ __('messages.common.hello') }}, {{ \Illuminate\Support\Facades\Auth::user()->full_name }}</h1>
+            {{-- <p>{{ __('messages.employer_dashboard.manage_jobs') }}</p> --}}
+        </div>
+        <a href="{{ route('company.edit.form', \Illuminate\Support\Facades\Auth::user()->owner_id) }}"
+           class="btn btn-primary employer-dashboard-hero__edit">
+            <i class="fa-solid fa-pen-to-square"></i>
+            {{ __('messages.user.edit_profile') }}
+        </a>
+    </div>
+
     <livewire:employer-dashboard lazy/>
 
     <div class="card card-xl-stretch mb-xl-8">

@@ -20,7 +20,7 @@
         <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('css/custom.css') }}">
         @endif
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/custom.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/custom.css') }}?v={{ filemtime(public_path('assets/css/custom.css')) }}">
     @livewireStyles
     <link rel="stylesheet" type="text/css" href="{{ asset('vendor/rappasoft/livewire-tables/css/laravel-livewire-tables.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('vendor/rappasoft/livewire-tables/css/laravel-livewire-tables-thirdparty.min.css') }}">

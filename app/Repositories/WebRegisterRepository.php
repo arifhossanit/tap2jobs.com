@@ -83,7 +83,9 @@ class WebRegisterRepository
                 $subscriptionRepo->createStripeCustomer($user);
             }
 
-            $user->sendEmailVerificationNotification();
+            if ($input['type'] != 1) {
+                $user->sendEmailVerificationNotification();
+            }
 
             DB::commit();
 

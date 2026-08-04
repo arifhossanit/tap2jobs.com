@@ -10,11 +10,11 @@
     <div class="mb-xl-8 candidate-accomplishment-page">
         <div class="candidate-education-panel" id="candidatePortfolioInformation">
             <div class="candidate-education-panel__header">
-                <h1>Portfolio <span class="candidate-portfolio-limit">(max 2)</span></h1>
+                <h1>{{ __('messages.candidate_profile.portfolio') }} <span class="candidate-portfolio-limit">{{ __('messages.candidate_profile.max_2') }}</span></h1>
                 <div class="candidate-education-panel__actions">
                     <button type="button" class="candidate-education-add" data-portfolio-add-action>
                         <i class="fa-solid fa-plus"></i>
-                        Add Portfolio
+                        {{ __('messages.candidate_profile.add_portfolio') }}
                     </button>
                     <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
                             data-bs-target="#candidatePortfolioInformationPanelBody" aria-expanded="true"
@@ -32,32 +32,32 @@
                         <form class="candidate-portfolio-form d-none" data-portfolio-form
                               data-store-url="{{ route('candidate-profile.portfolios.store') }}">
                             @csrf
-                            <h2 data-portfolio-form-title>Portfolio</h2>
+                            <h2 data-portfolio-form-title>{{ __('messages.candidate_profile.portfolio') }}</h2>
                             <input type="hidden" data-portfolio-editing-id>
                             <div class="candidate-skill-form__field">
-                                <label for="candidatePortfolioTitle">Title <span class="text-danger">*</span></label>
+                                <label for="candidatePortfolioTitle">{{ __('messages.candidate_profile.title') }} <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="candidatePortfolioTitle" name="title"
-                                       data-portfolio-title-input placeholder="Enter your title name" required>
+                                       data-portfolio-title-input placeholder="{{ __('messages.candidate_profile.enter_title') }}" required>
                             </div>
                             <div class="candidate-skill-form__field">
-                                <label for="candidatePortfolioUrl">URL</label>
+                                <label for="candidatePortfolioUrl">{{ __('messages.candidate_profile.url') }}</label>
                                 <input type="url" class="form-control" id="candidatePortfolioUrl" name="url"
-                                       data-portfolio-url-input placeholder="Enter your URL">
+                                       data-portfolio-url-input placeholder="{{ __('messages.candidate_profile.enter_url') }}">
                             </div>
                             <div class="candidate-skill-form__field">
-                                <label>Description <span class="text-danger">*</span></label>
+                                <label>{{ __('messages.candidate_profile.description') }} <span class="text-danger">*</span></label>
                                 <input type="hidden" name="description" data-portfolio-description-input>
                                 <div class="candidate-portfolio-editor">
                                     <div class="candidate-portfolio-quill" data-portfolio-description-editor
-                                         data-placeholder="Enter your writing texts..."></div>
+                                         data-placeholder="{{ __('messages.candidate_profile.enter_writing_texts') }}"></div>
                                 </div>
                                 <p class="candidate-portfolio-counter">
-                                    You wrote <strong data-portfolio-character-count>0/300</strong> character(s)
+                                    {{ __('messages.candidate_profile.you_wrote') }} <strong data-portfolio-character-count>0/300</strong> {{ __('messages.candidate_profile.characters') }}
                                 </p>
                             </div>
                             <div class="candidate-skill-form__actions">
-                                <button type="submit" class="candidate-skill-save" data-portfolio-submit>Save</button>
-                                <button type="button" class="candidate-skill-close" data-portfolio-close>Close</button>
+                                <button type="submit" class="candidate-skill-save" data-portfolio-submit>{{ __('messages.candidate_profile.save') }}</button>
+                                <button type="button" class="candidate-skill-close" data-portfolio-close>{{ __('messages.candidate_profile.close') }}</button>
                             </div>
                         </form>
 
@@ -76,17 +76,17 @@
                                     <div class="candidate-portfolio-actions">
                                         <button type="button" data-portfolio-edit>
                                             <i class="fa-regular fa-pen-to-square"></i>
-                                            Edit
+                                            {{ __('messages.candidate_profile.edit') }}
                                         </button>
                                         <button type="button" data-portfolio-delete>
                                             <i class="fa-regular fa-trash-can"></i>
-                                            Delete
+                                            {{ __('messages.candidate_profile.delete') }}
                                         </button>
                                     </div>
                                 </div>
 
                                 <div class="candidate-portfolio-field">
-                                    <span>URL</span>
+                                    <span>{{ __('messages.candidate_profile.url') }}</span>
                                     @if(filled($portfolio->url))
                                         <a href="{{ addLinkHttpUrl($portfolio->url) }}" target="_blank" rel="noopener" data-portfolio-url-text>{{ $portfolio->url }}</a>
                                         <strong class="d-none" data-portfolio-url-empty>---</strong>
@@ -97,7 +97,7 @@
                                 </div>
 
                                 <div class="candidate-portfolio-field">
-                                    <span>Description</span>
+                                    <span>{{ __('messages.candidate_profile.description') }}</span>
                                     <div data-portfolio-description-text>{!! $portfolioDescription ?: '---' !!}</div>
                                 </div>
                             </div>
@@ -107,7 +107,7 @@
 
                         {{-- <button type="button" class="candidate-portfolio-add-outline" data-portfolio-add-action>
                             <i class="fa-solid fa-plus"></i>
-                            Add Portfolio
+                            {{ __('messages.candidate_profile.add_portfolio') }}
                         </button> --}}
                     </div>
                 </div>
@@ -116,11 +116,11 @@
 
         <div class="candidate-education-panel" id="candidatePublicationInformation">
             <div class="candidate-education-panel__header collapsed">
-                <h1>Publication <span class="candidate-portfolio-limit">(max 5)</span></h1>
+                <h1>{{ __('messages.candidate_profile.publication') }} <span class="candidate-portfolio-limit">{{ __('messages.candidate_profile.max_5') }}</span></h1>
                 <div class="candidate-education-panel__actions">
                     <button type="button" class="candidate-education-add d-none" data-publication-add-action>
                         <i class="fa-solid fa-plus"></i>
-                        Add Publication
+                        {{ __('messages.candidate_profile.add_publication') }}
                     </button>
                     <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
                             data-bs-target="#candidatePublicationInformationPanelBody" aria-expanded="false"
@@ -138,15 +138,15 @@
                         <form class="candidate-publication-form d-none" data-publication-form
                               data-store-url="{{ route('candidate-profile.publications.store') }}">
                             @csrf
-                            <h2 data-publication-form-title>Publication</h2>
+                            <h2 data-publication-form-title>{{ __('messages.candidate_profile.publication') }}</h2>
                             <input type="hidden" data-publication-editing-id>
                             <div class="candidate-skill-form__field">
-                                <label for="candidatePublicationTitle">Title <span class="text-danger">*</span></label>
+                                <label for="candidatePublicationTitle">{{ __('messages.candidate_profile.title') }} <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="candidatePublicationTitle" name="title"
-                                       data-publication-title-input placeholder="Enter your title name" required>
+                                       data-publication-title-input placeholder="{{ __('messages.candidate_profile.enter_title') }}" required>
                             </div>
                             <div class="candidate-skill-form__field">
-                                <label for="candidatePublicationIssuedOn">Issued On <span class="text-danger">*</span></label>
+                                <label for="candidatePublicationIssuedOn">{{ __('messages.candidate_profile.issued_on') }} <span class="text-danger">*</span></label>
                                 <div class="candidate-publication-date-field" style="position: relative; width: 100%; height: 38px;">
                                     <i class="fa-regular fa-calendar" style="align-items: center; bottom: 0; color: #52637a; display: flex; font-size: 16px; height: 38px; justify-content: center; left: 14px; line-height: 1; pointer-events: none; position: absolute; top: 0; width: 16px; z-index: 2;"></i>
                                     <input type="text" class="form-control" id="candidatePublicationIssuedOn" name="issued_on"
@@ -155,24 +155,24 @@
                                 </div>
                             </div>
                             <div class="candidate-skill-form__field">
-                                <label for="candidatePublicationUrl">URL</label>
+                                <label for="candidatePublicationUrl">{{ __('messages.candidate_profile.url') }}</label>
                                 <input type="url" class="form-control" id="candidatePublicationUrl" name="url"
-                                       data-publication-url-input placeholder="Enter your URL">
+                                       data-publication-url-input placeholder="{{ __('messages.candidate_profile.enter_url') }}">
                             </div>
                             <div class="candidate-skill-form__field">
-                                <label>Description <span class="text-danger">*</span></label>
+                                <label>{{ __('messages.candidate_profile.description') }} <span class="text-danger">*</span></label>
                                 <input type="hidden" name="description" data-publication-description-input>
                                 <div class="candidate-publication-editor">
                                     <div class="candidate-publication-quill" data-publication-description-editor
-                                         data-placeholder="Enter your writing texts..."></div>
+                                         data-placeholder="{{ __('messages.candidate_profile.enter_writing_texts') }}"></div>
                                 </div>
                                 <p class="candidate-publication-counter">
-                                    You wrote <strong data-publication-character-count>0/300</strong> character(s)
+                                    {{ __('messages.candidate_profile.you_wrote') }} <strong data-publication-character-count>0/300</strong> {{ __('messages.candidate_profile.characters') }}
                                 </p>
                             </div>
                             <div class="candidate-skill-form__actions">
-                                <button type="submit" class="candidate-skill-save" data-publication-submit>Save</button>
-                                <button type="button" class="candidate-skill-close" data-publication-close>Close</button>
+                                <button type="submit" class="candidate-skill-save" data-publication-submit>{{ __('messages.candidate_profile.save') }}</button>
+                                <button type="button" class="candidate-skill-close" data-publication-close>{{ __('messages.candidate_profile.close') }}</button>
                             </div>
                         </form>
 
@@ -193,22 +193,22 @@
                                     <div class="candidate-publication-actions">
                                         <button type="button" data-publication-edit>
                                             <i class="fa-regular fa-pen-to-square"></i>
-                                            Edit
+                                            {{ __('messages.candidate_profile.edit') }}
                                         </button>
                                         <button type="button" data-publication-delete>
                                             <i class="fa-regular fa-trash-can"></i>
-                                            Delete
+                                            {{ __('messages.candidate_profile.delete') }}
                                         </button>
                                     </div>
                                 </div>
 
                                 <div class="candidate-publication-field">
-                                    <span>Issued On</span>
+                                    <span>{{ __('messages.candidate_profile.issued_on') }}</span>
                                     <strong data-publication-issued-text>{{ optional($publication->issued_on)->format('d M Y') ?: '---' }}</strong>
                                 </div>
 
                                 <div class="candidate-publication-field">
-                                    <span>URL</span>
+                                    <span>{{ __('messages.candidate_profile.url') }}</span>
                                     @if(filled($publication->url))
                                         <a href="{{ addLinkHttpUrl($publication->url) }}" target="_blank" rel="noopener" data-publication-url-text>{{ $publication->url }}</a>
                                         <strong class="d-none" data-publication-url-empty>---</strong>
@@ -219,7 +219,7 @@
                                 </div>
 
                                 <div class="candidate-publication-field">
-                                    <span>Description</span>
+                                    <span>{{ __('messages.candidate_profile.description') }}</span>
                                     <div data-publication-description-text>{!! $publicationDescription ?: '---' !!}</div>
                                 </div>
                             </div>
@@ -229,7 +229,7 @@
 
                         {{-- <button type="button" class="candidate-publication-add-outline" data-publication-add-action>
                             <i class="fa-solid fa-plus"></i>
-                            Add Publication
+                            {{ __('messages.candidate_profile.add_publication') }}
                         </button> --}}
                     </div>
                 </div>
@@ -238,11 +238,11 @@
 
         <div class="candidate-education-panel" id="candidateAwardHonorInformation">
             <div class="candidate-education-panel__header collapsed">
-                <h1>Award <span class="candidate-portfolio-limit">(max 5)</span></h1>
+                <h1>{{ __('messages.candidate_profile.award') }} <span class="candidate-portfolio-limit">{{ __('messages.candidate_profile.max_5') }}</span></h1>
                 <div class="candidate-education-panel__actions">
                     <button type="button" class="candidate-education-add d-none" data-award-add-action>
                         <i class="fa-solid fa-plus"></i>
-                        Add Award
+                        {{ __('messages.candidate_profile.add_award') }}
                     </button>
                     <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
                             data-bs-target="#candidateAwardHonorInformationPanelBody" aria-expanded="false"
@@ -260,15 +260,15 @@
                         <form class="candidate-publication-form d-none" data-award-form
                               data-store-url="{{ route('candidate-profile.awards.store') }}">
                             @csrf
-                            <h2 data-award-form-title>Award</h2>
+                            <h2 data-award-form-title>{{ __('messages.candidate_profile.award') }}</h2>
                             <input type="hidden" data-award-editing-id>
                             <div class="candidate-skill-form__field">
-                                <label for="candidateAwardTitle">Title <span class="text-danger">*</span></label>
+                                <label for="candidateAwardTitle">{{ __('messages.candidate_profile.title') }} <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="candidateAwardTitle" name="title"
-                                       data-award-title-input placeholder="Enter your title name" required>
+                                       data-award-title-input placeholder="{{ __('messages.candidate_profile.enter_title') }}" required>
                             </div>
                             <div class="candidate-skill-form__field">
-                                <label for="candidateAwardIssuedOn">Issued On <span class="text-danger">*</span></label>
+                                <label for="candidateAwardIssuedOn">{{ __('messages.candidate_profile.issued_on') }} <span class="text-danger">*</span></label>
                                 <div class="candidate-publication-date-field" style="position: relative; width: 100%; height: 38px;">
                                     <i class="fa-regular fa-calendar" style="align-items: center; bottom: 0; color: #52637a; display: flex; font-size: 16px; height: 38px; justify-content: center; left: 14px; line-height: 1; pointer-events: none; position: absolute; top: 0; width: 16px; z-index: 2;"></i>
                                     <input type="text" class="form-control" id="candidateAwardIssuedOn" name="issued_on"
@@ -277,24 +277,24 @@
                                 </div>
                             </div>
                             <div class="candidate-skill-form__field">
-                                <label for="candidateAwardUrl">URL</label>
+                                <label for="candidateAwardUrl">{{ __('messages.candidate_profile.url') }}</label>
                                 <input type="url" class="form-control" id="candidateAwardUrl" name="url"
-                                       data-award-url-input placeholder="Enter your URL">
+                                       data-award-url-input placeholder="{{ __('messages.candidate_profile.enter_url') }}">
                             </div>
                             <div class="candidate-skill-form__field">
-                                <label>Description <span class="text-danger">*</span></label>
+                                <label>{{ __('messages.candidate_profile.description') }} <span class="text-danger">*</span></label>
                                 <input type="hidden" name="description" data-award-description-input>
                                 <div class="candidate-publication-editor">
                                     <div class="candidate-award-quill" data-award-description-editor
-                                         data-placeholder="Enter your writing texts..."></div>
+                                         data-placeholder="{{ __('messages.candidate_profile.enter_writing_texts') }}"></div>
                                 </div>
                                 <p class="candidate-publication-counter">
-                                    You wrote <strong data-award-character-count>0/300</strong> character(s)
+                                    {{ __('messages.candidate_profile.you_wrote') }} <strong data-award-character-count>0/300</strong> {{ __('messages.candidate_profile.characters') }}
                                 </p>
                             </div>
                             <div class="candidate-skill-form__actions">
-                                <button type="submit" class="candidate-skill-save" data-award-submit>Save</button>
-                                <button type="button" class="candidate-skill-close" data-award-close>Close</button>
+                                <button type="submit" class="candidate-skill-save" data-award-submit>{{ __('messages.candidate_profile.save') }}</button>
+                                <button type="button" class="candidate-skill-close" data-award-close>{{ __('messages.candidate_profile.close') }}</button>
                             </div>
                         </form>
 
@@ -315,22 +315,22 @@
                                     <div class="candidate-publication-actions">
                                         <button type="button" data-award-edit>
                                             <i class="fa-regular fa-pen-to-square"></i>
-                                            Edit
+                                            {{ __('messages.candidate_profile.edit') }}
                                         </button>
                                         <button type="button" data-award-delete>
                                             <i class="fa-regular fa-trash-can"></i>
-                                            Delete
+                                            {{ __('messages.candidate_profile.delete') }}
                                         </button>
                                     </div>
                                 </div>
 
                                 <div class="candidate-publication-field">
-                                    <span>Issued On</span>
+                                    <span>{{ __('messages.candidate_profile.issued_on') }}</span>
                                     <strong data-award-issued-text>{{ optional($award->issued_on)->format('d M Y') ?: '---' }}</strong>
                                 </div>
 
                                 <div class="candidate-publication-field">
-                                    <span>URL</span>
+                                    <span>{{ __('messages.candidate_profile.url') }}</span>
                                     @if(filled($award->url))
                                         <a href="{{ addLinkHttpUrl($award->url) }}" target="_blank" rel="noopener" data-award-url-text>{{ $award->url }}</a>
                                         <strong class="d-none" data-award-url-empty>---</strong>
@@ -341,7 +341,7 @@
                                 </div>
 
                                 <div class="candidate-publication-field">
-                                    <span>Description</span>
+                                    <span>{{ __('messages.candidate_profile.description') }}</span>
                                     <div data-award-description-text>{!! $awardDescription ?: '---' !!}</div>
                                 </div>
                             </div>
@@ -351,7 +351,7 @@
 
                         {{-- <button type="button" class="candidate-publication-add-outline" data-award-add-action>
                             <i class="fa-solid fa-plus"></i>
-                            Add Award
+                            {{ __('messages.candidate_profile.add_award') }}
                         </button> --}}
                     </div>
                 </div>
@@ -360,11 +360,11 @@
 
         <div class="candidate-education-panel" id="candidateProjectInformation">
             <div class="candidate-education-panel__header collapsed">
-                <h1>Project <span class="candidate-portfolio-limit">(max 5)</span></h1>
+                <h1>{{ __('messages.candidate_profile.project') }} <span class="candidate-portfolio-limit">{{ __('messages.candidate_profile.max_5') }}</span></h1>
                 <div class="candidate-education-panel__actions">
                     <button type="button" class="candidate-education-add d-none" data-project-add-action>
                         <i class="fa-solid fa-plus"></i>
-                        Add Project
+                        {{ __('messages.candidate_profile.add_project') }}
                     </button>
                     <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
                             data-bs-target="#candidateProjectInformationPanelBody" aria-expanded="false"
@@ -384,12 +384,12 @@
                             @csrf
                             <input type="hidden" data-project-editing-id>
                             <div class="candidate-skill-form__field">
-                                <label for="candidateProjectTitle">Title <span class="text-danger">*</span></label>
+                                <label for="candidateProjectTitle">{{ __('messages.candidate_profile.title') }} <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="candidateProjectTitle" name="title"
-                                       data-project-title-input placeholder="Enter your title name" required>
+                                       data-project-title-input placeholder="{{ __('messages.candidate_profile.enter_title') }}" required>
                             </div>
                             <div class="candidate-skill-form__field">
-                                <label for="candidateProjectIssuedOn">Issued On <span class="text-danger">*</span></label>
+                                <label for="candidateProjectIssuedOn">{{ __('messages.candidate_profile.issued_on') }} <span class="text-danger">*</span></label>
                                 <div class="candidate-publication-date-field" style="position: relative; width: 100%; height: 38px;">
                                     <i class="fa-regular fa-calendar" style="align-items: center; bottom: 0; color: #52637a; display: flex; font-size: 16px; height: 38px; justify-content: center; left: 14px; line-height: 1; pointer-events: none; position: absolute; top: 0; width: 16px; z-index: 2;"></i>
                                     <input type="text" class="form-control" id="candidateProjectIssuedOn" name="issued_on"
@@ -398,24 +398,24 @@
                                 </div>
                             </div>
                             <div class="candidate-skill-form__field">
-                                <label for="candidateProjectUrl">URL</label>
+                                <label for="candidateProjectUrl">{{ __('messages.candidate_profile.url') }}</label>
                                 <input type="url" class="form-control" id="candidateProjectUrl" name="url"
-                                       data-project-url-input placeholder="Enter your URL">
+                                       data-project-url-input placeholder="{{ __('messages.candidate_profile.enter_url') }}">
                             </div>
                             <div class="candidate-skill-form__field">
-                                <label>Description <span class="text-danger">*</span></label>
+                                <label>{{ __('messages.candidate_profile.description') }} <span class="text-danger">*</span></label>
                                 <input type="hidden" name="description" data-project-description-input>
                                 <div class="candidate-project-editor">
                                     <div class="candidate-project-quill" data-project-description-editor
-                                         data-placeholder="Enter your writing texts..."></div>
+                                         data-placeholder="{{ __('messages.candidate_profile.enter_writing_texts') }}"></div>
                                 </div>
                                 <p class="candidate-project-counter">
-                                    You wrote <strong data-project-character-count>0/300</strong> character(s)
+                                    {{ __('messages.candidate_profile.you_wrote') }} <strong data-project-character-count>0/300</strong> {{ __('messages.candidate_profile.characters') }}
                                 </p>
                             </div>
                             <div class="candidate-skill-form__actions">
-                                <button type="submit" class="candidate-skill-save" data-project-submit>Save</button>
-                                <button type="button" class="candidate-skill-close" data-project-close>Close</button>
+                                <button type="submit" class="candidate-skill-save" data-project-submit>{{ __('messages.candidate_profile.save') }}</button>
+                                <button type="button" class="candidate-skill-close" data-project-close>{{ __('messages.candidate_profile.close') }}</button>
                             </div>
                         </form>
 
@@ -436,20 +436,20 @@
                                     <div class="candidate-project-actions">
                                         <button type="button" data-project-edit>
                                             <i class="fa-regular fa-pen-to-square"></i>
-                                            Edit
+                                            {{ __('messages.candidate_profile.edit') }}
                                         </button>
                                         <button type="button" data-project-delete>
                                             <i class="fa-regular fa-trash-can"></i>
-                                            Delete
+                                            {{ __('messages.candidate_profile.delete') }}
                                         </button>
                                     </div>
                                 </div>
                                 <div class="candidate-project-field">
-                                    <span>Issued On:</span>
+                                    <span>{{ __('messages.candidate_profile.issued_on') }}</span>
                                     <strong data-project-issued-text>{{ optional($project->issued_on)->format('d M Y') ?: '---' }}</strong>
                                 </div>
                                 <div class="candidate-project-field">
-                                    <span>URL</span>
+                                    <span>{{ __('messages.candidate_profile.url') }}</span>
                                     @if(filled($project->url))
                                         <a href="{{ addLinkHttpUrl($project->url) }}" target="_blank" rel="noopener" data-project-url-text>{{ $project->url }}</a>
                                         <strong class="d-none" data-project-url-empty>---</strong>
@@ -459,7 +459,7 @@
                                     @endif
                                 </div>
                                 <div class="candidate-project-field">
-                                    <span>Description</span>
+                                    <span>{{ __('messages.candidate_profile.description') }}</span>
                                     <div data-project-description-text>{!! $projectDescription ?: '---' !!}</div>
                                 </div>
                             </div>
@@ -469,7 +469,7 @@
 
                         {{-- <button type="button" class="candidate-project-add-outline" data-project-add-action>
                             <i class="fa-solid fa-plus"></i>
-                            Add Project
+                            {{ __('messages.candidate_profile.add_project') }}
                         </button> --}}
                     </div>
                 </div>
@@ -478,11 +478,11 @@
 
         <div class="candidate-education-panel" id="candidateOtherAccomplishmentInformation">
             <div class="candidate-education-panel__header collapsed">
-                <h1>Other <span class="candidate-portfolio-limit">(max 5)</span></h1>
+                <h1>{{ __('messages.candidate_profile.other') }} <span class="candidate-portfolio-limit">{{ __('messages.candidate_profile.max_5') }}</span></h1>
                 <div class="candidate-education-panel__actions">
                     <button type="button" class="candidate-education-add d-none" data-other-add-action>
                         <i class="fa-solid fa-plus"></i>
-                        Add Other
+                        {{ __('messages.candidate_profile.add_other') }}
                     </button>
                     <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
                             data-bs-target="#candidateOtherAccomplishmentInformationPanelBody" aria-expanded="false"
@@ -500,15 +500,15 @@
                         <form class="candidate-other-form d-none" data-other-form
                               data-store-url="{{ route('candidate-profile.others.store') }}">
                             @csrf
-                            <h2 data-other-form-title>Other Accomplishment</h2>
+                            <h2 data-other-form-title>{{ __('messages.candidate_profile.other_accomplishment') }}</h2>
                             <input type="hidden" data-other-editing-id>
                             <div class="candidate-skill-form__field">
-                                <label for="candidateOtherTitle">Title <span class="text-danger">*</span></label>
+                                <label for="candidateOtherTitle">{{ __('messages.candidate_profile.title') }} <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="candidateOtherTitle" name="title"
-                                       data-other-title-input placeholder="Enter your title name" required>
+                                       data-other-title-input placeholder="{{ __('messages.candidate_profile.enter_title') }}" required>
                             </div>
                             <div class="candidate-skill-form__field">
-                                <label for="candidateOtherIssuedOn">Issued On <span class="text-danger">*</span></label>
+                                <label for="candidateOtherIssuedOn">{{ __('messages.candidate_profile.issued_on') }} <span class="text-danger">*</span></label>
                                 <div class="candidate-publication-date-field" style="position: relative; width: 100%; height: 38px;">
                                     <i class="fa-regular fa-calendar" style="align-items: center; bottom: 0; color: #52637a; display: flex; font-size: 16px; height: 38px; justify-content: center; left: 14px; line-height: 1; pointer-events: none; position: absolute; top: 0; width: 16px; z-index: 2;"></i>
                                     <input type="text" class="form-control" id="candidateOtherIssuedOn" name="issued_on"
@@ -517,24 +517,24 @@
                                 </div>
                             </div>
                             <div class="candidate-skill-form__field">
-                                <label for="candidateOtherUrl">URL</label>
+                                <label for="candidateOtherUrl">{{ __('messages.candidate_profile.url') }}</label>
                                 <input type="url" class="form-control" id="candidateOtherUrl" name="url"
-                                       data-other-url-input placeholder="Enter your URL">
+                                       data-other-url-input placeholder="{{ __('messages.candidate_profile.enter_url') }}">
                             </div>
                             <div class="candidate-skill-form__field">
-                                <label>Description <span class="text-danger">*</span></label>
+                                <label>{{ __('messages.candidate_profile.description') }} <span class="text-danger">*</span></label>
                                 <input type="hidden" name="description" data-other-description-input>
                                 <div class="candidate-other-editor">
                                     <div class="candidate-other-quill" data-other-description-editor
-                                         data-placeholder="Enter your writing texts..."></div>
+                                         data-placeholder="{{ __('messages.candidate_profile.enter_writing_texts') }}"></div>
                                 </div>
                                 <p class="candidate-other-counter">
-                                    You wrote <strong data-other-character-count>0/300</strong> character(s)
+                                    {{ __('messages.candidate_profile.you_wrote') }} <strong data-other-character-count>0/300</strong> {{ __('messages.candidate_profile.characters') }}
                                 </p>
                             </div>
                             <div class="candidate-skill-form__actions">
-                                <button type="submit" class="candidate-skill-save" data-other-submit>Save</button>
-                                <button type="button" class="candidate-skill-close" data-other-close>Close</button>
+                                <button type="submit" class="candidate-skill-save" data-other-submit>{{ __('messages.candidate_profile.save') }}</button>
+                                <button type="button" class="candidate-skill-close" data-other-close>{{ __('messages.candidate_profile.close') }}</button>
                             </div>
                         </form>
 
@@ -555,20 +555,20 @@
                                     <div class="candidate-other-actions">
                                         <button type="button" data-other-edit>
                                             <i class="fa-regular fa-pen-to-square"></i>
-                                            Edit
+                                            {{ __('messages.candidate_profile.edit') }}
                                         </button>
                                         <button type="button" data-other-delete>
                                             <i class="fa-regular fa-trash-can"></i>
-                                            Delete
+                                            {{ __('messages.candidate_profile.delete') }}
                                         </button>
                                     </div>
                                 </div>
                                 <div class="candidate-other-field">
-                                    <span>Issued On:</span>
+                                    <span>{{ __('messages.candidate_profile.issued_on') }}</span>
                                     <strong data-other-issued-text>{{ optional($other->issued_on)->format('d M Y') ?: '---' }}</strong>
                                 </div>
                                 <div class="candidate-other-field">
-                                    <span>URL</span>
+                                    <span>{{ __('messages.candidate_profile.url') }}</span>
                                     @if(filled($other->url))
                                         <a href="{{ addLinkHttpUrl($other->url) }}" target="_blank" rel="noopener" data-other-url-text>{{ $other->url }}</a>
                                         <strong class="d-none" data-other-url-empty>---</strong>
@@ -578,7 +578,7 @@
                                     @endif
                                 </div>
                                 <div class="candidate-other-field">
-                                    <span>Description</span>
+                                    <span>{{ __('messages.candidate_profile.description') }}</span>
                                     <div data-other-description-text>{!! $otherDescription ?: '---' !!}</div>
                                 </div>
                             </div>
@@ -588,7 +588,7 @@
 
                         {{-- <button type="button" class="candidate-other-add-outline" data-other-add-action>
                             <i class="fa-solid fa-plus"></i>
-                            Add Other
+                            {{ __('messages.candidate_profile.add_other') }}
                         </button> --}}
                     </div>
                 </div>
@@ -890,6 +890,18 @@
                 let portfolioQuill = null;
                 const portfolioFormHome = document.createElement('div');
                 portfolioForm.after(portfolioFormHome);
+                const portfolioLabels = {
+                    portfolio: @json(__('messages.candidate_profile.portfolio')),
+                    save: @json(__('messages.candidate_profile.save')),
+                    close: @json(__('messages.candidate_profile.close')),
+                    update: @json(__('messages.candidate_profile.update')),
+                    cancel: @json(__('messages.candidate_profile.cancel')),
+                    edit: @json(__('messages.candidate_profile.edit')),
+                    delete: @json(__('messages.candidate_profile.delete')),
+                    url: @json(__('messages.candidate_profile.url')),
+                    description: @json(__('messages.candidate_profile.description')),
+                    confirmDelete: @json(__('messages.candidate_profile.confirm_delete_portfolio')),
+                };
 
                 const portfolioItems = function () {
                     return Array.from(portfolioList.querySelectorAll('[data-portfolio-item]'));
@@ -985,12 +997,12 @@
                         '<div class="candidate-portfolio-item__header">',
                         '<h2></h2>',
                         '<div class="candidate-portfolio-actions">',
-                        '<button type="button" data-portfolio-edit><i class="fa-regular fa-pen-to-square"></i> Edit</button>',
-                        '<button type="button" data-portfolio-delete><i class="fa-regular fa-trash-can"></i> Delete</button>',
+                        '<button type="button" data-portfolio-edit><i class="fa-regular fa-pen-to-square"></i> ' + portfolioLabels.edit + '</button>',
+                        '<button type="button" data-portfolio-delete><i class="fa-regular fa-trash-can"></i> ' + portfolioLabels.delete + '</button>',
                         '</div>',
                         '</div>',
-                        '<div class="candidate-portfolio-field"><span>URL</span><a target="_blank" rel="noopener" data-portfolio-url-text></a><strong data-portfolio-url-empty>---</strong></div>',
-                        '<div class="candidate-portfolio-field"><span>Description</span><div data-portfolio-description-text></div></div>',
+                        '<div class="candidate-portfolio-field"><span>' + portfolioLabels.url + '</span><a target="_blank" rel="noopener" data-portfolio-url-text></a><strong data-portfolio-url-empty>---</strong></div>',
+                        '<div class="candidate-portfolio-field"><span>' + portfolioLabels.description + '</span><div data-portfolio-description-text></div></div>',
                     ].join('');
                     syncPortfolioItem(item, values);
                     return item;
@@ -1003,13 +1015,13 @@
                     }
                     setPortfolioFormValues(null);
                     if (portfolioFormTitle) {
-                        portfolioFormTitle.textContent = 'Portfolio';
+                        portfolioFormTitle.textContent = portfolioLabels.portfolio;
                     }
                     if (portfolioSubmit) {
-                        portfolioSubmit.textContent = 'Save';
+                        portfolioSubmit.textContent = portfolioLabels.save;
                     }
                     if (portfolioClose) {
-                        portfolioClose.textContent = 'Close';
+                        portfolioClose.textContent = portfolioLabels.close;
                     }
                     if (activePortfolioItem) {
                         activePortfolioItem.classList.remove('d-none');
@@ -1040,13 +1052,13 @@
                     setPortfolioFormValues(item);
                     portfolioForm.classList.remove('d-none');
                     if (portfolioFormTitle) {
-                        portfolioFormTitle.textContent = 'Portfolio';
+                        portfolioFormTitle.textContent = portfolioLabels.portfolio;
                     }
                     if (portfolioSubmit) {
-                        portfolioSubmit.textContent = item ? 'Update' : 'Save';
+                        portfolioSubmit.textContent = item ? portfolioLabels.update : portfolioLabels.save;
                     }
                     if (portfolioClose) {
-                        portfolioClose.textContent = item ? 'Cancel' : 'Close';
+                        portfolioClose.textContent = item ? portfolioLabels.cancel : portfolioLabels.close;
                     }
                     if (item) {
                         portfolioForm.classList.add('candidate-portfolio-form--inline');
@@ -1082,7 +1094,7 @@
                     }
 
                     if (deleteButton && item) {
-                        if (!window.confirm('Are you sure you want to delete this portfolio?')) {
+                        if (!window.confirm(portfolioLabels.confirmDelete)) {
                             return;
                         }
 
@@ -1244,6 +1256,19 @@
                 let publicationQuill = null;
                 const publicationFormHome = document.createElement('div');
                 publicationForm.after(publicationFormHome);
+                const publicationLabels = {
+                    publication: @json(__('messages.candidate_profile.publication')),
+                    save: @json(__('messages.candidate_profile.save')),
+                    close: @json(__('messages.candidate_profile.close')),
+                    update: @json(__('messages.candidate_profile.update')),
+                    cancel: @json(__('messages.candidate_profile.cancel')),
+                    edit: @json(__('messages.candidate_profile.edit')),
+                    delete: @json(__('messages.candidate_profile.delete')),
+                    issuedOn: @json(__('messages.candidate_profile.issued_on')),
+                    url: @json(__('messages.candidate_profile.url')),
+                    description: @json(__('messages.candidate_profile.description')),
+                    confirmDelete: @json(__('messages.candidate_profile.confirm_delete_publication')),
+                };
 
                 const publicationItems = function () {
                     return Array.from(publicationList.querySelectorAll('[data-publication-item]'));
@@ -1346,13 +1371,13 @@
                         '<div class="candidate-publication-item__header">',
                         '<h2></h2>',
                         '<div class="candidate-publication-actions">',
-                        '<button type="button" data-publication-edit><i class="fa-regular fa-pen-to-square"></i> Edit</button>',
-                        '<button type="button" data-publication-delete><i class="fa-regular fa-trash-can"></i> Delete</button>',
+                        '<button type="button" data-publication-edit><i class="fa-regular fa-pen-to-square"></i> ' + publicationLabels.edit + '</button>',
+                        '<button type="button" data-publication-delete><i class="fa-regular fa-trash-can"></i> ' + publicationLabels.delete + '</button>',
                         '</div>',
                         '</div>',
-                        '<div class="candidate-publication-field"><span>Issued On</span><strong data-publication-issued-text></strong></div>',
-                        '<div class="candidate-publication-field"><span>URL</span><a target="_blank" rel="noopener" data-publication-url-text></a><strong data-publication-url-empty>---</strong></div>',
-                        '<div class="candidate-publication-field"><span>Description</span><div data-publication-description-text></div></div>',
+                        '<div class="candidate-publication-field"><span>' + publicationLabels.issuedOn + '</span><strong data-publication-issued-text></strong></div>',
+                        '<div class="candidate-publication-field"><span>' + publicationLabels.url + '</span><a target="_blank" rel="noopener" data-publication-url-text></a><strong data-publication-url-empty>---</strong></div>',
+                        '<div class="candidate-publication-field"><span>' + publicationLabels.description + '</span><div data-publication-description-text></div></div>',
                     ].join('');
                     syncPublicationItem(item, values);
                     return item;
@@ -1365,13 +1390,13 @@
                     }
                     setPublicationFormValues(null);
                     if (publicationFormTitle) {
-                        publicationFormTitle.textContent = 'Publication';
+                        publicationFormTitle.textContent = publicationLabels.publication;
                     }
                     if (publicationSubmit) {
-                        publicationSubmit.textContent = 'Save';
+                        publicationSubmit.textContent = publicationLabels.save;
                     }
                     if (publicationClose) {
-                        publicationClose.textContent = 'Close';
+                        publicationClose.textContent = publicationLabels.close;
                     }
                     if (activePublicationItem) {
                         activePublicationItem.classList.remove('d-none');
@@ -1402,13 +1427,13 @@
                     setPublicationFormValues(item);
                     publicationForm.classList.remove('d-none');
                     if (publicationFormTitle) {
-                        publicationFormTitle.textContent = 'Publication';
+                        publicationFormTitle.textContent = publicationLabels.publication;
                     }
                     if (publicationSubmit) {
-                        publicationSubmit.textContent = item ? 'Update' : 'Save';
+                        publicationSubmit.textContent = item ? publicationLabels.update : publicationLabels.save;
                     }
                     if (publicationClose) {
-                        publicationClose.textContent = item ? 'Cancel' : 'Close';
+                        publicationClose.textContent = item ? publicationLabels.cancel : publicationLabels.close;
                     }
                     if (item) {
                         publicationForm.classList.add('candidate-publication-form--inline');
@@ -1439,7 +1464,7 @@
                     }
 
                     if (deleteButton && item) {
-                        if (!window.confirm('Are you sure you want to delete this publication?')) {
+                        if (!window.confirm(publicationLabels.confirmDelete)) {
                             return;
                         }
 
@@ -1610,6 +1635,19 @@
                 let awardQuill = null;
                 const awardFormHome = document.createElement('div');
                 awardForm.after(awardFormHome);
+                const awardLabels = {
+                    award: @json(__('messages.candidate_profile.award')),
+                    save: @json(__('messages.candidate_profile.save')),
+                    close: @json(__('messages.candidate_profile.close')),
+                    update: @json(__('messages.candidate_profile.update')),
+                    cancel: @json(__('messages.candidate_profile.cancel')),
+                    edit: @json(__('messages.candidate_profile.edit')),
+                    delete: @json(__('messages.candidate_profile.delete')),
+                    issuedOn: @json(__('messages.candidate_profile.issued_on')),
+                    url: @json(__('messages.candidate_profile.url')),
+                    description: @json(__('messages.candidate_profile.description')),
+                    confirmDelete: @json(__('messages.candidate_profile.confirm_delete_award')),
+                };
 
                 const awardItems = function () {
                     return Array.from(awardList.querySelectorAll('[data-award-item]'));
@@ -1714,13 +1752,13 @@
                         '<div class="candidate-publication-item__header">',
                         '<h2></h2>',
                         '<div class="candidate-publication-actions">',
-                        '<button type="button" data-award-edit><i class="fa-regular fa-pen-to-square"></i> Edit</button>',
-                        '<button type="button" data-award-delete><i class="fa-regular fa-trash-can"></i> Delete</button>',
+                        '<button type="button" data-award-edit><i class="fa-regular fa-pen-to-square"></i> ' + awardLabels.edit + '</button>',
+                        '<button type="button" data-award-delete><i class="fa-regular fa-trash-can"></i> ' + awardLabels.delete + '</button>',
                         '</div>',
                         '</div>',
-                        '<div class="candidate-publication-field"><span>Issued On</span><strong data-award-issued-text></strong></div>',
-                        '<div class="candidate-publication-field"><span>URL</span><a target="_blank" rel="noopener" data-award-url-text></a><strong data-award-url-empty>---</strong></div>',
-                        '<div class="candidate-publication-field"><span>Description</span><div data-award-description-text></div></div>',
+                        '<div class="candidate-publication-field"><span>' + awardLabels.issuedOn + '</span><strong data-award-issued-text></strong></div>',
+                        '<div class="candidate-publication-field"><span>' + awardLabels.url + '</span><a target="_blank" rel="noopener" data-award-url-text></a><strong data-award-url-empty>---</strong></div>',
+                        '<div class="candidate-publication-field"><span>' + awardLabels.description + '</span><div data-award-description-text></div></div>',
                     ].join('');
                     syncAwardItem(item, values);
                     return item;
@@ -1733,10 +1771,10 @@
                     }
                     setAwardFormValues(null);
                     if (awardSubmit) {
-                        awardSubmit.textContent = 'Save';
+                        awardSubmit.textContent = awardLabels.save;
                     }
                     if (awardClose) {
-                        awardClose.textContent = 'Close';
+                        awardClose.textContent = awardLabels.close;
                     }
                     if (activeAwardItem) {
                         activeAwardItem.classList.remove('d-none');
@@ -1765,10 +1803,10 @@
                     setAwardFormValues(item);
                     awardForm.classList.remove('d-none');
                     if (awardSubmit) {
-                        awardSubmit.textContent = item ? 'Update' : 'Save';
+                        awardSubmit.textContent = item ? awardLabels.update : awardLabels.save;
                     }
                     if (awardClose) {
-                        awardClose.textContent = item ? 'Cancel' : 'Close';
+                        awardClose.textContent = item ? awardLabels.cancel : awardLabels.close;
                     }
                     if (item) {
                         awardForm.classList.add('candidate-publication-form--inline');
@@ -1798,7 +1836,7 @@
                         openAwardForm(item);
                     }
                     if (deleteButton && item) {
-                        if (!window.confirm('Are you sure you want to delete this award?')) {
+                        if (!window.confirm(awardLabels.confirmDelete)) {
                             return;
                         }
 
@@ -1965,6 +2003,18 @@
                 if (projectForm) {
                     projectForm.after(projectFormHome);
                 }
+                const projectLabels = {
+                    save: @json(__('messages.candidate_profile.save')),
+                    close: @json(__('messages.candidate_profile.close')),
+                    update: @json(__('messages.candidate_profile.update')),
+                    cancel: @json(__('messages.candidate_profile.cancel')),
+                    edit: @json(__('messages.candidate_profile.edit')),
+                    delete: @json(__('messages.candidate_profile.delete')),
+                    issuedOn: @json(__('messages.candidate_profile.issued_on')),
+                    url: @json(__('messages.candidate_profile.url')),
+                    description: @json(__('messages.candidate_profile.description')),
+                    confirmDelete: @json(__('messages.candidate_profile.confirm_delete_project')),
+                };
 
                 const projectItems = function () {
                     return Array.from(projectList.querySelectorAll('[data-project-item]'));
@@ -2072,13 +2122,13 @@
                         '<div class="candidate-project-item__header">',
                         '<h2></h2>',
                         '<div class="candidate-project-actions">',
-                        '<button type="button" data-project-edit><i class="fa-regular fa-pen-to-square"></i> Edit</button>',
-                        '<button type="button" data-project-delete><i class="fa-regular fa-trash-can"></i> Delete</button>',
+                        '<button type="button" data-project-edit><i class="fa-regular fa-pen-to-square"></i> ' + projectLabels.edit + '</button>',
+                        '<button type="button" data-project-delete><i class="fa-regular fa-trash-can"></i> ' + projectLabels.delete + '</button>',
                         '</div>',
                         '</div>',
-                        '<div class="candidate-project-field"><span>Issued On:</span><strong data-project-issued-text></strong></div>',
-                        '<div class="candidate-project-field"><span>URL</span><a target="_blank" rel="noopener" data-project-url-text></a><strong data-project-url-empty>---</strong></div>',
-                        '<div class="candidate-project-field"><span>Description</span><div data-project-description-text></div></div>',
+                        '<div class="candidate-project-field"><span>' + projectLabels.issuedOn + '</span><strong data-project-issued-text></strong></div>',
+                        '<div class="candidate-project-field"><span>' + projectLabels.url + '</span><a target="_blank" rel="noopener" data-project-url-text></a><strong data-project-url-empty>---</strong></div>',
+                        '<div class="candidate-project-field"><span>' + projectLabels.description + '</span><div data-project-description-text></div></div>',
                     ].join('');
                     syncProjectItem(item, values);
                     return item;
@@ -2094,10 +2144,10 @@
                     }
                     setProjectFormValues(null);
                     if (projectSubmit) {
-                        projectSubmit.textContent = 'Save';
+                        projectSubmit.textContent = projectLabels.save;
                     }
                     if (projectClose) {
-                        projectClose.textContent = 'Close';
+                        projectClose.textContent = projectLabels.close;
                     }
                     if (activeProjectItem) {
                         activeProjectItem.classList.remove('d-none');
@@ -2129,10 +2179,10 @@
                     setProjectFormValues(item);
                     projectForm.classList.remove('d-none');
                     if (projectSubmit) {
-                        projectSubmit.textContent = item ? 'Update' : 'Save';
+                        projectSubmit.textContent = item ? projectLabels.update : projectLabels.save;
                     }
                     if (projectClose) {
-                        projectClose.textContent = item ? 'Cancel' : 'Close';
+                        projectClose.textContent = item ? projectLabels.cancel : projectLabels.close;
                     }
                     if (item) {
                         projectForm.classList.add('candidate-project-form--inline');
@@ -2164,7 +2214,7 @@
                     }
 
                     if (deleteButton && item) {
-                        if (!window.confirm('Are you sure you want to delete this project?')) {
+                        if (!window.confirm(projectLabels.confirmDelete)) {
                             return;
                         }
 
@@ -2330,6 +2380,19 @@
                 let otherQuill = null;
                 const otherFormHome = document.createElement('div');
                 otherForm.after(otherFormHome);
+                const otherLabels = {
+                    otherAccomplishment: @json(__('messages.candidate_profile.other_accomplishment')),
+                    save: @json(__('messages.candidate_profile.save')),
+                    close: @json(__('messages.candidate_profile.close')),
+                    update: @json(__('messages.candidate_profile.update')),
+                    cancel: @json(__('messages.candidate_profile.cancel')),
+                    edit: @json(__('messages.candidate_profile.edit')),
+                    delete: @json(__('messages.candidate_profile.delete')),
+                    issuedOn: @json(__('messages.candidate_profile.issued_on')),
+                    url: @json(__('messages.candidate_profile.url')),
+                    description: @json(__('messages.candidate_profile.description')),
+                    confirmDelete: @json(__('messages.candidate_profile.confirm_delete_other_accomplishment')),
+                };
 
                 const otherItems = function () {
                     return Array.from(otherList.querySelectorAll('[data-other-item]'));
@@ -2434,13 +2497,13 @@
                         '<div class="candidate-other-item__header">',
                         '<h2></h2>',
                         '<div class="candidate-other-actions">',
-                        '<button type="button" data-other-edit><i class="fa-regular fa-pen-to-square"></i> Edit</button>',
-                        '<button type="button" data-other-delete><i class="fa-regular fa-trash-can"></i> Delete</button>',
+                        '<button type="button" data-other-edit><i class="fa-regular fa-pen-to-square"></i> ' + otherLabels.edit + '</button>',
+                        '<button type="button" data-other-delete><i class="fa-regular fa-trash-can"></i> ' + otherLabels.delete + '</button>',
                         '</div>',
                         '</div>',
-                        '<div class="candidate-other-field"><span>Issued On:</span><strong data-other-issued-text></strong></div>',
-                        '<div class="candidate-other-field"><span>URL</span><a target="_blank" rel="noopener" data-other-url-text></a><strong data-other-url-empty>---</strong></div>',
-                        '<div class="candidate-other-field"><span>Description</span><div data-other-description-text></div></div>',
+                        '<div class="candidate-other-field"><span>' + otherLabels.issuedOn + '</span><strong data-other-issued-text></strong></div>',
+                        '<div class="candidate-other-field"><span>' + otherLabels.url + '</span><a target="_blank" rel="noopener" data-other-url-text></a><strong data-other-url-empty>---</strong></div>',
+                        '<div class="candidate-other-field"><span>' + otherLabels.description + '</span><div data-other-description-text></div></div>',
                     ].join('');
                     syncOtherItem(item, values);
                     return item;
@@ -2453,13 +2516,13 @@
                     }
                     setOtherFormValues(null);
                     if (otherFormTitle) {
-                        otherFormTitle.textContent = 'Other Accomplishment';
+                        otherFormTitle.textContent = otherLabels.otherAccomplishment;
                     }
                     if (otherSubmit) {
-                        otherSubmit.textContent = 'Save';
+                        otherSubmit.textContent = otherLabels.save;
                     }
                     if (otherClose) {
-                        otherClose.textContent = 'Close';
+                        otherClose.textContent = otherLabels.close;
                     }
                     if (activeOtherItem) {
                         activeOtherItem.classList.remove('d-none');
@@ -2488,10 +2551,10 @@
                     setOtherFormValues(item);
                     otherForm.classList.remove('d-none');
                     if (otherSubmit) {
-                        otherSubmit.textContent = item ? 'Update' : 'Save';
+                        otherSubmit.textContent = item ? otherLabels.update : otherLabels.save;
                     }
                     if (otherClose) {
-                        otherClose.textContent = item ? 'Cancel' : 'Close';
+                        otherClose.textContent = item ? otherLabels.cancel : otherLabels.close;
                     }
                     if (item) {
                         otherForm.classList.add('candidate-other-form--inline');
@@ -2521,7 +2584,7 @@
                         openOtherForm(item);
                     }
                     if (deleteButton && item) {
-                        if (!window.confirm('Are you sure you want to delete this other accomplishment?')) {
+                        if (!window.confirm(otherLabels.confirmDelete)) {
                             return;
                         }
 

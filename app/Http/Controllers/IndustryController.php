@@ -12,6 +12,8 @@ use Exception;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class IndustryController extends AppBaseController
@@ -46,6 +48,30 @@ class IndustryController extends AppBaseController
         $industry = $this->industryRepository->create($input);
 
         return $this->sendResponse($industry, __('messages.flash.industry_save'));
+    }
+
+    /**
+     * Store an industry suggested from the employer profile editor.
+     */
+    public function storeForEmployer(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'industry_type_id' => ['required', 'integer', 'exists:industry_types,id'],
+            'name' => ['required', 'string', 'max:150', Rule::unique('industries', 'name')],
+        ]);
+
+        $industry = Industry::create([
+            'industry_type_id' => $validated['industry_type_id'],
+            'name' => trim($validated['name']),
+            'description' => trim($validated['name']),
+            'created_by' => Auth::id(),
+            'is_default' => false,
+        ]);
+
+        return $this->sendResponse(
+            $industry->only(['id', 'name', 'industry_type_id']),
+            'Industry added successfully.'
+        );
     }
 
     /**

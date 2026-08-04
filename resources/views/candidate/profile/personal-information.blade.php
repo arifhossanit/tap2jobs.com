@@ -256,7 +256,7 @@
                         </div>
                         <div class="col-12">
                             <div class="candidate-profile-section-actions">
-                                {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary btnSave', 'formaction' => route('candidate-profile.personal-details.update'), 'formnovalidate' => true]) }}
+                                {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary btnSave', 'formaction' => route('candidate-profile.personal-details.update'), 'formnovalidate' => true, 'data-scoped-ajax-submit' => true]) }}
                                 <button type="button" class="btn btn-outline-secondary" data-personal-edit-close>{{ __('messages.common.close') }}</button>
                             </div>
                         </div>
@@ -448,8 +448,8 @@
                 <div class="candidate-profile-section__body">
                     @php
                         $defaultObjective = __('messages.candidate_profile.objective_default');
-                        $selectedJobLevel = $user->candidate->job_level ?? 'mid';
-                        $selectedJobNature = $user->candidate->job_nature ?? 'full_time';
+                        $selectedJobLevel = $user->candidate->job_level ?? null;
+                        $selectedJobNature = $user->candidate->job_nature ?? null;
                         $careerDisplayValue = function ($value) {
                             return filled($value) ? $value : '---';
                         };
@@ -478,16 +478,16 @@
                     <div class="candidate-career-summary">
                         <div class="candidate-career-summary-item candidate-career-summary-item--full">
                             <span>{{ __('messages.candidate_profile.objective') }}</span>
-                            <strong>{{ $careerDisplayValue($user->candidate->objective ?? $defaultObjective) }}</strong>
+                            <strong>{{ $careerDisplayValue($user->candidate->objective ?? null) }}</strong>
                         </div>
                         <div class="candidate-career-summary-grid">
                             <div class="candidate-career-summary-item">
                                 <span>{{ __('messages.candidate_profile.present_salary') }} ({{ __('messages.candidate_profile.taka_month') }})</span>
-                                <strong>{{ $careerFormatSalary($user->candidate->current_salary ?? '20000') }}</strong>
+                                <strong>{{ $careerFormatSalary($user->candidate->current_salary ?? null) }}</strong>
                             </div>
                             <div class="candidate-career-summary-item">
                                 <span>{{ __('messages.candidate_profile.expected_salary') }} ({{ __('messages.candidate_profile.taka_month') }})</span>
-                                <strong>{{ $careerFormatSalary($user->candidate->expected_salary ?? '25000') }}</strong>
+                                <strong>{{ $careerFormatSalary($user->candidate->expected_salary ?? null) }}</strong>
                             </div>
                             <div class="candidate-career-summary-item">
                                 <span>{{ __('messages.candidate_profile.looking_for') }} ({{ __('messages.candidate_profile.job_level') }})</span>
@@ -520,17 +520,17 @@
                                     </span>
                                 </span>
                             </div>
-                            {{ Form::textarea('objective', $user->candidate->objective ?? $defaultObjective, ['class' => 'form-control candidate-objective-textarea', 'rows' => 5, 'placeholder' => $defaultObjective]) }}
+                            {{ Form::textarea('objective', $user->candidate->objective ?? null, ['class' => 'form-control candidate-objective-textarea', 'rows' => 5, 'placeholder' => $defaultObjective]) }}
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
                             {{ Form::label('current_salary', __('messages.candidate_profile.present_salary'), ['class' => 'form-label']) }}
                             <span class="candidate-field-note">({{ __('messages.candidate_profile.taka_month') }})</span>
-                            {{ Form::text('current_salary', $user->candidate->current_salary ?? '20000', ['class' => 'form-control', 'placeholder' => '20000']) }}
+                            {{ Form::text('current_salary', $user->candidate->current_salary ?? null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_current_salary')]) }}
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
                             {{ Form::label('expected_salary', __('messages.candidate_profile.expected_salary'), ['class' => 'form-label']) }}
                             <span class="candidate-field-note">({{ __('messages.candidate_profile.taka_month') }})</span>
-                            {{ Form::text('expected_salary', $user->candidate->expected_salary ?? '25000', ['class' => 'form-control', 'placeholder' => '25000']) }}
+                            {{ Form::text('expected_salary', $user->candidate->expected_salary ?? null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_expected_salary')]) }}
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
                             <div class="form-label mb-3">

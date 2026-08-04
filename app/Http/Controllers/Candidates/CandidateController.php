@@ -282,7 +282,7 @@ class CandidateController extends AppBaseController
     /**
      * @throws \Throwable
      */
-    public function updatePersonalDetails(CandidateUpdatePersonalDetailsRequest $request): RedirectResponse
+    public function updatePersonalDetails(CandidateUpdatePersonalDetailsRequest $request)
     {
         $input = $request->validated();
 
@@ -291,6 +291,10 @@ class CandidateController extends AppBaseController
         }
 
         $this->candidateRepository->updatePersonalDetails($input);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return $this->sendSuccess(__('messages.flash.candidate_profile'));
+        }
 
         Flash::success(__('messages.flash.candidate_profile'));
 

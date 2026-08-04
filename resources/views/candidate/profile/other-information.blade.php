@@ -1,6 +1,27 @@
 @extends('candidate.profile.index')
 @section('section')
     @php
+        $candidateProfileNumber = function ($number) {
+            $number = (string) $number;
+
+            if (app()->getLocale() !== 'bn') {
+                return $number;
+            }
+
+            return strtr($number, [
+                '0' => '০',
+                '1' => '১',
+                '2' => '২',
+                '3' => '৩',
+                '4' => '৪',
+                '5' => '৫',
+                '6' => '৬',
+                '7' => '৭',
+                '8' => '৮',
+                '9' => '৯',
+            ]);
+        };
+
         $candidateSkillItems = $data['candidateSkillRows'] ?? collect();
         $candidateSkillNames = $candidateSkillItems->pluck('skill.name')->filter()->toArray();
         $candidateLanguageItems = $data['candidateLanguageItems'] ?? $user->candidateLanguage;
@@ -49,14 +70,24 @@
                                     $sources = $candidateSkill->relationLoaded('sources')
                                         ? $candidateSkill->sources->pluck('source')->filter()->values()
                                         : collect();
-                                    $sourceText = $sources->count() ? $sources->implode(', ') : 'Professional Training';
+                                    $rawSourceText = $sources->count() ? $sources->implode(', ') : 'Professional Training';
+                                    $sourceMap = [
+                                        'Self' => __('messages.candidate_profile.self'),
+                                        'Job' => __('messages.candidate_profile.job'),
+                                        'Educational' => __('messages.candidate_profile.educational'),
+                                        'Professional Training' => __('messages.candidate_profile.professional_training'),
+                                        'NTVQF' => __('messages.candidate_profile.ntvqf'),
+                                    ];
+                                    $translatedSources = $sources->count()
+                                        ? $sources->map(fn($s) => $sourceMap[$s] ?? $s)->implode(', ')
+                                        : __('messages.candidate_profile.professional_training');
                                 @endphp
                                 @continue(! $skill)
                                 <div class="candidate-skill-item" data-skill-item data-skill-id="{{ $skill->id }}"
-                                     data-skill-name="{{ $skill->name }}" data-skill-sources="{{ $sourceText }}">
+                                     data-skill-name="{{ $skill->name }}" data-skill-sources="{{ $rawSourceText }}">
                                     <div>
                                         <strong>{{ $skill->name }}</strong>
-                                        <span>{{ $sourceText }}</span>
+                                        <span>{{ $translatedSources }}</span>
                                     </div>
                                     <div class="candidate-skill-item__actions">
                                         <button type="button" data-skill-edit>
@@ -79,27 +110,39 @@
                             <input type="hidden" data-skill-editing-id>
 
                             <div class="candidate-skill-form__field">
-                                <label for="candidateSkillName">Skill <span class="text-danger">*</span></label>
+                                <label for="candidateSkillName">{{ __('messages.candidate_profile.skill') }} <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="candidateSkillName" data-skill-name-input
-                                       placeholder="Enter your skill">
+                                       placeholder="{{ __('messages.candidate_profile.enter_skill') }}">
                             </div>
 
                             <div class="candidate-skill-form__field">
-                                <label>How did you learn the skill?</label>
+                                <label>{{ __('messages.candidate_profile.how_did_you_learn_skill') }}</label>
                                 <div class="candidate-skill-source-list">
+                                    @php
+                                        $sourceKeyMap = [
+                                            'Self' => 'self',
+                                            'Job' => 'job',
+                                            'Educational' => 'educational',
+                                            'Professional Training' => 'professional_training',
+                                            'NTVQF' => 'ntvqf',
+                                        ];
+                                    @endphp
                                     @foreach($skillLearnOptions as $source)
+                                        @php
+                                            $sourceKey = $sourceKeyMap[$source] ?? 'professional_training';
+                                        @endphp
                                         <label class="candidate-skill-source">
                                             <input type="checkbox" value="{{ $source }}" data-skill-source
                                                    {{ $source === 'Professional Training' ? 'checked' : '' }}>
-                                            <span>{{ $source }}</span>
+                                            <span>{{ __('messages.candidate_profile.' . $sourceKey) }}</span>
                                         </label>
                                     @endforeach
                                 </div>
                             </div>
 
                             <div class="candidate-skill-form__actions">
-                                <button type="submit" class="candidate-skill-save">Save Changes</button>
-                                <button type="button" class="candidate-skill-close" data-skill-close>Close</button>
+                                <button type="submit" class="candidate-skill-save">{{ __('messages.candidate_profile.save') }}</button>
+                                <button type="button" class="candidate-skill-close" data-skill-close>{{ __('messages.candidate_profile.close') }}</button>
                             </div>
                         </form>
 
@@ -147,13 +190,13 @@
                                      data-update-url="{{ route('candidate-profile.extracurricular-activities.update', $extraCurricular) }}"
                                      data-delete-url="{{ route('candidate-profile.extracurricular-activities.destroy', $extraCurricular) }}">
                                     <div class="candidate-activity-item__header">
-                                        <h2>Extracurricular Activities {{ $loop->iteration }}</h2>
+                                        <h2>{{ __('messages.candidate_profile.extracurricular_activities') }} {{ $candidateProfileNumber($loop->iteration) }}</h2>
                                         <div class="candidate-reference-actions">
                                             <button type="button" data-activity-edit>
-                                                <i class="fa-regular fa-pen-to-square"></i> Edit
+                                                <i class="fa-regular fa-pen-to-square"></i> {{ __('messages.candidate_profile.edit') }}
                                             </button>
                                             <button type="button" data-activity-delete>
-                                                <i class="fa-regular fa-trash-can"></i> Delete
+                                                <i class="fa-regular fa-trash-can"></i> {{ __('messages.candidate_profile.delete') }}
                                             </button>
                                         </div>
                                     </div>
@@ -167,18 +210,18 @@
                           data-store-url="{{ route('candidate-profile.extracurricular-activities.store') }}">
                         @csrf
                         <input type="hidden" data-activity-editing-id>
-                        <h2 class="candidate-language-form__title" data-activity-form-title>Extracurricular Activities {{ max($candidateExtraCurricularItems->count() + 1, 1) }}</h2>
+                        <h2 class="candidate-language-form__title" data-activity-form-title>{{ __('messages.candidate_profile.extracurricular_activities') }} {{ $candidateProfileNumber(max($candidateExtraCurricularItems->count() + 1, 1)) }}</h2>
                         <div class="candidate-activity-editor">
                             <textarea class="d-none" name="description" data-activity-quill-input></textarea>
                             <div class="candidate-activity-quill" data-activity-quill-editor
-                                 data-placeholder="Enter your writing texts..."></div>
+                                 data-placeholder="{{ __('messages.candidate_profile.enter_writing_texts') }}"></div>
                         </div>
                         <p class="candidate-activity-count">
-                            You wrote <strong data-activity-character-count>0/500</strong> characters
+                            {{ __('messages.candidate_profile.you_wrote') }} <strong data-activity-character-count>0/500</strong> {{ __('messages.candidate_profile.characters') }}
                         </p>
                         <div class="candidate-skill-form__actions candidate-activity-form__actions mt-5">
-                            <button type="submit" class="candidate-skill-save">Save</button>
-                            <button type="button" class="candidate-skill-close" data-activity-close>Close</button>
+                            <button type="submit" class="candidate-skill-save">{{ __('messages.candidate_profile.save') }}</button>
+                            <button type="button" class="candidate-skill-close" data-activity-close>{{ __('messages.candidate_profile.close') }}</button>
                         </div>
                     </form>
                 </div>
@@ -222,31 +265,31 @@
                                      data-language-writing="{{ $writingLevel }}"
                                      data-language-speaking="{{ $speakingLevel }}">
                                     <div class="candidate-language-item__header">
-                                        <h2>Language {{ $loop->iteration }}</h2>
+                                        <h2>{{ __('messages.candidate_profile.language') }} {{ $candidateProfileNumber($loop->iteration) }}</h2>
                                         <div class="candidate-reference-actions">
                                             <button type="button" data-language-item-edit>
-                                                <i class="fa-regular fa-pen-to-square"></i> Edit
+                                                <i class="fa-regular fa-pen-to-square"></i> {{ __('messages.candidate_profile.edit') }}
                                             </button>
                                             <button type="button" data-language-item-delete>
-                                                <i class="fa-regular fa-trash-can"></i> Delete
+                                                <i class="fa-regular fa-trash-can"></i> {{ __('messages.candidate_profile.delete') }}
                                             </button>
                                         </div>
                                     </div>
                                     <div class="candidate-language-detail-grid">
                                         <div class="candidate-reference-field">
-                                            <span>Language</span>
+                                            <span>{{ __('messages.candidate_profile.language') }}</span>
                                             <strong data-language-detail="name">{{ $languageName }}</strong>
                                         </div>
                                         <div class="candidate-reference-field">
-                                            <span>Reading</span>
+                                            <span>{{ __('messages.candidate_profile.reading') }}</span>
                                             <strong data-language-detail="reading">{{ $readingLevel ?: '---' }}</strong>
                                         </div>
                                         <div class="candidate-reference-field">
-                                            <span>Writing</span>
+                                            <span>{{ __('messages.candidate_profile.writing') }}</span>
                                             <strong data-language-detail="writing">{{ $writingLevel ?: '---' }}</strong>
                                         </div>
                                         <div class="candidate-reference-field">
-                                            <span>Speaking</span>
+                                            <span>{{ __('messages.candidate_profile.speaking') }}</span>
                                             <strong data-language-detail="speaking">{{ $speakingLevel ?: '---' }}</strong>
                                         </div>
                                     </div>
@@ -263,42 +306,42 @@
                           data-update-url="{{ route('candidate.general.profile.update') }}"
                           data-first-name="{{ $user->first_name }}"
                           data-last-name="{{ $user->last_name }}">
-                        <h2 class="candidate-language-form__title" data-language-form-title>Language {{ max(count($candidateLanguageNames) + 1, 1) }}</h2>
+                        <h2 class="candidate-language-form__title" data-language-form-title>{{ __('messages.candidate_profile.language') }} {{ $candidateProfileNumber(max(count($candidateLanguageNames) + 1, 1)) }}</h2>
                         <div class="candidate-language-form-grid">
                             <div class="candidate-skill-form__field">
-                                <label for="candidateLanguageName">Language <span class="text-danger">*</span></label>
+                                <label for="candidateLanguageName">{{ __('messages.candidate_profile.language') }} <span class="text-danger">*</span></label>
                                 <select class="form-control" id="candidateLanguageName" data-language-name-input>
-                                    <option value="">Select your Language</option>
+                                    <option value="">{{ __('messages.candidate_profile.select_language') }}</option>
                                     @foreach($data['language'] ?? [] as $languageId => $languageName)
                                         <option value="{{ $languageName }}" data-language-id="{{ $languageId }}">{{ $languageName }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="candidate-skill-form__field">
-                                <label for="candidateLanguageReading">Reading <span class="text-danger">*</span></label>
+                                <label for="candidateLanguageReading">{{ __('messages.candidate_profile.reading') }} <span class="text-danger">*</span></label>
                                 <select class="form-control" id="candidateLanguageReading" data-language-reading-input>
-                                    <option value="">Select your Reading</option>
-                                    <option value="High">High</option>
-                                    <option value="Medium">Medium</option>
-                                    <option value="Low">Low</option>
+                                    <option value="">{{ __('messages.candidate_profile.select_reading') }}</option>
+                                    <option value="High">{{ __('messages.candidate_profile.high') }}</option>
+                                    <option value="Medium">{{ __('messages.candidate_profile.medium') }}</option>
+                                    <option value="Low">{{ __('messages.candidate_profile.low') }}</option>
                                 </select>
                             </div>
                             <div class="candidate-skill-form__field">
-                                <label for="candidateLanguageWriting">Writing <span class="text-danger">*</span></label>
+                                <label for="candidateLanguageWriting">{{ __('messages.candidate_profile.writing') }} <span class="text-danger">*</span></label>
                                 <select class="form-control" id="candidateLanguageWriting" data-language-writing-input>
-                                    <option value="">Select your Writing</option>
-                                    <option value="High">High</option>
-                                    <option value="Medium">Medium</option>
-                                    <option value="Low">Low</option>
+                                    <option value="">{{ __('messages.candidate_profile.select_writing') }}</option>
+                                    <option value="High">{{ __('messages.candidate_profile.high') }}</option>
+                                    <option value="Medium">{{ __('messages.candidate_profile.medium') }}</option>
+                                    <option value="Low">{{ __('messages.candidate_profile.low') }}</option>
                                 </select>
                             </div>
                             <div class="candidate-skill-form__field">
-                                <label for="candidateLanguageSpeaking">Speaking <span class="text-danger">*</span></label>
+                                <label for="candidateLanguageSpeaking">{{ __('messages.candidate_profile.speaking') }} <span class="text-danger">*</span></label>
                                 <select class="form-control" id="candidateLanguageSpeaking" data-language-speaking-input>
-                                    <option value="">Select your Speaking</option>
-                                    <option value="High">High</option>
-                                    <option value="Medium">Medium</option>
-                                    <option value="Low">Low</option>
+                                    <option value="">{{ __('messages.candidate_profile.select_speaking') }}</option>
+                                    <option value="High">{{ __('messages.candidate_profile.high') }}</option>
+                                    <option value="Medium">{{ __('messages.candidate_profile.medium') }}</option>
+                                    <option value="Low">{{ __('messages.candidate_profile.low') }}</option>
                                 </select>
                             </div>
                         </div>
@@ -327,8 +370,8 @@
                         </div>
 
                         <div class="candidate-skill-form__actions">
-                            <button type="submit" class="candidate-skill-save">Save Changes</button>
-                            <button type="button" class="candidate-skill-close" data-language-close>Close</button>
+                            <button type="submit" class="candidate-skill-save">{{ __('messages.candidate_profile.save') }}</button>
+                            <button type="button" class="candidate-skill-close" data-language-close>{{ __('messages.candidate_profile.close') }}</button>
                         </div>
 
                         @if(count($data['language'] ?? []))
@@ -383,10 +426,10 @@
                                     </a>
                                     <span class="candidate-link-actions">
                                         <button type="button" data-link-edit>
-                                            <i class="fa-regular fa-pen-to-square"></i> Edit
+                                            <i class="fa-regular fa-pen-to-square"></i> {{ __('messages.candidate_profile.edit') }}
                                         </button>
                                         <button type="button" data-link-delete>
-                                            <i class="fa-regular fa-trash-can"></i> Delete
+                                            <i class="fa-regular fa-trash-can"></i> {{ __('messages.candidate_profile.delete') }}
                                         </button>
                                     </span>
                                 </div>
@@ -401,9 +444,9 @@
                             <input type="hidden" data-link-editing-id>
                             <div class="candidate-link-form-grid">
                                 <div class="candidate-skill-form__field">
-                                    <label for="candidateLinkPlatform">Account Type <span class="text-danger">*</span></label>
+                                    <label for="candidateLinkPlatform">{{ __('messages.candidate_profile.account_type') }} <span class="text-danger">*</span></label>
                                     <select class="form-control" id="candidateLinkPlatform" name="platform" data-link-platform-input>
-                                        <option value="">Select account type</option>
+                                        <option value="">{{ __('messages.candidate_profile.select_account_type') }}</option>
                                         <option value="Facebook">Facebook</option>
                                         <option value="GitHub">GitHub</option>
                                         <option value="LinkedIn">LinkedIn</option>
@@ -412,14 +455,14 @@
                                     </select>
                                 </div>
                                 <div class="candidate-skill-form__field">
-                                    <label for="candidateLinkUrl">URL <span class="text-danger">*</span></label>
+                                    <label for="candidateLinkUrl">{{ __('messages.candidate_profile.url') }} <span class="text-danger">*</span></label>
                                     <input type="url" class="form-control" id="candidateLinkUrl" name="url"
-                                           data-link-url-input placeholder="https://example.com/profile">
+                                           data-link-url-input placeholder="{{ __('messages.candidate_profile.enter_url') }}">
                                 </div>
                             </div>
                             <div class="candidate-skill-form__actions">
-                                <button type="submit" class="candidate-skill-save" data-link-submit>Save</button>
-                                <button type="button" class="candidate-skill-close" data-link-close>Close</button>
+                                <button type="submit" class="candidate-skill-save" data-link-submit>{{ __('messages.candidate_profile.save') }}</button>
+                                <button type="button" class="candidate-skill-close" data-link-close>{{ __('messages.candidate_profile.close') }}</button>
                             </div>
                         </form>
                     </div>
@@ -453,63 +496,63 @@
                             @csrf
                             <input type="hidden" data-reference-editing-id>
                             <div class="candidate-reference-item__header">
-                                <h2 data-reference-form-title>Reference</h2>
+                                <h2 data-reference-form-title>{{ __('messages.candidate_profile.reference') }}</h2>
                             </div>
                             <div class="candidate-reference-form-grid">
                                 <div class="candidate-skill-form__field">
-                                    <label for="candidateReferenceName">Name <span class="text-danger">*</span></label>
+                                    <label for="candidateReferenceName">{{ __('messages.candidate_profile.name') }} <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="candidateReferenceName"
-                                           name="name" data-reference-field-input="name" required>
+                                           name="name" data-reference-field-input="name" placeholder="{{ __('messages.candidate_profile.enter_name') }}" required>
                                 </div>
                                 <div class="candidate-skill-form__field">
-                                    <label for="candidateReferenceDesignation">Designation <span class="text-danger">*</span></label>
+                                    <label for="candidateReferenceDesignation">{{ __('messages.candidate_profile.designation') }} <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="candidateReferenceDesignation"
-                                           name="designation" data-reference-field-input="designation" required>
+                                           name="designation" data-reference-field-input="designation" placeholder="{{ __('messages.candidate_profile.enter_designation') }}" required>
                                 </div>
                                 <div class="candidate-skill-form__field">
-                                    <label for="candidateReferenceOrganization">Organization <span class="text-danger">*</span></label>
+                                    <label for="candidateReferenceOrganization">{{ __('messages.candidate_profile.organization') }} <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="candidateReferenceOrganization"
-                                           name="organization" data-reference-field-input="organization" required>
+                                           name="organization" data-reference-field-input="organization" placeholder="{{ __('messages.candidate_profile.enter_organization') }}" required>
                                 </div>
                                 <div class="candidate-skill-form__field">
-                                    <label for="candidateReferenceEmail">Email</label>
+                                    <label for="candidateReferenceEmail">{{ __('messages.candidate_profile.email') }}</label>
                                     <input type="email" class="form-control" id="candidateReferenceEmail"
-                                           name="email" data-reference-field-input="email">
+                                           name="email" data-reference-field-input="email" placeholder="{{ __('messages.candidate_profile.enter_email') }}">
                                 </div>
                                 <div class="candidate-skill-form__field">
-                                    <label for="candidateReferenceRelation">Relation</label>
+                                    <label for="candidateReferenceRelation">{{ __('messages.candidate_profile.relation') }}</label>
                                     <select class="form-control" id="candidateReferenceRelation" name="relation" data-reference-field-input="relation">
-                                        <option value="">Select relation</option>
-                                        <option value="Relative">Relative</option>
-                                        <option value="Academic">Academic</option>
-                                        <option value="Professional">Professional</option>
-                                        <option value="Other">Other</option>
+                                        <option value="">{{ __('messages.candidate_profile.select_relation') }}</option>
+                                        <option value="Relative">{{ __('messages.candidate_profile.relative') }}</option>
+                                        <option value="Academic">{{ __('messages.candidate_profile.academic') }}</option>
+                                        <option value="Professional">{{ __('messages.candidate_profile.professional') }}</option>
+                                        <option value="Other">{{ __('messages.candidate_profile.other') }}</option>
                                     </select>
                                 </div>
                                 <div class="candidate-skill-form__field">
-                                    <label for="candidateReferenceMobile">Mobile</label>
+                                    <label for="candidateReferenceMobile">{{ __('messages.candidate_profile.mobile') }}</label>
                                     <input type="text" class="form-control" id="candidateReferenceMobile"
-                                           name="mobile" data-reference-field-input="mobile">
+                                           name="mobile" data-reference-field-input="mobile" placeholder="{{ __('messages.candidate_profile.enter_mobile') }}">
                                 </div>
                                 <div class="candidate-skill-form__field">
-                                    <label for="candidateReferenceOfficePhone">Phone (Office)</label>
+                                    <label for="candidateReferenceOfficePhone">{{ __('messages.candidate_profile.phone_office') }}</label>
                                     <input type="text" class="form-control" id="candidateReferenceOfficePhone"
-                                           name="office_phone" data-reference-field-input="officePhone" placeholder="Enter your Phone (Office)">
+                                           name="office_phone" data-reference-field-input="officePhone" placeholder="{{ __('messages.candidate_profile.enter_phone_office') }}">
                                 </div>
                                 <div class="candidate-skill-form__field">
-                                    <label for="candidateReferenceResidentialPhone">Phone (Residential)</label>
+                                    <label for="candidateReferenceResidentialPhone">{{ __('messages.candidate_profile.phone_residential') }}</label>
                                     <input type="text" class="form-control" id="candidateReferenceResidentialPhone"
-                                           name="residential_phone" data-reference-field-input="residentialPhone" placeholder="Enter your Phone (Residential)">
+                                           name="residential_phone" data-reference-field-input="residentialPhone" placeholder="{{ __('messages.candidate_profile.enter_phone_residential') }}">
                                 </div>
                                 <div class="candidate-skill-form__field candidate-reference-form-field--full">
-                                    <label for="candidateReferenceAddress">Address</label>
+                                    <label for="candidateReferenceAddress">{{ __('messages.candidate_profile.address') }}</label>
                                     <textarea class="form-control" id="candidateReferenceAddress" rows="4"
                                               name="address" data-reference-field-input="address"></textarea>
                                 </div>
                             </div>
                             <div class="candidate-skill-form__actions">
-                                <button type="submit" class="candidate-skill-save" data-reference-submit>Save</button>
-                                <button type="button" class="candidate-skill-close" data-reference-close>Close</button>
+                                <button type="submit" class="candidate-skill-save" data-reference-submit>{{ __('messages.candidate_profile.save') }}</button>
+                                <button type="button" class="candidate-skill-close" data-reference-close>{{ __('messages.candidate_profile.close') }}</button>
                             </div>
                         </form>
 
@@ -528,53 +571,53 @@
                                  data-update-url="{{ route('candidate-profile.references.update', $reference) }}"
                                  data-delete-url="{{ route('candidate-profile.references.destroy', $reference) }}">
                                 <div class="candidate-reference-item__header">
-                                    <h2>Reference {{ $loop->iteration }}</h2>
+                                    <h2>{{ __('messages.candidate_profile.reference') }} {{ $candidateProfileNumber($loop->iteration) }}</h2>
                                     <div class="candidate-reference-actions">
                                         <button type="button" data-reference-edit>
                                             <i class="fa-regular fa-pen-to-square"></i>
-                                            Edit
+                                            {{ __('messages.candidate_profile.edit') }}
                                         </button>
                                         <button type="button" data-reference-delete>
                                             <i class="fa-regular fa-trash-can"></i>
-                                            Delete
+                                            {{ __('messages.candidate_profile.delete') }}
                                         </button>
                                     </div>
                                 </div>
                                 <div class="candidate-reference-detail-grid">
                                     <div class="candidate-reference-field">
-                                        <span>Name</span>
+                                        <span>{{ __('messages.candidate_profile.name') }}</span>
                                         <strong data-reference-value="name">{{ $reference->name }}</strong>
                                     </div>
                                     <div class="candidate-reference-field">
-                                        <span>Designation</span>
+                                        <span>{{ __('messages.candidate_profile.designation') }}</span>
                                         <strong data-reference-value="designation">{{ $reference->designation }}</strong>
                                     </div>
                                     <div class="candidate-reference-field">
-                                        <span>Organization</span>
+                                        <span>{{ __('messages.candidate_profile.organization') }}</span>
                                         <strong data-reference-value="organization">{{ $reference->organization }}</strong>
                                     </div>
                                     <div class="candidate-reference-field">
-                                        <span>Email</span>
+                                        <span>{{ __('messages.candidate_profile.email') }}</span>
                                         <strong data-reference-value="email">{{ $reference->email ?: '---' }}</strong>
                                     </div>
                                     <div class="candidate-reference-field">
-                                        <span>Relation</span>
+                                        <span>{{ __('messages.candidate_profile.relation') }}</span>
                                         <strong data-reference-value="relation">{{ $reference->relation ?: '---' }}</strong>
                                     </div>
                                     <div class="candidate-reference-field">
-                                        <span>Mobile</span>
+                                        <span>{{ __('messages.candidate_profile.mobile') }}</span>
                                         <strong data-reference-value="mobile">{{ $reference->mobile ?: '---' }}</strong>
                                     </div>
                                     <div class="candidate-reference-field">
-                                        <span>Phone (Office)</span>
+                                        <span>{{ __('messages.candidate_profile.phone_office') }}</span>
                                         <strong data-reference-value="officePhone">{{ $reference->office_phone ?: '---' }}</strong>
                                     </div>
                                     <div class="candidate-reference-field">
-                                        <span>Phone (Residential)</span>
+                                        <span>{{ __('messages.candidate_profile.phone_residential') }}</span>
                                         <strong data-reference-value="residentialPhone">{{ $reference->residential_phone ?: '---' }}</strong>
                                     </div>
                                     <div class="candidate-reference-field candidate-reference-field--full">
-                                        <span>Address</span>
+                                        <span>{{ __('messages.candidate_profile.address') }}</span>
                                         <strong data-reference-value="address">{{ $reference->address ?: '---' }}</strong>
                                     </div>
                                 </div>
@@ -592,6 +635,14 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const _useBanglaDigits = @json(app()->getLocale() === 'bn');
+            const formatProfileNumber = function (number) {
+                const value = String(number);
+                if (!_useBanglaDigits) return value;
+                const bd = { '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪', '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯' };
+                return value.replace(/[0-9]/g, function (d) { return bd[d]; });
+            };
+
             const otherSectionLinks = document.querySelectorAll('[data-other-section-link]');
             const otherSectionBodies = document.querySelectorAll('.candidate-other-info-page .candidate-profile-section__collapse');
             const skillManager = document.querySelector('.candidate-skill-manager');
@@ -619,6 +670,15 @@
                     LinkedIn: 'fa-brands fa-linkedin',
                     Twitter: 'fa-brands fa-twitter',
                     Website: 'fa-solid fa-globe',
+                };
+                const linkLabels = {
+                    save: @json(__('messages.candidate_profile.save')),
+                    close: @json(__('messages.candidate_profile.close')),
+                    update: @json(__('messages.candidate_profile.update')),
+                    cancel: @json(__('messages.candidate_profile.cancel')),
+                    edit: @json(__('messages.candidate_profile.edit')),
+                    delete: @json(__('messages.candidate_profile.delete')),
+                    confirmDelete: @json(__('messages.candidate_profile.confirm_delete_link_account')),
                 };
 
                 const linkItems = function () {
@@ -660,12 +720,14 @@
                         '<span class="candidate-link-platform"><i></i><span></span></span>',
                         '<a target="_blank" data-link-url-text></a>',
                         '<span class="candidate-link-actions">',
-                        '<button type="button" data-link-edit><i class="fa-regular fa-pen-to-square"></i> Edit</button>',
-                        '<button type="button" data-link-delete><i class="fa-regular fa-trash-can"></i> Delete</button>',
+                        '<button type="button" data-link-edit><i class="fa-regular fa-pen-to-square"></i> <span></span></button>',
+                        '<button type="button" data-link-delete><i class="fa-regular fa-trash-can"></i> <span></span></button>',
                         '</span>',
                     ].join('');
                     item.querySelector('.candidate-link-platform i').className = platformIcons[platform] || platformIcons.Website;
                     item.querySelector('.candidate-link-platform span').textContent = platform;
+                    item.querySelector('[data-link-edit] span').textContent = linkLabels.edit;
+                    item.querySelector('[data-link-delete] span').textContent = linkLabels.delete;
                     item.querySelector('[data-link-url-text]').textContent = url;
                     item.querySelector('[data-link-url-text]').href = /^https?:\/\//i.test(url) ? url : 'https://' + url;
                     return item;
@@ -692,10 +754,10 @@
                         linkEditingId.value = '';
                     }
                     if (linkSubmit) {
-                        linkSubmit.textContent = 'Save';
+                        linkSubmit.textContent = linkLabels.save;
                     }
                     if (linkClose) {
-                        linkClose.textContent = 'Close';
+                        linkClose.textContent = linkLabels.close;
                     }
                 };
 
@@ -740,10 +802,10 @@
                         linkPlatformInput.value = item.dataset.linkPlatform || '';
                         linkUrlInput.value = item.dataset.linkUrl || '';
                         if (linkSubmit) {
-                            linkSubmit.textContent = 'Update';
+                            linkSubmit.textContent = linkLabels.update;
                         }
                         if (linkClose) {
-                            linkClose.textContent = 'Cancel';
+                            linkClose.textContent = linkLabels.cancel;
                         }
                         linkForm.classList.add('candidate-link-form--inline');
                         item.before(linkForm);
@@ -752,7 +814,7 @@
                     }
 
                     if (deleteButton && item) {
-                        if (!window.confirm('Are you sure you want to delete this link account?')) {
+                        if (!window.confirm(linkLabels.confirmDelete)) {
                             return;
                         }
 
@@ -924,12 +986,31 @@
                     return values;
                 };
 
+                const referenceLabels = {
+                    reference: @json(__('messages.candidate_profile.reference')),
+                    save: @json(__('messages.candidate_profile.save')),
+                    close: @json(__('messages.candidate_profile.close')),
+                    update: @json(__('messages.candidate_profile.update')),
+                    cancel: @json(__('messages.candidate_profile.cancel')),
+                    edit: @json(__('messages.candidate_profile.edit')),
+                    delete: @json(__('messages.candidate_profile.delete')),
+                    name: @json(__('messages.candidate_profile.name')),
+                    designation: @json(__('messages.candidate_profile.designation')),
+                    organization: @json(__('messages.candidate_profile.organization')),
+                    email: @json(__('messages.candidate_profile.email')),
+                    relation: @json(__('messages.candidate_profile.relation')),
+                    mobile: @json(__('messages.candidate_profile.mobile')),
+                    officePhone: @json(__('messages.candidate_profile.phone_office')),
+                    residentialPhone: @json(__('messages.candidate_profile.phone_residential')),
+                    address: @json(__('messages.candidate_profile.address')),
+                    confirmDelete: @json(__('messages.candidate_profile.confirm_delete_reference')),
+                };
                 const renderReferenceNumbers = function () {
                     const items = referenceItems();
                     items.forEach(function (item, index) {
                         const title = item.querySelector('.candidate-reference-item__header h2');
                         if (title) {
-                            title.textContent = 'Reference ' + (index + 1);
+                            title.textContent = referenceLabels.reference + ' ' + formatProfileNumber(index + 1);
                         }
                     });
                     referenceEmpty()?.classList.toggle('d-none', items.length > 0);
@@ -956,20 +1037,20 @@
                         '<div class="candidate-reference-item__header">',
                         '<h2></h2>',
                         '<div class="candidate-reference-actions">',
-                        '<button type="button" data-reference-edit><i class="fa-regular fa-pen-to-square"></i> Edit</button>',
-                        '<button type="button" data-reference-delete><i class="fa-regular fa-trash-can"></i> Delete</button>',
+                        '<button type="button" data-reference-edit><i class="fa-regular fa-pen-to-square"></i> ' + referenceLabels.edit + '</button>',
+                        '<button type="button" data-reference-delete><i class="fa-regular fa-trash-can"></i> ' + referenceLabels.delete + '</button>',
                         '</div>',
                         '</div>',
                         '<div class="candidate-reference-detail-grid">',
-                        '<div class="candidate-reference-field"><span>Name</span><strong data-reference-value="name"></strong></div>',
-                        '<div class="candidate-reference-field"><span>Designation</span><strong data-reference-value="designation"></strong></div>',
-                        '<div class="candidate-reference-field"><span>Organization</span><strong data-reference-value="organization"></strong></div>',
-                        '<div class="candidate-reference-field"><span>Email</span><strong data-reference-value="email"></strong></div>',
-                        '<div class="candidate-reference-field"><span>Relation</span><strong data-reference-value="relation"></strong></div>',
-                        '<div class="candidate-reference-field"><span>Mobile</span><strong data-reference-value="mobile"></strong></div>',
-                        '<div class="candidate-reference-field"><span>Phone (Office)</span><strong data-reference-value="officePhone"></strong></div>',
-                        '<div class="candidate-reference-field"><span>Phone (Residential)</span><strong data-reference-value="residentialPhone"></strong></div>',
-                        '<div class="candidate-reference-field candidate-reference-field--full"><span>Address</span><strong data-reference-value="address"></strong></div>',
+                        '<div class="candidate-reference-field"><span>' + referenceLabels.name + '</span><strong data-reference-value="name"></strong></div>',
+                        '<div class="candidate-reference-field"><span>' + referenceLabels.designation + '</span><strong data-reference-value="designation"></strong></div>',
+                        '<div class="candidate-reference-field"><span>' + referenceLabels.organization + '</span><strong data-reference-value="organization"></strong></div>',
+                        '<div class="candidate-reference-field"><span>' + referenceLabels.email + '</span><strong data-reference-value="email"></strong></div>',
+                        '<div class="candidate-reference-field"><span>' + referenceLabels.relation + '</span><strong data-reference-value="relation"></strong></div>',
+                        '<div class="candidate-reference-field"><span>' + referenceLabels.mobile + '</span><strong data-reference-value="mobile"></strong></div>',
+                        '<div class="candidate-reference-field"><span>' + referenceLabels.officePhone + '</span><strong data-reference-value="officePhone"></strong></div>',
+                        '<div class="candidate-reference-field"><span>' + referenceLabels.residentialPhone + '</span><strong data-reference-value="residentialPhone"></strong></div>',
+                        '<div class="candidate-reference-field candidate-reference-field--full"><span>' + referenceLabels.address + '</span><strong data-reference-value="address"></strong></div>',
                         '</div>',
                     ].join('');
                     syncReferenceItem(item, values);
@@ -983,13 +1064,13 @@
                     }
                     setReferenceInputValues(null);
                     if (referenceSubmit) {
-                        referenceSubmit.textContent = 'Save';
+                        referenceSubmit.textContent = referenceLabels.save;
                     }
                     if (referenceClose) {
-                        referenceClose.textContent = 'Close';
+                        referenceClose.textContent = referenceLabels.close;
                     }
                     if (referenceFormTitle) {
-                        referenceFormTitle.textContent = 'Reference';
+                        referenceFormTitle.textContent = referenceLabels.reference;
                     }
                     referenceForm.classList.remove('candidate-reference-form--inline');
                     if (activeReferenceItem) {
@@ -1015,13 +1096,13 @@
                     referenceForm.classList.remove('d-none');
                     if (referenceFormTitle) {
                         const formIndex = item ? referenceItems().indexOf(item) + 1 : referenceItems().length + 1;
-                        referenceFormTitle.textContent = 'Reference ' + formIndex;
+                        referenceFormTitle.textContent = referenceLabels.reference + ' ' + formatProfileNumber(formIndex);
                     }
                     if (referenceSubmit) {
-                        referenceSubmit.textContent = item ? 'Update' : 'Save';
+                        referenceSubmit.textContent = item ? referenceLabels.update : referenceLabels.save;
                     }
                     if (referenceClose) {
-                        referenceClose.textContent = item ? 'Cancel' : 'Close';
+                        referenceClose.textContent = item ? referenceLabels.cancel : referenceLabels.close;
                     }
                     if (item) {
                         referenceForm.classList.add('candidate-reference-form--inline');
@@ -1054,7 +1135,7 @@
                     }
 
                     if (deleteButton && item) {
-                        if (!window.confirm('Are you sure you want to delete this reference?')) {
+                        if (!window.confirm(referenceLabels.confirmDelete)) {
                             return;
                         }
 
@@ -1213,6 +1294,12 @@
 
                 const renderLanguageSummary = function () {
                     const items = languageItems();
+                    const _langLabel       = @json(__('messages.candidate_profile.language'));
+                    const _readingLabel    = @json(__('messages.candidate_profile.reading'));
+                    const _writingLabel    = @json(__('messages.candidate_profile.writing'));
+                    const _speakingLabel   = @json(__('messages.candidate_profile.speaking'));
+                    const _editLabel       = @json(__('messages.candidate_profile.edit'));
+                    const _deleteLabel     = @json(__('messages.candidate_profile.delete'));
                     if (languageChipList) {
                         languageChipList.innerHTML = '';
                         items.forEach(function (item, index) {
@@ -1228,18 +1315,18 @@
                                 '<div class="candidate-language-item__header">',
                                 '<h2></h2>',
                                 '<div class="candidate-reference-actions">',
-                                '<button type="button" data-language-item-edit><i class="fa-regular fa-pen-to-square"></i> Edit</button>',
-                                '<button type="button" data-language-item-delete><i class="fa-regular fa-trash-can"></i> Delete</button>',
+                                '<button type="button" data-language-item-edit><i class="fa-regular fa-pen-to-square"></i> ' + _editLabel + '</button>',
+                                '<button type="button" data-language-item-delete><i class="fa-regular fa-trash-can"></i> ' + _deleteLabel + '</button>',
                                 '</div>',
                                 '</div>',
                                 '<div class="candidate-language-detail-grid">',
-                                '<div class="candidate-reference-field"><span>Language</span><strong data-language-detail="name"></strong></div>',
-                                '<div class="candidate-reference-field"><span>Reading</span><strong data-language-detail="reading"></strong></div>',
-                                '<div class="candidate-reference-field"><span>Writing</span><strong data-language-detail="writing"></strong></div>',
-                                '<div class="candidate-reference-field"><span>Speaking</span><strong data-language-detail="speaking"></strong></div>',
+                                '<div class="candidate-reference-field"><span>' + _langLabel + '</span><strong data-language-detail="name"></strong></div>',
+                                '<div class="candidate-reference-field"><span>' + _readingLabel + '</span><strong data-language-detail="reading"></strong></div>',
+                                '<div class="candidate-reference-field"><span>' + _writingLabel + '</span><strong data-language-detail="writing"></strong></div>',
+                                '<div class="candidate-reference-field"><span>' + _speakingLabel + '</span><strong data-language-detail="speaking"></strong></div>',
                                 '</div>',
                             ].join('');
-                            chip.querySelector('h2').textContent = 'Language ' + (index + 1);
+                            chip.querySelector('h2').textContent = _langLabel + ' ' + formatProfileNumber(index + 1);
                             chip.querySelector('[data-language-detail="name"]').textContent = item.dataset.languageName || '---';
                             chip.querySelector('[data-language-detail="reading"]').textContent = item.dataset.languageReading || '---';
                             chip.querySelector('[data-language-detail="writing"]').textContent = item.dataset.languageWriting || '---';
@@ -1251,7 +1338,7 @@
                     languageEmpty?.classList.toggle('d-none', Boolean(items.length));
                     languageInlineAddAction?.classList.toggle('d-none', !items.length);
                     if (languageEditAction) {
-                        languageEditAction.innerHTML = '<i class="fa-solid fa-plus"></i> Add Language';
+                        languageEditAction.innerHTML = '<i class="fa-solid fa-plus"></i> ' + @json(__('messages.candidate_profile.add_language'));
                     }
                 };
 
@@ -1285,7 +1372,7 @@
 
                     const items = languageItems();
                     const index = item ? items.indexOf(item) + 1 : items.length + 1;
-                    languageFormTitle.textContent = 'Language ' + Math.max(index, 1);
+                    languageFormTitle.textContent = @json(__('messages.candidate_profile.language')) + ' ' + formatProfileNumber(Math.max(index, 1));
                 };
 
                 const syncLanguages = function () {
@@ -1530,19 +1617,32 @@
                     return activityList ? Array.from(activityList.querySelectorAll('[data-activity-item]')) : [];
                 };
 
+                const extracurricularTitle = @json(__('messages.candidate_profile.extracurricular_activities'));
+                const editText = @json(__('messages.candidate_profile.edit'));
+                const deleteText = @json(__('messages.candidate_profile.delete'));
+                const confirmDeleteText = @json(__('messages.candidate_profile.confirm_delete_extracurricular'));
+
+                const useBanglaNumbers = @json(app()->getLocale() === 'bn');
+                const formatActivityNumber = function (number) {
+                    const value = String(number);
+                    if (!useBanglaNumbers) return value;
+                    const banglaDigits = { '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪', '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯' };
+                    return value.replace(/[0-9]/g, function (d) { return banglaDigits[d]; });
+                };
+
                 const renderActivityNumbers = function () {
                     const items = activityItems();
                     items.forEach(function (item, index) {
                         const title = item.querySelector('h2');
                         if (title) {
-                            title.textContent = 'Extracurricular Activities ' + (index + 1);
+                            title.textContent = extracurricularTitle + ' ' + formatProfileNumber(index + 1);
                         }
                     });
 
                     activityList?.classList.toggle('d-none', !items.length);
                     activityEmpty?.classList.toggle('d-none', items.length > 0);
                     if (activityFormTitle && !activeActivityItem) {
-                        activityFormTitle.textContent = 'Extracurricular Activities ' + (items.length + 1);
+                        activityFormTitle.textContent = extracurricularTitle + ' ' + formatProfileNumber(items.length + 1);
                     }
                 };
 
@@ -1556,13 +1656,13 @@
                     item.dataset.deleteUrl = activity.delete_url || '';
                     item.innerHTML = `
                         <div class="candidate-activity-item__header">
-                            <h2>Extracurricular Activities</h2>
+                            <h2>${extracurricularTitle}</h2>
                             <div class="candidate-reference-actions">
                                 <button type="button" data-activity-edit>
-                                    <i class="fa-regular fa-pen-to-square"></i> Edit
+                                    <i class="fa-regular fa-pen-to-square"></i> ${editText}
                                 </button>
                                 <button type="button" data-activity-delete>
-                                    <i class="fa-regular fa-trash-can"></i> Delete
+                                    <i class="fa-regular fa-trash-can"></i> ${deleteText}
                                 </button>
                             </div>
                         </div>
@@ -1675,7 +1775,7 @@
                         activityEditingId.value = activeActivityItem ? (activeActivityItem.dataset.activityId || '') : '';
                     }
                     if (activityFormTitle) {
-                        activityFormTitle.textContent = 'Extracurricular Activities ' + Math.max(number, 1);
+                        activityFormTitle.textContent = extracurricularTitle + ' ' + formatProfileNumber(Math.max(number, 1));
                     }
                     if (activityQuill) {
                         activityQuill.root.innerHTML = description;
@@ -1762,7 +1862,7 @@
                         return;
                     }
 
-                    if (!window.confirm('Are you sure you want to delete this extracurricular activity?')) {
+                    if (!window.confirm(confirmDeleteText)) {
                         return;
                     }
 
@@ -1813,6 +1913,23 @@
                     return skillManager.querySelector('[data-skill-empty]');
                 };
                 const skillOptions = {};
+                const skillSourceTranslations = {
+                    'Self': @json(__('messages.candidate_profile.self')),
+                    'Job': @json(__('messages.candidate_profile.job')),
+                    'Educational': @json(__('messages.candidate_profile.educational')),
+                    'Professional Training': @json(__('messages.candidate_profile.professional_training')),
+                    'NTVQF': @json(__('messages.candidate_profile.ntvqf')),
+                };
+                const defaultSourceTranslated = @json(__('messages.candidate_profile.professional_training'));
+
+                const formatSourcesTranslated = function (sources) {
+                    if (!sources || !sources.length) {
+                        return defaultSourceTranslated;
+                    }
+                    return sources.map(function (s) {
+                        return skillSourceTranslations[s] || s;
+                    }).join(', ');
+                };
 
                 skillManager.querySelectorAll('[data-skill-option]').forEach(function (option) {
                     skillOptions[String(option.dataset.name || '').toLowerCase()] = {
@@ -1856,7 +1973,7 @@
                         '</div>',
                     ].join('');
                     item.querySelector('strong').textContent = name;
-                    item.querySelector('span').textContent = sources.join(', ') || 'Professional Training';
+                    item.querySelector('span').textContent = formatSourcesTranslated(sources);
                     return item;
                 };
 
@@ -1992,7 +2109,7 @@
                         existingItem.dataset.skillName = skillName;
                         existingItem.dataset.skillSources = sources.join(', ');
                         existingItem.querySelector('strong').textContent = skillName;
-                        existingItem.querySelector('span').textContent = sources.join(', ') || 'Professional Training';
+                        existingItem.querySelector('span').textContent = formatSourcesTranslated(sources);
                     } else {
                         skillList.appendChild(makeSkillItem(skillId, skillName, sources));
                     }

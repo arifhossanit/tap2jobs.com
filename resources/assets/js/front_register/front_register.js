@@ -1,5 +1,14 @@
 document.addEventListener('DOMContentLoaded', loadFrontRegisterData);
 
+function visitRegisterRedirect (url) {
+    if (window.Turbo && typeof window.Turbo.visit === 'function') {
+        window.Turbo.visit(url);
+        return;
+    }
+
+    window.location.href = url;
+}
+
 function loadFrontRegisterData () {
     if (!$('#addEmployerNewForm').length && !$('#addCandidateNewForm').length) {
         return;
