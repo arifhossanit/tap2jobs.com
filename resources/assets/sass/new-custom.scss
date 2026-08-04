@@ -92,7 +92,14 @@
 
 .employer-account-sidebar {
   border-right: 1px solid #dce4ed;
-  padding: 22px 16px 32px 28px;
+  padding: 22px 12px 32px 24px;
+}
+
+.employer-account-sidebar__inner {
+  max-height: calc(100vh - 90px);
+  overflow-y: auto;
+  position: sticky;
+  top: 72px;
 }
 
 .employer-account-sidebar h2 {
@@ -105,7 +112,6 @@
 .employer-account-nav {
   display: flex;
   flex-direction: column;
-  gap: 2px;
 }
 
 .employer-account-nav a,
@@ -116,31 +122,98 @@
   color: #4b5768;
   display: flex;
   font-size: 14px;
-  gap: 10px;
-  min-height: 36px;
+  cursor: pointer;
+  gap: 11px;
+  min-height: 38px;
   padding: 8px 12px;
   text-align: left;
   text-decoration: none;
   width: 100%;
 }
 
-.employer-account-nav a.active {
+.employer-account-nav .employer-account-nav-toggle.active {
   background: #eef6ff;
-  border-left: 3px solid #0b77bd;
-  color: #0b77bd;
+  border-left: 4px solid #1681bd;
+  color: #0879b9;
   min-height: 50px;
+  padding-left: 12px;
 }
 
-.employer-account-nav a.active .fa-chevron-up {
+.employer-account-nav-toggle .fa-chevron-up {
+  font-size: 11px;
   margin-left: auto;
+  margin-right: 7px;
+  transition: transform 0.2s ease;
 }
 
-.employer-account-nav a:not(.active) {
-  padding-left: 48px;
+.employer-account-nav-toggle[aria-expanded='false'] .fa-chevron-up {
+  transform: rotate(180deg);
 }
 
-.employer-account-nav button {
-  margin-top: 18px;
+.employer-account-nav .employer-account-nav-toggle.active > .fa-user {
+  font-size: 20px;
+}
+
+.employer-account-subnav {
+  border-left: 1px solid #d5dde7;
+  margin-left: 24px;
+  max-height: 122px;
+  overflow: hidden;
+  padding: 2px 0 4px 12px;
+  transition: max-height 0.25s ease, padding 0.25s ease, border-color 0.25s ease;
+}
+
+.employer-account-subnav.is-collapsed {
+  border-color: transparent;
+  max-height: 0;
+  padding-bottom: 0;
+  padding-top: 0;
+}
+
+.employer-account-subnav .employer-account-section-link {
+  border-left: 0;
+  border-radius: 0;
+  min-height: 36px;
+  padding: 7px 12px;
+}
+
+.employer-account-subnav .employer-account-section-link.active {
+  background: #eef6ff;
+  color: #0879b9;
+  font-weight: 500;
+}
+
+.employer-account-nav .employer-account-nav-action {
+  font-size: 14px;
+  margin-top: 14px;
+  padding-left: 11px;
+}
+
+.employer-account-nav-action > i,
+.employer-account-user-icon {
+  flex: 0 0 19px;
+  font-size: 17px;
+  text-align: center;
+}
+
+.employer-account-user-icon {
+  display: inline-block;
+  height: 22px;
+  position: relative;
+}
+
+.employer-account-user-icon .fa-user {
+  left: 0;
+  position: absolute;
+  top: 1px;
+}
+
+.employer-account-user-icon .fa-gear {
+  background: #fff;
+  bottom: 0;
+  font-size: 9px;
+  position: absolute;
+  right: -1px;
 }
 
 .employer-account-panel {
@@ -223,12 +296,339 @@
   font-size: 14px;
   font-weight: 700;
   gap: 8px;
-  margin: 0 0 22px 24px;
+  margin: 0 0 22px;
 }
 
 .employer-account-form {
-  max-width: 900px;
+  max-width: 940px;
+}
+
+.employer-account-content-panel {
   padding: 0 24px;
+  scroll-margin-top: 82px;
+}
+
+.employer-account-content-panel:not(#companyDetailsPanel) {
+  border-top: 1px solid #dfe7ef;
+  margin-top: 38px;
+  padding-top: 30px;
+}
+
+.employer-account-content-panel:not(#companyDetailsPanel) .employer-account-section-title {
+  margin-bottom: 22px;
+}
+
+.employer-account-section-subtitle {
+  color: #10203f;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 16px;
+}
+
+.employer-primary-contact-grid {
+  row-gap: 18px;
+}
+
+.employer-primary-contact-grid .form-label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.employer-primary-contact-grid .form-control,
+.employer-primary-contact-grid .form-select {
+  min-height: 42px;
+}
+
+.employer-primary-contact-grid .employer-contact-readonly {
+  background-color: #f1f1f1;
+  color: #4b4b4b;
+}
+
+.employer-contact-mobile .iti,
+.employer-contact-mobile .iti input {
+  width: 100%;
+}
+
+.employer-contact-mobile .iti input {
+  padding-left: 122px !important;
+}
+
+.employer-contact-action {
+  background: #087db7;
+  border: 1px solid #087db7;
+  border-radius: 7px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  min-height: 40px;
+  padding: 9px 16px;
+}
+
+.employer-contact-action:hover {
+  background: #066a9c;
+  border-color: #066a9c;
+}
+
+.employer-billing-grid {
+  row-gap: 18px;
+}
+
+.employer-billing-grid .form-label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.employer-billing-grid .form-control {
+  min-height: 42px;
+}
+
+.employer-billing-mobile .iti,
+.employer-billing-mobile .iti input {
+  width: 100%;
+}
+
+.employer-billing-mobile .iti input {
+  padding-left: 122px !important;
+}
+
+.employer-billing-divider {
+  border-top: 1px solid #dfe7ef;
+  margin: 40px 24px 52px;
+}
+
+.employer-facilities-question {
+  margin-left: 24px;
+}
+
+.employer-facilities-question__title {
+  align-items: center;
+  color: #10203f;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 13px;
+  font-weight: 600;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.employer-facilities-question__title a {
+  color: #0879b9;
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+.employer-facilities-options {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(2, 240px);
+}
+
+.employer-facility-card {
+  background: #fff;
+  border: 1px solid #d3dfeb;
+  border-radius: 7px;
+  cursor: pointer;
+  min-height: 124px;
+  padding: 27px 34px 16px 16px;
+  position: relative;
+}
+
+.employer-facility-card input {
+  accent-color: #1681bd;
+  height: 19px;
+  margin: 0;
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  width: 19px;
+}
+
+.employer-facility-card strong {
+  color: #101828;
+  display: block;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.employer-facility-card span {
+  color: #475467;
+  display: block;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.employer-facility-card:has(input:checked) {
+  background: #eef6fb;
+  border-color: #a9d9f4;
+  box-shadow: 0 3px 6px rgba(16, 24, 40, .12);
+}
+
+.employer-disability-details {
+  margin-top: 32px;
+}
+
+.employer-disability-overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  margin: 0 8px 42px;
+  min-height: 142px;
+}
+
+.employer-disability-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 8px 0;
+}
+
+.employer-disability-questions fieldset {
+  border: 0;
+  display: grid !important;
+  gap: 5px 16px;
+  grid-template-columns: max-content max-content;
+  justify-content: start;
+  margin: 0;
+  padding: 0;
+}
+
+.employer-disability-questions legend {
+  color: #101828;
+  display: block !important;
+  float: none !important;
+  font-size: 13px;
+  font-weight: 600;
+  grid-column: 1 / -1;
+  line-height: 1.45;
+  margin: 0;
+  max-width: 430px;
+  width: auto !important;
+}
+
+.employer-disability-questions label {
+  align-items: center;
+  color: #101828;
+  display: inline-flex;
+  font-size: 14px;
+  gap: 4px;
+  justify-self: start;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.employer-disability-questions input {
+  accent-color: #1681bd;
+  height: 14px;
+  margin: 0;
+  width: 14px;
+}
+
+.employer-disability-illustration {
+  align-items: flex-end;
+  background: linear-gradient(135deg, #edf2ff 0%, #c6d7ff 100%);
+  border-radius: 5px;
+  color: #2c75e8;
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  overflow: hidden;
+  padding: 24px 34px 14px;
+  position: relative;
+}
+
+.employer-disability-illustration > .fa-person {
+  color: #ff805d;
+  font-size: 78px;
+  position: relative;
+  z-index: 2;
+}
+
+.employer-disability-illustration > .fa-wheelchair-move {
+  color: #2165d5;
+  font-size: 84px;
+  position: relative;
+  z-index: 2;
+}
+
+.employer-disability-illustration > span {
+  background: rgba(48, 100, 202, .18);
+  bottom: 0;
+  height: 58%;
+  position: absolute;
+  right: 28px;
+  transform: skewX(-9deg);
+  width: 58px;
+}
+
+.employer-disability-cloud {
+  color: #fff;
+  font-size: 17px;
+  position: absolute;
+  top: 18px;
+}
+
+.employer-disability-cloud--one {
+  left: 32px;
+}
+
+.employer-disability-cloud--two {
+  right: 72px;
+  top: 28px;
+}
+
+.employer-disability-checklist {
+  border: 1px solid #d3dfeb;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(16, 24, 40, .08);
+  padding: 28px 24px 24px;
+}
+
+.employer-disability-checklist h3 {
+  color: #101828;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 30px;
+}
+
+.employer-disability-checklist__grid {
+  display: grid;
+  gap: 18px 30px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.employer-disability-checklist__grid label {
+  align-items: flex-start;
+  color: #101828;
+  cursor: pointer;
+  display: flex;
+  font-size: 13px;
+  gap: 9px;
+  line-height: 1.45;
+}
+
+.employer-disability-checklist__grid input {
+  accent-color: #1681bd;
+  flex: 0 0 16px;
+  height: 16px;
+  margin: 1px 0 0;
+  width: 16px;
+}
+
+.employer-account-actions .employer-save-changes {
+  background: #00a63c;
+  border-color: #00a63c;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  min-height: 46px;
+  padding: 10px 18px;
+}
+
+.employer-account-actions .employer-save-changes:hover {
+  background: #008f34;
+  border-color: #008f34;
+  color: #fff;
 }
 
 .employer-account-form .form-label {
@@ -237,12 +637,386 @@
   font-weight: 500;
 }
 
+.employer-account-field-heading {
+  color: #10203f;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+  margin-bottom: 9px;
+}
+
+.employer-account-field-heading.required-heading:after {
+  color: #f04438;
+  content: ' *';
+}
+
+.employer-company-size-options {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  max-width: 740px;
+  width: 100%;
+}
+
+.employer-choice-card {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #d4e1ed;
+  border-radius: 6px;
+  color: #071638;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+  height: 40px;
+  min-width: 0;
+  padding: 0 14px;
+  white-space: nowrap;
+}
+
+.employer-choice-card span {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.employer-choice-card input {
+  accent-color: #1681bd;
+  height: 14px;
+  margin: 0;
+  min-width: 14px;
+  width: 14px;
+}
+
+.employer-choice-card:has(input:checked) {
+  background: #fff;
+  border-color: #c8ddec;
+}
+
+.employer-industry-type-row {
+  align-items: flex-end;
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.employer-industry-type-select {
+  min-width: 0;
+}
+
+.employer-add-industry-trigger {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: #2969e8;
+  display: inline-flex;
+  font-size: 14px;
+  gap: 6px;
+  height: 50px;
+  padding: 0 8px;
+  white-space: nowrap;
+}
+
+.employer-add-industry-trigger i {
+  font-size: 19px;
+}
+
+.employer-industry-picker {
+  border: 1px solid #d3dfeb;
+  border-radius: 8px;
+  min-height: 280px;
+  padding: 24px;
+}
+
+.employer-industry-search-wrap {
+  margin-bottom: 24px;
+  position: relative !important;
+}
+
+.employer-industry-search-wrap .form-control {
+  min-height: 46px;
+  padding-right: 46px !important;
+  width: 100%;
+}
+
+.employer-industry-search-icon {
+  align-items: center;
+  color: #98a2b3 !important;
+  display: flex !important;
+  height: 46px;
+  justify-content: center;
+  left: auto !important;
+  margin: 0 !important;
+  pointer-events: none;
+  position: absolute !important;
+  right: 0 !important;
+  top: 0 !important;
+  transform: none !important;
+  width: 46px;
+  z-index: 5;
+}
+
+.employer-industry-search-icon i,
+.employer-industry-search-icon svg {
+  color: inherit !important;
+  display: block;
+  font-size: 16px;
+  height: 16px;
+  line-height: 16px;
+  margin: 0 !important;
+  position: static !important;
+  transform: none !important;
+  width: 16px;
+}
+
+.employer-industry-options {
+  display: grid;
+  gap: 16px 30px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.employer-industry-option {
+  align-items: flex-start;
+  color: #101828;
+  cursor: pointer;
+  display: flex;
+  font-size: 14px;
+  gap: 9px;
+  line-height: 1.4;
+}
+
+.employer-industry-option.is-extra {
+  display: none;
+}
+
+.employer-industry-option.is-filtered-out {
+  display: none !important;
+}
+
+.employer-industry-options.is-expanded .employer-industry-option.is-extra {
+  display: flex;
+}
+
+.employer-industry-option input {
+  appearance: none;
+  background: #fff;
+  border: 1px solid #98a2b3;
+  border-radius: 2px;
+  flex: 0 0 16px;
+  height: 16px;
+  margin: 1px 0 0;
+  position: relative;
+  width: 16px;
+}
+
+.employer-industry-option input:checked {
+  background: #1681bd;
+  border-color: #1681bd;
+}
+
+.employer-industry-option input:checked:after {
+  color: #fff;
+  content: '\2713';
+  font-size: 11px;
+  left: 2px;
+  line-height: 1;
+  position: absolute;
+  top: 1px;
+}
+
+.employer-industry-more {
+  background: transparent;
+  border: 0;
+  color: #0879b9;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 26px;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.employer-industry-empty {
+  color: #667085;
+  font-size: 14px;
+  padding: 18px 0 4px;
+  text-align: center;
+}
+
+.employer-industry-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.employer-industry-tags span {
+  align-items: center;
+  background: #f2f4f7;
+  border-radius: 16px;
+  color: #344054;
+  display: inline-flex;
+  font-size: 13px;
+  gap: 8px;
+  padding: 6px 11px;
+}
+
+.employer-industry-tags i {
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.employer-add-industry-modal .modal-dialog {
+  max-width: 550px;
+}
+
+.employer-add-industry-modal .modal-content {
+  border: 0;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(16, 24, 40, .2);
+  overflow: hidden;
+}
+
+.employer-add-industry-modal .modal-header {
+  align-items: flex-start;
+  border-bottom: 1px solid #dbe5ee;
+  padding: 32px;
+}
+
+.employer-add-industry-modal__heading {
+  align-items: center;
+  display: flex;
+  gap: 20px;
+}
+
+.employer-add-industry-modal__icon {
+  align-items: center;
+  border: 1px solid #d3dfeb;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(16, 24, 40, .08);
+  color: #2969e8;
+  display: flex;
+  flex: 0 0 50px;
+  font-size: 25px;
+  height: 50px;
+  justify-content: center;
+}
+
+.employer-add-industry-modal .modal-title {
+  color: #1d2939;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0 0 2px;
+}
+
+.employer-add-industry-modal__heading p {
+  color: #667085;
+  font-size: 17px;
+  margin: 0;
+}
+
+.employer-add-industry-modal .btn-close {
+  margin: 4px 0 0;
+}
+
+.employer-add-industry-modal .modal-body {
+  padding: 36px 32px 42px;
+}
+
+.employer-add-industry-modal .form-control,
+.employer-add-industry-modal .form-select {
+  border: 1px solid #d3dfeb;
+  border-radius: 8px;
+  min-height: 52px;
+}
+
+.employer-add-industry-modal .modal-footer {
+  background: #f8fafc;
+  border-top: 1px solid #dbe5ee;
+  padding: 16px 20px;
+}
+
+.employer-add-industry-modal .btn-success {
+  background: #009b35;
+  border-color: #009b35;
+  min-width: 80px;
+}
+
 .employer-account-form .form-control,
 .employer-account-form .form-select,
 .employer-account-form .select2-container--bootstrap-5 .select2-selection {
   border: 1px solid #d3dfeb;
   border-radius: 8px;
   min-height: 50px;
+}
+
+.employer-account-form .input-group-text {
+  background: #fff;
+  border: 1px solid #d3dfeb;
+  border-radius: 8px 0 0 8px;
+  color: #0879b9;
+  min-width: 46px;
+  justify-content: center;
+}
+
+.employer-account-form .input-group .form-control {
+  border-left: 0;
+}
+
+.employer-account-form .iti {
+  width: 100%;
+}
+
+.employer-account-form .ql-editor {
+  min-height: 105px;
+}
+
+#companyDetailsPanel .ql-toolbar {
+  display: none;
+}
+
+#companyDetailsPanel .ql-container.ql-snow {
+  border: 1px solid #d3dfeb;
+  border-radius: 8px;
+  min-height: 78px;
+  overflow: auto;
+  resize: vertical;
+}
+
+#companyDetailsPanel .ql-editor {
+  font-size: 14px;
+  min-height: 76px;
+  padding: 15px 16px;
+}
+
+#companyDetailsPanel .ql-editor.ql-blank:before {
+  color: #98a2b3;
+  content: attr(data-placeholder);
+  font-style: normal;
+  left: 16px;
+  right: 16px;
+}
+
+.employer-company-final-field .form-label {
+  min-height: 19px;
+}
+
+.employer-company-final-field .form-control {
+  font-size: 16px;
+  padding-left: 19px;
+  padding-right: 19px;
+}
+
+.employer-account-form .employer-company-summary {
+  min-height: 78px;
+  padding: 15px 16px;
+  resize: vertical;
+}
+
+.employer-account-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  max-width: 988px;
+  padding: 8px 24px 0;
 }
 
 .employer-account-form .ql-container {
@@ -267,6 +1041,92 @@
   .employer-account-sidebar {
     border-bottom: 1px solid #dce4ed;
     border-right: 0;
+  }
+
+  .employer-account-sidebar__inner {
+    max-height: none;
+    overflow: visible;
+    position: static;
+  }
+
+  .employer-account-content-panel,
+  .employer-account-actions {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .employer-industry-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .employer-company-size-options {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: none;
+  }
+
+  .employer-disability-overview {
+    grid-template-columns: minmax(0, 1fr) 280px;
+  }
+
+  .employer-disability-checklist__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 575.98px) {
+  .employer-industry-type-row {
+    align-items: stretch;
+    gap: 8px;
+    grid-template-columns: 1fr;
+  }
+
+  .employer-add-industry-trigger {
+    height: auto;
+    justify-content: flex-start;
+    padding: 4px 0;
+  }
+
+  .employer-industry-options {
+    grid-template-columns: 1fr;
+  }
+
+  .employer-industry-picker {
+    padding: 18px 16px;
+  }
+
+  .employer-company-size-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .employer-billing-divider {
+    margin: 32px 0 38px;
+  }
+
+  .employer-facilities-question {
+    margin-left: 0;
+  }
+
+  .employer-facilities-options {
+    gap: 12px;
+    grid-template-columns: 1fr;
+  }
+
+  .employer-disability-overview {
+    gap: 20px;
+    grid-template-columns: 1fr;
+    margin: 0 0 30px;
+  }
+
+  .employer-disability-illustration {
+    min-height: 140px;
+  }
+
+  .employer-disability-checklist {
+    padding: 22px 18px;
+  }
+
+  .employer-disability-checklist__grid {
+    grid-template-columns: 1fr;
   }
 }
 

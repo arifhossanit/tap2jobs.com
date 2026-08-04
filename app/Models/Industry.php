@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Industry
@@ -44,6 +45,8 @@ class Industry extends Model
         'name',
         'description',
         'is_default',
+        'industry_type_id',
+        'created_by',
     ];
 
     /**
@@ -56,5 +59,17 @@ class Industry extends Model
         'name' => 'string',
         'description' => 'string',
         'is_default' => 'boolean',
+        'industry_type_id' => 'integer',
+        'created_by' => 'integer',
     ];
+
+    public function industryType(): BelongsTo
+    {
+        return $this->belongsTo(IndustryType::class);
+    }
+
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }
