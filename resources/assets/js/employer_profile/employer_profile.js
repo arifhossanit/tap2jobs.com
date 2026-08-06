@@ -162,6 +162,58 @@ listenSubmit('#changeEmployerPasswordForm', function (event) {
     });
 });
 
+listenSubmit('#employerAccountPasswordForm', function (event) {
+    event.preventDefault();
+
+    const form = this;
+    const password = form.querySelector('[name="password"]');
+    const confirmation = form.querySelector('[name="password_confirmation"]');
+    const errorBox = document.getElementById('employerAccountPasswordErrors');
+
+    errorBox.classList.add('d-none');
+    errorBox.textContent = '';
+
+    if (password.value !== confirmation.value) {
+        errorBox.textContent = 'New password and confirm password do not match.';
+        errorBox.classList.remove('d-none');
+        confirmation.focus();
+        return;
+    }
+
+    processingBtn('#employerAccountPasswordForm', '#employerAccountPasswordSubmit', 'loading');
+
+    $.ajax({
+        url: route('employer-change-password'),
+        type: 'post',
+        data: new FormData(form),
+        processData: false,
+        contentType: false,
+        success: function (result) {
+            if (result.success) {
+                form.reset();
+                form.querySelectorAll('.employer-account-password-input input').forEach(function (input) {
+                    input.type = 'password';
+                });
+                form.querySelectorAll('.employer-account-password-visibility i').forEach(function (icon) {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                });
+                displaySuccessMessage(result.message);
+            }
+        },
+        error: function (result) {
+            const response = result.responseJSON || {};
+            const errors = response.errors || {};
+            const firstError = Object.keys(errors).length ? errors[Object.keys(errors)[0]][0] : response.message;
+            errorBox.textContent = firstError || 'Unable to update password.';
+            errorBox.classList.remove('d-none');
+        },
+        complete: function () {
+            processingBtn('#employerAccountPasswordForm', '#employerAccountPasswordSubmit');
+        },
+    });
+});
+
 function validateEmployerPassword() {
     let currentPassword = $('#pfCurrentPassword').val().trim();
     let password = $('#pfNewPassword').val().trim();
