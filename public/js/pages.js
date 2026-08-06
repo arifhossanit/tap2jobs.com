@@ -6687,7 +6687,11 @@ window.displaySuccessMessage = function (message) {
   toastr.success(message, successTitle);
 };
 window.displayErrorMessage = function (message) {
-  toastr.error(message, Lang.get("js.error"));
+  var errorTitle = Lang.get("js.error");
+  if (errorTitle === "js.error") {
+    errorTitle = typeof lancode !== 'undefined' && lancode === 'bn' ? 'ত্রুটি' : 'Error';
+  }
+  toastr.error(message, errorTitle);
 };
 window.deleteItem = function (url, header) {
   var callFunction = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
@@ -7966,6 +7970,52 @@ listenSubmit('#changeEmployerPasswordForm', function (event) {
     },
     complete: function complete() {
       loadingButton.button('reset');
+    }
+  });
+});
+listenSubmit('#employerAccountPasswordForm', function (event) {
+  event.preventDefault();
+  var form = this;
+  var password = form.querySelector('[name="password"]');
+  var confirmation = form.querySelector('[name="password_confirmation"]');
+  var errorBox = document.getElementById('employerAccountPasswordErrors');
+  errorBox.classList.add('d-none');
+  errorBox.textContent = '';
+  if (password.value !== confirmation.value) {
+    errorBox.textContent = 'New password and confirm password do not match.';
+    errorBox.classList.remove('d-none');
+    confirmation.focus();
+    return;
+  }
+  processingBtn('#employerAccountPasswordForm', '#employerAccountPasswordSubmit', 'loading');
+  $.ajax({
+    url: route('employer-change-password'),
+    type: 'post',
+    data: new FormData(form),
+    processData: false,
+    contentType: false,
+    success: function success(result) {
+      if (result.success) {
+        form.reset();
+        form.querySelectorAll('.employer-account-password-input input').forEach(function (input) {
+          input.type = 'password';
+        });
+        form.querySelectorAll('.employer-account-password-visibility i').forEach(function (icon) {
+          icon.classList.remove('fa-eye');
+          icon.classList.add('fa-eye-slash');
+        });
+        displaySuccessMessage(result.message);
+      }
+    },
+    error: function error(result) {
+      var response = result.responseJSON || {};
+      var errors = response.errors || {};
+      var firstError = Object.keys(errors).length ? errors[Object.keys(errors)[0]][0] : response.message;
+      errorBox.textContent = firstError || 'Unable to update password.';
+      errorBox.classList.remove('d-none');
+    },
+    complete: function complete() {
+      processingBtn('#employerAccountPasswordForm', '#employerAccountPasswordSubmit');
     }
   });
 });
