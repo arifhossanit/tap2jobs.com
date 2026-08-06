@@ -226,15 +226,20 @@ class CompanyController extends AppBaseController
     /**
      * Update the specified Company in storage.
      *
-     * @return RedirectResponse|Redirector
+     * @return JsonResponse|RedirectResponse
      */
-    public function updateCompany(Company $company, UpdateCompanyRequest $request): RedirectResponse
+    public function updateCompany(Company $company, UpdateCompanyRequest $request): JsonResponse|RedirectResponse
     {
-        $input = $request->all();
+        $input = $request->validated();
 
         $company = $this->companyRepository->update($input, $company);
+        $message = __('messages.flash.employer_update');
 
-        Flash::success(__('messages.flash.employer_update'));
+        if ($request->expectsJson()) {
+            return $this->sendSuccess($message);
+        }
+
+        Flash::success($message);
 
         return redirect(route('company.edit.form', Auth::user()->owner_id));
     }
