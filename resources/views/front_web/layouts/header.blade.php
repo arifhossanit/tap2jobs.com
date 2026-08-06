@@ -45,12 +45,15 @@
                         @endauth
                         --}}
                         <li class="nav-item">
-                            <div class="dropdown">
-                                <a class="nav-link text-gray dropdown-toggle language-dropdown-btn" type="button"
-                                     aria-expanded="false">
+                            <div class="dropdown language-dropdown"
+                                 data-language-url="{{ route('front.change-language') }}">
+                                <a href="#" class="nav-link text-gray dropdown-toggle language-dropdown-btn"
+                                   id="frontLanguageToggle" role="button" aria-expanded="false"
+                                   aria-controls="frontLanguageMenu">
                                     {{ getCurrentLanguageName() }}
                                 </a>
-                                <ul class="language-dropdown-menu language-menu">
+                                <ul class="language-dropdown-menu language-menu" id="frontLanguageMenu"
+                                    aria-labelledby="frontLanguageToggle">
                                     @foreach (getUserLanguages() as $key => $value)
                                         <li class="languageSelection {{ checkLanguageSession() == $key ? 'languageSelection-active' : '' }}"
                                             data-prefix-value="{{ $key }}">
@@ -88,6 +91,12 @@
                                         <a href="#"
                                             class="nav-link btn btn-secondary btn-secondary-login {{ getFrontSelectLanguage() == 'ar' ? 'ms-xxl-4 ms-2' : 'me-xxl-4 me-2' }} mb-3 mb-lg-0 nav-link">{{ __('web.login') }}</a>
                                         <ul class="nav submenu">
+                                            {{-- <li class="nav-item mb-3 mt-2">
+                                                <a href="{{ route('admin.login') }}"
+                                                    class="nav-link text-gray d-flex align-items-center {{ request()->routeIs('admin.login') ? ' active' : '' }}">
+                                                    @lang('web.admin')
+                                                </a>
+                                            </li> --}}
                                             <li class="nav-item mb-3 mt-2">
                                                 <a href="{{ route('front.candidate.login') }}"
                                                     class="nav-link text-gray d-flex align-items-center {{ request()->routeIs('front.candidate.login') ? ' active' : '' }}">

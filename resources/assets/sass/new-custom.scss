@@ -42,7 +42,6 @@
   box-shadow: 0 8px 18px rgba(15, 27, 61, 0.05);
   display: flex;
   justify-content: space-between;
-  margin-bottom: 24px;
   padding: 28px 32px;
 }
 
@@ -92,6 +91,14 @@
 
 .employer-account-sidebar {
   border-right: 1px solid #dce4ed;
+  padding: 22px 12px 32px 24px;
+}
+
+.employer-account-sidebar__inner {
+  max-height: calc(100vh - 90px);
+  overflow-y: auto;
+  position: sticky;
+  top: 72px;
   padding: 22px 12px 32px 24px;
 }
 
@@ -189,6 +196,14 @@
   padding-left: 11px;
 }
 
+.employer-account-nav .employer-account-nav-action.active {
+  background: #eef6ff;
+  border-left: 4px solid #1681bd;
+  color: #0879b9;
+  min-height: 42px;
+  padding-left: 7px;
+}
+
 .employer-account-nav-action > i,
 .employer-account-user-icon {
   flex: 0 0 19px;
@@ -240,6 +255,94 @@
   color: #41516a;
   font-size: 13px;
   margin: 0;
+}
+
+.employer-account-password-panel {
+  min-height: 520px;
+}
+
+.employer-account-password-head {
+  margin-bottom: 28px;
+}
+
+.employer-account-password-form {
+  max-width: 920px;
+  width: 50%;
+}
+
+.employer-account-password-field {
+  margin-bottom: 42px;
+}
+
+.employer-account-password-field label {
+  color: #35435a;
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.employer-account-password-input {
+  position: relative;
+}
+
+.employer-account-password-input .form-control {
+  border: 1px solid #cad5e1;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(15, 32, 54, 0.12);
+  color: #27364d;
+  font-size: 14px;
+  height: 38px;
+  padding: 8px 44px 8px 16px;
+}
+
+.employer-account-password-input .form-control::placeholder {
+  color: #97a3b5;
+}
+
+.employer-account-password-input .form-control:focus {
+  border-color: #1681bd;
+  box-shadow: 0 0 0 2px rgba(22, 129, 189, 0.12);
+}
+
+.employer-account-password-visibility {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: #77869b;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  position: absolute;
+  right: 8px;
+  top: 0;
+  width: 34px;
+  z-index: 2;
+}
+
+@media (max-width: 767px) {
+  .employer-account-password-form {
+    width: 100%;
+  }
+}
+
+.employer-account-password-submit {
+  background: #087fb8;
+  border: 0;
+  border-radius: 7px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  min-height: 44px;
+  padding: 10px 16px;
+}
+
+.employer-account-password-submit:hover,
+.employer-account-password-submit:focus {
+  background: #076e9f;
+  color: #fff;
 }
 
 .employer-account-logo-row {
@@ -469,16 +572,18 @@
 }
 
 .employer-disability-overview {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
+  align-items: flex-start;
+  display: flex;
+  gap: 24px;
   margin: 0 8px 42px;
-  min-height: 142px;
 }
 
 .employer-disability-questions {
   display: flex;
+  flex: 1 1 0;
   flex-direction: column;
   gap: 22px;
+  min-width: 0;
   padding: 8px 0;
 }
 
@@ -524,56 +629,22 @@
 }
 
 .employer-disability-illustration {
-  align-items: flex-end;
-  background: linear-gradient(135deg, #edf2ff 0%, #c6d7ff 100%);
+  background: #cbdcff;
   border-radius: 5px;
-  color: #2c75e8;
-  display: flex;
-  gap: 24px;
-  justify-content: center;
+  flex: 1 1 0;
+  height: 213px;
+  max-height: 213px;
+  min-height: 213px;
+  min-width: 0;
   overflow: hidden;
-  padding: 24px 34px 14px;
-  position: relative;
 }
 
-.employer-disability-illustration > .fa-person {
-  color: #ff805d;
-  font-size: 78px;
-  position: relative;
-  z-index: 2;
-}
-
-.employer-disability-illustration > .fa-wheelchair-move {
-  color: #2165d5;
-  font-size: 84px;
-  position: relative;
-  z-index: 2;
-}
-
-.employer-disability-illustration > span {
-  background: rgba(48, 100, 202, .18);
-  bottom: 0;
-  height: 58%;
-  position: absolute;
-  right: 28px;
-  transform: skewX(-9deg);
-  width: 58px;
-}
-
-.employer-disability-cloud {
-  color: #fff;
-  font-size: 17px;
-  position: absolute;
-  top: 18px;
-}
-
-.employer-disability-cloud--one {
-  left: 32px;
-}
-
-.employer-disability-cloud--two {
-  right: 72px;
-  top: 28px;
+.employer-disability-illustration img {
+  display: block;
+  height: 100%;
+  object-fit: fill;
+  object-position: center;
+  width: 100%;
 }
 
 .employer-disability-checklist {
@@ -1064,10 +1135,6 @@
     max-width: none;
   }
 
-  .employer-disability-overview {
-    grid-template-columns: minmax(0, 1fr) 280px;
-  }
-
   .employer-disability-checklist__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1112,13 +1179,17 @@
   }
 
   .employer-disability-overview {
+    flex-direction: column;
     gap: 20px;
-    grid-template-columns: 1fr;
     margin: 0 0 30px;
   }
 
   .employer-disability-illustration {
-    min-height: 140px;
+    flex: 0 0 180px;
+    height: 180px;
+    max-height: 180px;
+    min-height: 180px;
+    width: 100%;
   }
 
   .employer-disability-checklist {

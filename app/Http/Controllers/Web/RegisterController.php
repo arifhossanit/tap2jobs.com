@@ -5,10 +5,15 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\AppBaseController;
 use App\Http\Requests\WebRegisterRequest;
 use App\Providers\RouteServiceProvider;
+use App\Models\Country;
+use App\Models\Industry;
+use App\Models\IndustryType;
+use App\Models\User;
 use App\Repositories\WebRegisterRepository;
 use Flash;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -38,8 +43,49 @@ class RegisterController extends AppBaseController
     public function employerRegister(): View
     {
         $isGoogleReCaptchaEnabled = $this->webRegisterRepository->getSettingForReCaptcha();
+        $countries = getCountries();
+        $bangladeshId = Country::where('name', 'Bangladesh')->value('id');
+        $states = $bangladeshId ? getStates($bangladeshId) : [];
+        $industryTypes = IndustryType::orderBy('sort_order')->pluck('name', 'id');
+        $industryRecords = Industry::whereNull('created_by')
+            ->orderBy('name')
+            ->get(['id', 'name', 'industry_type_id']);
 
-        return view('front_web.auth.employer_register', compact('isGoogleReCaptchaEnabled'));
+        return view('front_web.auth.employer_register', compact(
+            'isGoogleReCaptchaEnabled',
+            'countries',
+            'bangladeshId',
+            'states',
+            'industryTypes',
+            'industryRecords'
+        ));
+    }
+
+    public function registrationStates(Request $request): JsonResponse
+    {
+        $validated = $request->validate(['country_id' => ['required', 'integer', 'exists:countries,id']]);
+
+        return $this->sendResponse(getStates($validated['country_id']), 'States retrieved successfully.');
+    }
+
+    public function usernameAvailability(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'username' => ['required', 'string', 'max:100', 'regex:/^[\p{L}\p{M}\p{N}._-]+$/u'],
+        ]);
+        $available = ! User::where('username', $validated['username'])->exists();
+
+        return response()->json([
+            'available' => $available,
+            'message' => $available ? '' : 'This Username already exists. Try another.',
+        ]);
+    }
+
+    public function registrationCities(Request $request): JsonResponse
+    {
+        $validated = $request->validate(['state_id' => ['required', 'integer', 'exists:states,id']]);
+
+        return $this->sendResponse(getCities($validated['state_id']), 'Cities retrieved successfully.');
     }
 
     /**

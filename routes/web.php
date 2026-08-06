@@ -759,6 +759,11 @@ Route::middleware('xss', 'setLanguage')->group(function () {
          Route::get('/front-register', [Web\RegisterController::class, 'candidateRegister'])->name('front.register');
          Route::get('/candidate-register', [Web\RegisterController::class, 'candidateRegister'])->name('candidate.register');
          Route::get('/employer-register', [Web\RegisterController::class, 'employerRegister'])->name('employer.register');
+         Route::get('/register/username-availability', [Web\RegisterController::class, 'usernameAvailability'])
+                  ->middleware('throttle:30,1')
+                  ->name('register.username-availability');
+         Route::get('/register/states', [Web\RegisterController::class, 'registrationStates'])->name('register.states');
+         Route::get('/register/cities', [Web\RegisterController::class, 'registrationCities'])->name('register.cities');
          Route::get('/privacy-policy-list', [Web\PrivacyPolicyController::class, 'showPrivacyPolicy'])->name('privacy.policy.list');
          Route::get('/terms-conditions-list', [Web\PrivacyPolicyController::class, 'showTermsConditions'])->name('terms.conditions.list');
          Route::get('/contact-us', function () {
@@ -788,7 +793,8 @@ Route::middleware('xss', 'setLanguage')->group(function () {
          )->name('front.candidate.details');
 
          //Change language
-         Route::post('/change-language', [Web\HomeController::class, 'changeLanguage']);
+         Route::post('/change-language', [Web\HomeController::class, 'changeLanguage'])
+                  ->name('front.change-language');
 });
 
 Route::middleware('xss', 'verified.user', 'setLanguage')->group(function () {

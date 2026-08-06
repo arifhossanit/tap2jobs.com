@@ -91,6 +91,8 @@ class CompanyRepository extends BaseRepository
         try {
             DB::beginTransaction();
             $input['unique_id'] = getUniqueCompanyId();
+            $input['company_name'] = $input['name'];
+            $input['contact_person_designation'] = $input['ceo'] ?? null;
             $company = $this->create(Arr::only($input, (new Company())->getFillable()));
 
             // Create User
@@ -162,19 +164,26 @@ class CompanyRepository extends BaseRepository
             if (array_key_exists('has_disability_facilities', $input)) {
                 if (! (bool) $input['has_disability_facilities']) {
                     $input['disability_inclusion_policy'] = null;
+                    $input['disability_inclusion_support'] = null;
                     $input['disability_inclusion_training'] = null;
                     $input['disability_facilities'] = [];
                 } else {
+                    if ((bool) ($input['disability_inclusion_policy'] ?? false)) {
+                        $input['disability_inclusion_support'] = null;
+                    }
                     $input['disability_facilities'] = array_values(array_unique($input['disability_facilities'] ?? []));
                 }
             }
+
+            $input['company_name'] = $input['name'];
+            $input['contact_person_designation'] = $input['ceo'] ?? null;
 
             $company->update($input);
 
             $input['first_name'] = $input['name'];
             $userInput = Arr::only($input,
                 [
-                    'first_name', 'email', 'phone', 'password', 'country_id', 'state_id', 'city_id', 'is_active',
+                    'first_name', 'email', 'phone', 'country_id', 'state_id', 'city_id', 'is_active',
                     'facebook_url', 'twitter_url', 'linkedin_url', 'google_plus_url', 'pinterest_url', 'region_code',
                 ]);
             /** @var User $user */

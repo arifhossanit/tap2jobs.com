@@ -35,8 +35,26 @@
                 <div class="row">
                     <div class="col-xl-6 col-lg-8 mx-auto">
                         @include('flash::message')
-                        <form method="POST" action="{{ route('login') }}" class="py-40 px-40 bg-gray">
+                        <form method="POST" action="{{ route('login') }}" class="py-40 px-40 bg-gray shadow rounded border">
                             <div class="row">
+                                {{-- <div class="col-12 mb-4">
+                                    <div class="form-group row">
+                                        <div class="col-sm-4 col-12">
+                                            <a href="{{ route('admin.login') }}" class="btn btn-primary d-block">
+                                                @lang('web.admin')</a>
+                                        </div>
+                                        <div class="col-sm-4 col-12 mb-3 mb-sm-0">
+                                            <a href="{{ route('front.candidate.login') }}"
+                                                class="btn btn-light-primary  d-block">
+                                                {{ __('web.register_menu.candidate') }} </a>
+                                        </div>
+                                        <div class="col-sm-4 col-12">
+                                            <a href="{{ route('front.employee.login') }}"
+                                                class="btn btn-light-primary d-block">
+                                                {{ __('web.register_menu.employer') }} </a>
+                                        </div>
+                                    </div>
+                                </div> --}}
                                 @csrf
                                 <div id="candidateValidationErrBox">
                                     @include('layouts.errors')

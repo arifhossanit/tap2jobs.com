@@ -27,6 +27,7 @@
     "/assets/img/china.svg": "/assets/img/china.svg?id=ded34c7fb724554d70ecfd51e9db4e61",
     "/assets/img/close-icon.png": "/assets/img/close-icon.png?id=21acf2253e465fc683bf3883114b95cb",
     "/assets/img/default-user.png": "/assets/img/default-user.png?id=f27ae51e73c8cbb311ed4ca918b0d318",
+    "/assets/img/disability.svg": "/assets/img/disability.svg?id=7ff94eb4c55e3dd92a70fbd2e24b7f05",
     "/assets/img/document.png": "/assets/img/document.png?id=7a49e4f6f94771c329e155a5ae4506d1",
     "/assets/img/employer-image.png": "/assets/img/employer-image.png?id=aeae7230121090d5731aec0cd6cf41f9",
     "/assets/img/envelope.png": "/assets/img/envelope.png?id=e73cec6eef64f8ef0eb7332b04485cd0",
@@ -100,7 +101,11 @@
     "/fonts/README.md": "/fonts/README.md?id=5a7ce780dda6e4e6b1bf2b607c72444d",
     "/js/third-party.js": "/js/third-party.js?id=e82dd82f643b167e40abd87beca80347",
     "/assets/css/front-third-party.css": "/assets/css/front-third-party.css?id=28e34326b96cce696393b5c5e8bd83d3",
+<<<<<<< HEAD
     "/css/front-pages.css": "/css/front-pages.css?id=557a27d3dcfa6d7f5f4f020ca0731836",
+=======
+    "/css/front-pages.css": "/css/front-pages.css?id=75999ac31b67a617aa84838a64d5fe63",
+>>>>>>> f784efedf471acf57cea89d298f2110b9ca9b208
     "/js/front-third-party.js": "/js/front-third-party.js?id=8a67875329efe9712da317450bb2c8d4",
     "/js/auth-third-party.js": "/js/auth-third-party.js?id=a39fc087129317e7384105ab61b5f5f0",
     "/assets/css/iziToast.min.css": "/assets/css/iziToast.min.css?id=b2f7bdc3ed47f5956551ce0333925792",

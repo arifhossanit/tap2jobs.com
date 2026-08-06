@@ -149,9 +149,9 @@
         let defaultCountryCodeValue = "{{ getSettingValue('default_country_code') }}";
         let currentFrontLang = "{{ session()->get('languageName') ?? 'en' }}";
         let lancode = "{{ getFrontSelectLanguage() }}";
-        Lang.setLocale(currentFrontLang);
+        Lang.setLocale(lancode);
     </script>
-     <script src="{{ asset('assets/js/custom/custom.js') }}"></script>
+     <script src="{{ mix('assets/js/custom/custom.js') }}"></script>
 
     </body>
 
