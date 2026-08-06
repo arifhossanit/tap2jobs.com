@@ -9811,23 +9811,23 @@ fieldset:disabled .btn {
 
 .contact-us-section .contact-us form input,.contact-us-section .contact-us form textarea{border:1px solid #e8f4f3;padding:16px 20px;box-shadow:none}
 @font-face {
-    font-family: "Circular Std";
-    src: url(../fonts/CircularStd-Book.otf);
+    font-family: "Poppins";
+    src: url(../fonts/Poppins-Regular.ttf);
     font-weight: 400;
     font-style: normal;
-    display: swap
+    font-display: swap;
 }
 
 @font-face {
-    font-family: "Circular Std";
-    src: url(../fonts/circular-std-medium-500.ttf);
+    font-family: "Poppins";
+    src: url(../fonts/Poppins-Medium.ttf);
     font-weight: 500;
     font-style: normal;
-    display: swap
+    font-display: swap;
 }
 
 body {
-    font-family: "Circular Std", sans-serif !important;
+    font-family: "Poppins", sans-serif !important;
     font-weight: 500 !important;
     font-size: 16px !important;
 }
