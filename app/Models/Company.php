@@ -121,8 +121,10 @@ class Company extends Model implements HasMedia
 
     public $fillable = [
         'ceo',
+        'company_name',
         'company_name_bn',
         'contact_person_name',
+        'contact_person_designation',
         'company_summary',
         'company_summary_bn',
         'trade_license_no',
@@ -138,6 +140,7 @@ class Company extends Model implements HasMedia
         'location',
         'location2',
         'company_address_bn',
+        'billing_address',
         'billing_phone',
         'billing_region_code',
         'billing_email',
@@ -161,8 +164,10 @@ class Company extends Model implements HasMedia
     protected $casts = [
         'id' => 'integer',
         'ceo' => 'string',
+        'company_name' => 'string',
         'company_name_bn' => 'string',
         'contact_person_name' => 'string',
+        'contact_person_designation' => 'string',
         'company_summary' => 'string',
         'company_summary_bn' => 'string',
         'trade_license_no' => 'string',
@@ -178,6 +183,7 @@ class Company extends Model implements HasMedia
         'location' => 'string',
         'location2' => 'string',
         'company_address_bn' => 'string',
+        'billing_address' => 'string',
         'billing_phone' => 'string',
         'billing_region_code' => 'string',
         'billing_email' => 'string',

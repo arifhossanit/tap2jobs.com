@@ -12,11 +12,17 @@
             <h1>{{ __('messages.common.hello') }}, {{ \Illuminate\Support\Facades\Auth::user()->full_name }}</h1>
             {{-- <p>{{ __('messages.employer_dashboard.manage_jobs') }}</p> --}}
         </div>
-        <a href="{{ route('company.edit.form', \Illuminate\Support\Facades\Auth::user()->owner_id) }}"
-           class="btn btn-primary employer-dashboard-hero__edit">
-            <i class="fa-solid fa-pen-to-square"></i>
-            {{ __('messages.user.edit_profile') }}
-        </a>
+        <div class="d-flex flex-wrap justify-content-end gap-3">
+            <a href="{{ route('job.create') }}" class="btn btn-success employer-dashboard-hero__edit">
+                <i class="fa-solid fa-plus"></i>
+                {{ __('messages.employer_dashboard.add_job') }}
+            </a>
+            <a href="{{ route('company.edit.form', \Illuminate\Support\Facades\Auth::user()->owner_id) }}"
+               class="btn btn-primary employer-dashboard-hero__edit">
+                <i class="fa-solid fa-pen-to-square"></i>
+                {{ __('messages.user.edit_profile') }}
+            </a>
+        </div>
     </div>
 
     <livewire:employer-dashboard lazy/>

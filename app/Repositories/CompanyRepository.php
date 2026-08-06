@@ -7,7 +7,6 @@ use App\Models\CompanySize;
 use App\Models\FavouriteCompany;
 use App\Models\Industry;
 use App\Models\IndustryType;
-use App\Models\IndustryType;
 use App\Models\Job;
 use App\Models\Notification;
 use App\Models\NotificationSetting;
@@ -92,6 +91,8 @@ class CompanyRepository extends BaseRepository
         try {
             DB::beginTransaction();
             $input['unique_id'] = getUniqueCompanyId();
+            $input['company_name'] = $input['name'];
+            $input['contact_person_designation'] = $input['ceo'] ?? null;
             $company = $this->create(Arr::only($input, (new Company())->getFillable()));
 
             // Create User
@@ -174,12 +175,15 @@ class CompanyRepository extends BaseRepository
                 }
             }
 
+            $input['company_name'] = $input['name'];
+            $input['contact_person_designation'] = $input['ceo'] ?? null;
+
             $company->update($input);
 
             $input['first_name'] = $input['name'];
             $userInput = Arr::only($input,
                 [
-                    'first_name', 'email', 'phone', 'password', 'country_id', 'state_id', 'city_id', 'is_active',
+                    'first_name', 'email', 'phone', 'country_id', 'state_id', 'city_id', 'is_active',
                     'facebook_url', 'twitter_url', 'linkedin_url', 'google_plus_url', 'pinterest_url', 'region_code',
                 ]);
             /** @var User $user */
