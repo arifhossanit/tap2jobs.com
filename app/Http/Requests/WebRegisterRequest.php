@@ -28,7 +28,7 @@ class WebRegisterRequest extends FormRequest
 
         if ((int) $this->input('type') === 2) {
             $rules += [
-                'username' => ['required', 'string', 'max:100', 'regex:/^[A-Za-z0-9._-]+$/', 'unique:users,username'],
+                'username' => ['required', 'string', 'max:100', 'regex:/^[\p{L}\p{M}\p{N}._-]+$/u', 'unique:users,username'],
                 'company_name' => 'required|string|max:180',
                 'company_name_bn' => 'nullable|string|max:180',
                 'established_in' => 'required|integer|min:1800|max:'.date('Y'),
@@ -62,13 +62,13 @@ class WebRegisterRequest extends FormRequest
                 ],
                 'details' => 'nullable|string|max:5000',
                 'trade_license_no' => 'nullable|string|max:100',
-                'rl_no' => 'nullable|string|max:100',
+                'rl_no' => ['nullable', 'string', 'max:100', 'regex:/^\d+$/'],
                 'website' => 'nullable|url|max:255',
                 'contact_person_name' => 'required|string|max:180',
                 'contact_person_designation' => 'required|string|max:180',
                 'email' => 'required|email:filter|max:170|unique:users,email',
-                'phone' => 'required|string|max:30',
-                'region_code' => 'required|string|max:10',
+                'phone' => ['required', 'string', 'regex:/^\d{4,15}$/'],
+                'region_code' => ['required', 'string', 'regex:/^\d{1,4}$/'],
                 'has_disability_facilities' => 'nullable|boolean',
                 'disability_inclusion_policy' => 'required_if:has_disability_facilities,1|nullable|boolean',
                 'disability_inclusion_support' => 'required_if:disability_inclusion_policy,0|nullable|boolean',
@@ -113,6 +113,8 @@ class WebRegisterRequest extends FormRequest
         $disabilityFacilities = $hasDisabilityFacilities
             ? collect($this->input('disability_facilities', []))->filter()->unique()->values()->all()
             : [];
+        $phone = preg_replace('/\D+/', '', (string) $this->input('phone'));
+        $regionCode = preg_replace('/\D+/', '', (string) $this->input('region_code'));
 
         $this->merge([
             'industry_ids' => $industryIds,
@@ -129,6 +131,8 @@ class WebRegisterRequest extends FormRequest
                 ? $this->input('disability_inclusion_training')
                 : null,
             'disability_facilities' => $disabilityFacilities,
+            'phone' => $phone,
+            'region_code' => $regionCode,
         ]);
     }
 
