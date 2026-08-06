@@ -18,6 +18,35 @@
         </nav>
         <ul class="nav align-items-stretch flex-nowrap">
             <li class="px-xxl-3 px-2 d-flex align-items-stretch">
+                <div class="dropdown d-flex align-items-stretch">
+                    <button type="button"
+                            class="btn dropdown-toggle px-0 text-gray-600 d-flex align-items-center"
+                            id="employerLanguageDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ getCurrentLanguageName() }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow p-2"
+                        aria-labelledby="employerLanguageDropdown">
+                        @foreach (getUserLanguages() as $languageCode => $languageName)
+                            <li>
+                                <button type="button"
+                                        class="dropdown-item rounded d-flex align-items-center gap-3 px-3 py-2 employer-header-language-option {{ checkLanguageSession() === $languageCode ? 'active' : '' }}"
+                                        data-language="{{ $languageCode }}"
+                                        {{ checkLanguageSession() === $languageCode ? 'aria-current=true' : '' }}>
+                                    @if (isset(\App\Models\User::LANGUAGES_IMAGE[$languageCode]))
+                                        <img src="{{ asset(\App\Models\User::LANGUAGES_IMAGE[$languageCode]) }}"
+                                             width="20" height="14" alt="" class="flex-shrink-0">
+                                    @else
+                                        <i class="fa-solid fa-flag text-primary" style="width: 20px"></i>
+                                    @endif
+                                    <span>{{ $languageName }}</span>
+                                </button>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </li>
+            <li class="px-xxl-3 px-2 d-flex align-items-stretch">
                 <a href="{{ route('theme.mode') }}" class="d-flex align-items-center" >
                     <i class="fas user-check-icon {{ getLoggedInUser()->theme_mode ? 'fa-sun' : 'fa-moon' }} fs-2"></i>
                 </a>
@@ -25,18 +54,19 @@
             <li class="px-xxl-3 px-2 d-flex align-items-stretch">
                 <div class="dropdown custom-dropdown d-flex align-items-stretch">
                     <button class="btn dropdown-toggle hide-arrow p-0 d-flex align-items-center"
-                            type="button" id="dropdownMenuButton1"
+                            type="button" id="employerNotificationDropdown"
                             data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="position-relative">
                             <i class="fa-solid fa-bell text-primary fs-2"></i>
                             @if($notificationCount > 0)
                                 <span class="position-absolute notification-count top-0 start-100 translate-middle badge badge-circle bg-danger" id="counter">
-                    {{ ($notificationCount) }}
-                    <span class="visually-hidden">{{ __('messages.unread_messages') }}</span>
+                                    {{ $notificationCount }}
+                                    <span class="visually-hidden">{{ __('messages.unread_messages') }}</span>
+                                </span>
                             @endif
                         </div>
                     </button>
-                    <div class="dropdown-menu py-0" aria-labelledby="dropdownMenuButton1">
+                    <div class="dropdown-menu py-0" aria-labelledby="employerNotificationDropdown">
                         <div class="{{ checkLanguageSession() == 'ar' ? 'text-end' : 'text-start' }} border-bottom py-4 px-7">
                             <h3 class="text-gray-900 mb-0">{{__('messages.notification.notifications')}}</h3>
                         </div>
@@ -78,7 +108,7 @@
             <li class="px-xxl-3 px-2 d-flex align-items-stretch">
                 <div class="dropdown dropdown-transparent d-flex align-items-stretch">
                     <button class="btn dropdown-toggle px-0 text-gray-600 d-flex align-items-center" type="button"
-                            id="dropdownMenuButton1" data-bs-auto-close="outside"
+                            id="employerUserDropdown" data-bs-auto-close="outside"
                             data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="image image-circle image-mini d-flex align-items-center {{ checkLanguageSession() == 'ar' ? 'ms-sm-3' : 'me-sm-3' }}">
                             <img src="{{ getLoggedInUser()->avatar }}"
@@ -87,7 +117,7 @@
                         {{\Illuminate\Support\Facades\Auth::user()->full_name}}
                         {{--                        <i class="fa-solid fa-angle-down ms-2"></i>--}}
                     </button>
-                    <div class="dropdown-menu py-7 pb-4" aria-labelledby="dropdownMenuButton1"
+                    <div class="dropdown-menu p-4 pb-4" aria-labelledby="employerUserDropdown"
                          data-bs-auto-close="outside">
                         <div class="text-center border-bottom pb-5 ">
                             <div class="image image-circle image-tiny mb-5">
@@ -98,35 +128,27 @@
                         </div>
                         <ul class="pt-4 pe-0">
                             <li>
-                                <a href="{{ route('company.edit.form', \Illuminate\Support\Facades\Auth::user()->owner_id) }}" class="dropdown-item text-gray-900 {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}">
+                                <a href="{{ route('company.edit.form', \Illuminate\Support\Facades\Auth::user()->owner_id) }}#company-details" class="dropdown-item text-gray-900 {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}">
                                      <span class="dropdown-icon {{ checkLanguageSession() == 'ar' ? 'ms-4' : 'me-4' }} text-gray-600">
                                         <i class="fa-solid fa-user"></i>
                                      </span> {{ __('messages.user.edit_profile') }}</a>
                             </li>
                             <li>
-                                <a class="dropdown-item text-gray-900 changePasswordModal {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}"
-                                   href="javascript:void(0)" data-id="{{ getLoggedInUserId() }}">
+                                <a class="dropdown-item text-gray-900 {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}"
+                                   href="{{ route('company.edit.form', \Illuminate\Support\Facades\Auth::user()->owner_id) }}#change-password">
                                     <span class="dropdown-icon {{ checkLanguageSession() == 'ar' ? 'ms-4' : 'me-4' }} text-gray-600">
                                         <i class="fa-solid fa-lock"></i>
                                     </span> {{ (Str::limit(__('messages.user.change_password'),20,'...')) }}
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item text-gray-900 changeLanguageModal {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}"
-                                   href="javascript:void(0)" data-id="{{ getLoggedInUserId() }}">
-                                    <span class="dropdown-icon {{ checkLanguageSession() == 'ar' ? 'ms-4' : 'me-4' }} text-gray-600">
-                                        <i class="fa-solid fa-globe"></i>
-                                    </span> {{ (Str::limit(__('messages.user_language.change_language'),20,'...')) }}
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item text-gray-900 {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}" href="{{ url('logout') }}"
+                                <a class="dropdown-item text-gray-900 {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}" href="{{ route('logout') }}"
                                    onclick="event.preventDefault(); localStorage.clear();  document.getElementById('logout-form').submit();">
                                     <span class="dropdown-icon {{ checkLanguageSession() == 'ar' ? 'ms-4' : 'me-4' }} text-gray-600">
                                         <i class="fa-solid fa-right-from-bracket"></i>
                                     </span> {{ __('messages.user.logout') }}
                                 </a>
-                                <form id="logout-form" action="{{ url('/logout') }}" method="POST" class="d-none">
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                     {{ csrf_field() }}
                                 </form>
                             </li>
@@ -134,6 +156,7 @@
                     </div>
                 </div>
             </li>
+
             <li class="d-flex align-items-center">
                 <button type="button" class="btn px-0 horizontal-menubar d-block d-xl-none text-gray-600">
                     <i class="fa-solid fa-bars fs-1"></i>
@@ -143,3 +166,39 @@
     </div>
 </header>
 <div class="bg-overlay" id="horizontal-menubar-overly"></div>
+
+<script>
+    document.addEventListener('click', function (event) {
+        const option = event.target.closest('.employer-header-language-option');
+
+        if (!option || option.disabled || option.getAttribute('aria-current') === 'true') {
+            return;
+        }
+
+        option.disabled = true;
+
+        fetch("{{ route('update-language') }}", {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ language: option.dataset.language })
+        })
+            .then(async function (response) {
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Unable to change language.');
+                }
+
+                window.location.reload();
+            })
+            .catch(function (error) {
+                option.disabled = false;
+                displayErrorMessage(error.message);
+            });
+    });
+</script>

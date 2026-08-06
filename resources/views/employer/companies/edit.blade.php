@@ -41,20 +41,21 @@
                             </button>
                             <button type="button" class="employer-account-section-link"
                                     data-account-section="billingAddressPanel">
-                                Billing Address
+                                {{ __('messages.employer_account.billing_address') }}
                             </button>
                         </div>
-                        <button type="button" class="employer-account-nav-action changePasswordModal" data-id="{{ getLoggedInUserId() }}">
+                        <button type="button" class="employer-account-nav-action employer-account-password-link"
+                                data-account-password-panel="employerPasswordPanel">
                             <i class="fa-solid fa-key"></i>
                             <span>{{ __('messages.user.change_password') }}</span>
                         </button>
-                        <button type="button" class="employer-account-nav-action" aria-label="User Management">
+                        {{-- <button type="button" class="employer-account-nav-action" aria-label="User Management">
                             <span class="employer-account-user-icon" aria-hidden="true">
                                 <i class="fa-regular fa-user"></i>
                                 <i class="fa-solid fa-gear"></i>
                             </span>
                             <span>User Management</span>
-                        </button>
+                        </button> --}}
                     </nav>
                 </div>
             </aside>
@@ -82,6 +83,62 @@
                 @include('employer.companies.edit_fields')
                 {{ Form::close() }}
 
+                <section class="employer-account-password-panel d-none" id="employerPasswordPanel">
+                    <div class="employer-account-panel__head employer-account-password-head">
+                        <div>
+                            <h1>{{ __('messages.user.change_password') }}</h1>
+                            <p>{{ __('messages.employer_account.change_password_help') }}</p>
+                        </div>
+                    </div>
+
+                    {{ Form::open(['id' => 'employerAccountPasswordForm', 'class' => 'employer-account-password-form']) }}
+                        <div class="alert alert-danger d-none" id="employerAccountPasswordErrors"></div>
+
+                        <div class="employer-account-password-field">
+                            <label for="employerAccountCurrentPassword">{{ __('messages.employer_account.old_password') }} <span class="text-danger">*</span></label>
+                            <div class="employer-account-password-input">
+                                <input type="password" name="password_current" id="employerAccountCurrentPassword"
+                                       class="form-control" placeholder="{{ __('messages.employer_account.enter_old_password') }}" required autocomplete="current-password">
+                                <button type="button" class="employer-account-password-visibility"
+                                        data-password-target="employerAccountCurrentPassword" aria-label="{{ __('messages.employer_account.show_old_password') }}">
+                                    <i class="fa-regular fa-eye-slash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="employer-account-password-field">
+                            <label for="employerAccountNewPassword">{{ __('messages.employer_account.new_password') }} <span class="text-danger">*</span></label>
+                            <div class="employer-account-password-input">
+                                <input type="password" name="password" id="employerAccountNewPassword"
+                                       class="form-control" minlength="6" maxlength="20"
+                                       placeholder="{{ __('messages.employer_account.maximum_20_characters') }}" required autocomplete="new-password">
+                                <button type="button" class="employer-account-password-visibility"
+                                        data-password-target="employerAccountNewPassword" aria-label="{{ __('messages.employer_account.show_new_password') }}">
+                                    <i class="fa-regular fa-eye-slash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="employer-account-password-field">
+                            <label for="employerAccountConfirmPassword">{{ __('messages.employer_account.confirm_password') }} <span class="text-danger">*</span></label>
+                            <div class="employer-account-password-input">
+                                <input type="password" name="password_confirmation" id="employerAccountConfirmPassword"
+                                       class="form-control" minlength="6" maxlength="20"
+                                       placeholder="{{ __('messages.employer_account.maximum_20_characters') }}" required autocomplete="new-password">
+                                <button type="button" class="employer-account-password-visibility"
+                                        data-password-target="employerAccountConfirmPassword" aria-label="{{ __('messages.employer_account.show_confirmed_password') }}">
+                                    <i class="fa-regular fa-eye-slash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="employer-account-password-submit" id="employerAccountPasswordSubmit"
+                                data-loading-text="<span class='spinner-border spinner-border-sm'></span> {{ __('messages.common.process') }}">
+                            {{ __('messages.employer_account.update_password') }}
+                        </button>
+                    {{ Form::close() }}
+                </section>
+
                 <div class="modal fade employer-add-industry-modal" id="employerAddIndustryModal" tabindex="-1"
                      aria-labelledby="employerAddIndustryModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
@@ -90,8 +147,8 @@
                                 <div class="employer-add-industry-modal__heading">
                                     <span class="employer-add-industry-modal__icon"><i class="fa-solid fa-plus"></i></span>
                                     <div>
-                                        <h2 class="modal-title" id="employerAddIndustryModalLabel">Add New Industry</h2>
-                                        <p>Please specify your industry</p>
+                                        <h2 class="modal-title" id="employerAddIndustryModalLabel">{{ __('messages.employer_account.add_new_industry_title') }}</h2>
+                                        <p>{{ __('messages.employer_account.specify_industry') }}</p>
                                     </div>
                                 </div>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -99,7 +156,7 @@
                             <div class="modal-body">
                                 <div class="alert alert-danger d-none" id="employerIndustryModalError"></div>
                                 <div class="mb-5">
-                                    <label for="employerModalIndustryType" class="form-label">Industry Type</label>
+                                    <label for="employerModalIndustryType" class="form-label">{{ __('messages.employer_account.industry_type') }}</label>
                                     <select class="form-select" id="employerModalIndustryType">
                                         @foreach ($data['industryTypes'] as $industryTypeId => $industryTypeName)
                                             <option value="{{ $industryTypeId }}">{{ $industryTypeName }}</option>
@@ -107,13 +164,13 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label for="employerModalIndustryName" class="form-label">Your Industry Name</label>
+                                    <label for="employerModalIndustryName" class="form-label">{{ __('messages.employer_account.your_industry_name') }}</label>
                                     <input type="text" class="form-control" id="employerModalIndustryName"
-                                           maxlength="150" placeholder="Type industry name">
+                                           maxlength="150" placeholder="{{ __('messages.employer_account.type_industry_name') }}">
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-success" id="employerAddIndustryButton">Add</button>
+                                <button type="button" class="btn btn-success" id="employerAddIndustryButton">{{ __('messages.employer_account.add') }}</button>
                             </div>
                         </div>
                     </div>
@@ -134,10 +191,88 @@
     <script>
         var phoneNo = "{{ old('region_code') . old('phone') }}";
 
+        $(document).off('submit.employerAccountSave', '#editCompanyForm')
+            .on('submit.employerAccountSave', '#editCompanyForm', function (event) {
+                event.preventDefault();
+
+                const form = this;
+                const errorBox = document.getElementById('editValidationErrorsBox');
+
+                if (window.editEmployeeDetail && window.editEmployeeDetail.getText().trim().length === 0) {
+                    return;
+                }
+
+                if (document.getElementById('error-msg')?.textContent.trim()) {
+                    document.getElementById('phoneNumber')?.focus();
+                    return;
+                }
+
+                if (form.dataset.saving === 'true') {
+                    return;
+                }
+
+                form.dataset.saving = 'true';
+                errorBox?.classList.add('d-none');
+                processingBtn('#editCompanyForm', '#employerSaveChanges', 'loading');
+
+                $.ajax({
+                    url: form.action,
+                    type: 'POST',
+                    data: new FormData(form),
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        Accept: 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    success: function (result) {
+                        if (result.success) {
+                            displaySuccessMessage(result.message);
+                        }
+                    },
+                    error: function (result) {
+                        const response = result.responseJSON || {};
+                        const errors = response.errors || {};
+                        const firstError = Object.keys(errors).length
+                            ? errors[Object.keys(errors)[0]][0]
+                            : response.message;
+
+                        displayErrorMessage(firstError || '{{ __('messages.common.save_failed') }}');
+                    },
+                    complete: function () {
+                        form.dataset.saving = 'false';
+                        processingBtn('#editCompanyForm', '#employerSaveChanges');
+                    }
+                });
+            });
+
         function setActiveAccountSection(sectionId) {
             document.querySelectorAll('.employer-account-section-link').forEach(function (link) {
                 link.classList.toggle('active', link.dataset.accountSection === sectionId);
             });
+        }
+
+        function setEmployerPasswordView(showPassword) {
+            const profileForm = document.getElementById('editCompanyForm');
+            const passwordPanel = document.getElementById('employerPasswordPanel');
+            const passwordLink = document.querySelector('.employer-account-password-link');
+            const profileToggle = document.querySelector('.employer-account-nav-toggle');
+
+            if (!profileForm || !passwordPanel) {
+                return;
+            }
+
+            profileForm.classList.toggle('d-none', showPassword);
+            passwordPanel.classList.toggle('d-none', !showPassword);
+            passwordLink?.classList.toggle('active', showPassword);
+            profileToggle?.classList.toggle('active', !showPassword);
+
+            if (showPassword) {
+                document.querySelectorAll('.employer-account-section-link').forEach(function (link) {
+                    link.classList.remove('active');
+                });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         }
 
         document.addEventListener('change', function (event) {
@@ -151,10 +286,40 @@
         });
 
         document.addEventListener('click', function (event) {
+            const passwordVisibilityButton = event.target.closest('.employer-account-password-visibility');
+
+            if (passwordVisibilityButton) {
+                const input = document.getElementById(passwordVisibilityButton.dataset.passwordTarget);
+                const icon = passwordVisibilityButton.querySelector('i');
+
+                if (input) {
+                    const showPassword = input.type === 'password';
+                    input.type = showPassword ? 'text' : 'password';
+                    icon?.classList.toggle('fa-eye', showPassword);
+                    icon?.classList.toggle('fa-eye-slash', !showPassword);
+                    passwordVisibilityButton.setAttribute(
+                        'aria-label',
+                        showPassword ? 'Hide password' : 'Show password'
+                    );
+                }
+
+                return;
+            }
+
             const toggle = event.target.closest('.employer-account-nav-toggle');
 
             if (toggle) {
                 const subnav = document.getElementById(toggle.getAttribute('aria-controls'));
+                const passwordPanel = document.getElementById('employerPasswordPanel');
+
+                if (passwordPanel && !passwordPanel.classList.contains('d-none')) {
+                    setEmployerPasswordView(false);
+                    setActiveAccountSection('companyDetailsPanel');
+                    toggle.setAttribute('aria-expanded', 'true');
+                    subnav?.classList.remove('is-collapsed');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
 
                 if (subnav) {
                     const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
@@ -164,6 +329,12 @@
             }
 
             const sectionLink = event.target.closest('.employer-account-section-link');
+
+            const passwordLink = event.target.closest('.employer-account-password-link');
+            if (passwordLink) {
+                setEmployerPasswordView(true);
+                return;
+            }
 
             if (!sectionLink) {
                 return;
@@ -176,6 +347,7 @@
             }
 
             setActiveAccountSection(targetPanel.id);
+            setEmployerPasswordView(false);
 
             const profileToggle = document.querySelector('.employer-account-nav-toggle');
             const profileSubnav = document.getElementById('employerProfileSubnav');
@@ -197,6 +369,10 @@
             }
 
             const updateActiveSection = function () {
+                if (!document.getElementById('employerPasswordPanel').classList.contains('d-none')) {
+                    return;
+                }
+
                 let currentPanel = accountPanels[0];
 
                 accountPanels.forEach(function (panel) {
@@ -210,6 +386,22 @@
 
             window.addEventListener('scroll', updateActiveSection, { passive: true });
             updateActiveSection();
+
+            const applyAccountHash = function () {
+                if (window.location.hash === '#change-password') {
+                    setEmployerPasswordView(true);
+                    return;
+                }
+
+                if (window.location.hash === '#company-details') {
+                    setEmployerPasswordView(false);
+                    setActiveAccountSection('companyDetailsPanel');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            };
+
+            window.addEventListener('hashchange', applyAccountHash);
+            applyAccountHash();
 
             const primaryIndustryInput = document.getElementById('primaryIndustryId');
             const industryType = document.getElementById('employerIndustryType');
@@ -453,7 +645,7 @@
                         field.classList.toggle('employer-contact-readonly', !isEditing);
                     });
 
-                    this.textContent = isEditing ? 'Done' : 'Add/Edit Contact Person';
+                    this.textContent = isEditing ? 'Done' : 'Edit Contact Person';
                     if (isEditing) {
                         editableContactFields[0].focus();
                     }
@@ -462,25 +654,45 @@
 
             const billingPhoneInput = document.getElementById('billingPhoneNumber');
             const billingPrefixCode = document.getElementById('billingPrefixCode');
+            const contactPhoneInput = document.getElementById('phoneNumber');
+            const normalizePhoneDigits = function (input) {
+                if (input) {
+                    input.value = input.value.replace(/\D/g, '');
+                }
+            };
+
+            if (contactPhoneInput) {
+                ['input', 'change', 'blur', 'countrychange'].forEach(function (eventName) {
+                    contactPhoneInput.addEventListener(eventName, function () {
+                        normalizePhoneDigits(contactPhoneInput);
+                    });
+                });
+                setTimeout(function () {
+                    normalizePhoneDigits(contactPhoneInput);
+                }, 0);
+            }
 
             if (billingPhoneInput && billingPrefixCode && window.intlTelInput) {
                 const billingPhone = window.intlTelInput(billingPhoneInput, {
                     initialCountry: 'bd',
                     separateDialCode: true,
+                    formatOnDisplay: false,
                     utilsScript: "{{ asset('assets/js/inttel/js/utils.min.js') }}"
                 });
                 const existingBillingNumber = @json(($company->billing_region_code ?: $user->region_code ?: '880').($company->billing_phone ?: $user->phone ?: ''));
 
                 if (existingBillingNumber) {
                     billingPhone.setNumber('+' + String(existingBillingNumber).replace(/\D/g, ''));
+                    normalizePhoneDigits(billingPhoneInput);
                 }
 
                 const updateBillingPrefix = function () {
                     billingPrefixCode.value = billingPhone.getSelectedCountryData().dialCode || '880';
+                    normalizePhoneDigits(billingPhoneInput);
                 };
 
                 billingPhoneInput.addEventListener('input', function () {
-                    this.value = this.value.replace(/\D/g, '');
+                    normalizePhoneDigits(this);
                 });
                 billingPhoneInput.addEventListener('countrychange', updateBillingPrefix);
                 updateBillingPrefix();
@@ -538,7 +750,7 @@
 
             const businessDescription = document.querySelector('#companyDetailsPanel .ql-editor');
             if (businessDescription) {
-                businessDescription.setAttribute('data-placeholder', 'Write Business Description');
+                businessDescription.setAttribute('data-placeholder', '{{ __('messages.employer_account.business_description') }}');
             }
         });
     </script>
