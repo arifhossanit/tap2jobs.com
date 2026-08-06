@@ -278,7 +278,11 @@ window.displaySuccessMessage = function(message) {
 };
 
 window.displayErrorMessage = function(message) {
-    toastr.error(message, Lang.get("js.error"));
+    let errorTitle = Lang.get("js.error");
+    if (errorTitle === "js.error") {
+        errorTitle = typeof lancode !== 'undefined' && lancode === 'bn' ? 'ত্রুটি' : 'Error';
+    }
+    toastr.error(message, errorTitle);
 };
 
 window.deleteItem = function(url, header) {
