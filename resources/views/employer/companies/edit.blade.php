@@ -1,6 +1,7 @@
 @extends('employer.layouts.app')
 @section('title')
     {{ __('messages.company.edit_company') }}
+    {{ __('messages.company.edit_company') }}
 @endsection
 @push('css')
     {{--    <link href="{{ asset('assets/css/summernote.min.css') }}" rel="stylesheet" type="text/css"/> --}}

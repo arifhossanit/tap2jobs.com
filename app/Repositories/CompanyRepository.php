@@ -7,6 +7,7 @@ use App\Models\CompanySize;
 use App\Models\FavouriteCompany;
 use App\Models\Industry;
 use App\Models\IndustryType;
+use App\Models\IndustryType;
 use App\Models\Job;
 use App\Models\Notification;
 use App\Models\NotificationSetting;
