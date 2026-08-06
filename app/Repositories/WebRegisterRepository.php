@@ -102,8 +102,10 @@ class WebRegisterRepository
                 $employer = Company::create([
                     'user_id' => $user->id,
                     'unique_id' => getUniqueCompanyId(),
+                    'company_name' => $input['company_name'],
                     'company_name_bn' => $input['company_name_bn'] ?? null,
                     'contact_person_name' => $input['contact_person_name'],
+                    'contact_person_designation' => $input['contact_person_designation'],
                     'ceo' => $input['contact_person_designation'],
                     'established_in' => $input['established_in'],
                     'employee_range' => $input['employee_range'],
@@ -118,6 +120,10 @@ class WebRegisterRepository
                     'website' => $input['website'] ?? null,
                     'location' => $input['company_address'],
                     'company_address_bn' => $input['company_address_bn'] ?? null,
+                    'billing_address' => $input['company_address'],
+                    'billing_phone' => $input['phone'],
+                    'billing_region_code' => $input['region_code'],
+                    'billing_email' => $input['email'],
                     'has_disability_facilities' => (bool) ($input['has_disability_facilities'] ?? false),
                     'disability_inclusion_policy' => ($input['has_disability_facilities'] ?? false)
                         ? (bool) $input['disability_inclusion_policy']
