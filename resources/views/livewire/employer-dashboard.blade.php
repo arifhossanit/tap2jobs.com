@@ -1,5 +1,5 @@
 <div class="content flex-column-fluid">
-    <div class="container-fluid container-xxl">
+    <div class="my-4">
         <div class="row">
             <div class="col-xl-4 col-sm-6 widget">
                 <a href="{{ route('job.index') }}" class=" text-decoration-none">
