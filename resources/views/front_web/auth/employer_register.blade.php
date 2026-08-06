@@ -63,20 +63,20 @@
                                     <section class="employer-user-information-card">
                                         <h2 class="employer-user-information-title">
                                             <i class="fa-solid fa-user-tie"></i>
-                                            <span>Let's Start by Filling Out Your User Information</span>
+                                            <span>{{ __('messages.employer_register.user_information_title') }}</span>
                                         </h2>
 
                                         <div class="row g-4">
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="employerUsername" class="employer-user-information-label">
-                                                        Username <span class="text-danger">*</span>
+                                                        {{ __('messages.employer_register.username') }} <span class="text-danger">*</span>
                                                     </label>
                                                     <div class="employer-user-information-input">
                                                         <i class="fa-regular fa-user"></i>
                                                         <input type="text" name="username" id="employerUsername"
                                                                class="form-control" value="{{ old('username') }}"
-                                                               maxlength="100" placeholder="Type Username" required>
+                                                               maxlength="100" placeholder="{{ __('messages.employer_register.username_placeholder') }}" required>
                                                     </div>
                                                     <div class="employer-live-validation-message" id="employerUsernameFeedback"
                                                          aria-live="polite"></div>
@@ -86,13 +86,13 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="employerPassword" class="employer-user-information-label">
-                                                        Password <span class="text-danger">*</span>
+                                                        {{ __('messages.employer_register.password') }} <span class="text-danger">*</span>
                                                     </label>
                                                     <div class="employer-user-information-input">
                                                         <i class="fa-solid fa-key"></i>
                                                         <input type="password" name="password" id="employerPassword"
                                                                class="form-control" minlength="6" maxlength="20"
-                                                               placeholder="Use maximum 8 characters" required
+                                                               placeholder="{{ __('messages.employer_register.password_placeholder') }}" required
                                                                onkeypress="return avoidSpace(event)">
                                                     </div>
                                                 </div>
@@ -101,13 +101,13 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="employerConfirmPassword" class="employer-user-information-label">
-                                                        Confirm Password <span class="text-danger">*</span>
+                                                        {{ __('messages.employer_register.confirm_password') }} <span class="text-danger">*</span>
                                                     </label>
                                                     <div class="employer-user-information-input">
                                                         <i class="fa-solid fa-key"></i>
                                                         <input type="password" name="password_confirmation"
                                                                id="employerConfirmPassword" class="form-control"
-                                                               minlength="6" maxlength="20" placeholder="Retype password"
+                                                               minlength="6" maxlength="20" placeholder="{{ __('messages.employer_register.confirm_password_placeholder') }}"
                                                                required onkeypress="return avoidSpace(event)">
                                                     </div>
                                                     <div class="employer-live-validation-message" id="employerConfirmPasswordFeedback"
@@ -123,50 +123,50 @@
                                         <section class="employer-company-information-card">
                                             <h2 class="employer-company-information-title">
                                                 <i class="fa-solid fa-building"></i>
-                                                <span>Tell Us About Your Company</span>
+                                                <span>{{ __('messages.employer_register.company_information_title') }}</span>
                                             </h2>
 
                                             <div class="row g-4">
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label for="registerCompanyName" class="employer-company-information-label">
-                                                            Company Name <span class="text-danger">*</span>
+                                                            {{ __('messages.employer_register.company_name') }} <span class="text-danger">*</span>
                                                         </label>
                                                         <input type="text" name="company_name" id="registerCompanyName"
                                                                class="form-control employer-company-information-control"
                                                                value="{{ old('company_name') }}" maxlength="180"
-                                                               placeholder="Type Company Name" required>
+                                                               placeholder="{{ __('messages.employer_register.company_name_placeholder') }}" required>
                                                     </div>
                                                 </div>
 
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label for="registerCompanyNameBn" class="employer-company-information-label">
-                                                            কোম্পানির নাম (বাংলায়)
+                                                            {{ __('messages.employer_register.company_name_bn') }}
                                                         </label>
                                                         <input type="text" name="company_name_bn" id="registerCompanyNameBn"
                                                                class="form-control employer-company-information-control"
                                                                value="{{ old('company_name_bn') }}" maxlength="180"
-                                                               placeholder="Type Company Name">
+                                                               placeholder="{{ __('messages.employer_register.company_name_bn_placeholder') }}">
                                                     </div>
                                                 </div>
 
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label for="registerEstablishedIn" class="employer-company-information-label">
-                                                            Year of Establishment <span class="text-danger">*</span>
+                                                            {{ __('messages.employer_register.year_of_establishment') }} <span class="text-danger">*</span>
                                                         </label>
                                                         <input type="number" name="established_in" id="registerEstablishedIn"
                                                                class="form-control employer-company-information-control"
                                                                value="{{ old('established_in') }}" min="1800" max="{{ date('Y') }}"
-                                                               placeholder="Type Company's Establishment Year" required>
+                                                               placeholder="{{ __('messages.employer_register.year_of_establishment_placeholder') }}" required>
                                                     </div>
                                                 </div>
 
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label class="employer-company-information-label">
-                                                            Number of Employees <span class="text-danger">*</span>
+                                                            {{ __('messages.employer_register.number_of_employees') }} <span class="text-danger">*</span>
                                                         </label>
                                                         <div class="employer-company-employee-options">
                                                             @foreach (['1-25', '26-50', '51-100', '101-500', '501-1000', '1000+'] as $employeeRange)
@@ -186,7 +186,7 @@
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label class="employer-company-information-label">
-                                                            Company Address <span class="text-danger">*</span>
+                                                            {{ __('messages.employer_register.company_address') }} <span class="text-danger">*</span>
                                                         </label>
                                                         <div class="row g-3">
                                                             <div class="col-md-4">
@@ -208,7 +208,7 @@
                                                             <div class="col-md-4">
                                                                 <select name="state_id" id="registerStateId"
                                                                         class="form-select employer-company-information-control" required>
-                                                                    <option value="">Select District</option>
+                                                                    <option value="">{{ __('messages.employer_register.select_district') }}</option>
                                                                     @foreach ($states as $stateId => $stateName)
                                                                         <option value="{{ $stateId }}"
                                                                             {{ (int) old('state_id') === (int) $stateId ? 'selected' : '' }}>
@@ -221,7 +221,7 @@
                                                                 <select name="city_id" id="registerCityId"
                                                                         class="form-select employer-company-information-control"
                                                                         data-old-city-id="{{ old('city_id') }}" required disabled>
-                                                                    <option value="">Select Thana</option>
+                                                                    <option value="">{{ __('messages.employer_register.select_thana') }}</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -232,25 +232,25 @@
                                                     <textarea name="company_address"
                                                               class="form-control employer-company-information-control employer-company-address"
                                                               maxlength="255" rows="3"
-                                                              placeholder="Write Company Detail Address In English"
+                                                              placeholder="{{ __('messages.employer_register.company_address_en_placeholder') }}"
                                                               required>{{ old('company_address') }}</textarea>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <textarea name="company_address_bn"
                                                               class="form-control employer-company-information-control employer-company-address"
                                                               maxlength="1000" rows="3"
-                                                              placeholder="Write Company Detail Address In Bangla">{{ old('company_address_bn') }}</textarea>
+                                                              placeholder="{{ __('messages.employer_register.company_address_bn_placeholder') }}">{{ old('company_address_bn') }}</textarea>
                                                 </div>
 
                                                 <div class="col-12">
                                                     <div class="employer-register-industry-type-row">
                                                         <div class="employer-register-industry-type-select">
                                                             <label for="registerIndustryType" class="employer-company-information-label">
-                                                                Industry Type <span class="text-danger">*</span>
+                                                                {{ __('messages.employer_register.industry_type') }} <span class="text-danger">*</span>
                                                             </label>
                                                             <select id="registerIndustryType"
                                                                     class="form-select employer-company-information-control">
-                                                                <option value="all" selected>All</option>
+                                                                <option value="all" selected>{{ __('messages.employer_register.all') }}</option>
                                                                 @foreach ($industryTypes as $industryTypeId => $industryTypeName)
                                                                     <option value="{{ $industryTypeId }}">{{ $industryTypeName }}</option>
                                                                 @endforeach
@@ -260,7 +260,7 @@
                                                                 id="registerAddIndustryTrigger" data-bs-toggle="modal"
                                                                 data-bs-target="#registerAddIndustryModal">
                                                             <i class="fa-solid fa-plus"></i>
-                                                            <span>Add a New Industry</span>
+                                                            <span>{{ __('messages.employer_register.add_new_industry') }}</span>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -270,7 +270,7 @@
                                                         <div class="employer-company-industry-search">
                                                             <input type="search" id="registerIndustrySearch"
                                                                    class="form-control employer-company-information-control"
-                                                                   placeholder="Search Industry">
+                                                                   placeholder="{{ __('messages.employer_register.search_industry') }}">
                                                             <i class="fa-solid fa-magnifying-glass"></i>
                                                         </div>
 
@@ -287,10 +287,10 @@
                                                             @endforeach
                                                         </div>
 
-                                                        <div class="text-gray d-none" id="registerIndustryEmpty">No industry found.</div>
+                                                        <div class="text-gray d-none" id="registerIndustryEmpty">{{ __('messages.employer_register.no_industry_found') }}</div>
                                                         <button type="button"
                                                                 class="btn btn-link p-0 d-none employer-register-see-more"
-                                                                id="registerIndustryMore">See more</button>
+                                                                id="registerIndustryMore">{{ __('messages.employer_register.see_more') }}</button>
                                                     </div>
                                                 </div>
 
@@ -302,43 +302,45 @@
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label for="registerBusinessDescription"
-                                                               class="employer-company-information-label">Business Description</label>
+                                                               class="employer-company-information-label">{{ __('messages.employer_register.business_description') }}</label>
                                                         <textarea name="details" id="registerBusinessDescription"
                                                                   class="form-control employer-company-information-control employer-company-description"
                                                                   maxlength="5000" rows="3"
-                                                                  placeholder="Write Business Description">{{ old('details') }}</textarea>
+                                                                  placeholder="{{ __('messages.employer_register.business_description_placeholder') }}">{{ old('details') }}</textarea>
                                                     </div>
                                                 </div>
 
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label for="registerTradeLicense"
-                                                               class="employer-company-information-label">Business/ Trade License No</label>
+                                                               class="employer-company-information-label">{{ __('messages.employer_register.trade_license_no') }}</label>
                                                         <input type="text" name="trade_license_no" id="registerTradeLicense"
                                                                class="form-control employer-company-information-control"
                                                                value="{{ old('trade_license_no') }}" maxlength="100"
-                                                               placeholder="Business/ Trade License No">
+                                                               placeholder="{{ __('messages.employer_register.trade_license_no_placeholder') }}">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label for="registerRlNo" class="employer-company-information-label">
-                                                            RL No. <span class="text-muted">(Only for Recruiting Agency)</span>
+                                                            {{ __('messages.employer_register.rl_no') }} <span class="text-muted">({{ __('messages.employer_register.rl_no_only_recruiting_agency') }})</span>
                                                         </label>
                                                         <input type="text" name="rl_no" id="registerRlNo"
                                                                class="form-control employer-company-information-control"
                                                                value="{{ old('rl_no') }}" maxlength="100" inputmode="numeric"
-                                                               placeholder="Enter Number Only">
+                                                               pattern="[0-9]*"
+                                                               oninput="this.value = this.value.replace(/\D/g, '')"
+                                                               placeholder="{{ __('messages.employer_register.enter_number_only') }}">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label for="registerWebsite"
-                                                               class="employer-company-information-label">Website URL</label>
+                                                               class="employer-company-information-label">{{ __('messages.employer_register.website_url') }}</label>
                                                         <input type="url" name="website" id="registerWebsite"
                                                                class="form-control employer-company-information-control"
                                                                value="{{ old('website') }}" maxlength="255"
-                                                               placeholder="Type Website URL">
+                                                               placeholder="{{ __('messages.employer_register.website_url_placeholder') }}">
                                                     </div>
                                                 </div>
                                             </div>
@@ -350,56 +352,57 @@
                                     <section class="employer-contact-information-card">
                                         <h2 class="employer-contact-information-title">
                                             <i class="fa-solid fa-phone"></i>
-                                            <span>Provide Contact Person Information</span>
+                                            <span>{{ __('messages.employer_register.contact_information_title') }}</span>
                                         </h2>
 
                                         <div class="row g-4">
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="registerContactName" class="employer-contact-information-label">
-                                                        Contact Person's Name <span class="text-danger">*</span>
+                                                        {{ __('messages.employer_register.contact_person_name') }} <span class="text-danger">*</span>
                                                     </label>
                                                     <input type="text" name="contact_person_name" id="registerContactName"
                                                            class="form-control employer-contact-information-control"
                                                            value="{{ old('contact_person_name') }}" maxlength="180"
-                                                           placeholder="Type contact person's name" required>
+                                                           placeholder="{{ __('messages.employer_register.contact_person_name_placeholder') }}" required>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="registerContactDesignation" class="employer-contact-information-label">
-                                                        Contact Person's Designation <span class="text-danger">*</span>
+                                                        {{ __('messages.employer_register.contact_person_designation') }} <span class="text-danger">*</span>
                                                     </label>
                                                     <input type="text" name="contact_person_designation"
                                                            id="registerContactDesignation"
                                                            class="form-control employer-contact-information-control"
                                                            value="{{ old('contact_person_designation') }}" maxlength="180"
-                                                           placeholder="Type contact person's designation" required>
+                                                           placeholder="{{ __('messages.employer_register.contact_person_designation_placeholder') }}" required>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="employerEmail" class="employer-contact-information-label">
-                                                        Contact Person's Email <span class="text-danger">*</span>
+                                                        {{ __('messages.employer_register.contact_person_email') }} <span class="text-danger">*</span>
                                                     </label>
                                                     <input type="email" name="email" id="employerEmail"
                                                            class="form-control employer-contact-information-control"
                                                            value="{{ old('email') }}" maxlength="170"
-                                                           placeholder="Type contact person's email" required>
+                                                           placeholder="{{ __('messages.employer_register.contact_person_email_placeholder') }}" required>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-6">
                                                 <div class="form-group employer-register-phone-field employer-contact-phone-field">
                                                     <label for="employerRegisterPhone" class="employer-contact-information-label">
-                                                        Contact Person's Mobile <span class="text-danger">*</span>
+                                                        {{ __('messages.employer_register.contact_person_mobile') }} <span class="text-danger">*</span>
                                                     </label>
                                                     <input type="tel" name="phone" id="employerRegisterPhone"
                                                            class="form-control employer-contact-information-control"
-                                                           value="{{ old('phone') }}" maxlength="30"
-                                                           placeholder="Enter Mobile Number" required>
+                                                           value="{{ old('phone') }}" minlength="4" maxlength="15"
+                                                           inputmode="numeric" pattern="[0-9]{4,15}"
+                                                           placeholder="{{ __('messages.employer_register.enter_mobile_number') }}" required>
                                                     <input type="hidden" name="region_code" id="employerRegisterRegionCode"
                                                            value="{{ old('region_code', '880') }}">
                                                 </div>
@@ -414,74 +417,74 @@
                                             $registerHasDisabilityFacilities = (int) old('has_disability_facilities', 0) === 1;
                                             $registerSelectedDisabilityFacilities = collect(old('disability_facilities', []));
                                             $registerDisabilityFacilityOptions = [
-                                                'accessible_documentation' => 'Accessible documentation and alternative formats',
-                                                'accessible_washrooms' => 'Accessible Washrooms / Toilets',
-                                                'adapted_transport' => 'Adapted Transport facility for Distant Travelling',
-                                                'assistive_software' => 'Assistive Software, communication and computer devices',
-                                                'flexible_shifts' => 'Available Flexible working shifts',
-                                                'work_from_home' => 'Offering Work from home',
-                                                'ramps_lifts' => 'Ramps or Lifts or Escalators for entry and move between floors',
-                                                'reasonable_accommodation' => 'Reasonable Accommodation in Recruitment/interview procedures like sign language, oral/typed/video interview',
-                                                'warning_indicators' => 'Warning Indicators or Markers in place for hazards, staircase',
-                                                'workstation_adaptations' => 'Workstation or seating adaptations for easy use',
+                                                'accessible_documentation' => __('messages.employer_register.facilities.accessible_documentation'),
+                                                'accessible_washrooms' => __('messages.employer_register.facilities.accessible_washrooms'),
+                                                'adapted_transport' => __('messages.employer_register.facilities.adapted_transport'),
+                                                'assistive_software' => __('messages.employer_register.facilities.assistive_software'),
+                                                'flexible_shifts' => __('messages.employer_register.facilities.flexible_shifts'),
+                                                'work_from_home' => __('messages.employer_register.facilities.work_from_home'),
+                                                'ramps_lifts' => __('messages.employer_register.facilities.ramps_lifts'),
+                                                'reasonable_accommodation' => __('messages.employer_register.facilities.reasonable_accommodation'),
+                                                'warning_indicators' => __('messages.employer_register.facilities.warning_indicators'),
+                                                'workstation_adaptations' => __('messages.employer_register.facilities.workstation_adaptations'),
                                             ];
                                         @endphp
                                         <h2 class="employer-accessibility-title">
                                             <i class="fa-solid fa-universal-access"></i>
-                                            <span>Accessibility Profile for Inclusion of Persons with Disabilities</span>
+                                            <span>{{ __('messages.employer_register.accessibility_title') }}</span>
                                         </h2>
 
                                         <label class="employer-accessibility-check" for="registerDisabilityFacilities">
                                             <input type="checkbox" name="has_disability_facilities" value="1"
                                                    id="registerDisabilityFacilities" data-register-facilities-toggle
                                                 {{ $registerHasDisabilityFacilities ? 'checked' : '' }}>
-                                            <span>Enable Facilities for Person with Disabilities as Employees</span>
+                                            <span>{{ __('messages.employer_register.enable_facilities') }}</span>
                                         </label>
 
-                                        <a href="javascript:void(0)" class="employer-accessibility-learn-more">Learn More</a>
+                                        <a href="javascript:void(0)" class="employer-accessibility-learn-more">{{ __('messages.employer_register.learn_more') }}</a>
 
                                         <div class="employer-register-disability-details {{ $registerHasDisabilityFacilities ? '' : 'd-none' }}"
                                              id="registerDisabilityDetails">
                                             <div class="employer-register-disability-overview">
                                                 <div class="employer-register-disability-questions">
                                                     <fieldset>
-                                                        <legend>Do you have Disability Inclusion Policy</legend>
+                                                        <legend>{{ __('messages.employer_register.disability_inclusion_policy') }}</legend>
                                                         <label>
                                                             <input type="radio" name="disability_inclusion_policy" value="1"
                                                                 {{ (int) old('disability_inclusion_policy') === 1 ? 'checked' : '' }}>
-                                                            Yes
+                                                            {{ __('messages.employer_register.yes') }}
                                                         </label>
                                                         <label>
                                                             <input type="radio" name="disability_inclusion_policy" value="0"
                                                                 {{ old('disability_inclusion_policy') !== null && (int) old('disability_inclusion_policy') === 0 ? 'checked' : '' }}>
-                                                            No
+                                                            {{ __('messages.employer_register.no') }}
                                                         </label>
                                                     </fieldset>
                                                     <fieldset id="registerDisabilitySupportQuestion"
                                                               class="{{ old('disability_inclusion_policy') !== null && (int) old('disability_inclusion_policy') === 0 ? '' : 'd-none' }}">
-                                                        <legend>Would you like to have any support for implementing?</legend>
+                                                        <legend>{{ __('messages.employer_register.disability_support') }}</legend>
                                                         <label>
                                                             <input type="radio" name="disability_inclusion_support" value="1"
                                                                 {{ (int) old('disability_inclusion_support') === 1 ? 'checked' : '' }}>
-                                                            Yes
+                                                            {{ __('messages.employer_register.yes') }}
                                                         </label>
                                                         <label>
                                                             <input type="radio" name="disability_inclusion_support" value="0"
                                                                 {{ old('disability_inclusion_support') !== null && (int) old('disability_inclusion_support') === 0 ? 'checked' : '' }}>
-                                                            No
+                                                            {{ __('messages.employer_register.no') }}
                                                         </label>
                                                     </fieldset>
                                                     <fieldset>
-                                                        <legend>Do you provide Disability Inclusion Training for your Employees?</legend>
+                                                        <legend>{{ __('messages.employer_register.disability_training') }}</legend>
                                                         <label>
                                                             <input type="radio" name="disability_inclusion_training" value="1"
                                                                 {{ (int) old('disability_inclusion_training') === 1 ? 'checked' : '' }}>
-                                                            Yes
+                                                            {{ __('messages.employer_register.yes') }}
                                                         </label>
                                                         <label>
                                                             <input type="radio" name="disability_inclusion_training" value="0"
                                                                 {{ old('disability_inclusion_training') !== null && (int) old('disability_inclusion_training') === 0 ? 'checked' : '' }}>
-                                                            No
+                                                            {{ __('messages.employer_register.no') }}
                                                         </label>
                                                     </fieldset>
                                                 </div>
@@ -491,7 +494,7 @@
                                             </div>
 
                                             <div class="employer-register-disability-checklist">
-                                                <h3>As part of Disability Inclusion, what do your company have?</h3>
+                                                <h3>{{ __('messages.employer_register.disability_facilities_question') }}</h3>
                                                 <div class="employer-register-disability-checklist-grid">
                                                     @foreach ($registerDisabilityFacilityOptions as $facilityKey => $facilityLabel)
                                                         <label>
@@ -510,11 +513,11 @@
                                 <div class="shadow rounded border mt-4">
                                     <section class="employer-pricing-policy-card" id="employerPricingPolicyCard">
                                         <div class="employer-pricing-policy-header">
-                                            <h2>Pricing Policy of {{ getAppName() }} recruitment services</h2>
+                                            <h2>{{ __('messages.employer_register.pricing_policy', ['name' => getAppName()]) }}</h2>
                                             <button type="button" class="employer-pricing-policy-toggle"
                                                     id="employerPricingPolicyToggle" aria-expanded="true"
                                                     aria-controls="employerPricingPolicyContent"
-                                                    aria-label="Toggle pricing policy">
+                                                    aria-label="{{ __('messages.employer_register.toggle_pricing_policy') }}">
                                                 <i class="fa-solid fa-chevron-down"></i>
                                             </button>
                                         </div>
@@ -523,8 +526,8 @@
                                             <label for="remember" class="employer-pricing-policy-check">
                                                 <input type="checkbox" name="privacyPolicy" value="1"
                                                        id="remember" required>
-                                                <span>I have read and accepted the
-                                                    <a href="{{ route('privacy.policy.list') }}" target="_blank">Privacy Policy</a>
+                                                <span>{{ __('messages.employer_register.privacy_policy_agree') }}
+                                                    <a href="{{ route('privacy.policy.list') }}" target="_blank">{{ __('messages.employer_register.privacy_policy') }}</a>
                                                 </span>
                                             </label>
                                         </div>
@@ -599,8 +602,8 @@
                                                 <i class="fa-solid fa-plus"></i>
                                             </span>
                                             <div>
-                                                <h2 class="modal-title" id="registerAddIndustryModalLabel">Add New Industry</h2>
-                                                <p>Please specify your industry</p>
+                                                <h2 class="modal-title" id="registerAddIndustryModalLabel">{{ __('messages.employer_register.add_new_industry_title') }}</h2>
+                                                <p>{{ __('messages.employer_register.specify_industry') }}</p>
                                             </div>
                                         </div>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -608,7 +611,7 @@
                                     <div class="modal-body">
                                         <div class="alert alert-danger d-none" id="registerIndustryModalError"></div>
                                         <div class="mb-4">
-                                            <label for="registerModalIndustryType" class="form-label">Industry Type</label>
+                                            <label for="registerModalIndustryType" class="form-label">{{ __('messages.employer_register.industry_type') }}</label>
                                             <select class="form-select" id="registerModalIndustryType">
                                                 @foreach ($industryTypes as $industryTypeId => $industryTypeName)
                                                     <option value="{{ $industryTypeId }}">{{ $industryTypeName }}</option>
@@ -616,13 +619,13 @@
                                             </select>
                                         </div>
                                         <div>
-                                            <label for="registerModalIndustryName" class="form-label">Your Industry Name</label>
+                                            <label for="registerModalIndustryName" class="form-label">{{ __('messages.employer_register.your_industry_name') }}</label>
                                             <input type="text" class="form-control" id="registerModalIndustryName"
-                                                   maxlength="150" placeholder="Type industry name">
+                                                   maxlength="150" placeholder="{{ __('messages.employer_register.type_industry_name') }}">
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-success" id="registerAddIndustryButton">Add</button>
+                                        <button type="button" class="btn btn-success" id="registerAddIndustryButton">{{ __('messages.employer_register.add') }}</button>
                                     </div>
                                 </div>
                             </div>

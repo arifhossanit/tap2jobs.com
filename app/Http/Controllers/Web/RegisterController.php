@@ -70,7 +70,7 @@ class RegisterController extends AppBaseController
     public function usernameAvailability(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'username' => ['required', 'string', 'max:100', 'regex:/^[A-Za-z0-9._-]+$/'],
+            'username' => ['required', 'string', 'max:100', 'regex:/^[\p{L}\p{M}\p{N}._-]+$/u'],
         ]);
         $available = ! User::where('username', $validated['username'])->exists();
 
