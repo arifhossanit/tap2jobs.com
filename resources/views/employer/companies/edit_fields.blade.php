@@ -272,6 +272,12 @@
                             <label>{{ Form::radio('disability_inclusion_policy', 1, (int) old('disability_inclusion_policy', $company->disability_inclusion_policy) === 1) }} Yes</label>
                             <label>{{ Form::radio('disability_inclusion_policy', 0, old('disability_inclusion_policy', $company->disability_inclusion_policy) !== null && (int) old('disability_inclusion_policy', $company->disability_inclusion_policy) === 0) }} No</label>
                         </fieldset>
+                        <fieldset id="employerDisabilitySupportQuestion"
+                                  class="{{ old('disability_inclusion_policy', $company->disability_inclusion_policy) !== null && (int) old('disability_inclusion_policy', $company->disability_inclusion_policy) === 0 ? '' : 'd-none' }}">
+                            <legend>Would you like to have any support for implementing?</legend>
+                            <label>{{ Form::radio('disability_inclusion_support', 1, (int) old('disability_inclusion_support', $company->disability_inclusion_support) === 1) }} Yes</label>
+                            <label>{{ Form::radio('disability_inclusion_support', 0, old('disability_inclusion_support', $company->disability_inclusion_support) !== null && (int) old('disability_inclusion_support', $company->disability_inclusion_support) === 0) }} No</label>
+                        </fieldset>
                         <fieldset>
                             <legend>Do you provide Disability Inclusion Training for your Employees?</legend>
                             <label>{{ Form::radio('disability_inclusion_training', 1, (int) old('disability_inclusion_training', $company->disability_inclusion_training) === 1) }} Yes</label>
@@ -279,11 +285,7 @@
                         </fieldset>
                     </div>
                     <div class="employer-disability-illustration" aria-hidden="true">
-                        <i class="fa-solid fa-cloud employer-disability-cloud employer-disability-cloud--one"></i>
-                        <i class="fa-solid fa-cloud employer-disability-cloud employer-disability-cloud--two"></i>
-                        <i class="fa-solid fa-person"></i>
-                        <i class="fa-solid fa-wheelchair-move"></i>
-                        <span></span>
+                        <img src="{{ asset('assets/img/disability.svg') }}" alt="">
                     </div>
                 </div>
 

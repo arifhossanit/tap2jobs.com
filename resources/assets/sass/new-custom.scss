@@ -469,16 +469,18 @@
 }
 
 .employer-disability-overview {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
+  align-items: flex-start;
+  display: flex;
+  gap: 24px;
   margin: 0 8px 42px;
-  min-height: 142px;
 }
 
 .employer-disability-questions {
   display: flex;
+  flex: 1 1 0;
   flex-direction: column;
   gap: 22px;
+  min-width: 0;
   padding: 8px 0;
 }
 
@@ -524,56 +526,22 @@
 }
 
 .employer-disability-illustration {
-  align-items: flex-end;
-  background: linear-gradient(135deg, #edf2ff 0%, #c6d7ff 100%);
+  background: #cbdcff;
   border-radius: 5px;
-  color: #2c75e8;
-  display: flex;
-  gap: 24px;
-  justify-content: center;
+  flex: 1 1 0;
+  height: 213px;
+  max-height: 213px;
+  min-height: 213px;
+  min-width: 0;
   overflow: hidden;
-  padding: 24px 34px 14px;
-  position: relative;
 }
 
-.employer-disability-illustration > .fa-person {
-  color: #ff805d;
-  font-size: 78px;
-  position: relative;
-  z-index: 2;
-}
-
-.employer-disability-illustration > .fa-wheelchair-move {
-  color: #2165d5;
-  font-size: 84px;
-  position: relative;
-  z-index: 2;
-}
-
-.employer-disability-illustration > span {
-  background: rgba(48, 100, 202, .18);
-  bottom: 0;
-  height: 58%;
-  position: absolute;
-  right: 28px;
-  transform: skewX(-9deg);
-  width: 58px;
-}
-
-.employer-disability-cloud {
-  color: #fff;
-  font-size: 17px;
-  position: absolute;
-  top: 18px;
-}
-
-.employer-disability-cloud--one {
-  left: 32px;
-}
-
-.employer-disability-cloud--two {
-  right: 72px;
-  top: 28px;
+.employer-disability-illustration img {
+  display: block;
+  height: 100%;
+  object-fit: fill;
+  object-position: center;
+  width: 100%;
 }
 
 .employer-disability-checklist {
@@ -1064,10 +1032,6 @@
     max-width: none;
   }
 
-  .employer-disability-overview {
-    grid-template-columns: minmax(0, 1fr) 280px;
-  }
-
   .employer-disability-checklist__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1112,13 +1076,17 @@
   }
 
   .employer-disability-overview {
+    flex-direction: column;
     gap: 20px;
-    grid-template-columns: 1fr;
     margin: 0 0 30px;
   }
 
   .employer-disability-illustration {
-    min-height: 140px;
+    flex: 0 0 180px;
+    height: 180px;
+    max-height: 180px;
+    min-height: 180px;
+    width: 100%;
   }
 
   .employer-disability-checklist {

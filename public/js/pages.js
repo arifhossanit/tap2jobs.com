@@ -6856,19 +6856,57 @@ window.urlValidation = function (value, regex) {
   }
   return true;
 };
-listenClick(".languageSelection", function () {
+function closeFrontLanguageDropdowns(restoreFocus) {
+  $(".language-dropdown.is-open").each(function () {
+    var dropdown = $(this);
+    dropdown.removeClass("is-open");
+    dropdown.find(".language-dropdown-btn").attr("aria-expanded", "false");
+    if (restoreFocus) {
+      dropdown.find(".language-dropdown-btn").trigger("focus");
+    }
+  });
+}
+listenClick(".language-dropdown-btn", function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+  var dropdown = $(this).closest(".language-dropdown");
+  var willOpen = !dropdown.hasClass("is-open");
+  closeFrontLanguageDropdowns(false);
+  dropdown.toggleClass("is-open", willOpen);
+  $(this).attr("aria-expanded", willOpen ? "true" : "false");
+});
+listenClick(".languageSelection", function (e) {
+  e.preventDefault();
+  e.stopPropagation();
   var languageName = $(this).data("prefix-value");
+  var languageUrl = $(this).closest(".language-dropdown").data("language-url");
+  closeFrontLanguageDropdowns(false);
   refreshCsrfToken();
   $.ajax({
     type: "POST",
-    url: "/change-language",
+    url: languageUrl,
     data: {
       languageName: languageName
     },
     success: function success() {
       location.reload();
+    },
+    error: function error(result) {
+      if (typeof displayErrorMessage === "function") {
+        displayErrorMessage(result.responseJSON && result.responseJSON.message ? result.responseJSON.message : "Unable to change language.");
+      }
     }
   });
+});
+listenWithOutTarget("click", function (e) {
+  if (!$(e.target).closest(".language-dropdown").length) {
+    closeFrontLanguageDropdowns(false);
+  }
+});
+listenWithOutTarget("keydown", function (e) {
+  if (e.key === "Escape") {
+    closeFrontLanguageDropdowns(true);
+  }
 });
 listenClick("#readNotification", function (e) {
   e.preventDefault();

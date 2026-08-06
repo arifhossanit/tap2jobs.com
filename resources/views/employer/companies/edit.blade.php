@@ -487,6 +487,27 @@
 
             const facilitiesToggleInputs = document.querySelectorAll('[data-facilities-toggle]');
             const disabilityDetails = document.getElementById('employerDisabilityDetails');
+            const disabilitySupportQuestion = document.getElementById('employerDisabilitySupportQuestion');
+            const disabilityPolicyInputs = document.querySelectorAll('input[name="disability_inclusion_policy"]');
+
+            const updateDisabilitySupportQuestion = function () {
+                if (!disabilitySupportQuestion) {
+                    return;
+                }
+
+                const selectedFacilitiesOption = document.querySelector('[data-facilities-toggle]:checked');
+                const selectedPolicy = document.querySelector('input[name="disability_inclusion_policy"]:checked');
+                const showSupportQuestion = Boolean(
+                    selectedFacilitiesOption && selectedFacilitiesOption.value === '1' &&
+                    selectedPolicy && selectedPolicy.value === '0'
+                );
+
+                disabilitySupportQuestion.classList.toggle('d-none', !showSupportQuestion);
+                disabilitySupportQuestion.querySelectorAll('input').forEach(function (input) {
+                    input.disabled = !showSupportQuestion;
+                    input.required = showSupportQuestion;
+                });
+            };
 
             const updateDisabilityDetails = function () {
                 if (!disabilityDetails) {
@@ -503,10 +524,14 @@
                 disabilityDetails.querySelectorAll('input[name="disability_inclusion_policy"], input[name="disability_inclusion_training"]').forEach(function (input) {
                     input.required = Boolean(showDetails);
                 });
+                updateDisabilitySupportQuestion();
             };
 
             facilitiesToggleInputs.forEach(function (input) {
                 input.addEventListener('change', updateDisabilityDetails);
+            });
+            disabilityPolicyInputs.forEach(function (input) {
+                input.addEventListener('change', updateDisabilitySupportQuestion);
             });
             updateDisabilityDetails();
 

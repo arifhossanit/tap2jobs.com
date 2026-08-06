@@ -1527,6 +1527,12 @@ function loadPhoneNumberCountry() {
   \**************************************************************/
 () {
 
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 document.addEventListener('DOMContentLoaded', loadFrontRegisterData);
 function visitRegisterRedirect(url) {
   if (window.Turbo && typeof window.Turbo.visit === 'function') {
@@ -1560,6 +1566,408 @@ function loadFrontRegisterData() {
   $('#employer').on('hidden.bs.tab', function () {
     resetModalForm('#employeeForm', '#employerValidationErrBox');
   });
+  loadEmployerRegistrationForm();
+}
+function loadEmployerRegistrationForm() {
+  var form = document.getElementById('addEmployerNewForm');
+  if (!form) {
+    return;
+  }
+  var username = document.getElementById('employerUsername');
+  var usernameFeedback = document.getElementById('employerUsernameFeedback');
+  var password = document.getElementById('employerPassword');
+  var confirmPassword = document.getElementById('employerConfirmPassword');
+  var confirmPasswordFeedback = document.getElementById('employerConfirmPasswordFeedback');
+  var usernameTimer = null;
+  var usernameRequest = null;
+  var showLiveError = function showLiveError(input, feedback, message) {
+    input.classList.toggle('is-invalid', Boolean(message));
+    input.setCustomValidity(message || '');
+    feedback.textContent = message || '';
+  };
+  var validatePasswordMatch = function validatePasswordMatch() {
+    if (!password || !confirmPassword || !confirmPasswordFeedback) {
+      return true;
+    }
+    var mismatch = confirmPassword.value !== '' && password.value !== confirmPassword.value;
+    showLiveError(confirmPassword, confirmPasswordFeedback, mismatch ? 'Passwords do not match' : '');
+    return !mismatch;
+  };
+  if (password && confirmPassword && confirmPasswordFeedback) {
+    password.addEventListener('input', validatePasswordMatch);
+    confirmPassword.addEventListener('input', validatePasswordMatch);
+  }
+  if (username && usernameFeedback) {
+    form.dataset.usernameAvailable = 'unchecked';
+    username.addEventListener('input', function () {
+      var value = this.value.trim();
+      window.clearTimeout(usernameTimer);
+      if (usernameRequest) {
+        usernameRequest.abort();
+        usernameRequest = null;
+      }
+      form.dataset.usernameAvailable = 'unchecked';
+      showLiveError(username, usernameFeedback, '');
+      if (!value || !/^[A-Za-z0-9._-]+$/.test(value)) {
+        return;
+      }
+      usernameTimer = window.setTimeout(function () {
+        usernameRequest = new AbortController();
+        form.dataset.usernameAvailable = 'checking';
+        fetch(route('register.username-availability') + '?username=' + encodeURIComponent(value), {
+          headers: {
+            'Accept': 'application/json'
+          },
+          signal: usernameRequest.signal
+        }).then(function (response) {
+          if (!response.ok) {
+            throw new Error('Username availability check failed.');
+          }
+          return response.json();
+        }).then(function (result) {
+          if (username.value.trim() !== value) {
+            return;
+          }
+          var available = Boolean(result.available);
+          form.dataset.usernameAvailable = available ? 'true' : 'false';
+          showLiveError(username, usernameFeedback, available ? '' : result.message || 'This Username already exists. Try another.');
+        })["catch"](function (error) {
+          if (error.name !== 'AbortError' && username.value.trim() === value) {
+            form.dataset.usernameAvailable = 'unchecked';
+            showLiveError(username, usernameFeedback, '');
+          }
+        })["finally"](function () {
+          usernameRequest = null;
+        });
+      }, 450);
+    });
+    if (username.value.trim()) {
+      username.dispatchEvent(new Event('input'));
+    }
+  }
+  var country = document.getElementById('registerCountryId');
+  var state = document.getElementById('registerStateId');
+  var city = document.getElementById('registerCityId');
+  var countryFlag = document.querySelector('.employer-register-bd-flag');
+  var fillSelect = function fillSelect(select, items, placeholder, selectedValue) {
+    select.innerHTML = '';
+    select.append(new Option(placeholder, ''));
+    Object.entries(items || {}).forEach(function (_ref) {
+      var _ref2 = _slicedToArray(_ref, 2),
+        value = _ref2[0],
+        text = _ref2[1];
+      select.append(new Option(text, value, false, String(value) === String(selectedValue || '')));
+    });
+    select.disabled = false;
+  };
+  var loadCities = function loadCities(stateId, selectedCity) {
+    if (!stateId) {
+      fillSelect(city, {}, 'Select Thana');
+      city.disabled = true;
+      return;
+    }
+    city.disabled = true;
+    fetch(route('register.cities') + '?state_id=' + encodeURIComponent(stateId), {
+      headers: {
+        'Accept': 'application/json'
+      }
+    }).then(function (response) {
+      return response.json();
+    }).then(function (result) {
+      return fillSelect(city, result.data, 'Select Thana', selectedCity);
+    })["catch"](function () {
+      return fillSelect(city, {}, 'Select Thana');
+    });
+  };
+  if (country && state && city) {
+    var updateCountryFlag = function updateCountryFlag() {
+      if (countryFlag) {
+        countryFlag.classList.toggle('d-none', country.value !== country.dataset.bangladeshId);
+      }
+    };
+    country.addEventListener('change', function () {
+      updateCountryFlag();
+      state.disabled = true;
+      city.disabled = true;
+      fetch(route('register.states') + '?country_id=' + encodeURIComponent(this.value), {
+        headers: {
+          'Accept': 'application/json'
+        }
+      }).then(function (response) {
+        return response.json();
+      }).then(function (result) {
+        fillSelect(state, result.data, 'Select District');
+        fillSelect(city, {}, 'Select Thana');
+        city.disabled = true;
+      })["catch"](function () {
+        return fillSelect(state, {}, 'Select District');
+      });
+    });
+    state.addEventListener('change', function () {
+      loadCities(this.value);
+    });
+    updateCountryFlag();
+    if (state.value) {
+      loadCities(state.value, city.dataset.oldCityId);
+    }
+  }
+  var industryType = document.getElementById('registerIndustryType');
+  var industrySearch = document.getElementById('registerIndustrySearch');
+  var industryOptions = document.getElementById('registerIndustryOptions');
+  var industryMore = document.getElementById('registerIndustryMore');
+  var industryEmpty = document.getElementById('registerIndustryEmpty');
+  var industryTags = document.getElementById('registerIndustryTags');
+  var customIndustryInputs = document.getElementById('registerCustomIndustryInputs');
+  var addIndustryTrigger = document.getElementById('registerAddIndustryTrigger');
+  var modalIndustryType = document.getElementById('registerModalIndustryType');
+  var modalIndustryName = document.getElementById('registerModalIndustryName');
+  var modalIndustryError = document.getElementById('registerIndustryModalError');
+  var addIndustryButton = document.getElementById('registerAddIndustryButton');
+  var customIndustrySequence = 0;
+  var refreshIndustries = function refreshIndustries(resetExpansion) {
+    if (!industryType || !industryOptions) {
+      return;
+    }
+    if (resetExpansion) {
+      industryOptions.classList.remove('is-expanded');
+    }
+    var typeId = industryType.value;
+    var query = industrySearch.value.trim().toLowerCase();
+    var matched = 0;
+    industryOptions.querySelectorAll('label[data-industry-name]').forEach(function (option) {
+      var isMatch = (typeId === 'all' || option.dataset.industryTypeId === typeId) && (!query || option.dataset.industryName.includes(query));
+      option.classList.toggle('is-filtered-out', !isMatch);
+      option.classList.remove('is-extra');
+      if (isMatch) {
+        option.classList.toggle('is-extra', matched >= 9);
+        matched += 1;
+      }
+    });
+    industryEmpty.classList.toggle('d-none', matched !== 0);
+    industryMore.classList.toggle('d-none', matched <= 9);
+    industryMore.textContent = industryOptions.classList.contains('is-expanded') ? 'See less' : 'See more';
+  };
+  var updateIndustryPicker = function updateIndustryPicker() {
+    if (!industryOptions || !industryTags || !customIndustryInputs) {
+      return;
+    }
+    var selectedCheckboxes = Array.from(industryOptions.querySelectorAll('input[type="checkbox"]:checked'));
+    industryTags.innerHTML = '';
+    customIndustryInputs.innerHTML = '';
+    var customInputIndex = 0;
+    selectedCheckboxes.forEach(function (checkbox) {
+      var option = checkbox.closest('label[data-industry-name]');
+      if (!option) {
+        return;
+      }
+      if (!checkbox.dataset.optionKey) {
+        checkbox.dataset.optionKey = 'existing-' + checkbox.value;
+      }
+      var tag = document.createElement('span');
+      tag.dataset.optionKey = checkbox.dataset.optionKey;
+      tag.append(document.createTextNode(option.querySelector('span').textContent.trim() + ' '));
+      var removeIcon = document.createElement('i');
+      removeIcon.className = 'fa-solid fa-xmark';
+      tag.append(removeIcon);
+      industryTags.append(tag);
+      if (checkbox.dataset.customIndustry === 'true') {
+        var typeInput = document.createElement('input');
+        typeInput.type = 'hidden';
+        typeInput.name = 'custom_industries[' + customInputIndex + '][industry_type_id]';
+        typeInput.value = option.dataset.industryTypeId;
+        var nameInput = document.createElement('input');
+        nameInput.type = 'hidden';
+        nameInput.name = 'custom_industries[' + customInputIndex + '][name]';
+        nameInput.value = option.querySelector('span').textContent.trim();
+        customIndustryInputs.append(typeInput, nameInput);
+        customInputIndex += 1;
+      }
+    });
+  };
+  if (industryType && industrySearch && industryOptions) {
+    industryOptions.addEventListener('change', function (event) {
+      if (event.target.matches('input[type="checkbox"]')) {
+        updateIndustryPicker();
+      }
+    });
+    industryType.addEventListener('change', function () {
+      industrySearch.value = '';
+      refreshIndustries(true);
+    });
+    industrySearch.addEventListener('input', function () {
+      refreshIndustries(true);
+    });
+    industryMore.addEventListener('click', function () {
+      industryOptions.classList.toggle('is-expanded');
+      this.textContent = industryOptions.classList.contains('is-expanded') ? 'See less' : 'See more';
+    });
+    refreshIndustries(true);
+    updateIndustryPicker();
+  }
+  if (industryTags && industryOptions) {
+    industryTags.addEventListener('click', function (event) {
+      var removeIcon = event.target.closest('.fa-xmark');
+      if (!removeIcon) {
+        return;
+      }
+      var tag = removeIcon.closest('[data-option-key]');
+      var checkbox = tag ? Array.from(industryOptions.querySelectorAll('input[type="checkbox"]')).find(function (input) {
+        return input.dataset.optionKey === tag.dataset.optionKey;
+      }) : null;
+      if (checkbox) {
+        checkbox.checked = false;
+        updateIndustryPicker();
+      }
+    });
+  }
+  if (addIndustryTrigger && modalIndustryType && modalIndustryName && modalIndustryError) {
+    addIndustryTrigger.addEventListener('click', function () {
+      var selectedType = industryType ? industryType.value : '';
+      var selectedTypeExists = Array.from(modalIndustryType.options).some(function (option) {
+        return option.value === selectedType;
+      });
+      modalIndustryType.value = selectedTypeExists ? selectedType : modalIndustryType.options[0] ? modalIndustryType.options[0].value : '';
+      modalIndustryName.value = '';
+      modalIndustryError.classList.add('d-none');
+      modalIndustryError.textContent = '';
+      setTimeout(function () {
+        modalIndustryName.focus();
+      }, 350);
+    });
+  }
+  var addRegistrationIndustry = function addRegistrationIndustry() {
+    if (!addIndustryButton || !industryOptions || !modalIndustryType || !modalIndustryName) {
+      return;
+    }
+    var industryName = modalIndustryName.value.trim();
+    var normalizedName = industryName.toLowerCase();
+    modalIndustryError.classList.add('d-none');
+    modalIndustryError.textContent = '';
+    if (!modalIndustryType.value) {
+      modalIndustryError.textContent = 'Please select an industry type.';
+      modalIndustryError.classList.remove('d-none');
+      return;
+    }
+    if (!industryName) {
+      modalIndustryError.textContent = 'Please enter your industry name.';
+      modalIndustryError.classList.remove('d-none');
+      modalIndustryName.focus();
+      return;
+    }
+    var duplicateOption = Array.from(industryOptions.querySelectorAll('label[data-industry-name]')).find(function (option) {
+      return option.dataset.industryName === normalizedName;
+    });
+    if (duplicateOption) {
+      modalIndustryError.textContent = 'This industry already exists.';
+      modalIndustryError.classList.remove('d-none');
+      return;
+    }
+    customIndustrySequence += 1;
+    var option = document.createElement('label');
+    option.dataset.industryName = normalizedName;
+    option.dataset.industryTypeId = modalIndustryType.value;
+    var checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = true;
+    checkbox.dataset.customIndustry = 'true';
+    checkbox.dataset.optionKey = 'custom-' + customIndustrySequence;
+    var labelText = document.createElement('span');
+    labelText.textContent = industryName;
+    option.append(checkbox, labelText);
+    industryOptions.append(option);
+    industryType.value = modalIndustryType.value;
+    industrySearch.value = '';
+    updateIndustryPicker();
+    refreshIndustries(true);
+    var modalElement = document.getElementById('registerAddIndustryModal');
+    var modalInstance = window.bootstrap && modalElement ? window.bootstrap.Modal.getInstance(modalElement) : null;
+    if (modalInstance) {
+      modalInstance.hide();
+    } else if (modalElement) {
+      var closeButton = modalElement.querySelector('[data-bs-dismiss="modal"]');
+      if (closeButton) {
+        closeButton.click();
+      }
+    }
+  };
+  if (addIndustryButton && modalIndustryName) {
+    addIndustryButton.addEventListener('click', addRegistrationIndustry);
+    modalIndustryName.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        addRegistrationIndustry();
+      }
+    });
+  }
+  var phoneInput = document.getElementById('employerRegisterPhone');
+  var regionCode = document.getElementById('employerRegisterRegionCode');
+  if (phoneInput && regionCode && window.intlTelInput) {
+    var phone = window.intlTelInput(phoneInput, {
+      initialCountry: 'bd',
+      separateDialCode: true,
+      utilsScript: '/assets/js/inttel/js/utils.min.js'
+    });
+    var existingNumber = String(regionCode.value || '880') + String(phoneInput.value || '');
+    if (phoneInput.value) {
+      phone.setNumber('+' + existingNumber.replace(/\D/g, ''));
+    }
+    var syncRegionCode = function syncRegionCode() {
+      regionCode.value = phone.getSelectedCountryData().dialCode || '880';
+    };
+    phoneInput.addEventListener('countrychange', syncRegionCode);
+    phoneInput.addEventListener('input', function () {
+      this.value = this.value.replace(/\D/g, '');
+    });
+    syncRegionCode();
+  }
+  var disabilityFacilitiesToggle = document.querySelector('[data-register-facilities-toggle]');
+  var disabilityDetails = document.getElementById('registerDisabilityDetails');
+  var disabilitySupportQuestion = document.getElementById('registerDisabilitySupportQuestion');
+  var disabilityPolicyInputs = document.querySelectorAll('input[name="disability_inclusion_policy"]');
+  var updateDisabilitySupportQuestion = function updateDisabilitySupportQuestion() {
+    if (!disabilitySupportQuestion) {
+      return;
+    }
+    var selectedPolicy = document.querySelector('input[name="disability_inclusion_policy"]:checked');
+    var showSupportQuestion = Boolean(disabilityFacilitiesToggle && disabilityFacilitiesToggle.checked && selectedPolicy && selectedPolicy.value === '0');
+    disabilitySupportQuestion.classList.toggle('d-none', !showSupportQuestion);
+    disabilitySupportQuestion.querySelectorAll('input').forEach(function (input) {
+      input.disabled = !showSupportQuestion;
+      input.required = showSupportQuestion;
+    });
+  };
+  var updateDisabilityDetails = function updateDisabilityDetails() {
+    if (!disabilityFacilitiesToggle || !disabilityDetails) {
+      return;
+    }
+    var showDetails = disabilityFacilitiesToggle.checked;
+    disabilityDetails.classList.toggle('d-none', !showDetails);
+    disabilityDetails.querySelectorAll('input').forEach(function (input) {
+      input.disabled = !showDetails;
+    });
+    disabilityDetails.querySelectorAll('input[name="disability_inclusion_policy"], input[name="disability_inclusion_training"]').forEach(function (input) {
+      input.required = showDetails;
+    });
+    updateDisabilitySupportQuestion();
+  };
+  if (disabilityFacilitiesToggle && disabilityDetails) {
+    disabilityFacilitiesToggle.addEventListener('change', updateDisabilityDetails);
+    disabilityPolicyInputs.forEach(function (input) {
+      input.addEventListener('change', updateDisabilitySupportQuestion);
+    });
+    updateDisabilityDetails();
+  }
+  var pricingPolicyCard = document.getElementById('employerPricingPolicyCard');
+  var pricingPolicyToggle = document.getElementById('employerPricingPolicyToggle');
+  var pricingPolicyContent = document.getElementById('employerPricingPolicyContent');
+  if (pricingPolicyCard && pricingPolicyToggle && pricingPolicyContent) {
+    pricingPolicyToggle.addEventListener('click', function () {
+      var isExpanded = this.getAttribute('aria-expanded') === 'true';
+      this.setAttribute('aria-expanded', String(!isExpanded));
+      pricingPolicyContent.hidden = isExpanded;
+      pricingPolicyCard.classList.toggle('is-collapsed', isExpanded);
+    });
+  }
 }
 listenSubmit('#addCandidateNewForm', function (e) {
   e.preventDefault();
@@ -1592,6 +2000,27 @@ listenSubmit('#addCandidateNewForm', function (e) {
 });
 listenSubmit('#addEmployerNewForm', function (e) {
   e.preventDefault();
+  var employerForm = this;
+  var usernameInput = document.getElementById('employerUsername');
+  var usernameFeedback = document.getElementById('employerUsernameFeedback');
+  var confirmPasswordInput = document.getElementById('employerConfirmPassword');
+  if (usernameInput && employerForm.dataset.usernameAvailable === 'false') {
+    showLiveRegistrationError(usernameInput, usernameFeedback, 'This Username already exists. Try another.');
+    usernameInput.focus();
+    return;
+  }
+  if (confirmPasswordInput && !confirmPasswordInput.checkValidity()) {
+    confirmPasswordInput.reportValidity();
+    return;
+  }
+  if (!document.querySelector('#registerIndustryOptions input[type="checkbox"]:checked')) {
+    displayErrorMessage('Please select at least one industry.');
+    document.getElementById('registerIndustryOptions').scrollIntoView({
+      behavior: 'smooth',
+      block: 'center'
+    });
+    return;
+  }
   processingBtn('#addEmployerNewForm', '#btnEmployerSave', 'loading');
   //
   // if ($('#isGoogleReCaptchaEnabled').val()) {
@@ -1620,6 +2049,13 @@ listenSubmit('#addEmployerNewForm', function (e) {
     }
   });
 });
+function showLiveRegistrationError(input, feedback, message) {
+  input.classList.add('is-invalid');
+  input.setCustomValidity(message);
+  if (feedback) {
+    feedback.textContent = message;
+  }
+}
 
 /***/ },
 

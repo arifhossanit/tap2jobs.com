@@ -150,7 +150,7 @@
         let lancode = "{{ getFrontSelectLanguage() }}";
         Lang.setLocale(currentFrontLang);
     </script>
-     <script src="{{ asset('assets/js/custom/custom.js') }}"></script>
+     <script src="{{ mix('assets/js/custom/custom.js') }}"></script>
 
     </body>
 

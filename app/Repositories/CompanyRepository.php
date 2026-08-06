@@ -162,9 +162,13 @@ class CompanyRepository extends BaseRepository
             if (array_key_exists('has_disability_facilities', $input)) {
                 if (! (bool) $input['has_disability_facilities']) {
                     $input['disability_inclusion_policy'] = null;
+                    $input['disability_inclusion_support'] = null;
                     $input['disability_inclusion_training'] = null;
                     $input['disability_facilities'] = [];
                 } else {
+                    if ((bool) ($input['disability_inclusion_policy'] ?? false)) {
+                        $input['disability_inclusion_support'] = null;
+                    }
                     $input['disability_facilities'] = array_values(array_unique($input['disability_facilities'] ?? []));
                 }
             }

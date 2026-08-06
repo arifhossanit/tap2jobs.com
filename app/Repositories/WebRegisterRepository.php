@@ -5,8 +5,11 @@ namespace App\Repositories;
 use App;
 use App\Models\Candidate;
 use App\Models\Company;
+use App\Models\CompanySize;
+use App\Models\Industry;
 use App\Models\Notification;
 use App\Models\NotificationSetting;
+use App\Models\OwnerShipType;
 use App\Models\Setting;
 use App\Models\User;
 use App\Repositories\Candidates\CandidateRepository;
@@ -41,7 +44,13 @@ class WebRegisterRepository
         try {
             DB::beginTransaction();
 
-            $userInput = Arr::except($input, ['type']);
+            $userInput = Arr::only($input, [
+                'first_name', 'last_name', 'username', 'email', 'phone', 'region_code',
+                'country_id', 'state_id', 'city_id',
+            ]);
+            if ((int) $input['type'] === 2) {
+                $userInput['first_name'] = $input['company_name'];
+            }
             $userInput['password'] = Hash::make($input['password']);
             if ($input['type'] == 1) {
                 $userInput['email_verified_at'] = now();
@@ -67,9 +76,62 @@ class WebRegisterRepository
                         'New Candidate Registered',
                     ]) : false;
             } else {
+                $legacySizeMap = [
+                    '1-25' => '5-10',
+                    '26-50' => '21-50',
+                    '51-100' => '51-100',
+                    '101-500' => '51-100',
+                    '501-1000' => '51-100',
+                    '1000+' => '51-100',
+                ];
+                $companySizeId = CompanySize::where('size', $legacySizeMap[$input['employee_range']])->value('id')
+                    ?: CompanySize::value('id');
+                $industryIds = array_values(array_unique($input['industry_ids'] ?? []));
+                foreach ($input['custom_industries'] ?? [] as $customIndustry) {
+                    $industry = Industry::create([
+                        'industry_type_id' => $customIndustry['industry_type_id'],
+                        'name' => trim($customIndustry['name']),
+                        'description' => trim($customIndustry['name']),
+                        'created_by' => $user->id,
+                        'is_default' => false,
+                    ]);
+                    $industryIds[] = $industry->id;
+                }
+                $industryIds = array_values(array_unique($industryIds));
+
                 $employer = Company::create([
                     'user_id' => $user->id,
                     'unique_id' => getUniqueCompanyId(),
+                    'company_name_bn' => $input['company_name_bn'] ?? null,
+                    'contact_person_name' => $input['contact_person_name'],
+                    'ceo' => $input['contact_person_designation'],
+                    'established_in' => $input['established_in'],
+                    'employee_range' => $input['employee_range'],
+                    'company_size_id' => $companySizeId,
+                    'ownership_type_id' => OwnerShipType::value('id'),
+                    'no_of_offices' => 1,
+                    'industry_id' => $industryIds[0],
+                    'industry_ids' => $industryIds,
+                    'details' => $input['details'] ?? null,
+                    'trade_license_no' => $input['trade_license_no'] ?? null,
+                    'rl_no' => $input['rl_no'] ?? null,
+                    'website' => $input['website'] ?? null,
+                    'location' => $input['company_address'],
+                    'company_address_bn' => $input['company_address_bn'] ?? null,
+                    'has_disability_facilities' => (bool) ($input['has_disability_facilities'] ?? false),
+                    'disability_inclusion_policy' => ($input['has_disability_facilities'] ?? false)
+                        ? (bool) $input['disability_inclusion_policy']
+                        : null,
+                    'disability_inclusion_support' => ($input['has_disability_facilities'] ?? false)
+                        && ! (bool) $input['disability_inclusion_policy']
+                            ? (bool) $input['disability_inclusion_support']
+                            : null,
+                    'disability_inclusion_training' => ($input['has_disability_facilities'] ?? false)
+                        ? (bool) $input['disability_inclusion_training']
+                        : null,
+                    'disability_facilities' => ($input['has_disability_facilities'] ?? false)
+                        ? array_values(array_unique($input['disability_facilities'] ?? []))
+                        : [],
                 ]);
                 $user->update(['owner_id' => $employer->id, 'owner_type' => Company::class]);
                 NotificationSetting::where('key', 'NEW_EMPLOYER_REGISTERED')->first()->value == 1 ?
