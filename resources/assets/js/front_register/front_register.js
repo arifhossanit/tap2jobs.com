@@ -93,7 +93,7 @@ function loadEmployerRegistrationForm () {
             form.dataset.usernameAvailable = 'unchecked';
             showLiveError(username, usernameFeedback, '');
 
-            if (!value || !/^[A-Za-z0-9._-]+$/.test(value)) {
+            if (!value || !/^[\p{L}\p{M}\p{N}._-]+$/u.test(value)) {
                 return;
             }
 
@@ -552,6 +552,15 @@ listenSubmit('#addEmployerNewForm', function (e) {
     const usernameFeedback = document.getElementById('employerUsernameFeedback');
     const confirmPasswordInput = document.getElementById('employerConfirmPassword');
 
+    employerForm.querySelectorAll('.employer-server-validation-message').forEach(function (message) {
+        message.remove();
+    });
+    employerForm.querySelectorAll('.is-invalid').forEach(function (input) {
+        if (!input.matches('#employerUsername, #employerConfirmPassword')) {
+            input.classList.remove('is-invalid');
+        }
+    });
+
     if (usernameInput && employerForm.dataset.usernameAvailable === 'false') {
         showLiveRegistrationError(
             usernameInput,
@@ -597,7 +606,36 @@ listenSubmit('#addEmployerNewForm', function (e) {
             }
         },
         error: function (result) {
-            displayErrorMessage(result.responseJSON.message);
+            const response = result.responseJSON || {};
+            const errors = response.errors || {};
+            const firstErrorKey = Object.keys(errors)[0];
+            const firstMessage = firstErrorKey && errors[firstErrorKey]
+                ? errors[firstErrorKey][0]
+                : (response.message || 'Registration could not be completed. Please review the form.');
+
+            if (firstErrorKey) {
+                const baseName = firstErrorKey.split('.')[0];
+                const field = employerForm.querySelector('[name="' + baseName + '"]') ||
+                    employerForm.querySelector('[name="' + baseName + '[]"]');
+
+                if (field && field.type !== 'hidden') {
+                    field.classList.add('is-invalid');
+                    const feedback = document.createElement('div');
+                    feedback.className = 'invalid-feedback d-block employer-server-validation-message';
+                    feedback.textContent = firstMessage;
+                    const fieldContainer = field.closest('.form-group') || field.parentElement;
+                    fieldContainer.append(feedback);
+                    field.focus();
+                    field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else if (baseName === 'industry_ids' || baseName === 'custom_industries') {
+                    document.getElementById('registerIndustryOptions').scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }
+            }
+
+            displayErrorMessage(firstMessage);
         },
         complete: function () {
             processingBtn('#addEmployerNewForm', '#btnEmployerSave');
