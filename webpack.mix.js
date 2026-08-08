@@ -190,10 +190,15 @@ mix.styles([
     'resources/assets/front_web_css/home.css',
     'resources/assets/front_web_css/job-details.css',
     'resources/assets/front_web_css/layout.css',
+    'resources/assets/front_web_css/footer.css',
     'resources/assets/front_web_css/slick-theme.css',
     'resources/assets/front_web_css/slick.css',
 
 ], 'public/css/front-pages.css')
+
+// front footer css (shared by candidate & employer dashboards)
+mix.styles('resources/assets/front_web_css/footer.css',
+    'public/css/footer.css').version()
 
 // front-third-party js
 mix.scripts([

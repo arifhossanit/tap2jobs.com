@@ -20,11 +20,24 @@ class CandidateHeaderLayoutTest extends TestCase
         $this->assertStringNotContainsString('id="dropdownMenuButton1"', $header);
         $this->assertStringContainsString("getNotification(\\App\\Models\\Notification::CANDIDATE)", $header);
         $this->assertStringContainsString("@include('candidate.layouts.sidebar')", $header);
+        $this->assertStringContainsString("route('candidate.profile')", $header);
+        $this->assertStringContainsString('href="#changePasswordModal"', $header);
+        $this->assertStringNotContainsString('href="javascript:void(0)" class="dropdown-item text-gray-900 editCandidateProfileModal', $header);
 
         $styles = file_get_contents(resource_path('assets/sass/new-custom.scss'));
         $this->assertStringContainsString('.candidate-dashboard-header', $styles);
         $this->assertStringContainsString('flex: 0 0 20px', $styles);
         $this->assertStringContainsString('line-height: 20px', $styles);
+    }
+
+    public function test_candidate_header_overflow_menu_uses_valid_destinations(): void
+    {
+        $sidebar = file_get_contents(resource_path('views/candidate/layouts/sidebar.blade.php'));
+
+        $this->assertStringContainsString("route('candidate.applied.job')", $sidebar);
+        $this->assertStringContainsString("route('candidate.job.alert')", $sidebar);
+        $this->assertStringContainsString("Request::is('candidate/applied-jobs*')", $sidebar);
+        $this->assertStringNotContainsString('href="javascript:void(0)"', $sidebar);
     }
 
     public function test_employer_header_uses_the_same_icon_and_label_alignment(): void

@@ -73,6 +73,11 @@ class ResumeTable extends LivewireTableComponent
     {
         return Media::where('collection_name', Candidate::RESUME_PATH)
             ->where('model_type', Candidate::class)
-            ->where('model_id', Auth::user()->candidate->id)->select('media.*');
+            ->where('model_id', Auth::user()->candidate->id)
+            ->select('media.*')
+            ->selectRaw(
+                "CASE WHEN custom_properties LIKE '%\"is_application_cv\":true%' THEN 0 ELSE 1 END AS application_cv_priority"
+            )
+            ->orderBy('application_cv_priority');
     }
 }

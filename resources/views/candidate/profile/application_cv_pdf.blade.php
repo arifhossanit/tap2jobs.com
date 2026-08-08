@@ -3,212 +3,336 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        @page { margin: 0; }
+        @page { margin: 34px 46px 38px; }
         * { box-sizing: border-box; }
-        body { color: #263548; font-family: DejaVu Sans, sans-serif; font-size: 9.5px; line-height: 1.55; margin: 0; }
+        body { color: #30343b; font-family: DejaVu Sans, sans-serif; font-size: 9.2px; line-height: 1.42; margin: 0; }
         h1, h2, h3, p { margin: 0; }
-        .header { background: #103a5d; color: #fff; padding: 32px 42px 25px; }
-        .header-table, .content-table, .entry-table, .reference-table { border-collapse: collapse; width: 100%; }
-        .header-main { vertical-align: top; width: 63%; }
-        .header-contact { border-left: 1px solid rgba(255, 255, 255, .3); padding-left: 22px; vertical-align: top; width: 37%; }
-        .name { font-size: 27px; font-weight: 700; letter-spacing: .2px; line-height: 1.15; }
-        .headline { color: #bfe5f5; font-size: 11px; margin-top: 7px; }
-        .contact-line { margin-bottom: 5px; word-break: break-word; }
-        .contact-label { color: #8fcce5; display: inline-block; font-size: 8px; font-weight: 700; text-transform: uppercase; width: 48px; }
-        .body { padding: 25px 42px 34px; }
-        .summary { background: #eef7fb; border-left: 4px solid #1688b8; border-radius: 3px; color: #34495e; margin-bottom: 20px; padding: 12px 15px; white-space: pre-line; }
-        .section { margin-top: 18px; }
-        .section-title { color: #103a5d; font-size: 12px; font-weight: 700; letter-spacing: .8px; margin-bottom: 9px; padding-bottom: 5px; position: relative; text-transform: uppercase; }
-        .section-title-line { border-top: 1px solid #b9d6e3; display: block; margin-top: 4px; }
-        .entry { margin-bottom: 12px; page-break-inside: avoid; }
-        .entry-period { color: #1688b8; font-size: 8.5px; font-weight: 700; padding-right: 14px; text-transform: uppercase; vertical-align: top; width: 105px; }
-        .entry-content { border-left: 2px solid #d7e8ef; padding-left: 14px; vertical-align: top; }
-        .entry-title { color: #172b3f; font-size: 11px; font-weight: 700; line-height: 1.35; }
-        .entry-subtitle { color: #5d7184; font-size: 9px; margin-top: 2px; }
-        .entry-description { color: #425466; margin-top: 5px; white-space: pre-line; }
-        .detail-grid { border-collapse: separate; border-spacing: 8px 7px; margin: -7px -8px 0; width: calc(100% + 16px); }
-        .detail-card { background: #f7fafc; border: 1px solid #dce8ee; border-radius: 4px; padding: 9px 11px; vertical-align: top; width: 50%; }
-        .detail-card-title { color: #183b56; font-size: 10px; font-weight: 700; }
-        .detail-card-meta { color: #60758a; font-size: 8.5px; margin-top: 3px; }
-        .skill-pill { background: #eaf4f8; border: 1px solid #c5e0eb; border-radius: 10px; color: #126f98; display: inline-block; margin: 0 5px 6px 0; padding: 3px 9px; }
-        .link-row { margin-bottom: 4px; }
-        .link-label { color: #183b56; display: inline-block; font-weight: 700; width: 90px; }
-        .link-value { color: #1688b8; text-decoration: none; }
-        .reference-table { border-spacing: 8px 0; margin: 0 -8px; width: calc(100% + 16px); }
-        .reference-card { background: #f7fafc; border-top: 2px solid #1688b8; padding: 9px 11px; vertical-align: top; width: 50%; }
-        .footer { bottom: 12px; color: #8a9baa; font-size: 7.5px; left: 42px; position: fixed; right: 42px; text-align: right; }
-        .footer-page:after { content: counter(page); }
+        table { border-collapse: collapse; width: 100%; }
+        thead { display: table-header-group; }
+        tr { page-break-inside: avoid; }
+        .header { border-bottom: 1.4px solid #363636; margin-bottom: 13px; padding: 3px 7px 13px; }
+        .header-info { padding-right: 18px; vertical-align: top; }
+        .header-photo-cell { text-align: right; vertical-align: top; width: 116px; }
+        .candidate-name { color: #3c3198; font-size: 16px; font-weight: 700; line-height: 1.2; margin: 4px 0 7px; }
+        .contact-row { margin: 0 0 5px; word-break: break-word; }
+        .contact-icon { height: 11px; margin-right: 7px; vertical-align: -1px; width: 11px; }
+        .profile-photo { border: 2px solid #dedede; border-radius: 5px; height: 116px; object-fit: cover; padding: 2px; width: 96px; }
+        .section { margin: 0 0 12px; }
+        .section-title { background: #e5e5e5; color: #5b5b5b; font-size: 11.5px; font-weight: 700; margin-bottom: 9px; padding: 4px 5px; page-break-after: avoid; }
+        .section-copy { padding: 0 5px; white-space: pre-line; }
+        .experience-summary { font-weight: 700; margin: 0 5px 8px; }
+        .experience-item { margin: 0 5px 11px; page-break-inside: avoid; }
+        .experience-number { padding-right: 8px; vertical-align: top; width: 22px; }
+        .experience-content { vertical-align: top; }
+        .experience-title { font-weight: 700; }
+        .experience-date { margin-bottom: 3px; }
+        .label-line { margin-top: 3px; }
+        .label-line strong { display: block; }
+        .pre-line { white-space: pre-line; }
+        .data-table { table-layout: fixed; }
+        .data-table th, .data-table td { border: 1px solid #c9ccd1; padding: 5px 5px; text-align: center; vertical-align: middle; word-break: break-word; }
+        .data-table th { color: #30343b; font-size: 8.2px; font-weight: 700; }
+        .data-table td { font-size: 8.4px; }
+        .detail-table { margin: 0 6px; width: calc(100% - 12px); }
+        .detail-table td { padding: 2px 0; vertical-align: top; }
+        .detail-label { width: 175px; }
+        .detail-colon { text-align: center; width: 18px; }
+        .skill-table td:first-child { text-align: left; width: 36%; }
+        .skill-list { margin: 0; padding-left: 17px; }
+        .skill-list li { margin-bottom: 6px; }
+        .accomplishment-group { margin: 0 6px 10px; page-break-inside: avoid; }
+        .accomplishment-group-title { font-weight: 400; margin-bottom: 3px; text-transform: capitalize; }
+        .accomplishment-item { margin-bottom: 7px; }
+        .accomplishment-number { padding-right: 8px; vertical-align: top; width: 24px; }
+        .accomplishment-content { vertical-align: top; }
+        .link { color: #30343b; text-decoration: none; word-break: break-all; }
+        .language-table { margin: 0 auto; width: 74%; }
+        .personal-table { width: 66%; }
+        .reference-table { margin: 0 6px; width: calc(100% - 12px); }
+        .reference-card { padding: 0 13px 0 0; vertical-align: top; width: 50%; }
+        .reference-card + .reference-card { border-left: 1px solid #d5d5d5; padding-left: 16px; }
+        .reference-card table td { padding: 1px 0; vertical-align: top; }
+        .reference-label { width: 86px; }
+        .reference-colon { width: 12px; }
+        .muted { color: #636a73; }
+        .footer { bottom: 14px; color: #9a9a9a; font-size: 7px; left: 46px; position: fixed; right: 46px; text-align: right; }
+        .page-number:after { content: counter(page); }
     </style>
 </head>
 <body>
-    @php
-        $summary = $plainText($candidate->career_summary ?: $candidate->objective);
-        $headline = $plainText($candidate->special_qualification ?: $candidate->career_summary);
-    @endphp
+@php
+    $objective = $plainText($candidate->objective ?: $candidate->career_summary);
+    $specialQualification = $plainText($candidate->special_qualification);
+    $formatDuration = function ($startDate, $endDate = null, $current = false) {
+        if (!$startDate) return '';
+        $end = $current ? now() : ($endDate ?: now());
+        $months = max(1, $startDate->diffInMonths($end));
+        $years = intdiv($months, 12);
+        $remainingMonths = $months % 12;
+        return collect([
+            $years ? $years.' yr'.($years > 1 ? 's' : '') : null,
+            $remainingMonths ? $remainingMonths.' month'.($remainingMonths > 1 ? 's' : '') : null,
+        ])->filter()->implode(' ');
+    };
+    $totalExperienceMonths = $experiences->sum(function ($experience) {
+        if (!$experience->start_date) return 0;
+        return max(1, $experience->start_date->diffInMonths(
+            $experience->currently_working ? now() : ($experience->end_date ?: now())
+        ));
+    });
+    $totalExperience = collect([
+        intdiv($totalExperienceMonths, 12) ? intdiv($totalExperienceMonths, 12).' yrs' : null,
+        ($totalExperienceMonths % 12) ? ($totalExperienceMonths % 12).' months' : null,
+    ])->filter()->implode(' ');
+    $jobLevelLabels = ['entry' => 'Entry Level Job', 'mid' => 'Mid Level Job', 'top' => 'Top Level Job'];
+    $jobNatureLabels = ['full_time' => 'Full Time', 'part_time' => 'Part Time', 'contract' => 'Contract', 'internship' => 'Internship', 'freelance' => 'Freelance'];
+    $contactAddress = collect([
+        $candidate->address,
+        $candidate->present_post_office,
+        $candidate->city_name,
+        $candidate->state_name,
+        $candidate->country_name,
+    ])->filter()->unique()->implode(', ');
+    $phoneNumbers = collect([$user->phone, $candidate->secondary_mobile])->filter()->unique()->implode(', ');
+    $emails = collect([$user->email, $candidate->alternate_email])->filter()->unique()->implode(', ');
+    $careerRows = collect([
+        'Preferred Job Category' => $preferredFunctionalAreas->merge($preferredSkills)->unique()->implode(', '),
+        'Looking For' => $jobLevelLabels[$candidate->job_level] ?? null,
+        'Available For' => $jobNatureLabels[$candidate->job_nature] ?? null,
+        'Present Salary' => $candidate->current_salary ? strtoupper($candidate->salary_currency ?: 'BDT').' '.number_format($candidate->current_salary, 0) : null,
+        'Expected Salary' => $candidate->expected_salary ? strtoupper($candidate->salary_currency ?: 'BDT').' '.number_format($candidate->expected_salary, 0) : null,
+        'Preferred District' => $preferredLocations->implode(', '),
+        'Preferred Country' => $preferredCountries->implode(', '),
+        'Preferred Organization' => $preferredOrganizations->implode(', '),
+    ])->filter();
+    $personalRows = collect([
+        "Father's Name" => $candidate->father_name,
+        "Mother's Name" => $candidate->mother_name,
+        'Date of Birth' => $user->dob?->format('d M, Y'),
+        'Gender' => is_null($user->gender) ? null : ($user->gender == 0 ? 'Male' : 'Female'),
+        'Marital Status' => optional($candidate->maritalStatus)->marital_status,
+        'Nationality' => $candidate->nationality,
+        'National ID No.' => $candidate->national_id_card,
+        'Passport No.' => $candidate->passport_number,
+        'Religion' => $candidate->religion,
+        'Blood Group' => $candidate->blood_group,
+        'Height (Meter)' => $candidate->height,
+        'Weight (Kg)' => $candidate->weight,
+    ])->filter(fn ($value) => filled($value));
+    $svgIcon = fn (string $svg): string => 'data:image/svg+xml;base64,'.base64_encode($svg);
+    $contactIcons = [
+        'location' => $svgIcon('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#454b54" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>'),
+        'phone' => $svgIcon('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#454b54" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92Z"/></svg>'),
+        'email' => $svgIcon('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#454b54" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><path d="m3.5 6 8.5 6 8.5-6"/></svg>'),
+        'link' => $svgIcon('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#454b54" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>'),
+    ];
+@endphp
 
-    <div class="header">
-        <table class="header-table">
-            <tr>
-                <td class="header-main">
-                    <h1 class="name">{{ $user->full_name }}</h1>
-                    @if($headline)<p class="headline">{{ $headline }}</p>@endif
-                </td>
-                <td class="header-contact">
-                    <p class="contact-line"><span class="contact-label">Email</span>{{ $user->email }}</p>
-                    @if($user->phone)<p class="contact-line"><span class="contact-label">Phone</span>{{ $user->phone }}</p>@endif
-                    @if($candidate->full_location)<p class="contact-line"><span class="contact-label">Address</span>{{ $candidate->full_location }}</p>@endif
-                </td>
-            </tr>
+<div class="header">
+    <table>
+
+<tr>
+    <td class="header-info">
+        <h1 class="candidate-name">{{ $user->full_name }}</h1>
+
+        @if($contactAddress)
+            <p class="contact-row">
+                <img class="contact-icon" src="{{ $contactIcons['location'] }}" alt="">
+                {{ $contactAddress }}
+            </p>
+        @endif
+
+        @if($phoneNumbers)
+            <p class="contact-row">
+                <img class="contact-icon" src="{{ $contactIcons['phone'] }}" alt="">
+                {{ $phoneNumbers }}
+            </p>
+        @endif
+
+        @if($emails)
+            <p class="contact-row">
+                <img class="contact-icon" src="{{ $contactIcons['email'] }}" alt="">
+                {{ $emails }}
+            </p>
+        @endif
+
+        @foreach($links as $link)
+            <p class="contact-row">
+                <img class="contact-icon" src="{{ $contactIcons['link'] }}" alt="">
+                <a class="link" href="{{ $link->url }}">
+                    {{ $link->url }}
+                </a>
+            </p>
+        @endforeach
+    </td>
+
+    <td class="header-photo-cell">
+        @if($profilePhoto)
+            <img class="profile-photo" src="{{ $profilePhoto }}" alt="">
+        @endif
+    </td>
+</tr>
+
+
+    </table>
+</div>
+
+@if($objective)
+    <section class="section">
+        <h2 class="section-title">Career Objective</h2>
+        <div class="section-copy">{{ $objective }}</div>
+    </section>
+@endif
+
+@if($specialQualification)
+    <section class="section">
+        <h2 class="section-title">Special Qualification</h2>
+        <div class="section-copy">{{ $specialQualification }}</div>
+    </section>
+@endif
+
+@if($experiences->isNotEmpty())
+    <section class="section">
+        <h2 class="section-title">Experience</h2>
+        @if($totalExperience)<p class="experience-summary">Total Year of Experience: {{ $totalExperience }}</p>@endif
+        @foreach($experiences as $experience)
+            <div class="experience-item">
+                <table>
+                    <tr>
+                        <td class="experience-number">{{ $loop->iteration }}.</td>
+                        <td class="experience-content">
+                            <p class="experience-title">{{ $experience->experience_title }} ({{ $formatDuration($experience->start_date, $experience->end_date, $experience->currently_working) }})</p>
+                            <p class="experience-date">({{ optional($experience->start_date)->format('d M, Y') }} - {{ $experience->currently_working ? 'Continuing' : optional($experience->end_date)->format('d M, Y') }})</p>
+                            <p><strong>{{ $experience->company }}</strong></p>
+                            @if($experience->company_location)<p>{{ $experience->company_location }}</p>@endif
+                            @if($experience->expertises->isNotEmpty())
+                                <p class="label-line"><strong>Area of Expertise</strong>{{ $experience->expertises->map(fn ($expertise) => $expertise->name.($expertise->duration_months ? ' ('.$expertise->duration_months.' months)' : ''))->implode(', ') }}</p>
+                            @endif
+                            @if($plainText($experience->description))
+                                <p class="label-line"><strong>Duties/Responsibilities</strong><span class="pre-line">{{ $plainText($experience->description) }}</span></p>
+                            @endif
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        @endforeach
+    </section>
+@endif
+
+@if($educations->isNotEmpty())
+    <section class="section">
+        <h2 class="section-title">Academic / Education</h2>
+        <table class="data-table">
+            <thead><tr><th>Exam Title</th><th>Concentration/<br>Major</th><th>Institute</th><th>Result</th><th>Pas. Year</th><th>Duration</th><th>Achievement</th></tr></thead>
+            <tbody>
+            @foreach($educations as $education)
+                <tr>
+                    <td>{{ $education->degree_title ?: optional($education->degreeLevel)->name }}</td>
+                    <td>{{ $education->major }}</td>
+                    <td>{{ $education->institute }}</td>
+                    <td>@if($education->cgpa){{ $education->cgpa }} out of {{ $education->scale }}@elseif($education->marks_percentage){{ $education->marks_percentage }}%@else{{ $education->result }}@endif</td>
+                    <td>{{ $education->year }}</td>
+                    <td>{{ $education->duration }}</td>
+                    <td>{{ $plainText($education->achievement) }}</td>
+                </tr>
+            @endforeach
+            </tbody>
         </table>
-    </div>
+    </section>
+@endif
 
-    <div class="body">
-        @if($summary)
-            <div class="summary">{{ $summary }}</div>
-        @endif
+@if($trainings->isNotEmpty())
+    <section class="section">
+        <h2 class="section-title">Training</h2>
+        <table class="data-table">
+            <thead><tr><th>Training Title</th><th>Topic</th><th>Institute</th><th>Country</th><th>Location</th><th>Year</th><th>Duration</th></tr></thead>
+            <tbody>
+            @foreach($trainings as $training)
+                <tr><td>{{ $training->title }}</td><td>{{ $plainText($training->topics) }}</td><td>{{ $training->institute }}</td><td>{{ $training->country }}</td><td>{{ $training->location }}</td><td>{{ $training->year }}</td><td>{{ $training->duration }}</td></tr>
+            @endforeach
+            </tbody>
+        </table>
+    </section>
+@endif
 
-        @if($skills->isNotEmpty())
-            <div class="section">
-                <h2 class="section-title">Core Skills<span class="section-title-line"></span></h2>
-                <div>
-                    @foreach($skills as $candidateSkill)
-                        @if($candidateSkill->skill)<span class="skill-pill">{{ $candidateSkill->skill->name }}</span>@endif
-                    @endforeach
-                </div>
-            </div>
-        @endif
+@if($certifications->isNotEmpty())
+    <section class="section">
+        <h2 class="section-title">Professional Qualification</h2>
+        <table class="data-table">
+            <thead><tr><th>Certification</th><th>Institute</th><th>Location</th><th>Duration</th></tr></thead>
+            <tbody>@foreach($certifications as $certification)<tr><td>{{ $certification->name }}</td><td>{{ $certification->institute }}</td><td>{{ $certification->location }}</td><td>{{ $certification->duration }}</td></tr>@endforeach</tbody>
+        </table>
+    </section>
+@endif
 
-        @if($experiences->isNotEmpty())
-            <div class="section">
-                <h2 class="section-title">Employment Experience<span class="section-title-line"></span></h2>
-                @foreach($experiences as $experience)
-                    <div class="entry">
-                        <table class="entry-table">
-                            <tr>
-                                <td class="entry-period">
-                                    {{ optional($experience->start_date)->format('M Y') }}<br>
-                                    {{ $experience->currently_working ? 'Present' : optional($experience->end_date)->format('M Y') }}
-                                </td>
-                                <td class="entry-content">
-                                    <h3 class="entry-title">{{ $experience->experience_title }}</h3>
-                                    <p class="entry-subtitle">{{ $experience->company }}@if($experience->company_location) · {{ $experience->company_location }}@endif</p>
-                                    @if($plainText($experience->description))
-                                        <p class="entry-description">{{ $plainText($experience->description) }}</p>
-                                    @endif
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
+@if($careerRows->isNotEmpty())
+    <section class="section">
+        <h2 class="section-title">Career and Application Information</h2>
+        <table class="detail-table">
+            @foreach($careerRows as $label => $value)<tr><td class="detail-label">{{ $label }}</td><td class="detail-colon">:</td><td>{{ $value }}</td></tr>@endforeach
+        </table>
+    </section>
+@endif
+
+@if($skills->isNotEmpty())
+    <section class="section">
+        <h2 class="section-title">Skill</h2>
+        <table class="data-table skill-table">
+            <thead><tr><th>Fields of Skill</th><th>Description</th></tr></thead>
+            <tbody><tr><td><ul class="skill-list">@foreach($skills as $candidateSkill)@if($candidateSkill->skill)<li>{{ $candidateSkill->skill->name }}</li>@endif @endforeach</ul></td><td></td></tr></tbody>
+        </table>
+    </section>
+@endif
+
+@if($accomplishments->isNotEmpty())
+    <section class="section">
+        <h2 class="section-title">Accomplishment</h2>
+        @foreach($accomplishments->groupBy('type') as $type => $items)
+            <div class="accomplishment-group">
+                <h3 class="accomplishment-group-title">{{ str($type)->replace('_', ' ')->title() }}</h3>
+                @foreach($items as $item)
+                    <table class="accomplishment-item"><tr><td class="accomplishment-number">{{ $loop->iteration }}.</td><td class="accomplishment-content"><strong>{{ $item->title }}</strong>@if($item->url)<br>URL: <a class="link" href="{{ $item->url }}">{{ $item->url }}</a>@endif @if($plainText($item->description))<br><span class="pre-line">{{ $plainText($item->description) }}</span>@endif</td></tr></table>
                 @endforeach
             </div>
-        @endif
+        @endforeach
+    </section>
+@endif
 
-        @if($educations->isNotEmpty())
-            <div class="section">
-                <h2 class="section-title">Education<span class="section-title-line"></span></h2>
-                <table class="detail-grid">
-                    @foreach($educations->chunk(2) as $educationRow)
-                        <tr>
-                            @foreach($educationRow as $education)
-                                <td class="detail-card">
-                                    <h3 class="detail-card-title">{{ $education->degree_title ?: optional($education->degreeLevel)->name }}</h3>
-                                    <p class="detail-card-meta">{{ $education->institute }}</p>
-                                    <p class="detail-card-meta">
-                                        @if($education->year){{ $education->year }}@endif
-                                        @if($education->major) · {{ $education->major }}@endif
-                                        @if($education->result) · {{ $education->result }}@endif
-                                    </p>
-                                    @if($plainText($education->achievement))<p class="entry-description">{{ $plainText($education->achievement) }}</p>@endif
-                                </td>
-                            @endforeach
-                            @if($educationRow->count() === 1)<td style="width: 50%"></td>@endif
-                        </tr>
+@if($extraCurriculars->isNotEmpty())
+    <section class="section"><h2 class="section-title">Extracurricular Activities</h2><div class="section-copy">@foreach($extraCurriculars as $activity)<p class="pre-line">{{ $plainText($activity->description) }}</p>@endforeach</div></section>
+@endif
+
+@if($languages->isNotEmpty())
+    <section class="section">
+        <h2 class="section-title">Language Proficiency</h2>
+        <table class="data-table language-table"><thead><tr><th>Language</th><th>Reading</th><th>Writing</th><th>Speaking</th></tr></thead><tbody>
+            @foreach($languages as $language)<tr><td>{{ $language->language }}</td><td>{{ $language->reading_level ?: $language->proficiency_level }}</td><td>{{ $language->writing_level ?: $language->proficiency_level }}</td><td>{{ $language->speaking_level ?: $language->proficiency_level }}</td></tr>@endforeach
+        </tbody></table>
+    </section>
+@endif
+
+@if($personalRows->isNotEmpty())
+    <section class="section">
+        <h2 class="section-title">Personal Details</h2>
+        <table class="detail-table personal-table">@foreach($personalRows as $label => $value)<tr><td class="detail-label">{{ $label }}</td><td class="detail-colon">:</td><td>{{ $value }}</td></tr>@endforeach</table>
+    </section>
+@endif
+
+@if($references->isNotEmpty())
+    <section class="section">
+        <h2 class="section-title">Reference</h2>
+        <table class="reference-table"><tr>
+            @foreach($references->take(2) as $reference)
+                <td class="reference-card"><table>
+                    @foreach(collect(['Name' => $reference->name, 'Organization' => $reference->organization, 'Designation' => $reference->designation, 'Address' => $reference->address, 'Mobile' => $reference->mobile, 'Email' => $reference->email, 'Relation' => $reference->relation])->filter() as $label => $value)
+                        <tr><td class="reference-label">{{ $label }}</td><td class="reference-colon">:</td><td>{{ $value }}</td></tr>
                     @endforeach
-                </table>
-            </div>
-        @endif
+                </table></td>
+            @endforeach
+            @if($references->count() === 1)<td class="reference-card"></td>@endif
+        </tr></table>
+    </section>
+@endif
 
-        @if($trainings->isNotEmpty())
-            <div class="section">
-                <h2 class="section-title">Training &amp; Certifications<span class="section-title-line"></span></h2>
-                @foreach($trainings as $training)
-                    <div class="entry">
-                        <table class="entry-table">
-                            <tr>
-                                <td class="entry-period">{{ $training->year }}<br>{{ $training->duration }}</td>
-                                <td class="entry-content">
-                                    <h3 class="entry-title">{{ $training->title }}</h3>
-                                    <p class="entry-subtitle">{{ $training->institute }}@if($training->location) · {{ $training->location }}@endif</p>
-                                    @if($plainText($training->topics))<p class="entry-description">{{ $plainText($training->topics) }}</p>@endif
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                @endforeach
-            </div>
-        @endif
-
-        @if($accomplishments->isNotEmpty())
-            <div class="section">
-                <h2 class="section-title">Accomplishments<span class="section-title-line"></span></h2>
-                <table class="detail-grid">
-                    @foreach($accomplishments->chunk(2) as $accomplishmentRow)
-                        <tr>
-                            @foreach($accomplishmentRow as $accomplishment)
-                                <td class="detail-card">
-                                    <h3 class="detail-card-title">{{ $accomplishment->title }}</h3>
-                                    <p class="detail-card-meta">{{ ucfirst($accomplishment->type) }}@if($accomplishment->issued_on) · {{ $accomplishment->issued_on->format('M Y') }}@endif</p>
-                                    @if($plainText($accomplishment->description))<p class="entry-description">{{ $plainText($accomplishment->description) }}</p>@endif
-                                    @if($accomplishment->url)<p><a class="link-value" href="{{ $accomplishment->url }}">{{ $accomplishment->url }}</a></p>@endif
-                                </td>
-                            @endforeach
-                            @if($accomplishmentRow->count() === 1)<td style="width: 50%"></td>@endif
-                        </tr>
-                    @endforeach
-                </table>
-            </div>
-        @endif
-
-        @if($links->isNotEmpty())
-            <div class="section">
-                <h2 class="section-title">Online Profiles<span class="section-title-line"></span></h2>
-                @foreach($links as $link)
-                    <p class="link-row"><span class="link-label">{{ $link->platform }}</span><a class="link-value" href="{{ $link->url }}">{{ $link->url }}</a></p>
-                @endforeach
-            </div>
-        @endif
-
-        @if($extraCurriculars->isNotEmpty())
-            <div class="section">
-                <h2 class="section-title">Extracurricular Activities<span class="section-title-line"></span></h2>
-                @foreach($extraCurriculars as $activity)
-                    @if($plainText($activity->description))<p class="entry-description">{{ $plainText($activity->description) }}</p>@endif
-                @endforeach
-            </div>
-        @endif
-
-        @if($references->isNotEmpty())
-            <div class="section">
-                <h2 class="section-title">References<span class="section-title-line"></span></h2>
-                <table class="reference-table">
-                    @foreach($references->chunk(2) as $referenceRow)
-                        <tr>
-                            @foreach($referenceRow as $reference)
-                                <td class="reference-card">
-                                    <h3 class="detail-card-title">{{ $reference->name }}</h3>
-                                    <p>{{ $reference->designation }}@if($reference->organization), {{ $reference->organization }}@endif</p>
-                                    @if($reference->email)<p>{{ $reference->email }}</p>@endif
-                                    @if($reference->mobile)<p>{{ $reference->mobile }}</p>@endif
-                                </td>
-                            @endforeach
-                            @if($referenceRow->count() === 1)<td style="width: 50%"></td>@endif
-                        </tr>
-                    @endforeach
-                </table>
-            </div>
-        @endif
-    </div>
-
-    <div class="footer">Generated from the candidate's latest Tap2Jobs profile · Page <span class="footer-page"></span></div>
 </body>
 </html>

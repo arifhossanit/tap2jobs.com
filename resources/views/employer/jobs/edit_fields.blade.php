@@ -82,7 +82,7 @@
         {{ Form::label('city', __('messages.job.city').':', ['class' => 'form-label']) }}
         <span class="required"></span>
         <div class="input-group flex-nowrap">
-            {{ Form::select('city_id', (isset($cities) && $cities!=null?$cities:[]), null, ['id'=>'cityId','class' => 'form-select','placeholder' => __('messages.company.select_city'),'data-control'=>'select2','required']) }}
+            {{ Form::select('city_id', (isset($cities) && $cities!=null?$cities:[]), old('city_id', $job->city_id), ['id'=>'cityId','class' => 'form-select','placeholder' => __('messages.company.select_city'),'data-control'=>'select2','required']) }}
             <div class="input-group-text border-0">
                 <a href="javascript:void(0)" class="text-gray-500 createCityModal"><i class="fa fa-plus"></i></a>
             </div>

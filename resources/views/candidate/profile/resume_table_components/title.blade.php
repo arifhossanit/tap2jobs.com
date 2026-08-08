@@ -1,7 +1,9 @@
 @php
-    $resumeTitle = $row->getCustomProperty('title', $row->name);
     $isDefaultResume = (bool) $row->getCustomProperty('is_default', false);
     $isApplicationCv = (bool) $row->getCustomProperty(\App\Services\ApplicationCvService::APPLICATION_CV_PROPERTY, false);
+    $resumeTitle = $isApplicationCv
+        ? \App\Services\ApplicationCvService::TITLE
+        : $row->getCustomProperty('title', $row->name);
 @endphp
 
 <div class="py-2 text-primary">

@@ -3,13 +3,30 @@
 }
 
 .candidate-resume-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 10px;
+  width: 100%;
+
   .candidate-default-resume-select {
-    min-width: 230px;
+    flex: 1 1 230px;
+    min-width: 0;
     max-width: 320px;
   }
 
-  .btn {
-    white-space: nowrap;
+  .candidate-resume-upload-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+
+    i {
+      font-size: 17px;
+    }
   }
 }
 
@@ -40,10 +57,14 @@
 
 @media (max-width: 575.98px) {
   .candidate-resume-toolbar,
-  .candidate-resume-toolbar .candidate-default-resume-select,
-  .candidate-resume-toolbar .btn {
+  .candidate-resume-toolbar .candidate-default-resume-select {
     width: 100%;
     max-width: none;
+  }
+
+  .candidate-resume-toolbar .candidate-resume-upload-button {
+    flex-basis: 44px;
+    width: 44px;
   }
 
   .candidate-resume-preview-modal {

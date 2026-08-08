@@ -1,0 +1,141 @@
+/* =====================================================
+   Front footer (shared by front_web, candidate & employer)
+   Styles are scoped under `footer` so the candidate/employer
+   dashboards get the exact front_web footer look without
+   overriding the admin theme's utility classes.
+   ===================================================== */
+
+footer.footer.bg-gradient {
+    background-image: linear-gradient(to right, #e4f2fb, #eaf0fc) !important
+}
+
+footer {
+    padding-top: 80px;
+    font-size: 16px !important;
+    font-weight: 400 !important
+}
+
+footer ul li a {
+    color: #777a7d
+}
+
+footer ul li a:hover,
+footer ul li a:focus {
+    color: #272727
+}
+
+footer .text-gray {
+    color: #777a7d !important
+}
+
+footer .text-secondary {
+    color: #272727 !important
+}
+
+footer .text-primary {
+    color: #1967d2 !important
+}
+
+footer .bg-primary {
+    background-color: #1967d2 !important
+}
+
+footer .text-decoration-none {
+    font-size: 14px !important;
+    font-weight: 500 !important
+}
+
+footer .email input {
+    width: 100%;
+    outline: none;
+    border: none;
+    padding: 0 20px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px
+}
+
+footer .email .icon {
+    width: 50px;
+    height: 50px;
+    padding: 17px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px
+}
+
+footer .social-icon i {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: #777a7d;
+    background-color: #fff;
+    transition: all .5s
+}
+
+footer .social-icon i:hover,
+footer .social-icon i:focus {
+    color: #fff;
+    background-color: #1967d2
+}
+
+footer .social-icon a {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    color: #777a7d !important;
+    background-color: #fff !important;
+    transition: all .5s !important
+}
+
+footer .social-icon a>* {
+    transform: translate(13px, 12px)
+}
+
+footer .social-icon a:hover,
+footer .social-icon a:focus {
+    color: #fff !important;
+    background-color: #1967d2 !important
+}
+
+.footer-info div:nth-child(2) p {
+    font-weight: 500 !important
+}
+
+.footer-info div:nth-child(3) a {
+    font-size: 16px !important;
+    font-weight: 500 !important
+}
+
+#mc-email {
+    font-size: 16px !important;
+    font-weight: 500 !important
+}
+
+@media (max-width: 1199px) {
+    footer .email input {
+        width: 65%
+    }
+}
+
+@media (max-width: 991px) {
+    footer {
+        padding-top: 50px
+    }
+}
+
+@media (max-width: 767px) {
+    footer .email input {
+        width: 100%
+    }
+
+    footer .social-icon i {
+        width: 30px;
+        font-size: 14px;
+        height: 30px
+    }
+}
+
+@media (max-width: 575px) {
+    footer .email .icon {
+        height: 45px
+    }
+}

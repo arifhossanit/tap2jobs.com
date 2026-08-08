@@ -2,8 +2,6 @@ document.addEventListener('DOMContentLoaded', loadApplyJobData);
 
 function loadApplyJobData() {
 
-    $('#resumeId').select2();
-
     listenClick('.save-draft', function (e) {
         e.preventDefault();
         submitForm('#applyJobForm', 'draft', '#draftJobSave', '#applyJobSave', '#g-recaptcha');

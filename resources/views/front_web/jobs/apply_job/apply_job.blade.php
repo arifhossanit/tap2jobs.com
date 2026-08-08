@@ -1,150 +1,139 @@
 @extends('front_web.layouts.app')
+
 @section('title')
     {{ __('web.job_details.apply_for_job') }}
 @endsection
-{{-- @section('page_css') --}}
-{{--    <link rel="stylesheet" type="text/css" href="{{ asset('web_front/css/header-span.css') }}"> --}}
-{{--        <link href="{{asset('front_web/scss/apply-details.css')}}" rel="stylesheet" type="text/css"> --}}
-{{-- @endsection --}}
+
 @section('content')
-    <div class="apply-job-page">
-        <section class="hero-section position-relative bg-gradient pt-15 pb-40">
+    @php
+        $resumeDetails = collect($resumeDetails ?? []);
+        $selectedResumeId = null;
+
+        if (!$isApplied) {
+            $selectedResumeId = $default_resume ?? null;
+        }
+
+        $selectedResume = $resumeDetails->get($selectedResumeId);
+        $companyName = optional($job->company)->company_name
+            ?: optional(optional($job->company)->user)->full_name;
+    @endphp
+
+    <main class="apply-job-page">
+        <section class="apply-job-hero">
             <div class="container">
-                <div class="row align-items-center justify-content-center">
-                    <div class="col-lg-6 text-center mb-lg-0 mb-md-5 mb-sm-4">
-                        <div class="hero-content">
-                            <h1 class="text-secondary mb-2"> @lang('web.job_details.apply_for_job')</h1>
-                            <nav aria-label="breadcrumb">
-                                <ol class="breadcrumb justify-content-center mb-0">
-                                    <li class="breadcrumb-item">
-                                        <a href="{{ route('front.home') }}" class="fs-18 text-gray">{{ __('web.home') }}
-                                        </a>
-                                    </li>
-                                    <li class="breadcrumb-item text-primary fs-18" aria-current="page">
-                                        @lang('web.job_details.apply_for_job')
-                                    </li>
-                                </ol>
-                            </nav>
-                        </div>
-                    </div>
+                <div class="apply-job-hero__content">
+                    <h1>{{ __('web.job_details.apply_for_job') }}</h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb justify-content-center mb-0">
+                            <li class="breadcrumb-item"><a href="{{ route('front.home') }}">{{ __('web.home') }}</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ __('web.job_details.apply_for_job') }}</li>
+                        </ol>
+                    </nav>
                 </div>
             </div>
         </section>
 
-        <section class="apply-job-section contact-section py-100">
+        <section class="apply-job-section">
             <div class="container">
-                <div class="upper-box">
-                    <div class="row">
-                        <div class="col-xl-8 col-md-10 mx-auto mb-4">
-                            <div class="row mb-3">
-                                <div class="col-lg-2">
-                                    <img src="{{ $job->company->company_url }}"
-                                        class="mb-4 apply-img rounded-circle object-fit-cover">
-                                </div>
-                                <div class="col-lg-10">
-                                    <h2 class="ml-3 mb-2">{{ __('web.apply_for_job.apply_for') }}</h2> <span
-                                        class="text-primary ml-3">{{ $job->job_title }}</span>
-                                </div>
-                            </div>
-                            <h3 class="fs-4 mb-0">{{ __('web.apply_for_job.fill_details') }}</h3>
-                            <p class="font-weight-bold">
-                                @if ($job->is_suspended)
-                                    {{ 'job is suspended' }}
-                                @elseif(!$isActive)
-                                    {{ 'job is ' . \App\Models\Job::STATUS[$job->status] }}
-                                @else
-                                    {{ __('web.apply_for_job.due_to_our_continued_growth') }} {{ $job->job_title }}
-                                    {{ __('web.apply_for_job.or_words_to_that_effect') }}
-                                @endif
-                            </p>
+                <div class="apply-job-shell">
+                    <article class="apply-job-summary-card">
+                        <div class="apply-job-company-logo">
+                            <img src="{{ $job->company->company_url }}" alt="{{ $companyName }}">
                         </div>
-                    </div>
-                </div>
-                <div class="col-xl-8 col-md-10 mx-auto">
-                    <form id="applyJobForm" class="py-40 px-40 bg-gray">
+                        <div class="apply-job-summary-card__content">                            
+                            <h2>{{ $job->job_title }}</h2>
+                            @if($companyName)<p><i class="fa-regular fa-building"></i>{{ $companyName }}</p>@endif
+                        </div>                        
+                    </article>
+
+                    <form id="applyJobForm" class="apply-job-form-card">
                         @csrf
                         @include('front_web.layouts.errors')
                         @include('flash::message')
-                        <input type="hidden" value="{{ isset($job) ? $job->id : null }}" name="job_id">
-                        <div class="row">
-                            <div class="form-group col-lg-12 col-md-12 col-sm-12">
-                                <div class="response"></div>
-                            </div>
+                        <input type="hidden" value="{{ $job->id }}" name="job_id">
 
-                            <div class="col-lg-6 col-md-12 col-sm-12 form-group mb-md-4 mb-3 ">
-                                <label for=""
-                                    class="fs-16 text-secondary mb-3">{{ __('messages.apply_job.resume') . ':' }}<span
-                                        class="text-danger">*</span></label>
-                                <select class="chosen-search-select form-select fs-14 text-gray bg-white br-10 p-3"
-                                    aria-label="None" data-live-search="true" data-size="5" name="resume_id" id="resumeId"
-                                    data-control="select2">
-                                    <option value="">{{ __('web.job_menu.none') }}</option>
-                                    @foreach ($resumes as $key => $value)
-                                        <option value="{{ $key }}"
-                                            {{ ($isJobDrafted ? $key == $draftJobDetails->resume_id : $key == $default_resume) ? 'selected' : '' }}>
-                                            {{ html_entity_decode($value) }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                        <header class="apply-job-form-card__header">
+                            <span class="apply-job-form-card__icon"><i class="fa-regular fa-file-lines"></i></span>
+                            <div>
+                                <h3>{{ __('messages.apply_job.application_details') }}</h3>                                
                             </div>
+                        </header>
 
-                            <div class="col-lg-6 col-md-12 col-sm-12 form-group mb-md-4 mb-3 ">
-                                <label for=""
-                                    class="fs-16 text-secondary mb-3">{{ __('messages.candidate.expected_salary') . ':' }}<span
-                                        class="text-danger">*</span></label>
-                                <input type="text" class="form-control fs-14 text-gray bg-white  br-10 p-3"
-                                    id="expected_salary" name="expected_salary" min="0" max="9999999999"
-                                    value="{{ $isJobDrafted ? $draftJobDetails->expected_salary : '' }}" required>
-                            </div>
+                        <div class="response"></div>
 
-                            <div class="col-md-12 mb-4">
-                                <div class="form-group">
-                                    <label for=""
-                                        class="fs-16 text-secondary mb-2">{{ __('messages.apply_job.notes') . ':' }}
+                        @if(!$isApplied)
+                            <div class="row g-4">
+                                <div class="col-lg-7">
+                                    <label for="resumeId" class="apply-job-label">
+                                        {{ __('messages.apply_job.resume') }} <span class="text-danger">*</span>
                                     </label>
-                                    <textarea class="form-control fs-14 text-gray br-10" rows="5" id="notes" name="notes"
-                                        >{{ $isJobDrafted ? $draftJobDetails->notes : '' }}</textarea>
+                                    <input type="hidden" name="resume_id" id="resumeId" value="{{ $selectedResumeId }}">
+
+                                    <div class="apply-job-selected-cv {{ $selectedResume ? '' : 'd-none' }}" id="selectedCvCard">
+                                        <span class="apply-job-selected-cv__file"><i class="fa-regular fa-file-pdf"></i></span>
+                                        <div class="apply-job-selected-cv__content">
+                                            {{-- <span>{{ __('messages.apply_job.selected_cv') }}</span> --}}
+                                            <strong id="selectedCvName">{{ data_get($selectedResume, 'title') }}</strong>
+                                            {{-- <small>{{ __('messages.apply_job.selected_for_application') }}</small> --}}
+                                        </div>                                        
+                                        <a class="apply-job-selected-cv__preview {{ $selectedResume ? '' : 'd-none' }}"
+                                           id="selectedCvPreview"
+                                           href="{{ $selectedResume ? route('candidate.resumes.preview', $selectedResumeId) : '#' }}"
+                                           target="_blank" rel="noopener">
+                                            <i class="fa-regular fa-eye"></i><span>{{ __('messages.apply_job.preview_cv') }}</span>
+                                        </a>
+                                    </div>
                                 </div>
-                            </div>
-                            @if (getSettingValue('enable_google_recaptcha'))
-                                <div class="col-lg-12 col-md-12 col-sm-12 form-group mb-4 text-center">
-                                    <div class="g-recaptcha d-flex justify-content-center"
-                                        data-sitekey="{{ config('app.google_recaptcha_site_key') }}" name="g-recaptcha"
-                                        id="g-recaptcha" required></div>
-                                    <div id="g-recaptcha-error" required></div>
+
+                                <div class="col-lg-5">
+                                    <label for="expected_salary" class="apply-job-label">
+                                        {{ __('messages.candidate.expected_salary') }} <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control apply-job-control" id="expected_salary"
+                                           name="expected_salary" inputmode="decimal" min="0" max="9999999999"
+                                           value="{{ $isJobDrafted ? $draftJobDetails->expected_salary : '' }}" required>
+                                    <small class="apply-job-field-help">{{ __('messages.apply_job.expected_salary_hint') }}</small>
                                 </div>
-                            @endif
-                            <div class="col-lg-12 col-md-12 col-sm-12 form-group text-center">
-                                @if (!$isApplied)
-                                    @if (!$isJobDrafted)
-                                        <button class="btn btn-primary  mx-2 save-draft"
-                                            data-loading-text="<span class='spinner-border spinner-border-sm'></span> {{ __('messages.common.process') }}"
-                                            id="draftJobSave">{{ __('web.common.save_as_draft') }}
-                                        </button>
-                                    @endif
-                                    @if ($isActive && !$job->is_suspended)
-                                        <button class="btn btn-primary  mx-2 apply-job"
-                                            data-loading-text="<span class='spinner-border spinner-border-sm'></span> {{ __('messages.common.process') }}"
-                                            id="applyJobSave">{{ __('web.common.apply') }}</button>
-                                    @endif
-                                @else
-                                    <button
-                                        class="theme-btn btn-style-eight">{{ __('web.apply_for_job.already_applied') }}</button>
+
+                                <div class="col-12">
+                                    <label for="notes" class="apply-job-label">{{ __('messages.apply_job.notes') }}</label>
+                                    <textarea class="form-control apply-job-control apply-job-notes" rows="5" id="notes"
+                                              name="notes" placeholder="{{ __('messages.apply_job.notes_placeholder') }}">{{ $isJobDrafted ? $draftJobDetails->notes : '' }}</textarea>
+                                </div>
+
+                                @if(getSettingValue('enable_google_recaptcha'))
+                                    <div class="col-12 text-center">
+                                        <div class="g-recaptcha d-flex justify-content-center"
+                                             data-sitekey="{{ config('app.google_recaptcha_site_key') }}"
+                                             name="g-recaptcha" id="g-recaptcha" required></div>
+                                        <div id="g-recaptcha-error"></div>
+                                    </div>
                                 @endif
                             </div>
-                        </div>
+
+                            <footer class="apply-job-form-card__actions">
+                                @if(!$isJobDrafted)
+                                    <button type="button" class="btn apply-job-draft-button save-draft"
+                                            data-loading-text="<span class='spinner-border spinner-border-sm'></span> {{ __('messages.common.process') }}"
+                                            id="draftJobSave">{{ __('web.common.save_as_draft') }}</button>
+                                @endif
+                                @if($isActive && !$job->is_suspended)
+                                    <button type="button" class="btn btn-primary apply-job-submit-button apply-job"
+                                            data-loading-text="<span class='spinner-border spinner-border-sm'></span> {{ __('messages.common.process') }}"
+                                            id="applyJobSave">
+                                        {{ __('web.common.apply') }} <i class="fa-solid fa-arrow-right"></i>
+                                    </button>
+                                @endif
+                            </footer>
+                        @else
+                            <div class="apply-job-already-applied">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <h4>{{ __('web.apply_for_job.already_applied') }}</h4>
+                            </div>
+                        @endif
                     </form>
-                    {{--                @endif --}}
                 </div>
             </div>
         </section>
-    </div>
+    </main>
 @endsection
-{{-- @section('page_scripts') --}}
-{{--    <script> --}}
-{{--        let applyJobUrl = "{{ route('apply-job') }}"; --}}
-{{--        let jobDetailsUrl = "{{ url('job-details') }}"; --}}
-{{--    </script> --}}
-{{--    <script src="{{asset('assets/js/custom/input_price_format.js')}}"></script> --}}
-{{--    <script src="{{ asset('assets/js/jobs/front/apply_job.js') }}"></script> --}}
-{{-- @endsection --}}

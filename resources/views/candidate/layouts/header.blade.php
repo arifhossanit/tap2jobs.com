@@ -128,15 +128,15 @@
                         </div>
                         <ul class="pt-4 pe-0">
                             <li>
-                                <a href="javascript:void(0)" class="dropdown-item text-gray-900 editCandidateProfileModal {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}"
-                                   data-id="{{ getLoggedInUserId() }}">
+                                <a href="{{ route('candidate.profile') }}"
+                                   class="dropdown-item text-gray-900 {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}">
                                      <span class="dropdown-icon {{ checkLanguageSession() == 'ar' ? 'ms-4' : 'me-4' }} text-gray-600">
                                         <i class="fa-solid fa-user"></i>
                                      </span> {{ __('messages.user.edit_profile') }}</a>
                             </li>
                             <li>
                                 <a class="dropdown-item text-gray-900 changePasswordModal {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}"
-                                   href="javascript:void(0)"  data-id="{{ getLoggedInUserId() }}">
+                                   href="#changePasswordModal" data-id="{{ getLoggedInUserId() }}">
                                     <span class="dropdown-icon {{ checkLanguageSession() == 'ar' ? 'ms-4' : 'me-4' }} text-gray-600">
                                         <i class="fa-solid fa-lock"></i>
                                     </span> {{ (Str::limit(__('messages.user.change_password'),20,'...')) }}

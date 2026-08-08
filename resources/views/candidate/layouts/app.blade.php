@@ -23,6 +23,7 @@
         <link rel="stylesheet" type="text/css" href="{{ asset('css/custom.css') }}">
         @endif
     <link rel="stylesheet" type="text/css" href="{{ mix('assets/css/custom.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ mix('css/footer.css') }}">
     @livewireStyles
     <link rel="stylesheet" type="text/css" href="{{ asset('vendor/rappasoft/livewire-tables/css/laravel-livewire-tables.min.css') }}">
 
@@ -109,9 +110,7 @@
                     </div>
                 </div>
             </div>
-            <div class='container-fluid container-xxl'>
-                @include('front_web.layouts.footer')
-            </div>
+            @include('front_web.layouts.footer')
             @include('candidate_profile.edit_profile_modal')
             @include('candidate_profile.change_password_modal')
             @include('jobs.modals.cities')

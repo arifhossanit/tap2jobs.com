@@ -13,7 +13,7 @@ class ApplicationCvWorkflowTest extends TestCase
         $service = file_get_contents(app_path('Services/ApplicationCvService.php'));
         $repository = file_get_contents(app_path('Repositories/JobApplicationRepository.php'));
 
-        $this->assertSame('Application CV', ApplicationCvService::TITLE);
+        $this->assertSame('Default', ApplicationCvService::TITLE);
         $this->assertStringContainsString("Pdf::loadView('candidate.profile.application_cv_pdf'", $service);
         $this->assertStringContainsString('addMediaFromString($pdfContent)', $service);
         $this->assertStringContainsString('ApplicationCvService::class)->ensure($candidate)', $repository);
@@ -42,16 +42,39 @@ class ApplicationCvWorkflowTest extends TestCase
         $this->assertStringNotContainsString('name="selected_cv"', $modal);
         $this->assertStringContainsString('candidate-default-resume-select', $toolbar);
         $this->assertStringContainsString("route('candidate.resumes.default')", $toolbar);
+        $this->assertStringContainsString('candidate-resume-upload-button', $toolbar);
+        $this->assertStringContainsString('fa-cloud-arrow-up', $toolbar);
+        $this->assertStringContainsString('sortByDesc', $toolbar);
+        $this->assertStringContainsString('ApplicationCvService::TITLE', $toolbar);
         $this->assertStringContainsString("type: 'PUT'", $script);
         $this->assertStringContainsString('$hasUploadedResume', $candidateRepository);
         $this->assertStringContainsString('resume_upload_limit', $candidateRepository);
     }
 
+    public function test_application_cv_is_pinned_to_the_top_of_the_resume_table(): void
+    {
+        $table = file_get_contents(app_path('Livewire/ResumeTable.php'));
+
+        $this->assertStringContainsString("setDefaultSort('created_at', 'desc')", $table);
+        $this->assertStringContainsString('%\"is_application_cv\":true%', $table);
+        $this->assertStringContainsString('AS application_cv_priority', $table);
+        $this->assertStringContainsString("orderBy('application_cv_priority')", $table);
+    }
+
     public function test_apply_form_selects_the_saved_default_resume(): void
     {
         $applyForm = file_get_contents(resource_path('views/front_web/jobs/apply_job/apply_job.blade.php'));
+        $applyScript = file_get_contents(resource_path('assets/js/jobs/front/apply_job.js'));
+        $repository = file_get_contents(app_path('Repositories/JobApplicationRepository.php'));
 
-        $this->assertStringContainsString('$key == $default_resume', $applyForm);
+        $this->assertStringContainsString('$selectedResumeId', $applyForm);
+        $this->assertStringContainsString('type="hidden" name="resume_id"', $applyForm);
+        $this->assertStringContainsString('id="selectedCvCard"', $applyForm);
+        $this->assertStringContainsString("route('candidate.resumes.preview', \$selectedResumeId)", $applyForm);
+        $this->assertStringNotContainsString('updateSelectedCv', $applyScript);
+        $this->assertStringContainsString("'resumeDetails'", $repository);
+        $this->assertStringContainsString("getCustomProperty('is_default', false)", $repository);
+        $this->assertStringContainsString("\$input['resume_id'] = \$selectedResume->id", $repository);
         $this->assertStringContainsString("['section' => 'resume']", file_get_contents(resource_path('views/candidate/profile/profile_menu.blade.php')));
     }
 

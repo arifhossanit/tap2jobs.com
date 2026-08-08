@@ -29,14 +29,14 @@
             </a>
         </li>
         @if(getCurrentLanguageCode() == 'de' || getCurrentLanguageCode() == 'tr' || getCurrentLanguageCode() == 'pt' || getCurrentLanguageCode() == 'ru' || getCurrentLanguageCode() == 'es' || getCurrentLanguageCode() == 'fr')
-            <li class="nav-item d-none d-xl-grid dropdown dropdown-hover {{ Request::is('candidate/applied-job*','candidate/job-alerts*') ? 'active' : '' }}">
-                <a class="nav-link d-flex align-items-center py-3 ps-2" aria-current="page"
-                   href="javascript:void(0)">
+            <li class="nav-item d-none d-xl-grid dropdown dropdown-hover {{ Request::is('candidate/applied-jobs*','candidate/job-alerts*') ? 'active' : '' }}">
+                <button class="nav-link d-flex align-items-center py-3 ps-2 border-0 bg-transparent"
+                        type="button" aria-label="More navigation">
                     <span class="horizontal-menu-icon"><i class="fas fa-ellipsis-vertical fs-4"></i></span>
-                </a>
+                </button>
                 <ul class="horizontal-submenu dropdown-menu top-100">
                     <li>
-                        <a class="dropdown-item {{ Request::is('candidate/applied-job*') ? 'active' : '' }}"
+                        <a class="dropdown-item {{ Request::is('candidate/applied-jobs*') ? 'active' : '' }}"
                            href="{{ route('candidate.applied.job') }}">
                             <span class="horizontal-menu-icon me-1"><i class="fas fa-briefcase fs-6"></i></span>
                             <span class="horizontal-menu-title fs-6">{{ __('messages.applied_job.applied_jobs') }}</span>
@@ -53,7 +53,7 @@
             </li>
 
             {{-- start side bar menu for bar--}}
-            <li class="nav-item d-xl-none {{ Request::is('candidate/applied-job*') ? 'active' : ''}}">
+            <li class="nav-item d-xl-none {{ Request::is('candidate/applied-jobs*') ? 'active' : ''}}">
                 <a class="nav-link d-flex align-items-center py-3" aria-current="page"
                    href="{{ route('candidate.applied.job') }}">
                     <span class="horizontal-menu-icon me-1"><i class="fas fa-briefcase"></i></span>
@@ -69,7 +69,7 @@
             </li>
             {{-- end side bar menu for bar--}}
         @else
-            <li class="nav-item {{ Request::is('candidate/applied-job*') ? 'active' : ''}}">
+            <li class="nav-item {{ Request::is('candidate/applied-jobs*') ? 'active' : ''}}">
                 <a class="nav-link d-flex align-items-center py-3" aria-current="page"
                    href="{{ route('candidate.applied.job') }}">
                     <span class="horizontal-menu-icon"><i class="fas fa-briefcase"></i></span>

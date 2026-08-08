@@ -79,7 +79,22 @@ class JobApplicationRepository extends BaseRepository
             $resumeMedia = $candidate->getMedia(Candidate::RESUME_PATH)
                 ->sortByDesc(fn (Media $media) => (bool) $media->getCustomProperty(ApplicationCvService::APPLICATION_CV_PROPERTY, false));
             $data['resumes'] = $resumeMedia->mapWithKeys(fn (Media $media) => [
-                $media->id => $media->getCustomProperty('title', $media->name),
+                $media->id => $media->getCustomProperty(ApplicationCvService::APPLICATION_CV_PROPERTY, false)
+                    ? ApplicationCvService::TITLE
+                    : $media->getCustomProperty('title', $media->name),
+            ]);
+            $data['resumeDetails'] = $resumeMedia->mapWithKeys(fn (Media $media) => [
+                $media->id => [
+                    'title' => $media->getCustomProperty(ApplicationCvService::APPLICATION_CV_PROPERTY, false)
+                        ? ApplicationCvService::TITLE
+                        : $media->getCustomProperty('title', $media->name),
+                    'extension' => strtoupper($media->extension ?: 'FILE'),
+                    'is_application_cv' => (bool) $media->getCustomProperty(
+                        ApplicationCvService::APPLICATION_CV_PROPERTY,
+                        false
+                    ),
+                    'is_default' => (bool) $media->getCustomProperty('is_default', false),
+                ],
             ]);
             $data['default_resume'] = $resumeMedia->first(
                 fn (Media $media) => (bool) $media->getCustomProperty('is_default', false)
@@ -103,7 +118,16 @@ class JobApplicationRepository extends BaseRepository
     public function store(array $input): bool
     {
         try {
-            $input['candidate_id'] = Auth::user()->owner_id;
+            /** @var Candidate $candidate */
+            $candidate = Candidate::findOrFail(Auth::user()->owner_id);
+            $input['candidate_id'] = $candidate->id;
+
+            $candidate->unsetRelation('media');
+            $selectedResume = $candidate->getMedia(Candidate::RESUME_PATH)->first(
+                fn (Media $media) => (bool) $media->getCustomProperty('is_default', false)
+            ) ?? app(ApplicationCvService::class)->ensure($candidate);
+
+            $input['resume_id'] = $selectedResume->id;
 
             $job = Job::findOrFail($input['job_id']);
             if ($job->status != Job::STATUS_OPEN) {
@@ -123,7 +147,6 @@ class JobApplicationRepository extends BaseRepository
                 $jobApplication->delete();
             }
 
-            $input['candidate_id'] = Auth::user()->owner_id;
             $input['expected_salary'] = removeCommaFromNumbers($input['expected_salary']);
             $input['status'] = $input['application_type'] == 'apply' ? JobApplication::STATUS_APPLIED : JobApplication::STATUS_DRAFT;
 

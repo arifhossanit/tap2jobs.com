@@ -11,13 +11,21 @@ use App\Models\CandidateLink;
 use App\Models\CandidateReference;
 use App\Models\CandidateSkill;
 use App\Models\CandidateTraining;
+use App\Models\Country;
+use App\Models\FunctionalArea;
+use App\Models\OwnerShipType;
+use App\Models\Skill;
+use App\Models\State;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ApplicationCvService
 {
-    public const TITLE = 'Application CV';
+    public const TITLE = 'Default';
 
     public const APPLICATION_CV_PROPERTY = 'is_application_cv';
 
@@ -93,11 +101,39 @@ class ApplicationCvService
     private function viewData(Candidate $candidate): array
     {
         $candidateId = $candidate->id;
+        $candidate->loadMissing(['user', 'maritalStatus', 'careerLevel', 'functionalArea']);
+
+        $languages = collect();
+        if (Schema::hasTable('candidate_language')) {
+            $languageQuery = DB::table('candidate_language')
+                ->join('languages', 'languages.id', '=', 'candidate_language.language_id')
+                ->where('candidate_language.user_id', $candidate->user_id)
+                ->select('languages.language');
+
+            foreach (['proficiency_level', 'reading_level', 'writing_level', 'speaking_level'] as $column) {
+                $languageQuery->addSelect(
+                    Schema::hasColumn('candidate_language', $column)
+                        ? "candidate_language.$column"
+                        : DB::raw("NULL as $column")
+                );
+            }
+
+            $languages = $languageQuery->orderBy('candidate_language.id')->get();
+        }
+
+        $certifications = Schema::hasTable('candidate_certifications')
+            ? DB::table('candidate_certifications')
+                ->where('candidate_id', $candidateId)
+                ->orderBy('sort_order')
+                ->orderByDesc('id')
+                ->get()
+            : collect();
 
         return [
             'candidate' => $candidate,
             'user' => $candidate->user,
             'plainText' => fn (?string $value): string => $this->plainText($value),
+            'profilePhoto' => $this->profilePhotoDataUri($candidate->user),
             'educations' => CandidateEducation::with('degreeLevel')
                 ->where('candidate_id', $candidateId)
                 ->orderBy('sort_order')
@@ -126,7 +162,42 @@ class ApplicationCvService
                 ->orderBy('sort_order')
                 ->get(),
             'extraCurriculars' => CandidateExtraCurricular::where('candidate_id', $candidateId)->get(),
+            'certifications' => $certifications,
+            'languages' => $languages,
+            'preferredFunctionalAreas' => FunctionalArea::whereIn(
+                'id',
+                $candidate->preferred_functional_categories ?? []
+            )->pluck('name'),
+            'preferredSkills' => Skill::whereIn(
+                'id',
+                $candidate->preferred_special_skills ?? []
+            )->pluck('name'),
+            'preferredLocations' => State::whereIn(
+                'id',
+                $candidate->preferred_job_locations_inside ?? []
+            )->pluck('name'),
+            'preferredCountries' => Country::whereIn(
+                'id',
+                $candidate->preferred_job_locations_outside ?? []
+            )->pluck('name'),
+            'preferredOrganizations' => OwnerShipType::whereIn(
+                'id',
+                $candidate->preferred_organization_types ?? []
+            )->pluck('name'),
         ];
+    }
+
+    private function profilePhotoDataUri(User $user): ?string
+    {
+        $profilePhoto = $user->getFirstMedia(User::PROFILE);
+
+        if (! $profilePhoto || ! is_file($profilePhoto->getPath())) {
+            return null;
+        }
+
+        return 'data:'.$profilePhoto->mime_type.';base64,'.base64_encode(
+            file_get_contents($profilePhoto->getPath())
+        );
     }
 
     private function plainText(?string $value): string
