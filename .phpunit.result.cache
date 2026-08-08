@@ -1,1 +1,1 @@
-{"version":1,"defects":[],"times":{"Tests\\Unit\\ExampleTest::test_that_true_is_true":0.007,"Tests\\Feature\\ExampleTest::testBasicTest":0.743}}
+{"version":1,"defects":[],"times":{"Tests\\Unit\\ExampleTest::test_that_true_is_true":0.007,"Tests\\Feature\\ExampleTest::testBasicTest":0.743,"Tests\\Unit\\CandidateHeaderLayoutTest::test_candidate_header_matches_employer_header_structure":0.423,"Tests\\Unit\\CandidateHeaderLayoutTest::test_employer_header_uses_the_same_icon_and_label_alignment":0.108}}

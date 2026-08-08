@@ -300,3 +300,139 @@ footer .social-icon i:focus {
         height: 30px
     }
 }
+/* Front header account dropdown. Keep this in the layout bundle so git/build
+   changes to page-specific styles cannot alter the global header design. */
+header .front-user-nav,
+header .front-user-dropdown,
+header .front-user-dropdown-toggle {
+    display: flex;
+    align-items: center;
+}
+
+header .front-user-dropdown {
+    position: relative;
+}
+
+header .front-user-dropdown .front-user-dropdown-toggle {
+    max-width: 230px;
+    padding: 0;
+    gap: 10px;
+    color: #5e6278;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+header .front-user-dropdown .front-user-dropdown-toggle::after {
+    margin-left: 2px;
+}
+
+header .front-user-avatar,
+header .front-user-summary-avatar {
+    display: block;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+header .front-user-avatar {
+    width: 40px;
+    height: 40px;
+}
+
+header .front-user-summary-avatar {
+    width: 64px;
+    height: 64px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+header .front-user-dropdown .front-user-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: auto;
+    z-index: 1055;
+    min-width: 285px;
+    margin-top: 12px;
+    border: 0;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, .14);
+}
+
+header .front-user-dropdown.is-open .front-user-dropdown-menu,
+header .front-user-dropdown .front-user-dropdown-menu.show {
+    display: block;
+}
+
+header .front-user-name {
+    color: #181c32;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+header .front-user-email {
+    color: #7e8299;
+    font-size: 14px;
+}
+
+header .front-user-menu-list .dropdown-item {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 8px 10px;
+    color: #3f4254;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+header .front-user-menu-list .dropdown-item:hover,
+header .front-user-menu-list .dropdown-item:focus {
+    color: #1967d2;
+    background-color: #f1f7ff;
+}
+
+header .front-user-menu-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 20px;
+    width: 20px;
+    margin-right: 12px;
+    color: #7e8299;
+}
+
+header .front-user-menu-list .dropdown-item:hover .front-user-menu-icon,
+header .front-user-menu-list .dropdown-item:focus .front-user-menu-icon {
+    color: #1967d2;
+}
+
+html[dir='rtl'] header .front-user-dropdown .front-user-dropdown-menu {
+    right: auto;
+    left: 0;
+}
+
+html[dir='rtl'] header .front-user-menu-icon {
+    margin-right: 0;
+    margin-left: 12px;
+}
+
+@media (max-width: 991.98px) {
+    header .front-user-nav,
+    header .front-user-dropdown,
+    header .front-user-dropdown .front-user-dropdown-toggle {
+        width: 100%;
+        max-width: none;
+    }
+
+    header .front-user-dropdown .front-user-dropdown-menu {
+        position: static;
+        width: 100%;
+        min-width: 0;
+        margin-top: 8px;
+    }
+}

@@ -1,3 +1,6 @@
+@php
+    $settings = settings();
+@endphp
 <!DOCTYPE html>
 <html lang="en" {{ checkLanguageSession() == 'ar' ? 'dir=rtl' : '' }}>
 <!--begin::Head-->
@@ -100,7 +103,7 @@
             </div>
         </div>
         <div class='container-fluid container-xxl'>
-            @include('layouts.footer')
+            @include('front_web.layouts.footer')
         </div>
         @include('employer_profile.edit_profile_modal')
         @include('employer_profile.change_password_modal')

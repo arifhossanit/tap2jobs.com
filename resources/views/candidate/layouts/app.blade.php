@@ -110,7 +110,7 @@
                 </div>
             </div>
             <div class='container-fluid container-xxl'>
-                @include('layouts.footer')
+                @include('front_web.layouts.footer')
             </div>
             @include('candidate_profile.edit_profile_modal')
             @include('candidate_profile.change_password_modal')

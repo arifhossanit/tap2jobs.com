@@ -1,4 +1,7 @@
-@charset 'UTF-8';.how-it-works-section .work-process{overflow:hidden}.how-it-works-section .work-process .img{width:100px;height:100px;border-radius:50px;box-shadow:0 5px 10px rgba(0,0,0,.1)}@media(max-width:767px){.how-it-works-section .work-process .img{width:80px;height:80px}}.how-it-works-section .work-process .img img{height:50px}@media(max-width:767px){.how-it-works-section .work-process .img img{height:40px}}.how-it-works-section .work-process .arrow1{left:23%;top:0}.how-it-works-section .work-process .arrow2{left:56%;top:32%}.question-section .accordion-button::after{display:none}.question-section .accordion-button:focus{box-shadow:none}.question-section .accordion-button:not(.collapsed){color:#1967d2;background-color:#fff;box-shadow:none!important}.question-section .accordion-item{border:none;box-shadow:0 5px 10px rgba(0,0,0,.1);margin-bottom:20px}.question-section .accordion-body{padding:0 20px 20px 20px}.blog-card .card{border:none}.blog-card .card-img-top{width:290px;height:100%}@media(max-width:767px){.blog-card .card-img-top{width:100%;height:100%;border-radius:10px}}.recent-post-section .recent-post .img img{width:100px;height:70px;border-radius:5px;object-fit:cover}/*!
+.how-it-works-section .work-process{overflow:hidden}.how-it-works-section .work-process .img{width:100px;height:100px;border-radius:50px;box-shadow:0px 5px 10px rgba(0,0,0,.1)}@media(max-width: 767px){.how-it-works-section .work-process .img{width:80px;height:80px}}.how-it-works-section .work-process .img img{height:50px}@media(max-width: 767px){.how-it-works-section .work-process .img img{height:40px}}.how-it-works-section .work-process .arrow1{left:23%;top:0}.how-it-works-section .work-process .arrow2{left:56%;top:32%}.question-section .accordion-button::after{display:none}.question-section .accordion-button:focus{box-shadow:none}.question-section .accordion-button:not(.collapsed){color:#1967d2;background-color:#fff;box-shadow:none !important}.question-section .accordion-item{border:none;box-shadow:0px 5px 10px rgba(0,0,0,.1);margin-bottom:20px}.question-section .accordion-body{padding:0 20px 20px 20px}
+.blog-card .card{border:none}.blog-card .card-img-top{width:290px;height:100%}@media(max-width: 767px){.blog-card .card-img-top{width:100%;height:100%;border-radius:10px}}.recent-post-section .recent-post .img img{width:100px;height:70px;border-radius:5px;object-fit: cover;}
+
+/*!
  * Bootstrap v5.1.3 (https://getbootstrap.com/)
  * Copyright 2011-2021 The Bootstrap Authors
  * Copyright 2011-2021 Twitter, Inc.
@@ -11523,6 +11526,109 @@ header .navbar .navbar-collapse .navbar-nav .nav-item .nav-link {
     color: #1967d2 !important;
 }
 
+/* Public header user menu mirrors the dashboard header profile dropdown. */
+.front-user-dropdown .front-user-dropdown-toggle {
+    max-width: 230px;
+    padding: 0;
+    color: #5e6278;
+    font-size: 15px;
+    font-weight: 500;
+    gap: 10px;
+    border: 0;
+}
+
+.front-user-dropdown .front-user-dropdown-toggle::after {
+    margin-left: 2px;
+}
+
+.front-user-avatar,
+.front-user-summary-avatar {
+    display: block;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.front-user-avatar {
+    width: 40px;
+    height: 40px;
+}
+
+.front-user-summary-avatar {
+    width: 64px;
+    height: 64px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.front-user-dropdown .front-user-dropdown-menu {
+    min-width: 285px;
+    margin-top: 12px;
+    border: 0;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, .14);
+}
+
+.front-user-name {
+    color: #181c32;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.front-user-email {
+    color: #7e8299;
+    font-size: 14px;
+}
+
+.front-user-menu-list .dropdown-item {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 8px 10px;
+    color: #3f4254;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+.front-user-menu-list .dropdown-item:hover,
+.front-user-menu-list .dropdown-item:focus {
+    color: #1967d2;
+    background-color: #f1f7ff;
+}
+
+.front-user-menu-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    margin-right: 12px;
+    color: #7e8299;
+}
+
+.front-user-menu-list .dropdown-item:hover .front-user-menu-icon,
+.front-user-menu-list .dropdown-item:focus .front-user-menu-icon {
+    color: #1967d2;
+}
+
+html[dir='rtl'] .front-user-menu-icon {
+    margin-right: 0;
+    margin-left: 12px;
+}
+
+@media (max-width: 991.98px) {
+    .front-user-nav,
+    .front-user-dropdown,
+    .front-user-dropdown .front-user-dropdown-toggle {
+        width: 100%;
+        max-width: none;
+    }
+
+    .front-user-dropdown .front-user-dropdown-menu {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
 .company-details-social-media a:hover {
     color: #628cc8 !important;
 }
@@ -12082,7 +12188,7 @@ footer .text-decoration-none {
     color: #1967d2 !important;
 }
 .skill-experience li{
-    line-height: 50px;
+    line-height: 20px;
     color: #777a7d !important;
 }
 input, select
@@ -12273,6 +12379,12 @@ input, select
     color: #fff;
     background-color: #1967d2;
     border-color: #1967d2;
+}
+
+.register-side-ad__image {
+    border-radius: 10px;
+    object-fit: contain;
+    max-height: 420px;
 }
 
 .slider-test-section .carousel-control-prev {
@@ -12516,6 +12628,65 @@ input, select
 
 .job-details-section ul li {
     list-style: disc
+}
+
+.job-editor-content p,
+.job-editor-content ol,
+.job-editor-content ul {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.job-editor-content ol,
+.job-editor-content ul {
+    padding-left: 1.5em;
+}
+
+.job-editor-content ol {
+    counter-reset: job-editor-list;
+}
+
+.job-editor-content li[data-list] {
+    position: relative;
+    padding-left: 1.5em;
+    list-style: none;
+}
+
+.job-editor-content li[data-list] > .ql-ui {
+    position: absolute;
+}
+
+.job-editor-content li[data-list] > .ql-ui::before {
+    display: inline-block;
+    width: 1.2em;
+    margin-left: -1.5em;
+    margin-right: .3em;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.job-editor-content li[data-list="bullet"] > .ql-ui::before {
+    content: "\2022";
+}
+
+.job-editor-content li[data-list="ordered"] {
+    counter-increment: job-editor-list;
+}
+
+.job-editor-content li[data-list="ordered"] > .ql-ui::before {
+    content: counter(job-editor-list) ". ";
+}
+
+.job-editor-content strong {
+    font-weight: 700;
+}
+
+.job-editor-content u {
+    text-decoration: underline;
+}
+
+.job-editor-content s {
+    text-decoration: line-through;
 }
 
 .job-details-section .share-this-job .icon-box .social-icon {
@@ -12871,6 +13042,142 @@ footer .social-icon i:focus {
         width: 30px;
         font-size: 14px;
         height: 30px
+    }
+}
+/* Front header account dropdown. Keep this in the layout bundle so git/build
+   changes to page-specific styles cannot alter the global header design. */
+header .front-user-nav,
+header .front-user-dropdown,
+header .front-user-dropdown-toggle {
+    display: flex;
+    align-items: center;
+}
+
+header .front-user-dropdown {
+    position: relative;
+}
+
+header .front-user-dropdown .front-user-dropdown-toggle {
+    max-width: 230px;
+    padding: 0;
+    gap: 10px;
+    color: #5e6278;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+header .front-user-dropdown .front-user-dropdown-toggle::after {
+    margin-left: 2px;
+}
+
+header .front-user-avatar,
+header .front-user-summary-avatar {
+    display: block;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+header .front-user-avatar {
+    width: 40px;
+    height: 40px;
+}
+
+header .front-user-summary-avatar {
+    width: 64px;
+    height: 64px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+header .front-user-dropdown .front-user-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: auto;
+    z-index: 1055;
+    min-width: 285px;
+    margin-top: 12px;
+    border: 0;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, .14);
+}
+
+header .front-user-dropdown.is-open .front-user-dropdown-menu,
+header .front-user-dropdown .front-user-dropdown-menu.show {
+    display: block;
+}
+
+header .front-user-name {
+    color: #181c32;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+header .front-user-email {
+    color: #7e8299;
+    font-size: 14px;
+}
+
+header .front-user-menu-list .dropdown-item {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 8px 10px;
+    color: #3f4254;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+header .front-user-menu-list .dropdown-item:hover,
+header .front-user-menu-list .dropdown-item:focus {
+    color: #1967d2;
+    background-color: #f1f7ff;
+}
+
+header .front-user-menu-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 20px;
+    width: 20px;
+    margin-right: 12px;
+    color: #7e8299;
+}
+
+header .front-user-menu-list .dropdown-item:hover .front-user-menu-icon,
+header .front-user-menu-list .dropdown-item:focus .front-user-menu-icon {
+    color: #1967d2;
+}
+
+html[dir='rtl'] header .front-user-dropdown .front-user-dropdown-menu {
+    right: auto;
+    left: 0;
+}
+
+html[dir='rtl'] header .front-user-menu-icon {
+    margin-right: 0;
+    margin-left: 12px;
+}
+
+@media (max-width: 991.98px) {
+    header .front-user-nav,
+    header .front-user-dropdown,
+    header .front-user-dropdown .front-user-dropdown-toggle {
+        width: 100%;
+        max-width: none;
+    }
+
+    header .front-user-dropdown .front-user-dropdown-menu {
+        position: static;
+        width: 100%;
+        min-width: 0;
+        margin-top: 8px;
     }
 }
 
