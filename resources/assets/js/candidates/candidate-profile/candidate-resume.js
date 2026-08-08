@@ -3,6 +3,43 @@
         $('#candidateResumeModal').appendTo('body').modal('show');
     });
 
+ listenClick('.preview-resume', function (event) {
+     event.preventDefault();
+
+     const button = $(event.currentTarget);
+     const modal = $('#candidateResumePreviewModal');
+     const frame = $('#candidateResumePreviewFrame');
+     const loading = modal.find('.candidate-resume-preview-loading');
+     const unavailable = modal.find('.candidate-resume-preview-unavailable');
+
+     modal.appendTo('body');
+     modal.find('#candidateResumePreviewTitle').text(button.data('title'));
+     frame.addClass('d-none').attr('src', '');
+     unavailable.addClass('d-none');
+
+     if (String(button.data('previewable')) === '1') {
+         loading.removeClass('d-none');
+         frame.removeClass('d-none').attr('src', button.data('url'));
+         window.setTimeout(function () {
+             loading.addClass('d-none');
+         }, 1200);
+     } else {
+         loading.addClass('d-none');
+         unavailable.removeClass('d-none');
+     }
+
+     modal.modal('show');
+ });
+
+ listen('load', '#candidateResumePreviewFrame', function () {
+     $('.candidate-resume-preview-loading').addClass('d-none');
+ });
+
+ listen('hidden.bs.modal', '#candidateResumePreviewModal', function () {
+     $('#candidateResumePreviewFrame').attr('src', '').addClass('d-none');
+     $(this).find('.candidate-resume-preview-loading').removeClass('d-none');
+ });
+
  listenSubmit('#addCandidateResumeForm', function (e) {
         let empty = $('#uploadResumeTitle').val().trim().replace(/ \r\n\t/g, '') === '';
         if (empty) {
@@ -43,6 +80,32 @@
             },
         });
     });
+
+ listenChange('.candidate-default-resume-select', function () {
+     const select = $(this);
+     const previousValue = select.attr('data-current-value');
+
+     select.prop('disabled', true);
+     $.ajax({
+         url: select.data('url'),
+         type: 'PUT',
+         data: { resume_id: select.val() },
+         success: function (result) {
+             select.attr('data-current-value', select.val());
+             displaySuccessMessage(result.message);
+             Livewire.dispatch('refreshDatatable');
+         },
+         error: function (result) {
+             select.val(previousValue);
+             displayErrorMessage(result.responseJSON && result.responseJSON.message
+                 ? result.responseJSON.message
+                 : Lang.get('js.something_went_wrong'));
+         },
+         complete: function () {
+             select.prop('disabled', false);
+         },
+     });
+ });
 
    listenChange('#customFile', function () {
         let extension = isValidDocument($(this), '#validationErrorsBox');

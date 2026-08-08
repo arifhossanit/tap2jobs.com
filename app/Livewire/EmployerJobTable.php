@@ -35,6 +35,11 @@ class EmployerJobTable extends LivewireTableComponent
                 'class' => 'table table-striped',
             ]);
 
+        $this->setTableWrapperAttributes([
+            'default' => false,
+            'class' => 'table-responsive employer-jobs-table-responsive',
+        ]);
+
         $this->setThAttributes(function (Column $column) {
             if ($column->isField('status')) {
                 return [

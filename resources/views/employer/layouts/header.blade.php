@@ -1,6 +1,6 @@
 @php($notifications = getNotification(\App\Models\Notification::EMPLOYER))
 @php($notificationCount = $notifications->count())
-<header class='container-fluid container-xxl d-flex align-items-stretch justify-content-between'>
+<header class='employer-dashboard-header container-fluid container-xxl d-flex align-items-stretch justify-content-between'>
     <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
         <a href="{{ route('front.home') }}"  target="_blank"
            class="text-decoration-none horizontal-sidebar-logo d-flex align-items-center {{ checkLanguageSession() == 'ar' ? 'ps-xl-8' : 'pe-xl-8' }}">
@@ -114,8 +114,8 @@
                             <img src="{{ getLoggedInUser()->avatar }}"
                                  class="img-fluid" alt="profile image">
                         </div>
-                        {{\Illuminate\Support\Facades\Auth::user()->full_name}}
-                        {{--                        <i class="fa-solid fa-angle-down ms-2"></i>--}}
+                        {{-- {{\Illuminate\Support\Facades\Auth::user()->full_name}} --}}
+                        {{-- <i class="fa-solid fa-angle-down ms-2"></i>--}}
                     </button>
                     <div class="dropdown-menu p-4 pb-4" aria-labelledby="employerUserDropdown"
                          data-bs-auto-close="outside">

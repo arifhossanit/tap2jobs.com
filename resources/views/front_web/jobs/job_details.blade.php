@@ -171,7 +171,7 @@
                             <div class="col-md-12 col-sm-12">
                                 <div class="alert alert-warning" role="alert">
                                     {{ Session::get('warning') }}
-                                    <a href="{{ route('candidate.profile', ['section' => 'accomplishment']) }}"
+                                    <a href="{{ route('candidate.profile', ['section' => 'resume']) }}"
                                         class="alert-link ml-2 ">{{ __('web.job_details.click_here') }}</a>
                                     {{ __('web.job_details.to_upload_resume') }}
                                     .
@@ -182,9 +182,9 @@
                             <div class="Job Description mb-lg-5 mb-4">
                                 <h5 class="fs-18 text-secondary mb-4">@lang('web.web_jobs.job_description')</h5>
                                 @if ($job->description)
-                                    <p class="job-description">
-                                        {!! nl2br($job->description) !!}
-                                    </p>
+                                    <div class="job-description job-editor-content">
+                                        {!! $job->description !!}
+                                    </div>
                                 @else
                                     <p class="fs-16 text-gray mb-5 pb-lg-4">{{ __('messages.n/a') }}</p>
                                 @endif
@@ -192,8 +192,8 @@
                             <div class="key-responsibilities mb-lg-5 mb-4">
                                 <h5 class="fs-18 text-secondary mb-4">@lang('web.web_jobs.key_responsibilities')</h5>
                                 @if ($job->key_responsibilities)
-                                    <div class="key-responsibilities">
-                                        {!! nl2br($job->key_responsibilities) !!}
+                                    <div class="key-responsibilities job-editor-content">
+                                        {!! $job->key_responsibilities !!}
                                     </div>
                                 @else
                                     <p class="fs-16 text-gray mb-5 pb-lg-4">{{ __('messages.n/a') }}</p>
@@ -262,7 +262,7 @@
                             <div class="job-desc-right br-10 px-40 bg-light mb-40">
                                 <div class="pb-2">
                                     <h5 class="fs-18 text-dark mb-4">@lang('web.web_jobs.job_overview')</h5>
-                                    <div class="desc-box d-flex justify-content-between mb-4">
+                                    {{-- <div class="desc-box d-flex justify-content-between mb-4">
                                         <div class="desc d-flex">
                                             <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-2' : 'me-2' }} w-20">
                                                 <svg width="18" height="20" viewBox="0 0 18 20" fill="none"
@@ -277,7 +277,7 @@
                                         </div>
                                         <p class="fs-14 text-gray text-end mb-0">
                                             {{ \Carbon\Carbon::parse($job->created_at)->translatedFormat('jS M, Y') }}</p>
-                                    </div>
+                                    </div> --}}
                                     <div class="desc-box d-flex justify-content-between mb-4">
                                         <div class="desc d-flex">
                                             <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-2' : 'me-2' }} w-20">
@@ -415,7 +415,7 @@
                                             <p class="fs-14 text-secondary mb-0">@lang('messages.positions'):</p>
                                         </div>
                                         <p class="fs-14 text-gray text-end mb-0">
-                                            {{ isset($job->position) ? $job->position : '0' }}</p>
+                                            {{ isset($job->vacancy) ? $job->vacancy : '0' }}</p>
                                     </div>
                                     <div class="desc-box d-flex justify-content-between mb-4">
                                         <div class="desc d-flex">
@@ -430,7 +430,10 @@
                                             <p class="fs-14 text-secondary mb-0">@lang('messages.job_experience.job_experience'):</p>
                                         </div>
                                         <p class="fs-14 text-gray text-end mb-0">
-                                            {{ isset($job->experience) ? $job->experience . ' ' . __('messages.candidate_profile.year') : 'No experience' }}
+                                            {{ $job->formatted_experience }}
+                                            @if ($job->freshers_encouraged)
+                                                <span class="d-block text-success mt-1">{{ __('messages.job.freshers_encouraged') }}</span>
+                                            @endif
                                         </p>
                                     </div>
                                     <div class="desc-box d-flex justify-content-between mb-4">
@@ -468,7 +471,7 @@
                                             {{ $job->salaryPeriod->period }}
                                         </p>
                                     </div>
-                                    <div class="desc-box d-flex justify-content-between mb-4">
+                                    <div class="desc-box d-flex justify-content-between">
                                         <div class="desc d-flex">
                                             <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-2' : 'me-2' }} w-20">
                                                 <svg width="20" height="18" viewBox="0 0 20 18" fill="none"
@@ -495,7 +498,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <div class="desc-box">
+                                {{-- <div class="desc-box">
                                     <h5 class="fs-18 text-secondary mb-4">@lang('web.job_details.job_skills')</h5>
                                     <div class="d-flex flex-wrap gap-3">
                                         @if ($job->jobsSkill->isNotEmpty())
@@ -511,54 +514,71 @@
                                                 {{ __('messages.common.n/a') }}</p>
                                         @endif
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
+                            @php
+                                $company = $job->company;
+                                $companyUser = $company?->user;
+                                $companyName = getFrontSelectLanguage() === 'bn' && filled($company?->company_name_bn)
+                                    ? $company->company_name_bn
+                                    : ($company?->company_name ?: $companyUser?->full_name);
+                                $companyPhone = $companyUser?->phone;
+                                $companyRegionCode = ltrim((string) $companyUser?->region_code, '+');
+                                $formattedCompanyPhone = $companyPhone
+                                    ? (str_starts_with($companyPhone, '+') || blank($companyRegionCode)
+                                        ? $companyPhone
+                                        : '+'.$companyRegionCode.' '.$companyPhone)
+                                    : null;
+                            @endphp
                             <div class="company-overview br-10 px-40 bg-light">
                                 <h5 class="fs-18 text-secondary mb-4">@lang('web.job_details.company_overview')</h5>
-                                <div class="company-profile d-flex align-items-center mb-4">
-                                    <div class="profile">
-                                        <img src="{{ $job->company->company_url }}" class="w-100 h-100 object-fit-cover"
-                                            alt="company-details" />
-                                    </div>
-                                    <div class="desc {{ getFrontSelectLanguage() == 'ar' ? 'me-4' : 'ms-4' }}">
-                                        <p class="fs-18 text-secondary mb-0">
-                                            {{ html_entity_decode($job->company->user->first_name) }}</p>
-                                        <a hred="{{ route('front.company.details', $job->company->unique_id) }}"
-                                            class="fs-14 text-primary">@lang('web.web_jobs.view_company_profile')</a>
-                                    </div>
-                                </div>
-                                <div class="desc-box d-flex justify-content-between mb-4">
-                                    <p class="fs-14 text-secondary mb-0">@lang('web.web_jobs.founded_in'):</p>
-                                    <p class="fs-14 text-gray text-end mb-0">{{ $job->company->established_in }}</p>
-                                </div>
-                                @if ($job->company->user->phone)
-                                    <div class="desc-box d-flex justify-content-between mb-2">
-                                        <p class="fs-14 text-secondary mb-0">@lang('web.web_jobs.phone'):</p>
-                                        <p class="fs-14 text-gray text-end mb-0">{{ $job->company->user->phone }}</p>
-                                    </div>
-                                @endif
-                                <div class="desc-box d-flex justify-content-between mb-4">
-                                    <p class="fs-14 text-secondary mb-0">@lang('web.common.location'):</p>
-                                    @if (!empty($job->company->location))
-                                        <p class="fs-14 text-gray text-end mb-0">{{ $job->company->location }}</p>
-                                    @else
-                                        <p class="fs-14 text-gray text-end mb-0">
-                                            {{ __('web.job_details.location_information_not_available') }}
-                                        </p>
-                                    @endif
-                                </div>
-                                <a href="{{ route('front.company.details', $job->company->unique_id) }}"
-                                    class="jobs-position col-12 btn btn-light">
-                                    {{ __('web.companies_menu.opened_jobs') }} : {{ $jobsCount ? $jobsCount : 0 }}
-                                </a>
-                                @if ($job->company->website)
-                                    <div class="card-desc mt-3">
-                                        <div class="desc  d-flex mt-2">
-                                            <a href="{{ $job->company->website }}"
-                                                class="jobs-position fs-14 text-primary"
-                                                target="_blank">{{ $job->company->website }}</a>
+                                @if ($company)
+                                    <div class="company-profile d-flex align-items-center mb-4">
+                                        <div class="profile">
+                                            <img src="{{ $company->company_url }}" class="w-100 h-100 object-fit-cover"
+                                                alt="{{ $companyName ?: __('web.job_details.company_overview') }}" />
+                                        </div>
+                                        <div class="desc {{ getFrontSelectLanguage() == 'ar' ? 'me-4' : 'ms-4' }}">
+                                            <p class="fs-18 text-secondary mb-0">
+                                                {{ $companyName ?: __('messages.common.n/a') }}
+                                            </p>
+                                            <a href="{{ route('front.company.details', $company->unique_id) }}"
+                                                class="fs-14 text-primary">@lang('web.web_jobs.view_company_profile')</a>
                                         </div>
                                     </div>
+                                    <div class="desc-box d-flex justify-content-between mb-4">
+                                        <p class="fs-14 text-secondary mb-0">@lang('web.web_jobs.founded_in'):</p>
+                                        <p class="fs-14 text-gray text-end mb-0">
+                                            {{ $company->established_in ?: __('messages.common.n/a') }}
+                                        </p>
+                                    </div>
+                                    @if ($formattedCompanyPhone)
+                                        <div class="desc-box d-flex justify-content-between mb-2">
+                                            <p class="fs-14 text-secondary mb-0">@lang('web.web_jobs.phone'):</p>
+                                            <p class="fs-14 text-gray text-end mb-0">{{ $formattedCompanyPhone }}</p>
+                                        </div>
+                                    @endif
+                                    <div class="desc-box d-flex justify-content-between mb-4">
+                                        <p class="fs-14 text-secondary mb-0">@lang('web.common.location'):</p>
+                                        <p class="fs-14 text-gray text-end mb-0">
+                                            {{ $company->location ?: __('web.job_details.location_information_not_available') }}
+                                        </p>
+                                    </div>
+                                    <a href="{{ route('front.company.details', $company->unique_id) }}"
+                                        class="jobs-position col-12 btn btn-light">
+                                        {{ __('web.companies_menu.opened_jobs') }} : {{ $jobsCount ?: 0 }}
+                                    </a>
+                                    @if ($company->website)
+                                        <div class="card-desc mt-3">
+                                            <div class="desc d-flex mt-2">
+                                                <a href="{{ $company->website }}"
+                                                    class="jobs-position fs-14 text-primary"
+                                                    target="_blank" rel="noopener noreferrer">{{ $company->website }}</a>
+                                            </div>
+                                        </div>
+                                    @endif
+                                @else
+                                    <p class="fs-14 text-gray mb-0">{{ __('messages.common.n/a') }}</p>
                                 @endif
                             </div>
                         </div>

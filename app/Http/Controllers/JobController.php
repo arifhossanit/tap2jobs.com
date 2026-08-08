@@ -79,14 +79,13 @@ class JobController extends AppBaseController
      */
     public function store(CreateJobRequest $request): RedirectResponse
     {
-        $input = $request->all();
-        $input['hide_salary'] = (isset($input['hide_salary'])) ? 1 : 0;
-        $input['is_freelance'] = (isset($input['is_freelance'])) ? 1 : 0;
+        $input = $request->validated();
+        $saveAsDraft = $request->boolean('saveAsDraft');
         $is_approved = Setting::where('key','job_approved')->first();
         if ($is_approved !== null) {
-            $input['status'] = isset($request->saveAsDraft) ? Job::STATUS_DRAFT : ($is_approved->value == 1 ? Job::SELECT_PANDING : Job::STATUS_OPEN);
+            $input['status'] = $saveAsDraft ? Job::STATUS_DRAFT : ($is_approved->value == 1 ? Job::SELECT_PANDING : Job::STATUS_OPEN);
         } else {
-            $input['status'] = (isset($request->saveAsDraft)) ? Job::STATUS_DRAFT : Job::STATUS_OPEN;
+            $input['status'] = $saveAsDraft ? Job::STATUS_DRAFT : Job::STATUS_OPEN;
         }
 
         if ($input['status'] == Job::STATUS_OPEN) {
@@ -96,7 +95,7 @@ class JobController extends AppBaseController
         }
         $job = $this->jobRepository->store($input);
 
-        isset($request->saveDraft) ? Flash::success(__('messages.flash.job_draft')) : Flash::success(__('messages.flash.job_save'));
+        $saveAsDraft ? Flash::success(__('messages.flash.job_draft')) : Flash::success(__('messages.flash.job_save'));
 
         return redirect(route('job.index'));
     }
@@ -157,9 +156,7 @@ class JobController extends AppBaseController
             }
         }
 
-        $input = $request->all();
-        $input['hide_salary'] = (isset($input['hide_salary'])) ? 1 : 0;
-        $input['is_freelance'] = (isset($input['is_freelance'])) ? 1 : 0;
+        $input = $request->validated();
         $job = $this->jobRepository->update($input, $job);
 
         Flash::success(__('messages.flash.job_update'));
@@ -252,9 +249,7 @@ class JobController extends AppBaseController
      */
     public function storeJob(CreateJobRequest $request): RedirectResponse
     {
-        $input = $request->all();
-        $input['hide_salary'] = (isset($input['hide_salary'])) ? 1 : 0;
-        $input['is_freelance'] = (isset($input['is_freelance'])) ? 1 : 0;
+        $input = $request->validated();
         $input['status'] = Job::STATUS_OPEN;
         $this->jobRepository->store($input);
 
@@ -298,9 +293,7 @@ class JobController extends AppBaseController
      */
     public function updateJob(Job $job, UpdateJobRequest $request): RedirectResponse
     {
-        $input = $request->all();
-        $input['hide_salary'] = (isset($input['hide_salary'])) ? 1 : 0;
-        $input['is_freelance'] = (isset($input['is_freelance'])) ? 1 : 0;
+        $input = $request->validated();
 
         $this->jobRepository->update($input, $job);
 

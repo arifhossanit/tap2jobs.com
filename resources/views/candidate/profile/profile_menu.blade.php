@@ -29,6 +29,11 @@
             <i class="fa-solid fa-award"></i>
             <span>{{ __('messages.candidate_profile.accomplishment') }}</span>
         </a>
+        <a class="candidate-profile-menu__main-link {{ $sectionName == 'resume' ? 'active' : '' }}"
+           href="{{ route('candidate.profile', ['section' => 'resume']) }}">
+            <i class="fa-regular fa-file-lines"></i>
+            <span>{{ __('messages.candidate_profile.resume') }}</span>
+        </a>
     </div>
 
     <div class="candidate-profile-menu__sub overflow-auto">
@@ -95,6 +100,10 @@
             <a class="candidate-profile-menu__sub-link" href="#candidateOtherAccomplishmentInformation"
                data-accomplishment-section-link="candidateOtherAccomplishmentInformation">
                 {{ __('messages.candidate_profile.other') }}
+            </a>
+        @elseif($sectionName == 'resume')
+            <a class="candidate-profile-menu__sub-link active" href="#">
+                {{ __('messages.candidate_profile.application_cv') }}
             </a>
         @else
             <a class="candidate-profile-menu__sub-link active" href="#candidatePersonalDetails"

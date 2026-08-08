@@ -978,11 +978,14 @@
 
                 const scrollToTrainingForm = function () {
                     window.setTimeout(function () {
-                        trainingFormWrap.scrollIntoView({
+                        const stickyOffset = 150;
+                        const top = window.scrollY + trainingFormWrap.getBoundingClientRect().top - stickyOffset;
+
+                        window.scrollTo({
+                            top: Math.max(0, top),
                             behavior: 'smooth',
-                            block: 'start',
                         });
-                    }, 50);
+                    }, 100);
                 };
 
                 const setTrainingFormMode = function (item, shouldScroll) {

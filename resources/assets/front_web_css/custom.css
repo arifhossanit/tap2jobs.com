@@ -1714,6 +1714,109 @@ header .navbar .navbar-collapse .navbar-nav .nav-item .nav-link {
     color: #1967d2 !important;
 }
 
+/* Public header user menu mirrors the dashboard header profile dropdown. */
+.front-user-dropdown .front-user-dropdown-toggle {
+    max-width: 230px;
+    padding: 0;
+    color: #5e6278;
+    font-size: 15px;
+    font-weight: 500;
+    gap: 10px;
+    border: 0;
+}
+
+.front-user-dropdown .front-user-dropdown-toggle::after {
+    margin-left: 2px;
+}
+
+.front-user-avatar,
+.front-user-summary-avatar {
+    display: block;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.front-user-avatar {
+    width: 40px;
+    height: 40px;
+}
+
+.front-user-summary-avatar {
+    width: 64px;
+    height: 64px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.front-user-dropdown .front-user-dropdown-menu {
+    min-width: 285px;
+    margin-top: 12px;
+    border: 0;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, .14);
+}
+
+.front-user-name {
+    color: #181c32;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.front-user-email {
+    color: #7e8299;
+    font-size: 14px;
+}
+
+.front-user-menu-list .dropdown-item {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 8px 10px;
+    color: #3f4254;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+.front-user-menu-list .dropdown-item:hover,
+.front-user-menu-list .dropdown-item:focus {
+    color: #1967d2;
+    background-color: #f1f7ff;
+}
+
+.front-user-menu-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    margin-right: 12px;
+    color: #7e8299;
+}
+
+.front-user-menu-list .dropdown-item:hover .front-user-menu-icon,
+.front-user-menu-list .dropdown-item:focus .front-user-menu-icon {
+    color: #1967d2;
+}
+
+html[dir='rtl'] .front-user-menu-icon {
+    margin-right: 0;
+    margin-left: 12px;
+}
+
+@media (max-width: 991.98px) {
+    .front-user-nav,
+    .front-user-dropdown,
+    .front-user-dropdown .front-user-dropdown-toggle {
+        width: 100%;
+        max-width: none;
+    }
+
+    .front-user-dropdown .front-user-dropdown-menu {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
 .company-details-social-media a:hover {
     color: #628cc8 !important;
 }
@@ -2273,7 +2376,7 @@ footer .text-decoration-none {
     color: #1967d2 !important;
 }
 .skill-experience li{
-    line-height: 50px;
+    line-height: 20px;
     color: #777a7d !important;
 }
 input, select

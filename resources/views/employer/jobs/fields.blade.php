@@ -19,6 +19,7 @@
         <span class="required"></span>
         {{Form::select('jobsSkill[]',$data['jobSkill'], null, ['class' => 'form-select','id'=>'SkillId','multiple'=>true,'data-control'=>'select2','required'])}}
     </div>
+    @include('employer.jobs.employment_workplace_fields')
     <div class="col-xl-12 col-md-12 col-sm-12 mb-5">
         {{ Form::label('description', __('messages.job.description').':', ['class' => 'form-label']) }}
         <span class="required"></span>
@@ -117,15 +118,11 @@
         <span class="required"></span>
         {{ Form::select('functional_area_id', $data['functionalArea'], null, ['id'=>'functionalAreaId','class' => 'form-select','placeholder' => __('messages.company.select_functional_area'),'data-control'=>'select2','required']) }}
     </div>
+    @include('jobs.experience_fields')
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
-        {{ Form::label('position', __('messages.job.position').':', ['class' => 'form-label']) }}
+        {{ Form::label('vacancy', __('messages.job.vacancy').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{ Form::text('position',  null, ['id'=>'positionId','class' => 'form-control','placeholder' => __('messages.company.select_position'),'required', 'min' => 0, 'max' => 255, 'placeholder' => __('messages.job.position'), 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")']) }}
-    </div>
-    <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
-        {{ Form::label('experience', __('messages.job_experience.job_experience').':', ['class' => 'form-label']) }}
-        <span class="required"></span>
-        {{ Form::text('experience',  null, ['id'=>'experienceId','class' => 'form-control','placeholder' => __('messages.company.enter_experience_year'),'required', 'min' => 0, 'max' => 255, 'placeholder' => __('messages.job_experience.job_experience'), 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")']) }}
+        {{ Form::text('vacancy',  null, ['id'=>'vacancyId','class' => 'form-control','required', 'min' => 1, 'max' => 4294967295, 'placeholder' => __('messages.job.vacancy'), 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")']) }}
     </div>
     <div class="col-xl-3 col-md-3 col-sm-12 mb-5">
         <label class="form-label">{{ __('messages.job.is_freelance').':' }}</label><br>

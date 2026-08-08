@@ -35,7 +35,7 @@ class CreateJobSeeder extends Seeder
                     'functional_area_id' => rand(1, 8),
                     'job_shift_id' => rand(1, 8),
                     'degree_level_id' => rand(1, 5),
-                    'position' => rand(1, 5),
+                    'vacancy' => rand(1, 5),
                     'is_featured' => rand(1, 0),
                     'company_id' => rand(1, 19),
                     'description' => $faker->realText(200),

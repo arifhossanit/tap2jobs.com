@@ -289,6 +289,24 @@ function loadCandidateCareerInformationData() {
         $('.candidate-education-container').removeClass('d-none');
     }
 
+    function scrollToEducationInlineForm() {
+        const form = document.querySelector('[data-education-add-form]');
+
+        if (!form) {
+            return;
+        }
+
+        window.setTimeout(function () {
+            const stickyOffset = 150;
+            const top = window.scrollY + form.getBoundingClientRect().top - stickyOffset;
+
+            window.scrollTo({
+                top: Math.max(0, top),
+                behavior: 'smooth',
+            });
+        }, 100);
+    }
+
     listenClick('[data-inline-education-add]', function () {
         closeEducationInlineForms();
         $('[data-education-edit-form]').addClass('d-none');
@@ -297,6 +315,7 @@ function loadCandidateCareerInformationData() {
         setEducationFormTitle('[data-education-add-form]', $('.candidate-education-container .candidate-education').length + 1);
         updateEducationFormLayout('#addNewEducationForm');
         initEducationQuillEditors();
+        scrollToEducationInlineForm();
     });
 
     listenClick('[data-education-add-close], [data-education-edit-close]', function () {

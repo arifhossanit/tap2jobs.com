@@ -56,12 +56,15 @@
         <p class="fs-5 text-gray-800">{{ (!empty($job->degreeLevel)) ? html_entity_decode($job->degreeLevel->name) : __('messages.n/a') }}</p>
     </div>
     <div class="col-sm-6 d-flex flex-column mb-md-10 mb-5">
-        {{ Form::label('position', __('messages.job.position').':', ['class' => 'pb-2 fs-5 text-gray-600']) }}
-        <p class="fs-5 text-gray-800">{{ $job->position }}</p>
+        {{ Form::label('vacancy', __('messages.job.vacancy').':', ['class' => 'pb-2 fs-5 text-gray-600']) }}
+        <p class="fs-5 text-gray-800">{{ $job->vacancy }}</p>
     </div>
     <div class="col-sm-6 d-flex flex-column mb-md-10 mb-5">
-        {{ Form::label('position', __('messages.job_experience.job_experience').':', ['class' => 'pb-2 fs-5 text-gray-600']) }}
-        <p class="fs-5 text-gray-800">{{ $job->experience .' '. __('messages.candidate_profile.year') }} </p>
+        {{ Form::label('experience', __('messages.job_experience.job_experience').':', ['class' => 'pb-2 fs-5 text-gray-600']) }}
+        <p class="fs-5 text-gray-800">{{ $job->formatted_experience }}</p>
+        @if ($job->freshers_encouraged)
+            <p class="fs-6 text-success mb-0">{{ __('messages.job.freshers_encouraged') }}</p>
+        @endif
     </div>
     <div class="col-sm-6 d-flex flex-column mb-md-10 mb-5">
         {{ Form::label('country', __('messages.job.country').':', ['class' => 'pb-2 fs-5 text-gray-600']) }}

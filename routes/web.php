@@ -848,6 +848,8 @@ Route::middleware('auth', 'role:Candidate', 'xss', 'verified.user')->prefix('can
     Route::post('edit-profile-update', [Candidates\CandidateController::class, 'profileUpdate'])->name('candidate.update.profile');
 
     Route::post('/resumes', [Candidates\CandidateController::class, 'uploadResume'])->name('candidate.resumes');
+    Route::put('/resumes/default', [Candidates\CandidateController::class, 'selectDefaultResume'])->name('candidate.resumes.default');
+    Route::get('/resumes/{media}/preview', [Candidates\CandidateController::class, 'previewResume'])->name('candidate.resumes.preview');
     Route::get('/media/{media?}', [CandidateController::class, 'downloadResume'])->name('download.resume');
     Route::delete('/resumes/{media}', [Candidates\CandidateController::class, 'deletedResume'])->name('download.destroy');
 

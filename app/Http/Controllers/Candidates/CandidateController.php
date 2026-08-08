@@ -41,6 +41,8 @@ use App\Models\JobApplicationSchedule;
 use App\Models\RequiredDegreeLevel;
 use App\Models\User;
 use App\Repositories\Candidates\CandidateRepository;
+use App\Services\ApplicationCvService;
+use App\Services\ResumePreviewService;
 use Auth;
 use Carbon\Carbon;
 use Exception;
@@ -54,18 +56,29 @@ use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Symfony\Component\HttpFoundation\Response;
 
 class CandidateController extends AppBaseController
 {
     /** @var CandidateRepository */
     private $candidateRepository;
 
+    private ApplicationCvService $applicationCvService;
+
+    private ResumePreviewService $resumePreviewService;
+
     /**
      * CandidateController constructor.
      */
-    public function __construct(CandidateRepository $candidateRepo)
+    public function __construct(
+        CandidateRepository $candidateRepo,
+        ApplicationCvService $applicationCvService,
+        ResumePreviewService $resumePreviewService
+    )
     {
         $this->candidateRepository = $candidateRepo;
+        $this->applicationCvService = $applicationCvService;
+        $this->resumePreviewService = $resumePreviewService;
     }
 
     /**
@@ -125,7 +138,6 @@ class CandidateController extends AppBaseController
             'general' => 'personal-information',
             'career-informations' => 'education-training',
             'cv-builder' => 'other-information',
-            'resume' => 'accomplishment',
         ];
         $sectionName = ($request->section === null) ? 'personal-information' : $request->section;
         $sectionName = $sectionAliases[$sectionName] ?? $sectionName;
@@ -171,6 +183,10 @@ class CandidateController extends AppBaseController
                     ->orderBy('id')
                     ->get();
             }
+        }
+
+        if ($sectionName == 'resume') {
+            $this->applicationCvService->ensure($user->candidate);
         }
 
         if ($sectionName == 'education-training' || $sectionName == 'other-information' || $sectionName == 'employment') {
@@ -931,18 +947,64 @@ class CandidateController extends AppBaseController
      */
     public function uploadResume(Request $request)
     {
-        $input = $request->all();
+        $input = $request->validate([
+            'title' => ['required', 'string', 'max:150'],
+            'file' => ['required', 'file', 'mimes:jpg,jpeg,pdf,doc,docx', 'max:10240'],
+        ]);
         $this->candidateRepository->uploadResume($input);
 
         return $this->sendSuccess(__('messages.flash.resume_update'));
     }
 
+    public function selectDefaultResume(Request $request): JsonResponse
+    {
+        $candidate = Auth::user()->candidate;
+        $validated = $request->validate([
+            'resume_id' => [
+                'required',
+                \Illuminate\Validation\Rule::exists('media', 'id')->where(function ($query) use ($candidate) {
+                    return $query->where('model_type', \App\Models\Candidate::class)
+                        ->where('model_id', $candidate->id)
+                        ->where('collection_name', \App\Models\Candidate::RESUME_PATH);
+                }),
+            ],
+        ]);
+
+        $resume = Media::whereKey($validated['resume_id'])
+            ->where('model_type', \App\Models\Candidate::class)
+            ->where('model_id', $candidate->id)
+            ->where('collection_name', \App\Models\Candidate::RESUME_PATH)
+            ->firstOrFail();
+
+        $this->applicationCvService->makeDefault($candidate, $resume);
+
+        return $this->sendSuccess(__('messages.candidate_profile.default_cv_updated'));
+    }
+
     public function downloadResume(int $media): Media
     {
         /** @var Media $mediaItem */
-        $mediaItem = Media::findOrFail($media);
+        $mediaItem = Media::whereKey($media)
+            ->where('model_type', \App\Models\Candidate::class)
+            ->where('model_id', Auth::user()->owner_id)
+            ->where('collection_name', \App\Models\Candidate::RESUME_PATH)
+            ->firstOrFail();
 
         return $mediaItem;
+    }
+
+    public function previewResume(int $media): Response
+    {
+        $candidate = Auth::user()->candidate;
+
+        /** @var Media $mediaItem */
+        $mediaItem = Media::whereKey($media)
+            ->where('model_type', \App\Models\Candidate::class)
+            ->where('model_id', $candidate->id)
+            ->where('collection_name', \App\Models\Candidate::RESUME_PATH)
+            ->firstOrFail();
+
+        return $this->resumePreviewService->preview($mediaItem);
     }
 
     /**
@@ -1029,7 +1091,18 @@ class CandidateController extends AppBaseController
         $mediaFile = Media::where('id', $media->id)->where('model_id', getLoggedInUser()->candidate->id)->first();
 
         if ($mediaFile) {
+            if ($media->getCustomProperty(ApplicationCvService::APPLICATION_CV_PROPERTY, false)) {
+                return $this->sendError(__('messages.candidate_profile.application_cv_delete_error'));
+            }
+
+            $wasDefault = (bool) $media->getCustomProperty('is_default', false);
             $media->delete();
+
+            if ($wasDefault) {
+                $candidate = getLoggedInUser()->candidate;
+                $applicationCv = $this->applicationCvService->ensure($candidate);
+                $this->applicationCvService->makeDefault($candidate, $applicationCv);
+            }
         } else {
             return $this->sendError(__('messages.common.seems_message'));
         }

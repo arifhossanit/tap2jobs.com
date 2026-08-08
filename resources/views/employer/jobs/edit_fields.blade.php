@@ -19,6 +19,7 @@
         <span class="required"></span>
         {{Form::select('jobsSkill[]',$data['jobSkill'], null, ['class' => 'form-select','data-control'=>'select2','id'=>'SkillId','multiple'=>true,'required'])}}
     </div>
+    @include('employer.jobs.employment_workplace_fields')
     <div class="col-xl-12 col-md-12 col-sm-12 mb-5">
         {{ Form::label('description', __('messages.job.description').':', ['class' => 'form-label']) }}
         <span class="required"></span>
@@ -70,12 +71,12 @@
     <div class="col-xl-4 col-md-4 col-sm-12 mb-5">
         {{ Form::label('country', __('messages.company.country').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{ Form::select('country_id', $data['countries'], null, ['id'=>'countryId','class' => 'form-select','data-control'=>'select2','placeholder' => __('messages.company.select_country')]) }}
+        {{ Form::select('country_id', $data['countries'], old('country_id', $job->country_id), ['id'=>'countryId','class' => 'form-select','data-control'=>'select2','placeholder' => __('messages.company.select_country'),'required']) }}
     </div>
     <div class="col-xl-4 col-md-4 col-sm-12 mb-5">
         {{ Form::label('state', __('messages.job.state').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{ Form::select('state_id', (isset($states) && $states!=null?$states:[]), null, ['id'=>'stateId','class' => 'form-select','data-control'=>'select2','placeholder' => __('messages.company.select_state')]) }}
+        {{ Form::select('state_id', (isset($states) && $states!=null?$states:[]), old('state_id', $job->state_id), ['id'=>'stateId','class' => 'form-select','data-control'=>'select2','placeholder' => __('messages.company.select_state'),'required']) }}
     </div>
     <div class="col-xl-4 col-md-4 col-sm-12 mb-5">
         {{ Form::label('city', __('messages.job.city').':', ['class' => 'form-label']) }}
@@ -108,15 +109,11 @@
         <span class="required"></span>
         {{ Form::select('functional_area_id', $data['functionalArea'], null, ['id'=>'functionalAreaId','class' => 'form-select','placeholder' => __('messages.company.select_functional_area'),'data-control'=>'select2','required']) }}
     </div>
+    @include('jobs.experience_fields')
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
-        {{ Form::label('position', __('messages.job.position').':', ['class' => 'form-label']) }}
+        {{ Form::label('vacancy', __('messages.job.vacancy').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{ Form::text('position',  null, ['id'=>'positionId','class' => 'form-control','placeholder' => __('messages.company.select_position'),'required', 'min' => 0, 'max' => 255, 'placeholder' => __('messages.job.position'), 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")']) }}
-    </div>
-    <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
-        {{ Form::label('experience', __('messages.job_experience.job_experience').':', ['class' => 'form-label']) }}
-        <span class="required"></span>
-        {{ Form::text('experience',  null, ['id'=>'experienceId','class' => 'form-control','placeholder' => __('messages.company.enter_experience_year'),'required', 'min' => 0, 'max' => 255, 'placeholder' => __('messages.job_experience.job_experience'), 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")']) }}
+        {{ Form::text('vacancy', null, ['id'=>'vacancyId','class' => 'form-control','required', 'min' => 1, 'max' => 4294967295, 'placeholder' => __('messages.job.vacancy'), 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")']) }}
     </div>
     <div class="col-xl-3 col-md-3 col-sm-12 mb-5">
         <label class="form-label">{{ __('messages.job.hide_salary').':' }}</label>
@@ -126,15 +123,6 @@
                    id="salary" {{$job->hide_salary == 1? 'checked' : ''}}>
         </label>
     </div>
-    <div class="col-xl-3 col-md-3 col-sm-12 mb-5">
-        <label class="form-label">{{ __('messages.job.is_freelance').':' }}</label>
-        <label class="form-check form-switch form-switch-sm">
-            <input type="checkbox" name="is_freelance" class="form-check-input"
-                   value="1"
-                   id="freelance" {{$job->is_freelance == 1? 'checked' : ''}}>
-        </label>
-    </div>
-
     <!-- Submit Field -->
     <div class="d-flex justify-content-end mt-5">
         {{ Form::button(__('messages.common.save'), ['type' => 'submit','class' => 'btn btn-primary me-3','id' => 'editJobsSaveBtn','data-loading-text' => "<span class='spinner-border spinner-border-sm'></span> ".__('messages.common.process')]) }}

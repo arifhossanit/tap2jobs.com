@@ -8,7 +8,11 @@ function loadEmployeeCreateEditData() {
     if ($("#editDetails").length) {
         window.editJobDescription = new Quill("#editDetails", {
             modules: {
-                toolbar: [["bold", "italic", "underline", "strike"], ["clean"]],
+                toolbar: [
+                    ["bold", "italic", "underline", "strike"],
+                    [{ list: "ordered" }, { list: "bullet" }],
+                    ["clean"]
+                ],
                 keyboard: {
                     bindings: {
                         tab: "disabled"
@@ -24,6 +28,7 @@ function loadEmployeeCreateEditData() {
                 modules: {
                     toolbar: [
                         ["bold", "italic", "underline", "strike"],
+                        [{ list: "ordered" }, { list: "bullet" }],
                         ["clean"]
                     ],
                     keyboard: {
@@ -46,7 +51,11 @@ function loadEmployeeCreateEditData() {
     if ($("#details").length) {
         window.details = new Quill("#details", {
             modules: {
-                toolbar: [["bold", "italic", "underline", "strike"], ["clean"]],
+                toolbar: [
+                    ["bold", "italic", "underline", "strike"],
+                    [{ list: "ordered" }, { list: "bullet" }],
+                    ["clean"]
+                ],
                 keyboard: {
                     bindings: {
                         tab: "disabled"
@@ -61,6 +70,7 @@ function loadEmployeeCreateEditData() {
                 modules: {
                     toolbar: [
                         ["bold", "italic", "underline", "strike"],
+                        [{ list: "ordered" }, { list: "bullet" }],
                         ["clean"]
                     ],
                     keyboard: {
@@ -1050,7 +1060,6 @@ listenClick("#jobsSaveBtn, #saveDraft", function(e) {
     }
     processingBtn("#createJobForm", $(this), "loading");
     let editor_content1 = details.root.innerHTML;
-    let input = JSON.stringify(editor_content1);
     if (details.getText().trim().length === 0) {
         displayErrorMessage(
             Lang.get("js.description_required")
@@ -1058,7 +1067,7 @@ listenClick("#jobsSaveBtn, #saveDraft", function(e) {
         processingBtn("#createJobForm", $(this));
         return false;
     }
-    $("#job_desc").val(input.replace(/"/g, ""));
+    $("#job_desc").val(editor_content1);
     // if (!checkSummerNoteEmpty('#details',
     //     'Job Description field is required.', 1)) {
     //     e.preventDefault();
@@ -1066,7 +1075,6 @@ listenClick("#jobsSaveBtn, #saveDraft", function(e) {
     //     return false;
     // }
     let keyResponsibilitiesContent = response.root.innerHTML;
-    let respose = JSON.stringify(keyResponsibilitiesContent);
     if (response.getText().trim().length === 0) {
         displayErrorMessage(
             Lang.get("js.key_responsibilities_required")
@@ -1074,7 +1082,7 @@ listenClick("#jobsSaveBtn, #saveDraft", function(e) {
         processingBtn("#createJobForm", $(this));
         return false;
     }
-    $("#key_responsibilities").val(respose.replace(/"/g, ""));
+    $("#key_responsibilities").val(keyResponsibilitiesContent);
 
     if ($("#salaryToErrorMsg").text() !== "") {
         $("#toSalary").focus();
@@ -1088,7 +1096,6 @@ listenClick("#jobsSaveBtn, #saveDraft", function(e) {
 listenClick("#editJobsSaveBtn, #saveDraft", function(e) {
     processingBtn("#editJobForm", $(this), "loading");
     let editor_content2 = editJobDescription.root.innerHTML;
-    let input2 = JSON.stringify(editor_content2);
     if (editJobDescription.getText().trim().length === 0) {
         displayErrorMessage(
             Lang.get("js.description_required")
@@ -1096,9 +1103,8 @@ listenClick("#editJobsSaveBtn, #saveDraft", function(e) {
         processingBtn("#editJobForm", "#editJobsSaveBtn");
         return false;
     }
-    $("#editJobDescription").val(input2.replace(/"/g, ""));
+    $("#editJobDescription").val(editor_content2);
     let editor_content3 = editResponse.root.innerHTML;
-    let input3 = JSON.stringify(editor_content3);
     if (editResponse.getText().trim().length === 0) {
         displayErrorMessage(
             Lang.get("js.key_responsibilities_required")
@@ -1106,7 +1112,7 @@ listenClick("#editJobsSaveBtn, #saveDraft", function(e) {
         processingBtn("#editJobForm", "#editJobsSaveBtn");
         return false;
     }
-    $("#edit_responsibilities").val(input3.replace(/"/g, ""));
+    $("#edit_responsibilities").val(editor_content3);
 
     if ($("#salaryToErrorMsg").text() !== "") {
         $("#toSalary").focus();

@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Candidate;
 use App\Models\Job;
 use App\Models\JobApplication;
+use App\Services\ApplicationCvService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -73,8 +74,16 @@ class JobApplicationRepository extends BaseRepository
         $data['isJobDrafted'] = false;
         if (! $data['isApplied']) {
             // get candidate resumes
-            $data['resumes'] = $candidate->getMedia('resumes')->pluck('custom_properties.title', 'id');
-            $data['default_resume'] = $candidate->getMedia('resumes', ['is_default' => true])->first();
+            $applicationCv = app(ApplicationCvService::class)->ensure($candidate);
+            $candidate->refresh();
+            $resumeMedia = $candidate->getMedia(Candidate::RESUME_PATH)
+                ->sortByDesc(fn (Media $media) => (bool) $media->getCustomProperty(ApplicationCvService::APPLICATION_CV_PROPERTY, false));
+            $data['resumes'] = $resumeMedia->mapWithKeys(fn (Media $media) => [
+                $media->id => $media->getCustomProperty('title', $media->name),
+            ]);
+            $data['default_resume'] = $resumeMedia->first(
+                fn (Media $media) => (bool) $media->getCustomProperty('is_default', false)
+            ) ?? $applicationCv;
             if (isset($data['default_resume'])) {
                 $data['default_resume'] = $data['default_resume']->id;
             }

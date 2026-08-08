@@ -25,6 +25,7 @@ use App\Models\State;
 use App\Models\User;
 use App\ReportedToCandidate;
 use App\Repositories\BaseRepository;
+use App\Services\ApplicationCvService;
 use Arr;
 use Auth;
 use DB;
@@ -37,7 +38,6 @@ use PragmaRX\Countries\Package\Countries;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Models\Role;
 use Str;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Throwable;
 
@@ -1259,26 +1259,32 @@ class CandidateRepository extends BaseRepository
             $user = Auth::user();
             /** @var Candidate $candidate */
             $candidate = Candidate::findOrFail($user->candidate->id);
-            $input['is_default'] = isset($input['is_default']) ? true : false;
-            if ($input['is_default']) {
-                $media = Media::where('model_type', '=', Candidate::class)->where('model_id', '=', $candidate->id)->where('custom_properties->is_default', '=', true)->first();
-                if (isset($media)) {
-                    throw new BadRequestHttpException(
-                        __('messages.flash.default_resume_already_upload'),
-                        null,
-                        \Illuminate\Http\Response::HTTP_BAD_REQUEST
-                    );
+
+            $applicationCvService = app(ApplicationCvService::class);
+            $applicationCvService->ensure($candidate);
+
+            return DB::transaction(function () use ($candidate, $input) {
+                $candidate = Candidate::whereKey($candidate->id)->lockForUpdate()->firstOrFail();
+                $candidate->unsetRelation('media');
+
+                $hasUploadedResume = $candidate->getMedia(Candidate::RESUME_PATH)->contains(
+                    fn (Media $media) => ! $media->getCustomProperty(ApplicationCvService::APPLICATION_CV_PROPERTY, false)
+                );
+
+                if ($hasUploadedResume) {
+                    throw new UnprocessableEntityHttpException(__('messages.candidate_profile.resume_upload_limit'));
                 }
-            }
 
-            $fileExtension = getFileName('download', $input['file']);
-            $candidate->addMedia($input['file'])
-                ->withCustomProperties([
-                    'is_default' => $input['is_default'],
-                    'title' => $input['title'],
-                ])->usingFileName($fileExtension)->toMediaCollection(Candidate::RESUME_PATH, config('app.media_disc'));
+                $fileExtension = getFileName('download', $input['file']);
+                $candidate->addMedia($input['file'])
+                    ->withCustomProperties([
+                        'is_default' => false,
+                        ApplicationCvService::APPLICATION_CV_PROPERTY => false,
+                        'title' => $input['title'],
+                    ])->usingFileName($fileExtension)->toMediaCollection(Candidate::RESUME_PATH, config('app.media_disc'));
 
-            return true;
+                return true;
+            });
         } catch (Exception $e) {
             throw new UnprocessableEntityHttpException($e->getMessage());
         }

@@ -1,5 +1,141 @@
 .iti {
-  display: block !important;
+    display: block !important;
+}
+
+.candidate-resume-toolbar {
+  .candidate-default-resume-select {
+    min-width: 230px;
+    max-width: 320px;
+  }
+
+  .btn {
+    white-space: nowrap;
+  }
+}
+
+.candidate-resume-preview-modal {
+  overflow: hidden;
+
+  .modal-body,
+  .candidate-resume-preview-loading,
+  .candidate-resume-preview-frame {
+    height: min(76vh, 850px);
+    min-height: 520px;
+  }
+
+  .candidate-resume-preview-loading {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    z-index: 2;
+  }
+
+  .candidate-resume-preview-frame {
+    width: 100%;
+    border: 0;
+    background: #eef2f7;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .candidate-resume-toolbar,
+  .candidate-resume-toolbar .candidate-default-resume-select,
+  .candidate-resume-toolbar .btn {
+    width: 100%;
+    max-width: none;
+  }
+
+  .candidate-resume-preview-modal {
+    .modal-body,
+    .candidate-resume-preview-loading,
+    .candidate-resume-preview-frame {
+      height: 72vh;
+      min-height: 420px;
+    }
+  }
+}
+
+// Employer job employment status and workplace choices
+.job-choice-list {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+}
+
+.job-choice-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.job-choice-label {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    margin: 0;
+    padding: 8px 10px;
+    color: #c1c5cc;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    border: 1px solid #dce3ec;
+    border-radius: 5px;
+    background-color: #fff;
+    transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+
+    &::before {
+        width: 13px;
+        height: 13px;
+        margin-right: 9px;
+        content: '';
+        flex: 0 0 13px;
+        border: 1px solid #b7c4d4;
+        background-color: #fff;
+    }
+}
+
+.job-choice-input[type='radio'] + .job-choice-label::before {
+    border-radius: 50%;
+}
+
+.job-choice-input[type='checkbox'] + .job-choice-label::before {
+    border-radius: 1px;
+}
+
+.job-workplace-choice .job-choice-label {
+    color: #111827;
+}
+
+.job-choice-input:checked + .job-choice-label {
+    color: #0077b5;
+    border-color: #008bd2;
+    background-color: #fff;
+}
+
+.job-choice-input[type='radio']:checked + .job-choice-label::before {
+    border-color: #008bd2;
+    box-shadow: inset 0 0 0 1px #fff;
+    background-color: #008bd2;
+}
+
+.job-choice-input[type='checkbox']:checked + .job-choice-label::before {
+    border-color: #008bd2;
+    box-shadow: inset 0 0 0 2px #fff;
+    background-color: #008bd2;
+}
+
+.job-choice-input:focus-visible + .job-choice-label {
+    outline: 2px solid rgba(0, 139, 210, 0.25);
+    outline-offset: 2px;
+}
+
+@media (max-width: 1199.98px) {
+    .job-choice-list {
+        flex-wrap: wrap;
+    }
 }
 
 .swal-modal .swal-text {
@@ -8,6 +144,26 @@
 
 .customDropdown {
   min-width: 100px !important;
+}
+
+// Keep employer job status menus above the table/card without clipping them.
+.employer-jobs-table-responsive {
+  overflow: visible;
+
+  .employer-job-status-dropdown.show {
+    position: relative;
+    z-index: 1055;
+  }
+
+  .employer-job-status-dropdown .dropdown-menu {
+    z-index: 1060;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .employer-jobs-table-responsive {
+    overflow-x: auto;
+  }
 }
 
 .featuredDropdown {
@@ -1320,6 +1476,56 @@
 .candidate-profile-section,
 .candidate-education-panel {
   scroll-margin-top: 150px;
+}
+
+.candidate-dashboard-header,
+.employer-dashboard-header {
+  .horizontal-menu .nav-item .nav-link {
+    align-items: center;
+    line-height: 20px;
+  }
+
+  .horizontal-menu .nav-item .nav-link .horizontal-menu-icon {
+    align-items: center;
+    display: inline-flex;
+    flex: 0 0 20px;
+    height: 20px;
+    justify-content: center;
+    line-height: 1;
+    padding: 0 !important;
+    width: 20px;
+
+    i {
+      display: block;
+      line-height: 1;
+    }
+  }
+
+  .horizontal-menu-title {
+    align-items: center;
+    display: inline-flex;
+    line-height: 20px;
+    margin-left: 5px;
+  }
+
+  > .d-flex > .nav > li > a,
+  > .d-flex > .nav > li > .dropdown > .btn {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    line-height: 20px;
+  }
+
+  .custom-dropdown > .btn i,
+  .user-check-icon {
+    line-height: 1;
+  }
+}
+
+[dir="rtl"] .candidate-dashboard-header .horizontal-menu-title,
+[dir="rtl"] .employer-dashboard-header .horizontal-menu-title {
+  margin-left: 0;
+  margin-right: 10px;
 }
 
 @media (max-width: 1200px) {
@@ -3028,7 +3234,6 @@
   color: #0f1b3d;
   font-size: 15px;
   grid-column: 1 / -1;
-  margin: 0;
 }
 
 .candidate-skill-form {
@@ -3472,7 +3677,6 @@
 .candidate-link-form {
   border-top: 1px solid #dfe3ea;
   grid-column: 1 / -1;
-  margin-top: 22px;
   padding-top: 22px;
   width: 100%;
 }
@@ -4608,6 +4812,7 @@
 .candidate-education-inline-form {
   color: #0f1b3d;
   margin-bottom: 26px;
+  scroll-margin-top: 150px;
 
   h2 {
     color: #1d2939;
@@ -4652,14 +4857,14 @@
   }
 }
 
-.candidate-certification-duration-label:after {
-  color: #f79009;
-  content: "\f05a";
-  font-family: "Font Awesome 6 Free";
-  font-size: 12px;
-  font-weight: 900;
-  margin-left: 5px;
-}
+// .candidate-certification-duration-label:after {
+//   color: #f79009;
+//   content: "\f05a";
+//   font-family: "Font Awesome 6 Free";
+//   font-size: 12px;
+//   font-weight: 900;
+//   margin-left: 5px;
+// }
 
 .candidate-certification-duration-input {
   align-items: center;

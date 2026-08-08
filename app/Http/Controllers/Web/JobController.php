@@ -47,7 +47,7 @@ class JobController extends AppBaseController
      */
     public function jobDetails(string $uniqueJobId)
     {
-        $job = Job::with('jobsTag')->whereJobId($uniqueJobId)->first();
+        $job = Job::with(['jobsTag', 'company.user'])->whereJobId($uniqueJobId)->first();
         $skill = Job::with('jobCategory', 'jobShift', 'jobsSkill', 'company')->whereJobId($uniqueJobId)
             ->orderByDesc('created_at')->get();
         $valuee = [];

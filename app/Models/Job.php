@@ -109,6 +109,10 @@ use Illuminate\Support\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Job whereStateId($value)
  *
  * @property int|null $experience
+ * @property string $experience_unit
+ * @property string $experience_requirement
+ * @property bool $freshers_encouraged
+ * @property int $vacancy
  * @property-read \App\Models\FeaturedRecord|null $activeFeatured
  * @property-read \App\Models\FeaturedRecord|null $featured
  * @property-read string $full_location
@@ -124,6 +128,30 @@ use Illuminate\Support\Carbon;
  */
 class Job extends Model
 {
+    public const EXPERIENCE_UNIT_MONTH = 'month';
+    public const EXPERIENCE_UNIT_YEAR = 'year';
+    public const EXPERIENCE_UNIT_MONTH_YEAR = 'month_year';
+
+    public const EXPERIENCE_UNITS = [
+        self::EXPERIENCE_UNIT_MONTH => 'messages.job.month',
+        self::EXPERIENCE_UNIT_YEAR => 'messages.job.year',
+        self::EXPERIENCE_UNIT_MONTH_YEAR => 'messages.job.month_year',
+    ];
+
+    public const EMPLOYMENT_STATUS_FULL_TIME = 'full_time';
+    public const EMPLOYMENT_STATUS_PART_TIME = 'part_time';
+    public const EMPLOYMENT_STATUS_CONTRACTUAL = 'contractual';
+    public const EMPLOYMENT_STATUS_INTERNSHIP = 'internship';
+    public const EMPLOYMENT_STATUS_FREELANCE = 'freelance';
+
+    public const EMPLOYMENT_STATUSES = [
+        self::EMPLOYMENT_STATUS_FULL_TIME => 'messages.job.full_time',
+        self::EMPLOYMENT_STATUS_PART_TIME => 'messages.job.part_time',
+        self::EMPLOYMENT_STATUS_CONTRACTUAL => 'messages.job.contractual',
+        self::EMPLOYMENT_STATUS_INTERNSHIP => 'messages.job.internship',
+        self::EMPLOYMENT_STATUS_FREELANCE => 'messages.job.freelance',
+    ];
+
     const NO_PREFERENCE = [
         2 => 'Both',
         1 => 'Male',
@@ -226,9 +254,15 @@ class Job extends Model
         'currency_id' => 'required',
         'salary_period_id' => 'required',
         'job_type_id' => 'required',
+        'employment_status' => 'nullable|in:full_time,part_time,contractual,internship,freelance',
+        'work_from_office' => 'nullable|boolean',
+        'work_from_home' => 'nullable|boolean',
         'functional_area_id' => 'required',
-        'position' => 'required|min:0|max:255',
-        'experience' => 'required|min:0|max:255',
+        'experience' => 'required|integer|min:0|max:60',
+        'experience_unit' => 'required|in:month,year,month_year',
+        'experience_requirement' => 'required|string|max:100',
+        'freshers_encouraged' => 'required|boolean',
+        'vacancy' => 'required|integer|min:1|max:4294967295',
         'country_id' => 'required',
         'job_category_id' => 'required',
         'state_id' => 'required',
@@ -251,12 +285,18 @@ class Job extends Model
         'currency_id',
         'salary_period_id',
         'job_type_id',
+        'employment_status',
+        'work_from_office',
+        'work_from_home',
         'career_level_id',
         'functional_area_id',
         'job_shift_id',
         'degree_level_id',
-        'position',
         'experience',
+        'experience_unit',
+        'experience_requirement',
+        'freshers_encouraged',
+        'vacancy',
         'job_expiry_date',
         'no_preference',
         'hide_salary',
@@ -284,12 +324,18 @@ class Job extends Model
         'currency_id' => 'integer',
         'salary_period_id' => 'integer',
         'job_type_id' => 'integer',
+        'employment_status' => 'string',
+        'work_from_office' => 'boolean',
+        'work_from_home' => 'boolean',
         'career_level_id' => 'integer',
         'functional_area_id' => 'integer',
         'job_shift_id' => 'integer',
         'degree_level_id' => 'integer',
-        'position' => 'integer',
         'experience' => 'integer',
+        'experience_unit' => 'string',
+        'experience_requirement' => 'string',
+        'freshers_encouraged' => 'boolean',
+        'vacancy' => 'integer',
         'salary_from' => 'double',
         'salary_to' => 'double',
         'country_id' => 'integer',
@@ -309,6 +355,44 @@ class Job extends Model
     protected $appends = ['country_name', 'state_name', 'city_name'];
 
     protected $with = ['country', 'state', 'city', 'activeFeatured'];
+
+    public function getFormattedExperienceAttribute(): string
+    {
+        $requirement = trim((string) $this->experience_requirement);
+
+        if (preg_match('/\pL/u', $requirement)) {
+            return $requirement;
+        }
+
+        if ($this->experience_unit === self::EXPERIENCE_UNIT_MONTH) {
+            return $requirement.' '.__('messages.job.months');
+        }
+
+        if ($this->experience_unit === self::EXPERIENCE_UNIT_YEAR) {
+            return $requirement.' '.__('messages.job.years');
+        }
+
+        return $requirement;
+    }
+
+    public function getDescriptionAttribute(?string $value): string
+    {
+        return $this->normalizeLegacyQuillHtml($value);
+    }
+
+    public function getKeyResponsibilitiesAttribute(?string $value): string
+    {
+        return $this->normalizeLegacyQuillHtml($value);
+    }
+
+    private function normalizeLegacyQuillHtml(?string $html): string
+    {
+        return (string) preg_replace_callback(
+            '/(data-list|class|contenteditable)=\\\\([^\\\\<>]+)\\\\/',
+            static fn (array $matches): string => $matches[1].'="'.$matches[2].'"',
+            (string) $html
+        );
+    }
 
     public function country(): BelongsTo
     {

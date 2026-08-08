@@ -95,7 +95,7 @@
         {{ Form::label('country', __('messages.company.country').':',  ['class' => 'form-label ']) }}
         <span class="required"></span>
         <div class="input-group flex-nowrap">
-            {{ Form::select('country_id', $data['countries'], null, ['id'=>'countryId','class' => 'form-select','placeholder' => __('messages.company.select_country'),'required', 'data-control'=>'select2']) }}
+            {{ Form::select('country_id', $data['countries'], old('country_id', $job->country_id), ['id'=>'countryId','class' => 'form-select','placeholder' => __('messages.company.select_country'),'required', 'data-control'=>'select2']) }}
             <div class="input-group-text border-0">
                 <a href="javascript:void(0)" class=" text-gray-500 createCountryModal"><i class="fa fa-plus"></i></a>
             </div>
@@ -105,7 +105,7 @@
         {{ Form::label('state', __('messages.company.state').':',  ['class' => 'form-label ']) }}
         <span class="required"></span>
         <div class="input-group flex-nowrap">
-            {{ Form::select('state_id', (isset($states) && $states!=null?$states:[]), null, ['id'=>'stateId','class' => 'form-select','placeholder' => __('messages.company.select_state'), 'data-control'=>'select2']) }}
+            {{ Form::select('state_id', (isset($states) && $states!=null?$states:[]), old('state_id', $job->state_id), ['id'=>'stateId','class' => 'form-select','placeholder' => __('messages.company.select_state'), 'data-control'=>'select2']) }}
             <div class="input-group-text border-0">
                 <a href="javascript:void(0)" class=" text-gray-500 createStateModal"><i class="fa fa-plus"></i></a>
             </div>
@@ -115,7 +115,7 @@
         {{ Form::label('city', __('messages.company.city').':', ['class' => 'form-label ']) }}<span
                 class="required"></span>
         <div class="input-group flex-nowrap">
-            {{ Form::select('city_id', (isset($cities) && $cities!=null?$cities:[]), null, ['id'=>'cityId','class' => 'form-select','placeholder' => __('messages.company.select_city'),'required', 'data-control'=>'select2']) }}
+            {{ Form::select('city_id', (isset($cities) && $cities!=null?$cities:[]), old('city_id', $job->city_id), ['id'=>'cityId','class' => 'form-select','placeholder' => __('messages.company.select_city'),'required', 'data-control'=>'select2']) }}
             <div class="input-group-text border-0">
                 <a href="javascript:void(0)" class=" text-gray-500 createCityModal"><i class="fa fa-plus"></i></a>
             </div>
@@ -170,9 +170,9 @@
         </div>
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
-        {{ Form::label('position', __('messages.job.position').':', ['class' => 'form-label ']) }}
+        {{ Form::label('vacancy', __('messages.job.vacancy').':', ['class' => 'form-label ']) }}
         <span class="required"></span>
-        {{ Form::text('position',  null, ['id'=>'positionId','class' => 'form-control','placeholder' =>  __('messages.company.select_position'),'required', 'min' => 0, 'max' => 255, 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")']) }}
+        {{ Form::text('vacancy',  null, ['id'=>'vacancyId','class' => 'form-control','placeholder' => __('messages.job.vacancy'),'required', 'min' => 1, 'max' => 4294967295, 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")']) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
          {{ Form::label('key_responsibilities', __('messages.job.key_responsibilities') . ':', ['class' => 'form-label ']) }}<span
@@ -187,12 +187,7 @@
         {{ Form::hidden('description', $job->description, ['id' => 'editJobDescription']) }}
         {{--        {{ Form::textarea('description', null, ['class' => 'form-control' , 'id' => 'details', 'rows' => '5']) }}--}}
     </div>
-    <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
-         {{ Form::label('experience', __('messages.job_experience.job_experience').':', ['class' => 'form-label ']) }}
-
-         <span class="required"></span>
-         {{ Form::text('experience',  null, ['id'=>'experienceId','class' => 'form-control','placeholder' => __('messages.company.enter_experience_year'), 'min' => 0, 'max' => 255, 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")']) }}
-     </div>
+    @include('jobs.experience_fields')
     {{--    <div class="form-group col-xl-3 col-md-3 col-sm-12 mb-5">--}}
     {{--        <label>{{ __('messages.job.hide_salary').':' }}</label>--}}
     {{--        <label class="custom-switch pl-0 col-12">--}}

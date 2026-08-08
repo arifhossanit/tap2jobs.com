@@ -69,10 +69,10 @@
         <p  class="fw-bolder fs-6 text-gray-800">{{ $job->degreeLevel->name }}</p>
     </div>
     <div class="form-group col-xl-6 col-md-6 col-sm-12">
-{{--        {{ Form::label('position', __('messages.job.position').':') }}--}}
-        {{ Form::label('position',  __('messages.job.position').':'), ['class' => 'form-label fs-6 fw-bolder text-gray-700 mb-3']) }}
+{{--        {{ Form::label('vacancy', __('messages.job.vacancy').':') }}--}}
+        {{ Form::label('vacancy', __('messages.job.vacancy').':', ['class' => 'form-label fs-6 fw-bolder text-gray-700 mb-3']) }}
 
-        <p  class="fw-bolder fs-6 text-gray-800">{{ $job->position }}</p>
+        <p  class="fw-bolder fs-6 text-gray-800">{{ $job->vacancy }}</p>
     </div>
     <div class="form-group col-xl-6 col-md-6 col-sm-12">
 {{--        {{ Form::label('country', __('messages.job.country').':') }}--}}

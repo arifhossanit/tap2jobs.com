@@ -2,6 +2,65 @@
     list-style: disc
 }
 
+.job-editor-content p,
+.job-editor-content ol,
+.job-editor-content ul {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.job-editor-content ol,
+.job-editor-content ul {
+    padding-left: 1.5em;
+}
+
+.job-editor-content ol {
+    counter-reset: job-editor-list;
+}
+
+.job-editor-content li[data-list] {
+    position: relative;
+    padding-left: 1.5em;
+    list-style: none;
+}
+
+.job-editor-content li[data-list] > .ql-ui {
+    position: absolute;
+}
+
+.job-editor-content li[data-list] > .ql-ui::before {
+    display: inline-block;
+    width: 1.2em;
+    margin-left: -1.5em;
+    margin-right: .3em;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.job-editor-content li[data-list="bullet"] > .ql-ui::before {
+    content: "\2022";
+}
+
+.job-editor-content li[data-list="ordered"] {
+    counter-increment: job-editor-list;
+}
+
+.job-editor-content li[data-list="ordered"] > .ql-ui::before {
+    content: counter(job-editor-list) ". ";
+}
+
+.job-editor-content strong {
+    font-weight: 700;
+}
+
+.job-editor-content u {
+    text-decoration: underline;
+}
+
+.job-editor-content s {
+    text-decoration: line-through;
+}
+
 .job-details-section .share-this-job .icon-box .social-icon {
     border-radius: 50px;
     width: 50px;

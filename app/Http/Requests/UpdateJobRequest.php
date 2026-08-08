@@ -2,16 +2,26 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\ValidatesJob;
 use App\Models\Job;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateJobRequest extends FormRequest
 {
+    use ValidatesJob;
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
+        $job = $this->route('job');
+
+        if (Auth::check() && Auth::user()->hasRole('Employer')) {
+            return $job instanceof Job && (int) $job->company_id === (int) Auth::user()->owner_id;
+        }
+
         return true;
     }
 
@@ -20,11 +30,21 @@ class UpdateJobRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        $salaryFrom = removeCommaFromNumbers($this->request->get('salary_from'));
-        $salaryTo = removeCommaFromNumbers($this->request->get('salary_to'));
+        $job = $this->route('job');
 
-        $this->request->set('salary_from', $salaryFrom);
-        $this->request->set('salary_to', $salaryTo);
+        if ($job instanceof Job) {
+            $savedLocation = [];
+
+            foreach (['country_id', 'state_id', 'city_id'] as $field) {
+                if (! $this->filled($field) && $job->{$field} !== null) {
+                    $savedLocation[$field] = $job->{$field};
+                }
+            }
+
+            $this->merge($savedLocation);
+        }
+
+        $this->prepareJobForValidation();
     }
 
     /**
@@ -32,9 +52,7 @@ class UpdateJobRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = Job::$rules;
-
-        return $rules;
+        return $this->jobRules();
     }
 
     public function messages(): array

@@ -24,14 +24,6 @@
                         <input type="file" class="form-control custom-file-input" id="customFile" name="file" required>
                     </div>
                 </div>
-                <div>
-                    {{ Form::label('is_default', __('messages.job_experience.is_default').':', ['class' => 'form-label']) }}
-                    <br>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input {{ checkLanguageSession() == 'ar' ? 'float-end' : 'float-start' }}" name="is_default" type="checkbox"
-                               value="1" id="default">
-                    </div>
-                </div>
             </div>
             <div class="modal-footer pt-0">
                 {{ Form::button(__('messages.common.save'), ['type' => 'submit','class' => 'btn btn-primary m-0','id' => 'candidateSaveBtn','data-loading-text' => "<span class='spinner-border spinner-border-sm'></span> ".__('messages.common.process')]) }}

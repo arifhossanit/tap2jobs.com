@@ -81,7 +81,7 @@
                                     <option value="">{{ __('web.job_menu.none') }}</option>
                                     @foreach ($resumes as $key => $value)
                                         <option value="{{ $key }}"
-                                            {{ $isJobDrafted ? ($key == $draftJobDetails->resume_id ? 'selected' : '') : '' }}>
+                                            {{ ($isJobDrafted ? $key == $draftJobDetails->resume_id : $key == $default_resume) ? 'selected' : '' }}>
                                             {{ html_entity_decode($value) }}
                                         </option>
                                     @endforeach

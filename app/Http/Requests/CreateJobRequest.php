@@ -2,11 +2,13 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Job;
+use App\Http\Requests\Concerns\ValidatesJob;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateJobRequest extends FormRequest
 {
+    use ValidatesJob;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -20,11 +22,7 @@ class CreateJobRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        $salaryFrom = removeCommaFromNumbers($this->request->get('salary_from'));
-        $salaryTo = removeCommaFromNumbers($this->request->get('salary_to'));
-
-        $this->request->set('salary_from', $salaryFrom);
-        $this->request->set('salary_to', $salaryTo);
+        $this->prepareJobForValidation();
     }
 
     /**
@@ -32,8 +30,6 @@ class CreateJobRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = Job::$rules;
-
-        return $rules;
+        return $this->jobRules();
     }
 }

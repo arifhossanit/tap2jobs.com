@@ -29,14 +29,15 @@ $statusArray = App\Models\Job::STATUS;
             <button class="btn bg-light-info mr-1 badge job-application-status"
                 style="cursor:context-menu"><?php echo __('messages.pending_jobs.pending'); ?></button>
         @else
-            <div class="dropdown dropdown-transparent">
+            @php($statusDropdownId = 'job-status-dropdown-' . $row->id)
+            <div class="dropdown dropdown-transparent employer-job-status-dropdown">
                 {{--            <a class="btn btn-light btn-active-light-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" --}}
                 {{--               aria-expanded="false"> --}}
                 {{--                {{$statusArray[$row->status]}} --}}
                 {{--            </a> --}}
 
-                <button class="btn dropdown-toggle text-gray-600 mr-1" type="button" id="dropdownMenuButton1"
-                    data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn dropdown-toggle text-gray-600 mr-1" type="button" id="{{ $statusDropdownId }}"
+                    data-bs-toggle="dropdown" data-bs-boundary="viewport" aria-expanded="false">
                     @if ($statusArray[$row->status] == 'live')
                         {{ __('messages.common.live') }}
                     @else
@@ -45,7 +46,8 @@ $statusArray = App\Models\Job::STATUS;
                     <i class="fa-solid fa-angle-down ms-2"></i>
                 </button>
 
-                <ul class="fw-bold fs-6 py-4 dropdown-menu customDropdown" aria-labelledby="dropdownMenuButton1">
+                <ul class="fw-bold fs-6 py-4 dropdown-menu customDropdown"
+                    aria-labelledby="{{ $statusDropdownId }}">
 
                     @if ($statusArray[$row->status] == 'live')
                         <li>

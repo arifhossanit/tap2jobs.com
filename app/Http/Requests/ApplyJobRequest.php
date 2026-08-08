@@ -2,8 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Candidate;
 use App\Models\JobApplication;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 /**
  * Class ApplyJobRequest
@@ -35,7 +38,14 @@ class ApplyJobRequest extends FormRequest
     {
         $rules = [
             'job_id' => 'required',
-            'resume_id' => 'required',
+            'resume_id' => [
+                'required',
+                Rule::exists('media', 'id')->where(function ($query) {
+                    return $query->where('model_type', Candidate::class)
+                        ->where('model_id', Auth::user()->owner_id)
+                        ->where('collection_name', Candidate::RESUME_PATH);
+                }),
+            ],
             'expected_salary' => 'required|numeric|min:0|max:9999999999',
         ];
 
