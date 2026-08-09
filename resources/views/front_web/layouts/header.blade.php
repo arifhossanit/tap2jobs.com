@@ -88,7 +88,7 @@
                             <div class="d-flex align-items-center gap-xl-4 gap-3 mt-lg-0 mt-2 ms-xl-3 ms-lg-2">
                                 <ul class="navbar-nav d-flex flex-row align-items-center py-2 py-lg-0">
                                     <li class="nav-item login_btn">
-                                        <a href="#"
+                                        <a href="{{ route('front.candidate.login') }}"
                                             class="nav-link btn btn-secondary btn-secondary-login {{ getFrontSelectLanguage() == 'ar' ? 'ms-xxl-4 ms-2' : 'me-xxl-4 me-2' }} mb-3 mb-lg-0 nav-link">{{ __('web.login') }}</a>
                                         <ul class="nav submenu">
                                             {{-- <li class="nav-item mb-3 mt-2">
