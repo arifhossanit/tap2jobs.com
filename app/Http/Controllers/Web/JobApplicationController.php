@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Web;
 
 use App\Models\Job;
 use App\Models\Candidate;
+use App\Models\JobApplication;
 use Illuminate\View\View;
 use App\Models\Notification;
 use App\Mail\EmailToEmployer;
 use App\Models\EmailTemplate;
 use App\Models\NotificationSetting;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use Laracasts\Flash\Flash;
 use App\Http\Requests\ApplyJobRequest;
 use Illuminate\Contracts\View\Factory;
 use App\Http\Controllers\AppBaseController;
@@ -50,32 +53,75 @@ class JobApplicationController extends AppBaseController
 
         /** @var Job $job */
         $job = Job::with(['company.user', 'appliedJobs'])->findOrFail($input['job_id']);
+        if ($input['application_type'] === 'draft') {
+            return $this->sendResponse($job->job_id, __('messages.flash.job_application_draft'));
+        }
+
         $employerId = $job->company->user->id;
 
-        $input['application_type'] != 'draft' ? NotificationSetting::where('key', 'JOB_APPLICATION_SUBMITTED')->first()->value == 1 ?
+        if ((int) NotificationSetting::where('key', 'JOB_APPLICATION_SUBMITTED')->value('value') === 1) {
             addNotification([
                 Notification::JOB_APPLICATION_SUBMITTED,
                 $employerId,
                 Notification::EMPLOYER,
                 'Job Application submitted for '.$job->job_title,
-            ]) : false : false;
+            ]);
+        }
 
         $candidateUniqueId = Candidate::whereUserId(getLoggedInUserId())->value('unique_id');
         $templateBody = EmailTemplate::whereTemplateName('Candidate Job Applied')->first();
-        $keyVariable = [
-            '{{employer_fullName}}', '{{candidate_name}}', '{{candidate_details_url}}', '{{job_title}}', '{{from_name}}',
-        ];
-        $value = [
-            $job->company->user->full_name, getLoggedInUser()->full_name,
-            asset('/candidate-details/'.$candidateUniqueId), $job->job_title, config('app.name'),
-        ];
-        $body = str_replace($keyVariable, $value, $templateBody->body);
-        $data['body'] = $body;
+        if ($templateBody && $job->company->user->email) {
+            $keyVariable = [
+                '{{employer_fullName}}', '{{candidate_name}}', '{{candidate_details_url}}', '{{job_title}}', '{{from_name}}',
+            ];
+            $value = [
+                $job->company->user->full_name, getLoggedInUser()->full_name,
+                asset('/candidate-details/'.$candidateUniqueId), $job->job_title, config('app.name'),
+            ];
+            $data['body'] = str_replace($keyVariable, $value, $templateBody->body);
 
-       Mail::to($job->company->user->email)->send(new EmailToEmployer($data));
+            try {
+                Mail::to($job->company->user->email)->send(new EmailToEmployer($data));
+            } catch (\Throwable $exception) {
+                Log::warning('Job application email could not be sent.', [
+                    'job_id' => $job->id,
+                    'candidate_user_id' => getLoggedInUserId(),
+                    'error' => $exception->getMessage(),
+                ]);
+            }
+        }
 
-        return $input['application_type'] == 'draft' ?
-            $this->sendResponse($job->job_id, __('messages.flash.job_application_draft')) :
-            $this->sendResponse($job->job_id, __('messages.flash.job_applied'));
+        return $this->sendResponse($job->job_id, __('messages.flash.job_applied'));
+    }
+
+    public function discardDraft(string $jobId)
+    {
+        $candidate = Candidate::findOrFail(auth()->user()->owner_id);
+        $job = Job::whereJobId($jobId)->firstOrFail();
+
+        $draft = JobApplication::where('job_id', $job->id)
+            ->where('candidate_id', $candidate->id)
+            ->where('status', JobApplication::STATUS_DRAFT)
+            ->first();
+
+        if (! $draft) {
+            if (request()->expectsJson()) {
+                return $this->sendError(__('messages.flash.job_application_draft_not_found'), 404);
+            }
+
+            Flash::error(__('messages.flash.job_application_draft_not_found'));
+
+            return redirect()->route('front.job.details', $job->job_id);
+        }
+
+        $draft->delete();
+
+        if (request()->expectsJson()) {
+            return $this->sendSuccess(__('messages.flash.job_application_delete'));
+        }
+
+        Flash::success(__('messages.flash.job_application_delete'));
+
+        return redirect()->route('front.job.details', $job->job_id);
     }
 }

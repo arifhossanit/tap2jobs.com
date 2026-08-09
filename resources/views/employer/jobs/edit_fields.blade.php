@@ -17,21 +17,21 @@
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('skill_id', __('messages.job.job_skill').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{Form::select('jobsSkill[]',$data['jobSkill'], null, ['class' => 'form-select','data-control'=>'select2','id'=>'SkillId','multiple'=>true,'required'])}}
+        {{Form::select('jobsSkill[]',$data['jobSkill'], old('jobsSkill', $data['jobSkills']), ['class' => 'form-select','data-control'=>'select2','id'=>'SkillId','multiple'=>true,'required'])}}
     </div>
     @include('employer.jobs.employment_workplace_fields')
     <div class="col-xl-12 col-md-12 col-sm-12 mb-5">
         {{ Form::label('description', __('messages.job.description').':', ['class' => 'form-label']) }}
         <span class="required"></span>
         {{--        {{ Form::textarea('description', null, ['class' => 'form-control' , 'id' => 'details', 'rows' => '5']) }}--}}
-        <div id="editDetails"></div>
-        {{ Form::hidden('description',$job->description, ['id' => 'editJobDescription']) }}
+        <div id="editDetails" aria-required="true"></div>
+        {{ Form::hidden('description',$job->description, ['id' => 'editJobDescription', 'required']) }}
     </div>
     <div class="col-xl-12 col-md-6 col-sm-12 mb-5">
          {{ Form::label('key_responsibilities', __('messages.job.key_responsibilities') . ':', ['class' => 'form-label ']) }}<span
              class="required"></span>
-         <div id="editResponse"></div>
-         {{ Form::hidden('key_responsibilities', $job->key_responsibilities, ['id' => 'edit_responsibilities']) }}
+         <div id="editResponse" aria-required="true"></div>
+         {{ Form::hidden('key_responsibilities', $job->key_responsibilities, ['id' => 'edit_responsibilities', 'required']) }}
      </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('no_preference', __('messages.candidate.gender').':', ['class' => 'form-label']) }}
@@ -44,18 +44,18 @@
             <div class="input-group-text border-0">
                 <i class="fas fa-calendar-alt"></i>
             </div>
-            <input type="text" name="job_expiry_date" id="availableAt" class="form-control  expiryDatepicker {{(getLoggedInUser()->theme_mode) ? 'bg-light' : 'bg-white'}}" autocomplete="off" value="{{isset($job->job_expiry_date) ? $job->job_expiry_date : null,}}" placeholder="{{__('messages.job.job_expiry_date')}}">
+            <input type="text" name="job_expiry_date" id="availableAt" class="form-control  expiryDatepicker {{(getLoggedInUser()->theme_mode) ? 'bg-light' : 'bg-white'}}" autocomplete="off" required value="{{ old('job_expiry_date', isset($job->job_expiry_date) ? $job->job_expiry_date : null) }}" placeholder="{{__('messages.job.job_expiry_date')}}">
         </div>
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('salary_from', __('messages.job.salary_from').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{ Form::text('salary_from', null, ['class' => 'form-control salary', 'id' => 'fromSalary', 'required', 'autocomplete' => 'off', 'placeholder' => __('messages.job.salary_from')]) }}
+        {{ Form::text('salary_from', null, ['class' => 'form-control salary', 'id' => 'fromSalary', 'required', 'autocomplete' => 'off', 'inputmode' => 'decimal', 'placeholder' => __('messages.job.salary_from')]) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('salary_to', __('messages.job.salary_to').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{ Form::text('salary_to', null, ['class' => 'form-control salary', 'id' => 'toSalary', 'required', 'autocomplete' => 'off', 'placeholder' => __('messages.job.salary_to')]) }}
+        {{ Form::text('salary_to', null, ['class' => 'form-control salary', 'id' => 'toSalary', 'required', 'autocomplete' => 'off', 'inputmode' => 'decimal', 'placeholder' => __('messages.job.salary_to')]) }}
         <span id="salaryToErrorMsg" class="text-danger"></span>
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
@@ -71,7 +71,7 @@
     <div class="col-xl-4 col-md-4 col-sm-12 mb-5">
         {{ Form::label('country', __('messages.company.country').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{ Form::select('country_id', $data['countries'], old('country_id', $job->country_id), ['id'=>'countryId','class' => 'form-select','data-control'=>'select2','placeholder' => __('messages.company.select_country'),'required']) }}
+        {{ Form::select('country_id', $data['countries'], $data['selected_country_id'], ['id'=>'countryId','class' => 'form-select','data-control'=>'select2','required']) }}
     </div>
     <div class="col-xl-4 col-md-4 col-sm-12 mb-5">
         {{ Form::label('state', __('messages.job.state').':', ['class' => 'form-label']) }}

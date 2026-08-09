@@ -3,7 +3,7 @@
 @endphp
 
 <div class="candidate-profile-menu">
-    <div class="candidate-profile-menu__top overflow-auto">
+    <div class="candidate-profile-menu__top">
         <a class="candidate-profile-menu__main-link {{ $sectionName == 'personal-information' ? 'active' : '' }}"
            href="{{ route('candidate.profile', ['section' => 'personal-information']) }}">
             <i class="fa-regular fa-user"></i>
@@ -36,7 +36,7 @@
         </a>
     </div>
 
-    <div class="candidate-profile-menu__sub overflow-auto">
+    <div class="candidate-profile-menu__sub">
         @if($sectionName == 'education-training')
             <a class="candidate-profile-menu__sub-link active" href="#candidateEducationDetails"
                data-career-section-link="candidateEducationDetails">
@@ -133,3 +133,30 @@
         @endif
     </div>
 </div>
+
+<script>
+    window.scrollCandidateProfileSection = function (target) {
+        if (!target) {
+            return;
+        }
+
+        window.clearTimeout(window.candidateProfileSectionScrollTimer);
+        window.candidateProfileSectionScrollTimer = window.setTimeout(function () {
+            const section = target.matches('.candidate-profile-section, .candidate-education-panel')
+                ? target
+                : target.closest('.candidate-profile-section, .candidate-education-panel') || target;
+            const header = document.querySelector('.candidate-dashboard-header');
+            const stickyMenu = document.querySelector('.candidate-profile-menu-shell');
+            const headerHeight = header ? header.getBoundingClientRect().height : 0;
+            const menuHeight = stickyMenu ? stickyMenu.getBoundingClientRect().height : 0;
+            const stickyTop = stickyMenu ? parseFloat(window.getComputedStyle(stickyMenu).top) || 0 : 0;
+            const visibleOffset = Math.max(headerHeight, stickyTop + menuHeight) + 12;
+            const sectionTop = window.scrollY + section.getBoundingClientRect().top - visibleOffset;
+
+            window.scrollTo({
+                top: Math.max(0, sectionTop),
+                behavior: 'smooth',
+            });
+        }, 380);
+    };
+</script>

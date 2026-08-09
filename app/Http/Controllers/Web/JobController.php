@@ -15,7 +15,6 @@ use App\Http\Controllers\AppBaseController;
 use App\Http\Requests\EmailJobToFriendRequest;
 use Illuminate\Contracts\Foundation\Application;
 use App\Models\Skill;
-use App\Utils\GoogleTranslate;
 use Illuminate\Support\Facades\Session;
 
 
@@ -75,7 +74,7 @@ class JobController extends AppBaseController
 
         $data['isActive'] = $data['isApplied'] = $data['isJobAddedToFavourite'] = $data['isJobReportedAsAbuse'] = false;
         if (Auth::check() && Auth::user()->hasRole('Candidate')) {
-            $data = $this->jobRepository->getJobDetails($job);
+            $data = array_merge($data, $this->jobRepository->getJobDetails($job));
         }
         $data['jobsCount'] = Job::whereStatus(Job::STATUS_OPEN)->whereCompanyId($job->company_id)->whereDate('job_expiry_date',
             '>=',
@@ -93,14 +92,6 @@ class JobController extends AppBaseController
             'facebook' => 'https://www.facebook.com/sharer/sharer.php?u='.url()->current(),
             'pinterest' => 'http://pinterest.com/pin/create/button/?url='.url()->current(),
         ];
-
-        // Translate job details if current language is Bangla
-        $currentLang = checkLanguageSession();
-        if ($currentLang === 'bn') {
-            $job->job_title = GoogleTranslate::translate($job->job_title, 'bn', 'en');
-            $job->description = GoogleTranslate::translate($job->description, 'bn', 'en');
-            $job->key_responsibilities = GoogleTranslate::translate($job->key_responsibilities, 'bn', 'en');
-        }
 
         return view('front_web.jobs.job_details', compact('job', 'url'))->with($data);
     }

@@ -1,51 +1,74 @@
 
 listenChange('#countryId', function (){
+    const selectedCountry = $(this).val();
+    const selectedState = $('#stateId').val();
+    const selectedCity = $('#cityId').val();
+
+    $('#stateId').empty().append(
+        $('<option value=""></option>').text(Lang.get('js.select_state'))
+    );
+    $('#cityId').empty().append(
+        $('<option value=""></option>').text(Lang.get('js.select_city'))
+    );
+
+    if (!selectedCountry) {
+        $('#stateId, #cityId').trigger('change.select2');
+        return;
+    }
+
     $.ajax({
         url: route('states-list'),
         type: 'get',
         dataType: 'json',
-        data: { postal: $(this).val() },
+        data: { postal: selectedCountry },
         success: function (data) {
-            $('#stateId').empty();
-            if (data.data.length != 0) {
-                $.each(data.data, function (i, v) {
-                    $('#stateId').
-                        append($('<option></option>').attr('value', i).text(v));
-                });
-            } else {
-                $('#stateId').
-                    append(
-                        $('<option value=""></option>').text(Lang.get('js.select_state')));
+            $.each(data.data || {}, function (i, v) {
+                $('#stateId').append($('<option></option>').attr('value', i).text(v));
+            });
+
+            const stateStillExists = selectedState &&
+                $('#stateId option[value="' + selectedState + '"]').length > 0;
+
+            $('#stateId').val(stateStillExists ? selectedState : '').trigger('change.select2');
+
+            if (stateStillExists) {
+                loadCities(selectedState, selectedCity);
             }
-            $('#stateId').trigger('change');
         },
     });
 })
 
 listenChange('#stateId', function (){
-        $.ajax({
-            url: route('cities-list'),
-            type: 'get',
-            dataType: 'json',
-            data: {
-                state: $(this).val(),
-                country: $('#countryId').val(),
-            },
-            success: function (data) {
-                $('#cityId').empty();
-                if (data.data.length != 0) {
-                    $.each(data.data, function (i, v) {
-                        $('#cityId').
-                            append($('<option></option>').
-                                attr('value', i).
-                                text(v));
-                    });
-                } else {
-                    $('#cityId').
-                        append(
-                            $('<option value=""></option>').
-                                text(Lang.get('js.select_city')));
-                }
-            },
-        });
-    })
+    loadCities($(this).val(), null);
+})
+
+function loadCities(stateId, selectedCity = null) {
+    $('#cityId').empty().append(
+        $('<option value=""></option>').text(Lang.get('js.select_city'))
+    );
+
+    if (!stateId) {
+        $('#cityId').trigger('change.select2');
+        return;
+    }
+
+    $.ajax({
+        url: route('cities-list'),
+        type: 'get',
+        dataType: 'json',
+        data: {
+            state: stateId,
+            country: $('#countryId').val(),
+        },
+        success: function (data) {
+            $.each(data.data || {}, function (i, v) {
+                $('#cityId').append($('<option></option>').attr('value', i).text(v));
+            });
+
+            const cityStillExists = selectedCity &&
+                $('#cityId option[value="' + selectedCity + '"]').length > 0;
+
+            $('#cityId').val(cityStillExists ? selectedCity : '').trigger('change.select2');
+        },
+    });
+}

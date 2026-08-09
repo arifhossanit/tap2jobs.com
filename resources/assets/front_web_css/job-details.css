@@ -113,3 +113,107 @@
     width: 24px;
     min-width: 24px
 }
+
+.job-details-page .job-header-actions {
+    gap: 12px;
+}
+
+.job-details-page .job-header-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid rgba(25, 103, 210, .2);
+    border-radius: 50%;
+    color: #1967d2;
+    background: #fff;
+}
+
+.job-details-page .job-header-action:hover:not(:disabled) {
+    color: #fff;
+    background: #1967d2;
+}
+
+.job-details-page .job-header-action:hover:not(:disabled) i {
+    color: #fff !important;
+}
+
+.job-details-page .job-header-action #favorite,
+.job-details-page .job-header-action #favorite i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+}
+
+.job-details-page .job-header-action:disabled {
+    color: #9aa5b5;
+    background: #f5f7fa;
+}
+
+.job-details-page .job-hero-meta {
+    gap: 10px 26px;
+}
+
+.job-details-page .job-hero-meta .desc {
+    gap: 10px;
+}
+
+.job-details-page .job-hero-meta-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 20px;
+}
+
+.job-details-page .job-already-applied-btn,
+.job-details-page .job-already-applied-btn:hover,
+.job-details-page .job-already-applied-btn:focus,
+.job-details-page .job-already-applied-btn:active,
+.job-details-page .job-already-applied-btn:disabled {
+    color: #fff;
+    background-color: #198754;
+    border-color: #198754;
+    box-shadow: none;
+    opacity: 1;
+    cursor: default;
+    pointer-events: none;
+}
+
+.job-details-page .job-apply-btn {
+    color: #fff;
+    background-color: #1967d2;
+    border-color: #1967d2;
+    transition: background-color .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.job-details-page .job-apply-btn:hover,
+.job-details-page .job-apply-btn:focus,
+.job-details-page .job-apply-btn:active {
+    color: #fff;
+    background-color: #1254ad;
+    border-color: #1254ad;
+    box-shadow: none;
+    transform: translateY(-1px);
+}
+
+/* Keep the share/report dialogs and their backdrop above the top announcement banner. */
+.job-action-modal.modal {
+    z-index: 1200 !important;
+}
+
+body:has(.job-action-modal.show) .modal-backdrop {
+    z-index: 1190 !important;
+}
+
+@media (max-width: 575px) {
+    .job-details-page .job-hero-title {
+        gap: 8px;
+    }
+
+    .job-details-page .job-header-actions {
+        margin-left: 0 !important;
+    }
+}

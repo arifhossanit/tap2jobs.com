@@ -41,7 +41,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-lg-4 px-lg-3">
-                        <div class="latest-job-left br-10 px-40 bg-light mb-40">
+                        <div class="latest-job-left br-10 px-40 bg-light">
                             <form>
                                 <div class="form-group mb-md-4 mb-3 ">
                                     <div class="d-flex mb-3 justify-content-between flex-wrap">
@@ -186,11 +186,7 @@
 
                                 </div>
                         </div>
-                        </form>
-                        <div class="job-img mb-40">
-                            <img src="{{ isset($advertise_image->value) ? $advertise_image->value : asset('front_web/images/job-img.png') }}"
-                                class="w-100">
-                        </div>
+                        </form>                        
                     </div>
                     <div class="col-lg-8 px-lg-3">
                         <div class="job-card">

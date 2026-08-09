@@ -44,9 +44,7 @@ class DashboardController extends AppBaseController
      */
     public function employerDashboard(): View
     {
-        $data = $this->dashboardRepository->getEmployerDashboardData();
-        $data['recentJobs'] = $this->dashboardRepository->getEmployerRecentJobsData();
-        $data['recentFollowers'] = $this->dashboardRepository->getEmployerRecentFollowerData();
+        $data = [];
         $data['jobStatus'] = Job::whereCompanyId(getLoggedInUser()->owner_id)->pluck('job_title', 'id');
         $data['gender'] = Job::GENDER;
 

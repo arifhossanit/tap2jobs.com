@@ -2,12 +2,16 @@
 
 namespace App\Http\Requests\Concerns;
 
+use App\Models\City;
+use App\Models\State;
 use Illuminate\Validation\Rule;
 
 trait ValidatesJob
 {
     protected function prepareJobForValidation(): void
     {
+        $this->restoreLocationHierarchy();
+
         $employmentStatus = $this->input('employment_status');
         $isEmployerJobForm = $this->routeIs('job.store', 'job.update');
         $experienceUnit = $this->input('experience_unit');
@@ -22,11 +26,38 @@ trait ValidatesJob
                 : $this->boolean('is_freelance'),
             'work_from_office' => $this->boolean('work_from_office'),
             'work_from_home' => $this->boolean('work_from_home'),
+            'hybrid' => $this->boolean('hybrid'),
             'experience_unit' => $experienceUnit,
             'experience_requirement' => $experienceRequirement,
             'freshers_encouraged' => $this->boolean('freshers_encouraged'),
             'experience' => $this->minimumExperienceYears($experienceUnit, $experienceRequirement),
         ]);
+    }
+
+    private function restoreLocationHierarchy(): void
+    {
+        $location = [];
+        $stateId = $this->input('state_id');
+
+        if (! $stateId && $this->filled('city_id')) {
+            $stateId = City::whereKey($this->input('city_id'))->value('state_id');
+
+            if ($stateId) {
+                $location['state_id'] = $stateId;
+            }
+        }
+
+        if (! $this->filled('country_id') && $stateId) {
+            $countryId = State::whereKey($stateId)->value('country_id');
+
+            if ($countryId) {
+                $location['country_id'] = $countryId;
+            }
+        }
+
+        if ($location !== []) {
+            $this->merge($location);
+        }
     }
 
     protected function jobRules(): array
@@ -72,6 +103,7 @@ trait ValidatesJob
             ],
             'work_from_office' => ['required', 'boolean'],
             'work_from_home' => ['required', 'boolean'],
+            'hybrid' => ['required', 'boolean'],
             'hide_salary' => ['required', 'boolean'],
             'is_freelance' => ['required', 'boolean'],
             'jobsSkill' => ['required', 'array', 'min:1'],

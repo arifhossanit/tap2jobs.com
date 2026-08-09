@@ -306,7 +306,7 @@ return [
         'view_company_profile' => 'View company profile',
         'founded_in' => 'Founded in',
         'phone' => 'Phone',
-        'Skill_Experience' => 'Skill & Experience'
+        'Skill_Experience' => 'Skill'
     ],
 
     'web_company' => [

@@ -930,10 +930,7 @@
                     closeOtherCareerSections(section);
                     bootstrap.Collapse.getOrCreateInstance(section, { toggle: false }).show();
                     setActiveCareerSection(panel.id);
-                    panel.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start',
-                    });
+                    window.scrollCandidateProfileSection(panel);
                 });
             });
 

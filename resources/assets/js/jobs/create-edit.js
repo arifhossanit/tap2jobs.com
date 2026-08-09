@@ -84,6 +84,9 @@ function loadEmployeeCreateEditData() {
                 ),
                 theme: "snow"
             });
+
+            details.root.innerHTML = $("#job_desc").val() || "";
+            response.root.innerHTML = $("#key_responsibilities").val() || "";
         }
 
 
@@ -173,20 +176,36 @@ function loadEmployeeCreateEditData() {
         $(this).trigger("keyup");
     });
 
-    $(
-        "#jobTypeId,#jobCategoryId,#careerLevelsId,#jobShiftId,#countryId,#stateId,#cityId,#salaryPeriodsId,#requiredDegreeLevelId,#functionalAreaId"
-    ).select2({
-        width: "calc(100% - 44px)"
-    });
+    function initializeJobSelect2(selector, options) {
+        $(selector).each(function() {
+            const select = $(this);
+            const selectedValue = select.val();
+
+            if (select.hasClass("select2-hidden-accessible")) {
+                select.select2("destroy");
+            }
+
+            select.select2(options);
+
+            if (selectedValue !== null && selectedValue !== "") {
+                select.val(selectedValue).trigger("change.select2");
+            }
+        });
+    }
+
+    const countrySelect = $("#countryId");
+    if (countrySelect.length && !countrySelect.val()) {
+        countrySelect.val(countrySelect.find("option").first().val());
+    }
+
+    initializeJobSelect2(
+        "#jobTypeId,#jobCategoryId,#careerLevelsId,#jobShiftId,#countryId,#stateId,#cityId,#salaryPeriodsId,#requiredDegreeLevelId,#functionalAreaId",
+        { width: "calc(100% - 44px)" }
+    );
 
     $("#preferenceId,#currencyId,#createCityStateID").select2({
         width: "100%"
     });
-
-    // Auto-select default country on create and load its states
-    if ($("#details").length && $("#countryId").val()) {
-        $("#countryId").trigger("change");
-    }
 
     $("#jobCountryID").select2({
         width: "100%",
@@ -1053,18 +1072,65 @@ listenSubmit("#createSalaryPeriodForm", function() {
 });
 
 
-listenClick("#jobsSaveBtn, #saveDraft", function(e) {
-    console.log($(this).val());
-    if ($(this).val() == "draft") {
-        $("#saveAsDraft").attr("value", "1");
+function prepareJobFormForSubmission(formSelector) {
+    const form = $(formSelector)[0];
+
+    if (!form) {
+        return false;
     }
-    processingBtn("#createJobForm", $(this), "loading");
+
+    ["#fromSalary", "#toSalary"].forEach(function(selector) {
+        const field = $(form).find(selector)[0];
+
+        if (field && field.value !== "") {
+            field.value = removeCommas(field.value).trim();
+        }
+    });
+
+    $(form).find("select.select2-hidden-accessible").each(function() {
+        const select = $(this);
+        const selectedIds = (select.select2("data") || [])
+            .map(function(item) {
+                return item.id;
+            })
+            .filter(function(id) {
+                return id !== null && id !== undefined && id !== "";
+            });
+
+        if ((!select.val() || select.val().length === 0) && selectedIds.length) {
+            select.val(select.prop("multiple") ? selectedIds : selectedIds[0]);
+        }
+    });
+
+    const countrySelect = $(form).find("#countryId");
+    if (countrySelect.length && !countrySelect.val()) {
+        countrySelect.val(countrySelect.find("option").first().val()).trigger("change.select2");
+    }
+
+    if (!form.checkValidity()) {
+        displayErrorMessage(Lang.get("js.required_field_messages"));
+
+        const invalidSelect = $(form).find("select:invalid").first();
+        if (invalidSelect.length && invalidSelect.hasClass("select2-hidden-accessible")) {
+            invalidSelect.select2("open");
+        } else {
+            $(form).find(":invalid").first().trigger("focus");
+        }
+
+        return false;
+    }
+
+    return true;
+}
+
+listenClick("#jobsSaveBtn, #saveDraft", function(e) {
+    e.preventDefault();
+    $("#saveAsDraft").val($(this).val() === "draft" ? "1" : "0");
     let editor_content1 = details.root.innerHTML;
     if (details.getText().trim().length === 0) {
         displayErrorMessage(
             Lang.get("js.description_required")
         );
-        processingBtn("#createJobForm", $(this));
         return false;
     }
     $("#job_desc").val(editor_content1);
@@ -1079,7 +1145,6 @@ listenClick("#jobsSaveBtn, #saveDraft", function(e) {
         displayErrorMessage(
             Lang.get("js.key_responsibilities_required")
         );
-        processingBtn("#createJobForm", $(this));
         return false;
     }
     $("#key_responsibilities").val(keyResponsibilitiesContent);
@@ -1087,20 +1152,24 @@ listenClick("#jobsSaveBtn, #saveDraft", function(e) {
     if ($("#salaryToErrorMsg").text() !== "") {
         $("#toSalary").focus();
         $("#saveJob,#draftJob").attr("disabled", false);
-        processingBtn("#createJobForm", $(this));
         return false;
     }
+
+    if (!prepareJobFormForSubmission("#createJobForm")) {
+        return false;
+    }
+
+    processingBtn("#createJobForm", $(this), "loading");
     $("#createJobForm")[0].submit();
 });
 
 listenClick("#editJobsSaveBtn, #saveDraft", function(e) {
-    processingBtn("#editJobForm", $(this), "loading");
+    e.preventDefault();
     let editor_content2 = editJobDescription.root.innerHTML;
     if (editJobDescription.getText().trim().length === 0) {
         displayErrorMessage(
             Lang.get("js.description_required")
         );
-        processingBtn("#editJobForm", "#editJobsSaveBtn");
         return false;
     }
     $("#editJobDescription").val(editor_content2);
@@ -1109,7 +1178,6 @@ listenClick("#editJobsSaveBtn, #saveDraft", function(e) {
         displayErrorMessage(
             Lang.get("js.key_responsibilities_required")
         );
-        processingBtn("#editJobForm", "#editJobsSaveBtn");
         return false;
     }
     $("#edit_responsibilities").val(editor_content3);
@@ -1117,9 +1185,13 @@ listenClick("#editJobsSaveBtn, #saveDraft", function(e) {
     if ($("#salaryToErrorMsg").text() !== "") {
         $("#toSalary").focus();
         $("#saveJob,#draftJob").attr("disabled", false);
-        processingBtn("#editJobForm", "#editJobsSaveBtn");
         return false;
     }
 
+    if (!prepareJobFormForSubmission("#editJobForm")) {
+        return false;
+    }
+
+    processingBtn("#editJobForm", $(this), "loading");
     $("#editJobForm")[0].submit();
 });

@@ -1,4 +1,4 @@
-<footer class="footer bg-gradient">
+<footer class="footer bg-gradient front-shared-footer">
     <div class="container">
         <div class="row justify-content-between">
             <div class="col-xxl-3 col-xl-4 col-lg-6 mb-xl-0 mb-5">
@@ -101,7 +101,8 @@
                         <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} align-content-center">
                             <img src="{{ asset('img_template/contact.svg') }}" class="w-100" />
                         </div>
-                        <a href="tel: +91 7096336561" class="text-decoration-none text-gray fs-13">
+                        <a href="tel:{{ preg_replace('/[^0-9+]/', '', ($settings['region_code'] ?? '').($settings['phone'] ?? '')) }}"
+                           class="text-decoration-none text-gray fs-13">
                             {{ $settings['region_code'] . ' ' . $settings['phone'] }}
                         </a>
                     </div>

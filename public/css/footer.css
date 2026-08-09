@@ -6,13 +6,55 @@
    ===================================================== */
 
 footer.footer.bg-gradient {
+    background-color: #e7f1fb !important;
     background-image: linear-gradient(to right, #e4f2fb, #eaf0fc) !important
 }
 
-footer {
+footer.front-shared-footer {
+    width: 100%;
+    flex-shrink: 0;
     padding-top: 80px;
+    color: #777a7d;
+    font-family: "Poppins", sans-serif !important;
     font-size: 16px !important;
-    font-weight: 400 !important
+    font-weight: 400 !important;
+    line-height: 1.5
+}
+
+/* The dashboard's legacy skeleton stylesheet sets every `.container` to
+   100vh/flex. Keep the shared footer's Bootstrap container content-sized. */
+footer.front-shared-footer > .container {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    flex-flow: initial !important;
+    justify-content: initial !important;
+    align-items: initial !important
+}
+
+footer.front-shared-footer h3.fs-18 {
+    font-size: 18px !important;
+    font-weight: 500 !important;
+    line-height: 1.2
+}
+
+footer.front-shared-footer .fs-14 {
+    font-size: 14px !important;
+    line-height: 24px
+}
+
+footer.front-shared-footer .fs-13 {
+    font-size: 13px !important
+}
+
+footer.front-shared-footer ul,
+footer.front-shared-footer li {
+    list-style: none
+}
+
+footer.front-shared-footer .footer-logo img {
+    width: 80px;
+    max-width: 120px
 }
 
 footer ul li a {
@@ -47,6 +89,9 @@ footer .text-decoration-none {
 
 footer .email input {
     width: 100%;
+    min-width: 0;
+    height: 50px;
+    background: #fff;
     outline: none;
     border: none;
     padding: 0 20px;
@@ -55,11 +100,24 @@ footer .email input {
 }
 
 footer .email .icon {
+    flex: 0 0 50px;
     width: 50px;
     height: 50px;
     padding: 17px;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px
+}
+
+footer .email > .icon {
+    padding: 0;
+    overflow: hidden
+}
+
+footer .email > .icon > button.icon {
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    cursor: pointer
 }
 
 footer .social-icon i {
@@ -105,6 +163,33 @@ footer .social-icon a:focus {
     font-weight: 500 !important
 }
 
+footer.front-shared-footer .footer-info__block {
+    align-items: center
+}
+
+footer.front-shared-footer .footer-info__block > div {
+    flex: 0 0 20px;
+    width: 20px
+}
+
+footer.front-shared-footer .footer-info__block img {
+    display: block;
+    max-width: 20px;
+    max-height: 20px
+}
+
+footer.front-shared-footer .copy-right p {
+    margin-bottom: 0
+}
+
+[dir="rtl"] footer.front-shared-footer .email input {
+    border-radius: 0 10px 10px 0
+}
+
+[dir="rtl"] footer.front-shared-footer .email > .icon {
+    border-radius: 10px 0 0 10px
+}
+
 #mc-email {
     font-size: 16px !important;
     font-weight: 500 !important
@@ -117,8 +202,12 @@ footer .social-icon a:focus {
 }
 
 @media (max-width: 991px) {
-    footer {
+    footer.front-shared-footer {
         padding-top: 50px
+    }
+
+    footer.front-shared-footer h3.fs-18 {
+        font-size: 16px !important
     }
 }
 

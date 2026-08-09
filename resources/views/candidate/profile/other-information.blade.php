@@ -2221,10 +2221,7 @@
                     closeOtherSections(section);
                     bootstrap.Collapse.getOrCreateInstance(section, { toggle: false }).show();
                     setActiveOtherSection(panel.id);
-                    panel.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start',
-                    });
+                    window.scrollCandidateProfileSection(panel);
                 });
             });
         });

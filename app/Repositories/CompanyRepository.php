@@ -22,6 +22,7 @@ use Hash;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\ValidationException;
 use PragmaRX\Countries\Package\Countries;
 use Spatie\Permission\Models\Role;
@@ -191,10 +192,15 @@ class CompanyRepository extends BaseRepository
             $user->phone = preparePhoneNumber($user->phone, $user->region_code);
             $user->update($userInput);
 
-            if ((isset($input['image']))) {
-                $user->clearMediaCollection(User::PROFILE);
-                $user->addMedia($input['image'])
+            if (($input['image'] ?? null) instanceof UploadedFile && $input['image']->isValid()) {
+                $newLogo = $user->addMedia($input['image'])
                     ->toMediaCollection(User::PROFILE, config('app.media_disc'));
+
+                // Delete the previous logo only after the new file has been
+                // stored successfully, so a failed upload cannot remove it.
+                $user->getMedia(User::PROFILE)
+                    ->where('id', '!=', $newLogo->id)
+                    ->each->delete();
             }
 
             DB::commit();

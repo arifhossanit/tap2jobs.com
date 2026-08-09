@@ -2822,10 +2822,7 @@
                     closeAccomplishmentSections(section);
                     bootstrap.Collapse.getOrCreateInstance(section, { toggle: false }).show();
                     setActiveAccomplishmentSection(panel.id);
-                    panel.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start',
-                    });
+                    window.scrollCandidateProfileSection(panel);
                 });
             });
         });

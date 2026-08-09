@@ -937,6 +937,9 @@ Route::middleware('auth', 'role:Candidate', 'xss', 'verified.user', 'setLanguage
 
     Route::post('apply-job', [Web\JobApplicationController::class, 'applyJob'])->name('apply-job');
 
+    Route::delete('job-application-draft/{jobId}', [Web\JobApplicationController::class, 'discardDraft'])
+        ->name('discard-job-draft');
+
     Route::post(
         '/save-favourite-company',
         [Web\CompanyController::class, 'saveFavouriteCompany']

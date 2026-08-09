@@ -19,16 +19,28 @@
     @endphp
 
     <main class="apply-job-page">
-        <section class="apply-job-hero">
+        <section class="hero-section position-relative bg-gradient pt-15 pb-40">
             <div class="container">
-                <div class="apply-job-hero__content">
-                    <h1>{{ __('web.job_details.apply_for_job') }}</h1>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb justify-content-center mb-0">
-                            <li class="breadcrumb-item"><a href="{{ route('front.home') }}">{{ __('web.home') }}</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">{{ __('web.job_details.apply_for_job') }}</li>
-                        </ol>
-                    </nav>
+                <div class="row align-items-center justify-content-center">
+                    <div class="col-lg-6 text-center mb-lg-0 mb-md-5 mb-sm-4">
+                        <div class="hero-content">
+                            <h1 class="text-secondary mb-3">
+                                {{ __('web.job_details.apply_for_job') }}
+                            </h1>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb justify-content-center mb-0">
+                                    <li class="breadcrumb-item">
+                                        <a href="{{ route('front.home') }}" class="fs-18 text-gray">
+                                            {{ __('web.home') }}
+                                        </a>
+                                    </li>
+                                    <li class="breadcrumb-item text-primary fs-18" aria-current="page">
+                                        {{ __('web.job_details.apply_for_job') }}
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -112,11 +124,9 @@
                             </div>
 
                             <footer class="apply-job-form-card__actions">
-                                @if(!$isJobDrafted)
-                                    <button type="button" class="btn apply-job-draft-button save-draft"
-                                            data-loading-text="<span class='spinner-border spinner-border-sm'></span> {{ __('messages.common.process') }}"
-                                            id="draftJobSave">{{ __('web.common.save_as_draft') }}</button>
-                                @endif
+                                <button type="button" class="btn apply-job-draft-button save-draft"
+                                        data-loading-text="<span class='spinner-border spinner-border-sm'></span> {{ __('messages.common.process') }}"
+                                        id="draftJobSave">{{ __('web.common.save_as_draft') }}</button>
                                 @if($isActive && !$job->is_suspended)
                                     <button type="button" class="btn btn-primary apply-job-submit-button apply-job"
                                             data-loading-text="<span class='spinner-border spinner-border-sm'></span> {{ __('messages.common.process') }}"

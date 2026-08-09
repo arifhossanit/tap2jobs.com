@@ -1105,7 +1105,7 @@
                         return;
                     }
                     bootstrap.Collapse.getOrCreateInstance(target, { toggle: false }).show();
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    window.scrollCandidateProfileSection(target);
                 });
             });
 

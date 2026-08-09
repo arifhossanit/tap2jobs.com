@@ -1,5 +1,9 @@
-@php($notifications = getNotification(\App\Models\Notification::EMPLOYER))
-@php($notificationCount = $notifications->count())
+@php
+    $notifications = getNotification(\App\Models\Notification::EMPLOYER);
+    $notificationCount = $notifications->count();
+    $loggedInEmployer = getLoggedInUser();
+    $employerHeaderName = $loggedInEmployer->company?->contact_person_name ?: $loggedInEmployer->full_name;
+@endphp
 <header class='employer-dashboard-header container-fluid container-xxl d-flex align-items-stretch justify-content-between'>
     <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
         <a href="{{ route('front.home') }}"  target="_blank"
@@ -111,20 +115,18 @@
                             id="employerUserDropdown" data-bs-auto-close="outside"
                             data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="image image-circle image-mini d-flex align-items-center {{ checkLanguageSession() == 'ar' ? 'ms-sm-3' : 'me-sm-3' }}">
-                            <img src="{{ getLoggedInUser()->avatar }}"
-                                 class="img-fluid" alt="profile image">
+                            <img src="{{ $loggedInEmployer->avatar }}"
+                                 class="img-fluid" alt="{{ $employerHeaderName }}">
                         </div>
-                        {{-- {{\Illuminate\Support\Facades\Auth::user()->full_name}} --}}
-                        {{-- <i class="fa-solid fa-angle-down ms-2"></i>--}}
                     </button>
                     <div class="dropdown-menu p-4 pb-4" aria-labelledby="employerUserDropdown"
                          data-bs-auto-close="outside">
                         <div class="text-center border-bottom pb-5 ">
                             <div class="image image-circle image-tiny mb-5">
-                                <img src="{{ getLoggedInUser()->avatar }}" class="img-fluid" alt="profile image">
+                                <img src="{{ $loggedInEmployer->avatar }}" class="img-fluid" alt="{{ $employerHeaderName }}">
                             </div>
-                            <h3 class="text-gray-900">{{\Illuminate\Support\Facades\Auth::user()->full_name}}</h3>
-                            <h4 class="mb-0 fw-400 fs-6">{{\Illuminate\Support\Facades\Auth::user()->email}}</h4>
+                            <h3 class="text-gray-900">{{ $employerHeaderName }}</h3>
+                            <h4 class="mb-0 fw-400 fs-6">{{ $loggedInEmployer->email }}</h4>
                         </div>
                         <ul class="pt-4 pe-0">
                             <li>

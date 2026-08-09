@@ -2,25 +2,16 @@
 
 namespace App\Livewire;
 
-use App\Models\Job;
 use App\Repositories\DashboardRepository;
 use Livewire\Component;
 
 class EmployerDashboard extends Component
 {
     public $data;
-    public $recentJobs;
-    public $recentFollowers;
-    public $jobStatus;
-    public $gender;
 
-    public function mount(DashboardRepository $dashboardRepositor)
+    public function mount(DashboardRepository $dashboardRepository): void
     {
-        $this->data = $dashboardRepositor->getEmployerDashboardData();
-        $this->recentJobs = $dashboardRepositor->getEmployerRecentJobsData();
-        $this->recentFollowers = $dashboardRepositor->getEmployerRecentFollowerData();
-        $this->jobStatus = Job::whereCompanyId(getLoggedInUser()->owner_id)->pluck('job_title', 'id');
-        $this->gender = Job::GENDER;
+        $this->data = $dashboardRepository->getEmployerDashboardData();
     }
 
     public function placeholder()

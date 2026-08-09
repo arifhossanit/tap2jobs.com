@@ -6,10 +6,14 @@
     <link rel="stylesheet" href="{{ asset('assets/css/daterangepicker.css') }}">
 @endpush
 @section('content')
+    @php
+        $dashboardEmployer = getLoggedInUser();
+        $dashboardEmployerName = $dashboardEmployer->company?->contact_person_name ?: $dashboardEmployer->full_name;
+    @endphp
     <div class="employer-dashboard-hero">
         <div>
             <span class="employer-dashboard-hero__eyebrow">{{ __('messages.employer_dashboard.dashboard') }}</span>
-            <h1>{{ __('messages.common.hello') }}, {{ \Illuminate\Support\Facades\Auth::user()->full_name }}</h1>
+            <h1>{{ __('messages.common.hello') }}, {{ $dashboardEmployerName }}</h1>
             {{-- <p>{{ __('messages.employer_dashboard.manage_jobs') }}</p> --}}
         </div>
         <div class="d-flex flex-wrap justify-content-end gap-3">
@@ -17,7 +21,7 @@
                 <i class="fa-solid fa-plus"></i>
                 {{ __('messages.employer_dashboard.add_job') }}
             </a>
-            <a href="{{ route('company.edit.form', \Illuminate\Support\Facades\Auth::user()->owner_id) }}"
+            <a href="{{ route('company.edit.form', $dashboardEmployer->owner_id) }}"
                class="btn btn-primary employer-dashboard-hero__edit">
                 <i class="fa-solid fa-pen-to-square"></i>
                 {{ __('messages.user.edit_profile') }}

@@ -117,19 +117,16 @@ function loadEmployerDashboardData() {
         }).done(prepareJobsReport);
     };
     window.prepareJobsReport = function (result) {
-        $('#employerDashboardChart').html('');
         let data = result.data;
+        $('#jobContainer').html('').
+            append('<canvas id="employerDashboardChart"></canvas>');
+
         if (data.totalJobApplication === 0) {
-            $('#jobContainer').html('');
             $('#jobContainer').
                 append(
-                    '<div align="center" class="pt50 h150">No Records Found</div>');
-            return true;
-        } else {
-            $('#jobContainer').html('');
-            $('#jobContainer').
-                append('<canvas id="employerDashboardChart"></canvas>');
+                    '<div class="text-center text-muted mt-3">No Records Found</div>');
         }
+
         let barChartData = {
             labels: data.dates.dateArr,
             datasets: [

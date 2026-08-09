@@ -8,6 +8,7 @@ use App\Models\JobApplication;
 use App\Services\ApplicationCvService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -118,41 +119,47 @@ class JobApplicationRepository extends BaseRepository
     public function store(array $input): bool
     {
         try {
-            /** @var Candidate $candidate */
-            $candidate = Candidate::findOrFail(Auth::user()->owner_id);
-            $input['candidate_id'] = $candidate->id;
+            return DB::transaction(function () use ($input): bool {
+                /** @var Candidate $candidate */
+                $candidate = Candidate::findOrFail(Auth::user()->owner_id);
+                $candidate->unsetRelation('media');
 
-            $candidate->unsetRelation('media');
-            $selectedResume = $candidate->getMedia(Candidate::RESUME_PATH)->first(
-                fn (Media $media) => (bool) $media->getCustomProperty('is_default', false)
-            ) ?? app(ApplicationCvService::class)->ensure($candidate);
+                $selectedResume = $candidate->getMedia(Candidate::RESUME_PATH)->first(
+                    fn (Media $media) => (bool) $media->getCustomProperty('is_default', false)
+                ) ?? app(ApplicationCvService::class)->ensure($candidate);
 
-            $input['resume_id'] = $selectedResume->id;
+                $job = Job::findOrFail($input['job_id']);
+                if ($job->status !== Job::STATUS_OPEN) {
+                    throw new UnprocessableEntityHttpException(__('messages.flash.job_not_active'));
+                }
 
-            $job = Job::findOrFail($input['job_id']);
-            if ($job->status != Job::STATUS_OPEN) {
-                throw new UnprocessableEntityHttpException('job is not active.');
-            }
+                /** @var JobApplication|null $jobApplication */
+                $jobApplication = JobApplication::where('job_id', $job->id)
+                    ->where('candidate_id', $candidate->id)
+                    ->lockForUpdate()
+                    ->first();
 
-            /** @var JobApplication $jobApplication */
-            $jobApplication = JobApplication::where('job_id', $input['job_id'])
-                ->where('candidate_id', $input['candidate_id'])
-                ->first();
+                if ($jobApplication?->status === JobApplication::STATUS_APPLIED) {
+                    throw new UnprocessableEntityHttpException(__('messages.flash.job_already_applied'));
+                }
 
-            if ($jobApplication && $jobApplication->status == JobApplication::STATUS_APPLIED) {
-                throw new UnprocessableEntityHttpException('You have already applied for this job.');
-            }
+                $jobApplication ??= new JobApplication();
+                $jobApplication->fill([
+                    'job_id' => $job->id,
+                    'candidate_id' => $candidate->id,
+                    'resume_id' => $selectedResume->id,
+                    'expected_salary' => filled($input['expected_salary'] ?? null)
+                        ? removeCommaFromNumbers($input['expected_salary'])
+                        : null,
+                    'notes' => $input['notes'] ?? null,
+                    'status' => $input['application_type'] === 'apply'
+                        ? JobApplication::STATUS_APPLIED
+                        : JobApplication::STATUS_DRAFT,
+                ]);
+                $jobApplication->save();
 
-            if ($jobApplication && $jobApplication->status == JobApplication::STATUS_DRAFT) {
-                $jobApplication->delete();
-            }
-
-            $input['expected_salary'] = removeCommaFromNumbers($input['expected_salary']);
-            $input['status'] = $input['application_type'] == 'apply' ? JobApplication::STATUS_APPLIED : JobApplication::STATUS_DRAFT;
-
-            $this->create($input);
-
-            return true;
+                return true;
+            });
         } catch (Exception $e) {
             throw new UnprocessableEntityHttpException($e->getMessage());
         }

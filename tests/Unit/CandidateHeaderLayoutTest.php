@@ -46,7 +46,42 @@ class CandidateHeaderLayoutTest extends TestCase
         $styles = file_get_contents(resource_path('assets/sass/new-custom.scss'));
 
         $this->assertStringContainsString('employer-dashboard-header', $header);
+        $this->assertStringContainsString('$notifications = getNotification(\App\Models\Notification::EMPLOYER);', $header);
+        $this->assertStringContainsString('$notificationCount = $notifications->count();', $header);
+        $this->assertStringNotContainsString('@php($notificationCount', $header);
+        $this->assertStringContainsString('$loggedInEmployer->company?->contact_person_name', $header);
+        $this->assertStringContainsString('{{ $employerHeaderName }}', $header);
+        $this->assertStringNotContainsString('{{\Illuminate\Support\Facades\Auth::user()->full_name}}', $header);
         $this->assertStringContainsString('.employer-dashboard-header', $styles);
         $this->assertStringContainsString('[dir="rtl"] .employer-dashboard-header', $styles);
+    }
+
+    public function test_candidate_profile_tabs_wrap_without_horizontal_scrolling(): void
+    {
+        $menu = file_get_contents(resource_path('views/candidate/profile/profile_menu.blade.php'));
+        $styles = file_get_contents(resource_path('assets/sass/new-custom.scss'));
+
+        $this->assertStringNotContainsString('candidate-profile-menu__top overflow-auto', $menu);
+        $this->assertStringNotContainsString('candidate-profile-menu__sub overflow-auto', $menu);
+        $this->assertStringContainsString('grid-template-columns: repeat(6, minmax(0, 1fr))', $styles);
+        $this->assertStringContainsString('grid-template-columns: repeat(3, minmax(0, 1fr))', $styles);
+        $this->assertStringContainsString('grid-template-columns: repeat(2, minmax(0, 1fr))', $styles);
+        $this->assertStringContainsString('flex-wrap: wrap', $styles);
+        $this->assertStringContainsString('gap: 4px 18px', $styles);
+
+        $profileViews = [
+            'personal-information.blade.php',
+            'education-training.blade.php',
+            'employment.blade.php',
+            'other-information.blade.php',
+            'accomplishment.blade.php',
+        ];
+
+        $this->assertStringContainsString('window.scrollCandidateProfileSection = function', $menu);
+        $this->assertStringContainsString('stickyTop + menuHeight', $menu);
+        foreach ($profileViews as $profileView) {
+            $view = file_get_contents(resource_path('views/candidate/profile/'.$profileView));
+            $this->assertStringContainsString('window.scrollCandidateProfileSection(', $view);
+        }
     }
 }

@@ -2410,7 +2410,7 @@ function loadJobDetailsData() {
         console.log('sd');
         if (result.success) {
           $('#favorite').empty();
-          result.data ? $('#favorite').html('<i class="fa-solid fa-bookmark text-primary featured"></i>') : $('#favorite').html('<i class="fa-regular fa-bookmark text-primary"></i>');
+          result.data ? $('#favorite').html('<i class="fa-solid fa-bookmark featured"></i>') : $('#favorite').html('<i class="fa-regular fa-bookmark"></i>');
           displaySuccessMessage(result.message);
         }
       },
@@ -2431,8 +2431,7 @@ listenSubmit('#reportJobAbuse', function (e) {
       if (result.success) {
         displaySuccessMessage(result.message);
         $('#reportJobAbuseModal').modal('hide');
-        $(".reportJobAbuse").attr('disabled', true);
-        $(".reportJobAbuse").text(Lang.get('js.already_reported'));
+        $(".reportJobAbuse").attr('disabled', true).attr('title', Lang.get('js.already_reported')).attr('aria-label', Lang.get('js.already_reported'));
         $('.modal-backdrop').remove();
         $('.close-modal').click();
       }

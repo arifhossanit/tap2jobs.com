@@ -237,8 +237,10 @@ class DashboardRepository
             $query->whereHas('candidate.user', function (Builder $query) use ($gender) {
                 $query->where('gender', '=', $gender);
             });
-        })->whereIn('job_id', $jobIds)->whereBetween('created_at',
-            [$dateS->format('Y-m-d').' 00:00:00', $dateE.' 23:59:59'])
+        })->whereIn('job_id', $jobIds)->whereBetween('created_at', [
+            $dateS->copy()->startOfDay(),
+            $dateE->copy()->endOfDay(),
+        ])
             ->groupBy('date')
             ->orderBy('date')
             ->get([
@@ -266,6 +268,7 @@ class DashboardRepository
         }, iterator_to_array($period));
 
         $data['jobApplicationCounts'] = $jobApplicationData;
+        $data['totalJobApplication'] = array_sum($jobApplicationData);
         $data['dateLabels'] = $labelsData;
 
         return $data;

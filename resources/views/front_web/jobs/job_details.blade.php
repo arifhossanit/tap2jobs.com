@@ -1,11 +1,12 @@
 @extends('front_web.layouts.app')
 @section('title')
-    {{ __('web.job_details.job_details') }}
+    {{ __('messages.front_job_details.job_details') }}
 @endsection
 {{-- @section('page_css') --}}
 {{--    <link href="{{asset('front_web/scss/job-details.css')}}" rel="stylesheet" type="text/css"> --}}
 {{-- @endsection --}}
 @section('content')
+    @include('layouts.flash-toasts')
     <div class="job-details-page">
         <!-- start hero section -->
         <section class="hero-section position-relative bg-gradient pt-15 pb-40">
@@ -21,46 +22,65 @@
                             </div>
                             <div class="">
                                 <div class="hero-content">
-                                    <h4 class="text-secondary lh-base mb-2">
-                                        {{ html_entity_decode(Str::limit($job->job_title, 50, '...')) }}
+                                    <h4 class="job-hero-title text-secondary lh-base mb-2 d-flex align-items-center flex-wrap">
+                                        <span>{{ html_entity_decode(Str::limit($job->job_title, 50, '...')) }}</span>
                                         @role('Candidate')
-                                            @if (!$isJobApplicationRejected)
-                                                <button class="btn p-0 ms-5"
-                                                    data-favorite-user-id="{{ getLoggedInUserId() !== null ? getLoggedInUserId() : null }}"
-                                                    data-favorite-job-id="{{ $job->id }}" id="addToFavourite">
-                                                    <span id="favorite">
-                                                        <i
-                                                            class=" {{ $isJobAddedToFavourite ? 'fa-solid fa-bookmark featured' : 'fa-regular fa-bookmark' }}  text-primary fs-18"></i>
-                                                    </span>
+                                            <span class="job-header-actions d-inline-flex align-items-center ms-3">
+                                                @if (!$isJobApplicationRejected)
+                                                    <button class="btn job-header-action" type="button"
+                                                        data-favorite-user-id="{{ getLoggedInUserId() !== null ? getLoggedInUserId() : null }}"
+                                                        data-favorite-job-id="{{ $job->id }}" id="addToFavourite"
+                                                        title="{{ __('messages.front_job_details.add_to_favorite') }}"
+                                                        aria-label="{{ __('messages.front_job_details.add_to_favorite') }}">
+                                                        <span id="favorite">
+                                                            <i class="{{ $isJobAddedToFavourite ? 'fa-solid fa-bookmark featured' : 'fa-regular fa-bookmark' }}"></i>
+                                                        </span>
+                                                    </button>
+                                                @endif
+                                                <button type="button" class="btn job-header-action emailJobToFriend"
+                                                    data-bs-toggle="modal" data-bs-target="#emailJobToFriendModal"
+                                                    title="{{ __('messages.front_job_details.email_to_friend') }}"
+                                                    aria-label="{{ __('messages.front_job_details.email_to_friend') }}">
+                                                    <i class="fa-solid fa-share-nodes"></i>
                                                 </button>
-                                            @endif
+                                                <button type="button" class="btn job-header-action reportJobAbuse"
+                                                    @if ($isJobReportedAsAbuse) disabled @endif
+                                                    data-bs-toggle="modal" data-bs-target="#reportJobAbuseModal"
+                                                    title="{{ $isJobReportedAsAbuse ? __('messages.candidate.already_reported') : __('messages.front_job_details.report_abuse') }}"
+                                                    aria-label="{{ $isJobReportedAsAbuse ? __('messages.candidate.already_reported') : __('messages.front_job_details.report_abuse') }}">
+                                                    <i class="fa-regular fa-flag"></i>
+                                                </button>
+                                            </span>
                                         @endrole
                                     </h4>
-                                    <div class="hero-desc d-md-flex">
-                                        <div class="desc d-flex {{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
-                                            <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
+                                    <div class="hero-desc job-hero-meta d-flex flex-wrap align-items-center">
+                                        <div class="desc d-flex align-items-center">
+                                            <div class="job-hero-meta-icon w-20">
                                                 <img src="{{ asset('img_template/briefcase.svg') }}" class="w-100" />
                                             </div>
                                             <p class="fs-14 text-gray mb-0">
                                                 {{ html_entity_decode($job->jobCategory->name) }}
                                             </p>
                                         </div>
-                                        <div class="desc d-flex {{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
-                                            <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
+                                        <div class="desc d-flex align-items-center">
+                                            <div class="job-hero-meta-icon w-20">
                                                 <img src="{{ asset('img_template/clock.svg') }}" class="w-100" />
                                             </div>
                                             <p class="fs-14 text-gray mb-0">{{ $job->created_at->diffForHumans() }}</p>
                                         </div>
-                                        @if ($job->hide_salary == '0')
-                                            <div class="desc d-flex {{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
-                                                <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
-                                                    <img src="{{ asset('img_template/money.svg') }}" class="w-100" />
-                                                </div>
-                                                <a href="#"
-                                                    class="fs-14 text-gray">{{ $job->currency->currency_icon }}
-                                                    {{ numberFormatShort($job->salary_from) . ' - ' . numberFormatShort($job->salary_to) }}</a>
+                                        <div class="desc d-flex align-items-center">
+                                            <div class="job-hero-meta-icon w-20">
+                                                <img src="{{ asset('img_template/money.svg') }}" class="w-100" />
                                             </div>
-                                        @endif
+                                            <span class="fs-14 text-gray">
+                                                @if (!$job->hide_salary)
+                                                    {{ $job->currency->currency_icon }}
+                                                    {{ numberFormatShort($job->salary_from) . ' - ' . numberFormatShort($job->salary_to) }}
+                                                @else
+                                                    {{ __('messages.front_job_details.negotiable') }}
+                                                @endif
+                                            </span>
+                                        </div>
                                     </div>
                                     @if (count($job->jobsTag) > 0)
                                         {{-- <div class="hero-desc d-md-flex flex-wrap">
@@ -93,39 +113,34 @@
                     <div class="row align-items-lg-center">
                         @auth
                             @role('Candidate')
-                                <div class="hero-desc d-flex flex-wrap">
-                                    <div class="desc me-2 pe-2 mb-sm-0 mb-2">
-                                        <button type="button" class="btn btn-primary  emailJobToFriend" data-bs-toggle="modal"
-                                            data-bs-target="#emailJobToFriendModal">
-                                            {{ __('web.job_details.email_to_friend') }}
-                                        </button>
-                                    </div>
-                                    <div class="desc me-2 pe-2 mb-sm-0 mb-2">
-                                        @if ($isJobReportedAsAbuse)
-                                            <button type="button" class="btn btn-primary  reportJobAbuse" disabled
-                                                data-bs-toggle="modal" data-bs-target="#reportJobAbuseModal">
-                                                {{ __('messages.candidate.already_reported') }}
-                                            </button>
-                                        @else
-                                            <button type="button" class="btn btn-primary  reportJobAbuse" data-bs-toggle="modal"
-                                                data-bs-target="#reportJobAbuseModal">
-                                                {{ __('web.job_details.report_abuse') }}
-                                            </button>
-                                        @endif
-                                    </div>
+                                <div class="hero-desc d-flex flex-wrap align-items-center gap-2">
                                     <div class="desc me-2 pe-2 mb-sm-0 mb-2">
                                         @if (!$isApplied && !$isJobApplicationRejected && !$isJobApplicationCompleted && !$isJobApplicationShortlisted)
                                             @if ($isActive && !$job->is_suspended && \Carbon\Carbon::today()->toDateString() < $job->job_expiry_date->toDateString())
-                                                <button class="btn {{ $isJobDrafted ? 'btn-primary ' : 'btn-dark' }} "
+                                                <button class="btn btn-primary job-apply-btn"
                                                     onclick="window.location='{{ route('show.apply-job-form', $job->job_id) }}'">
-                                                    {{ $isJobDrafted ? __('web.job_details.edit_draft') : __('web.job_details.apply_for_job') }}
+                                                    {{ $isJobDrafted ? __('messages.front_job_details.edit_draft') : __('messages.front_job_details.apply_for_job') }}
                                                 </button>
                                             @endif
                                         @else
                                             <button
-                                                class="btn btn-primary  ml-2">{{ __('web.job_details.already_applied') }}</button>
-                                        @endif
+                                                class="btn job-already-applied-btn ml-2" disabled>{{ __('messages.front_job_details.already_applied') }}</button>
+                                            @endif
                                     </div>
+                                    @if ($isJobDrafted)
+                                        <div class="desc me-2 pe-2 mb-sm-0 mb-2">
+                                            <form method="POST" action="{{ route('discard-job-draft', $job->job_id) }}"
+                                                class="d-inline-block discard-job-draft-form"
+                                                data-confirm="{{ __('messages.front_job_details.discard_draft_confirmation') }}"
+                                                onsubmit="return window.confirm(this.dataset.confirm);">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-outline-danger discard-job-draft">
+                                                    {{ __('messages.front_job_details.discard_draft') }}
+                                                </button>
+                                            </form>
+                                        </div>
+                                    @endif
                                 </div>
                             @endrole
                         @else
@@ -133,13 +148,13 @@
                                 <div class="hero-desc d-flex flex-wrap">
                                     <div class="desc d-flex me-4 pe-2">
                                         <button class="btn btn-primary  mb-3"
-                                            onclick="window.location='{{ route('candidate.register') }}'">{{ __('web.job_details.register_to_apply') }}
+                                            onclick="window.location='{{ route('candidate.register') }}'">{{ __('messages.front_job_details.register_to_apply') }}
                                         </button>
                                     </div>
                                     <div class="desc d-flex me-4 pe-2">
                                         <button class="btn btn-primary  mb-3"
                                             onclick="window.location='{{ route('front.candidate.login') }}'">
-                                            {{ __('web.job_details.apply_for_job') }}
+                                            {{ __('messages.front_job_details.apply_for_job') }}
                                         </button>
                                     </div>
                                 </div>
@@ -152,14 +167,14 @@
         <!-- end hero section -->
 
         <!-- start job-details section -->
-        <section class="job-details-section py-60 mb-sm-4">
+        <section class="job-details-section py-60">
             <div class="container">
                 <div class="job-card">
                     <div class="row">
                         @if ($job->is_suspended || !$isActive)
                             <div class="col-md-12 col-sm-12">
                                 <div class="alert alert-warning text-warning bg-transparent" role="alert">
-                                    {{ __('web.job_details.job_is') }}
+                                    {{ __('messages.front_job_details.job_is') }}
                                     @php
                                         $status = \App\Models\Job::STATUS[$job->status];
                                     @endphp
@@ -172,15 +187,15 @@
                                 <div class="alert alert-warning" role="alert">
                                     {{ Session::get('warning') }}
                                     <a href="{{ route('candidate.profile', ['section' => 'resume']) }}"
-                                        class="alert-link ml-2 ">{{ __('web.job_details.click_here') }}</a>
-                                    {{ __('web.job_details.to_upload_resume') }}
+                                        class="alert-link ml-2 ">{{ __('messages.front_job_details.click_here') }}</a>
+                                    {{ __('messages.front_job_details.to_upload_resume') }}
                                     .
                                 </div>
                             </div>
                         @endif
                         <div class="col-lg-8">
                             <div class="Job Description mb-lg-5 mb-4">
-                                <h5 class="fs-18 text-secondary mb-4">@lang('web.web_jobs.job_description')</h5>
+                                <h5 class="fs-18 text-secondary mb-4">@lang('messages.front_job_details.job_description')</h5>
                                 @if ($job->description)
                                     <div class="job-description job-editor-content">
                                         {!! $job->description !!}
@@ -190,7 +205,7 @@
                                 @endif
                             </div>
                             <div class="key-responsibilities mb-lg-5 mb-4">
-                                <h5 class="fs-18 text-secondary mb-4">@lang('web.web_jobs.key_responsibilities')</h5>
+                                <h5 class="fs-18 text-secondary mb-4">@lang('messages.front_job_details.key_responsibilities')</h5>
                                 @if ($job->key_responsibilities)
                                     <div class="key-responsibilities job-editor-content">
                                         {!! $job->key_responsibilities !!}
@@ -201,7 +216,7 @@
 
                             </div>
                             <div class="skill-experience mb-lg-5 mb-4">
-                                <h5 class="fs-18 text-secondary mb-4">@lang('web.web_jobs.Skill_Experience')</h5>
+                                <h5 class="fs-18 text-secondary mb-4">@lang('messages.front_job_details.skill_experience')</h5>
                                 @if (!empty($skills))
                                 <ul>
                                     @foreach ($skills as $id => $skill)
@@ -213,10 +228,10 @@
                                 @endif
                             </div>
                             <div class="share-this-job mb-lg-0 mb-40">
-                                <h5 class="fs-18 text-secondary mb-4">@lang('web.apply_for_job.share_this_job'):</h5>
+                                <h5 class="fs-18 text-secondary mb-4">@lang('messages.front_job_details.share_this_job'):</h5>
                                 <div class="icon-box d-flex">
                                     <a href="{{ $url['facebook'] }}" target="_blank" class="facebook d-flex"
-                                        title="@lang('web.web_jobs.facebook')">
+                                        title="@lang('messages.front_job_details.facebook')">
                                     <div class="social-icon me-sm-4 me-3 d-flex align-items-center justify-content-center">
                                             <div class="icon d-flex">
                                                 <i class="fa-brands fa-facebook-f text-white"></i>
@@ -224,7 +239,7 @@
                                         </div>
                                     </a>
                                     <a href="https://www.linkedin.com/shareArticle/?url={{ rawurlencode(URL::to('/job-details/' . $job->job_id)) }}"
-                                        title="@lang('web.web_jobs.linkedin')" target="_blank" class="linkedin d-flex">
+                                        title="@lang('messages.front_job_details.linkedin')" target="_blank" class="linkedin d-flex">
                                     <div class="social-icon me-sm-4 me-3 d-flex align-items-center justify-content-center">
                                             <div class="icon d-flex">
                                                 <i class="fa-brands fa-linkedin-in text-white"></i>
@@ -232,7 +247,7 @@
                                         </div>
                                     </a>
                                     <a href="{{ $url['twitter'] }}" target="_blank" class="twitter d-flex"
-                                        title="@lang('web.web_jobs.twitter')">
+                                        title="@lang('messages.front_job_details.twitter')">
                                     <div class="social-icon me-sm-4 me-3 d-flex align-items-center justify-content-center">
                                             <div class="icon d-flex">
                                                 <i class="fa-brands fa-twitter text-white"></i>
@@ -240,7 +255,7 @@
                                         </div>
                                     </a>
                                     <a href="{{ $url['gmail'] }}" target="_blank" class="google d-flex"
-                                        title="@lang('web.web_jobs.google')">
+                                        title="@lang('messages.front_job_details.google')">
                                     <div class="social-icon me-sm-4 me-3 d-flex align-items-center justify-content-center">
                                             <div class="icon d-flex">
                                                 <i class="fa-brands fa-google-plus-g text-white"></i>
@@ -248,7 +263,7 @@
                                         </div>
                                     </a>
                                     <a href="{{ $url['pinterest'] }}" target="_blank" class="pinterest d-flex"
-                                        title="@lang('web.web_jobs.pinterest')">
+                                        title="@lang('messages.front_job_details.pinterest')">
                                     <div class="social-icon me-sm-4 me-3 d-flex align-items-center justify-content-center">
                                             <div class="icon d-flex">
                                                 <i class="fa-brands fa-pinterest-p text-white"></i>
@@ -261,7 +276,7 @@
                         <div class="col-lg-4">
                             <div class="job-desc-right br-10 px-40 bg-light mb-40">
                                 <div class="pb-2">
-                                    <h5 class="fs-18 text-dark mb-4">@lang('web.web_jobs.job_overview')</h5>
+                                    <h5 class="fs-18 text-dark mb-4">@lang('messages.front_job_details.job_overview')</h5>
                                     {{-- <div class="desc-box d-flex justify-content-between mb-4">
                                         <div class="desc d-flex">
                                             <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-2' : 'me-2' }} w-20">
@@ -273,7 +288,7 @@
                                                 </svg>
                                             </div>
 
-                                            <p class="fs-14 text-secondary mb-0">@lang('web.job_details.date_posted'):</p>
+                                            <p class="fs-14 text-secondary mb-0">@lang('messages.front_job_details.date_posted'):</p>
                                         </div>
                                         <p class="fs-14 text-gray text-end mb-0">
                                             {{ \Carbon\Carbon::parse($job->created_at)->translatedFormat('jS M, Y') }}</p>
@@ -288,7 +303,7 @@
                                                         fill="#1967D2" />
                                                 </svg>
                                             </div>
-                                            <p class="fs-14 text-secondary mb-0">@lang('web.web_jobs.expiration_date'):</p>
+                                            <p class="fs-14 text-secondary mb-0">@lang('messages.front_job_details.expiration_date'):</p>
                                         </div>
                                         <p class="fs-14 text-gray text-end mb-0">
                                             {{ \Carbon\Carbon::parse($job->job_expiry_date)->translatedFormat('jS M, Y') }}
@@ -314,7 +329,7 @@
                                                     </defs>
                                                 </svg>
                                             </div>
-                                            <p class="fs-14 text-secondary mb-0">@lang('web.common.location'):</p>
+                                            <p class="fs-14 text-secondary mb-0">@lang('messages.front_job_details.location'):</p>
                                         </div>
                                         <p class="fs-14 text-gray text-end mb-0">
                                             @if (!empty($job->city_id))
@@ -327,7 +342,7 @@
                                                 {{ $job->country_name }}
                                             @endif
                                             @if (empty($job->country_id))
-                                                {{ __('web.job_details.location_information_not_available') }}
+                                                {{ __('messages.front_job_details.location_information_not_available') }}
                                             @endif
                                         </p>
                                     </div>
@@ -499,7 +514,7 @@
                                     </div>
                                 </div>
                                 {{-- <div class="desc-box">
-                                    <h5 class="fs-18 text-secondary mb-4">@lang('web.job_details.job_skills')</h5>
+                                    <h5 class="fs-18 text-secondary mb-4">@lang('messages.front_job_details.job_skills')</h5>
                                     <div class="d-flex flex-wrap gap-3">
                                         @if ($job->jobsSkill->isNotEmpty())
                                         <ul>
@@ -531,42 +546,42 @@
                                     : null;
                             @endphp
                             <div class="company-overview br-10 px-40 bg-light">
-                                <h5 class="fs-18 text-secondary mb-4">@lang('web.job_details.company_overview')</h5>
+                                <h5 class="fs-18 text-secondary mb-4">@lang('messages.front_job_details.company_overview')</h5>
                                 @if ($company)
                                     <div class="company-profile d-flex align-items-center mb-4">
                                         <div class="profile">
                                             <img src="{{ $company->company_url }}" class="w-100 h-100 object-fit-cover"
-                                                alt="{{ $companyName ?: __('web.job_details.company_overview') }}" />
+                                                alt="{{ $companyName ?: __('messages.front_job_details.company_overview') }}" />
                                         </div>
                                         <div class="desc {{ getFrontSelectLanguage() == 'ar' ? 'me-4' : 'ms-4' }}">
                                             <p class="fs-18 text-secondary mb-0">
                                                 {{ $companyName ?: __('messages.common.n/a') }}
                                             </p>
                                             <a href="{{ route('front.company.details', $company->unique_id) }}"
-                                                class="fs-14 text-primary">@lang('web.web_jobs.view_company_profile')</a>
+                                                class="fs-14 text-primary">@lang('messages.front_job_details.view_company_profile')</a>
                                         </div>
                                     </div>
                                     <div class="desc-box d-flex justify-content-between mb-4">
-                                        <p class="fs-14 text-secondary mb-0">@lang('web.web_jobs.founded_in'):</p>
+                                        <p class="fs-14 text-secondary mb-0">@lang('messages.front_job_details.founded_in'):</p>
                                         <p class="fs-14 text-gray text-end mb-0">
                                             {{ $company->established_in ?: __('messages.common.n/a') }}
                                         </p>
                                     </div>
                                     @if ($formattedCompanyPhone)
                                         <div class="desc-box d-flex justify-content-between mb-2">
-                                            <p class="fs-14 text-secondary mb-0">@lang('web.web_jobs.phone'):</p>
+                                            <p class="fs-14 text-secondary mb-0">@lang('messages.front_job_details.phone'):</p>
                                             <p class="fs-14 text-gray text-end mb-0">{{ $formattedCompanyPhone }}</p>
                                         </div>
                                     @endif
                                     <div class="desc-box d-flex justify-content-between mb-4">
-                                        <p class="fs-14 text-secondary mb-0">@lang('web.common.location'):</p>
+                                        <p class="fs-14 text-secondary mb-0">@lang('messages.front_job_details.location'):</p>
                                         <p class="fs-14 text-gray text-end mb-0">
-                                            {{ $company->location ?: __('web.job_details.location_information_not_available') }}
+                                            {{ $company->location ?: __('messages.front_job_details.location_information_not_available') }}
                                         </p>
                                     </div>
                                     <a href="{{ route('front.company.details', $company->unique_id) }}"
                                         class="jobs-position col-12 btn btn-light">
-                                        {{ __('web.companies_menu.opened_jobs') }} : {{ $jobsCount ?: 0 }}
+                                        {{ __('messages.front_job_details.open_jobs') }} : {{ $jobsCount ?: 0 }}
                                     </a>
                                     @if ($company->website)
                                         <div class="card-desc mt-3">
@@ -585,7 +600,7 @@
                         @if (count($getRelatedJobs) > 0)
                             <div class="row job-details-related-jobs our-latest-jobs">
                                 <h5 class="fs-18 text-secondary mt-5 mb-4 pb-2">
-                                    @lang('web.job_details.related_jobs')
+                                    @lang('messages.front_job_details.related_jobs')
                                 </h5>
                                 @foreach ($getRelatedJobs as $relatedJob)
                                     @if ($relatedJob->status != \App\Models\Job::STATUS_DRAFT)
@@ -607,16 +622,16 @@
                                                         </h5>
                                                     </a>
                                                 @endif
-                                                <div class="mt-2 d-flex flex-wrap align-items-center">
+                                                {{-- <div class="mt-2 d-flex flex-wrap align-items-center">
                                                     @if (isset($relatedJob->jobShift->shift))
                                                         <span class="text text-primary fs-12 mb-0 me-3 related-jobs">
                                                             {{ $relatedJob->jobShift->shift }}
                                                         </span>
                                                     @endif
-                                                </div>
+                                                </div> --}}
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <div class="d-flex align-items-center">
-                                                        <div class="me-4">
+                                                        <div class="me-1">
                                                             <img src="{{ $relatedJob->company->company_url }}"
                                                                 class="card-img" alt="..." />
                                                         </div>
@@ -629,10 +644,7 @@
                                                                 </a>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="icon position-relative pe-0">
-                                                        <i class="text-primary fa-solid fa-bookmark"></i>
-                                                    </div>
+                                                    </div>                                                   
                                                 </div>
                                                 <div
                                                     class="card-desc d-flex flex-column justify-content-between h-100 mt-4">
@@ -666,8 +678,8 @@
                                     <div class="row justify-content-center">
                                         <div class="col-8 text-center">
                                             <a href="{{ route('front.search.jobs', ['categories' => $relatedJob->jobCategory->id]) }}"
-                                                class="btn btn-primary  mb-40 mt-lg-4">
-                                                @lang('web.common.show_all')</a>
+                                                class="btn btn-primary">
+                                                @lang('messages.front_job_details.show_all')</a>
                                         </div>
                                     </div>
                                 @endif
@@ -684,8 +696,8 @@
         @include('front_web.jobs.report_job_modal')
     @endrole
     {{ Form::hidden('isJobAddedToFavourite', $isJobAddedToFavourite, ['id' => 'isJobAddedToFavourite']) }}
-    {{ Form::hidden('removeFromFavorite', __('web.job_details.remove_from_favorite'), ['id' => 'removeFromFavorite']) }}
-    {{ Form::hidden('addToFavorites', __('web.job_details.add_to_favorite'), ['id' => 'addToFavorites']) }}
+    {{ Form::hidden('removeFromFavorite', __('messages.front_job_details.remove_from_favorite'), ['id' => 'removeFromFavorite']) }}
+    {{ Form::hidden('addToFavorites', __('messages.front_job_details.add_to_favorite'), ['id' => 'addToFavorites']) }}
 @endsection
 {{-- @section('page_scripts') --}}
 {{--    <script> --}}
@@ -693,7 +705,7 @@
 {{-- let reportAbuseUrl = "{{ route('report.job.abuse') }}"; --}}
 {{-- let emailJobToFriend = "{{ route('email.job') }}"; --}}
 {{--        let isJobAddedToFavourite = "{{ $isJobAddedToFavourite }}"; --}}
-{{-- let removeFromFavorite = "{{ __('web.job_details.remove_from_favorite') }}"; --}}
-{{-- let addToFavorites = "{{ __('web.job_details.add_to_favorite') }}"; --}}
+{{-- let removeFromFavorite = "{{ __('messages.front_job_details.remove_from_favorite') }}"; --}}
+{{-- let addToFavorites = "{{ __('messages.front_job_details.add_to_favorite') }}"; --}}
 {{--    </script> --}}
 {{-- @endsection --}}

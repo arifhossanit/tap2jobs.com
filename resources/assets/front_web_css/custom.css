@@ -2360,15 +2360,11 @@ footer .text-decoration-none {
 
 .apply-job-company-logo {
     align-items: center;
-    background: #f7faff;
-    border: 1px solid #e3ebf5;
-    border-radius: 12px;
     display: flex;
     flex: 0 0 76px;
     height: 76px;
     justify-content: center;
     overflow: hidden;
-    padding: 8px;
 }
 
 .apply-job-section .apply-job-company-logo img {
@@ -2394,7 +2390,7 @@ footer .text-decoration-none {
     color: #17243b;
     font-size: 23px;
     font-weight: 600;
-    margin: 0 0 7px;
+    margin: 0;
 }
 
 .apply-job-summary-card__content p {
@@ -2523,20 +2519,15 @@ footer .text-decoration-none {
     border-radius: 9px;
     display: flex;
     gap: 12px;
-    margin-top: 12px;
     padding: 12px 13px;
 }
 
 .apply-job-selected-cv__file {
     align-items: center;
-    background: #fff;
-    border: 1px solid #d8e7f3;
-    border-radius: 8px;
     color: #e7505a;
     display: flex;
     flex: 0 0 38px;
     font-size: 18px;
-    height: 38px;
     justify-content: center;
 }
 

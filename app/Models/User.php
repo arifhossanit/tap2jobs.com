@@ -288,7 +288,7 @@ class User extends Authenticatable implements HasMedia
 
     public function getFullNameAttribute(): string
     {
-        return ucfirst($this->first_name).' '.ucfirst($this->last_name);
+        return trim(ucfirst((string) $this->first_name).' '.ucfirst((string) $this->last_name));
     }
 
     public function candidate(): HasOne

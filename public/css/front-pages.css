@@ -9808,6 +9808,13 @@ fieldset:disabled .btn {
   }
 }
 
+.company-action-modal.modal {
+    z-index: 1200 !important;
+}
+
+body:has(.company-action-modal.show) .modal-backdrop {
+    z-index: 1190 !important;
+}
 
 .contact-us-section .contact-us form input,.contact-us-section .contact-us form textarea{border:1px solid #e8f4f3;padding:16px 20px;box-shadow:none}
 @font-face {
@@ -11325,6 +11332,21 @@ h4 {
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @font-face {
     font-family: "Poppins";
     src: url(../fonts/Poppins-Medium.ttf);
@@ -12157,15 +12179,11 @@ footer .text-decoration-none {
 
 .apply-job-company-logo {
     align-items: center;
-    background: #f7faff;
-    border: 1px solid #e3ebf5;
-    border-radius: 12px;
     display: flex;
     flex: 0 0 76px;
     height: 76px;
     justify-content: center;
     overflow: hidden;
-    padding: 8px;
 }
 
 .apply-job-section .apply-job-company-logo img {
@@ -12191,7 +12209,7 @@ footer .text-decoration-none {
     color: #17243b;
     font-size: 23px;
     font-weight: 600;
-    margin: 0 0 7px;
+    margin: 0;
 }
 
 .apply-job-summary-card__content p {
@@ -12320,20 +12338,15 @@ footer .text-decoration-none {
     border-radius: 9px;
     display: flex;
     gap: 12px;
-    margin-top: 12px;
     padding: 12px 13px;
 }
 
 .apply-job-selected-cv__file {
     align-items: center;
-    background: #fff;
-    border: 1px solid #d8e7f3;
-    border-radius: 8px;
     color: #e7505a;
     display: flex;
     flex: 0 0 38px;
     font-size: 18px;
-    height: 38px;
     justify-content: center;
 }
 
@@ -13083,6 +13096,110 @@ input, select
     min-width: 24px
 }
 
+.job-details-page .job-header-actions {
+    gap: 12px;
+}
+
+.job-details-page .job-header-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid rgba(25, 103, 210, .2);
+    border-radius: 50%;
+    color: #1967d2;
+    background: #fff;
+}
+
+.job-details-page .job-header-action:hover:not(:disabled) {
+    color: #fff;
+    background: #1967d2;
+}
+
+.job-details-page .job-header-action:hover:not(:disabled) i {
+    color: #fff !important;
+}
+
+.job-details-page .job-header-action #favorite,
+.job-details-page .job-header-action #favorite i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+}
+
+.job-details-page .job-header-action:disabled {
+    color: #9aa5b5;
+    background: #f5f7fa;
+}
+
+.job-details-page .job-hero-meta {
+    gap: 10px 26px;
+}
+
+.job-details-page .job-hero-meta .desc {
+    gap: 10px;
+}
+
+.job-details-page .job-hero-meta-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 20px;
+}
+
+.job-details-page .job-already-applied-btn,
+.job-details-page .job-already-applied-btn:hover,
+.job-details-page .job-already-applied-btn:focus,
+.job-details-page .job-already-applied-btn:active,
+.job-details-page .job-already-applied-btn:disabled {
+    color: #fff;
+    background-color: #198754;
+    border-color: #198754;
+    box-shadow: none;
+    opacity: 1;
+    cursor: default;
+    pointer-events: none;
+}
+
+.job-details-page .job-apply-btn {
+    color: #fff;
+    background-color: #1967d2;
+    border-color: #1967d2;
+    transition: background-color .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.job-details-page .job-apply-btn:hover,
+.job-details-page .job-apply-btn:focus,
+.job-details-page .job-apply-btn:active {
+    color: #fff;
+    background-color: #1254ad;
+    border-color: #1254ad;
+    box-shadow: none;
+    transform: translateY(-1px);
+}
+
+/* Keep the share/report dialogs and their backdrop above the top announcement banner. */
+.job-action-modal.modal {
+    z-index: 1200 !important;
+}
+
+body:has(.job-action-modal.show) .modal-backdrop {
+    z-index: 1190 !important;
+}
+
+@media (max-width: 575px) {
+    .job-details-page .job-hero-title {
+        gap: 8px;
+    }
+
+    .job-details-page .job-header-actions {
+        margin-left: 0 !important;
+    }
+}
+
 header .navbar {
     padding: 20px 0
 }
@@ -13530,13 +13647,55 @@ html[dir='rtl'] header .front-user-menu-icon {
    ===================================================== */
 
 footer.footer.bg-gradient {
+    background-color: #e7f1fb !important;
     background-image: linear-gradient(to right, #e4f2fb, #eaf0fc) !important
 }
 
-footer {
+footer.front-shared-footer {
+    width: 100%;
+    flex-shrink: 0;
     padding-top: 80px;
+    color: #777a7d;
+    font-family: "Poppins", sans-serif !important;
     font-size: 16px !important;
-    font-weight: 400 !important
+    font-weight: 400 !important;
+    line-height: 1.5
+}
+
+/* The dashboard's legacy skeleton stylesheet sets every `.container` to
+   100vh/flex. Keep the shared footer's Bootstrap container content-sized. */
+footer.front-shared-footer > .container {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    flex-flow: initial !important;
+    justify-content: initial !important;
+    align-items: initial !important
+}
+
+footer.front-shared-footer h3.fs-18 {
+    font-size: 18px !important;
+    font-weight: 500 !important;
+    line-height: 1.2
+}
+
+footer.front-shared-footer .fs-14 {
+    font-size: 14px !important;
+    line-height: 24px
+}
+
+footer.front-shared-footer .fs-13 {
+    font-size: 13px !important
+}
+
+footer.front-shared-footer ul,
+footer.front-shared-footer li {
+    list-style: none
+}
+
+footer.front-shared-footer .footer-logo img {
+    width: 80px;
+    max-width: 120px
 }
 
 footer ul li a {
@@ -13571,6 +13730,9 @@ footer .text-decoration-none {
 
 footer .email input {
     width: 100%;
+    min-width: 0;
+    height: 50px;
+    background: #fff;
     outline: none;
     border: none;
     padding: 0 20px;
@@ -13579,11 +13741,24 @@ footer .email input {
 }
 
 footer .email .icon {
+    flex: 0 0 50px;
     width: 50px;
     height: 50px;
     padding: 17px;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px
+}
+
+footer .email > .icon {
+    padding: 0;
+    overflow: hidden
+}
+
+footer .email > .icon > button.icon {
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    cursor: pointer
 }
 
 footer .social-icon i {
@@ -13629,6 +13804,33 @@ footer .social-icon a:focus {
     font-weight: 500 !important
 }
 
+footer.front-shared-footer .footer-info__block {
+    align-items: center
+}
+
+footer.front-shared-footer .footer-info__block > div {
+    flex: 0 0 20px;
+    width: 20px
+}
+
+footer.front-shared-footer .footer-info__block img {
+    display: block;
+    max-width: 20px;
+    max-height: 20px
+}
+
+footer.front-shared-footer .copy-right p {
+    margin-bottom: 0
+}
+
+[dir="rtl"] footer.front-shared-footer .email input {
+    border-radius: 0 10px 10px 0
+}
+
+[dir="rtl"] footer.front-shared-footer .email > .icon {
+    border-radius: 10px 0 0 10px
+}
+
 #mc-email {
     font-size: 16px !important;
     font-weight: 500 !important
@@ -13641,8 +13843,12 @@ footer .social-icon a:focus {
 }
 
 @media (max-width: 991px) {
-    footer {
+    footer.front-shared-footer {
         padding-top: 50px
+    }
+
+    footer.front-shared-footer h3.fs-18 {
+        font-size: 16px !important
     }
 }
 

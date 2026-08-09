@@ -96,7 +96,7 @@
         <!-- end hero section -->
 
         <!-- start about-comapany section -->
-        <section class="about-company-section pt-60 pb-100">
+        <section class="about-company-section py-60">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-8 mb-lg-0 mb-40">
@@ -160,7 +160,7 @@
                                 @endforeach
                             </div>
                             @if ($jobDetails->count() > 0)
-                                <div class="text-center py-4">
+                                <div class="text-center">
                                     <a href="{{ route('front.search.jobs', ['company' => $companyDetail->id]) }}"
                                         class="btn btn-primary "> @lang('web.common.show_all')</a>
                                 </div>

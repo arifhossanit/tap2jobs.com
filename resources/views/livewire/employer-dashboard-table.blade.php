@@ -61,6 +61,12 @@
                                                 </td>
                                             </tr>
                                         @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="3" class="text-center">
+                                                <span>{{ __('messages.employer_menu.no_data_available') }}.</span>
+                                            </td>
+                                        </tr>
                                     @endif
                                 </tbody>
                                 <!--end::Table body-->

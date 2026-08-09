@@ -1,0 +1,7 @@
+.company-action-modal.modal {
+    z-index: 1200 !important;
+}
+
+body:has(.company-action-modal.show) .modal-backdrop {
+    z-index: 1190 !important;
+}

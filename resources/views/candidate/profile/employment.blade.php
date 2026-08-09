@@ -518,10 +518,7 @@
                     closeOtherEmploymentSections(section);
                     bootstrap.Collapse.getOrCreateInstance(section, { toggle: false }).show();
                     setActiveEmploymentSection(panel.id);
-                    panel.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start',
-                    });
+                    window.scrollCandidateProfileSection(panel);
                 });
             });
 

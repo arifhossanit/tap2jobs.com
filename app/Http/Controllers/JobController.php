@@ -65,9 +65,15 @@ class JobController extends AppBaseController
     public function create(): View
     {
         $data = $this->jobRepository->prepareData();
-        $states = \App\Models\State::toBase()->pluck('name', 'id');
+        $firstCountryId = array_key_first($data['countries']);
+        $selectedCountryId = old('country_id', $data['default_country_id'] ?: $firstCountryId);
+        $selectedStateId = old('state_id');
 
-        return view('employer.jobs.create', compact('data', 'states'));
+        $data['selected_country_id'] = $selectedCountryId;
+        $data['default_country_states'] = $selectedCountryId ? getStates($selectedCountryId) : [];
+        $data['selected_state_cities'] = $selectedStateId ? getCities($selectedStateId) : [];
+
+        return view('employer.jobs.create', compact('data'));
     }
 
     /**
@@ -130,13 +136,14 @@ class JobController extends AppBaseController
         }
         $data = $this->jobRepository->prepareData();
         $data['jobTags'] = $job->jobsTag()->pluck('tag_id')->toArray();
-        $states = $cities = null;
-        if (isset($job->country_id)) {
-            $states = getStates($job->country_id);
-        }
-        if (isset($job->state_id)) {
-            $cities = getCities($job->state_id);
-        }
+        $data['jobSkills'] = $job->jobsSkill()->pluck('skill_id')->toArray();
+        $firstCountryId = array_key_first($data['countries']);
+        $selectedCountryId = old('country_id', $job->country_id ?: ($data['default_country_id'] ?: $firstCountryId));
+        $selectedStateId = old('state_id', $job->state_id);
+
+        $data['selected_country_id'] = $selectedCountryId;
+        $states = $selectedCountryId ? getStates($selectedCountryId) : [];
+        $cities = $selectedStateId ? getCities($selectedStateId) : [];
 
         return view('employer.jobs.edit', compact('data', 'job', 'cities', 'states'));
     }

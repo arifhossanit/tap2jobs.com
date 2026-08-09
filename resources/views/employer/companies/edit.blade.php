@@ -1,7 +1,6 @@
 @extends('employer.layouts.app')
 @section('title')
     {{ __('messages.company.edit_company') }}
-    {{ __('messages.company.edit_company') }}
 @endsection
 @push('css')
     {{--    <link href="{{ asset('assets/css/summernote.min.css') }}" rel="stylesheet" type="text/css"/> --}}
@@ -227,6 +226,14 @@
                     },
                     success: function (result) {
                         if (result.success) {
+                            const savedLogoUrl = result.data?.company_url;
+                            const logoPreview = document.querySelector('.employer-account-logo-picker img');
+
+                            if (savedLogoUrl && logoPreview) {
+                                logoPreview.src = savedLogoUrl + '?v=' + Date.now();
+                            }
+
+                            document.getElementById('employerCompanyLogo').value = '';
                             displaySuccessMessage(result.message);
                         }
                     },
@@ -252,6 +259,46 @@
             });
         }
 
+        const employerAccountSectionHashes = {
+            companyDetailsPanel: '#company-details',
+            contactDetailsPanel: '#contact-details',
+            billingAddressPanel: '#billing-address',
+        };
+
+        function getEmployerAccountScrollOffset() {
+            const fixedHeader = document.querySelector('.fixed-header');
+            const headerHeight = fixedHeader ? fixedHeader.getBoundingClientRect().height : 0;
+
+            return Math.max(headerHeight + 12, 12);
+        }
+
+        function syncEmployerAccountScrollOffset() {
+            document.documentElement.style.setProperty(
+                '--employer-account-scroll-offset',
+                `${getEmployerAccountScrollOffset()}px`
+            );
+        }
+
+        function scrollToEmployerAccountPanel(panel, behavior = 'smooth') {
+            if (!panel) {
+                return;
+            }
+
+            const targetPosition = panel.getBoundingClientRect().top
+                + window.pageYOffset
+                - getEmployerAccountScrollOffset();
+
+            window.scrollTo({ top: Math.max(targetPosition, 0), behavior });
+        }
+
+        function updateEmployerAccountHash(hash, replace = false) {
+            if (!hash || window.location.hash === hash) {
+                return;
+            }
+
+            window.history[replace ? 'replaceState' : 'pushState'](null, '', hash);
+        }
+
         function setEmployerPasswordView(showPassword) {
             const profileForm = document.getElementById('editCompanyForm');
             const passwordPanel = document.getElementById('employerPasswordPanel');
@@ -271,7 +318,6 @@
                 document.querySelectorAll('.employer-account-section-link').forEach(function (link) {
                     link.classList.remove('active');
                 });
-                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
 
@@ -317,7 +363,9 @@
                     setActiveAccountSection('companyDetailsPanel');
                     toggle.setAttribute('aria-expanded', 'true');
                     subnav?.classList.remove('is-collapsed');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    const companyPanel = document.getElementById('companyDetailsPanel');
+                    updateEmployerAccountHash(employerAccountSectionHashes.companyDetailsPanel);
+                    scrollToEmployerAccountPanel(companyPanel);
                     return;
                 }
 
@@ -333,6 +381,8 @@
             const passwordLink = event.target.closest('.employer-account-password-link');
             if (passwordLink) {
                 setEmployerPasswordView(true);
+                updateEmployerAccountHash('#change-password');
+                scrollToEmployerAccountPanel(document.getElementById('employerPasswordPanel'));
                 return;
             }
 
@@ -357,8 +407,8 @@
                 profileSubnav.classList.remove('is-collapsed');
             }
 
-            const targetPosition = targetPanel.getBoundingClientRect().top + window.pageYOffset - 82;
-            window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+            updateEmployerAccountHash(employerAccountSectionHashes[targetPanel.id]);
+            scrollToEmployerAccountPanel(targetPanel);
         });
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -374,9 +424,10 @@
                 }
 
                 let currentPanel = accountPanels[0];
+                const activeThreshold = getEmployerAccountScrollOffset() + 8;
 
                 accountPanels.forEach(function (panel) {
-                    if (panel.getBoundingClientRect().top <= 140) {
+                    if (panel.getBoundingClientRect().top <= activeThreshold) {
                         currentPanel = panel;
                     }
                 });
@@ -385,22 +436,35 @@
             };
 
             window.addEventListener('scroll', updateActiveSection, { passive: true });
+            window.addEventListener('resize', syncEmployerAccountScrollOffset, { passive: true });
+            syncEmployerAccountScrollOffset();
             updateActiveSection();
 
             const applyAccountHash = function () {
                 if (window.location.hash === '#change-password') {
                     setEmployerPasswordView(true);
+                    requestAnimationFrame(function () {
+                        scrollToEmployerAccountPanel(document.getElementById('employerPasswordPanel'), 'auto');
+                    });
                     return;
                 }
 
-                if (window.location.hash === '#company-details') {
+                const sectionId = Object.keys(employerAccountSectionHashes).find(function (panelId) {
+                    return employerAccountSectionHashes[panelId] === window.location.hash;
+                });
+
+                if (sectionId) {
+                    const targetPanel = document.getElementById(sectionId);
                     setEmployerPasswordView(false);
-                    setActiveAccountSection('companyDetailsPanel');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setActiveAccountSection(sectionId);
+                    requestAnimationFrame(function () {
+                        scrollToEmployerAccountPanel(targetPanel, 'auto');
+                    });
                 }
             };
 
             window.addEventListener('hashchange', applyAccountHash);
+            window.addEventListener('popstate', applyAccountHash);
             applyAccountHash();
 
             const primaryIndustryInput = document.getElementById('primaryIndustryId');

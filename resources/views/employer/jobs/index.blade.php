@@ -4,7 +4,7 @@
 @endsection
 @section('content')
     <div class="d-flex flex-column ">
-        @include('flash::message')
+        @include('layouts.flash-toasts')
         <livewire:employer-job-table lazy/>
     </div>
     {{Form::hidden('indexEmployeeJobsData',true,['id'=>'indexEmployeeJobsData'])}}

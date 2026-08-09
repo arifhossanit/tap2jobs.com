@@ -14,9 +14,7 @@
                                     <h5 class="card-title text-secondary fs-18 mb-0">
                                         {{ html_entity_decode(Str::limit($job['job_title'], 50)) }}
                                         @if (isset($job->jobShift->shift))
-                                        <span class="text text-primary fs-6 mb-0 me-3">
-                                            {{ $job->jobShift->shift }}
-                                        </span>
+                                        
                                         @endif
                                     </h5>
                                     <div class="">
@@ -45,7 +43,14 @@
                                         <p class="text text-primary fs-14 mb-0 {{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }}">
                                             {{ !empty($job->jobsSkill[0]->name) ? $job->jobsSkill[0]->name : 'Skill' }}
                                         </p>
-                                        <p class="fs-14 text text-primary mb-0">{{ $job->jobsSkill->count() }}+</p>
+
+                                        {{-- <p class="fs-14 text text-primary mb-0">
+                                            {{ $job->jobsSkill->count() }}+
+                                        </p> --}}
+
+                                        <span class="text text-primary fs-14 mb-0">
+                                            {{ $job->jobShift->shift }}
+                                        </span>
                                     </div>
                                 </div>
                             </div>

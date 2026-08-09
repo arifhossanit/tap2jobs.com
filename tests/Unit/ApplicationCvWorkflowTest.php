@@ -74,7 +74,7 @@ class ApplicationCvWorkflowTest extends TestCase
         $this->assertStringNotContainsString('updateSelectedCv', $applyScript);
         $this->assertStringContainsString("'resumeDetails'", $repository);
         $this->assertStringContainsString("getCustomProperty('is_default', false)", $repository);
-        $this->assertStringContainsString("\$input['resume_id'] = \$selectedResume->id", $repository);
+        $this->assertStringContainsString("'resume_id' => \$selectedResume->id", $repository);
         $this->assertStringContainsString("['section' => 'resume']", file_get_contents(resource_path('views/candidate/profile/profile_menu.blade.php')));
     }
 

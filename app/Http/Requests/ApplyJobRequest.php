@@ -24,7 +24,10 @@ class ApplyJobRequest extends FormRequest
     {
         $expectedSalary = removeCommaFromNumbers($this->request->get('expected_salary'));
 
-        $this->request->set('expected_salary', $expectedSalary);
+        $this->merge([
+            'application_type' => strtolower((string) $this->input('application_type')),
+            'expected_salary' => $expectedSalary === '' ? null : $expectedSalary,
+        ]);
     }
 
     /**
@@ -33,12 +36,14 @@ class ApplyJobRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'job_id' => 'required',
-            'expected_salary' => 'required|numeric|min:0|max:9999999999',
+            'application_type' => 'required|in:apply,draft',
+            'job_id' => 'required|integer|exists:jobs,id',
+            'expected_salary' => 'required_if:application_type,apply|nullable|numeric|min:0|max:9999999999',
+            'notes' => 'nullable|string|max:5000',
         ];
 
         if (getSettingValue('enable_google_recaptcha')) {
-            $rules['g-recaptcha-response'] = 'required';
+            $rules['g-recaptcha-response'] = 'required_if:application_type,apply';
         }
 
         return $rules;
