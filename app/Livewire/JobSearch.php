@@ -37,13 +37,15 @@ class JobSearch extends Component
 
     public $jobExperience = '';
 
+    public bool $freshersOnly = false;
+
     public $featuredJob = '';
 
     private $perPage = 10;
 
     public int $page = 0;
 
-    protected $listeners = ['changeFilter', 'resetFilter'];
+    protected $listeners = ['changeFilter', 'changeSalaryRange', 'resetFilter'];
 
     public function paginationView()
     {
@@ -98,6 +100,17 @@ class JobSearch extends Component
         $this->$param = $value;
     }
 
+    public function changeSalaryRange($from, $to, $maximum = 150000): void
+    {
+        $this->resetPage();
+        $from = max(0, (int) $from);
+        $to = max($from, (int) $to);
+        $maximum = max(1, (int) $maximum);
+
+        $this->salaryFrom = $from > 0 ? $from : '';
+        $this->salaryTo = $to < $maximum ? $to : '';
+    }
+
     public function resetFilter()
     {
         $this->reset();
@@ -132,11 +145,11 @@ class JobSearch extends Component
         });
 
         $query->when(! empty($this->salaryFrom), function (Builder $q) {
-            $q->where('salary_from', '>=', $this->salaryFrom);
+            $q->where('salary_to', '>=', $this->salaryFrom);
         });
 
         $query->when(! empty($this->salaryTo), function (Builder $q) {
-            $q->where('salary_to', '<=', $this->salaryTo);
+            $q->where('salary_from', '<=', $this->salaryTo);
         });
 
         $query->when(! empty($this->careerLevel), function (Builder $q) {
@@ -163,7 +176,11 @@ class JobSearch extends Component
         });
 
         $query->when(! empty($this->jobExperience), function (Builder $q) {
-            $q->where('experience', '=', $this->jobExperience);
+            $q->where('experience', '<=', $this->jobExperience);
+        });
+
+        $query->when($this->freshersOnly, function (Builder $q) {
+            $q->where('freshers_encouraged', true);
         });
 
         $query->when(! empty($this->featuredJob), function (Builder $q) {

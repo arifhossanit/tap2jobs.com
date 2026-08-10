@@ -39,154 +39,17 @@
 
         <section class="latest-job-section py-60">
             <div class="container">
-                <div class="row">
-                    <div class="col-lg-4 px-lg-3">
-                        <div class="latest-job-left br-10 px-40 bg-light">
-                            <form>
-                                <div class="form-group mb-md-4 mb-3 ">
-                                    <div class="d-flex mb-3 justify-content-between flex-wrap">
-                                        <label for="" class="fs-16 text-secondary mb-3">@lang('web.web_jobs.search_by_keywords')</label>
-                                        <button
-                                            class="btn btn-sm btn-primary  reset-filter mb-2 px-3 py-1 ms-1">{{ __('web.reset_filter') }}</button>
-                                    </div>
-                                    <input type="text" class="form-control fs-14 text-gray bg-white br-10 p-3"
-                                        value="{{ request()->input('keywords') }}" name="listing-search"
-                                        id="searchByLocation" placeholder="@lang('web.web_home.job_title_keywords_company')">
-                                </div>
-                                <div class="form-group mb-md-4 mb-3 ">
-                                    <label for="" class="fs-16 text-secondary mb-3">@lang('web.post_menu.categories')</label>
-                                    <select class="form-select fs-14 text-gray bg-white br-10 p-3" aria-label="None"
-                                        data-live-search="true" data-size="5" name="search-categories"
-                                        id="searchCategories">
-                                        <option value="">@lang('web.job_menu.none')</option>
-                                        @foreach ($jobCategories as $key => $value)
-                                            <option value="{{ $key }}"
-                                                {{ request()->get('categories') == $key ? 'selected' : '' }}>
-                                                {{ html_entity_decode($value) }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group mb-md-3 mb-3 ">
-                                    <label for="" class="fs-16 text-secondary ">
-                                        @lang('messages.candidate.candidate_skill')</label>
-                                    @if ($jobSkills->isNotEmpty())
-                                        <select class="form-select fs-14 text-gray bg-white br-10 p-3" aria-label="None"
-                                            data-live-search="true" data-size="5" name="search-skills" id="searchSkill">
-                                            <option value="">@lang('web.job_menu.none')</option>
-                                            @foreach ($jobSkills as $key => $value)
-                                                <option value="{{ $key }}">
-                                                    {{ html_entity_decode($value) }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    @endif
-                                </div>
-                                <div class="form-group mb-md-4 mb-3 ">
-                                    <label for="" class="fs-16 text-secondary mb-3">@lang('messages.candidate.gender')</label>
-                                    <select class="form-select fs-14 text-gray bg-white br-10 p-3" aria-label="None"
-                                        data-live-search="true" data-size="5" name="search-gender" id="searchGender">
-                                        <option value="">@lang('web.job_menu.none')</option>
-                                        @foreach ($genders as $key => $value)
-                                            <option value="{{ $key }}">
-                                                {{ html_entity_decode($value) }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group mb-md-4 mb-3 ">
-                                    <label for="" class="fs-16 text-secondary mb-3">@lang('messages.job.career_level')</label>
-                                    @if ($functionalAreas->isNotEmpty())
-                                        <select class="form-select fs-14 text-gray bg-white br-10 p-3" aria-label="None"
-                                            data-live-search="true" data-size="5" name="search-career-level"
-                                            id="searchCareerLevel">
-                                            <option value="">@lang('web.job_menu.none')</option>
-                                            @foreach ($careerLevels as $key => $value)
-                                                <option value="{{ $key }}">
-                                                    {{ html_entity_decode($value) }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    @endif
-                                </div>
-                                <div class="form-group mb-md-4 mb-3 ">
-                                    <label for="" class="fs-16 text-secondary mb-3">@lang('messages.job.functional_area')</label>
-                                    @if ($functionalAreas->isNotEmpty())
-                                        <select class="form-select fs-14 text-gray bg-white br-10 p-3" aria-label="None"
-                                            data-live-search="true" data-size="5" name="search-functional-area"
-                                            id="searchFunctionalArea">
-                                            <option value="">@lang('web.job_menu.none')</option>
-                                            @foreach ($functionalAreas as $key => $value)
-                                                <option value="{{ $key }}">
-                                                    {{ html_entity_decode($value) }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    @endif
-                                </div>
-                                @if ($jobTypes->isNotEmpty())
-                                    <div class="form-group mb-md-4 mb-3 ">
-                                        <label for="" class="fs-16 text-secondary mb-3">
-                                            @lang('web.job_menu.type')
-                                        </label>
-                                        @foreach ($jobTypes as $key => $jobType)
-                                            @if ($jobType->jobs_count > 0)
-                                                @if (Str::length($jobType->name) < 50)
-                                                    <div class="form-group d-flex justify-content-between mb-2">
-                                                        <label class="form-check-label fs-14 text-gray mb-2"
-                                                            for="{{ $jobType->id }}">
-                                                            {{ html_entity_decode($jobType->name) }}
-                                                            {{ $jobType->jobs_count > 0 ? '(' . $jobType->jobs_count . ')' : '' }}
-                                                        </label>
-                                                        <div class="form-check ">
-                                                            <input class="form-check-input jobType" type="checkbox"
-                                                                role="switch" name="job-type" id="{{ $jobType->id }}"
-                                                                value="{{ $jobType->id }}">
-                                                        </div>
-                                                    </div>
-                                                @else
-                                                    <div class="form-group d-flex justify-content-between ">
-                                                        <label class="form-check-label fs-14 text-gray mb-2"
-                                                            for="{{ $jobType->id }}" data-toggle="tooltip"
-                                                            data-placement="bottom" title="{{ $jobType->name }}">
-                                                            {{ html_entity_decode(Str::limit($jobType->name, 50, '...')) }}
-                                                        </label>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input jobType" type="checkbox"
-                                                                role="switch" name="job-type" id="{{ $jobType->id }}"
-                                                                value="{{ $jobType->id }}">
-                                                        </div>
-                                                    </div>
-                                                @endif
-                                            @endif
-                                        @endforeach
-                                    </div>
-                                @endif
-                                <div class="form-group mb-md-4 mb-3">
-                                    <label for="" class="fs-16 text-secondary mb-3">@lang('web.job_menu.salary_from'):</label>
-                                    <div dir="ltr">
-                                        <input type="text" id="salaryFrom" autocomplete="off" class="slider "
-                                            tabindex="-1" readonly="">
-                                    </div>
-                                </div>
-                                <div class="form-group mb-md-4 mb-3">
-                                    <label for="" class="fs-16 text-secondary mb-3">@lang('web.job_menu.salary_to'):</label>
-                                    <div dir="ltr">
-                                        <input type="text" id="salaryTo" autocomplete="off" class="slider2 "
-                                            tabindex="-1" readonly="">
-                                    </div>
-
-                                </div>
-                                <div class="form-group ">
-                                    <label for="" class="fs-16 text-secondary mb-3">@lang('messages.candidate.experience'):</label>
-                                    <div dir="ltr">
-                                        <input type="text" id="jobExperience" autocomplete="off" class="slider3 "
-                                            tabindex="-1" readonly="">
-                                    </div>
-
-                                </div>
-                        </div>
-                        </form>                        
+                <div class="row g-4 align-items-start">
+                    <div class="col-lg-4 find-jobs-filter-column">
+                        <x-front.job-search-filter
+                            :job-categories="$jobCategories"
+                            :job-skills="$jobSkills"
+                            :genders="$genders"
+                            :career-levels="$careerLevels"
+                            :functional-areas="$functionalAreas"
+                            :job-types="$jobTypes"
+                            :input="$input"
+                        />
                     </div>
                     <div class="col-lg-8 px-lg-3">
                         <div class="job-card">

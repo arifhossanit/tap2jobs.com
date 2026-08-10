@@ -94,7 +94,7 @@
         </div>
         <div class="theme-wrapper d-flex flex-column flex-row-fluid">
             <div class='d-flex flex-column flex-row-fluid'>
-                <div class="d-flex flex-column flex-column-fluid pt-7">
+                <div class="d-flex flex-column flex-column-fluid py-7">
                     <div class="content flex-column-fluid">
                         <div class="container-fluid container-xxl">
                             @yield('content')

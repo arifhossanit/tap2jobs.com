@@ -188,6 +188,7 @@ mix.styles([
     'resources/assets/front_web_css/contact-us.css',
     'resources/assets/front_web_css/custom.css',
     'resources/assets/front_web_css/home.css',
+    'resources/assets/front_web_css/jobs.css',
     'resources/assets/front_web_css/job-details.css',
     'resources/assets/front_web_css/layout.css',
     'resources/assets/front_web_css/footer.css',

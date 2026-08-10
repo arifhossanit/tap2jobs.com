@@ -2488,148 +2488,102 @@ listenHiddenBsModal('#reportJobAbuseModal', function () {
 $(window).scrollTop(0);
 document.addEventListener('DOMContentLoaded', loadJobSearchData);
 function loadJobSearchData() {
-  var salaryFromSlider = $('#salaryFrom');
-  var salaryToSlider = $('#salaryTo');
-  if (!$('#salaryFrom').length && !$('#salaryTo').length) {
-    return;
-  }
+  var salaryRangeSlider = $('#salaryRange');
   var jobExperienceSlider = $('#jobExperience');
-  if (!salaryFromSlider.length && !salaryToSlider.length && !jobExperienceSlider.length) {
+  if (!salaryRangeSlider.length && !jobExperienceSlider.length) {
     return;
   }
-  $('#searchCategories').select2();
-  $('#searchSkill').select2();
-  $('#searchGender').select2();
-  $('#searchCareerLevel').select2();
-  $('#searchFunctionalArea').select2();
-  var input = JSON.parse($('#input').val());
-  $('input[name=job-type]').prop('checked', false);
-  if ($('#jobExperience').length) {
-    var rangEle = $('#jobExperience').siblings()[1];
-    if (typeof rangEle !== "undefined") {
-      rangEle.remove();
+  ['#searchCategories', '#searchSkill', '#searchGender', '#searchCareerLevel', '#searchFunctionalArea'].forEach(function (selector) {
+    if ($(selector).length) {
+      $(selector).select2({
+        width: '100%'
+      });
     }
+  });
+  var input = $('#input').val() ? JSON.parse($('#input').val()) : {};
+  if (jobExperienceSlider.length) {
     $('#jobExperience').ionRangeSlider({
       type: 'single',
       min: 0,
+      from: 0,
       step: 1,
       max: 30,
       max_postfix: '+',
+      postfix: ' Years',
       onFinish: function onFinish(data) {
         Livewire.dispatch('changeFilter', {
           param: 'jobExperience',
-          value: data.from
+          value: data.from > 0 ? data.from : ''
         });
       }
     });
-    $('#jobExperience').addClass('irs-hidden-input');
+    jobExperienceSlider.addClass('irs-hidden-input');
   }
-  // $("#salaryFrom").ionRangeSlider({
-  //     min: 0,
-  //     max: 150000,
-  //     from: 0,
-  // });
-  if (salaryFromSlider.length) {
-    var rangEle = $('#salaryFrom').siblings()[1];
-    if (typeof rangEle !== "undefined") {
-      rangEle.remove();
-    }
-    $("#salaryFrom").ionRangeSlider({
-      type: 'single',
+  if (salaryRangeSlider.length) {
+    var salaryMaximum = Number(salaryRangeSlider.data('max')) || 150000;
+    salaryRangeSlider.ionRangeSlider({
+      type: 'double',
       min: 0,
-      step: 100,
-      max: 150000,
+      max: salaryMaximum,
+      from: 0,
+      to: salaryMaximum,
+      step: 1000,
       max_postfix: '+',
+      prettify_separator: ',',
       onFinish: function onFinish(data) {
-        Livewire.dispatch('changeFilter', {
-          param: 'salaryFrom',
-          value: data.from
+        Livewire.dispatch('changeSalaryRange', {
+          from: data.from,
+          to: data.to,
+          maximum: salaryMaximum
         });
       }
     });
-    $('#salaryFrom').addClass('irs-hidden-input');
+    salaryRangeSlider.addClass('irs-hidden-input');
   }
-  if (salaryToSlider.length) {
-    var rangEle = salaryToSlider.siblings()[1];
-    if (typeof rangEle !== "undefined") {
-      rangEle.remove();
-    }
-    salaryToSlider.ionRangeSlider({
-      type: 'single',
-      min: 0,
-      step: 100,
-      max: 150000,
-      max_postfix: '+',
-      onFinish: function onFinish(data) {
-        Livewire.dispatch('changeFilter', {
-          param: 'salaryTo',
-          value: data.from
-        });
-      }
-    });
-    salaryToSlider.addClass('irs-hidden-input');
-  }
-  if (input.length > 0 && input.location != '') {
+  if (input.location) {
     $('#searchByLocation').val(input.location);
-    Livewire.dispatch('changeFilter', {
-      param: 'searchByLocation',
-      value: input.location
-    });
-  }
-  if (input.length > 0 && input.keywords != '') {
-    Livewire.dispatch('changeFilter', {
-      param: 'title',
-      value: input.keywords
-    });
-  }
-
-  // $(document).on('change', '.jobType',function () {
-  if ($(window).width() > 991) {
-    $('#search-jobs-filter').show();
-    $('#collapseBtn').hide();
-  } else {
-    $('.job-post-sidebar').hide();
-    $('#collapseBtn').click(function () {
-      $('.job-post-sidebar').show();
-    });
   }
   listenClick('.reset-filter', function (event) {
     event.preventDefault();
     Livewire.dispatch('resetFilter');
-    salaryFromSlider.data('ionRangeSlider').update({
-      from: 0,
-      to: 0
-    });
-    salaryToSlider.data('ionRangeSlider').update({
-      from: 0,
-      to: 0
-    });
-    jobExperienceSlider.data('ionRangeSlider').update({
-      from: 0,
-      to: 0
-    });
+    var salaryInstance = salaryRangeSlider.data('ionRangeSlider');
+    var experienceInstance = jobExperienceSlider.data('ionRangeSlider');
+    if (salaryInstance) {
+      salaryInstance.update({
+        from: 0,
+        to: Number(salaryRangeSlider.data('max')) || 150000
+      });
+    }
+    if (experienceInstance) {
+      experienceInstance.update({
+        from: 0
+      });
+    }
     $('#searchByLocation').val("");
     $('#searchFunctionalArea').val('').trigger("change");
     $('#searchCareerLevel').val('').trigger("change");
-    $('#searchGender').val('').val('').trigger("change");
-    $('#searchSkill').val('').val('').trigger("change");
+    $('#searchGender').val('').trigger("change");
+    $('#searchSkill').val('').trigger("change");
     $("#searchCategories").val('').trigger("change");
     $('.jobType').prop('checked', false);
+    $('#fresherJobs').prop('checked', false);
   });
 }
 listenChange('.jobType', function () {
   var jobType = [];
-  $('input:checkbox[name=job-type]:checked').each(function () {
+  $('.jobType:checked').each(function () {
     jobType.push($(this).val());
   });
-  if (jobType.length > 0) {
-    Livewire.dispatch('changeFilter', {
-      param: 'types',
-      value: jobType
-    });
-  } else {
-    Livewire.dispatch('resetFilter');
-  }
+  Livewire.dispatch('changeFilter', {
+    param: 'types',
+    value: jobType
+  });
+});
+listenChange('#fresherJobs', function () {
+  Livewire.dispatch('changeFilter', {
+    param: 'freshersOnly',
+    value: $(this).is(':checked')
+  });
 });
 document.addEventListener('livewire:load', function () {
   window.livewire.hook('message.processed', function () {
