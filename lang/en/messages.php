@@ -167,6 +167,8 @@ return [
         'process' => 'Processing...',
         'saving' => 'Saving...',
         'save_failed' => 'Unable to save changes. Please try again.',
+        'saving' => 'Saving...',
+        'save_failed' => 'Unable to save changes. Please try again.',
         'are_you_sure' => 'Are you sure want to delete this',
         'no_cancel' => 'No, Cancel',
         'yes_delete' => 'Yes, Delete!',
