@@ -4,6 +4,43 @@
     {{ __('web.register') }}
 @endsection
 
+@section('page_css')
+<style>
+/* Employer Register Form Validation Red Focus & Border Highlight */
+#addEmployerNewForm .form-control.is-invalid,
+#addEmployerNewForm .form-select.is-invalid,
+#addEmployerNewForm .employer-user-information-input .form-control.is-invalid,
+#addEmployerNewForm .employer-company-information-control.is-invalid,
+#addEmployerNewForm .employer-contact-information-control.is-invalid,
+#addEmployerNewForm .is-invalid {
+    border-color: #dc3545 !important;
+}
+
+#addEmployerNewForm .form-control.is-invalid:focus,
+#addEmployerNewForm .form-select.is-invalid:focus,
+#addEmployerNewForm .employer-user-information-input .form-control.is-invalid:focus,
+#addEmployerNewForm .employer-company-information-control.is-invalid:focus,
+#addEmployerNewForm .employer-contact-information-control.is-invalid:focus,
+#addEmployerNewForm .form-control.is-invalid:focus-visible,
+#addEmployerNewForm .is-invalid:focus {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.25) !important;
+    outline: none !important;
+}
+
+#addEmployerNewForm .employer-company-employee-options.is-invalid {
+    border: 1.5px solid #dc3545 !important;
+    box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.25) !important;
+    border-radius: 8px;
+}
+
+#addEmployerNewForm .employer-company-industry-options.is-invalid {
+    border: 1.5px solid #dc3545 !important;
+    box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.25) !important;
+}
+</style>
+@endsection
+
 @section('content')
     <div class="register-page">
         <section class="hero-section position-relative bg-gradient pt-15 pb-40">
@@ -28,9 +65,8 @@
             </div>
         </section>
 
-<<<<<<< HEAD
         <!-- start candidate login section -->
-        <section class="py-100">
+        <section class="py-60">
             <div class="p-4">
                 @php
                     $registerLeftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT);
@@ -46,12 +82,6 @@
                     @else
                         <div class="col-xl-6 col-lg-8 mx-auto">
                     @endif
-=======
-        <section class="employer-register-content">
-            <div class="container">
-                <div class="row">
-                    <div class="mx-auto">
->>>>>>> f784efedf471acf57cea89d298f2110b9ca9b208
                         @include('flash::message')
 
                         <form method="POST" action="{{ route('front.save.register') }}" id="addEmployerNewForm"

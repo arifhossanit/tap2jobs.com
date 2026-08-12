@@ -32,4 +32,17 @@ class AboutUsController extends AppBaseController
 
         return view('front_web.about_us.index', compact('faqLists', 'settings'));
     }
+
+    /**
+     * Display Candidate FAQ page.
+     *
+     * @return View
+     */
+    public function candidateFaq(): View
+    {
+        $faqLists = FAQ::toBase()->get();
+        $settings = CmsServices::pluck('value', 'key');
+
+        return view('front_web.candidate_faq.index', compact('faqLists', 'settings'));
+    }
 }

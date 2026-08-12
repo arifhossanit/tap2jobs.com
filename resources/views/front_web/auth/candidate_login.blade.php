@@ -31,7 +31,7 @@
 
         <!-- start candidate login section -->
         <section class="py-100">
-            <div class="p-4">
+            <div class="container">
                 @php
                     $registerLeftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT);
                     $registerRightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT);

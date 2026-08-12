@@ -2,6 +2,31 @@
 @section('title')
     {{ __('web.register') }}
 @endsection
+
+@section('page_css')
+<style>
+/* Candidate Register Form Validation Red Focus & Border Highlight */
+#addCandidateNewForm .form-control.is-invalid,
+#addCandidateNewForm .form-select.is-invalid,
+#addCandidateNewForm .is-invalid {
+    border-color: #dc3545 !important;
+}
+
+#addCandidateNewForm .form-control.is-invalid:focus,
+#addCandidateNewForm .form-select.is-invalid:focus,
+#addCandidateNewForm .form-control.is-invalid:focus-visible,
+#addCandidateNewForm .is-invalid:focus {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.25) !important;
+    outline: none !important;
+}
+
+#addCandidateNewForm .form-check-input.is-invalid {
+    outline: 2px solid #dc3545 !important;
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.35) !important;
+}
+</style>
+@endsection
 @section('content')
     <div class="register-page">
         <!-- start hero section -->
@@ -31,7 +56,7 @@
         <!-- end hero section -->
 
         <!-- start candidate login section -->
-        <section class="py-100">
+        <section class="py-60">
             <div class="p-4">
                 @php
                     $registerLeftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT);
@@ -141,7 +166,7 @@
                             </div>
                             <div class="col-12 mb-4">
                                 <div class="form-check">
-                                    <input type="checkbox" name="privacyPolicy" class="form-check-input" id="remember">
+                                    <input type="checkbox" name="privacyPolicy" class="form-check-input" id="remember" required>
                                     <label class="form-check-label" for="remember">
                                         @lang('messages.by_signing_up_you_agree_to_our')
                                         <a href="{{ route('terms.conditions.list') }}" target="_blank"

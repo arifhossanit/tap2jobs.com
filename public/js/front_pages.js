@@ -1573,12 +1573,73 @@ function loadFrontRegisterData() {
     resetModalForm('#employeeForm', '#employerValidationErrBox');
   });
   loadEmployerRegistrationForm();
+  loadCandidateRegistrationForm();
+}
+function loadCandidateRegistrationForm() {
+  var form = document.getElementById('addCandidateNewForm');
+  if (!form) {
+    return;
+  }
+  form.addEventListener('blur', function (e) {
+    if (e.target && e.target.hasAttribute('required')) {
+      if (!e.target.value || !e.target.value.trim() || !e.target.checkValidity()) {
+        e.target.classList.add('is-invalid');
+      } else {
+        e.target.classList.remove('is-invalid');
+      }
+    }
+  }, true);
+  form.addEventListener('input', function (e) {
+    if (e.target && e.target.classList.contains('is-invalid')) {
+      if (e.target.value && e.target.value.trim() && e.target.checkValidity()) {
+        e.target.classList.remove('is-invalid');
+      }
+    }
+  });
+  form.addEventListener('change', function (e) {
+    if (e.target && e.target.classList.contains('is-invalid')) {
+      if (e.target.checkValidity()) {
+        e.target.classList.remove('is-invalid');
+      }
+    }
+  });
 }
 function loadEmployerRegistrationForm() {
   var form = document.getElementById('addEmployerNewForm');
   if (!form) {
     return;
   }
+  form.addEventListener('blur', function (e) {
+    if (e.target && e.target.hasAttribute('required')) {
+      if (!e.target.value || !e.target.value.trim() || !e.target.checkValidity()) {
+        e.target.classList.add('is-invalid');
+      } else {
+        e.target.classList.remove('is-invalid');
+      }
+    }
+  }, true);
+  form.addEventListener('input', function (e) {
+    if (e.target && e.target.classList.contains('is-invalid')) {
+      if (e.target.value && e.target.value.trim() && e.target.checkValidity()) {
+        e.target.classList.remove('is-invalid');
+      }
+    }
+  });
+  form.addEventListener('change', function (e) {
+    if (e.target && e.target.classList.contains('is-invalid')) {
+      if (e.target.checkValidity()) {
+        e.target.classList.remove('is-invalid');
+      }
+    }
+    if (e.target && e.target.name === 'employee_range') {
+      var options = form.querySelector('.employer-company-employee-options');
+      if (options) options.classList.remove('is-invalid');
+    }
+    if (e.target && e.target.closest('#registerIndustryOptions')) {
+      var options = document.getElementById('registerIndustryOptions');
+      if (options) options.classList.remove('is-invalid');
+    }
+  });
   var username = document.getElementById('employerUsername');
   var usernameFeedback = document.getElementById('employerUsernameFeedback');
   var password = document.getElementById('employerPassword');
@@ -1977,11 +2038,52 @@ function loadEmployerRegistrationForm() {
 }
 listenSubmit('#addCandidateNewForm', function (e) {
   e.preventDefault();
-  // if ($('#isGoogleReCaptchaEnabled').val()) {
-  //     if (!checkGoogleReCaptcha(1)) {
-  //         return true;
-  //     }
-  // }
+  var candidateForm = this;
+  candidateForm.querySelectorAll('.is-invalid').forEach(function (input) {
+    input.classList.remove('is-invalid');
+  });
+
+  var isValid = true;
+  var firstInvalidElement = null;
+
+  var requiredControls = candidateForm.querySelectorAll('input[required], select[required], textarea[required]');
+  requiredControls.forEach(function (control) {
+    if (control.disabled) return;
+
+    if (control.type === 'checkbox') {
+      if (!control.checked) {
+        isValid = false;
+        control.classList.add('is-invalid');
+        if (!firstInvalidElement) firstInvalidElement = control;
+      }
+    } else {
+      if (!control.value || !control.value.trim() || !control.checkValidity()) {
+        isValid = false;
+        control.classList.add('is-invalid');
+        if (!firstInvalidElement) firstInvalidElement = control;
+      }
+    }
+  });
+
+  var password = document.getElementById('candidatePassword');
+  var confirmPassword = document.getElementById('candidateConfirmPassword');
+  if (password && confirmPassword && confirmPassword.value !== password.value) {
+    isValid = false;
+    confirmPassword.classList.add('is-invalid');
+    if (!firstInvalidElement) firstInvalidElement = confirmPassword;
+  }
+
+  if (!isValid) {
+    displayErrorMessage('Please fill in all required fields.');
+    if (firstInvalidElement) {
+      firstInvalidElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(function () {
+        firstInvalidElement.focus();
+      }, 100);
+    }
+    return;
+  }
+
   processingBtn('#addCandidateNewForm', '#btnCandidateSave', 'loading');
   $.ajax({
     url: route('front.save.register'),
@@ -1996,7 +2098,19 @@ listenSubmit('#addCandidateNewForm', function (e) {
       }
     },
     error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
+      var response = result.responseJSON || {};
+      var errors = response.errors || {};
+      var firstErrorKey = Object.keys(errors)[0];
+      var firstMessage = firstErrorKey && errors[firstErrorKey] ? errors[firstErrorKey][0] : response.message || 'Registration could not be completed. Please review the form.';
+      if (firstErrorKey) {
+        var field = candidateForm.querySelector('[name="' + firstErrorKey + '"]');
+        if (field) {
+          field.classList.add('is-invalid');
+          field.focus();
+          field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+      displayErrorMessage(firstMessage);
     },
     complete: function complete() {
       processingBtn('#addCandidateNewForm', '#btnCandidateSave');
@@ -2009,31 +2123,77 @@ listenSubmit('#addEmployerNewForm', function (e) {
   var usernameInput = document.getElementById('employerUsername');
   var usernameFeedback = document.getElementById('employerUsernameFeedback');
   var confirmPasswordInput = document.getElementById('employerConfirmPassword');
+
   employerForm.querySelectorAll('.employer-server-validation-message').forEach(function (message) {
     message.remove();
   });
   employerForm.querySelectorAll('.is-invalid').forEach(function (input) {
-    if (!input.matches('#employerUsername, #employerConfirmPassword')) {
-      input.classList.remove('is-invalid');
+    input.classList.remove('is-invalid');
+  });
+
+  var isValid = true;
+  var firstInvalidElement = null;
+
+  var requiredControls = employerForm.querySelectorAll('input[required], select[required], textarea[required]');
+  requiredControls.forEach(function (control) {
+    if (control.disabled) return;
+
+    if (control.type === 'radio') {
+      var name = control.name;
+      var checked = employerForm.querySelector('input[name="' + name + '"]:checked');
+      if (!checked) {
+        isValid = false;
+        control.classList.add('is-invalid');
+        var radioContainer = control.closest('.employer-company-employee-options') || control.parentElement;
+        if (radioContainer) radioContainer.classList.add('is-invalid');
+        if (!firstInvalidElement) firstInvalidElement = control;
+      }
+    } else if (control.type === 'checkbox') {
+      if (!control.checked) {
+        isValid = false;
+        control.classList.add('is-invalid');
+        if (!firstInvalidElement) firstInvalidElement = control;
+      }
+    } else {
+      if (!control.value || !control.value.trim() || !control.checkValidity()) {
+        isValid = false;
+        control.classList.add('is-invalid');
+        if (!firstInvalidElement) firstInvalidElement = control;
+      }
     }
   });
+
   if (usernameInput && employerForm.dataset.usernameAvailable === 'false') {
+    isValid = false;
     showLiveRegistrationError(usernameInput, usernameFeedback, 'This Username already exists. Try another.');
-    usernameInput.focus();
-    return;
+    usernameInput.classList.add('is-invalid');
+    if (!firstInvalidElement) firstInvalidElement = usernameInput;
   }
+
   if (confirmPasswordInput && !confirmPasswordInput.checkValidity()) {
-    confirmPasswordInput.reportValidity();
+    isValid = false;
+    confirmPasswordInput.classList.add('is-invalid');
+    if (!firstInvalidElement) firstInvalidElement = confirmPasswordInput;
+  }
+
+  var industryOptions = document.getElementById('registerIndustryOptions');
+  if (industryOptions && !industryOptions.querySelector('input[type="checkbox"]:checked')) {
+    isValid = false;
+    industryOptions.classList.add('is-invalid');
+    if (!firstInvalidElement) firstInvalidElement = industryOptions;
+  }
+
+  if (!isValid) {
+    displayErrorMessage('Please fill in all required fields.');
+    if (firstInvalidElement) {
+      firstInvalidElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(function () {
+        firstInvalidElement.focus();
+      }, 100);
+    }
     return;
   }
-  if (!document.querySelector('#registerIndustryOptions input[type="checkbox"]:checked')) {
-    displayErrorMessage('Please select at least one industry.');
-    document.getElementById('registerIndustryOptions').scrollIntoView({
-      behavior: 'smooth',
-      block: 'center'
-    });
-    return;
-  }
+
   processingBtn('#addEmployerNewForm', '#btnEmployerSave', 'loading');
   //
   // if ($('#isGoogleReCaptchaEnabled').val()) {

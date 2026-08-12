@@ -86,6 +86,8 @@
                 }
             </style>
         @endif
+    @yield('page_css')
+    @yield('css')
 </head>
 <script data-turbo-eval="false">
     let lancode = "{{ checkLanguageSession() }}";
@@ -101,7 +103,7 @@
             </div>
             <div class="theme-wrapper d-flex flex-column flex-row-fluid">
                 <div class='d-flex flex-column flex-row-fluid'>
-                    <div class="d-flex flex-column flex-column-fluid pt-7">
+                    <div class="d-flex flex-column flex-column-fluid py-7">
                         <div class="content flex-column-fluid">
                             <div class="container-fluid container-xxl">
                                 @yield('content')
@@ -122,6 +124,8 @@
         let defaultCountryCodeValue = "{{ getSettingValue('default_country_code') }}"
         Lang.setLocale(getLoggedInUserLang)
     </script>
+    @yield('page_scripts')
+    @yield('scripts')
     @stack('scripts')
 </body>
 

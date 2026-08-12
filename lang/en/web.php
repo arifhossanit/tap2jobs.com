@@ -242,6 +242,11 @@ return [
     //footer keys
     'footer' => [
         'useful_links' => 'Useful Links',
+        'about_us' => 'About Us',
+        'job_seekers' => 'Job Seekers',
+        'recruiter' => 'Recruiter',
+        'post_a_job' => 'Post a Job',
+        'my_panel' => 'My Panel',
         'newsletter' => 'Newsletter',
         'newsletter_text' => 'Stay Connected with our regular updates by subscribing our newsletter.',
         'copyright' => 'Copyright',

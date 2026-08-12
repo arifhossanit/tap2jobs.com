@@ -8,6 +8,79 @@ function loadwebCustomData () {
     },500)
 }
 
+// Global Red Focus Form Validation System
+document.addEventListener('blur', function (e) {
+    if (e.target && e.target.hasAttribute && e.target.hasAttribute('required')) {
+        if (!e.target.value || !e.target.value.trim() || !e.target.checkValidity()) {
+            e.target.classList.add('is-invalid');
+        } else {
+            e.target.classList.remove('is-invalid');
+        }
+    }
+}, true);
+
+document.addEventListener('input', function (e) {
+    if (e.target && e.target.classList && e.target.classList.contains('is-invalid')) {
+        if (e.target.value && e.target.value.trim() && e.target.checkValidity()) {
+            e.target.classList.remove('is-invalid');
+        }
+    }
+});
+
+document.addEventListener('change', function (e) {
+    if (e.target && e.target.classList && e.target.classList.contains('is-invalid')) {
+        if (e.target.checkValidity()) {
+            e.target.classList.remove('is-invalid');
+        }
+    }
+});
+
+window.validateFormWithRedFocus = function (form) {
+    if (!form) return true;
+    let isValid = true;
+    let firstInvalid = null;
+
+    form.classList.add('was-validated');
+
+    const requiredControls = form.querySelectorAll('input[required], select[required], textarea[required]');
+    requiredControls.forEach(function (control) {
+        if (control.disabled) return;
+
+        if (control.type === 'radio') {
+            const name = control.name;
+            const checked = form.querySelector('input[name="' + name + '"]:checked');
+            if (!checked) {
+                isValid = false;
+                control.classList.add('is-invalid');
+                const container = control.closest('.employer-company-employee-options') || control.closest('.form-group') || control.parentElement;
+                if (container) container.classList.add('is-invalid');
+                if (!firstInvalid) firstInvalid = control;
+            }
+        } else if (control.type === 'checkbox') {
+            if (!control.checked) {
+                isValid = false;
+                control.classList.add('is-invalid');
+                if (!firstInvalid) firstInvalid = control;
+            }
+        } else {
+            if (!control.value || !control.value.trim() || !control.checkValidity()) {
+                isValid = false;
+                control.classList.add('is-invalid');
+                if (!firstInvalid) firstInvalid = control;
+            }
+        }
+    });
+
+    if (!isValid && firstInvalid) {
+        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(function () {
+            firstInvalid.focus();
+        }, 100);
+    }
+
+    return isValid;
+};
+
 window.manageFrontAjaxErrors = function (data) {
     var errorDivId = arguments.length > 1 && arguments[1] !== undefined
         ? arguments[1]

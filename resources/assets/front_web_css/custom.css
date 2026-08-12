@@ -2921,3 +2921,40 @@ input, select
     object-fit: contain;
     max-height: 420px;
 }
+
+/* GLOBAL RED FOCUS AND BORDER HIGHLIGHT FOR ALL FORMS AND REQUIRED INPUTS */
+.is-invalid,
+.form-control.is-invalid,
+.form-select.is-invalid,
+.employer-user-information-input .form-control.is-invalid,
+.employer-company-information-control.is-invalid,
+.employer-contact-information-control.is-invalid,
+.was-validated :invalid {
+    border-color: #dc3545 !important;
+}
+
+.is-invalid:focus,
+.is-invalid:focus-visible,
+.form-control.is-invalid:focus,
+.form-select.is-invalid:focus,
+.employer-user-information-input .form-control.is-invalid:focus,
+.employer-company-information-control.is-invalid:focus,
+.employer-contact-information-control.is-invalid:focus,
+.was-validated :invalid:focus {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.25) !important;
+    outline: none !important;
+}
+
+.employer-company-employee-options.is-invalid,
+.employer-company-industry-options.is-invalid {
+    border: 1.5px solid #dc3545 !important;
+    box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.25) !important;
+    border-radius: 8px;
+}
+
+.employer-pricing-policy-check.is-invalid,
+.form-check-input.is-invalid {
+    outline: 2px solid #dc3545 !important;
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.35) !important;
+}
