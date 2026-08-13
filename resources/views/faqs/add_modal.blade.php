@@ -15,6 +15,10 @@
                     <i class="fa-solid fa-face-frown me-5"></i>
                 </div>
                 <div class="mb-5">
+                    {{ Form::label('faq_category_id', 'Category:', ['class' => 'form-label']) }}
+                    {{ Form::select('faq_category_id', $faqCategories ?? [], null, ['class' => 'form-select', 'placeholder' => 'Select category']) }}
+                </div>
+                <div class="mb-5">
                     {{ Form::label('title',__('messages.faq.title').(':'), ['class' => 'form-label']) }}
                     <span class="required"></span>
                     {{ Form::text('title', null, ['class' => 'form-control ','required','placeholder' => __('messages.faq.title')]) }}

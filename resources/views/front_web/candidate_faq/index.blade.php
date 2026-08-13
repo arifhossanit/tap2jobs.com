@@ -1,568 +1,432 @@
-@extends('candidate.layouts.app')
+@extends($faqLayout ?? 'front_web.layouts.app')
+
+@php
+    $categorizedFaqs = collect($faqCategories ?? [])->filter(fn ($category) => $category->faqs->count() > 0);
+    $uncategorizedFaqs = collect($faqLists ?? [])->filter(fn ($faq) => empty($faq->faq_category_id));
+    $firstFaqCategory = $categorizedFaqs->first();
+    $defaultFaqAnchor = $firstFaqCategory ? $firstFaqCategory->slug : ($uncategorizedFaqs->count() > 0 ? 'other-questions' : 'candidate-faq-top');
+@endphp
+
 @section('title')
-    Candidate FAQ | {{ __('web.register_menu.candidate') }} {{ __('web.web_home.helpful_resources') }}
+    {{ $faqPageTitle ?? __('messages.faq.candidate_faq') }}
 @endsection
 
 @section('page_css')
-<style>
-.candidate-faq-hero {
-    background: linear-gradient(135deg, #d81b60 0%, #c2185b 50%, #ad1457 100%);
-    padding: 60px 0 90px;
-    color: #ffffff;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-}
-.candidate-faq-hero::after {
-    content: '';
-    position: absolute;
-    bottom: -30px;
-    left: 0;
-    width: 100%;
-    height: 60px;
-    background: #f8f9fa;
-    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-}
-.candidate-faq-hero h1 {
-    font-size: 32px;
-    font-weight: 700;
-    margin-bottom: 25px;
-    color: #ffffff;
-}
-.candidate-faq-search-box {
-    max-width: 580px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 2;
-}
-.candidate-faq-search-box .input-group {
-    background: #ffffff;
-    border-radius: 8px;
-    padding: 4px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-}
-.candidate-faq-search-box input {
-    border: none;
-    outline: none;
-    padding: 12px 18px;
-    font-size: 15px;
-    border-radius: 8px 0 0 8px;
-}
-.candidate-faq-search-box input:focus {
-    box-shadow: none;
-}
-.candidate-faq-search-box button {
-    background: #00e676;
-    border: none;
-    color: #004d40;
-    font-weight: bold;
-    padding: 0 24px;
-    border-radius: 6px;
-    transition: all 0.2s ease-in-out;
-}
-.candidate-faq-search-box button:hover {
-    background: #00c853;
-    color: #ffffff;
-}
+    <style>
+        .candidate-faq-page {
+            background: #f7f8fb;
+            padding: 50px 0;
+            width: 100%;
+        }
 
-.candidate-faq-container {
-    max-width: 1080px;
-    margin: -50px auto 60px;
-    background: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    padding: 40px 35px;
-    position: relative;
-    z-index: 3;
-}
+        .candidate-faq-page--dashboard {
+            border-radius: 8px;
+            margin-bottom: 28px;
+            padding: 32px 0 40px;
+        }
 
-.candidate-faq-title {
-    color: #8e24aa;
-    font-weight: 700;
-    font-size: 22px;
-    text-align: center;
-    margin-bottom: 35px;
-}
+        .candidate-faq-page .faq-sec-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
 
-/* Feature Cards Grid */
-.feature-card-item {
-    background: #ffffff;
-    border: 1px solid #f3e5f5;
-    border-radius: 12px;
-    padding: 22px 12px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.25s ease-in-out;
-    box-shadow: 0 2px 8px rgba(142, 36, 170, 0.04);
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-.feature-card-item:hover, .feature-card-item.active {
-    border-color: #ab47bc;
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(171, 71, 188, 0.18);
-    background: #fcf4fd;
-}
-.feature-card-item i {
-    font-size: 32px;
-    color: #ab47bc;
-    margin-bottom: 12px;
-    transition: transform 0.2s ease;
-}
-.feature-card-item:hover i {
-    transform: scale(1.1);
-}
-.feature-card-item span {
-    font-size: 13px;
-    font-weight: 600;
-    color: #6a1b9a;
-    line-height: 1.3;
-}
+        .candidate-faq-page--dashboard .faq-sec-header {
+            margin-bottom: 24px;
+        }
 
-/* Box Panels */
-.faq-bordered-box {
-    border: 1.5px solid #e1bee7;
-    border-radius: 12px;
-    padding: 28px;
-    background: #fdfafe;
-    margin-top: 35px;
-}
-.faq-bordered-box h5 {
-    color: #4a148c;
-    font-weight: 700;
-    font-size: 16px;
-    text-align: center;
-    margin-bottom: 22px;
-}
-.faq-link-item {
-    color: #0277bd;
-    font-size: 13.5px;
-    text-decoration: underline;
-    display: block;
-    margin-bottom: 14px;
-    transition: color 0.2s ease;
-    cursor: pointer;
-}
-.faq-link-item:hover {
-    color: #ad1457;
-}
+        .candidate-faq-page .faq-sec-header h1 {
+            color: #1f2937;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
 
-/* Promo Banner Cards */
-.candidate-promo-card {
-    background: #f3fbf6;
-    border: 1px solid #c8e6c9;
-    border-radius: 12px;
-    padding: 24px;
-    height: 100%;
-}
-.candidate-promo-card.pro-card {
-    background: #fbf5fc;
-    border-color: #e1bee7;
-}
-.candidate-promo-card h4 {
-    font-size: 18px;
-    font-weight: 700;
-    color: #2e7d32;
-    margin-bottom: 10px;
-}
-.candidate-promo-card.pro-card h4 {
-    color: #7b1fa2;
-}
-.candidate-promo-card p {
-    font-size: 13px;
-    color: #555;
-    margin: 0;
-    line-height: 1.5;
-}
+        .candidate-faq-page .faq-search {
+            margin: 0 auto;
+            max-width: 640px;
+        }
 
-/* Accordion Modal & Answers */
-.faq-answer-card {
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-    margin-bottom: 15px;
-    overflow: hidden;
-}
-.faq-answer-header {
-    background: #f8f9fa;
-    padding: 16px 20px;
-    font-weight: 600;
-    color: #333;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.faq-answer-body {
-    padding: 20px;
-    color: #555;
-    font-size: 14px;
-    line-height: 1.6;
-    border-top: 1px solid #eeeeee;
-}
-</style>
+        .candidate-faq-page .faq-search .input-group {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 10px 28px rgba(31, 41, 55, 0.07);
+            padding: 5px;
+        }
+
+        .candidate-faq-page .faq-search .form-control {
+            border: 0;
+            box-shadow: none;
+            color: #374151;
+            font-size: 15px;
+            min-height: 44px;
+            padding: 10px 16px;
+        }
+
+        .candidate-faq-page .faq-search .btn {
+            align-items: center;
+            background: #d8205f;
+            border: 0;
+            border-radius: 6px;
+            color: #ffffff;
+            display: inline-flex;
+            font-weight: 600;
+            gap: 8px;
+            padding: 0 20px;
+        }
+
+        .candidate-faq-page .faq-category-row {
+            margin-bottom: 14px;
+            row-gap: 16px;
+        }
+
+        .candidate-faq-page .faq-box {
+            background: #ffffff;
+            border: 1px solid #edf0f4;
+            border-radius: 8px;
+            box-shadow: 0 10px 26px rgba(31, 41, 55, 0.06);
+            height: 100%;
+            margin-bottom: 0;
+            text-align: center;
+            transition: 0.2s ease;
+        }
+
+        .candidate-faq-page .faq-box:hover {
+            border-color: #d8205f;
+            box-shadow: 0 14px 32px rgba(216, 32, 95, 0.12);
+            transform: translateY(-3px);
+        }
+
+        .candidate-faq-page .faq-box a {
+            color: #1f2937;
+            display: block;
+            height: 100%;
+            min-height: 132px;
+            padding: 22px 14px 18px;
+            text-decoration: none;
+        }
+
+        .candidate-faq-page .faq-icon {
+            align-items: center;
+            background: #fce8f0;
+            border-radius: 50%;
+            color: #d8205f;
+            display: flex;
+            font-size: 24px;
+            height: 58px;
+            justify-content: center;
+            margin: 0 auto 12px;
+            width: 58px;
+        }
+
+        .candidate-faq-page .faq-box h3 {
+            color: #253044;
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1.35;
+            margin: 0;
+        }
+
+        .candidate-faq-page .j-faq-box {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 10px 26px rgba(31, 41, 55, 0.06);
+            margin-top: 18px;
+            padding: 24px;
+        }
+
+        .candidate-faq-page--dashboard .j-faq-box {
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 760px;
+        }
+
+        .candidate-faq-page .j-faq-box h3 {
+            color: #1f2937;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .candidate-faq-page .faq-card {
+            background: transparent;
+            border: 0;
+            margin-bottom: 10px;
+        }
+
+        .candidate-faq-page .accordion-title {
+            align-items: center;
+            background: #f7f8fb;
+            border: 0;
+            border-radius: 8px;
+            color: #253044;
+            display: flex;
+            font-size: 15px;
+            font-weight: 600;
+            gap: 14px;
+            line-height: 1.5;
+            padding: 14px 16px;
+            text-align: left;
+            text-decoration: none;
+            white-space: normal;
+            width: 100%;
+        }
+
+        .candidate-faq-page .accordion-title i {
+            align-items: center;
+            background: #ffffff;
+            border-radius: 50%;
+            color: #d8205f;
+            display: inline-flex;
+            flex: 0 0 30px;
+            height: 30px;
+            justify-content: center;
+            width: 30px;
+        }
+
+        .candidate-faq-page .accordion-title:not(.collapsed) {
+            background: #d8205f;
+            color: #ffffff;
+        }
+
+        .candidate-faq-page .accordion-title:not(.collapsed) i {
+            color: #d8205f;
+        }
+
+        .candidate-faq-page .accordion-body {
+            color: #5d6678;
+            font-size: 14px;
+            line-height: 1.7;
+            padding: 16px 16px 6px 58px;
+        }
+
+        .candidate-faq-page .faq-empty {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 10px 26px rgba(31, 41, 55, 0.06);
+            color: #5d6678;
+            padding: 35px;
+            text-align: center;
+        }
+
+        @media (max-width: 575px) {
+            .candidate-faq-page {
+                padding: 34px 0 52px;
+            }
+
+            .candidate-faq-page .faq-sec-header h1 {
+                font-size: 26px;
+            }
+
+            .candidate-faq-page .faq-search .btn {
+                padding: 0 12px;
+            }
+
+            .candidate-faq-page .faq-category-row {
+                row-gap: 12px;
+            }
+
+            .candidate-faq-page .faq-box a {
+                min-height: 118px;
+                padding: 18px 10px 16px;
+            }
+
+            .candidate-faq-page .faq-icon {
+                height: 52px;
+                margin-bottom: 10px;
+                width: 52px;
+            }
+
+            .candidate-faq-page .j-faq-box {
+                padding: 18px 14px;
+            }
+
+            .candidate-faq-page .accordion-body {
+                padding-left: 18px;
+            }
+        }
+    </style>
 @endsection
 
 @section('content')
-<main class="candidate-faq-page">
-    <!-- Hero Banner -->
-    <section class="candidate-faq-hero">
-        <div class="">
-            <h1>Frequently Asked Questions</h1>
-            <div class="candidate-faq-search-box">
-                <div class="input-group">
-                    <input type="text" id="faqSearchInput" class="form-control" placeholder="Type question here...">
-                    <button class="btn" type="button" id="faqSearchBtn">
-                        <i class="fa-solid fa-magnifying-glass me-1"></i> Search
-                    </button>
+    <section class="candidate-faq-page {{ !empty($isDashboardFaq) ? 'candidate-faq-page--dashboard' : '' }}" id="candidate-faq-top">
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                "name": @json($faqPageTitle ?? __('messages.faq.candidate_faq')),
+                "publisher": {
+                    "@type": "Organization",
+                    "name": @json(getAppName())
+                }
+            }
+        </script>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="faq-sec-header">
+                        <h1>{{ $faqPageTitle ?? __('messages.faq.faq') }}</h1>
+                        <div class="faq-search">
+                            <div class="input-group">
+                                <input type="text" id="candidateFaqSearch" class="form-control" placeholder="{{ __('messages.faq.type_question_here') }}">
+                                <button type="button" class="btn" id="candidateFaqSearchBtn">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    {{ __('messages.common.search') }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row faq-category-row">
+                @foreach ($categorizedFaqs as $category)
+                    <div class="col-md-3 col-6">
+                        <div class="faq-box">
+                            <a href="#{{ $category->faqs->count() > 0 ? $category->slug : $defaultFaqAnchor }}">
+                                <div class="faq-icon">
+                                    <i class="{{ $category->icon ?: 'fa-solid fa-circle-question fa-fw' }}"></i>
+                                </div>
+                                <h3>{{ $category->name }}</h3>
+                            </a>
+                        </div>
+                    </div>
+                @endforeach
+                @if ($uncategorizedFaqs->count() > 0)
+                    <div class="col-md-3 col-6">
+                        <div class="faq-box">
+                            <a href="#other-questions">
+                                <div class="faq-icon">
+                                    <i class="fa-solid fa-circle-question fa-fw"></i>
+                                </div>
+                                <h3>{{ __('messages.faq.other_questions') }}</h3>
+                            </a>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row justify-content-md-center">
+                <div class="col-lg-12 col-md-12">
+                    @if ($categorizedFaqs->count() > 0 || $uncategorizedFaqs->count() > 0)
+                        @foreach ($categorizedFaqs as $category)
+                            @if ($category->faqs->count() > 0)
+                                <div class="j-faq-box faq-section" id="{{ $category->slug }}">
+                                    <h3>{{ $category->name }}</h3>
+                                    <div class="py-3 faq-accordion accordion" id="{{ $category->slug }}-accordion">
+                                        @foreach ($category->faqs as $faqList)
+                                            @php
+                                                $collapseId = $category->slug.'-collapse-'.$faqList->id;
+                                                $headingId = $category->slug.'-heading-'.$faqList->id;
+                                            @endphp
+                                            <div class="faq-card faq-search-item" data-question="{{ strtolower(strip_tags($faqList->title)) }}" data-answer="{{ strtolower(strip_tags($faqList->description)) }}">
+                                                <div class="faq-card-header p-0 border-0" id="{{ $headingId }}">
+                                                    <button class="btn btn-link accordion-title collapsed" type="button"
+                                                        data-bs-toggle="collapse"
+                                                        data-bs-target="#{{ $collapseId }}"
+                                                        aria-expanded="false"
+                                                        aria-controls="{{ $collapseId }}">
+                                                        <i class="fas fa-plus"></i>
+                                                        {{ html_entity_decode($faqList->title) }}
+                                                    </button>
+                                                </div>
+                                                <div id="{{ $collapseId }}" class="collapse"
+                                                    aria-labelledby="{{ $headingId }}"
+                                                    data-bs-parent="#{{ $category->slug }}-accordion">
+                                                    <div class="card-body accordion-body">
+                                                        <div class="faq-body-cont">
+                                                            {!! nl2br($faqList->description) !!}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
+
+                        @if ($uncategorizedFaqs->count() > 0)
+                            <div class="j-faq-box faq-section" id="other-questions">
+                                <h3>{{ __('messages.faq.other_questions') }}</h3>
+                                <div class="py-3 faq-accordion accordion" id="other-questions-accordion">
+                                    @foreach ($uncategorizedFaqs as $faqList)
+                                        @php
+                                            $collapseId = 'other-questions-collapse-'.$faqList->id;
+                                            $headingId = 'other-questions-heading-'.$faqList->id;
+                                        @endphp
+                                        <div class="faq-card faq-search-item" data-question="{{ strtolower(strip_tags($faqList->title)) }}" data-answer="{{ strtolower(strip_tags($faqList->description)) }}">
+                                            <div class="faq-card-header p-0 border-0" id="{{ $headingId }}">
+                                                <button class="btn btn-link accordion-title collapsed" type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#{{ $collapseId }}"
+                                                    aria-expanded="false"
+                                                    aria-controls="{{ $collapseId }}">
+                                                    <i class="fas fa-plus"></i>
+                                                    {{ html_entity_decode($faqList->title) }}
+                                                </button>
+                                            </div>
+                                            <div id="{{ $collapseId }}" class="collapse"
+                                                aria-labelledby="{{ $headingId }}"
+                                                data-bs-parent="#other-questions-accordion">
+                                                <div class="card-body accordion-body">
+                                                    <div class="faq-body-cont">
+                                                        {!! nl2br($faqList->description) !!}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    @else
+                        <div class="faq-empty">
+                            <h5 class="mb-0">{{ __('web.about_us_menu.faq_not_available') }}.</h5>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- Main Content Container -->
-    <div class="container">
-        <div class="candidate-faq-container">
-            <h2 class="candidate-faq-title">Choose Feature</h2>
-
-            <!-- 16 Feature Grid -->
-            <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 g-3 mb-4">
-                <div class="col">
-                    <div class="feature-card-item" data-category="about">
-                        <i class="fa-solid fa-user-gear"></i>
-                        <span>Know about Tap2Jobs</span>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="feature-card-item" data-category="search">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <span>Search</span>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="feature-card-item" data-category="apply">
-                        <i class="fa-solid fa-file-export"></i>
-                        <span>Apply</span>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="feature-card-item" data-category="profile">
-                        <i class="fa-solid fa-address-card"></i>
-                        <span>Tap2Jobs Profile</span>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="feature-card-item" data-category="invitation">
-                        <i class="fa-solid fa-envelope-open-text"></i>
-                        <span>Invitation</span>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="feature-card-item" data-category="settings">
-                        <i class="fa-solid fa-sliders"></i>
-                        <span>Account Settings</span>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="feature-card-item" data-category="videocv">
-                        <i class="fa-solid fa-file-video"></i>
-                        <span>Video CV</span>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="feature-card-item" data-category="videointerview">
-                        <i class="fa-solid fa-display"></i>
-                        <span>Video Interview</span>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="feature-card-item" data-category="onlinetest">
-                        <i class="fa-solid fa-laptop-code"></i>
-                        <span>Online test</span>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="feature-card-item" data-category="pro">
-                        <i class="fa-solid fa-award"></i>
-                        <span>Tap2Jobs pro</span>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="feature-card-item" data-category="points">
-                        <i class="fa-solid fa-coins"></i>
-                        <span>My Points</span>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="feature-card-item" data-category="liveinterview">
-                        <i class="fa-solid fa-users-rectangle"></i>
-                        <span>Live Interview</span>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="feature-card-item" data-category="sms">
-                        <i class="fa-solid fa-comment-sms"></i>
-                        <span>SMS Job Alert</span>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="feature-card-item" data-category="messages">
-                        <i class="fa-solid fa-comments"></i>
-                        <span>Messages</span>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="feature-card-item" data-category="notifications">
-                        <i class="fa-solid fa-bell"></i>
-                        <span>Notifications</span>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="feature-card-item" data-category="others">
-                        <i class="fa-solid fa-grip"></i>
-                        <span>Others</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dynamic Answer Display Container -->
-            <div id="faqAnswerDisplaySection" class="mt-4 d-none">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 id="faqSelectedCategoryTitle" class="fw-bold text-primary mb-0">Questions & Answers</h4>
-                    <button id="faqResetFilterBtn" class="btn btn-sm btn-outline-secondary">Show All</button>
-                </div>
-                <div id="faqAccordionContainer" class="accordion mb-4">
-                    <!-- Dynamic Items Injected via JS -->
-                </div>
-            </div>
-
-            <!-- Suggested for you Box -->
-            <div class="faq-bordered-box">
-                <h5>Suggested for you</h5>
-                <div class="row">
-                    <div class="col-md-4">
-                        <a class="faq-link-item" data-question="How to add Experience to your Resume?">How to add Experience to your Resume?</a>
-                        <a class="faq-link-item" data-question="How do I update my Area of Expertise?">How do I update my Area of Expertise?</a>
-                        <a class="faq-link-item" data-question="If I lost my User ID/Password how can I retrieve those?">If I lost my User ID/Password how can I retrieve those?</a>
-                    </div>
-                    <div class="col-md-4">
-                        <a class="faq-link-item" data-question="What is SMS Job Alert?">What is SMS Job Alert?</a>
-                        <a class="faq-link-item" data-question="What is Video CV?">What is Video CV?</a>
-                        <a class="faq-link-item" data-question="What is Customized CV?">What is Customized CV?</a>
-                    </div>
-                    <div class="col-md-4">
-                        <a class="faq-link-item" data-question="What is Application Boosting?">What is Application Boosting?</a>
-                        <a class="faq-link-item" data-question="How Matching Percentage works?">How Matching Percentage works?</a>
-                        <a class="faq-link-item" data-question="What is Application Insight?">What is Application Insight?</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Popular searches Box -->
-            <div class="faq-bordered-box">
-                <h5>Popular searches</h5>
-                <div class="row">
-                    <div class="col-md-4">
-                        <a class="faq-link-item" data-question="How to create account?">How to create account?</a>
-                        <a class="faq-link-item" data-question="What is Keyword search?">What is Keyword search?</a>
-                        <a class="faq-link-item" data-question="Can I change my User ID?">Can I change my User ID?</a>
-                    </div>
-                    <div class="col-md-4">
-                        <a class="faq-link-item" data-question="What is Personality Test by Voice?">What is Personality Test by Voice?</a>
-                        <a class="faq-link-item" data-question="What is Tap2Jobs Pro?">What is Tap2Jobs Pro?</a>
-                        <a class="faq-link-item" data-question="Where can I get information about interview invitation?">Where can I get information about interview invitation?</a>
-                    </div>
-                    <div class="col-md-4">
-                        <a class="faq-link-item" data-question="How to participate in Online Test?">How to participate in Online Test?</a>
-                        <a class="faq-link-item" data-question="How will I get informed if an employer views my resume?">How will I get informed if an employer views my resume?</a>
-                        <a class="faq-link-item" data-question="How can I apply to a job?">How can I apply to a job?</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bottom Promos -->
-            <div class="row g-4 mt-2">
-                <div class="col-md-6">
-                    <div class="candidate-promo-card pro-card">
-                        <h4>Subscribe to Tap2Jobs Pro</h4>
-                        <p>Tap2Jobs Pro gives you exclusive opportunities and features to help you find a job and increase your chances of getting more interview calls.</p>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="candidate-promo-card">
-                        <h4>Post job for personal hiring</h4>
-                        <p>Publish job for personal needs, receive qualified applicants, review their CVs, and hire the ideal candidate effortlessly.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</main>
 @endsection
 
 @section('page_scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const faqData = [
-        {
-            category: 'about',
-            question: 'How to create account?',
-            answer: 'Click on the Register button at the top of the website, choose Candidate, fill in your Name, Phone, Email, Password, and click Create Account.'
-        },
-        {
-            category: 'about',
-            question: 'Can I change my User ID?',
-            answer: 'Yes, you can update your email or username anytime from your Profile Settings panel.'
-        },
-        {
-            category: 'search',
-            question: 'What is Keyword search?',
-            answer: 'Keyword search lets you type job titles, skills, or company names to find relevant job openings matching your interest.'
-        },
-        {
-            category: 'apply',
-            question: 'How can I apply to a job?',
-            answer: 'Browse any job listing, click on the Apply button, select your resume option, and submit your application to the employer.'
-        },
-        {
-            category: 'profile',
-            question: 'How to add Experience to your Resume?',
-            answer: 'Go to your Profile Dashboard, click Edit Experience section, enter your company name, designation, start and end dates, and save.'
-        },
-        {
-            category: 'profile',
-            question: 'How do I update my Area of Expertise?',
-            answer: 'In your Profile settings, navigate to Skills & Expertise and add or update your functional areas.'
-        },
-        {
-            category: 'invitation',
-            question: 'Where can I get information about interview invitation?',
-            answer: 'All interview invitations will appear in your Candidate Dashboard under the Invitations tab, and you will also receive email/SMS notifications.'
-        },
-        {
-            category: 'settings',
-            question: 'If I lost my User ID/Password how can I retrieve those?',
-            answer: 'Click Forgot Password on the login page, enter your registered email address, and follow the link sent to your inbox to reset your password.'
-        },
-        {
-            category: 'videocv',
-            question: 'What is Video CV?',
-            answer: 'A Video CV allows you to upload a short 1-minute video introducing your skills and experience to employers.'
-        },
-        {
-            category: 'videointerview',
-            question: 'What is Video Interview?',
-            answer: 'Employers can invite you for an online video interview directly through our platform.'
-        },
-        {
-            category: 'onlinetest',
-            question: 'How to participate in Online Test?',
-            answer: 'If an employer requires an online skill test, a link will be enabled in your Candidate Dashboard under the Online Tests section.'
-        },
-        {
-            category: 'pro',
-            question: 'What is Tap2Jobs Pro?',
-            answer: 'Tap2Jobs Pro is a premium membership offering boosted application visibility, priority matching, and enhanced insights.'
-        },
-        {
-            category: 'points',
-            question: 'What is My Points?',
-            answer: 'My Points are reward points earned by completing your profile, which can be redeemed for premium features.'
-        },
-        {
-            category: 'sms',
-            question: 'What is SMS Job Alert?',
-            answer: 'SMS Job Alerts notify you instantly on your mobile phone whenever new jobs matching your preference are published.'
-        },
-        {
-            category: 'messages',
-            question: 'How will I get informed if an employer views my resume?',
-            answer: 'You will receive an in-app notification and message whenever an employer views or shortlists your resume.'
-        },
-        {
-            category: 'notifications',
-            question: 'What is Application Insight?',
-            answer: 'Application Insight gives you real-time analytics on how many candidates applied and where your application stands.'
-        }
-    ];
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('candidateFaqSearch');
+            const searchButton = document.getElementById('candidateFaqSearchBtn');
+            const faqItems = document.querySelectorAll('.faq-search-item');
+            const faqSections = document.querySelectorAll('.faq-section');
 
-    const displaySection = document.getElementById('faqAnswerDisplaySection');
-    const accordionContainer = document.getElementById('faqAccordionContainer');
-    const categoryTitle = document.getElementById('faqSelectedCategoryTitle');
-    const searchInput = document.getElementById('faqSearchInput');
-    const searchBtn = document.getElementById('faqSearchBtn');
-    const resetBtn = document.getElementById('faqResetFilterBtn');
-    const featureCards = document.querySelectorAll('.feature-card-item');
-    const linkItems = document.querySelectorAll('.faq-link-item');
+            function filterFaqs() {
+                const query = searchInput.value.trim().toLowerCase();
 
-    function renderFaqs(items, titleText) {
-        if (!items || items.length === 0) {
-            accordionContainer.innerHTML = '<div class="alert alert-info">No matching questions found. Try searching another keyword.</div>';
-        } else {
-            let html = '';
-            items.forEach((item, index) => {
-                const itemId = 'faqItem_' + index;
-                html += `
-                    <div class="accordion-item faq-answer-card">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button ${index !== 0 ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#${itemId}">
-                                ${item.question}
-                            </button>
-                        </h2>
-                        <div id="${itemId}" class="accordion-collapse collapse ${index === 0 ? 'show' : ''}" data-bs-parent="#faqAccordionContainer">
-                            <div class="accordion-body faq-answer-body">
-                                ${item.answer}
-                            </div>
-                        </div>
-                    </div>
-                `;
+                faqItems.forEach(function (item) {
+                    const haystack = (item.dataset.question || '') + ' ' + (item.dataset.answer || '');
+                    item.classList.toggle('d-none', query && !haystack.includes(query));
+                });
+
+                faqSections.forEach(function (section) {
+                    const visibleItems = section.querySelectorAll('.faq-search-item:not(.d-none)');
+                    section.classList.toggle('d-none', visibleItems.length === 0 && query.length > 0);
+                });
+            }
+
+            searchButton.addEventListener('click', filterFaqs);
+            searchInput.addEventListener('keyup', function (event) {
+                filterFaqs();
+
+                if (event.key === 'Enter') {
+                    const firstVisibleSection = document.querySelector('.faq-section:not(.d-none)');
+                    if (firstVisibleSection) {
+                        firstVisibleSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
             });
-            accordionContainer.innerHTML = html;
-        }
-        categoryTitle.textContent = titleText || 'Questions & Answers';
-        displaySection.classList.remove('d-none');
-        displaySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    featureCards.forEach(card => {
-        card.addEventListener('click', function () {
-            featureCards.forEach(c => c.classList.remove('active'));
-            this.classList.add('active');
-            const cat = this.getAttribute('data-category');
-            const catName = this.querySelector('span').textContent;
-            const filtered = faqData.filter(f => f.category === cat);
-            renderFaqs(filtered.length > 0 ? filtered : faqData, catName + ' - FAQs');
         });
-    });
-
-    linkItems.forEach(link => {
-        link.addEventListener('click', function () {
-            const qText = this.getAttribute('data-question');
-            const found = faqData.filter(f => f.question.toLowerCase().includes(qText.toLowerCase()));
-            renderFaqs(found.length > 0 ? found : [{ question: qText, answer: 'Detailed instructions are available in your Candidate Profile dashboard.' }], qText);
-        });
-    });
-
-    function performSearch() {
-        const query = searchInput.value.trim().toLowerCase();
-        if (!query) return;
-        const results = faqData.filter(f => f.question.toLowerCase().includes(query) || f.answer.toLowerCase().includes(query));
-        renderFaqs(results, 'Search Results for: "' + query + '"');
-    }
-
-    searchBtn.addEventListener('click', performSearch);
-    searchInput.addEventListener('keyup', function (e) {
-        if (e.key === 'Enter') performSearch();
-    });
-
-    resetBtn.addEventListener('click', function () {
-        featureCards.forEach(c => c.classList.remove('active'));
-        searchInput.value = '';
-        renderFaqs(faqData, 'All Candidate FAQs');
-    });
-});
-</script>
+    </script>
 @endsection

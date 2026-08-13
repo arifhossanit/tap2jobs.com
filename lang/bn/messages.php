@@ -1256,6 +1256,10 @@ return [
         'no_noticeboard_available' => 'কোন নোটিশ বোর্ড  নেই',
     ],
     'faq' => [
+        'candidate_faq' => 'প্রার্থীর জিজ্ঞাসা (Candidate FAQ)',
+        'employer_faq' => 'নিয়োগকর্তার জিজ্ঞাসা (Employer FAQ)',
+        'other_questions' => 'অন্যান্য প্রশ্ন',
+        'type_question_here' => 'এখানে আপনার প্রশ্ন লিখুন...',
         'faq' => 'সাধারণ জিজ্ঞাসা',
         'new_faq' => 'নতুন FAQ',
         'edit_faq' => 'FAQ এডিট',

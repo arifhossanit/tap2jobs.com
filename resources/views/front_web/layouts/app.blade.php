@@ -138,11 +138,7 @@
 
     @yield('content')
 
-    @if (Request::segment(1) != 'candidate-register' &&
-            Request::segment(1) != 'employer-register' &&
-            Request::segment(1) != 'users')
-        @include('front_web.layouts.footer')
-    @endif
+    @include('front_web.layouts.footer')
 
     {{ Form::hidden('createNewLetterUrl', route('news-letter.create'), ['id' => 'createNewLetterUrl']) }}
     <script data-turbo-eval="false">

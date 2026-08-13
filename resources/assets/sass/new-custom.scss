@@ -1501,32 +1501,63 @@
 
 .candidate-dashboard-header,
 .employer-dashboard-header {
+  gap: 24px;
+
+  .horizontal-sidebar {
+    justify-content: flex-end;
+  }
+
+  .horizontal-sidebar-logo {
+    border-right: 0;
+  }
+
+  .horizontal-menu {
+    gap: 0;
+  }
+
+  .horizontal-menu .nav-item {
+    align-items: center;
+    display: flex;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
   .horizontal-menu .nav-item .nav-link {
     align-items: center;
+    color: #6c757e;
+    display: flex;
+    font-size: 14px;
+    font-weight: 400;
     line-height: 20px;
+    padding: 24px 16px !important;
+    position: relative;
   }
 
-  .horizontal-menu .nav-item .nav-link .horizontal-menu-icon {
-    align-items: center;
-    display: inline-flex;
-    flex: 0 0 20px;
-    height: 20px;
-    justify-content: center;
-    line-height: 1;
-    padding: 0 !important;
-    width: 20px;
-
-    i {
-      display: block;
-      line-height: 1;
-    }
+  .horizontal-menu .nav-item:first-child .nav-link,
+  .horizontal-menu .nav-item:last-child .nav-link {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
   }
 
-  .horizontal-menu-title {
-    align-items: center;
-    display: inline-flex;
-    line-height: 20px;
-    margin-left: 5px;
+  .horizontal-menu .nav-item .nav-link:hover,
+  .horizontal-menu .nav-item.active .nav-link {
+    color: #6571ff;
+  }
+
+  .horizontal-menu .nav-item .nav-link::after {
+    border-bottom: 2px solid transparent;
+    bottom: 14px;
+    content: "";
+    display: inline-block;
+    left: 16px;
+    margin: auto;
+    position: absolute;
+    right: 16px;
+  }
+
+  .horizontal-menu .nav-item .nav-link:hover::after,
+  .horizontal-menu .nav-item.active .nav-link::after {
+    border-bottom-color: #6571ff;
   }
 
   > .d-flex > .nav > li > a,
@@ -1541,12 +1572,6 @@
   .user-check-icon {
     line-height: 1;
   }
-}
-
-[dir="rtl"] .candidate-dashboard-header .horizontal-menu-title,
-[dir="rtl"] .employer-dashboard-header .horizontal-menu-title {
-  margin-left: 0;
-  margin-right: 10px;
 }
 
 @media (max-width: 1200px) {

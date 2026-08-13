@@ -13,6 +13,7 @@ class FAQRepository extends BaseRepository
      * @var array
      */
     protected $fieldSearchable = [
+        'faq_category_id',
         'title',
     ];
 

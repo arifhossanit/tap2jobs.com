@@ -16,6 +16,10 @@
                 </div>
                 {{ Form::hidden('faqId',null,['id'=>'faqId']) }}
                 <div class="mb-5">
+                    {{ Form::label('faq_category_id', 'Category:', ['class' => 'form-label']) }}
+                    {{ Form::select('faq_category_id', $faqCategories ?? [], null, ['id' => 'editFaqCategoryId', 'class' => 'form-select', 'placeholder' => 'Select category']) }}
+                </div>
+                <div class="mb-5">
                     {{ Form::label('title',__('messages.faq.title').(':'), ['class' => 'form-label']) }}
                     <span class="required"></span>
                     {{ Form::text('title', null, ['id'=>'editFaqTitle','class' => 'form-control','required','placeholder' =>__('messages.faq.title')]) }}

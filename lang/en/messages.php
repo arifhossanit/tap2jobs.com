@@ -1266,6 +1266,10 @@ return [
         'no_noticeboard_available' => 'No Noticeboard Available',
     ],
     'faq' => [
+        'candidate_faq' => 'Candidate FAQ',
+        'employer_faq' => 'Employer FAQ',
+        'other_questions' => 'Other Questions',
+        'type_question_here' => 'Type question here...',
         'faq' => 'FAQs',
         'new_faq' => 'New FAQs',
         'edit_faq' => 'Edit FAQs',

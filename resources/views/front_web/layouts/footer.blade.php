@@ -124,6 +124,10 @@
                         <a href="{{ Route::has('job.create') ? route('job.create') : route('employer.register') }}"
                             class="text-decoration-none {{ Request::is('employer/jobs/create') ? 'footer-navbar-color-active text-dark' : 'text-gray' }} mb-3 d-block fs-14">{{ __('web.footer.post_a_job') }}</a>
                     </li>
+                    <li>
+                        <a href="{{ route('employer.faq') }}"
+                            class="text-decoration-none {{ Request::is('employer-faq') ? 'footer-navbar-color-active text-dark' : 'text-gray' }} mb-3 d-block fs-14">FAQ</a>
+                    </li>
                 </ul>
             </div>
 

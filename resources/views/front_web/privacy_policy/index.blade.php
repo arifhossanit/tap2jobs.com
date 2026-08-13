@@ -33,7 +33,7 @@
     {{--            </div> --}}
     {{--        </div> --}}
     {{--    </section> --}}
-    <div class="privacy-policy-section pt-60 pb-100">
+    <div class="privacy-policy-section py-60">
         <div class="container">
             <div class="about-infyjob">
                 <h5 class="fs-18 text-secondary mb-3">{{ __('messages.setting.privacy_policy') }}</h5>

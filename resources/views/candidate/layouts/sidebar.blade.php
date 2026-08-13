@@ -1,52 +1,46 @@
-<div class="{{ checkLanguageSession() == 'ar' ? 'ps-xl-0' : 'ps-xl-7' }} px-2 pe-xl-0 d-flex align-items-stretch">
-    <ul class="horizontal-menu nav flex-row d-block d-xl-flex">
+<div class="px-2 px-xl-0 d-flex align-items-stretch flex-grow-1">
+    <ul class="horizontal-menu navbar-nav d-flex justify-content-end align-items-xl-center w-100">
         <li class="nav-item {{ Request::is('candidate/dashboard*') ? 'active' : ''}}">
-            <a class="nav-link d-flex align-items-center py-3" aria-current="page"
+            <a class="nav-link header-navbar-color text-gray py-3" aria-current="page"
                href="{{ route('dashboard') }}">
-                <span class="horizontal-menu-icon"><i class="fab fa-dashcube"></i></span>
-                <span class="horizontal-menu-title">{{ __('messages.candidate.dashboard') }}</span>
+                {{ __('messages.candidate.dashboard') }}
             </a>
         </li>
         <li class="nav-item {{ Request::is('candidate/profile*') ? 'active' : ''}}">
-            <a class="nav-link d-flex align-items-center py-3" aria-current="page"
+            <a class="nav-link header-navbar-color text-gray py-3" aria-current="page"
                href="{{ route('candidate.profile') }}">
-                <span class="horizontal-menu-icon"><i class="far fa-user-circle"></i></span>
-                <span class="horizontal-menu-title">{{ __('messages.profile') }}</span>
+                {{ __('messages.profile') }}
             </a>
         </li>
         <li class="nav-item {{ Request::is('candidate/favourite-jobs*') ? 'active' : ''}}">
-            <a class="nav-link d-flex align-items-center py-3" aria-current="page"
+            <a class="nav-link header-navbar-color text-gray py-3" aria-current="page"
                href="{{ route('favourite.jobs') }}">
-                <span class="horizontal-menu-icon"><i class="far fa-star"></i></span>
-                <span class="horizontal-menu-title">{{ __('messages.favourite_jobs') }}</span>
+                {{ __('messages.favourite_jobs') }}
             </a>
         </li>
         <li class="nav-item {{ Request::is('candidate/favourite-companies*') ? 'active' : ''}}">
-            <a class="nav-link d-flex align-items-center py-3" aria-current="page"
+            <a class="nav-link header-navbar-color text-gray py-3" aria-current="page"
                href="{{ route('favourite.companies') }}">
-                <span class="horizontal-menu-icon"><i class="far fa-building"></i></span>
-                <span class="horizontal-menu-title">{{ __('messages.favourite_companies') }}</span>
+                {{ __('messages.favourite_companies') }}
             </a>
         </li>
         @if(getCurrentLanguageCode() == 'de' || getCurrentLanguageCode() == 'tr' || getCurrentLanguageCode() == 'pt' || getCurrentLanguageCode() == 'ru' || getCurrentLanguageCode() == 'es' || getCurrentLanguageCode() == 'fr')
             <li class="nav-item d-none d-xl-grid dropdown dropdown-hover {{ Request::is('candidate/applied-jobs*','candidate/job-alerts*') ? 'active' : '' }}">
-                <button class="nav-link d-flex align-items-center py-3 ps-2 border-0 bg-transparent"
+                <button class="nav-link header-navbar-color text-gray py-3 ps-2 border-0 bg-transparent dropdown-toggle"
                         type="button" aria-label="More navigation">
-                    <span class="horizontal-menu-icon"><i class="fas fa-ellipsis-vertical fs-4"></i></span>
+                    {{ __('web.more') }}
                 </button>
                 <ul class="horizontal-submenu dropdown-menu top-100">
                     <li>
                         <a class="dropdown-item {{ Request::is('candidate/applied-jobs*') ? 'active' : '' }}"
                            href="{{ route('candidate.applied.job') }}">
-                            <span class="horizontal-menu-icon me-1"><i class="fas fa-briefcase fs-6"></i></span>
-                            <span class="horizontal-menu-title fs-6">{{ __('messages.applied_job.applied_jobs') }}</span>
+                            {{ __('messages.applied_job.applied_jobs') }}
                         </a>
                     </li>
                     <li>
                         <a class="dropdown-item {{ Request::is('candidate/job-alerts*') ? 'active' : '' }}"
                            href="{{ route('candidate.job.alert') }}">
-                            <span class="horizontal-menu-icon me-1"><i class="far fa-bell fs-6"></i></span>
-                            <span class="horizontal-menu-title fs-6">{{ __('messages.job.job_alert') }}</span>
+                            {{ __('messages.job.job_alert') }}
                         </a>
                     </li>
                 </ul>
@@ -54,33 +48,29 @@
 
             {{-- start side bar menu for bar--}}
             <li class="nav-item d-xl-none {{ Request::is('candidate/applied-jobs*') ? 'active' : ''}}">
-                <a class="nav-link d-flex align-items-center py-3" aria-current="page"
+                <a class="nav-link header-navbar-color text-gray py-3" aria-current="page"
                    href="{{ route('candidate.applied.job') }}">
-                    <span class="horizontal-menu-icon me-1"><i class="fas fa-briefcase"></i></span>
-                    <span class="horizontal-menu-title">{{ __('messages.applied_job.applied_jobs') }}</span>
+                    {{ __('messages.applied_job.applied_jobs') }}
                 </a>
             </li>
             <li class="nav-item d-xl-none {{ Request::is('candidate/job-alerts*') ? 'active' : ''}}">
-                <a class="nav-link d-flex align-items-center py-3" aria-current="page"
+                <a class="nav-link header-navbar-color text-gray py-3" aria-current="page"
                    href="{{ route('candidate.job.alert') }}">
-                    <span class="horizontal-menu-icon me-1"><i class="far fa-bell"></i></span>
-                    <span class="horizontal-menu-title">{{ __('messages.job.job_alert') }}</span>
+                    {{ __('messages.job.job_alert') }}
                 </a>
             </li>
             {{-- end side bar menu for bar--}}
         @else
             <li class="nav-item {{ Request::is('candidate/applied-jobs*') ? 'active' : ''}}">
-                <a class="nav-link d-flex align-items-center py-3" aria-current="page"
+                <a class="nav-link header-navbar-color text-gray py-3" aria-current="page"
                    href="{{ route('candidate.applied.job') }}">
-                    <span class="horizontal-menu-icon"><i class="fas fa-briefcase"></i></span>
-                    <span class="horizontal-menu-title">{{ __('messages.applied_job.applied_jobs') }}</span>
+                    {{ __('messages.applied_job.applied_jobs') }}
                 </a>
             </li>
             <li class="nav-item {{ Request::is('candidate/job-alerts*') ? 'active' : ''}}">
-                <a class="nav-link d-flex align-items-center py-3" aria-current="page"
+                <a class="nav-link header-navbar-color text-gray py-3" aria-current="page"
                    href="{{ route('candidate.job.alert') }}">
-                    <span class="horizontal-menu-icon"><i class="far fa-bell"></i></span>
-                    <span class="horizontal-menu-title">{{ __('messages.job.job_alert') }}</span>
+                    {{ __('messages.job.job_alert') }}
                 </a>
             </li>
         @endif

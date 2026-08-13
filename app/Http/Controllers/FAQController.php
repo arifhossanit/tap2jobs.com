@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateFAQRequest;
 use App\Http\Requests\UpdateFAQRequest;
 use App\Models\FAQ;
+use App\Models\FAQCategory;
 use App\Repositories\FAQRepository;
 use Exception;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
 class FAQController extends AppBaseController
@@ -32,7 +34,11 @@ class FAQController extends AppBaseController
      */
     public function index(): View
     {
-        return view('faqs.index');
+        $faqCategories = Schema::hasTable('faq_categories')
+            ? FAQCategory::orderBy('sort_order')->orderBy('name')->pluck('name', 'id')
+            : collect();
+
+        return view('faqs.index', compact('faqCategories'));
     }
 
     /**

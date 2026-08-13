@@ -8414,6 +8414,7 @@ function loadFaqsData() {
           var element = document.createElement('textarea');
           element.innerHTML = result.data.title;
           $('#faqId').val(result.data.id);
+          $('#editFaqCategoryId').val(result.data.faq_category_id || '');
           $('#editFaqTitle').val(element.value);
           element.innerHTML = result.data.description;
           editFaqDescriptionQuill.root.innerHTML = element.value;

@@ -3,13 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * App\Models\FAQ
  *
  * @property int $id
+ * @property int|null $faq_category_id
  * @property string $title
  * @property string $description
+ * @property int $sort_order
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  *
@@ -32,6 +35,7 @@ class FAQ extends Model
      * @var array
      */
     public static $rules = [
+        'faq_category_id' => 'nullable|integer',
         'title' => 'required|max:150',
         'description' => 'required',
     ];
@@ -42,8 +46,10 @@ class FAQ extends Model
      * @var string[]
      */
     public $fillable = [
+        'faq_category_id',
         'title',
         'description',
+        'sort_order',
     ];
 
     /**
@@ -53,7 +59,14 @@ class FAQ extends Model
      */
     protected $casts = [
         'id' => 'integer',
+        'faq_category_id' => 'integer',
         'title' => 'string',
         'description' => 'string',
+        'sort_order' => 'integer',
     ];
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(FAQCategory::class, 'faq_category_id');
+    }
 }

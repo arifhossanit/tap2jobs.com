@@ -7,7 +7,7 @@
 <header class='employer-dashboard-header container-fluid container-xxl d-flex align-items-stretch justify-content-between'>
     <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
         <a href="{{ route('front.home') }}"  target="_blank"
-           class="text-decoration-none horizontal-sidebar-logo d-flex align-items-center {{ checkLanguageSession() == 'ar' ? 'ps-xl-8' : 'pe-xl-8' }}">
+           class="text-decoration-none horizontal-sidebar-logo d-flex align-items-center">
             <div class="image image-mini {{ checkLanguageSession() == 'ar' ? 'ms-3' : 'me-3' }}">
                 <img src="{{getLogoUrl()}}"
                      class="img-fluid" alt="profile image">
@@ -16,7 +16,7 @@
         </a>
     </div>
     <div class="d-flex align-items-stretch justify-content-xl-between justify-content-end flex-grow-1">
-        <nav class="navbar navbar-expand-xl navbar-light horizontal-sidebar d-xl-flex d-block align-items-stretch py-3 py-xl-0"
+        <nav class="navbar navbar-expand-xl navbar-light horizontal-sidebar d-xl-flex d-block align-items-stretch py-3 py-xl-0 flex-grow-1"
              id="nav-header">
             @include('employer.layouts.sidebar')
         </nav>

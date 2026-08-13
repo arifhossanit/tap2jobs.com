@@ -28,12 +28,12 @@
                             <a class="header-navbar-color text-gray nav-link {{ Request::is('company-lists') || Request::is('company-details*') ? 'header-navbar-color-active' : '' }}"
                                 href="{{ route('front.company.lists') }}">{{ __('web.companies') }}</a>
                         </li>
-                        @if(auth()->guest() || auth()->user()?->hasRole('Employer'))
+                        {{-- @if(auth()->guest() || auth()->user()?->hasRole('Employer'))
                             <li class="nav-item">
                                 <a class="header-navbar-color text-gray nav-link {{ Request::is('company-lists') || Request::is('company-details*') ? 'header-navbar-color-active' : '' }}"
                                     href="{{ route('job.create') }}">{{ __('web.add_post_job') }}</a>
                             </li>
-                        @endif
+                        @endif --}}
                         {{--
                         @auth
                             @role('Employer|Admin')
@@ -50,6 +50,7 @@
                                 <a href="#" class="nav-link text-gray dropdown-toggle language-dropdown-btn"
                                    id="frontLanguageToggle" role="button" aria-expanded="false"
                                    aria-controls="frontLanguageMenu">
+                                    <i class="fa-solid fa-globe {{ getFrontSelectLanguage() == 'ar' ? 'ms-1' : 'me-1' }}"></i>
                                     {{ getCurrentLanguageName() }}
                                 </a>
                                 <ul class="language-dropdown-menu language-menu" id="frontLanguageMenu"
