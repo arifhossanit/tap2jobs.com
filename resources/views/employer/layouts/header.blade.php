@@ -8,11 +8,11 @@
     <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
         <a href="{{ route('front.home') }}"  target="_blank"
            class="text-decoration-none horizontal-sidebar-logo d-flex align-items-center">
-            <div class="image image-mini {{ checkLanguageSession() == 'ar' ? 'ms-3' : 'me-3' }}">
+            <div class="image {{ checkLanguageSession() == 'ar' ? 'ms-3' : 'me-3' }}">
                 <img src="{{getLogoUrl()}}"
-                     class="img-fluid" alt="profile image">
+                     class="img-fluid new-logo-image" alt="profile image" style="width: auto; max-width: 100%; max-height: 45px; object-fit: contain;">
             </div>
-            <span class="text-gray-900 fs-4 d-none d-sm-block"> {{ getAppName() }}</span>
+            <!-- <span class="text-gray-900 fs-4 d-none d-sm-block"> {{ getAppName() }}</span> -->
         </a>
     </div>
     <div class="d-flex align-items-stretch justify-content-xl-between justify-content-end flex-grow-1">

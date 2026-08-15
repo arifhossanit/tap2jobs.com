@@ -5,6 +5,7 @@ Livewire.hook('element.init', () => {
 })
 
 let filterJobId = null;
+let selectedAppliedJobId = null;
 function loadAppliedJobsData() {
     // window.livewire.restart();
 
@@ -120,6 +121,7 @@ document.addEventListener('appliedJob:error', function (){
 
 listenClick('.schedule-slot-book', function (event) {
     let appliedJobId = $(event.currentTarget).attr('data-id');
+    selectedAppliedJobId = appliedJobId;
     $.ajax({
         url: route('show.schedule.slot',appliedJobId),
         type: 'POST',
@@ -209,6 +211,7 @@ listenClick('.schedule-slot-book', function (event) {
 });
 
 listenHiddenBsModal('#scheduleSlotBookModal', function () {
+    selectedAppliedJobId = null;
     $('.slot-main-div').html('');
     $('.choose-slot-textarea textarea').val('');
     $('.choose-slot-textarea').addClass('d-none');
@@ -228,7 +231,13 @@ listenClick('#scheduleInterviewBtnSave', function () {
 listenSubmit('#scheduleSlotBookForm', function (e) {
     e.preventDefault();
     $('#scheduleInterviewBtnSave,#rejectSlotBtnSave').attr('disabled', true);
-    let appliedJobId = $('.schedule-slot-book').attr('data-id');
+    let appliedJobId = selectedAppliedJobId;
+    if (isEmpty(appliedJobId)) {
+        displayErrorMessage(Lang.get('js.seems_message'));
+        $('#scheduleInterviewBtnSave,#rejectSlotBtnSave').attr('disabled', false);
+        return;
+    }
+
     let scheduleId;
     let formData = new FormData($(this)[0]);
     $.each($('.slot-book'), function (i) {
@@ -236,7 +245,9 @@ listenSubmit('#scheduleSlotBookForm', function (e) {
             scheduleId = $(this).data('schedule');
         }
     });
-    formData.append('rejectSlot', $('#rejectSlotBtnSave').val());
+    if (!isEmpty($('#rejectSlotBtnSave').val())) {
+        formData.append('rejectSlot', $('#rejectSlotBtnSave').val());
+    }
     formData.append('schedule_id', scheduleId);
     $.ajax({
         url: route('choose.preference',appliedJobId),

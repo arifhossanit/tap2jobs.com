@@ -28,6 +28,10 @@
                             <a class="header-navbar-color text-gray nav-link {{ Request::is('company-lists') || Request::is('company-details*') ? 'header-navbar-color-active' : '' }}"
                                 href="{{ route('front.company.lists') }}">{{ __('web.companies') }}</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="header-navbar-color text-gray nav-link {{ Request::is('posts*') || Request::is('blogs*') ? 'header-navbar-color-active' : '' }}"
+                                href="{{ route('front.blogs') }}">{{ __('web.blogs') }}</a>
+                        </li>
                         {{-- @if(auth()->guest() || auth()->user()?->hasRole('Employer'))
                             <li class="nav-item">
                                 <a class="header-navbar-color text-gray nav-link {{ Request::is('company-lists') || Request::is('company-details*') ? 'header-navbar-color-active' : '' }}"

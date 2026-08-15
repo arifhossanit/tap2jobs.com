@@ -25,13 +25,13 @@
         <span class="required"></span>
         {{--        {{ Form::textarea('description', null, ['class' => 'form-control' , 'id' => 'details', 'rows' => '5']) }}--}}
         <div id="editDetails" aria-required="true"></div>
-        {{ Form::hidden('description',$job->description, ['id' => 'editJobDescription', 'required']) }}
+        <textarea name="description" id="editJobDescription" class="d-none">{{ old('description', $job->description) }}</textarea>
     </div>
     <div class="col-xl-12 col-md-6 col-sm-12 mb-5">
          {{ Form::label('key_responsibilities', __('messages.job.key_responsibilities') . ':', ['class' => 'form-label ']) }}<span
              class="required"></span>
          <div id="editResponse" aria-required="true"></div>
-         {{ Form::hidden('key_responsibilities', $job->key_responsibilities, ['id' => 'edit_responsibilities', 'required']) }}
+         <textarea name="key_responsibilities" id="edit_responsibilities" class="d-none">{{ old('key_responsibilities', $job->key_responsibilities) }}</textarea>
      </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('no_preference', __('messages.candidate.gender').':', ['class' => 'form-label']) }}

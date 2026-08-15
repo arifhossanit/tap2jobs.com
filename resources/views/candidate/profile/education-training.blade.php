@@ -649,7 +649,8 @@
                                             <span>{{ __('messages.common.edit') }}</span>
                                         </a>
                                         <a href="javascript:void(0)"
-                                            class="candidate-education-action candidate-education-action--delete">
+                                            class="candidate-education-action candidate-education-action--delete"
+                                            data-certification-delete>
                                             <i class="fa-solid fa-trash-can"></i>
                                             <span>{{ __('messages.common.delete') }}</span>
                                         </a>
@@ -1212,9 +1213,22 @@
                     }
                 };
 
+                const reindexCertificationItems = function () {
+                    const items = certificationList.querySelectorAll('[data-certification-item]');
+                    items.forEach(function (item, idx) {
+                        const newIndex = idx + 1;
+                        item.dataset.certificationIndex = String(newIndex);
+                        const heading = item.querySelector('.candidate-education-item__head h2');
+                        if (heading) {
+                            heading.textContent = getNumberedSectionTitle(window.candidateProfileCertificationLabel, newIndex);
+                        }
+                    });
+                };
+
                 certificationPanel.addEventListener('click', function (event) {
                     const addButton = event.target.closest('[data-certification-add-action]');
                     const editButton = event.target.closest('[data-certification-edit]');
+                    const deleteButton = event.target.closest('[data-certification-delete]');
 
                     if (addButton) {
                         event.preventDefault();
@@ -1229,6 +1243,40 @@
                         if (item) {
                             setCertificationFormMode(item, false);
                         }
+                        return;
+                    }
+
+                    if (deleteButton) {
+                        event.preventDefault();
+                        const item = deleteButton.closest('[data-certification-item]');
+                        if (!item) return;
+
+                        const certName = item.dataset.certificationCertification || '';
+
+                        swal({
+                            title: Lang.get('js.delete') || 'Delete',
+                            text: (Lang.get('js.are_you_sure') || 'Are you sure you want to delete') + (certName ? ' "' + certName + '"' : '') + '?',
+                            buttons: {
+                                confirm: Lang.get('js.yes_delete') || 'Yes, Delete',
+                                cancel: Lang.get('js.no_cancel') || 'No, Cancel',
+                            },
+                            reverseButtons: true,
+                            icon: 'warning',
+                        }).then(function (willDelete) {
+                            if (!willDelete) {
+                                return;
+                            }
+
+                            if (activeCertificationItem === item) {
+                                closeCertificationForm();
+                            }
+
+                            item.remove();
+                            reindexCertificationItems();
+                            if (typeof displaySuccessMessage === 'function') {
+                                displaySuccessMessage('Professional Certification deleted successfully.');
+                            }
+                        });
                     }
                 });
 
@@ -1296,7 +1344,93 @@
                         fields.duration.value = '';
                     });
                 }
-            }
+            document.addEventListener('click', function (event) {
+                const deleteExpBtn = event.target.closest('.delete-experience');
+                if (!deleteExpBtn) {
+                    return;
+                }
+
+                event.preventDefault();
+                const experienceId = deleteExpBtn.dataset.id;
+                if (!experienceId) {
+                    return;
+                }
+
+                const titleText = (typeof Lang !== 'undefined' && Lang.get('js.delete')) ? Lang.get('js.delete') : 'Delete';
+                const textMsg = (typeof Lang !== 'undefined' && Lang.get('js.are_you_sure')) ? Lang.get('js.are_you_sure') + ' "' + (Lang.get('js.experience') || 'Experience') + '"?' : 'Are you sure you want to delete this experience?';
+                const confirmBtnText = (typeof Lang !== 'undefined' && Lang.get('js.yes_delete')) ? Lang.get('js.yes_delete') : 'Yes, Delete';
+                const cancelBtnText = (typeof Lang !== 'undefined' && Lang.get('js.no_cancel')) ? Lang.get('js.no_cancel') : 'No, Cancel';
+
+                const executeDelete = function () {
+                    const token = document.querySelector('meta[name="csrf-token"]');
+                    fetch(route('experience.destroy', experienceId), {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': token ? token.content : '',
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ _method: 'DELETE' }),
+                    })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            return response.json().then(function (data) {
+                                throw new Error(data.message || 'Unable to delete experience.');
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(function (result) {
+                        if (typeof displaySuccessMessage === 'function') {
+                            displaySuccessMessage(result.message || 'Experience deleted successfully');
+                        }
+                        window.location.reload();
+                    })
+                    .catch(function (error) {
+                        if (typeof displayErrorMessage === 'function') {
+                            displayErrorMessage(error.message);
+                        } else {
+                            alert(error.message);
+                        }
+                    });
+                };
+
+                if (typeof swal === 'function') {
+                    swal({
+                        title: titleText,
+                        text: textMsg,
+                        buttons: {
+                            confirm: confirmBtnText,
+                            cancel: cancelBtnText,
+                        },
+                        reverseButtons: true,
+                        icon: 'warning',
+                    }).then(function (willDelete) {
+                        if (willDelete) {
+                            executeDelete();
+                        }
+                    });
+                } else if (typeof Swal === 'function') {
+                    Swal.fire({
+                        title: titleText,
+                        text: textMsg,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: confirmBtnText,
+                        cancelButtonText: cancelBtnText,
+                        reverseButtons: true,
+                    }).then(function (result) {
+                        if (result.isConfirmed) {
+                            executeDelete();
+                        }
+                    });
+                } else {
+                    if (confirm(textMsg)) {
+                        executeDelete();
+                    }
+                }
+            });
         });
 
         {{-- let addExperienceUrl = "{{ route('candidate.create-experience') }}"; --}}

@@ -68,18 +68,21 @@ class AppliedJobs extends Component
         $appliedJob = JobApplication::with('applicationSchedule')->findOrFail($id);
 
         $candidateId = getLoggedInUser()->candidate->id;
-        $jobApplicationIds = JobApplication::whereCandidateId($candidateId)->pluck('id')->toArray();
 
-        if (! in_array($id, $jobApplicationIds)) {
+        if ($appliedJob->candidate_id !== $candidateId) {
             $this->dispatch('appliedJob:error');
 
-            if ($appliedJob->applicationSchedule->count() > 0) {
-                $this->dispatch('notDeleted');
-            }
-        } else {
-            $appliedJob->delete();
-            $this->dispatch('deleted');
+            return;
         }
+
+        if ($appliedJob->applicationSchedule->count() > 0) {
+            $this->dispatch('notDeleted');
+
+            return;
+        }
+
+        $appliedJob->delete();
+        $this->dispatch('deleted');
 
 //        $appliedJob = JobApplication::with('applicationSchedule')->findOrFail($id);
 //        if ($appliedJob->applicationSchedule->count() > 0) {

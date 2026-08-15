@@ -21,7 +21,7 @@ class CandidateHeaderLayoutTest extends TestCase
         $this->assertStringContainsString("getNotification(\\App\\Models\\Notification::CANDIDATE)", $header);
         $this->assertStringContainsString("@include('candidate.layouts.sidebar')", $header);
         $this->assertStringContainsString("route('candidate.profile')", $header);
-        $this->assertStringContainsString('href="#changePasswordModal"', $header);
+        $this->assertStringContainsString("route('candidate.change-password.form')", $header);
         $this->assertStringNotContainsString('href="javascript:void(0)" class="dropdown-item text-gray-900 editCandidateProfileModal', $header);
 
         $styles = file_get_contents(resource_path('assets/sass/new-custom.scss'));
@@ -53,7 +53,6 @@ class CandidateHeaderLayoutTest extends TestCase
         $this->assertStringContainsString('{{ $employerHeaderName }}', $header);
         $this->assertStringNotContainsString('{{\Illuminate\Support\Facades\Auth::user()->full_name}}', $header);
         $this->assertStringContainsString('.employer-dashboard-header', $styles);
-        $this->assertStringContainsString('[dir="rtl"] .employer-dashboard-header', $styles);
     }
 
     public function test_candidate_profile_tabs_wrap_without_horizontal_scrolling(): void

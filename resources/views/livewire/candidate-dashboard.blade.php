@@ -1,16 +1,33 @@
+@php
+    $profileImage = $user->avatar ?: asset('assets/img/infyom-logo.png');
+    $candidateLocation = __('messages.candidate_dashboard.location_information');
+
+    if ($candidate) {
+        if (! empty($candidate->city_name)) {
+            $candidateLocation = collect([
+                $candidate->city_name,
+                $candidate->state_name,
+                $candidate->country_name,
+            ])->filter()->implode(', ');
+        } elseif (! empty($candidate->country_id)) {
+            $candidateLocation = $candidate->country_name ?: $candidateLocation;
+        }
+    }
+@endphp
+
 <div class="content flex-column-fluid">
-    <div class="container-fluid container-xxl">
-        <div class="card mb-5 mb-xl-10">
-            <div class="card-body pt-9 pb-0">
+    <div class="candidate-dashboard">
+        <div class="card candidate-dashboard-profile-card">
+            <div class="card-body py-7">
                 <div class="d-flex flex-wrap flex-sm-nowrap mb-3">
                     <div class="me-7 mb-4">
-                        <div class="">
-                            <img height="150" width="150" src="{{ getCompanyLogo() }}" alt="image"
+                        <div class="candidate-dashboard-avatar">
+                            <img height="150" width="150" src="{{ $profileImage }}" alt="{{ html_entity_decode($user->full_name) }}"
                                 style="object-fit: cover">
                         </div>
                     </div>
                     <div class="flex-grow-1">
-                        <div class="d-flex justify-content-between align-items-start flex-wrap mb-2">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-4 mb-2">
                             <div class="d-flex flex-column">
                                 <div class="align-items-center mb-2">
                                     <a
@@ -25,7 +42,7 @@
                                     <a
                                         class="d-flex align-items-center text-gray-600 text-hover-primary {{ checkLanguageSession() == 'ar' ? 'ms-5' : 'me-5' }} mb-2 text-decoration-none">
                                         <i class="fa-solid fa-location-dot fs-3 {{ checkLanguageSession() == 'ar' ? 'ms-2' : 'me-2' }}"></i>
-                                        {{ !empty($candidate->city_name) ? $candidate->city_name . ', ' . $candidate->state_name . ', ' . $candidate->country_name : (!empty($candidate->country_id) ? $candidate->country_name : __('messages.candidate_dashboard.location_information')) }}
+                                        {{ $candidateLocation }}
                                     </a>
                                     <a
                                         class="d-flex align-items-center text-gray-600 text-hover-primary {{ checkLanguageSession() == 'ar' ? 'ms-5' : 'me-5' }} mb-2 text-decoration-none">
@@ -33,10 +50,16 @@
                                         {{ $user->email }}</a>
                                 </div>
                             </div>
-                            <div class="d-flex my-4">
-                                <a href="{{ route('candidate.profile') }}" class="btn btn-sm btn-primary me-2">
-                                    {{ __('messages.user.edit_profile') }}
-                                </a>
+                            <div class="candidate-profile-completion my-2">
+                                <div class="candidate-profile-completion__ring"
+                                     style="--completion: {{ $profileCompletion['percentage'] ?? 0 }}%; --completion-color: {{ $profileCompletion['color'] ?? '#1967d2' }};">
+                                    <span>{{ $profileCompletion['percentage'] ?? 0 }}%</span>
+                                </div>
+                                <div class="candidate-profile-completion__content">
+                                    <span>Profile Filled</span>
+                                    <strong>{{ $profileCompletion['completed'] ?? 0 }}/{{ $profileCompletion['total'] ?? 10 }} Completed</strong>
+                                    <a href="{{ route('candidate.profile') }}">{{ __('messages.user.edit_profile') }}</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -87,6 +110,60 @@
                         <h3 class="mb-0 fs-4 fw-light">{{ __('messages.apply_job.resume') }}</h3>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="card candidate-matching-jobs-card mt-7">
+            <div class="card-body">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-5">
+                    <div>
+                        <h3 class="candidate-section-title mb-1">Matching Jobs</h3>
+                        {{-- <p class="candidate-section-subtitle mb-0">Recommended jobs based on your candidate profile.</p> --}}
+                    </div>
+                    <a href="{{ route('front.search.jobs') }}" target="_blank" class="btn btn-sm btn-primary">
+                        View More Jobs
+                    </a>
+                </div>
+
+                @if($matchingJobs->isNotEmpty())
+                    <div class="candidate-match-grid">
+                        @foreach($matchingJobs as $job)
+                            <article class="candidate-match-card">
+                                <div class="candidate-match-card__top candidate-match-card__top--simple">
+                                    <a href="{{ route('front.job.details', $job->job_id) }}" target="_blank"
+                                       class="candidate-match-logo" aria-label="{{ html_entity_decode($job->company->user->full_name ?? $job->company->ceo ?? $job->job_title) }}">
+                                        <img src="{{ $job->company->company_url }}" alt="{{ html_entity_decode($job->company->user->full_name ?? $job->job_title) }}">
+                                    </a>
+                                    <div class="candidate-match-heading">
+                                        <a href="{{ route('front.job.details', $job->job_id) }}" target="_blank"
+                                           class="candidate-match-title">
+                                            {{ html_entity_decode(\Illuminate\Support\Str::limit($job->job_title, 54)) }}
+                                        </a>
+                                        <div class="candidate-match-company">
+                                            {{ html_entity_decode($job->company->user->full_name ?? $job->company->ceo ?? __('messages.company.company')) }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="candidate-match-card__body">
+                                    <div class="candidate-match-meta">
+                                        <span><i class="fa-solid fa-location-dot"></i>{{ $job->full_location ?: __('messages.candidate_dashboard.location_information') }}</span>
+                                        <span><i class="fa-solid fa-briefcase"></i>{{ $job->functionalArea->name ?? $job->jobCategory->name ?? __('messages.common.n/a') }}</span>
+                                    </div>
+                                </div>
+                                <div class="candidate-match-card__footer">
+                                    <span>{{ optional($job->job_expiry_date)->format('M d, Y') }}</span>
+                                    <a href="{{ route('front.job.details', $job->job_id) }}" target="_blank">View Details</a>
+                                </div>
+                            </article>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="candidate-match-empty">
+                        <i class="fa-solid fa-briefcase"></i>
+                        <h4>No matching jobs found</h4>
+                        <p>Complete your skills, preferred area and location to get better recommendations.</p>
+                        <a href="{{ route('candidate.profile') }}" class="btn btn-sm btn-primary">{{ __('messages.user.edit_profile') }}</a>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

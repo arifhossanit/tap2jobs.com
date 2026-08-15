@@ -782,6 +782,7 @@ Route::middleware('xss', 'setLanguage')->group(function () {
 
          //Blog Listing
          Route::get('/posts', [Web\PostController::class, 'getBlogLists'])->name('front.post.lists');
+         Route::get('/blogs', [Web\PostController::class, 'getBlogLists'])->name('front.blogs');
          Route::get('/posts/details/{post}', [Web\PostController::class, 'getBlogDetails'])->name('front.posts.details');
          Route::get(
                   '/posts/category/{postCategory}',
@@ -845,6 +846,7 @@ Route::middleware('auth', 'role:Candidate', 'xss', 'verified.user')->prefix('can
     Route::post('profile/image', [Candidates\CandidateController::class, 'updateProfileImage'])->name('candidate-profile.image.update');
     Route::delete('profile/image', [Candidates\CandidateController::class, 'deleteProfileImage'])->name('candidate-profile.image.delete');
 
+    Route::get('change-password', [Candidates\CandidateController::class, 'showChangePassword'])->name('candidate.change-password.form');
     Route::get('edit-profile', [Candidates\CandidateController::class, 'editCandidateProfile'])->name('candidate.edit.profile');
     Route::post('edit-change-password', [Candidates\CandidateController::class, 'changePassword'])->name('candidate.change-password');
     Route::post('edit-profile-update', [Candidates\CandidateController::class, 'profileUpdate'])->name('candidate.update.profile');

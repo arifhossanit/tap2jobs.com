@@ -1,14 +1,21 @@
 @php($notifications = getNotification(\App\Models\Notification::CANDIDATE))
 @php($notificationCount = $notifications->count())
+@php($isCandidateUserDropdownActive = Request::is('candidate/profile*', 'candidate/favourite-companies*', 'candidate/change-password*'))
+<style>
+    .candidate-user-dropdown-menu .dropdown-item.active,
+    .candidate-user-dropdown-menu .dropdown-item.active .dropdown-icon {
+        color: #ffffff !important;
+    }
+</style>
 <header class='candidate-dashboard-header container-fluid container-xxl d-flex align-items-stretch justify-content-between'>
     <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
         <a href="{{ route('front.home') }}"  target="_blank"
            class="text-decoration-none horizontal-sidebar-logo d-flex align-items-center">
-            <div class="image image-mini {{ checkLanguageSession() == 'ar' ? 'ms-3' : 'me-3' }}">
+            <div class="image {{ checkLanguageSession() == 'ar' ? 'ms-3' : 'me-3' }}">
                 <img src="{{getLogoUrl()}}"
-                     class="img-fluid" alt="profile image">
+                     class="img-fluid new-logo-image" alt="profile image" style="width: auto; max-width: 100%; max-height: 45px; object-fit: contain;">
             </div>
-            <span class="text-gray-900 fs-4 d-none d-sm-block"> {{ getAppName() }}</span>
+            <!-- <span class="text-gray-900 fs-4 d-none d-sm-block"> {{ getAppName() }}</span> -->
         </a>
     </div>
     <div class="d-flex align-items-stretch justify-content-xl-between justify-content-end flex-grow-1">
@@ -18,26 +25,32 @@
         </nav>
         <ul class="nav align-items-stretch flex-nowrap">
             <li class="px-xxl-3 px-2 d-flex align-items-stretch">
-                <div class="dropdown d-flex align-items-stretch">
+                <div class="dropdown language-dropdown d-flex align-items-stretch" data-language-url="{{ route('front.change-language') }}">
                     <button type="button"
-                            class="btn dropdown-toggle px-0 text-gray-600 d-flex align-items-center"
+                            class="btn px-0 text-gray-600 d-flex align-items-center gap-1"
                             id="candidateLanguageDropdown"
                             data-bs-toggle="dropdown" aria-expanded="false">
-                        {{ getCurrentLanguageName() }}
+                        <i class="fa-solid fa-globe {{ checkLanguageSession() == 'ar' ? 'ms-1' : 'me-1' }}"></i>
+                        <span>{{ getCurrentLanguageName() }}</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end border-0 shadow p-2"
                         aria-labelledby="candidateLanguageDropdown">
                         @foreach (getUserLanguages() as $languageCode => $languageName)
                             <li>
                                 <button type="button"
-                                        class="dropdown-item rounded d-flex align-items-center gap-3 px-3 py-2 candidate-header-language-option {{ checkLanguageSession() === $languageCode ? 'active' : '' }}"
+                                        class="dropdown-item rounded d-flex align-items-center px-3 py-2 candidate-header-language-option {{ checkLanguageSession() === $languageCode ? 'active' : '' }}"
                                         data-language="{{ $languageCode }}"
                                         {{ checkLanguageSession() === $languageCode ? 'aria-current=true' : '' }}>
-                                    @if (isset(\App\Models\User::LANGUAGES_IMAGE[$languageCode]))
-                                        <img src="{{ asset(\App\Models\User::LANGUAGES_IMAGE[$languageCode]) }}"
-                                             width="20" height="14" alt="" class="flex-shrink-0">
+                                    @if (array_key_exists($languageCode, \App\Models\User::LANGUAGES_IMAGE))
+                                        @foreach (\App\Models\User::LANGUAGES_IMAGE as $imageKey => $imageValue)
+                                            @if ($imageKey == $languageCode)
+                                                <img class="{{ checkLanguageSession() == 'ar' ? 'ms-2' : 'me-2' }} country-flag"
+                                                     src="{{ asset($imageValue) }}" style="width: 20px;" />
+                                            @endif
+                                        @endforeach
                                     @else
-                                        <i class="fa-solid fa-flag text-primary" style="width: 20px"></i>
+                                        <i class="fa fa-flag {{ checkLanguageSession() == 'ar' ? 'ms-2' : 'me-2' }} fs-7 text-danger" aria-hidden="true"
+                                           style="width: 20px;"></i>
                                     @endif
                                     <span>{{ $languageName }}</span>
                                 </button>
@@ -107,7 +120,7 @@
 
             <li class="px-xxl-3 px-2 d-flex align-items-stretch">
                 <div class="dropdown dropdown-transparent d-flex align-items-stretch">
-                    <button class="btn dropdown-toggle px-0 text-gray-600 d-flex align-items-center" type="button"
+                    <button class="btn dropdown-toggle px-0 text-gray-600 d-flex align-items-center {{ $isCandidateUserDropdownActive ? 'active' : '' }}" type="button"
                             id="candidateUserDropdown" data-bs-auto-close="outside"
                             data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="image image-circle image-mini d-flex align-items-center {{ checkLanguageSession() == 'ar' ? 'ms-sm-3' : 'me-sm-3' }}">
@@ -117,7 +130,7 @@
                         {{-- {{\Illuminate\Support\Facades\Auth::user()->full_name}} --}}
                         {{-- <i class="fa-solid fa-angle-down ms-2"></i>--}}
                     </button>
-                    <div class="dropdown-menu p-4 pb-4" aria-labelledby="candidateUserDropdown"
+                    <div class="dropdown-menu candidate-user-dropdown-menu p-4 pb-4" aria-labelledby="candidateUserDropdown"
                          data-bs-auto-close="outside">
                         <div class="text-center border-bottom pb-5 ">
                             <div class="image image-circle image-tiny mb-5">
@@ -129,23 +142,24 @@
                         <ul class="pt-4 pe-0">
                             <li>
                                 <a href="{{ route('candidate.profile') }}"
-                                   class="dropdown-item text-gray-900 {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}">
+                                   class="dropdown-item text-gray-900 {{ Request::is('candidate/profile*') ? 'active' : '' }} {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}">
                                      <span class="dropdown-icon {{ checkLanguageSession() == 'ar' ? 'ms-4' : 'me-4' }} text-gray-600">
                                         <i class="fa-solid fa-user"></i>
                                      </span> {{ __('messages.user.edit_profile') }}</a>
                             </li>
+                            
                             <li>
-                                <a class="dropdown-item text-gray-900 changePasswordModal {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}"
-                                   href="#changePasswordModal" data-id="{{ getLoggedInUserId() }}">
+                                <a class="dropdown-item text-gray-900 {{ Request::is('candidate/change-password*') ? 'active' : '' }} {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}"
+                                   href="{{ route('candidate.change-password.form') }}">
                                     <span class="dropdown-icon {{ checkLanguageSession() == 'ar' ? 'ms-4' : 'me-4' }} text-gray-600">
                                         <i class="fa-solid fa-lock"></i>
                                     </span> {{ (Str::limit(__('messages.user.change_password'),20,'...')) }}
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item text-gray-900 {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}" href="{{ route('logout') }}"
+                                <a class="dropdown-item text-red-700 {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}" href="{{ route('logout') }}"
                                    onclick="event.preventDefault(); localStorage.clear();  document.getElementById('logout-form').submit();">
-                                    <span class="dropdown-icon {{ checkLanguageSession() == 'ar' ? 'ms-4' : 'me-4' }} text-gray-600">
+                                    <span class="dropdown-icon {{ checkLanguageSession() == 'ar' ? 'ms-4' : 'me-4' }} text-red-600">
                                         <i class="fa-solid fa-right-from-bracket"></i>
                                     </span> {{ __('messages.user.logout') }}
                                 </a>

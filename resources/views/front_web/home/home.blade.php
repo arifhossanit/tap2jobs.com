@@ -26,6 +26,11 @@
         margin: auto;
     }
 
+    .bd-home {
+        --bd-section-gap: 18px;
+        --bd-card-padding: 18px;
+    }
+
     .bd-header a {
         text-decoration: none;
     }
@@ -390,13 +395,13 @@
     /* Hero Section */
     .bd-hero {
         background: linear-gradient(90deg, rgba(247, 252, 253, .93), rgba(224, 234, 242, .72), rgba(250, 244, 229, .85)), linear-gradient(125deg, #edf7f7 18%, #bbcfdb 18.2%, #e8eceb 44%, #c9d4dd 44.3%, #f5ebd8 78%);
-        min-height: 310px;
+        min-height: 300px;
     }
 
     .bd-hero__inner {
         position: relative;
-        min-height: 310px;
-        padding: 37px 270px 31px 270px;
+        min-height: 300px;
+        padding: 32px 270px 28px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -404,7 +409,7 @@
 
     .bd-hero h1 {
         font-size: 25px;
-        margin: 0 0 31px;
+        margin: 0 0 24px;
         color: #000;
         font-weight: bold;
         text-align: center;
@@ -414,8 +419,8 @@
     .bd-stats {
         display: flex;
         justify-content: center;
-        gap: 50px;
-        margin-bottom: 16px;
+        gap: 38px;
+        margin-bottom: var(--bd-section-gap);
     }
 
     .bd-stat {
@@ -488,6 +493,32 @@
 
     .find-job-section > .row {
         justify-content: center;
+        margin-left: 0;
+        margin-right: 0;
+        row-gap: 0;
+    }
+
+    .find-job-section .find-job {
+        border-radius: 8px;
+        box-shadow: 0 8px 20px rgba(24, 38, 60, .10);
+        padding: 2px;
+        top: 0 !important;
+    }
+
+    .find-job-section .find-job form > .row {
+        row-gap: 12px;
+    }
+
+    .find-job-section .find-job h3 {
+        margin-bottom: 5px !important;
+    }
+
+    .find-job-section .find-job input {
+        padding-bottom: 0 !important;
+    }
+
+    .find-job-section .find-jobs-btn {
+        min-height: 44px;
     }
 
     /* City Links */
@@ -495,8 +526,8 @@
         display: flex;
         justify-content: center;
         flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 14px;
+        gap: 8px;
+        margin-top: var(--bd-section-gap);
     }
 
     .bd-city-links a {
@@ -504,7 +535,7 @@
         font-size: 12px;
         font-weight: bold;
         background: #1967d2;
-        padding: 6px 8px;
+        padding: 6px 9px;
         border-radius: 3px;
         text-decoration: none;
     }
@@ -515,19 +546,20 @@
         width: 263px;
         background: #1967d2;
         color: #fff;
-        padding: 0px 17px;
+        padding: 16px 18px;
     }
 
     .bd-quick-links h2 {
-        font-size: 14px;
-        margin: 0 0 13px;
+        font-size: 16px;
+        line-height: 1.2 !important;
+        font-weight: bold;
+        margin: 0;
     }
 
     .bd-quick-links a {
         display: block;
         color: #fff;
         font-size: 12px;
-        margin: 0 0 12px;
     }
 
     .bd-quick-links a::before {
@@ -544,20 +576,21 @@
 
     /* Directory */
     .bd-directory {
-        padding: 21px 0;
+        padding: var(--bd-section-gap) 0 24px;
     }
 
     .bd-directory__layout {
         display: grid;
         grid-template-columns: 1fr 263px;
-        gap: 13px;
+        gap: 16px;
+        align-items: stretch;
     }
 
     .bd-category-card {
         background: #fff;
         border: 1px solid #d6dce3;
         border-radius: 4px;
-        padding: 0 21px 12px;
+        padding: 0 var(--bd-card-padding) 14px;
         box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
     }
 
@@ -565,7 +598,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 10px 4px 8px;
+        padding: 14px 4px 10px;
         color: #265997;
         font-size: 16px;
         font-weight: bold;
@@ -598,14 +631,15 @@
     .bd-category-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        column-gap: 32px;
+        column-gap: 28px;
+        row-gap: 2px;
     }
 
     .bd-category-grid a {
         color: #4e4e4e;
         font-size: 14px;
         display: block;
-        padding: 8px 0;
+        padding: 7px 0;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -838,9 +872,58 @@
         }
     }
 
-    /* Find Job Section */
-    .find-job-section .find-job {
-        top: 0px !important;
+    @media (max-width: 991px) {
+        .bd-home {
+            --bd-section-gap: 16px;
+            --bd-card-padding: 16px;
+        }
+
+        .bd-hero {
+            min-height: auto;
+        }
+
+        .bd-hero__inner {
+            min-height: auto;
+            padding: 28px 16px 24px;
+        }
+
+        .bd-hero h1 {
+            margin-bottom: 20px;
+        }
+
+        .find-job-section .find-job {
+            padding: 4px;
+        }
+    }
+
+    @media (max-width: 700px) {
+        .bd-shell {
+            width: min(100% - 24px, 1140px);
+        }
+
+        .bd-hero__inner {
+            padding: 24px 12px 20px;
+        }
+
+        .bd-stats {
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 2px;
+            width: 100%;
+        }
+
+        .bd-city-links {
+            gap: 6px;
+            margin-top: 14px;
+        }
+
+        .bd-directory {
+            padding: 16px 0 20px;
+        }
+
+        .bd-category-card__title {
+            padding: 12px 0 10px;
+        }
     }
 </style>
 @endsection
@@ -902,7 +985,7 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4 br-2 ps-lg-4 px-20 pb-0 autocomplete-wrapper">
+                                    <div class="col-lg-4 br-2 ps-lg-4 px-20 autocomplete-wrapper">
                                         <h3 class="fs-16 text-secondary text-start mb-0">@lang('web.common.location')</h3>
                                         <input type="text" class="fs-14 text-gray mb-0 pb-4" name="location"
                                             id="search-location" placeholder="@lang('web.web_home.city_or_postcode')" />

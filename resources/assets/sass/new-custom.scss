@@ -1501,6 +1501,8 @@
 
 .candidate-dashboard-header,
 .employer-dashboard-header {
+  background-color: #e4f2fb;
+  background-image: linear-gradient(to right, #e4f2fb, #eaf0fc);
   gap: 24px;
 
   .horizontal-sidebar {
@@ -1520,6 +1522,7 @@
     display: flex;
     margin-left: 0 !important;
     margin-right: 0 !important;
+    padding: 0 5px;
   }
 
   .horizontal-menu .nav-item .nav-link {
@@ -1545,19 +1548,22 @@
   }
 
   .horizontal-menu .nav-item .nav-link::after {
-    border-bottom: 2px solid transparent;
+    background-color: transparent;
+    border: none !important;
     bottom: 14px;
     content: "";
-    display: inline-block;
+    display: block;
+    height: 2px;
     left: 16px;
-    margin: auto;
     position: absolute;
     right: 16px;
+    width: auto;
+    transition: background-color 0.2s ease;
   }
 
   .horizontal-menu .nav-item .nav-link:hover::after,
   .horizontal-menu .nav-item.active .nav-link::after {
-    border-bottom-color: #6571ff;
+    background-color: #6571ff;
   }
 
   > .d-flex > .nav > li > a,

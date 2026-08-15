@@ -1094,52 +1094,66 @@
                     }
 
                     if (deleteButton && item) {
-                        if (!window.confirm(portfolioLabels.confirmDelete)) {
-                            return;
-                        }
+                        const portTitle = item.dataset.portfolioTitle || '';
+                        const textMsg = portfolioLabels.confirmDelete || ((typeof Lang !== 'undefined' && Lang.get('js.are_you_sure'))
+                            ? Lang.get('js.are_you_sure') + (portTitle ? ' "' + portTitle + '"' : '') + '?'
+                            : 'Are you sure you want to delete this portfolio?');
 
-                        const formData = new FormData();
-                        formData.append('_method', 'DELETE');
-                        if (portfolioToken) {
-                            formData.append('_token', portfolioToken);
-                        }
-
-                        fetch(item.dataset.deleteUrl, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
+                        swal({
+                            title: (typeof Lang !== 'undefined' && Lang.get('js.delete')) ? Lang.get('js.delete') : 'Delete',
+                            text: textMsg,
+                            buttons: {
+                                confirm: (typeof Lang !== 'undefined' && Lang.get('js.yes_delete')) ? Lang.get('js.yes_delete') : 'Yes, Delete',
+                                cancel: (typeof Lang !== 'undefined' && Lang.get('js.no_cancel')) ? Lang.get('js.no_cancel') : 'No, Cancel',
                             },
-                        }).then(function (response) {
-                            return response.json().then(function (body) {
-                                if (!response.ok) {
-                                    throw body;
-                                }
+                            reverseButtons: true,
+                            icon: 'warning',
+                        }).then(function (willDelete) {
+                            if (!willDelete) return;
 
-                                return body;
+                            const formData = new FormData();
+                            formData.append('_method', 'DELETE');
+                            if (portfolioToken) {
+                                formData.append('_token', portfolioToken);
+                            }
+
+                            fetch(item.dataset.deleteUrl, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                },
+                            }).then(function (response) {
+                                return response.json().then(function (body) {
+                                    if (!response.ok) {
+                                        throw body;
+                                    }
+
+                                    return body;
+                                });
+                            }).then(function (response) {
+                                if (activePortfolioItem === item) {
+                                    closePortfolioForm();
+                                }
+                                item.remove();
+                                if (!portfolioItems().length && !portfolioEmpty()) {
+                                    const empty = document.createElement('p');
+                                    empty.className = 'candidate-skill-empty candidate-portfolio-empty';
+                                    empty.dataset.portfolioEmpty = '';
+                                    empty.textContent = '---';
+                                    portfolioList.insertBefore(empty, portfolioList.querySelector('.candidate-portfolio-add-outline') || null);
+                                }
+                                renderPortfolioNumbers();
+                                refreshPortfolioAddActions();
+                                if (response && response.message && typeof displaySuccessMessage === 'function') {
+                                    displaySuccessMessage(response.message);
+                                }
+                            }).catch(function (error) {
+                                const message = portfolioMessage(error);
+                                if (message && typeof displayErrorMessage === 'function') {
+                                    displayErrorMessage(message);
+                                }
                             });
-                        }).then(function (response) {
-                            if (activePortfolioItem === item) {
-                                closePortfolioForm();
-                            }
-                            item.remove();
-                            if (!portfolioItems().length && !portfolioEmpty()) {
-                                const empty = document.createElement('p');
-                                empty.className = 'candidate-skill-empty candidate-portfolio-empty';
-                                empty.dataset.portfolioEmpty = '';
-                                empty.textContent = '---';
-                                portfolioList.insertBefore(empty, portfolioList.querySelector('.candidate-portfolio-add-outline') || null);
-                            }
-                            renderPortfolioNumbers();
-                            refreshPortfolioAddActions();
-                            if (response && response.message && typeof displaySuccessMessage === 'function') {
-                                displaySuccessMessage(response.message);
-                            }
-                        }).catch(function (error) {
-                            const message = portfolioMessage(error);
-                            if (message && typeof displayErrorMessage === 'function') {
-                                displayErrorMessage(message);
-                            }
                         });
                     }
                 });
@@ -1464,52 +1478,66 @@
                     }
 
                     if (deleteButton && item) {
-                        if (!window.confirm(publicationLabels.confirmDelete)) {
-                            return;
-                        }
+                        const pubTitle = item.dataset.publicationTitle || '';
+                        const textMsg = publicationLabels.confirmDelete || ((typeof Lang !== 'undefined' && Lang.get('js.are_you_sure'))
+                            ? Lang.get('js.are_you_sure') + (pubTitle ? ' "' + pubTitle + '"' : '') + '?'
+                            : 'Are you sure you want to delete this publication?');
 
-                        const formData = new FormData();
-                        formData.append('_method', 'DELETE');
-                        if (publicationToken) {
-                            formData.append('_token', publicationToken);
-                        }
-
-                        fetch(item.dataset.deleteUrl, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
+                        swal({
+                            title: (typeof Lang !== 'undefined' && Lang.get('js.delete')) ? Lang.get('js.delete') : 'Delete',
+                            text: textMsg,
+                            buttons: {
+                                confirm: (typeof Lang !== 'undefined' && Lang.get('js.yes_delete')) ? Lang.get('js.yes_delete') : 'Yes, Delete',
+                                cancel: (typeof Lang !== 'undefined' && Lang.get('js.no_cancel')) ? Lang.get('js.no_cancel') : 'No, Cancel',
                             },
-                        }).then(function (response) {
-                            return response.json().then(function (body) {
-                                if (!response.ok) {
-                                    throw body;
-                                }
+                            reverseButtons: true,
+                            icon: 'warning',
+                        }).then(function (willDelete) {
+                            if (!willDelete) return;
 
-                                return body;
+                            const formData = new FormData();
+                            formData.append('_method', 'DELETE');
+                            if (publicationToken) {
+                                formData.append('_token', publicationToken);
+                            }
+
+                            fetch(item.dataset.deleteUrl, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                },
+                            }).then(function (response) {
+                                return response.json().then(function (body) {
+                                    if (!response.ok) {
+                                        throw body;
+                                    }
+
+                                    return body;
+                                });
+                            }).then(function (response) {
+                                if (activePublicationItem === item) {
+                                    closePublicationForm();
+                                }
+                                item.remove();
+                                if (!publicationItems().length && !publicationEmpty()) {
+                                    const empty = document.createElement('p');
+                                    empty.className = 'candidate-skill-empty candidate-publication-empty';
+                                    empty.dataset.publicationEmpty = '';
+                                    empty.textContent = '---';
+                                    publicationList.insertBefore(empty, publicationList.querySelector('.candidate-publication-add-outline') || null);
+                                }
+                                renderPublicationNumbers();
+                                refreshPublicationAddActions();
+                                if (response && response.message && typeof displaySuccessMessage === 'function') {
+                                    displaySuccessMessage(response.message);
+                                }
+                            }).catch(function (error) {
+                                const message = publicationMessage(error);
+                                if (message && typeof displayErrorMessage === 'function') {
+                                    displayErrorMessage(message);
+                                }
                             });
-                        }).then(function (response) {
-                            if (activePublicationItem === item) {
-                                closePublicationForm();
-                            }
-                            item.remove();
-                            if (!publicationItems().length && !publicationEmpty()) {
-                                const empty = document.createElement('p');
-                                empty.className = 'candidate-skill-empty candidate-publication-empty';
-                                empty.dataset.publicationEmpty = '';
-                                empty.textContent = '---';
-                                publicationList.insertBefore(empty, publicationList.querySelector('.candidate-publication-add-outline') || null);
-                            }
-                            renderPublicationNumbers();
-                            refreshPublicationAddActions();
-                            if (response && response.message && typeof displaySuccessMessage === 'function') {
-                                displaySuccessMessage(response.message);
-                            }
-                        }).catch(function (error) {
-                            const message = publicationMessage(error);
-                            if (message && typeof displayErrorMessage === 'function') {
-                                displayErrorMessage(message);
-                            }
                         });
                     }
                 });
@@ -1836,52 +1864,66 @@
                         openAwardForm(item);
                     }
                     if (deleteButton && item) {
-                        if (!window.confirm(awardLabels.confirmDelete)) {
-                            return;
-                        }
+                        const awardTitle = item.dataset.awardTitle || '';
+                        const textMsg = awardLabels.confirmDelete || ((typeof Lang !== 'undefined' && Lang.get('js.are_you_sure'))
+                            ? Lang.get('js.are_you_sure') + (awardTitle ? ' "' + awardTitle + '"' : '') + '?'
+                            : 'Are you sure you want to delete this award/honor?');
 
-                        const formData = new FormData();
-                        formData.append('_method', 'DELETE');
-                        if (awardToken) {
-                            formData.append('_token', awardToken);
-                        }
-
-                        fetch(item.dataset.deleteUrl, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
+                        swal({
+                            title: (typeof Lang !== 'undefined' && Lang.get('js.delete')) ? Lang.get('js.delete') : 'Delete',
+                            text: textMsg,
+                            buttons: {
+                                confirm: (typeof Lang !== 'undefined' && Lang.get('js.yes_delete')) ? Lang.get('js.yes_delete') : 'Yes, Delete',
+                                cancel: (typeof Lang !== 'undefined' && Lang.get('js.no_cancel')) ? Lang.get('js.no_cancel') : 'No, Cancel',
                             },
-                        }).then(function (response) {
-                            return response.json().then(function (body) {
-                                if (!response.ok) {
-                                    throw body;
-                                }
+                            reverseButtons: true,
+                            icon: 'warning',
+                        }).then(function (willDelete) {
+                            if (!willDelete) return;
 
-                                return body;
+                            const formData = new FormData();
+                            formData.append('_method', 'DELETE');
+                            if (awardToken) {
+                                formData.append('_token', awardToken);
+                            }
+
+                            fetch(item.dataset.deleteUrl, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                },
+                            }).then(function (response) {
+                                return response.json().then(function (body) {
+                                    if (!response.ok) {
+                                        throw body;
+                                    }
+
+                                    return body;
+                                });
+                            }).then(function (response) {
+                                if (activeAwardItem === item) {
+                                    closeAwardForm();
+                                }
+                                item.remove();
+                                if (!awardItems().length && !awardEmpty()) {
+                                    const empty = document.createElement('p');
+                                    empty.className = 'candidate-skill-empty candidate-publication-empty';
+                                    empty.dataset.awardEmpty = '';
+                                    empty.textContent = '---';
+                                    awardList.insertBefore(empty, awardList.querySelector('.candidate-publication-add-outline') || null);
+                                }
+                                renderAwardNumbers();
+                                refreshAwardAddActions();
+                                if (response && response.message && typeof displaySuccessMessage === 'function') {
+                                    displaySuccessMessage(response.message);
+                                }
+                            }).catch(function (error) {
+                                const message = awardMessage(error);
+                                if (message && typeof displayErrorMessage === 'function') {
+                                    displayErrorMessage(message);
+                                }
                             });
-                        }).then(function (response) {
-                            if (activeAwardItem === item) {
-                                closeAwardForm();
-                            }
-                            item.remove();
-                            if (!awardItems().length && !awardEmpty()) {
-                                const empty = document.createElement('p');
-                                empty.className = 'candidate-skill-empty candidate-publication-empty';
-                                empty.dataset.awardEmpty = '';
-                                empty.textContent = '---';
-                                awardList.insertBefore(empty, awardList.querySelector('.candidate-publication-add-outline') || null);
-                            }
-                            renderAwardNumbers();
-                            refreshAwardAddActions();
-                            if (response && response.message && typeof displaySuccessMessage === 'function') {
-                                displaySuccessMessage(response.message);
-                            }
-                        }).catch(function (error) {
-                            const message = awardMessage(error);
-                            if (message && typeof displayErrorMessage === 'function') {
-                                displayErrorMessage(message);
-                            }
                         });
                     }
                 });
@@ -2214,52 +2256,66 @@
                     }
 
                     if (deleteButton && item) {
-                        if (!window.confirm(projectLabels.confirmDelete)) {
-                            return;
-                        }
+                        const projTitle = item.dataset.projectTitle || '';
+                        const textMsg = projectLabels.confirmDelete || ((typeof Lang !== 'undefined' && Lang.get('js.are_you_sure'))
+                            ? Lang.get('js.are_you_sure') + (projTitle ? ' "' + projTitle + '"' : '') + '?'
+                            : 'Are you sure you want to delete this project?');
 
-                        const formData = new FormData();
-                        formData.append('_method', 'DELETE');
-                        if (projectToken) {
-                            formData.append('_token', projectToken);
-                        }
-
-                        fetch(item.dataset.deleteUrl, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
+                        swal({
+                            title: (typeof Lang !== 'undefined' && Lang.get('js.delete')) ? Lang.get('js.delete') : 'Delete',
+                            text: textMsg,
+                            buttons: {
+                                confirm: (typeof Lang !== 'undefined' && Lang.get('js.yes_delete')) ? Lang.get('js.yes_delete') : 'Yes, Delete',
+                                cancel: (typeof Lang !== 'undefined' && Lang.get('js.no_cancel')) ? Lang.get('js.no_cancel') : 'No, Cancel',
                             },
-                        }).then(function (response) {
-                            return response.json().then(function (body) {
-                                if (!response.ok) {
-                                    throw body;
-                                }
+                            reverseButtons: true,
+                            icon: 'warning',
+                        }).then(function (willDelete) {
+                            if (!willDelete) return;
 
-                                return body;
+                            const formData = new FormData();
+                            formData.append('_method', 'DELETE');
+                            if (projectToken) {
+                                formData.append('_token', projectToken);
+                            }
+
+                            fetch(item.dataset.deleteUrl, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                },
+                            }).then(function (response) {
+                                return response.json().then(function (body) {
+                                    if (!response.ok) {
+                                        throw body;
+                                    }
+
+                                    return body;
+                                });
+                            }).then(function (response) {
+                                if (activeProjectItem === item) {
+                                    closeProjectForm();
+                                }
+                                item.remove();
+                                if (!projectItems().length && !projectEmpty()) {
+                                    const empty = document.createElement('p');
+                                    empty.className = 'candidate-skill-empty candidate-publication-empty';
+                                    empty.dataset.projectEmpty = '';
+                                    empty.textContent = '---';
+                                    projectList.insertBefore(empty, projectList.querySelector('.candidate-project-add-outline') || null);
+                                }
+                                renderProjectNumbers();
+                                refreshProjectAddActions();
+                                if (response && response.message && typeof displaySuccessMessage === 'function') {
+                                    displaySuccessMessage(response.message);
+                                }
+                            }).catch(function (error) {
+                                const message = projectMessage(error);
+                                if (message && typeof displayErrorMessage === 'function') {
+                                    displayErrorMessage(message);
+                                }
                             });
-                        }).then(function (response) {
-                            if (activeProjectItem === item) {
-                                closeProjectForm();
-                            }
-                            item.remove();
-                            if (!projectItems().length && !projectEmpty()) {
-                                const empty = document.createElement('p');
-                                empty.className = 'candidate-project-empty';
-                                empty.dataset.projectEmpty = '';
-                                empty.textContent = '---';
-                                projectList.insertBefore(empty, projectList.querySelector('.candidate-project-add-outline') || null);
-                            }
-                            renderProjectNumbers();
-                            refreshProjectAddActions();
-                            if (response && response.message && typeof displaySuccessMessage === 'function') {
-                                displaySuccessMessage(response.message);
-                            }
-                        }).catch(function (error) {
-                            const message = projectMessage(error);
-                            if (message && typeof displayErrorMessage === 'function') {
-                                displayErrorMessage(message);
-                            }
                         });
                     }
                 });
@@ -2584,52 +2640,66 @@
                         openOtherForm(item);
                     }
                     if (deleteButton && item) {
-                        if (!window.confirm(otherLabels.confirmDelete)) {
-                            return;
-                        }
+                        const otherTitle = item.dataset.otherTitle || '';
+                        const textMsg = otherLabels.confirmDelete || ((typeof Lang !== 'undefined' && Lang.get('js.are_you_sure'))
+                            ? Lang.get('js.are_you_sure') + (otherTitle ? ' "' + otherTitle + '"' : '') + '?'
+                            : 'Are you sure you want to delete this accomplishment?');
 
-                        const formData = new FormData();
-                        formData.append('_method', 'DELETE');
-                        if (otherToken) {
-                            formData.append('_token', otherToken);
-                        }
-
-                        fetch(item.dataset.deleteUrl, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
+                        swal({
+                            title: (typeof Lang !== 'undefined' && Lang.get('js.delete')) ? Lang.get('js.delete') : 'Delete',
+                            text: textMsg,
+                            buttons: {
+                                confirm: (typeof Lang !== 'undefined' && Lang.get('js.yes_delete')) ? Lang.get('js.yes_delete') : 'Yes, Delete',
+                                cancel: (typeof Lang !== 'undefined' && Lang.get('js.no_cancel')) ? Lang.get('js.no_cancel') : 'No, Cancel',
                             },
-                        }).then(function (response) {
-                            return response.json().then(function (body) {
-                                if (!response.ok) {
-                                    throw body;
-                                }
+                            reverseButtons: true,
+                            icon: 'warning',
+                        }).then(function (willDelete) {
+                            if (!willDelete) return;
 
-                                return body;
+                            const formData = new FormData();
+                            formData.append('_method', 'DELETE');
+                            if (otherToken) {
+                                formData.append('_token', otherToken);
+                            }
+
+                            fetch(item.dataset.deleteUrl, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                },
+                            }).then(function (response) {
+                                return response.json().then(function (body) {
+                                    if (!response.ok) {
+                                        throw body;
+                                    }
+
+                                    return body;
+                                });
+                            }).then(function (response) {
+                                if (activeOtherItem === item) {
+                                    closeOtherForm();
+                                }
+                                item.remove();
+                                if (!otherItems().length && !otherEmpty()) {
+                                    const empty = document.createElement('p');
+                                    empty.className = 'candidate-other-empty';
+                                    empty.dataset.otherEmpty = '';
+                                    empty.textContent = '---';
+                                    otherList.insertBefore(empty, otherList.querySelector('.candidate-other-add-outline') || null);
+                                }
+                                renderOtherNumbers();
+                                refreshOtherAddActions();
+                                if (response && response.message && typeof displaySuccessMessage === 'function') {
+                                    displaySuccessMessage(response.message);
+                                }
+                            }).catch(function (error) {
+                                const message = otherMessage(error);
+                                if (message && typeof displayErrorMessage === 'function') {
+                                    displayErrorMessage(message);
+                                }
                             });
-                        }).then(function (response) {
-                            if (activeOtherItem === item) {
-                                closeOtherForm();
-                            }
-                            item.remove();
-                            if (!otherItems().length && !otherEmpty()) {
-                                const empty = document.createElement('p');
-                                empty.className = 'candidate-other-empty';
-                                empty.dataset.otherEmpty = '';
-                                empty.textContent = '---';
-                                otherList.insertBefore(empty, otherList.querySelector('.candidate-other-add-outline') || null);
-                            }
-                            renderOtherNumbers();
-                            refreshOtherAddActions();
-                            if (response && response.message && typeof displaySuccessMessage === 'function') {
-                                displaySuccessMessage(response.message);
-                            }
-                        }).catch(function (error) {
-                            const message = otherMessage(error);
-                            if (message && typeof displayErrorMessage === 'function') {
-                                displayErrorMessage(message);
-                            }
                         });
                     }
                 });

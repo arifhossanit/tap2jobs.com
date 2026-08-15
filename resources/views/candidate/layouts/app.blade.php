@@ -88,6 +88,7 @@
         @endif
     @yield('page_css')
     @yield('css')
+    @stack('css')
 </head>
 <script data-turbo-eval="false">
     let lancode = "{{ checkLanguageSession() }}";

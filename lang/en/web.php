@@ -38,6 +38,7 @@ return [
     'easy_to_find_your' => 'It’s Easy to Find Your',
     'admin' => 'Admin',
     'add_post_job' => 'Post Job',
+    'more' => 'More',
 
     //common keys
     'common' => [

@@ -32,7 +32,7 @@
         </section>
         <!-- end hero section -->
         <!-- start blog-section -->
-        <section class="mani-blog recent-blog-section pt-60 pb-60">
+        <section class="mani-blog recent-blog-section py-60">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-8">

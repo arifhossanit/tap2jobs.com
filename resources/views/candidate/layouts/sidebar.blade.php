@@ -6,12 +6,18 @@
                 {{ __('messages.candidate.dashboard') }}
             </a>
         </li>
-        <li class="nav-item {{ Request::is('candidate/profile*') ? 'active' : ''}}">
+        <li class="nav-item {{ Request::is('search-jobs*') ? 'active' : '' }}">
+            <a class="nav-link header-navbar-color text-gray py-3" aria-current="page"
+               href="{{ route('front.search.jobs') }}">
+                {{ __('web.web_home.find_jobs') }}
+            </a>
+        </li>
+        {{-- <li class="nav-item {{ Request::is('candidate/profile*') ? 'active' : ''}}">
             <a class="nav-link header-navbar-color text-gray py-3" aria-current="page"
                href="{{ route('candidate.profile') }}">
                 {{ __('messages.profile') }}
             </a>
-        </li>
+        </li> --}}
         <li class="nav-item {{ Request::is('candidate/favourite-jobs*') ? 'active' : ''}}">
             <a class="nav-link header-navbar-color text-gray py-3" aria-current="page"
                href="{{ route('favourite.jobs') }}">

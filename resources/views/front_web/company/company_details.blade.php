@@ -15,9 +15,9 @@
                     <div class="col-12">
                         <div class="d-flex align-items-md-center">
                             <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
-                                <div class="hero-img">
+                                <div class="hero-img" style="width: auto; height: auto; min-width: auto;">
                                     <img src="{{ !empty($companyDetail->company_url) ? $companyDetail->company_url : asset('assets/img/infyom-logo.png') }}"
-                                        class="w-100 h-100 rounded-circle object-fit-cover" alt="company-details" />
+                                        class="img-fluid new-logo-image" alt="company-details" style="width: auto; max-width: 100%; max-height: 80px; object-fit: contain;" />
                                 </div>
                             </div>
                             <div class="">

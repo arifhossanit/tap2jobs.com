@@ -760,6 +760,7 @@ Livewire.hook('element.init', function () {
   loadAppliedJobsData();
 });
 var filterJobId = null;
+var selectedAppliedJobId = null;
 function loadAppliedJobsData() {
   // window.livewire.restart();
 
@@ -870,6 +871,7 @@ document.addEventListener('appliedJob:error', function () {
 });
 listenClick('.schedule-slot-book', function (event) {
   var appliedJobId = $(event.currentTarget).attr('data-id');
+  selectedAppliedJobId = appliedJobId;
   $.ajax({
     url: route('show.schedule.slot', appliedJobId),
     type: 'POST',
@@ -954,6 +956,7 @@ listenClick('.schedule-slot-book', function (event) {
   });
 });
 listenHiddenBsModal('#scheduleSlotBookModal', function () {
+  selectedAppliedJobId = null;
   $('.slot-main-div').html('');
   $('.choose-slot-textarea textarea').val('');
   $('.choose-slot-textarea').addClass('d-none');
@@ -971,7 +974,12 @@ listenClick('#scheduleInterviewBtnSave', function () {
 listenSubmit('#scheduleSlotBookForm', function (e) {
   e.preventDefault();
   $('#scheduleInterviewBtnSave,#rejectSlotBtnSave').attr('disabled', true);
-  var appliedJobId = $('.schedule-slot-book').attr('data-id');
+  var appliedJobId = selectedAppliedJobId;
+  if (isEmpty(appliedJobId)) {
+    displayErrorMessage(Lang.get('js.seems_message'));
+    $('#scheduleInterviewBtnSave,#rejectSlotBtnSave').attr('disabled', false);
+    return;
+  }
   var scheduleId;
   var formData = new FormData($(this)[0]);
   $.each($('.slot-book'), function (i) {
@@ -979,7 +987,9 @@ listenSubmit('#scheduleSlotBookForm', function (e) {
       scheduleId = $(this).data('schedule');
     }
   });
-  formData.append('rejectSlot', $('#rejectSlotBtnSave').val());
+  if (!isEmpty($('#rejectSlotBtnSave').val())) {
+    formData.append('rejectSlot', $('#rejectSlotBtnSave').val());
+  }
   formData.append('schedule_id', scheduleId);
   $.ajax({
     url: route('choose.preference', appliedJobId),
@@ -11606,8 +11616,8 @@ function loadEmployeeCreateEditData() {
         placeholder: Lang.get("js.enter_key_responsibilities"),
         theme: "snow"
       });
-      editJobDescription.root.innerHTML = $("#editJobDescription").val();
-      editResponse.root.innerHTML = $("#edit_responsibilities").val();
+      setQuillHtml(editJobDescription, "#editJobDescription");
+      setQuillHtml(editResponse, "#edit_responsibilities");
     }
   }
   if ($("#details").length) {
@@ -12511,6 +12521,12 @@ function prepareJobFormForSubmission(formSelector) {
     return false;
   }
   return true;
+}
+function setQuillHtml(editor, selector) {
+  if (!editor || !$(selector).length) {
+    return;
+  }
+  editor.clipboard.dangerouslyPasteHTML(0, $(selector).val() || "");
 }
 listenClick("#jobsSaveBtn, #saveDraft", function (e) {
   e.preventDefault();

@@ -38,6 +38,7 @@ return [
     'easy_to_find_your' => 'আপনার খুঁজে পাওয়া সহজ',
     'admin' => 'অ্যাডমিন',
     'add_post_job' => 'চাকরি পোস্ট',
+    'more' => 'আরও',
 
     //common keys
     'common' => [

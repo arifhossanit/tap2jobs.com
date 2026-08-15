@@ -7230,7 +7230,7 @@ fieldset:disabled .btn {
     display: flex;
     flex-shrink: 0;
     justify-content: space-between;
-    padding: 1.875rem
+    padding: 1rem
 }
 
 .modal-header .btn-close {
@@ -20234,7 +20234,7 @@ ul {
 
 .aside-menu-container__aside-logo {
     align-items: center;
-    border-bottom: .063rem solid #e9ecef;
+    border-bottom: 1px solid #e9ecef;
     display: flex;
     height: 70px;
     justify-content: space-between;
@@ -20419,7 +20419,7 @@ ul {
 
 .header {
     align-items: stretch;
-    display: flex
+    display: flex;
 }
 
 @media (min-width:1200px) {

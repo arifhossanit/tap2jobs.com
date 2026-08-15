@@ -1036,15 +1036,33 @@ class CandidateController extends AppBaseController
         return redirect(route('candidate.job.alert'));
     }
 
-    public function changePassword(ChangePasswordRequest $request): JsonResponse
+    public function showChangePassword(): View
+    {
+        return view('candidate.change_password.index');
+    }
+
+    public function changePassword(ChangePasswordRequest $request)
     {
         $input = $request->all();
 
         try {
             $user = $this->candidateRepository->changePassword($input);
 
+            if (! $request->ajax() && ! $request->wantsJson()) {
+                Flash::success(__('messages.flash.password_update'));
+
+                return redirect()->route('candidate.change-password.form');
+            }
+
             return $this->sendSuccess(__('messages.flash.password_update'));
         } catch (Exception $e) {
+            if (! $request->ajax() && ! $request->wantsJson()) {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->withErrors(['password_current' => $e->getMessage()]);
+            }
+
             return $this->sendError($e->getMessage(), 422);
         }
     }
@@ -1127,9 +1145,8 @@ class CandidateController extends AppBaseController
     public function showScheduleSlotBook(JobApplication $jobApplication): JsonResponse
     {
         $candidateId = getLoggedInUser()->candidate->id;
-        $jobApplicationIds = JobApplication::whereCandidateId($candidateId)->pluck('id')->toArray();
 
-        if (! in_array($jobApplication->id, $jobApplicationIds)) {
+        if ($jobApplication->candidate_id !== $candidateId) {
             return $this->sendError(__('messages.common.seems_message'));
         }
 
@@ -1153,11 +1170,15 @@ class CandidateController extends AppBaseController
         foreach ($jobApplicationSchedules->get() as $jobApplicationSchedule) {
             $data[] = [
                 'notes' => ! empty($jobApplicationSchedule->notes) ? $jobApplicationSchedule->notes : __('messages.job_stage.new_slot_send'),
-                'company_name' => $jobApplicationSchedule->jobApplication->job->company->user->full_name,
-                'schedule_created_at' => Carbon::parse($jobApplicationSchedule->created_at)->translatedFormat('jS M Y, h:m A'),
+                'company_name' => $jobApplicationSchedule->jobApplication?->job?->company?->user?->full_name ?? '',
+                'schedule_created_at' => Carbon::parse($jobApplicationSchedule->created_at)->translatedFormat('jS M Y, h:i A'),
             ];
         }
         $lastRecord = $jobApplicationSchedules->latest()->first();
+        if (empty($lastRecord)) {
+            return $this->sendError(__('messages.common.seems_message'));
+        }
+
         $data['rejectedSlot'] = $lastRecord->status == JobApplicationSchedule::STATUS_REJECTED;
 
         $allJobSchedule = JobApplicationSchedule::whereJobApplicationId($jobApplication->id)
@@ -1181,8 +1202,8 @@ class CandidateController extends AppBaseController
         $data['selectSlot'] = $allJobSchedule->whereIn('status', JobApplicationSchedule::STATUS_SEND)->toArray();
         $employerCancelNote = $allJobSchedule->where('employer_cancel_slot_notes')->first();
         $data['employer_cancel_note'] = isset($employerCancelNote) ? $employerCancelNote->employer_cancel_slot_notes : '';
-        $data['employer_fullName'] = $job->candidate->user->full_name;
-        $data['company_fullName'] = ! empty($job->jobStage->company) ? $job->jobStage->company->user->full_name : '';
+        $data['employer_fullName'] = $job->candidate->user->full_name ?? '';
+        $data['company_fullName'] = ! empty($job->jobStage?->company) ? $job->jobStage->company->user->full_name : '';
         $data['isSlotRejected'] = $jobApplicationSchedules->where('status',
             JobApplicationSchedule::STATUS_REJECTED)->count();
         $data['scheduleSelect'] = $allJobSchedule->where('status', JobApplicationSchedule::STATUS_SEND)->count();
@@ -1192,7 +1213,14 @@ class CandidateController extends AppBaseController
 
     public function choosePreference(JobApplication $jobApplication, Request $request): JsonResponse
     {
-        if (! isset($request->rejectSlot)) {
+        $candidateId = getLoggedInUser()->candidate->id;
+        if ($jobApplication->candidate_id !== $candidateId) {
+            return $this->sendError(__('messages.common.seems_message'));
+        }
+
+        $isRejectSlot = $request->filled('rejectSlot');
+
+        if (! $isRejectSlot) {
             $request->validate([
                 'slot_book' => 'required',
             ], [
@@ -1207,11 +1235,23 @@ class CandidateController extends AppBaseController
         ]);
         $scheduleId = $request->get('schedule_id');
         $slotNotes = $request->get('choose_slot_notes');
-        if (! isset($request->rejectSlot)) {
-            JobApplicationSchedule::whereId($scheduleId)->update(['status' => JobApplicationSchedule::STATUS_SEND, 'rejected_slot_notes' => $slotNotes]);
+        if (! $isRejectSlot) {
+            $schedule = JobApplicationSchedule::where('id', $scheduleId)
+                ->where('job_application_id', $jobApplication->id)
+                ->first();
+
+            if (empty($schedule)) {
+                return $this->sendError(__('messages.common.seems_message'));
+            }
+
+            $schedule->update(['status' => JobApplicationSchedule::STATUS_SEND, 'rejected_slot_notes' => $slotNotes]);
         } else {
             $jobApplicationSchedules = JobApplicationSchedule::whereJobApplicationId($jobApplication->id);
             $lastRecord = $jobApplicationSchedules->latest()->first();
+            if (empty($lastRecord)) {
+                return $this->sendError(__('messages.common.seems_message'));
+            }
+
             JobApplicationSchedule::where([
                 ['job_application_id', $jobApplication->id],
                 ['stage_id', $lastRecord->stage_id],
@@ -1223,7 +1263,7 @@ class CandidateController extends AppBaseController
             ]);
         }
 
-        if (isset($request->rejectSlot)) {
+        if ($isRejectSlot) {
             return $this->sendSuccess(__('messages.flash.slot_reject'));
         }
 

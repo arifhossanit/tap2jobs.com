@@ -30,7 +30,7 @@
                 {{ __('messages.employer_menu.followers') }}
             </a>
         </li>
-        <li class="nav-item d-none d-xl-grid dropdown dropdown-hover {{ Request::is('employer/transactions*','employer/manage-subscription*') ? 'active' : '' }}">
+        <!-- <li class="nav-item d-none d-xl-grid dropdown dropdown-hover {{ Request::is('employer/transactions*','employer/manage-subscription*') ? 'active' : '' }}">
             <a class="nav-link header-navbar-color text-gray py-3 ps-2 dropdown-toggle" aria-current="page"
                href="javascript:void(0)">
                 {{ __('web.more') }}
@@ -49,7 +49,7 @@
                     </a>
                 </li>
             </ul>
-        </li>
+        </li> -->
 
         {{-- start side bar menu for bar--}}
         <li class="nav-item d-xl-none {{ Request::is('employer/transaction*') ? 'active' : ''}}">

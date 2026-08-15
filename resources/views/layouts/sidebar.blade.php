@@ -3,11 +3,11 @@
     <!--begin::Brand-->
     <div class="aside-menu-container__aside-logo flex-column-auto">
         <a data-turbo="false" href="{{ url('/') }}" target="_blank" data-toggle="tooltip" data-placement="right"
-            class="text-decoration-none sidebar-logo image image-mini" title="{{ getAppName() }}">
-            <img src="{{ getLogoUrl() }}" alt="Logo" width="70px" height="30px" alt="Logo"
-                class="img-fluid new-logo-image" />
-            <span class="navbar-brand-name text-dark text-decoration-none logo ps-2" tooltip= "{{ getAppName() }}">
-                {!! substr(strip_tags(getAppName()), 0, 15) . (strlen(getAppName()) > 15 ? '...' : '') !!}</span>
+            class="text-decoration-none sidebar-logo image" title="{{ getAppName() }}">
+            <img src="{{ getLogoUrl() }}" alt="Logo"
+                class="img-fluid new-logo-image" style="width: auto; max-width: 100%; max-height: 45px; object-fit: contain;" />
+            {{-- <span class="navbar-brand-name text-dark text-decoration-none logo ps-2" title="{{ getAppName() }}">
+                {!! substr(strip_tags(getAppName()), 0, 15) . (strlen(getAppName()) > 15 ? '...' : '') !!}</span> --}}
         </a>
 
         <button type="button" class="btn px-0 aside-menu-container__aside-menubar d-lg-block d-none sidebar-btn">
@@ -18,7 +18,7 @@
     <!--end::Brand-->
     <form class="d-flex position-relative aside-menu-container__aside-search search-control py-3 mt-1">
         <div class="position-relative w-100 sidebar-search-box">
-            <input class="form-control" type="text" placeholder={{ __('messages.common.search') }} id="menuSearch"
+            <input class="form-control" type="text" placeholder="{{ __('messages.common.search') }}" id="menuSearch"
                 aria-label="Search" name="search">
             <span
                 class="aside-menu-container__search-icon position-absolute d-flex align-items-center top-0 left-50 bottom-0">

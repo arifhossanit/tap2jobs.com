@@ -59,5 +59,6 @@ class DatabaseSeeder extends Seeder
 //        $this->call(CmsServicesSeeder::class);
         $this->call(CandidateFAQSeeder::class);
         $this->call(EmployerFAQSeeder::class);
+        $this->call(BangladeshJobMarketSeeder::class);
     }
 }

@@ -43,8 +43,8 @@ function loadEmployeeCreateEditData() {
                 theme: "snow"
             });
 
-            editJobDescription.root.innerHTML = $("#editJobDescription").val();
-            editResponse.root.innerHTML = $("#edit_responsibilities").val();
+            setQuillHtml(editJobDescription, "#editJobDescription");
+            setQuillHtml(editResponse, "#edit_responsibilities");
         }
     }
 
@@ -1121,6 +1121,14 @@ function prepareJobFormForSubmission(formSelector) {
     }
 
     return true;
+}
+
+function setQuillHtml(editor, selector) {
+    if (!editor || !$(selector).length) {
+        return;
+    }
+
+    editor.clipboard.dangerouslyPasteHTML(0, $(selector).val() || "");
 }
 
 listenClick("#jobsSaveBtn, #saveDraft", function(e) {

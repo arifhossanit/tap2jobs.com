@@ -76,13 +76,14 @@
         </li>
         <li class="px-sm-3 px-2">
             <div class="dropdown d-flex align-items-center py-4">
-                <div class="image image-circle image-mini">
-                    <img src="{{ getLoggedInUser()->avatar }}"
-                         class="img-fluid" alt="profile image">
-                </div>
+                
                 <button class="btn dropdown-toggle {{ checkLanguageSession() == 'ar' ? 'pe-2 ps-0' : 'ps-2 pe-0' }} hide-arrow" type="button" id="dropdownMenuButton1"
                         data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-                    {{ getLoggedInUser()->full_name }}
+                    {{-- {{ getLoggedInUser()->full_name }} --}}
+                    <div class="image image-circle image-mini">
+                        <img src="{{ getLoggedInUser()->avatar }}"
+                            class="img-fluid" alt="profile image">
+                    </div>
                 </button>
                 <div class="dropdown-menu py-7 pb-4 my-2" aria-labelledby="dropdownMenuButton1"
                      data-bs-auto-close="outside">

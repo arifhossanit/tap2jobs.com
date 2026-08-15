@@ -37,6 +37,7 @@ return [
     'no_positions' => '没有职位',
     'easy_to_find_your' => '轻松找到您的',
     'admin' => '管理员',
+    'more' => '更多',
 
 
     //common keys

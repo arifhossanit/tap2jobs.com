@@ -37,6 +37,7 @@ return [
     'no_positions' => 'لا وظائف',
     'easy_to_find_your' => 'من السهل العثور على موقعك',
     'admin' => 'المسؤول',
+    'more' => 'المزيد',
 
     //common keys
     'common' => [

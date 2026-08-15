@@ -37,6 +37,7 @@ return [
     'no_positions' => 'Pozisyon yok',
     'easy_to_find_your' => 'Kolayca Bulabilirsiniz',
     'admin' => 'Yönetici',
+    'more' => 'Daha fazla',
 
     //common keys
     'common' => [

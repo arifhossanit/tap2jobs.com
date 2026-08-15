@@ -814,48 +814,62 @@
                     }
 
                     if (deleteButton && item) {
-                        if (!window.confirm(linkLabels.confirmDelete)) {
-                            return;
-                        }
+                        const platformName = item.dataset.linkPlatform || '';
+                        const textMsg = linkLabels.confirmDelete || ((typeof Lang !== 'undefined' && Lang.get('js.are_you_sure'))
+                            ? Lang.get('js.are_you_sure') + (platformName ? ' "' + platformName + '"' : '') + '?'
+                            : 'Are you sure you want to delete this link account?');
 
-                        const formData = new FormData();
-                        formData.append('_method', 'DELETE');
-                        if (linkToken) {
-                            formData.append('_token', linkToken);
-                        }
-
-                        fetch(item.dataset.deleteUrl, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
+                        swal({
+                            title: (typeof Lang !== 'undefined' && Lang.get('js.delete')) ? Lang.get('js.delete') : 'Delete',
+                            text: textMsg,
+                            buttons: {
+                                confirm: (typeof Lang !== 'undefined' && Lang.get('js.yes_delete')) ? Lang.get('js.yes_delete') : 'Yes, Delete',
+                                cancel: (typeof Lang !== 'undefined' && Lang.get('js.no_cancel')) ? Lang.get('js.no_cancel') : 'No, Cancel',
                             },
-                        }).then(function (response) {
-                            return response.json().then(function (body) {
-                                if (!response.ok) {
-                                    throw body;
-                                }
+                            reverseButtons: true,
+                            icon: 'warning',
+                        }).then(function (willDelete) {
+                            if (!willDelete) return;
 
-                                return body;
+                            const formData = new FormData();
+                            formData.append('_method', 'DELETE');
+                            if (linkToken) {
+                                formData.append('_token', linkToken);
+                            }
+
+                            fetch(item.dataset.deleteUrl, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                },
+                            }).then(function (response) {
+                                return response.json().then(function (body) {
+                                    if (!response.ok) {
+                                        throw body;
+                                    }
+
+                                    return body;
+                                });
+                            }).then(function (response) {
+                                if (activeLinkItem === item) {
+                                    closeLinkForm();
+                                }
+                                item.remove();
+                                if (!linkItems().length) {
+                                    closeLinkForm();
+                                    linkList.innerHTML = '<p class="candidate-skill-empty" data-link-empty>---</p>';
+                                }
+                                refreshLinkAddAction();
+                                if (response && response.message && typeof displaySuccessMessage === 'function') {
+                                    displaySuccessMessage(response.message);
+                                }
+                            }).catch(function (error) {
+                                const message = linkMessage(error);
+                                if (message && typeof displayErrorMessage === 'function') {
+                                    displayErrorMessage(message);
+                                }
                             });
-                        }).then(function (response) {
-                            if (activeLinkItem === item) {
-                                closeLinkForm();
-                            }
-                            item.remove();
-                            if (!linkItems().length) {
-                                closeLinkForm();
-                                linkList.innerHTML = '<p class="candidate-skill-empty" data-link-empty>---</p>';
-                            }
-                            refreshLinkAddAction();
-                            if (response && response.message && typeof displaySuccessMessage === 'function') {
-                                displaySuccessMessage(response.message);
-                            }
-                        }).catch(function (error) {
-                            const message = linkMessage(error);
-                            if (message && typeof displayErrorMessage === 'function') {
-                                displayErrorMessage(message);
-                            }
                         });
                     }
                 });
@@ -1135,54 +1149,68 @@
                     }
 
                     if (deleteButton && item) {
-                        if (!window.confirm(referenceLabels.confirmDelete)) {
-                            return;
-                        }
+                        const refName = item.dataset.referenceName || '';
+                        const textMsg = referenceLabels.confirmDelete || ((typeof Lang !== 'undefined' && Lang.get('js.are_you_sure'))
+                            ? Lang.get('js.are_you_sure') + (refName ? ' "' + refName + '"' : '') + '?'
+                            : 'Are you sure you want to delete this reference?');
 
-                        const formData = new FormData();
-                        formData.append('_method', 'DELETE');
-                        if (referenceToken) {
-                            formData.append('_token', referenceToken);
-                        }
-
-                        fetch(item.dataset.deleteUrl, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
+                        swal({
+                            title: (typeof Lang !== 'undefined' && Lang.get('js.delete')) ? Lang.get('js.delete') : 'Delete',
+                            text: textMsg,
+                            buttons: {
+                                confirm: (typeof Lang !== 'undefined' && Lang.get('js.yes_delete')) ? Lang.get('js.yes_delete') : 'Yes, Delete',
+                                cancel: (typeof Lang !== 'undefined' && Lang.get('js.no_cancel')) ? Lang.get('js.no_cancel') : 'No, Cancel',
                             },
-                        }).then(function (response) {
-                            return response.json().then(function (body) {
-                                if (!response.ok) {
-                                    throw body;
-                                }
+                            reverseButtons: true,
+                            icon: 'warning',
+                        }).then(function (willDelete) {
+                            if (!willDelete) return;
 
-                                return body;
-                            });
-                        }).then(function (response) {
-                            if (activeReferenceItem === item) {
-                                closeReferenceForm();
+                            const formData = new FormData();
+                            formData.append('_method', 'DELETE');
+                            if (referenceToken) {
+                                formData.append('_token', referenceToken);
                             }
-                            item.remove();
-                            if (!referenceItems().length) {
-                                closeReferenceForm();
-                                if (!referenceEmpty()) {
-                                    const empty = document.createElement('p');
-                                    empty.className = 'candidate-skill-empty candidate-reference-empty';
-                                    empty.dataset.referenceEmpty = '';
-                                    empty.textContent = '---';
-                                    referenceList.appendChild(empty);
+
+                            fetch(item.dataset.deleteUrl, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                },
+                            }).then(function (response) {
+                                return response.json().then(function (body) {
+                                    if (!response.ok) {
+                                        throw body;
+                                    }
+
+                                    return body;
+                                });
+                            }).then(function (response) {
+                                if (activeReferenceItem === item) {
+                                    closeReferenceForm();
                                 }
-                            }
-                            renderReferenceNumbers();
-                            if (response && response.message && typeof displaySuccessMessage === 'function') {
-                                displaySuccessMessage(response.message);
-                            }
-                        }).catch(function (error) {
-                            const message = referenceMessage(error);
-                            if (message && typeof displayErrorMessage === 'function') {
-                                displayErrorMessage(message);
-                            }
+                                item.remove();
+                                if (!referenceItems().length) {
+                                    closeReferenceForm();
+                                    if (!referenceEmpty()) {
+                                        const empty = document.createElement('p');
+                                        empty.className = 'candidate-skill-empty candidate-reference-empty';
+                                        empty.dataset.referenceEmpty = '';
+                                        empty.textContent = '---';
+                                        referenceList.appendChild(empty);
+                                    }
+                                }
+                                renderReferenceNumbers();
+                                if (response && response.message && typeof displaySuccessMessage === 'function') {
+                                    displaySuccessMessage(response.message);
+                                }
+                            }).catch(function (error) {
+                                const message = referenceMessage(error);
+                                if (message && typeof displayErrorMessage === 'function') {
+                                    displayErrorMessage(message);
+                                }
+                            });
                         });
                     }
                 });
@@ -1506,12 +1534,30 @@
                     }
 
                     if (deleteButton && item) {
-                        const current = languageItems().find(function (languageItem) {
-                            return String(languageItem.dataset.languageName || '').toLowerCase() === String(item.dataset.languageName || '').toLowerCase();
+                        const langName = item.dataset.languageName || '';
+                        const textMsg = (typeof Lang !== 'undefined' && Lang.get('js.are_you_sure'))
+                            ? Lang.get('js.are_you_sure') + (langName ? ' "' + langName + '"' : '') + '?'
+                            : 'Are you sure you want to delete this language?';
+
+                        swal({
+                            title: (typeof Lang !== 'undefined' && Lang.get('js.delete')) ? Lang.get('js.delete') : 'Delete',
+                            text: textMsg,
+                            buttons: {
+                                confirm: (typeof Lang !== 'undefined' && Lang.get('js.yes_delete')) ? Lang.get('js.yes_delete') : 'Yes, Delete',
+                                cancel: (typeof Lang !== 'undefined' && Lang.get('js.no_cancel')) ? Lang.get('js.no_cancel') : 'No, Cancel',
+                            },
+                            reverseButtons: true,
+                            icon: 'warning',
+                        }).then(function (willDelete) {
+                            if (!willDelete) return;
+
+                            const current = languageItems().find(function (languageItem) {
+                                return String(languageItem.dataset.languageName || '').toLowerCase() === String(item.dataset.languageName || '').toLowerCase();
+                            });
+                            current?.remove();
+                            renderLanguageSummary();
+                            syncLanguages();
                         });
-                        current?.remove();
-                        renderLanguageSummary();
-                        syncLanguages();
                     }
                 });
 
@@ -1858,44 +1904,53 @@
                         return;
                     }
 
-                    if (!deleteButton || !item || !item.dataset.deleteUrl) {
-                        return;
-                    }
+                    const textMsg = confirmDeleteText || ((typeof Lang !== 'undefined' && Lang.get('js.are_you_sure'))
+                        ? Lang.get('js.are_you_sure') + '?'
+                        : 'Are you sure you want to delete this activity?');
 
-                    if (!window.confirm(confirmDeleteText)) {
-                        return;
-                    }
-
-                    const formData = new FormData();
-                    formData.append('_method', 'DELETE');
-                    if (activityToken) {
-                        formData.append('_token', activityToken);
-                    }
-
-                    fetch(item.dataset.deleteUrl, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
+                    swal({
+                        title: (typeof Lang !== 'undefined' && Lang.get('js.delete')) ? Lang.get('js.delete') : 'Delete',
+                        text: textMsg,
+                        buttons: {
+                            confirm: (typeof Lang !== 'undefined' && Lang.get('js.yes_delete')) ? Lang.get('js.yes_delete') : 'Yes, Delete',
+                            cancel: (typeof Lang !== 'undefined' && Lang.get('js.no_cancel')) ? Lang.get('js.no_cancel') : 'No, Cancel',
                         },
-                    }).then(function (response) {
-                        return response.json().then(function (body) {
-                            if (!response.ok) {
-                                throw body;
-                            }
+                        reverseButtons: true,
+                        icon: 'warning',
+                    }).then(function (willDelete) {
+                        if (!willDelete) return;
 
-                            return body;
-                        });
-                    }).then(function (response) {
-                        if (activeActivityItem === item) {
-                            closeActivityForm();
+                        const formData = new FormData();
+                        formData.append('_method', 'DELETE');
+                        if (activityToken) {
+                            formData.append('_token', activityToken);
                         }
-                        item.remove();
-                        renderActivityNumbers();
-                        if (response && response.message && typeof displaySuccessMessage === 'function') {
-                            displaySuccessMessage(response.message);
-                        }
-                    }).catch(showActivityError);
+
+                        fetch(item.dataset.deleteUrl, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                        }).then(function (response) {
+                            return response.json().then(function (body) {
+                                if (!response.ok) {
+                                    throw body;
+                                }
+
+                                return body;
+                            });
+                        }).then(function (response) {
+                            if (activeActivityItem === item) {
+                                closeActivityForm();
+                            }
+                            item.remove();
+                            renderActivityNumbers();
+                            if (response && response.message && typeof displaySuccessMessage === 'function') {
+                                displaySuccessMessage(response.message);
+                            }
+                        }).catch(showActivityError);
+                    });
                 });
 
                 renderActivityNumbers();
@@ -2076,11 +2131,32 @@
                     }
 
                     if (deleteButton) {
-                        deleteButton.closest('[data-skill-item]')?.remove();
-                        if (!skillList.querySelector('[data-skill-item]')) {
-                            skillList.innerHTML = '<p class="candidate-skill-empty" data-skill-empty>---</p>';
-                        }
-                        syncSkills();
+                        const item = deleteButton.closest('[data-skill-item]');
+                        if (!item) return;
+
+                        const skillName = item.dataset.skillName || item.querySelector('strong')?.textContent || '';
+                        const textMsg = (typeof Lang !== 'undefined' && Lang.get('js.are_you_sure'))
+                            ? Lang.get('js.are_you_sure') + (skillName ? ' "' + skillName + '"' : '') + '?'
+                            : 'Are you sure you want to delete this skill?';
+
+                        swal({
+                            title: (typeof Lang !== 'undefined' && Lang.get('js.delete')) ? Lang.get('js.delete') : 'Delete',
+                            text: textMsg,
+                            buttons: {
+                                confirm: (typeof Lang !== 'undefined' && Lang.get('js.yes_delete')) ? Lang.get('js.yes_delete') : 'Yes, Delete',
+                                cancel: (typeof Lang !== 'undefined' && Lang.get('js.no_cancel')) ? Lang.get('js.no_cancel') : 'No, Cancel',
+                            },
+                            reverseButtons: true,
+                            icon: 'warning',
+                        }).then(function (willDelete) {
+                            if (!willDelete) return;
+
+                            item.remove();
+                            if (!skillList.querySelector('[data-skill-item]')) {
+                                skillList.innerHTML = '<p class="candidate-skill-empty" data-skill-empty>---</p>';
+                            }
+                            syncSkills();
+                        });
                     }
                 });
 

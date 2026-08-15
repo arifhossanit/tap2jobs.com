@@ -15,9 +15,9 @@
                     <div class="col-12">
                         <div class="d-flex align-items-md-center">
                             <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
-                                <div class="hero-img">
+                                <div class="hero-img" style="width: auto; height: auto; min-width: auto;">
                                     <img src="{{ $job->company->company_url }}"
-                                        class="w-100 h-100 rounded-circle object-fit-cover" alt="company-details" />
+                                        class="img-fluid new-logo-image" alt="company-details" style="width: auto; max-width: 100%; max-height: 80px; object-fit: contain; border:1px solid #dee2e6; padding: 8px; border-radius: 5px;" />
                                 </div>
                             </div>
                             <div class="">
@@ -549,12 +549,12 @@
                                 <h5 class="fs-18 text-secondary mb-4">@lang('messages.front_job_details.company_overview')</h5>
                                 @if ($company)
                                     <div class="company-profile d-flex align-items-center mb-4">
-                                        <div class="profile">
-                                            <img src="{{ $company->company_url }}" class="w-100 h-100 object-fit-cover"
-                                                alt="{{ $companyName ?: __('messages.front_job_details.company_overview') }}" />
+                                        <div class="profile flex-shrink-0" style="width: auto; height: auto;">
+                                            <img src="{{ $company->company_url }}" class="img-fluid new-logo-image"
+                                                alt="{{ $companyName ?: __('messages.front_job_details.company_overview') }}" style="width: auto; max-width: 65px; max-height: 60px; object-fit: contain; border: 1px solid #dee2e6; padding: 5px;" />
                                         </div>
-                                        <div class="desc {{ getFrontSelectLanguage() == 'ar' ? 'me-4' : 'ms-4' }}">
-                                            <p class="fs-18 text-secondary mb-0">
+                                        <div class="desc {{ getFrontSelectLanguage() == 'ar' ? 'me-2' : 'ms-2' }}">
+                                            <p class="fs-15 text-secondary mb-0">
                                                 {{ $companyName ?: __('messages.common.n/a') }}
                                             </p>
                                             <a href="{{ route('front.company.details', $company->unique_id) }}"
@@ -631,15 +631,15 @@
                                                 </div> --}}
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <div class="d-flex align-items-center">
-                                                        <div class="me-1">
+                                                        <div class="me-2 flex-shrink-0" style="width: auto; height: auto;">
                                                             <img src="{{ $relatedJob->company->company_url }}"
-                                                                class="card-img" alt="..." />
+                                                                class="img-fluid new-logo-image" alt="company logo" style="width: auto; max-width: 40px; border: 1px solid #dee2e6; padding: 3px; max-height: 40px; object-fit: contain;" />
                                                         </div>
                                                         <div class="">
                                                             <div class="card-body p-0">
                                                                 <a
                                                                     href="{{ route('front.company.details', $relatedJob->company->unique_id) }}">
-                                                                    <p class="card-title fs-18 mb-0 text-primary">
+                                                                    <p class="card-title fs-14 mb-0 text-primary">
                                                                         {{ $relatedJob->company->user->first_name }}</p>
                                                                 </a>
                                                             </div>

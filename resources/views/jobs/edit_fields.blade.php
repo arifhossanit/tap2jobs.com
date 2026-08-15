@@ -178,13 +178,13 @@
          {{ Form::label('key_responsibilities', __('messages.job.key_responsibilities') . ':', ['class' => 'form-label ']) }}<span
              class="required"></span>
          <div id="editResponse"></div>
-         {{ Form::hidden('key_responsibilities', $job->key_responsibilities, ['id' => 'edit_responsibilities']) }}
+         <textarea name="key_responsibilities" id="edit_responsibilities" class="d-none">{{ old('key_responsibilities', $job->key_responsibilities) }}</textarea>
      </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('description', __('messages.job.description').':', ['class' => 'form-label ']) }}<span
                 class="required"></span>
         <div id="editDetails"></div>
-        {{ Form::hidden('description', $job->description, ['id' => 'editJobDescription']) }}
+        <textarea name="description" id="editJobDescription" class="d-none">{{ old('description', $job->description) }}</textarea>
         {{--        {{ Form::textarea('description', null, ['class' => 'form-control' , 'id' => 'details', 'rows' => '5']) }}--}}
     </div>
     @include('jobs.experience_fields')

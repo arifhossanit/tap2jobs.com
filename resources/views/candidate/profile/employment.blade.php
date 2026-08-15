@@ -833,6 +833,91 @@
             });
 
             document.addEventListener('click', function (event) {
+                const deleteExpBtn = event.target.closest('.delete-experience');
+                if (deleteExpBtn) {
+                    event.preventDefault();
+                    const experienceId = deleteExpBtn.dataset.id;
+                    if (!experienceId) {
+                        return;
+                    }
+
+                    const titleText = (typeof Lang !== 'undefined' && Lang.get('js.delete')) ? Lang.get('js.delete') : 'Delete';
+                    const textMsg = (typeof Lang !== 'undefined' && Lang.get('js.are_you_sure')) ? Lang.get('js.are_you_sure') + ' "' + (Lang.get('js.experience') || 'Experience') + '"?' : 'Are you sure you want to delete this experience?';
+                    const confirmBtnText = (typeof Lang !== 'undefined' && Lang.get('js.yes_delete')) ? Lang.get('js.yes_delete') : 'Yes, Delete';
+                    const cancelBtnText = (typeof Lang !== 'undefined' && Lang.get('js.no_cancel')) ? Lang.get('js.no_cancel') : 'No, Cancel';
+
+                    const executeDelete = function () {
+                        const token = document.querySelector('meta[name="csrf-token"]');
+                        fetch(route('experience.destroy', experienceId), {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': token ? token.content : '',
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ _method: 'DELETE' }),
+                        })
+                        .then(function (response) {
+                            if (!response.ok) {
+                                return response.json().then(function (data) {
+                                    throw new Error(data.message || 'Unable to delete experience.');
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(function (result) {
+                            if (typeof displaySuccessMessage === 'function') {
+                                displaySuccessMessage(result.message || 'Experience deleted successfully');
+                            }
+                            window.location.reload();
+                        })
+                        .catch(function (error) {
+                            if (typeof displayErrorMessage === 'function') {
+                                displayErrorMessage(error.message);
+                            } else {
+                                alert(error.message);
+                            }
+                        });
+                    };
+
+                    if (typeof swal === 'function') {
+                        swal({
+                            title: titleText,
+                            text: textMsg,
+                            buttons: {
+                                confirm: confirmBtnText,
+                                cancel: cancelBtnText,
+                            },
+                            reverseButtons: true,
+                            icon: 'warning',
+                        }).then(function (willDelete) {
+                            if (willDelete) {
+                                executeDelete();
+                            }
+                        });
+                    } else if (typeof Swal === 'function') {
+                        Swal.fire({
+                            title: titleText,
+                            text: textMsg,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: confirmBtnText,
+                            cancelButtonText: cancelBtnText,
+                            reverseButtons: true,
+                        }).then(function (result) {
+                            if (result.isConfirmed) {
+                                executeDelete();
+                            }
+                        });
+                    } else {
+                        if (confirm(textMsg)) {
+                            executeDelete();
+                        }
+                    }
+                    return;
+                }
+
                 const removeButton = event.target.closest('[data-employment-expertise-remove]');
                 if (!removeButton) {
                     return;
