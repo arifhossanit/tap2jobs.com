@@ -1320,20 +1320,33 @@ function IOInitImageUpload(box) {
       var image = new Image();
       image.src = e.target.result;
       image.onload = function () {
+        thumb.innerHTML = '';
         thumb.style.backgroundImage = 'url(' + e.target.result + ')';
       };
     };
     reader.readAsDataURL(file);
   } // Check Image Type
 
+  function previewVideo(file) {
+    var thumb = box.querySelector('.previewImage');
+    var videoUrl = URL.createObjectURL(file);
+    thumb.style.backgroundImage = 'none';
+    thumb.innerHTML = '<video src="' + videoUrl + '" controls muted playsinline preload="metadata" style="width:100%;height:100%;object-fit:contain;background:#000;border-radius:inherit;"></video>';
+  }
   function checkType(file) {
     var imageType = /image.*/;
-    if (!file.type.match(imageType)) {
-      throw 'File Type is not match.';
-    } else if (!file) {
+    var videoType = /video.*/;
+    if (!file) {
       throw 'File not found.';
-    } else {
+    } else if (file.type.match(imageType)) {
       previewImage(file);
+    } else if (file.type.match(videoType)) {
+      previewVideo(file);
+    } else {
+      uploadField.value = '';
+      if (typeof displayErrorMessage === 'function') {
+        displayErrorMessage('Unsupported file type.');
+      }
     }
   }
 } // every load initialize the Image component on document load

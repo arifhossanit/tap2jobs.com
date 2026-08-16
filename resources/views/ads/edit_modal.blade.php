@@ -22,16 +22,22 @@
                         </label>
                         <div class="d-block">
                             <div class="image-picker">
-                                <div class="image previewImage" id="editPreviewImage"></div>
+                                <div class="image previewImage d-flex align-items-center justify-content-center text-center"
+                                     id="editPreviewImage">
+                                    <span class="text-muted fs-12 px-2">{{ __('messages.ad.no_media_selected') }}</span>
+                                </div>
                                 <span class="picker-edit rounded-circle text-gray-500 fs-small" data-bs-toggle="tooltip"
                                       data-placement="top"
                                       data-bs-original-title="{{ __('messages.tooltip.change_image') }}">
                                     <label>
                                         <i class="fa-solid fa-pen" id="profileImageIcon"></i>
-                                        {{ Form::file('ad_image', ['class' => 'image-upload d-none', 'accept' => '.png, .jpg, .jpeg, .webp, .mp4, .webm, .ogg']) }}
+                                        {{ Form::file('ad_image', ['class' => 'image-upload d-none', 'id' => 'editAdImage', 'accept' => '.png, .jpg, .jpeg, .webp, .mp4, .webm, .ogg']) }}
                                     </label>
                                 </span>
                             </div>
+                            <label for="editAdImage" class="btn btn-light-primary btn-sm mt-3">
+                                <i class="fa-solid fa-upload me-2"></i>{{ __('messages.ad.change_media') }}
+                            </label>
                             <small class="text-muted d-block mt-2">{{ __('messages.ad.media_help') }}</small>
                             <div class="ad-upload-progress mt-3 d-none" id="editAdUploadProgress">
                                 <div class="d-flex align-items-center justify-content-between mb-1">

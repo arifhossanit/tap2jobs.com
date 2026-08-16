@@ -9,13 +9,13 @@ function loadAdData() {
 
     listenHiddenBsModal('#addAdsModal', function () {
         resetModalForm('#addAdNewForm', '#validationErrorsBox');
-        clearAdPreview('#previewImage');
+        clearAdPreview('#previewImage', $('#adChooseMediaText').val());
         resetAdUploadProgress('ad');
     });
 
     listenHiddenBsModal('#editAdsModal', function () {
         resetModalForm('#editAdForm', '#editValidationErrorsBox');
-        clearAdPreview('#editPreviewImage');
+        clearAdPreview('#editPreviewImage', $('#adNoMediaSelectedText').val());
         resetAdUploadProgress('editAd');
     });
 }
@@ -47,10 +47,12 @@ function adRenderData(editAdId) {
                 $('#editSortOrder').val(result.data.sort_order || 0);
 
                 let mediaUrl = result.data.ad_media_url || result.data.ad_image_url;
-                if (isEmpty(mediaUrl) || result.data.ad_media_type === 'video') {
-                    clearAdPreview('#editPreviewImage');
+                if (isEmpty(mediaUrl)) {
+                    clearAdPreview('#editPreviewImage', $('#adNoMediaSelectedText').val());
+                } else if (result.data.ad_media_type === 'video') {
+                    setAdVideoPreview('#editPreviewImage', mediaUrl);
                 } else {
-                    $('#editPreviewImage').css('background-image', 'url("' + mediaUrl + '")');
+                    setAdImagePreview('#editPreviewImage', mediaUrl);
                 }
 
                 (result.data.is_active == 1)
@@ -200,6 +202,20 @@ function resetAdUploadProgress(prefix) {
     $('#' + prefix + 'UploadProgress').addClass('d-none');
 }
 
-function clearAdPreview(selector) {
-    $(selector).css('background-image', 'none');
+function clearAdPreview(selector, text) {
+    $(selector)
+        .css('background-image', 'none')
+        .html('<span class="text-muted fs-12 px-2">' + text + '</span>');
+}
+
+function setAdImagePreview(selector, mediaUrl) {
+    $(selector)
+        .empty()
+        .css('background-image', 'url("' + mediaUrl + '")');
+}
+
+function setAdVideoPreview(selector, mediaUrl) {
+    $(selector)
+        .css('background-image', 'none')
+        .html('<video src="' + mediaUrl + '" controls muted playsinline preload="metadata" style="width:100%;height:100%;object-fit:contain;background:#000;border-radius:inherit;"></video>');
 }

@@ -34,12 +34,12 @@ function loadAdData() {
   }
   listenHiddenBsModal('#addAdsModal', function () {
     resetModalForm('#addAdNewForm', '#validationErrorsBox');
-    clearAdPreview('#previewImage');
+    clearAdPreview('#previewImage', $('#adChooseMediaText').val());
     resetAdUploadProgress('ad');
   });
   listenHiddenBsModal('#editAdsModal', function () {
     resetModalForm('#editAdForm', '#editValidationErrorsBox');
-    clearAdPreview('#editPreviewImage');
+    clearAdPreview('#editPreviewImage', $('#adNoMediaSelectedText').val());
     resetAdUploadProgress('editAd');
   });
 }
@@ -67,10 +67,12 @@ function adRenderData(editAdId) {
         $('#editCtaText').val(result.data.cta_text || '');
         $('#editSortOrder').val(result.data.sort_order || 0);
         var mediaUrl = result.data.ad_media_url || result.data.ad_image_url;
-        if (isEmpty(mediaUrl) || result.data.ad_media_type === 'video') {
-          clearAdPreview('#editPreviewImage');
+        if (isEmpty(mediaUrl)) {
+          clearAdPreview('#editPreviewImage', $('#adNoMediaSelectedText').val());
+        } else if (result.data.ad_media_type === 'video') {
+          setAdVideoPreview('#editPreviewImage', mediaUrl);
         } else {
-          $('#editPreviewImage').css('background-image', 'url("' + mediaUrl + '")');
+          setAdImagePreview('#editPreviewImage', mediaUrl);
         }
         result.data.is_active == 1 ? $('#editIsActive').prop('checked', true) : $('#editIsActive').prop('checked', false);
         $('#editAdsModal').appendTo('body').modal('show');
@@ -202,8 +204,14 @@ function resetAdUploadProgress(prefix) {
   updateAdUploadProgress(prefix, 0);
   $('#' + prefix + 'UploadProgress').addClass('d-none');
 }
-function clearAdPreview(selector) {
-  $(selector).css('background-image', 'none');
+function clearAdPreview(selector, text) {
+  $(selector).css('background-image', 'none').html('<span class="text-muted fs-12 px-2">' + text + '</span>');
+}
+function setAdImagePreview(selector, mediaUrl) {
+  $(selector).empty().css('background-image', 'url("' + mediaUrl + '")');
+}
+function setAdVideoPreview(selector, mediaUrl) {
+  $(selector).css('background-image', 'none').html('<video src="' + mediaUrl + '" controls muted playsinline preload="metadata" style="width:100%;height:100%;object-fit:contain;background:#000;border-radius:inherit;"></video>');
 }
 
 /***/ },
@@ -7459,20 +7467,33 @@ function IOInitImageUpload(box) {
       var image = new Image();
       image.src = e.target.result;
       image.onload = function () {
+        thumb.innerHTML = '';
         thumb.style.backgroundImage = 'url(' + e.target.result + ')';
       };
     };
     reader.readAsDataURL(file);
   } // Check Image Type
 
+  function previewVideo(file) {
+    var thumb = box.querySelector('.previewImage');
+    var videoUrl = URL.createObjectURL(file);
+    thumb.style.backgroundImage = 'none';
+    thumb.innerHTML = '<video src="' + videoUrl + '" controls muted playsinline preload="metadata" style="width:100%;height:100%;object-fit:contain;background:#000;border-radius:inherit;"></video>';
+  }
   function checkType(file) {
     var imageType = /image.*/;
-    if (!file.type.match(imageType)) {
-      throw 'File Type is not match.';
-    } else if (!file) {
+    var videoType = /video.*/;
+    if (!file) {
       throw 'File not found.';
-    } else {
+    } else if (file.type.match(imageType)) {
       previewImage(file);
+    } else if (file.type.match(videoType)) {
+      previewVideo(file);
+    } else {
+      uploadField.value = '';
+      if (typeof displayErrorMessage === 'function') {
+        displayErrorMessage('Unsupported file type.');
+      }
     }
   }
 } // every load initialize the Image component on document load

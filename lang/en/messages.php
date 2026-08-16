@@ -1505,6 +1505,9 @@ return [
         'image_help' => 'Upload a promotional image or video (recommended for header banner and side ads).',
         'media_help' => 'Supported: JPG, PNG, WEBP, MP4, WEBM, OGG. Images are optimized automatically.',
         'uploading' => 'Uploading',
+        'choose_media' => 'Choose Media',
+        'change_media' => 'Change Media',
+        'no_media_selected' => 'No media selected',
         'positions' => [
             'header' => 'Header Banner',
             'register_left' => 'Login/Register Left',
