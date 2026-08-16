@@ -2,6 +2,7 @@
 /public/uploads
 /storage/*.key
 /vendor
+.playwright-mcp/
 .env
 .env.backup
 /.phpunit.cache

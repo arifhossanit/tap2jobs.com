@@ -6,12 +6,12 @@
                 {{ __('messages.dashboard') }}
             </a>
         </li>
-        <li class="nav-item {{ \Illuminate\Support\Facades\Route::is('company.edit.form') ? 'active' : ''}}">
+        {{-- <li class="nav-item {{ \Illuminate\Support\Facades\Route::is('company.edit.form') ? 'active' : ''}}">
             <a class="nav-link header-navbar-color text-gray py-3" aria-current="page"
                href="{{ route('company.edit.form', \Illuminate\Support\Facades\Auth::user()->owner_id) }}">
                 {{ __('messages.employer_menu.employer_profile') }}
             </a>
-        </li>
+        </li> --}}
         <li class="nav-item {{ Request::is('employer/jobs*') ? 'active' : ''}}">
             <a class="nav-link header-navbar-color text-gray py-3" aria-current="page"
                href="{{ route('job.index') }}">

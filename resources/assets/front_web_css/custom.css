@@ -2922,6 +2922,12 @@ input, select
     max-height: 420px;
 }
 
+.register-side-ad__video {
+    background: #000;
+    display: block;
+    width: 100%;
+}
+
 /* GLOBAL RED FOCUS AND BORDER HIGHLIGHT FOR ALL FORMS AND REQUIRED INPUTS */
 .is-invalid,
 .form-control.is-invalid,

@@ -29,8 +29,8 @@ class DatabaseSeeder extends Seeder
 //        $this->call(CreateDefaultFunctionalAreaSeeder::class);
 //        $this->call(CreateDefaultDegreeLevelSeeder::class);
 //        $this->call(JobCategorySeeder::class);
-        ////        $this->call(CreateCompaniesSeeder::class);
-        ////        $this->call(CreateCandidateSeeder::class);
+//        $this->call(CreateCompaniesSeeder::class);
+//        $this->call(CreateCandidateSeeder::class);
 //        $this->call(CreateJobSeeder::class);
 //        $this->call(SkillTableSeeder::class);
 //        $this->call(LanguageTableSeeder::class);
@@ -57,8 +57,7 @@ class DatabaseSeeder extends Seeder
 //        $this->call(CurrencySeeder::class);
 //        $this->call(FooterLogoSeeder::class);
 //        $this->call(CmsServicesSeeder::class);
-        $this->call(CandidateFAQSeeder::class);
-        $this->call(EmployerFAQSeeder::class);
+        $this->call(FAQSeeder::class);
         $this->call(BangladeshJobMarketSeeder::class);
     }
 }

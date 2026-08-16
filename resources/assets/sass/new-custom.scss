@@ -167,6 +167,21 @@
   min-width: 100px !important;
 }
 
+// Restore Bootstrap/Popper dropdown placement; the theme adds a global 80px slide offset.
+.dropdown-menu {
+  transform: none;
+  transition: none;
+}
+
+.dropdown.dropdown-hover .dropdown-menu {
+  transform: translateY(20px);
+  transition: all 0.2s ease;
+}
+
+.dropdown.dropdown-hover:hover .dropdown-menu {
+  transform: translate(0);
+}
+
 // Keep employer job status menus above the table/card without clipping them.
 .employer-jobs-table-responsive {
   overflow: visible;

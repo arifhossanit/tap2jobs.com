@@ -23,21 +23,17 @@ listenClick('.inquiry-show-btn', function (event) {
                 $('#showUpdatedAt').html('');
                 $('#showInquiresMessage').html('');
 
-                $('#showInquiresName').append(result.data.name);
-                $('#showInquiresEmail').append(result.data.email);
+                $('#showInquiresName').text(result.data.name);
+                $('#showInquiresEmail').text(result.data.email);
                 if (isEmpty(result.data.phone_no)) {
-                    $('#showInquiresPhoneNo').append('N/A');
+                    $('#showInquiresPhoneNo').text('N/A');
                 } else {
-                    $('#showInquiresPhoneNo').append(result.data.phone_no);
+                    $('#showInquiresPhoneNo').text(result.data.phone_no);
                 }
-                $('#showInquiresSubject').append(result.data.subject);
+                $('#showInquiresSubject').text(result.data.subject);
                 $('#showInquiresCreatedAt').text(moment(result.data.created_at, 'YYYY-MM-DD hh:mm:ss').format('Do MMM, YYYY'));
                 $('#showUpdatedAt').text(moment(result.data.updated_at, 'YYYY-MM-DD hh:mm:ss').format('Do MMM, YYYY'));
-                let element = document.createElement('textarea');
-                element.innerHTML = (!isEmpty(result.data.message))
-                    ? result.data.message
-                    : 'N/A';
-                $('#showInquiresMessage').append(element.value);
+                $('#showInquiresMessage').text(!isEmpty(result.data.message) ? result.data.message : 'N/A');
                 $('#showInquiryModal').appendTo('body').modal('show');
                 ajaxCallCompleted();
             }

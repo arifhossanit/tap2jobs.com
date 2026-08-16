@@ -4,13 +4,18 @@
 @endphp
 @foreach ($ads as $ad)
     <div class="register-side-ad mb-3">
-        @if (!empty($ad->ad_image_url))
-            @if (!empty($ad->link_url))
+        @if (!empty($ad->ad_media_url))
+            @if ($ad->ad_media_type === 'video')
+                <video class="img-fluid w-100 register-side-ad__image register-side-ad__video"
+                       controls muted playsinline preload="metadata">
+                    <source src="{{ $ad->ad_media_url }}" type="{{ optional($ad->getFirstMedia(\App\Models\Ad::PATH))->mime_type }}">
+                </video>
+            @elseif (!empty($ad->link_url))
                 <a href="{{ $ad->link_url }}" target="_blank" rel="noopener noreferrer" class="d-block">
-                    <img src="{{ $ad->ad_image_url }}" alt="{{ $ad->title }}" class="img-fluid w-100 register-side-ad__image">
+                    <img src="{{ $ad->ad_media_url }}" alt="{{ $ad->title }}" class="img-fluid w-100 register-side-ad__image">
                 </a>
             @else
-                <img src="{{ $ad->ad_image_url }}" alt="{{ $ad->title }}" class="img-fluid w-100 register-side-ad__image">
+                <img src="{{ $ad->ad_media_url }}" alt="{{ $ad->title }}" class="img-fluid w-100 register-side-ad__image">
             @endif
         @endif
         @if (!empty($ad->title) || !empty($ad->description) || (!empty($ad->link_url) && !empty($ad->cta_text)))

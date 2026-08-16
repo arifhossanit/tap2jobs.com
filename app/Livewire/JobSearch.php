@@ -37,6 +37,10 @@ class JobSearch extends Component
 
     public $jobExperience = '';
 
+    public $jobExperienceFrom = '';
+
+    public $jobExperienceTo = '';
+
     public bool $freshersOnly = false;
 
     public $featuredJob = '';
@@ -45,7 +49,7 @@ class JobSearch extends Component
 
     public int $page = 0;
 
-    protected $listeners = ['changeFilter', 'changeSalaryRange', 'resetFilter'];
+    protected $listeners = ['changeFilter', 'changeSalaryRange', 'changeExperienceRange', 'resetFilter'];
 
     public function paginationView()
     {
@@ -68,6 +72,15 @@ class JobSearch extends Component
         }
         if (! empty($request->get('job_type'))) {
             $this->types = [(int) $request->get('job_type')];
+        }
+        if ($request->filled('jobExperience')) {
+            $this->jobExperience = max(0, (int) $request->get('jobExperience'));
+        }
+        if ($request->filled('jobExperienceFrom')) {
+            $this->jobExperienceFrom = max(0, (int) $request->get('jobExperienceFrom'));
+        }
+        if ($request->filled('jobExperienceTo')) {
+            $this->jobExperienceTo = max(0, (int) $request->get('jobExperienceTo'));
         }
 
         $this->featuredJob = $request->is_featured;
@@ -96,8 +109,26 @@ class JobSearch extends Component
 
     public function changeFilter($param, $value)
     {
+        if (! property_exists($this, $param)) {
+            return;
+        }
+
         $this->resetPage();
-        $this->$param = $value;
+        $this->$param = in_array($param, ['jobExperience', 'jobExperienceFrom', 'jobExperienceTo']) && $value !== ''
+            ? max(0, (int) $value)
+            : $value;
+    }
+
+    public function changeExperienceRange($from, $to, $maximum): void
+    {
+        $this->resetPage();
+        $from = max(0, (int) $from);
+        $to = max($from, (int) $to);
+        $maximum = max(1, (int) $maximum);
+
+        $this->jobExperience = '';
+        $this->jobExperienceFrom = $from > 0 ? $from : '';
+        $this->jobExperienceTo = $to < $maximum ? $to : '';
     }
 
     public function changeSalaryRange($from, $to, $maximum = 150000): void
@@ -171,12 +202,20 @@ class JobSearch extends Component
         });
         $query->when(! empty($this->company), function (Builder $q) {
             $q->whereHas('company', function (Builder $q) {
-                $q->where('company_id', '=', $this->company);
+                $q->where('id', '=', $this->company);
             });
         });
 
-        $query->when(! empty($this->jobExperience), function (Builder $q) {
-            $q->where('experience', '<=', $this->jobExperience);
+        $query->when($this->jobExperienceFrom !== '', function (Builder $q) {
+            $q->where('experience', '>=', (int) $this->jobExperienceFrom);
+        });
+
+        $query->when($this->jobExperienceTo !== '', function (Builder $q) {
+            $q->where('experience', '<=', (int) $this->jobExperienceTo);
+        });
+
+        $query->when($this->jobExperience !== '' && $this->jobExperienceFrom === '' && $this->jobExperienceTo === '', function (Builder $q) {
+            $q->where('experience', '<=', (int) $this->jobExperience);
         });
 
         $query->when($this->freshersOnly, function (Builder $q) {
@@ -224,14 +263,16 @@ class JobSearch extends Component
         });
 
         $query->when(! empty($this->title), function (Builder $q) {
-            $q->where('job_title', 'like', '%'.$this->title.'%')
-                ->orWhereHas('jobsSkill', function (Builder $q) {
-                    $q->where('name', 'like', '%'.$this->title.'%');
-                })
-                ->orWhereHas('company.user', function (Builder $q) {
-                    $q->where('first_name', 'like', '%'.$this->title.'%')
-                        ->orWhere('last_name', 'like', '%'.$this->title.'%');
-                });
+            $q->where(function (Builder $q) {
+                $q->where('job_title', 'like', '%'.$this->title.'%')
+                    ->orWhereHas('jobsSkill', function (Builder $q) {
+                        $q->where('name', 'like', '%'.$this->title.'%');
+                    })
+                    ->orWhereHas('company.user', function (Builder $q) {
+                        $q->where('first_name', 'like', '%'.$this->title.'%')
+                            ->orWhere('last_name', 'like', '%'.$this->title.'%');
+                    });
+            });
         });
 
         $query->whereStatus(Job::STATUS_OPEN)->where('status', '!=',Job::STATUS_DRAFT)->whereIsSuspended(Job::NOT_SUSPENDED)->whereDate('job_expiry_date', '>=', Carbon::tomorrow()->toDateString());

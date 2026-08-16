@@ -79,6 +79,31 @@
                 }
             </style>
         @endif
+        <style>
+            body.employer-shell .header.fixed-header,
+            body.employer-shell .employer-dashboard-header {
+                background: #e4f2fb !important;
+                background-image: none !important;
+            }
+
+            body.employer-shell .header.fixed-header {
+                box-shadow: 0 1px 0 rgba(207, 216, 230, 0.8);
+            }
+
+            body.employer-shell .employer-language-toggle {
+                gap: 7px;
+            }
+
+            body.employer-shell .employer-language-toggle::after {
+                display: none !important;
+            }
+
+            body.employer-shell .employer-language-toggle i {
+                color: #6c757e;
+                font-size: 15px;
+                line-height: 1;
+            }
+        </style>
 </head>
 <script data-turbo-eval="false">
     let lancode = "{{ checkLanguageSession() }}";
@@ -86,7 +111,7 @@
 <script src="https://js.stripe.com/v3/"></script>
 <script src="{{ mix('js/third-party.js') }}"></script>
 <script src="{{ mix('js/pages.js') }}"></script>
-<body class="overflow-x-hidden">
+<body class="employer-shell overflow-x-hidden">
 <div class="d-flex flex-column flex-root">
     <div class="d-flex flex-column flex-column-fluid">
         <div class="header fixed-header">

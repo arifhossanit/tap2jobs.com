@@ -5,6 +5,7 @@
     'careerLevels',
     'functionalAreas',
     'jobTypes',
+    'maximumExperience' => 30,
     'input' => [],
 ])
 
@@ -88,7 +89,7 @@
             <input class="form-check-input" type="checkbox" id="fresherJobs" value="1">
             <label class="form-check-label" for="fresherJobs">
                 <span>{{ __('messages.job.fresher_jobs') }}</span>
-                <small>{{ __('messages.job.fresher_jobs_hint') }}</small>
+                {{-- <small>{{ __('messages.job.fresher_jobs_hint') }}</small> --}}
             </label>
         </div>
 
@@ -130,7 +131,7 @@
         <div class="form-group find-jobs-filter__group find-jobs-filter__range">
             <label for="jobExperience">{{ __('messages.job.maximum_experience') }}</label>
             <div dir="ltr">
-                <input type="text" id="jobExperience" autocomplete="off" tabindex="-1" readonly>
+                <input type="text" id="jobExperience" data-max="{{ max(1, (int) $maximumExperience) }}" autocomplete="off" tabindex="-1" readonly>
             </div>
         </div>
     </form>

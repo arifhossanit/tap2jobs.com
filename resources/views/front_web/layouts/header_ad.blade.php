@@ -1,7 +1,7 @@
 @php
     $headerAd = getActiveAdByPosition(\App\Models\Ad::POSITION_HEADER);
 @endphp
-@if ($headerAd && !empty($headerAd->ad_image_url))
+@if ($headerAd && !empty($headerAd->ad_media_url))
     {{--
       IMPORTANT: Do NOT use id/class/aria containing "ad" / "ads" / "advert".
       Browser ad blockers hide those selectors even when HTML is present.
@@ -14,15 +14,19 @@
                         onclick="this.closest('#siteTopBanner').classList.add('is-closed'); return false;">
                     <i class="fas fa-times"></i>
                 </button>
-                <div class="site-top-banner__inner">
-                    @if (!empty($headerAd->link_url))
+                <div class="site-top-banner__inner container mx-auto">
+                    @if ($headerAd->ad_media_type === 'video')
+                        <video class="site-top-banner__image" controls muted playsinline preload="metadata">
+                            <source src="{{ $headerAd->ad_media_url }}" type="{{ optional($headerAd->getFirstMedia(\App\Models\Ad::PATH))->mime_type }}">
+                        </video>
+                    @elseif (!empty($headerAd->link_url))
                         <a href="{{ $headerAd->link_url }}" target="_blank" rel="noopener noreferrer"
                            class="site-top-banner__image-link">
-                            <img src="{{ $headerAd->ad_image_url }}" alt="{{ $headerAd->title ?? 'Header Ad' }}"
+                            <img src="{{ $headerAd->ad_media_url }}" alt="{{ $headerAd->title ?? 'Header Ad' }}"
                                  class="site-top-banner__image">
                         </a>
                     @else
-                        <img src="{{ $headerAd->ad_image_url }}" alt="{{ $headerAd->title ?? 'Header Ad' }}"
+                        <img src="{{ $headerAd->ad_media_url }}" alt="{{ $headerAd->title ?? 'Header Ad' }}"
                              class="site-top-banner__image">
                     @endif
                 </div>
@@ -55,6 +59,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            background: linear-gradient(to right, #e4f2fb, #eaf0fc);
         }
         #siteTopBanner .site-top-banner__inner {
             display: block !important;

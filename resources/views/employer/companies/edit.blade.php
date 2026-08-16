@@ -41,11 +41,8 @@
                             <button type="button" class="employer-account-section-link"
                                     data-account-section="billingAddressPanel">
                                 {{ __('messages.employer_account.billing_address') }}
-                                {{ __('messages.employer_account.billing_address') }}
                             </button>
                         </div>
-                        <button type="button" class="employer-account-nav-action employer-account-password-link"
-                                data-account-password-panel="employerPasswordPanel">
                         <button type="button" class="employer-account-nav-action employer-account-password-link"
                                 data-account-password-panel="employerPasswordPanel">
                             <i class="fa-solid fa-key"></i>

@@ -3,14 +3,14 @@
         <div class="col-lg-12 px-lg-3">
             <div class="job-card">
 
-                <div class=" mb-40">
-                    <a href="{{ route('front.job.details', $job['job_id']) }}" class="card py-30 border-0 ">
-                        <div class="d-sm-flex position-relative">
-                            <div class="mb-sm-0 mb-3 {{ getFrontSelectLanguage() == 'ar' ? 'ms-sm-4' : 'me-sm-4' }}">
-                                <img src="{{ $job->company->company_url }}" class="card-img" alt="...">
+                <div class="mb-4">
+                    <a href="{{ route('front.job.details', $job['job_id']) }}" class="card p-4 border-0 shadow-sm">
+                        <div class="d-sm-flex gap-4 align-items-center position-relative">
+                            <div class="mb-sm-0 mb-3 flex-shrink-0">
+                                <img src="{{ $job->company->company_url }}" class="card-img" alt="..." style="width: 80px; height: 80px; object-fit: contain;">
                             </div>
-                            <div class="">
-                                <div class="card-body p-0 ">
+                            <div class="flex-grow-1">
+                                <div class="card-body p-0">
                                     <h5 class="card-title text-secondary fs-18 mb-0">
                                         {{ html_entity_decode(Str::limit($job['job_title'], 50)) }}
                                         @if (isset($job->jobShift->shift))

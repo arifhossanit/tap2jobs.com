@@ -2657,20 +2657,47 @@ function loadJobSearchData() {
     }
   });
   var input = $('#input').val() ? JSON.parse($('#input').val()) : {};
+  var currentLanguage = typeof lancode !== 'undefined' ? lancode : document.documentElement.lang || 'en';
+  var localizeNumber = function localizeNumber(value) {
+    var number = String(value);
+    if (currentLanguage !== 'bn') {
+      return number;
+    }
+    var banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    return number.replace(/\d/g, function (digit) {
+      return banglaDigits[digit];
+    });
+  };
+  var prettifyNumber = function prettifyNumber(value) {
+    return localizeNumber(String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+  };
   if (jobExperienceSlider.length) {
+    var _input$jobExperience;
+    var maximumExperience = Math.max(1, Number(jobExperienceSlider.data('max')) || 30);
+    var hasExperienceRange = Object.prototype.hasOwnProperty.call(input, 'jobExperienceFrom') || Object.prototype.hasOwnProperty.call(input, 'jobExperienceTo');
+    var legacyExperience = (_input$jobExperience = input.jobExperience) !== null && _input$jobExperience !== void 0 ? _input$jobExperience : input.experience;
+    var selectedExperienceFrom = hasExperienceRange ? Number(input.jobExperienceFrom || 0) : 0;
+    var selectedExperienceTo = hasExperienceRange ? Number(input.jobExperienceTo || maximumExperience) : legacyExperience !== undefined ? Number(legacyExperience) : maximumExperience;
+    selectedExperienceFrom = Math.min(Math.max(0, selectedExperienceFrom), maximumExperience);
+    selectedExperienceTo = Math.min(Math.max(selectedExperienceFrom, selectedExperienceTo), maximumExperience);
+    var dispatchExperienceFilter = function dispatchExperienceFilter(from, to) {
+      Livewire.dispatch('changeExperienceRange', {
+        from: from,
+        to: to,
+        maximum: maximumExperience
+      });
+    };
     $('#jobExperience').ionRangeSlider({
-      type: 'single',
+      type: 'double',
       min: 0,
-      from: 0,
+      from: selectedExperienceFrom,
+      to: selectedExperienceTo,
       step: 1,
-      max: 30,
+      max: maximumExperience,
       max_postfix: '+',
-      postfix: ' Years',
+      prettify: localizeNumber,
       onFinish: function onFinish(data) {
-        Livewire.dispatch('changeFilter', {
-          param: 'jobExperience',
-          value: data.from > 0 ? data.from : ''
-        });
+        dispatchExperienceFilter(data.from, data.to);
       }
     });
     jobExperienceSlider.addClass('irs-hidden-input');
@@ -2685,7 +2712,7 @@ function loadJobSearchData() {
       to: salaryMaximum,
       step: 1000,
       max_postfix: '+',
-      prettify_separator: ',',
+      prettify: prettifyNumber,
       onFinish: function onFinish(data) {
         Livewire.dispatch('changeSalaryRange', {
           from: data.from,
@@ -2712,7 +2739,8 @@ function loadJobSearchData() {
     }
     if (experienceInstance) {
       experienceInstance.update({
-        from: 0
+        from: 0,
+        to: Number(jobExperienceSlider.data('max')) || 30
       });
     }
     $('#searchByLocation').val("");

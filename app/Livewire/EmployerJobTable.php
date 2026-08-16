@@ -156,7 +156,7 @@ class EmployerJobTable extends LivewireTableComponent
                     function (Builder $builder, string $value) {
                         if ($value == 'yes') {
                             $builder->has('activeFeatured');
-                        } else {
+                        } elseif ($value == 'no') {
                             $builder->doesnthave('activeFeatured');
                         }
                     }

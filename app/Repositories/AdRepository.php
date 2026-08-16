@@ -4,7 +4,11 @@ namespace App\Repositories;
 
 use App\Models\Ad;
 use Exception;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+use Intervention\Image\ImageManagerStatic as InterventionImage;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 /**
@@ -44,7 +48,9 @@ class AdRepository extends BaseRepository
                 $ad = $this->create($input);
 
                 if (! empty($image)) {
-                    $ad->addMedia($image)->toMediaCollection(Ad::PATH, config('app.media_disc'));
+                    $preparedMedia = $this->prepareMediaForUpload($image);
+                    $ad->addMedia($preparedMedia)->toMediaCollection(Ad::PATH, config('app.media_disc'));
+                    $this->deletePreparedMedia($preparedMedia);
                 }
 
                 return true;
@@ -66,13 +72,51 @@ class AdRepository extends BaseRepository
 
                 if (! empty($image)) {
                     $ad->clearMediaCollection(Ad::PATH);
-                    $ad->addMedia($image)->toMediaCollection(Ad::PATH, config('app.media_disc'));
+                    $preparedMedia = $this->prepareMediaForUpload($image);
+                    $ad->addMedia($preparedMedia)->toMediaCollection(Ad::PATH, config('app.media_disc'));
+                    $this->deletePreparedMedia($preparedMedia);
                 }
 
                 return true;
             });
         } catch (Exception $e) {
             throw new UnprocessableEntityHttpException($e->getMessage());
+        }
+    }
+
+    private function prepareMediaForUpload(UploadedFile $file): UploadedFile|string
+    {
+        if (! str_starts_with((string) $file->getMimeType(), 'image/')) {
+            return $file;
+        }
+
+        $extension = strtolower($file->getClientOriginalExtension() ?: 'jpg');
+        $extension = $extension === 'jpg' ? 'jpeg' : $extension;
+        $allowedExtensions = ['jpeg', 'png', 'webp'];
+        $extension = in_array($extension, $allowedExtensions, true) ? $extension : 'jpeg';
+        $quality = $extension === 'png' ? 9 : 82;
+
+        $directory = storage_path('app/tmp/auth-ads');
+        File::ensureDirectoryExists($directory);
+
+        $optimizedPath = $directory.'/'.Str::uuid().'.'.$extension;
+
+        InterventionImage::make($file->getRealPath())
+            ->orientate()
+            ->resize(900, null, function ($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            })
+            ->encode($extension, $quality)
+            ->save($optimizedPath);
+
+        return $optimizedPath;
+    }
+
+    private function deletePreparedMedia(UploadedFile|string $media): void
+    {
+        if (is_string($media) && File::exists($media)) {
+            File::delete($media);
         }
     }
 }

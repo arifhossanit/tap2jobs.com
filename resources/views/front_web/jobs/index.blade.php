@@ -48,6 +48,7 @@
                             :career-levels="$careerLevels"
                             :functional-areas="$functionalAreas"
                             :job-types="$jobTypes"
+                            :maximum-experience="$maximumExperience"
                             :input="$input"
                         />
                     </div>

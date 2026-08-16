@@ -72,7 +72,7 @@ class AdController extends AppBaseController
             'cta_text' => 'nullable|max:50',
             'position' => 'required|in:header,register_left,register_right',
             'sort_order' => 'nullable|integer|min:0',
-            'ad_image' => 'nullable|mimes:jpeg,jpg,png',
+            'ad_image' => 'nullable|mimes:jpeg,jpg,png,webp,mp4,webm,ogg|max:51200',
         ], [
             'ad_image.mimes' => __('messages.image_slider.image_extension_message'),
             'position.required' => __('messages.ad.position_required'),

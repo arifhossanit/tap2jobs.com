@@ -68,7 +68,7 @@ class AdTable extends LivewireTableComponent
     public function columns(): array
     {
         return [
-            Column::make(__('messages.ad.image'), 'created_at')
+            Column::make(__('messages.ad.media'), 'created_at')
                 ->view('ads.table_components.image'),
 
             Column::make(__('messages.candidate_profile.title'), 'title')

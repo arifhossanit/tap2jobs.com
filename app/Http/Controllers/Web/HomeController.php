@@ -96,7 +96,7 @@ class HomeController extends AppBaseController
      */
     public function sendContactEmail(ContactFormRequest $request): RedirectResponse
     {
-        $inquiry = $this->homeRepository->storeInquires($request->all());
+        $this->homeRepository->storeInquires($request->validated());
         Flash::success(__('messages.flash.thank_you_for_contacting_us'));
 
         return redirect(route('front.contact'));

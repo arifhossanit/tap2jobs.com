@@ -13,7 +13,7 @@
                 <div class="row">
                     <div class="col-sm-12 mb-5" io-image-input="true">
                         <label for="ad_image" class="form-label">
-                            {{ __('messages.ad.image') . ':' }}
+                            {{ __('messages.ad.media') . ':' }}
                             <span data-bs-toggle="tooltip" data-placement="top"
                                   data-bs-original-title="{{ __('messages.ad.image_help') }}">
                                 <i class="fas fa-question-circle ml-1 general-question-mark"></i>
@@ -21,16 +21,27 @@
                         </label>
                         <div class="d-block">
                             <div class="image-picker">
-                                <div class="image previewImage" id="previewImage"
-                                     style="background-image: url({{ asset('assets/img/infyom-logo.png') }})"></div>
+                                <div class="image previewImage" id="previewImage"></div>
                                 <span class="picker-edit rounded-circle text-gray-500 fs-small" data-bs-toggle="tooltip"
                                       data-placement="top"
                                       data-bs-original-title="{{ __('messages.tooltip.change_image') }}">
                                     <label>
                                         <i class="fa-solid fa-pen" id="profileImageIcon"></i>
-                                        {{ Form::file('ad_image', ['class' => 'image-upload d-none', 'accept' => '.png, .jpg, .jpeg']) }}
+                                        {{ Form::file('ad_image', ['class' => 'image-upload d-none', 'accept' => '.png, .jpg, .jpeg, .webp, .mp4, .webm, .ogg']) }}
                                     </label>
                                 </span>
+                            </div>
+                            <small class="text-muted d-block mt-2">{{ __('messages.ad.media_help') }}</small>
+                            <div class="ad-upload-progress mt-3 d-none" id="adUploadProgress">
+                                <div class="d-flex align-items-center justify-content-between mb-1">
+                                    <span class="text-muted fs-12">{{ __('messages.ad.uploading') }}</span>
+                                    <span class="text-muted fs-12" id="adUploadProgressText">0%</span>
+                                </div>
+                                <div class="progress h-6px">
+                                    <div class="progress-bar bg-primary" id="adUploadProgressBar" role="progressbar"
+                                         style="width: 0%" aria-valuenow="0" aria-valuemin="0"
+                                         aria-valuemax="100"></div>
+                                </div>
                             </div>
                         </div>
                     </div>

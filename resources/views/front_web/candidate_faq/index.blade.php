@@ -172,7 +172,7 @@
             width: 100%;
         }
 
-        .candidate-faq-page .accordion-title i {
+        .candidate-faq-page .faq-plus-icon {
             align-items: center;
             background: #ffffff;
             border-radius: 50%;
@@ -181,16 +181,36 @@
             flex: 0 0 30px;
             height: 30px;
             justify-content: center;
+            transform: rotate(0deg);
+            transform-origin: center;
+            transition: transform 0.25s ease;
             width: 30px;
+            will-change: transform;
+            font-size: 25px;
         }
 
-        .candidate-faq-page .accordion-title:not(.collapsed) {
+        .candidate-faq-page .accordion-title:not(.collapsed),
+        .candidate-faq-page .accordion-title.is-open {
             background: #d8205f;
             color: #ffffff;
         }
 
-        .candidate-faq-page .accordion-title:not(.collapsed) i {
+        .candidate-faq-page .accordion-title:not(.collapsed) .faq-plus-icon,
+        .candidate-faq-page .accordion-title.is-open .faq-plus-icon {
             color: #d8205f;
+            transform: rotate(45deg) !important;
+        }
+
+        .candidate-faq-page .faq-card .collapse {
+            display: block !important;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.32s ease, opacity 0.22s ease;
+        }
+
+        .candidate-faq-page .faq-card .collapse.show {
+            opacity: 1;
         }
 
         .candidate-faq-page .accordion-body {
@@ -288,7 +308,7 @@
                                 <div class="faq-icon">
                                     <i class="{{ $category->icon ?: 'fa-solid fa-circle-question fa-fw' }}"></i>
                                 </div>
-                                <h3>{{ $category->name }}</h3>
+                                <h3>{{ $category->localizedName() }}</h3>
                             </a>
                         </div>
                     </div>
@@ -315,30 +335,31 @@
                         @foreach ($categorizedFaqs as $category)
                             @if ($category->faqs->count() > 0)
                                 <div class="j-faq-box faq-section" id="{{ $category->slug }}">
-                                    <h3>{{ $category->name }}</h3>
+                                    <h3>{{ $category->localizedName() }}</h3>
                                     <div class="py-3 faq-accordion accordion" id="{{ $category->slug }}-accordion">
                                         @foreach ($category->faqs as $faqList)
                                             @php
                                                 $collapseId = $category->slug.'-collapse-'.$faqList->id;
                                                 $headingId = $category->slug.'-heading-'.$faqList->id;
+                                                $faqTitle = $faqList->localizedTitle();
+                                                $faqDescription = $faqList->localizedDescription();
                                             @endphp
-                                            <div class="faq-card faq-search-item" data-question="{{ strtolower(strip_tags($faqList->title)) }}" data-answer="{{ strtolower(strip_tags($faqList->description)) }}">
+                                            <div class="faq-card faq-search-item" data-question="{{ strtolower(strip_tags($faqTitle)) }}" data-answer="{{ strtolower(strip_tags($faqDescription)) }}">
                                                 <div class="faq-card-header p-0 border-0" id="{{ $headingId }}">
                                                     <button class="btn btn-link accordion-title collapsed" type="button"
-                                                        data-bs-toggle="collapse"
+                                                        data-faq-toggle
                                                         data-bs-target="#{{ $collapseId }}"
                                                         aria-expanded="false"
                                                         aria-controls="{{ $collapseId }}">
-                                                        <i class="fas fa-plus"></i>
-                                                        {{ html_entity_decode($faqList->title) }}
+                                                        <span class="faq-plus-icon">+</span>
+                                                        {{ html_entity_decode($faqTitle) }}
                                                     </button>
                                                 </div>
                                                 <div id="{{ $collapseId }}" class="collapse"
-                                                    aria-labelledby="{{ $headingId }}"
-                                                    data-bs-parent="#{{ $category->slug }}-accordion">
+                                                    aria-labelledby="{{ $headingId }}">
                                                     <div class="card-body accordion-body">
                                                         <div class="faq-body-cont">
-                                                            {!! nl2br($faqList->description) !!}
+                                                            {!! nl2br($faqDescription) !!}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -357,24 +378,25 @@
                                         @php
                                             $collapseId = 'other-questions-collapse-'.$faqList->id;
                                             $headingId = 'other-questions-heading-'.$faqList->id;
+                                            $faqTitle = $faqList->localizedTitle();
+                                            $faqDescription = $faqList->localizedDescription();
                                         @endphp
-                                        <div class="faq-card faq-search-item" data-question="{{ strtolower(strip_tags($faqList->title)) }}" data-answer="{{ strtolower(strip_tags($faqList->description)) }}">
+                                        <div class="faq-card faq-search-item" data-question="{{ strtolower(strip_tags($faqTitle)) }}" data-answer="{{ strtolower(strip_tags($faqDescription)) }}">
                                             <div class="faq-card-header p-0 border-0" id="{{ $headingId }}">
                                                 <button class="btn btn-link accordion-title collapsed" type="button"
-                                                    data-bs-toggle="collapse"
+                                                    data-faq-toggle
                                                     data-bs-target="#{{ $collapseId }}"
                                                     aria-expanded="false"
                                                     aria-controls="{{ $collapseId }}">
-                                                    <i class="fas fa-plus"></i>
-                                                    {{ html_entity_decode($faqList->title) }}
+                                                    <span class="faq-plus-icon">+</span>
+                                                    {{ html_entity_decode($faqTitle) }}
                                                 </button>
                                             </div>
                                             <div id="{{ $collapseId }}" class="collapse"
-                                                aria-labelledby="{{ $headingId }}"
-                                                data-bs-parent="#other-questions-accordion">
+                                                aria-labelledby="{{ $headingId }}">
                                                 <div class="card-body accordion-body">
                                                     <div class="faq-body-cont">
-                                                        {!! nl2br($faqList->description) !!}
+                                                        {!! nl2br($faqDescription) !!}
                                                     </div>
                                                 </div>
                                             </div>
@@ -401,6 +423,66 @@
             const searchButton = document.getElementById('candidateFaqSearchBtn');
             const faqItems = document.querySelectorAll('.faq-search-item');
             const faqSections = document.querySelectorAll('.faq-section');
+            const faqButtons = document.querySelectorAll('.candidate-faq-page [data-faq-toggle]');
+
+            function getCollapseTarget(button) {
+                return document.querySelector(button.getAttribute('data-bs-target'));
+            }
+
+            function setFaqButtonState(button, isOpen) {
+                button.classList.toggle('collapsed', !isOpen);
+                button.classList.toggle('is-open', isOpen);
+                button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            }
+
+            function closeFaqTarget(target) {
+                target.style.maxHeight = target.scrollHeight + 'px';
+                requestAnimationFrame(function () {
+                    target.classList.remove('show');
+                    target.style.maxHeight = '';
+                });
+            }
+
+            function openFaqTarget(target) {
+                target.classList.add('show');
+                target.style.maxHeight = target.scrollHeight + 'px';
+            }
+
+            faqButtons.forEach(function (button) {
+                setFaqButtonState(button, false);
+
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    const target = getCollapseTarget(button);
+                    const parentAccordion = button.closest('.faq-accordion');
+
+                    if (!target) {
+                        return;
+                    }
+
+                    const shouldOpen = !target.classList.contains('show');
+
+                    if (parentAccordion) {
+                        parentAccordion.querySelectorAll('[data-faq-toggle]').forEach(function (otherButton) {
+                            const otherTarget = getCollapseTarget(otherButton);
+
+                            if (otherTarget && otherTarget !== target) {
+                                closeFaqTarget(otherTarget);
+                                setFaqButtonState(otherButton, false);
+                            }
+                        });
+                    }
+
+                    if (shouldOpen) {
+                        openFaqTarget(target);
+                        setFaqButtonState(button, true);
+                    } else {
+                        closeFaqTarget(target);
+                        setFaqButtonState(button, false);
+                    }
+                });
+            });
 
             function filterFaqs() {
                 const query = searchInput.value.trim().toLowerCase();

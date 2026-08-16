@@ -19,15 +19,26 @@
                     {{ Form::select('faq_category_id', $faqCategories ?? [], null, ['class' => 'form-select', 'placeholder' => 'Select category']) }}
                 </div>
                 <div class="mb-5">
-                    {{ Form::label('title',__('messages.faq.title').(':'), ['class' => 'form-label']) }}
+                    {{ Form::label('title_en', __('messages.faq.title').' (English):', ['class' => 'form-label']) }}
                     <span class="required"></span>
-                    {{ Form::text('title', null, ['class' => 'form-control ','required','placeholder' => __('messages.faq.title')]) }}
+                    {{ Form::text('title_en', null, ['class' => 'form-control', 'required', 'placeholder' => 'Enter English question']) }}
                 </div>
                 <div class="mb-5">
-                    {{ Form::label('description',__('messages.faq.description').(':'),['class' => 'form-label']) }}
+                    {{ Form::label('title_bn', __('messages.faq.title').' (বাংলা):', ['class' => 'form-label']) }}
                     <span class="required"></span>
-                    <div id="addFaqDescriptionQuillData"></div>
-                    {{ Form::hidden('description', null, ['id' => 'faqs_desc']) }}
+                    {{ Form::text('title_bn', null, ['class' => 'form-control', 'required', 'placeholder' => 'বাংলা প্রশ্ন লিখুন']) }}
+                </div>
+                <div class="mb-5">
+                    {{ Form::label('description_en', __('messages.faq.description').' (English):', ['class' => 'form-label']) }}
+                    <span class="required"></span>
+                    <div id="addFaqDescriptionEnQuillData"></div>
+                    {{ Form::hidden('description_en', null, ['id' => 'faqs_desc_en']) }}
+                </div>
+                <div class="mb-5">
+                    {{ Form::label('description_bn', __('messages.faq.description').' (বাংলা):', ['class' => 'form-label']) }}
+                    <span class="required"></span>
+                    <div id="addFaqDescriptionBnQuillData"></div>
+                    {{ Form::hidden('description_bn', null, ['id' => 'faqs_desc_bn']) }}
                 </div>
             </div>
             <div class="modal-footer pt-0">

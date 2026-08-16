@@ -69,7 +69,6 @@ function loadEmployerJobData() {
 listenClick('.employer-job-delete-btn', function (event) {
     let jobId = $(this).attr('data-id');
     deleteItem(route('job.destroy', jobId), Lang.get('js.job'));
-    Livewire.dispatch('refreshDatatable');
 });
 
 listenClick('.copy-btn', function (event) {

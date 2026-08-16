@@ -1,45 +1,65 @@
 document.addEventListener('DOMContentLoaded', loadFaqsData);
 
+function createFaqQuill(selector) {
+    if (!$(selector).length) {
+        return null;
+    }
+
+    return new Quill(selector, {
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline', 'strike'],
+                ['clean'],
+            ],
+            keyboard: {
+                bindings: {
+                    tab: 'disabled',
+                }
+            }
+        },
+        placeholder: Lang.get('js.enter_description'),
+        theme: 'snow',
+    });
+}
+
+function decodeHtml(value) {
+    let element = document.createElement('textarea');
+    element.innerHTML = value || '';
+    return element.value;
+}
+
+function setQuillValue(editor, value) {
+    if (editor) {
+        editor.root.innerHTML = decodeHtml(value);
+    }
+}
+
+function resetQuillValue(editor) {
+    if (editor) {
+        editor.setContents([{ insert: '' }]);
+    }
+}
+
+function getQuillHtml(editor) {
+    let input = JSON.stringify(editor.root.innerHTML);
+    return input.replace(/"/g, '');
+}
+
+function requireQuillContent(editor) {
+    return editor && editor.getText().trim().length > 0;
+}
+
 function loadFaqsData () {
-    if (!$('#addFaqDescriptionQuillData').length &&
-        !$('#editFaqDescriptionQuillData').length) {
+    if (!$('#addFaqDescriptionEnQuillData').length &&
+        !$('#editFaqDescriptionEnQuillData').length) {
         return;
     }
-    if ($('#addFaqDescriptionQuillData').length) {
-        window.addFaqDescriptionQuill = new Quill('#addFaqDescriptionQuillData', {
-            modules: {
-                toolbar: [
-                    ['bold', 'italic', 'underline', 'strike'],
-                    ['clean'],
-                ],
-                keyboard: {
-                    bindings: {
-                        tab: 'disabled',
-                    }
-                }
-            },
-            placeholder: Lang.get('js.enter_description'),
-            theme: 'snow',
-        });
-    }
-    if ($('#editFaqDescriptionQuillData').length) {
-        window.editFaqDescriptionQuill = new Quill('#editFaqDescriptionQuillData',
-            {
-                modules: {
-                    toolbar: [
-                        ['bold', 'italic', 'underline', 'strike'],
-                        ['clean'],
-                    ],
-                    keyboard: {
-                        bindings: {
-                            tab: 'disabled',
-                        }
-                    }
-                },
-                placeholder: Lang.get('js.enter_description'),
-                theme: 'snow',
-            });
-    }
+
+    window.addFaqDescriptionEnQuill = createFaqQuill('#addFaqDescriptionEnQuillData');
+    window.addFaqDescriptionBnQuill = createFaqQuill('#addFaqDescriptionBnQuillData');
+    window.editFaqDescriptionEnQuill = createFaqQuill('#editFaqDescriptionEnQuillData');
+    window.editFaqDescriptionBnQuill = createFaqQuill('#editFaqDescriptionBnQuillData');
+
     listenClick('.faqs-edit-btn', function (event) {
         let editFaqId = $(event.currentTarget).attr('data-id');
         $.ajax({
@@ -47,13 +67,12 @@ function loadFaqsData () {
             type: 'GET',
             success: function (result) {
                 if (result.success) {
-                    let element = document.createElement('textarea');
-                    element.innerHTML = result.data.title;
                     $('#faqId').val(result.data.id);
                     $('#editFaqCategoryId').val(result.data.faq_category_id || '');
-                    $('#editFaqTitle').val(element.value);
-                    element.innerHTML = result.data.description;
-                    editFaqDescriptionQuill.root.innerHTML = element.value;
+                    $('#editFaqTitleEn').val(decodeHtml(result.data.title_en || result.data.title));
+                    $('#editFaqTitleBn').val(decodeHtml(result.data.title_bn || ''));
+                    setQuillValue(editFaqDescriptionEnQuill, result.data.description_en || result.data.description);
+                    setQuillValue(editFaqDescriptionBnQuill, result.data.description_bn || '');
                     $('#editFAQsModal').appendTo('body').modal('show');
                 }
             },
@@ -65,8 +84,8 @@ function loadFaqsData () {
 
     listenHiddenBsModal('#addFAQsModal', function () {
         resetModalForm('#addFAQsForm', '#validationErrorsBox');
-        addFaqDescriptionQuill.setContents([{ insert: '' }]);
-        editFaqDescriptionQuill.setContents([{ insert: '' }]);
+        resetQuillValue(addFaqDescriptionEnQuill);
+        resetQuillValue(addFaqDescriptionBnQuill);
     })
 }
 
@@ -83,10 +102,8 @@ listenClick('.faq-show-btn', function (event) {
             if (result.success) {
                 $('#showFaqName').html('');
                 $('#showFaqDescription').html('');
-                $('#showFaqName').append(result.data.title);
-                let element = document.createElement('textarea');
-                element.innerHTML = result.data.description;
-                $('#showFaqDescription').append(element.value);
+                $('#showFaqName').append(decodeHtml(result.data.title_en || result.data.title));
+                $('#showFaqDescription').append(decodeHtml(result.data.description_en || result.data.description));
                 $('#showFaqModal').appendTo('body').modal('show');
             }
         },
@@ -98,24 +115,25 @@ listenClick('.faq-show-btn', function (event) {
 
 listenClick('.faqs-delete-btn', function (event) {
     let deleteFaqId = $(event.currentTarget).attr('data-id');
-    deleteItem(route('faqs.destroy', deleteFaqId),
-        Lang.get('js.faq'));
+    deleteItem(route('faqs.destroy', deleteFaqId), Lang.get('js.faq'));
 })
 
 listenHiddenBsModal('#editFAQsModal', function () {
     resetModalForm('#editFAQsForm', '#editValidationErrorsBox');
+    resetQuillValue(editFaqDescriptionEnQuill);
+    resetQuillValue(editFaqDescriptionBnQuill);
 })
 
 listenSubmit('#addFAQsForm', function (e) {
     e.preventDefault();
-    let addFaqEditorContent = addFaqDescriptionQuill.root.innerHTML;
 
-    if (addFaqDescriptionQuill.getText().trim().length === 0) {
+    if (!requireQuillContent(addFaqDescriptionEnQuill) || !requireQuillContent(addFaqDescriptionBnQuill)) {
         displayErrorMessage(Lang.get('js.description_required'));
         return false;
     }
-    let input = JSON.stringify(addFaqEditorContent);
-    $('#faqs_desc').val(input.replace(/"/g, ''));
+
+    $('#faqs_desc_en').val(getQuillHtml(addFaqDescriptionEnQuill));
+    $('#faqs_desc_bn').val(getQuillHtml(addFaqDescriptionBnQuill));
     processingBtn('#addFAQsForm', '#addFaqSaveBtn', 'loading');
     $.ajax({
         url: route('faqs.store'),
@@ -125,7 +143,9 @@ listenSubmit('#addFAQsForm', function (e) {
             if (result.success) {
                 displaySuccessMessage(result.message);
                 $('#addFAQsModal').modal('hide');
-                Livewire.dispatch('refreshDatatable');
+                setTimeout(function() {
+                    window.location.reload();
+                }, 800);
             }
         },
         error: function (result) {
@@ -139,14 +159,14 @@ listenSubmit('#addFAQsForm', function (e) {
 
 listenSubmit('#editFAQsForm', function (event) {
     event.preventDefault();
-    let editFaqEditorContent = editFaqDescriptionQuill.root.innerHTML;
 
-    if (editFaqDescriptionQuill.getText().trim().length === 0) {
+    if (!requireQuillContent(editFaqDescriptionEnQuill) || !requireQuillContent(editFaqDescriptionBnQuill)) {
         displayErrorMessage(Lang.get('js.description_required'));
         return false;
     }
-    let input = JSON.stringify(editFaqEditorContent);
-    $('#edit_faqs_desc').val(input.replace(/"/g, ""));
+
+    $('#edit_faqs_desc_en').val(getQuillHtml(editFaqDescriptionEnQuill));
+    $('#edit_faqs_desc_bn').val(getQuillHtml(editFaqDescriptionBnQuill));
     processingBtn('#editFAQsForm', '#editFaqSaveBtn', 'loading');
     const updateFaqId = $('#faqId').val();
     $.ajax({
@@ -157,8 +177,9 @@ listenSubmit('#editFAQsForm', function (event) {
             if (result.success) {
                 displaySuccessMessage(result.message);
                 $('#editFAQsModal').modal('hide');
-                Livewire.dispatch('refreshDatatable');
-
+                setTimeout(function() {
+                    window.location.reload();
+                }, 800);
             }
         },
         error: function (result) {

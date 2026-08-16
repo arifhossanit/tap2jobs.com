@@ -14,8 +14,9 @@ return [
     //header keys
     'home' => 'হোম',
     'jobs' => 'চাকরি',
+    'find_jobs' => 'চাকরি খুঁজুন',
     'companies' => 'কোম্পানি',
-    'about_us' => 'আমাদের সম্পর্কে',
+    'about_us' => 'Tap2Jobs সম্পর্কে',
     'term_conditions' => 'শর্তাবলী',
     'contact_us' => 'যোগাযোগ করুন',
     'blogs' => 'ব্লগ',

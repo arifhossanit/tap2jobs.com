@@ -476,6 +476,14 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          Route::put('faqs/{faq}', [FAQController::class, 'update'])->name('faqs.update');
          Route::delete('faqs/{faq}', [FAQController::class, 'destroy'])->name('faqs.destroy');
 
+         // FAQ Category routes
+         Route::post('faq-categories', [FAQController::class, 'storeCategory'])->name('faq-categories.store');
+         Route::post('faq-categories/update-order', [FAQController::class, 'updateCategoryOrder'])->name('faq-categories.update-order');
+         Route::post('faq-categories/{faqCategory}/status', [FAQController::class, 'toggleCategoryStatus'])->name('faq-categories.toggle-status');
+         Route::get('faq-categories/{faqCategory}/edit', [FAQController::class, 'editCategory'])->name('faq-categories.edit');
+         Route::put('faq-categories/{faqCategory}', [FAQController::class, 'updateCategory'])->name('faq-categories.update');
+         Route::delete('faq-categories/{faqCategory}', [FAQController::class, 'destroyCategory'])->name('faq-categories.destroy');
+
          // inquires listing route
          Route::get('inquires', [InquiryController::class, 'index'])->name('inquires.index');
          Route::get('inquires/{inquiry}', [InquiryController::class, 'show'])->name('inquires.show');

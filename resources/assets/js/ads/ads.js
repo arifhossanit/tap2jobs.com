@@ -7,16 +7,16 @@ function loadAdData() {
         return;
     }
 
-    let defaultDocumentImageUrl = $('#defaultDocumentImageUrl').val();
-
     listenHiddenBsModal('#addAdsModal', function () {
         resetModalForm('#addAdNewForm', '#validationErrorsBox');
-        $('#previewImage').css('background-image', 'url("' + defaultDocumentImageUrl + '")');
+        clearAdPreview('#previewImage');
+        resetAdUploadProgress('ad');
     });
 
     listenHiddenBsModal('#editAdsModal', function () {
         resetModalForm('#editAdForm', '#editValidationErrorsBox');
-        $('#editPreviewImage').css('background-image', 'url("' + defaultDocumentImageUrl + '")');
+        clearAdPreview('#editPreviewImage');
+        resetAdUploadProgress('editAd');
     });
 }
 
@@ -46,12 +46,11 @@ function adRenderData(editAdId) {
                 $('#editCtaText').val(result.data.cta_text || '');
                 $('#editSortOrder').val(result.data.sort_order || 0);
 
-                let imageUrl = result.data.ad_image_url;
-                if (isEmpty(imageUrl)) {
-                    $('#editPreviewImage').css('background-image',
-                        'url("' + $('#defaultDocumentImageUrl').val() + '")');
+                let mediaUrl = result.data.ad_media_url || result.data.ad_image_url;
+                if (isEmpty(mediaUrl) || result.data.ad_media_type === 'video') {
+                    clearAdPreview('#editPreviewImage');
                 } else {
-                    $('#editPreviewImage').css('background-image', 'url("' + imageUrl + '")');
+                    $('#editPreviewImage').css('background-image', 'url("' + mediaUrl + '")');
                 }
 
                 (result.data.is_active == 1)
@@ -70,6 +69,7 @@ function adRenderData(editAdId) {
 listenSubmit('#addAdNewForm', function (e) {
     e.preventDefault();
     processingBtn('#addAdNewForm', '#adSaveBtn', 'loading');
+    resetAdUploadProgress('ad');
     $.ajax({
         url: route('ads.store'),
         type: 'POST',
@@ -77,6 +77,9 @@ listenSubmit('#addAdNewForm', function (e) {
         dataType: 'JSON',
         processData: false,
         contentType: false,
+        xhr: function () {
+            return adUploadProgressXhr('ad');
+        },
         success: function (result) {
             if (result.success) {
                 displaySuccessMessage(result.message);
@@ -97,6 +100,7 @@ listenSubmit('#addAdNewForm', function (e) {
 listenSubmit('#editAdForm', function (event) {
     event.preventDefault();
     processingBtn('#editAdForm', '#editAdSaveBtn', 'loading');
+    resetAdUploadProgress('editAd');
     const adUpdateId = $('#adId').val();
     $.ajax({
         url: route('ads.update', adUpdateId),
@@ -105,6 +109,9 @@ listenSubmit('#editAdForm', function (event) {
         dataType: 'JSON',
         processData: false,
         contentType: false,
+        xhr: function () {
+            return adUploadProgressXhr('editAd');
+        },
         success: function (result) {
             if (result.success) {
                 displaySuccessMessage(result.message);
@@ -159,4 +166,40 @@ listenClick('#adStatusFilter-ResetFilter', function () {
 
 function hideDropdownManually(button, menu) {
     button.dropdown('toggle');
+}
+
+function adUploadProgressXhr(prefix) {
+    let xhr = $.ajaxSettings.xhr();
+
+    if (xhr.upload) {
+        xhr.upload.addEventListener('progress', function (event) {
+            if (!event.lengthComputable) {
+                return;
+            }
+
+            let percent = Math.round((event.loaded / event.total) * 100);
+            updateAdUploadProgress(prefix, percent);
+        }, false);
+    }
+
+    return xhr;
+}
+
+function updateAdUploadProgress(prefix, percent) {
+    let progress = $('#' + prefix + 'UploadProgress');
+    let progressBar = $('#' + prefix + 'UploadProgressBar');
+    let progressText = $('#' + prefix + 'UploadProgressText');
+
+    progress.removeClass('d-none');
+    progressBar.css('width', percent + '%').attr('aria-valuenow', percent);
+    progressText.text(percent + '%');
+}
+
+function resetAdUploadProgress(prefix) {
+    updateAdUploadProgress(prefix, 0);
+    $('#' + prefix + 'UploadProgress').addClass('d-none');
+}
+
+function clearAdPreview(selector) {
+    $(selector).css('background-image', 'none');
 }

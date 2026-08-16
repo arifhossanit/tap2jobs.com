@@ -7,7 +7,6 @@ use App\Models\CmsServices;
 use App\Models\FAQ;
 use App\Models\FAQCategory;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Schema;
@@ -43,12 +42,7 @@ class AboutUsController extends AppBaseController
      */
     public function candidateFaq(): View
     {
-        $faqLayout = Auth::check() && Auth::user()->hasRole('Candidate')
-            ? 'front_web.layouts.dashboard_faq_app'
-            : 'front_web.layouts.app';
-        $dashboardFaqHeader = 'candidate.layouts.header';
-
-        return $this->frontFaq('candidate', __('messages.faq.candidate_faq'), $faqLayout, $dashboardFaqHeader);
+        return $this->frontFaq('candidate', __('messages.faq.candidate_faq'));
     }
 
     /**
@@ -56,12 +50,7 @@ class AboutUsController extends AppBaseController
      */
     public function employerFaq(): View
     {
-        $faqLayout = Auth::check() && Auth::user()->hasRole('Employer')
-            ? 'front_web.layouts.dashboard_faq_app'
-            : 'front_web.layouts.app';
-        $dashboardFaqHeader = 'employer.layouts.header';
-
-        return $this->frontFaq('employer', __('messages.faq.employer_faq'), $faqLayout, $dashboardFaqHeader);
+        return $this->frontFaq('employer', __('messages.faq.employer_faq'));
     }
 
     private function frontFaq(
@@ -84,6 +73,7 @@ class AboutUsController extends AppBaseController
                     : $query->orderBy('id');
             }])
                 ->when($hasFaqCategoryAudienceColumn, fn ($query) => $query->where('audience', $audience))
+                ->when(Schema::hasColumn('faq_categories', 'is_active'), fn ($query) => $query->where('is_active', true))
                 ->orderBy('sort_order')
                 ->orderBy('id')
                 ->get();

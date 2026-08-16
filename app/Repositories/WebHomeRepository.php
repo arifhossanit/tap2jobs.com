@@ -11,7 +11,6 @@ use App\Models\Company;
 use App\Models\Inquiry;
 use App\Models\Setting;
 use App\Models\Candidate;
-use App\Mail\ContactEmail;
 use App\Models\ImageSlider;
 use App\Models\JobCategory;
 use App\Models\JobType;
@@ -21,6 +20,7 @@ use App\Models\FrontSetting;
 use App\Models\HeaderSlider;
 use App\Models\EmailTemplate;
 use App\Models\BrandingSliders;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -183,20 +183,53 @@ class WebHomeRepository
         $templateBody = EmailTemplate::whereTemplateName('Contact Us')->first();
         $keyVariable = ['{{name}}', '{{phone_no}}', '{{from_name}}'];
         $value = [$inquiry->name, $inquiry->phone_no, config('app.name')];
-        $body = str_replace($keyVariable, $value, $templateBody->body);
+        $body = str_replace($keyVariable, $value, $templateBody->body ?? '');
         $data['inquiry'] = $inquiry;
         $data['body'] = $body;
-    //    Mail::to($input['email'])->send(new ContactEmail($data));
+        $fromAddress = config('mail.from.address');
 
-       Mail::send(
-        view: 'emails.contact.contact_us',
-        data: [
-            'data' => $data,
-        ],
-        callback: function (Message $message) use ($input, $data) {
-            $message->to($input['email'])->from(config('mail.from.address'))->subject($data['inquiry']->subject);
+        try {
+            Mail::send(
+                view: 'emails.contact.contact_us',
+                data: [
+                    'data' => $data,
+                ],
+                callback: function (Message $message) use ($input, $data, $fromAddress) {
+                    $message->to($input['email'])->from($fromAddress)->subject($data['inquiry']->subject);
+                }
+            );
+        } catch (\Throwable $exception) {
+            Log::warning('Contact acknowledgement email failed.', [
+                'inquiry_id' => $inquiry->id,
+                'message' => $exception->getMessage(),
+            ]);
         }
-    );
+
+        $adminEmail = getSettingValue('email') ?: $fromAddress;
+
+        if (! empty($adminEmail)) {
+            try {
+                Mail::raw(
+                    "New contact inquiry received.\n\n".
+                    "Name: {$inquiry->name}\n".
+                    "Email: {$inquiry->email}\n".
+                    "Phone: {$inquiry->phone_no}\n".
+                    "Subject: {$inquiry->subject}\n\n".
+                    "Message:\n{$inquiry->message}",
+                    function (Message $message) use ($adminEmail, $fromAddress, $inquiry) {
+                        $message->to($adminEmail)
+                            ->from($fromAddress)
+                            ->replyTo($inquiry->email, $inquiry->name)
+                            ->subject('New Contact Inquiry: '.$inquiry->subject);
+                    }
+                );
+            } catch (\Throwable $exception) {
+                Log::warning('Contact admin notification email failed.', [
+                    'inquiry_id' => $inquiry->id,
+                    'message' => $exception->getMessage(),
+                ]);
+            }
+        }
 
         return true;
     }

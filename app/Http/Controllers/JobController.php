@@ -48,7 +48,10 @@ class JobController extends AppBaseController
      */
     public function index(): View
     {
-        $statusArray = Job::STATUS_ARRAY;
+        $statusArray = Job::STATUS_ARRAY + [
+            Job::SELECT_STATUS => 'Select Status',
+            Job::SELECT_PANDING => 'Pending',
+        ];
 
         if (! $this->checkJobLimit()) {
             Flash::error(__('messages.flash.job_create_limit'));
@@ -113,6 +116,10 @@ class JobController extends AppBaseController
      */
     public function show(Job $job): View
     {
+        if ($job->company_id !== Auth::user()->owner_id) {
+            abort(404);
+        }
+
         return view('employer.jobs.show')->with('job', $job);
     }
 
@@ -157,6 +164,10 @@ class JobController extends AppBaseController
      */
     public function update(Job $job, UpdateJobRequest $request): RedirectResponse
     {
+        if ($job->company_id !== Auth::user()->owner_id) {
+            abort(404);
+        }
+
         if ($job->status != Job::STATUS_OPEN) {
             if (! $this->checkJobLimit()) {
                 return redirect()->back()->withInput()->withErrors(['error' => __('messages.flash.job_create_limit')]);
@@ -374,6 +385,11 @@ class JobController extends AppBaseController
     {
         /** @var Job $job */
         $job = Job::findOrFail($id);
+
+        if ($job->company_id !== Auth::user()->owner_id) {
+            return $this->sendError(__('messages.common.seems_message'));
+        }
+
         if ($job->status != Job::STATUS_OPEN && $status == Job::STATUS_OPEN) {
             if (! $this->checkJobLimit()) {
                 return $this->sendError(__('messages.flash.job_create_limit'));

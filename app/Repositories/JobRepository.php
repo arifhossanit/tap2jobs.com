@@ -88,6 +88,11 @@ class JobRepository extends BaseRepository
         $data['genders'] = Job::NO_PREFERENCE;
         $data['careerLevels'] = CareerLevel::toBase()->pluck('level_name', 'id');
         $data['functionalAreas'] = FunctionalArea::toBase()->pluck('name', 'id');
+        $data['maximumExperience'] = max(1, (int) Job::whereStatus(Job::STATUS_OPEN)
+            ->where('status', '!=', Job::STATUS_DRAFT)
+            ->whereIsSuspended(Job::NOT_SUSPENDED)
+            ->whereDate('job_expiry_date', '>=', Carbon::tomorrow()->toDateString())
+            ->max('experience'));
         $data['advertise_image'] = FrontSetting::where('key', '=', 'advertise_image')->toBase()->first();
 
         return $data;

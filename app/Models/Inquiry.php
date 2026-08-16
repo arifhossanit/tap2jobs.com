@@ -39,11 +39,11 @@ class Inquiry extends Model
      * @var array
      */
     public static $rules = [
-        'name' => 'required',
-        'email' => 'required|regex:/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i',
-        'phone_no' => 'nullable',
+        'name' => 'required|string|max:190',
+        'email' => 'required|email:rfc|max:190',
+        'phone_no' => 'required|string|max:30',
         'subject' => 'required|max:190',
-        'message' => 'required',
+        'message' => 'required|string|max:5000',
     ];
 
     public $table = 'inquiries';

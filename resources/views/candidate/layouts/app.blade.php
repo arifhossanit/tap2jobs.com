@@ -1,5 +1,6 @@
 @php
     $settings = settings();
+    $lang = session()->get('languageName');
 @endphp
 <!DOCTYPE html>
 <html lang="{{ checkLanguageSession() }}" {{ checkLanguageSession() == 'ar' ? 'dir=rtl' : '' }}>
@@ -24,6 +25,7 @@
         @endif
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/custom.css') }}?v={{ filemtime(public_path('assets/css/custom.css')) }}">
     <link rel="stylesheet" type="text/css" href="{{ mix('css/footer.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ mix('css/front-pages.css') }}">
     @livewireStyles
     <link rel="stylesheet" type="text/css" href="{{ asset('vendor/rappasoft/livewire-tables/css/laravel-livewire-tables.min.css') }}">
 
@@ -89,6 +91,93 @@
     @yield('page_css')
     @yield('css')
     @stack('css')
+    <style>
+        body.candidate-front-shell {
+            display: block !important;
+            min-height: 100%;
+            background: #eff3f7;
+        }
+
+        body.candidate-front-shell > header.bg-gradient,
+        body.candidate-front-shell > footer {
+            flex: 0 0 auto !important;
+            height: auto !important;
+            min-height: 0 !important;
+        }
+
+        body.candidate-front-shell > header.bg-gradient {
+            display: block !important;
+            margin: 0 !important;
+            position: relative !important;
+            top: auto !important;
+            z-index: 1200 !important;
+        }
+
+        body.candidate-front-shell > header.bg-gradient .navbar {
+            height: auto !important;
+            min-height: 0 !important;
+            padding: 20px 0 !important;
+        }
+
+        body.candidate-front-shell > header.bg-gradient .navbar > .container,
+        body.candidate-front-shell > footer .container {
+            height: auto !important;
+            min-height: 0 !important;
+        }
+
+        body.candidate-front-shell > header.bg-gradient .navbar > .container {
+            align-items: center !important;
+            justify-content: space-between !important;
+        }
+
+        body.candidate-front-shell > header.bg-gradient .front-user-dropdown:not(.is-open) .front-user-dropdown-menu {
+            display: none !important;
+        }
+
+        body.candidate-front-shell > header.bg-gradient .front-user-dropdown .front-user-dropdown-menu {
+            inset: calc(100% + 8px) 0 auto auto !important;
+            top: calc(100% + 8px) !important;
+            right: 0 !important;
+            left: auto !important;
+            margin-top: 0 !important;
+            transform: none !important;
+        }
+
+        body.candidate-front-shell > header.bg-gradient .front-user-dropdown.is-open .front-user-dropdown-menu {
+            display: block !important;
+            z-index: 1210 !important;
+            max-height: calc(100vh - 180px);
+            overflow-y: auto;
+        }
+
+        body.candidate-front-shell .candidate-front-layout-main {
+            display: block !important;
+            flex: none !important;
+            min-height: auto !important;
+            background: #eff3f7;
+        }
+
+        body.candidate-front-shell .candidate-profile-menu-shell {
+            top: 0 !important;
+            z-index: 1100 !important;
+            margin-top: 0 !important;
+        }
+
+        body.candidate-front-shell .candidate-profile-menu {
+            border: 2px solid #cfd8e6 !important;
+            box-shadow: 0 8px 18px rgba(16, 24, 40, 0.08) !important;
+        }
+
+        body.candidate-front-shell .candidate-profile-menu__sub {
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+        }
+
+        body.candidate-front-shell .header-padding {
+            display: none !important;
+        }
+    </style>
 </head>
 <script data-turbo-eval="false">
     let lancode = "{{ checkLanguageSession() }}";
@@ -96,29 +185,24 @@
 <script src="{{ mix('js/third-party.js') }}"></script>
 <script src="{{ mix('js/pages.js') }}"></script>
 
-<body class="overflow-x-hidden">
-    <div class="d-flex flex-column flex-root">
-        <div class="d-flex flex-column flex-column-fluid">
-            <div class="header fixed-header">
-                @include('candidate.layouts.header')
+<body class="candidate-front-shell overflow-x-hidden {{ $lang == 'pt' || $lang == 'fr' || $lang == 'es' ? 'languages' : '' }}">
+    @include('front_web.layouts.header_ad')
+    <span class="header-padding"></span>
+    @include('front_web.layouts.header')
+
+    <main class="candidate-front-layout-main py-7">
+        <div class="content">
+            <div class="container-fluid container-xxl">
+                @yield('content')
             </div>
-            <div class="theme-wrapper d-flex flex-column flex-row-fluid">
-                <div class='d-flex flex-column flex-row-fluid'>
-                    <div class="d-flex flex-column flex-column-fluid py-7">
-                        <div class="content flex-column-fluid">
-                            <div class="container-fluid container-xxl">
-                                @yield('content')
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @include('front_web.layouts.footer')
-            @include('candidate_profile.edit_profile_modal')
-            @include('candidate_profile.change_password_modal')
-            @include('jobs.modals.cities')
         </div>
-    </div>
+    </main>
+
+    @include('front_web.layouts.footer')
+    {{ Form::hidden('createNewLetterUrl', route('news-letter.create'), ['id' => 'createNewLetterUrl']) }}
+    @include('candidate_profile.edit_profile_modal')
+    @include('candidate_profile.change_password_modal')
+    @include('jobs.modals.cities')
     <script data-turbo-eval="false">
         var hostUrl = 'assets/';
         let getLoggedInUserLang = '{{ getCurrentLanguageCode() }}';
@@ -128,6 +212,42 @@
     @yield('page_scripts')
     @yield('scripts')
     @stack('scripts')
+    <script src="{{ mix('js/front_pages.js') }}"></script>
+    <script>
+        (function () {
+            function closeCandidateHeaderDropdowns() {
+                document.querySelectorAll('body.candidate-front-shell header .front-user-dropdown.is-open')
+                    .forEach(function (dropdown) {
+                        dropdown.classList.remove('is-open');
+                        var toggle = dropdown.querySelector('.front-user-dropdown-toggle');
+                        var menu = dropdown.querySelector('.front-user-dropdown-menu');
+
+                        if (toggle) {
+                            toggle.setAttribute('aria-expanded', 'false');
+                        }
+
+                        if (menu) {
+                            menu.classList.remove('show');
+                            menu.style.zIndex = '';
+                        }
+                    });
+            }
+
+            function restoreCandidateHeaderZIndex() {
+                document.querySelectorAll('body.candidate-front-shell header .front-user-dropdown-menu')
+                    .forEach(function (menu) {
+                        menu.style.zIndex = '1210';
+                    });
+            }
+
+            document.addEventListener('DOMContentLoaded', closeCandidateHeaderDropdowns);
+            document.addEventListener('DOMContentLoaded', restoreCandidateHeaderZIndex);
+            document.addEventListener('turbo:load', function () {
+                closeCandidateHeaderDropdowns();
+                restoreCandidateHeaderZIndex();
+            });
+        })();
+    </script>
 </body>
 
 </html>

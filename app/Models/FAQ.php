@@ -36,8 +36,10 @@ class FAQ extends Model
      */
     public static $rules = [
         'faq_category_id' => 'nullable|integer',
-        'title' => 'required|max:150',
-        'description' => 'required',
+        'title_en' => 'required|max:150',
+        'title_bn' => 'required|max:150',
+        'description_en' => 'required',
+        'description_bn' => 'required',
     ];
 
     public $table = 'faqs';
@@ -48,7 +50,11 @@ class FAQ extends Model
     public $fillable = [
         'faq_category_id',
         'title',
+        'title_en',
+        'title_bn',
         'description',
+        'description_en',
+        'description_bn',
         'sort_order',
     ];
 
@@ -61,12 +67,34 @@ class FAQ extends Model
         'id' => 'integer',
         'faq_category_id' => 'integer',
         'title' => 'string',
+        'title_en' => 'string',
+        'title_bn' => 'string',
         'description' => 'string',
+        'description_en' => 'string',
+        'description_bn' => 'string',
         'sort_order' => 'integer',
     ];
 
     public function category(): BelongsTo
     {
         return $this->belongsTo(FAQCategory::class, 'faq_category_id');
+    }
+
+    public function localizedTitle(?string $locale = null): string
+    {
+        $locale = $locale ?: app()->getLocale();
+
+        return $locale === 'bn'
+            ? ($this->title_bn ?: $this->title_en ?: $this->title)
+            : ($this->title_en ?: $this->title ?: $this->title_bn);
+    }
+
+    public function localizedDescription(?string $locale = null): string
+    {
+        $locale = $locale ?: app()->getLocale();
+
+        return $locale === 'bn'
+            ? ($this->description_bn ?: $this->description_en ?: $this->description)
+            : ($this->description_en ?: $this->description ?: $this->description_bn);
     }
 }

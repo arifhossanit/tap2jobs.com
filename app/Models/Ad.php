@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Image\Manipulations;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * App\Models\Ad
@@ -31,6 +33,8 @@ class Ad extends Model implements HasMedia
     use InteractsWithMedia;
 
     public const PATH = 'ads';
+
+    public const OPTIMIZED_CONVERSION = 'optimized';
 
     public const POSITION_HEADER = 'header';
 
@@ -75,7 +79,7 @@ class Ad extends Model implements HasMedia
         'cta_text' => 'nullable|max:50',
         'position' => 'required|in:header,register_left,register_right',
         'sort_order' => 'nullable|integer|min:0',
-        'ad_image' => 'nullable|mimes:jpeg,jpg,png',
+        'ad_image' => 'nullable|mimes:jpeg,jpg,png,webp,mp4,webm,ogg|max:51200',
     ];
 
     protected $casts = [
@@ -89,19 +93,63 @@ class Ad extends Model implements HasMedia
         'sort_order' => 'integer',
     ];
 
-    protected $appends = ['ad_image_url'];
+    protected $appends = ['ad_image_url', 'ad_media_url', 'ad_media_type'];
 
     public function getAdImageUrlAttribute()
     {
+        return $this->getAdMediaUrlAttribute();
+    }
+
+    public function getAdMediaUrlAttribute()
+    {
         $media = $this->getFirstMedia(self::PATH);
         if (! empty($media)) {
-            $url = str_replace('\\', '/', $media->getFullUrl());
+            $url = $this->isImageMedia($media)
+                ? $media->getAvailableFullUrl([self::OPTIMIZED_CONVERSION])
+                : $media->getFullUrl();
+
+            $url = str_replace('\\', '/', $url);
 
             // Collapse accidental double slashes from APP_URL trailing slash + disk url.
             return preg_replace('#([^:])/{2,}#', '$1/', $url);
         }
 
         return null;
+    }
+
+    public function getAdMediaTypeAttribute(): ?string
+    {
+        $media = $this->getFirstMedia(self::PATH);
+
+        if (empty($media)) {
+            return null;
+        }
+
+        return $this->isVideoMedia($media) ? 'video' : 'image';
+    }
+
+    public function registerMediaConversions(Media $media = null): void
+    {
+        if ($media && ! $this->isImageMedia($media)) {
+            return;
+        }
+
+        $this->addMediaConversion(self::OPTIMIZED_CONVERSION)
+            ->performOnCollections(self::PATH)
+            ->width(900)
+            ->quality(82)
+            ->format(Manipulations::FORMAT_WEBP)
+            ->nonQueued();
+    }
+
+    private function isImageMedia(Media $media): bool
+    {
+        return str_starts_with((string) $media->mime_type, 'image/');
+    }
+
+    private function isVideoMedia(Media $media): bool
+    {
+        return str_starts_with((string) $media->mime_type, 'video/');
     }
 
     public function scopeActive(Builder $query): Builder

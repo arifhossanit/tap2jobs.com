@@ -83,7 +83,7 @@
                 <ul class="p-0">
                     <li>
                         <a href="{{ route('front.search.jobs') }}"
-                            class="text-decoration-none {{ Request::is('search-jobs') || Request::is('job-details*') ? 'footer-navbar-color-active text-dark' : 'text-gray' }} mb-3 d-block fs-14">{{ __('web.jobs') }}</a>
+                            class="text-decoration-none {{ Request::is('search-jobs') || Request::is('job-details*') ? 'footer-navbar-color-active text-dark' : 'text-gray' }} mb-3 d-block fs-14">{{ __('web.find_jobs') }}</a>
                     </li>
                     <li>
                         <a href="{{ route('front.candidate.login') }}"
@@ -99,7 +99,7 @@
                     </li>
                     <li>
                         <a href="{{ route('candidate.faq') }}"
-                            class="text-decoration-none {{ Request::is('candidate-faq') ? 'footer-navbar-color-active text-dark' : 'text-gray' }} mb-3 d-block fs-14">FAQ</a>
+                            class="text-decoration-none {{ Request::is('candidate-faq') ? 'footer-navbar-color-active text-dark' : 'text-gray' }} mb-3 d-block fs-14">{{ __('messages.faq.candidate_faq') }}</a>
                     </li>
                 </ul>
             </div>
@@ -116,17 +116,17 @@
                         <a href="{{ route('front.employee.login') }}"
                             class="text-decoration-none {{ Request::is('employer-login') ? 'footer-navbar-color-active text-dark' : 'text-gray' }} mb-3 d-block fs-14">{{ __('web.register_menu.employer') }} {{ __('web.login') }}</a>
                     </li>
-                    <li>
+                    {{-- <li>
                         <a href="{{ route('front.company.lists') }}"
                             class="text-decoration-none {{ Request::is('company-lists') || Request::is('company-details*') ? 'footer-navbar-color-active text-dark' : 'text-gray' }} mb-3 d-block fs-14">{{ __('web.companies') }}</a>
-                    </li>
+                    </li> --}}
                     <li>
                         <a href="{{ Route::has('job.create') ? route('job.create') : route('employer.register') }}"
                             class="text-decoration-none {{ Request::is('employer/jobs/create') ? 'footer-navbar-color-active text-dark' : 'text-gray' }} mb-3 d-block fs-14">{{ __('web.footer.post_a_job') }}</a>
                     </li>
                     <li>
                         <a href="{{ route('employer.faq') }}"
-                            class="text-decoration-none {{ Request::is('employer-faq') ? 'footer-navbar-color-active text-dark' : 'text-gray' }} mb-3 d-block fs-14">FAQ</a>
+                            class="text-decoration-none {{ Request::is('employer-faq') ? 'footer-navbar-color-active text-dark' : 'text-gray' }} mb-3 d-block fs-14">{{ __('messages.faq.employer_faq') }}</a>
                     </li>
                 </ul>
             </div>

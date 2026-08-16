@@ -32,14 +32,15 @@ function loadAdData() {
   if (!$('#addAdNewForm').length && !$('#editAdForm').length) {
     return;
   }
-  var defaultDocumentImageUrl = $('#defaultDocumentImageUrl').val();
   listenHiddenBsModal('#addAdsModal', function () {
     resetModalForm('#addAdNewForm', '#validationErrorsBox');
-    $('#previewImage').css('background-image', 'url("' + defaultDocumentImageUrl + '")');
+    clearAdPreview('#previewImage');
+    resetAdUploadProgress('ad');
   });
   listenHiddenBsModal('#editAdsModal', function () {
     resetModalForm('#editAdForm', '#editValidationErrorsBox');
-    $('#editPreviewImage').css('background-image', 'url("' + defaultDocumentImageUrl + '")');
+    clearAdPreview('#editPreviewImage');
+    resetAdUploadProgress('editAd');
   });
 }
 listenClick('.ad-delete-btn', function (event) {
@@ -65,11 +66,11 @@ function adRenderData(editAdId) {
         $('#editLinkUrl').val(result.data.link_url || '');
         $('#editCtaText').val(result.data.cta_text || '');
         $('#editSortOrder').val(result.data.sort_order || 0);
-        var imageUrl = result.data.ad_image_url;
-        if (isEmpty(imageUrl)) {
-          $('#editPreviewImage').css('background-image', 'url("' + $('#defaultDocumentImageUrl').val() + '")');
+        var mediaUrl = result.data.ad_media_url || result.data.ad_image_url;
+        if (isEmpty(mediaUrl) || result.data.ad_media_type === 'video') {
+          clearAdPreview('#editPreviewImage');
         } else {
-          $('#editPreviewImage').css('background-image', 'url("' + imageUrl + '")');
+          $('#editPreviewImage').css('background-image', 'url("' + mediaUrl + '")');
         }
         result.data.is_active == 1 ? $('#editIsActive').prop('checked', true) : $('#editIsActive').prop('checked', false);
         $('#editAdsModal').appendTo('body').modal('show');
@@ -83,6 +84,7 @@ function adRenderData(editAdId) {
 listenSubmit('#addAdNewForm', function (e) {
   e.preventDefault();
   processingBtn('#addAdNewForm', '#adSaveBtn', 'loading');
+  resetAdUploadProgress('ad');
   $.ajax({
     url: route('ads.store'),
     type: 'POST',
@@ -90,6 +92,9 @@ listenSubmit('#addAdNewForm', function (e) {
     dataType: 'JSON',
     processData: false,
     contentType: false,
+    xhr: function xhr() {
+      return adUploadProgressXhr('ad');
+    },
     success: function success(result) {
       if (result.success) {
         displaySuccessMessage(result.message);
@@ -109,6 +114,7 @@ listenSubmit('#addAdNewForm', function (e) {
 listenSubmit('#editAdForm', function (event) {
   event.preventDefault();
   processingBtn('#editAdForm', '#editAdSaveBtn', 'loading');
+  resetAdUploadProgress('editAd');
   var adUpdateId = $('#adId').val();
   $.ajax({
     url: route('ads.update', adUpdateId),
@@ -117,6 +123,9 @@ listenSubmit('#editAdForm', function (event) {
     dataType: 'JSON',
     processData: false,
     contentType: false,
+    xhr: function xhr() {
+      return adUploadProgressXhr('editAd');
+    },
     success: function success(result) {
       if (result.success) {
         displaySuccessMessage(result.message);
@@ -167,6 +176,34 @@ listenClick('#adStatusFilter-ResetFilter', function () {
 });
 function hideDropdownManually(button, menu) {
   button.dropdown('toggle');
+}
+function adUploadProgressXhr(prefix) {
+  var xhr = $.ajaxSettings.xhr();
+  if (xhr.upload) {
+    xhr.upload.addEventListener('progress', function (event) {
+      if (!event.lengthComputable) {
+        return;
+      }
+      var percent = Math.round(event.loaded / event.total * 100);
+      updateAdUploadProgress(prefix, percent);
+    }, false);
+  }
+  return xhr;
+}
+function updateAdUploadProgress(prefix, percent) {
+  var progress = $('#' + prefix + 'UploadProgress');
+  var progressBar = $('#' + prefix + 'UploadProgressBar');
+  var progressText = $('#' + prefix + 'UploadProgressText');
+  progress.removeClass('d-none');
+  progressBar.css('width', percent + '%').attr('aria-valuenow', percent);
+  progressText.text(percent + '%');
+}
+function resetAdUploadProgress(prefix) {
+  updateAdUploadProgress(prefix, 0);
+  $('#' + prefix + 'UploadProgress').addClass('d-none');
+}
+function clearAdPreview(selector) {
+  $(selector).css('background-image', 'none');
 }
 
 /***/ },
@@ -8382,38 +8419,55 @@ listenClick('.view-invoice', function () {
 () {
 
 document.addEventListener('DOMContentLoaded', loadFaqsData);
+function createFaqQuill(selector) {
+  if (!$(selector).length) {
+    return null;
+  }
+  return new Quill(selector, {
+    modules: {
+      toolbar: [['bold', 'italic', 'underline', 'strike'], ['clean']],
+      keyboard: {
+        bindings: {
+          tab: 'disabled'
+        }
+      }
+    },
+    placeholder: Lang.get('js.enter_description'),
+    theme: 'snow'
+  });
+}
+function decodeHtml(value) {
+  var element = document.createElement('textarea');
+  element.innerHTML = value || '';
+  return element.value;
+}
+function setQuillValue(editor, value) {
+  if (editor) {
+    editor.root.innerHTML = decodeHtml(value);
+  }
+}
+function resetQuillValue(editor) {
+  if (editor) {
+    editor.setContents([{
+      insert: ''
+    }]);
+  }
+}
+function getQuillHtml(editor) {
+  var input = JSON.stringify(editor.root.innerHTML);
+  return input.replace(/"/g, '');
+}
+function requireQuillContent(editor) {
+  return editor && editor.getText().trim().length > 0;
+}
 function loadFaqsData() {
-  if (!$('#addFaqDescriptionQuillData').length && !$('#editFaqDescriptionQuillData').length) {
+  if (!$('#addFaqDescriptionEnQuillData').length && !$('#editFaqDescriptionEnQuillData').length) {
     return;
   }
-  if ($('#addFaqDescriptionQuillData').length) {
-    window.addFaqDescriptionQuill = new Quill('#addFaqDescriptionQuillData', {
-      modules: {
-        toolbar: [['bold', 'italic', 'underline', 'strike'], ['clean']],
-        keyboard: {
-          bindings: {
-            tab: 'disabled'
-          }
-        }
-      },
-      placeholder: Lang.get('js.enter_description'),
-      theme: 'snow'
-    });
-  }
-  if ($('#editFaqDescriptionQuillData').length) {
-    window.editFaqDescriptionQuill = new Quill('#editFaqDescriptionQuillData', {
-      modules: {
-        toolbar: [['bold', 'italic', 'underline', 'strike'], ['clean']],
-        keyboard: {
-          bindings: {
-            tab: 'disabled'
-          }
-        }
-      },
-      placeholder: Lang.get('js.enter_description'),
-      theme: 'snow'
-    });
-  }
+  window.addFaqDescriptionEnQuill = createFaqQuill('#addFaqDescriptionEnQuillData');
+  window.addFaqDescriptionBnQuill = createFaqQuill('#addFaqDescriptionBnQuillData');
+  window.editFaqDescriptionEnQuill = createFaqQuill('#editFaqDescriptionEnQuillData');
+  window.editFaqDescriptionBnQuill = createFaqQuill('#editFaqDescriptionBnQuillData');
   listenClick('.faqs-edit-btn', function (event) {
     var editFaqId = $(event.currentTarget).attr('data-id');
     $.ajax({
@@ -8421,13 +8475,12 @@ function loadFaqsData() {
       type: 'GET',
       success: function success(result) {
         if (result.success) {
-          var element = document.createElement('textarea');
-          element.innerHTML = result.data.title;
           $('#faqId').val(result.data.id);
           $('#editFaqCategoryId').val(result.data.faq_category_id || '');
-          $('#editFaqTitle').val(element.value);
-          element.innerHTML = result.data.description;
-          editFaqDescriptionQuill.root.innerHTML = element.value;
+          $('#editFaqTitleEn').val(decodeHtml(result.data.title_en || result.data.title));
+          $('#editFaqTitleBn').val(decodeHtml(result.data.title_bn || ''));
+          setQuillValue(editFaqDescriptionEnQuill, result.data.description_en || result.data.description);
+          setQuillValue(editFaqDescriptionBnQuill, result.data.description_bn || '');
           $('#editFAQsModal').appendTo('body').modal('show');
         }
       },
@@ -8438,12 +8491,8 @@ function loadFaqsData() {
   });
   listenHiddenBsModal('#addFAQsModal', function () {
     resetModalForm('#addFAQsForm', '#validationErrorsBox');
-    addFaqDescriptionQuill.setContents([{
-      insert: ''
-    }]);
-    editFaqDescriptionQuill.setContents([{
-      insert: ''
-    }]);
+    resetQuillValue(addFaqDescriptionEnQuill);
+    resetQuillValue(addFaqDescriptionBnQuill);
   });
 }
 listenClick('.addFaqModal', function () {
@@ -8458,10 +8507,8 @@ listenClick('.faq-show-btn', function (event) {
       if (result.success) {
         $('#showFaqName').html('');
         $('#showFaqDescription').html('');
-        $('#showFaqName').append(result.data.title);
-        var element = document.createElement('textarea');
-        element.innerHTML = result.data.description;
-        $('#showFaqDescription').append(element.value);
+        $('#showFaqName').append(decodeHtml(result.data.title_en || result.data.title));
+        $('#showFaqDescription').append(decodeHtml(result.data.description_en || result.data.description));
         $('#showFaqModal').appendTo('body').modal('show');
       }
     },
@@ -8476,16 +8523,17 @@ listenClick('.faqs-delete-btn', function (event) {
 });
 listenHiddenBsModal('#editFAQsModal', function () {
   resetModalForm('#editFAQsForm', '#editValidationErrorsBox');
+  resetQuillValue(editFaqDescriptionEnQuill);
+  resetQuillValue(editFaqDescriptionBnQuill);
 });
 listenSubmit('#addFAQsForm', function (e) {
   e.preventDefault();
-  var addFaqEditorContent = addFaqDescriptionQuill.root.innerHTML;
-  if (addFaqDescriptionQuill.getText().trim().length === 0) {
+  if (!requireQuillContent(addFaqDescriptionEnQuill) || !requireQuillContent(addFaqDescriptionBnQuill)) {
     displayErrorMessage(Lang.get('js.description_required'));
     return false;
   }
-  var input = JSON.stringify(addFaqEditorContent);
-  $('#faqs_desc').val(input.replace(/"/g, ''));
+  $('#faqs_desc_en').val(getQuillHtml(addFaqDescriptionEnQuill));
+  $('#faqs_desc_bn').val(getQuillHtml(addFaqDescriptionBnQuill));
   processingBtn('#addFAQsForm', '#addFaqSaveBtn', 'loading');
   $.ajax({
     url: route('faqs.store'),
@@ -8495,7 +8543,9 @@ listenSubmit('#addFAQsForm', function (e) {
       if (result.success) {
         displaySuccessMessage(result.message);
         $('#addFAQsModal').modal('hide');
-        Livewire.dispatch('refreshDatatable');
+        setTimeout(function () {
+          window.location.reload();
+        }, 800);
       }
     },
     error: function error(result) {
@@ -8508,13 +8558,12 @@ listenSubmit('#addFAQsForm', function (e) {
 });
 listenSubmit('#editFAQsForm', function (event) {
   event.preventDefault();
-  var editFaqEditorContent = editFaqDescriptionQuill.root.innerHTML;
-  if (editFaqDescriptionQuill.getText().trim().length === 0) {
+  if (!requireQuillContent(editFaqDescriptionEnQuill) || !requireQuillContent(editFaqDescriptionBnQuill)) {
     displayErrorMessage(Lang.get('js.description_required'));
     return false;
   }
-  var input = JSON.stringify(editFaqEditorContent);
-  $('#edit_faqs_desc').val(input.replace(/"/g, ""));
+  $('#edit_faqs_desc_en').val(getQuillHtml(editFaqDescriptionEnQuill));
+  $('#edit_faqs_desc_bn').val(getQuillHtml(editFaqDescriptionBnQuill));
   processingBtn('#editFAQsForm', '#editFaqSaveBtn', 'loading');
   var updateFaqId = $('#faqId').val();
   $.ajax({
@@ -8525,7 +8574,9 @@ listenSubmit('#editFAQsForm', function (event) {
       if (result.success) {
         displaySuccessMessage(result.message);
         $('#editFAQsModal').modal('hide');
-        Livewire.dispatch('refreshDatatable');
+        setTimeout(function () {
+          window.location.reload();
+        }, 800);
       }
     },
     error: function error(result) {
@@ -9750,19 +9801,17 @@ listenClick('.inquiry-show-btn', function (event) {
         $('#showInquiresCreatedAt').html('');
         $('#showUpdatedAt').html('');
         $('#showInquiresMessage').html('');
-        $('#showInquiresName').append(result.data.name);
-        $('#showInquiresEmail').append(result.data.email);
+        $('#showInquiresName').text(result.data.name);
+        $('#showInquiresEmail').text(result.data.email);
         if (isEmpty(result.data.phone_no)) {
-          $('#showInquiresPhoneNo').append('N/A');
+          $('#showInquiresPhoneNo').text('N/A');
         } else {
-          $('#showInquiresPhoneNo').append(result.data.phone_no);
+          $('#showInquiresPhoneNo').text(result.data.phone_no);
         }
-        $('#showInquiresSubject').append(result.data.subject);
+        $('#showInquiresSubject').text(result.data.subject);
         $('#showInquiresCreatedAt').text(moment(result.data.created_at, 'YYYY-MM-DD hh:mm:ss').format('Do MMM, YYYY'));
         $('#showUpdatedAt').text(moment(result.data.updated_at, 'YYYY-MM-DD hh:mm:ss').format('Do MMM, YYYY'));
-        var element = document.createElement('textarea');
-        element.innerHTML = !isEmpty(result.data.message) ? result.data.message : 'N/A';
-        $('#showInquiresMessage').append(element.value);
+        $('#showInquiresMessage').text(!isEmpty(result.data.message) ? result.data.message : 'N/A');
         $('#showInquiryModal').appendTo('body').modal('show');
         ajaxCallCompleted();
       }
@@ -12927,7 +12976,6 @@ function changeStatus(jobId, jobStatus) {
 listenClick('.employer-job-delete-btn', function (event) {
   var jobId = $(this).attr('data-id');
   deleteItem(route('job.destroy', jobId), Lang.get('js.job'));
-  Livewire.dispatch('refreshDatatable');
 });
 listenClick('.copy-btn', function (event) {
   var copyUrlId = $(event.currentTarget).data('job-id');
