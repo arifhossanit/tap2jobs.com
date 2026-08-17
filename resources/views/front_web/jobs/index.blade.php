@@ -39,8 +39,15 @@
 
         <section class="latest-job-section py-60">
             <div class="container">
+                @php
+                    $rightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT, \App\Models\Ad::PAGE_JOBS);
+                    if ($rightAds->isEmpty()) {
+                        $rightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT, \App\Models\Ad::PAGE_JOBS);
+                    }
+                @endphp
+
                 <div class="row g-4 align-items-start">
-                    <div class="col-lg-4 find-jobs-filter-column">
+                    <div class="{{ $rightAds->isNotEmpty() ? 'col-lg-3 col-md-4' : 'col-lg-4' }} find-jobs-filter-column">
                         <x-front.job-search-filter
                             :job-categories="$jobCategories"
                             :job-skills="$jobSkills"
@@ -52,11 +59,18 @@
                             :input="$input"
                         />
                     </div>
-                    <div class="col-lg-8 px-lg-3">
+                    <div class="{{ $rightAds->isNotEmpty() ? 'col-lg-7 col-md-8' : 'col-lg-8' }} px-lg-3">
                         <div class="job-card">
                             @livewire('job-search')
                         </div>
                     </div>
+                    @if ($rightAds->isNotEmpty())
+                        <div class="col-lg-2 col-12 find-jobs-right-ads-column">
+                            <div class="find-jobs-right-ads sticky-top" style="top: 20px;">
+                                @include('front_web.common.register_side_ad', ['ads' => $rightAds])
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         </section>

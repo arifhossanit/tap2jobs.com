@@ -2917,15 +2917,31 @@ input, select
 }
 
 .register-side-ad__image {
-    border-radius: 10px;
     object-fit: contain;
-    max-height: 420px;
+    max-height: 550px;
 }
 
 .register-side-ad__video {
     background: #000;
     display: block;
     width: 100%;
+}
+
+.find-jobs-right-ads {
+    position: sticky;
+    top: 20px;
+    z-index: 2;
+}
+
+.find-jobs-right-ads .register-side-ad {
+    margin-bottom: 16px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.find-jobs-right-ads .register-side-ad__image {
+    width: 100%;
+    border-radius: 10px;
 }
 
 /* GLOBAL RED FOCUS AND BORDER HIGHLIGHT FOR ALL FORMS AND REQUIRED INPUTS */

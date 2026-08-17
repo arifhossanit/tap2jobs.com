@@ -12,7 +12,6 @@ use Illuminate\View\View;
 
 class AdController extends AppBaseController
 {
-    /** @var AdRepository */
     private $adRepository;
 
     public function __construct(AdRepository $adRepository)
@@ -20,26 +19,29 @@ class AdController extends AppBaseController
         $this->adRepository = $adRepository;
     }
 
-    /**
-     * Display a listing of ads.
-     *
-     * @throws Exception
-     */
     public function index(): View
     {
         $positions = collect(Ad::POSITIONS)->mapWithKeys(function ($value) {
             return [$value => __('messages.ad.positions.'.$value)];
         })->toArray();
 
-        return view('ads.index', compact('positions'));
+        $pages = collect(Ad::PAGES)->mapWithKeys(function ($value) {
+            return [$value => __('messages.ad.pages.'.$value)];
+        })->toArray();
+
+        return view('ads.index', compact('positions', 'pages'));
     }
 
-    /**
-     * Store a newly created ad in storage.
-     */
     public function store(CreateAdRequest $request): JsonResponse
     {
         $input = $request->all();
+        $pages = $request->input('page', []);
+        
+        if (in_array('all', $pages)) {
+            $input['page'] = ['all'];
+        } else {
+            $input['page'] = array_values(array_unique($pages));
+        }
         $input['is_active'] = (isset($input['is_active'])) ? 1 : 0;
         $input['sort_order'] = isset($input['sort_order']) && $input['sort_order'] !== ''
             ? (int) $input['sort_order']
@@ -52,17 +54,11 @@ class AdController extends AppBaseController
         return $this->sendSuccess(__('messages.flash.ad_save'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Ad $ad): JsonResponse
     {
         return $this->sendResponse($ad, __('messages.flash.ad_retrieved'));
     }
 
-    /**
-     * Update the specified ad in storage.
-     */
     public function update(Request $request, Ad $ad): JsonResponse
     {
         $request->validate([
@@ -71,15 +67,25 @@ class AdController extends AppBaseController
             'link_url' => 'nullable|url|max:255',
             'cta_text' => 'nullable|max:50',
             'position' => 'required|in:header,register_left,register_right',
+            'page' => 'nullable|array',
+            'page.*' => 'in:all,candidate_register,employer_register,candidate_login,employer_login,home',
             'sort_order' => 'nullable|integer|min:0',
-            'ad_image' => 'nullable|mimes:jpeg,jpg,png,webp,mp4,webm,ogg|max:51200',
+            'ad_image' => 'nullable|file|mimes:jpeg,jpg,png,webp,mp4,webm,ogg|max:51200',
         ], [
-            'ad_image.mimes' => __('messages.image_slider.image_extension_message'),
+            'ad_image.mimes' => __('messages.ad.media_extension_message'),
+            'ad_image.max' => __('messages.ad.media_size_message'),
             'position.required' => __('messages.ad.position_required'),
             'link_url.url' => __('messages.ad.valid_url'),
         ]);
-
+        
         $input = $request->all();
+        $pages = $request->input('page', []);
+        
+        if (in_array('all', $pages)) {
+            $input['page'] = ['all'];
+        } else {
+            $input['page'] = array_values(array_unique($pages));
+        }
         $input['is_active'] = (isset($input['is_active'])) ? 1 : 0;
         $input['sort_order'] = isset($input['sort_order']) && $input['sort_order'] !== ''
             ? (int) $input['sort_order']
@@ -94,11 +100,6 @@ class AdController extends AppBaseController
         return $this->sendSuccess(__('messages.flash.ad_update'));
     }
 
-    /**
-     * Remove the specified ad from storage.
-     *
-     * @throws Exception
-     */
     public function destroy(Ad $ad): JsonResponse
     {
         $ad->delete();
@@ -106,9 +107,6 @@ class AdController extends AppBaseController
         return $this->sendSuccess(__('messages.flash.ad_delete'));
     }
 
-    /**
-     * @return mixed
-     */
     public function changeIsActive(Ad $ad)
     {
         $isActive = $ad->is_active;

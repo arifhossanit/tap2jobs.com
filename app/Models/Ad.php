@@ -36,11 +36,36 @@ class Ad extends Model implements HasMedia
 
     public const OPTIMIZED_CONVERSION = 'optimized';
 
+
     public const POSITION_HEADER = 'header';
 
     public const POSITION_REGISTER_LEFT = 'register_left';
 
     public const POSITION_REGISTER_RIGHT = 'register_right';
+
+    public const PAGE_ALL = 'all';
+    public const PAGE_CANDIDATE_REGISTER = 'candidate_register';
+    public const PAGE_EMPLOYER_REGISTER = 'employer_register';
+    public const PAGE_CANDIDATE_LOGIN = 'candidate_login';
+    public const PAGE_EMPLOYER_LOGIN = 'employer_login';
+    public const PAGE_HOME = 'home';
+    public const PAGE_BLOG = 'blog';
+    public const PAGE_BLOG_DETAILS = 'blog_details';
+    public const PAGE_JOBS = 'jobs';
+    public const PAGE_JOB_DETAILS = 'job_details';
+
+    public const PAGES = [
+        self::PAGE_ALL => 'all',
+        self::PAGE_CANDIDATE_REGISTER => 'candidate_register',
+        self::PAGE_EMPLOYER_REGISTER => 'employer_register',
+        self::PAGE_CANDIDATE_LOGIN => 'candidate_login',
+        self::PAGE_EMPLOYER_LOGIN => 'employer_login',
+        self::PAGE_HOME => 'home',
+        self::PAGE_BLOG => 'blog',
+        self::PAGE_BLOG_DETAILS => 'blog_details',
+        self::PAGE_JOBS => 'jobs',
+        self::PAGE_JOB_DETAILS => 'job_details',
+    ];
 
     public const POSITIONS = [
         self::POSITION_HEADER => 'header',
@@ -53,6 +78,12 @@ class Ad extends Model implements HasMedia
     public const ACTIVE = 1;
 
     public const DEACTIVE = 0;
+
+    public const MEDIA_STATUS_READY = 'ready';
+
+    public const MEDIA_STATUS_PROCESSING = 'processing';
+
+    public const MEDIA_STATUS_FAILED = 'failed';
 
     public const STATUS = [
         self::ALL => 'select_status',
@@ -68,8 +99,12 @@ class Ad extends Model implements HasMedia
         'link_url',
         'cta_text',
         'position',
+        'page',
         'is_active',
         'sort_order',
+        'media_processing_status',
+        'media_processing_error',
+        'media_processed_at',
     ];
 
     public static $rules = [
@@ -78,8 +113,10 @@ class Ad extends Model implements HasMedia
         'link_url' => 'nullable|url|max:255',
         'cta_text' => 'nullable|max:50',
         'position' => 'required|in:header,register_left,register_right',
+        'page' => 'nullable|array',
+        'page.*' => 'in:all,candidate_register,employer_register,candidate_login,employer_login,home,blog,blog_details,jobs,job_details',
         'sort_order' => 'nullable|integer|min:0',
-        'ad_image' => 'nullable|mimes:jpeg,jpg,png,webp,mp4,webm,ogg|max:51200',
+        'ad_image' => 'nullable|file|mimes:jpeg,jpg,png,webp,mp4,webm,ogg|max:51200',
     ];
 
     protected $casts = [
@@ -89,11 +126,30 @@ class Ad extends Model implements HasMedia
         'link_url' => 'string',
         'cta_text' => 'string',
         'position' => 'string',
+        'page' => 'array',
         'is_active' => 'boolean',
         'sort_order' => 'integer',
+        'media_processed_at' => 'datetime',
     ];
 
-    protected $appends = ['ad_image_url', 'ad_media_url', 'ad_media_type'];
+    protected $appends = ['ad_image_url', 'ad_media_url', 'ad_media_type', 'ad_media_ready', 'page_array'];
+
+    public function getPageArrayAttribute(): array
+    {
+        $page = $this->page;
+        if (is_array($page)) {
+            return $page;
+        }
+        if (is_string($page) && ! empty($page)) {
+            $decoded = json_decode($page, true);
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+            return [$page];
+        }
+
+        return [self::PAGE_ALL];
+    }
 
     public function getAdImageUrlAttribute()
     {
@@ -126,6 +182,19 @@ class Ad extends Model implements HasMedia
         }
 
         return $this->isVideoMedia($media) ? 'video' : 'image';
+    }
+
+    public function getAdMediaReadyAttribute(): bool
+    {
+        return $this->media_processing_status !== self::MEDIA_STATUS_PROCESSING
+            && $this->media_processing_status !== self::MEDIA_STATUS_FAILED;
+    }
+
+    public function isVideoAd(): bool
+    {
+        $media = $this->getFirstMedia(self::PATH);
+
+        return ! empty($media) && $this->isVideoMedia($media);
     }
 
     public function registerMediaConversions(Media $media = null): void
@@ -162,8 +231,47 @@ class Ad extends Model implements HasMedia
         return $query->where('position', $position);
     }
 
+    public function scopeTargetPage(Builder $query, ?string $page): Builder
+    {
+        if (empty($page)) {
+            return $query;
+        }
+
+        return $query->where(function ($q) use ($page) {
+            $q->whereNull('page')
+                ->orWhere('page', self::PAGE_ALL)
+                ->orWhere('page', $page)
+                ->orWhere('page', 'LIKE', '%"'.self::PAGE_ALL.'"%')
+                ->orWhere('page', 'LIKE', '%"'.$page.'"%')
+                ->orWhere('page', 'LIKE', '%'.self::PAGE_ALL.'%')
+                ->orWhere('page', 'LIKE', '%'.$page.'%');
+        });
+    }
+
+    public function scopeMediaReady(Builder $query): Builder
+    {
+        return $query->where('media_processing_status', self::MEDIA_STATUS_READY);
+    }
+
     public function getPositionLabelAttribute(): string
     {
         return __('messages.ad.positions.'.$this->position);
+    }
+
+    public function getPageLabelAttribute(): string
+    {
+        $pages = $this->page_array;
+        $allPages = array_values(array_diff(array_keys(self::PAGES), ['all']));
+        $hasAll = in_array(self::PAGE_ALL, $pages, true) || count(array_intersect($pages, $allPages)) === count($allPages);
+
+        if ($hasAll) {
+            return __('messages.ad.pages.all');
+        }
+
+        $labels = array_map(function ($p) {
+            return __('messages.ad.pages.'.$p);
+        }, $pages);
+
+        return implode(', ', $labels);
     }
 }

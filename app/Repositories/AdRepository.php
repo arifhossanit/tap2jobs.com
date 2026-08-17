@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Jobs\OptimizeAdVideoJob;
 use App\Models\Ad;
 use Exception;
 use Illuminate\Http\UploadedFile;
@@ -40,7 +41,7 @@ class AdRepository extends BaseRepository
     public function store($input)
     {
         try {
-            return DB::transaction(function () use ($input) {
+            $videoOptimizationPayload = DB::transaction(function () use ($input) {
                 $image = $input['ad_image'] ?? null;
                 unset($input['ad_image']);
 
@@ -49,12 +50,34 @@ class AdRepository extends BaseRepository
 
                 if (! empty($image)) {
                     $preparedMedia = $this->prepareMediaForUpload($image);
-                    $ad->addMedia($preparedMedia)->toMediaCollection(Ad::PATH, config('app.media_disc'));
+                    $media = $ad->addMedia($preparedMedia)->toMediaCollection(Ad::PATH, config('app.media_disc'));
                     $this->deletePreparedMedia($preparedMedia);
+
+                    if ($this->isVideoUpload($image)) {
+                        $ad->update([
+                            'media_processing_status' => Ad::MEDIA_STATUS_READY,
+                            'media_processing_error' => null,
+                            'media_processed_at' => now(),
+                        ]);
+
+                        return [$ad->id, $media->id];
+                    }
                 }
 
-                return true;
+                $ad->update([
+                    'media_processing_status' => Ad::MEDIA_STATUS_READY,
+                    'media_processing_error' => null,
+                    'media_processed_at' => now(),
+                ]);
+
+                return null;
             });
+
+            if (! empty($videoOptimizationPayload)) {
+                OptimizeAdVideoJob::dispatch($videoOptimizationPayload[0], $videoOptimizationPayload[1]);
+            }
+
+            return true;
         } catch (Exception $e) {
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
@@ -63,7 +86,7 @@ class AdRepository extends BaseRepository
     public function updateAd(array $input, int $adId)
     {
         try {
-            return DB::transaction(function () use ($input, $adId) {
+            $videoOptimizationPayload = DB::transaction(function () use ($input, $adId) {
                 $image = $input['ad_image'] ?? null;
                 unset($input['ad_image']);
 
@@ -73,12 +96,34 @@ class AdRepository extends BaseRepository
                 if (! empty($image)) {
                     $ad->clearMediaCollection(Ad::PATH);
                     $preparedMedia = $this->prepareMediaForUpload($image);
-                    $ad->addMedia($preparedMedia)->toMediaCollection(Ad::PATH, config('app.media_disc'));
+                    $media = $ad->addMedia($preparedMedia)->toMediaCollection(Ad::PATH, config('app.media_disc'));
                     $this->deletePreparedMedia($preparedMedia);
+
+                    if ($this->isVideoUpload($image)) {
+                        $ad->update([
+                            'media_processing_status' => Ad::MEDIA_STATUS_READY,
+                            'media_processing_error' => null,
+                            'media_processed_at' => now(),
+                        ]);
+
+                        return [$ad->id, $media->id];
+                    }
+
+                    $ad->update([
+                        'media_processing_status' => Ad::MEDIA_STATUS_READY,
+                        'media_processing_error' => null,
+                        'media_processed_at' => now(),
+                    ]);
                 }
 
-                return true;
+                return null;
             });
+
+            if (! empty($videoOptimizationPayload)) {
+                OptimizeAdVideoJob::dispatch($videoOptimizationPayload[0], $videoOptimizationPayload[1]);
+            }
+
+            return true;
         } catch (Exception $e) {
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
@@ -87,7 +132,14 @@ class AdRepository extends BaseRepository
     private function prepareMediaForUpload(UploadedFile $file): UploadedFile|string
     {
         if (! str_starts_with((string) $file->getMimeType(), 'image/')) {
-            return $file;
+            $directory = storage_path('app/tmp/auth-ads');
+            File::ensureDirectoryExists($directory);
+
+            $extension = strtolower($file->getClientOriginalExtension() ?: 'mp4');
+            $videoPath = $directory.'/'.Str::uuid().'.'.$extension;
+            File::copy($file->getRealPath(), $videoPath);
+
+            return $videoPath;
         }
 
         $extension = strtolower($file->getClientOriginalExtension() ?: 'jpg');
@@ -118,5 +170,10 @@ class AdRepository extends BaseRepository
         if (is_string($media) && File::exists($media)) {
             File::delete($media);
         }
+    }
+
+    private function isVideoUpload(UploadedFile $file): bool
+    {
+        return str_starts_with((string) $file->getMimeType(), 'video/');
     }
 }

@@ -24,10 +24,10 @@
                             <a class="header-navbar-color text-gray nav-link {{ Request::is('search-jobs') || Request::is('job-details*') ? 'header-navbar-color-active' : '' }}"
                                 href="{{ route('front.search.jobs') }}">{{ __('web.jobs') }}</a>
                         </li>
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a class="header-navbar-color text-gray nav-link {{ Request::is('company-lists') || Request::is('company-details*') ? 'header-navbar-color-active' : '' }}"
                                 href="{{ route('front.company.lists') }}">{{ __('web.companies') }}</a>
-                        </li>
+                        </li> --}}
                         <li class="nav-item">
                             <a class="header-navbar-color text-gray nav-link {{ Request::is('posts*') || Request::is('blogs*') ? 'header-navbar-color-active' : '' }}"
                                 href="{{ route('front.blogs') }}">{{ __('web.blogs') }}</a>
@@ -94,7 +94,7 @@
                                 <ul class="navbar-nav d-flex flex-row align-items-center py-2 py-lg-0">
                                     <li class="nav-item login_btn">
                                         <a href="{{ route('front.candidate.login') }}"
-                                            class="nav-link btn btn-secondary btn-secondary-login {{ getFrontSelectLanguage() == 'ar' ? 'ms-xxl-4 ms-2' : 'me-xxl-4 me-2' }} mb-3 mb-lg-0 nav-link">{{ __('web.login') }}</a>
+                                            class="nav-link btn btn-secondary btn-secondary-login {{ getFrontSelectLanguage() == 'ar' ? 'ms-2' : 'me-2' }} mb-3 mb-lg-0 nav-link">{{ __('web.login') }}</a>
                                         <ul class="nav submenu">
                                             {{-- <li class="nav-item mb-3 mt-2">
                                                 <a href="{{ route('admin.login') }}"

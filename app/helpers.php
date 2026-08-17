@@ -25,6 +25,7 @@ use Spatie\SchemaOrg\Schema;
 use Stripe\Exception\ApiErrorException;
 use Stripe\Stripe;
 use Stripe\StripeClient;
+use Illuminate\Support\Str;
 
 /**
  * @return int
@@ -1143,11 +1144,13 @@ if (! function_exists('getActiveAdsByPosition')) {
     /**
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    function getActiveAdsByPosition(string $position)
+    function getActiveAdsByPosition(string $position, ?string $page = null)
     {
         return \App\Models\Ad::with('media')
             ->active()
             ->forPosition($position)
+            ->targetPage($page)
+            ->mediaReady()
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get();
@@ -1158,11 +1161,13 @@ if (! function_exists('getActiveAdByPosition')) {
     /**
      * @return \App\Models\Ad|null
      */
-    function getActiveAdByPosition(string $position)
+    function getActiveAdByPosition(string $position, ?string $page = null)
     {
         return \App\Models\Ad::with('media')
             ->active()
             ->forPosition($position)
+            ->targetPage($page)
+            ->mediaReady()
             ->orderBy('sort_order')
             ->orderBy('id')
             ->first();

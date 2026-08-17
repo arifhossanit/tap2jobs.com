@@ -64,6 +64,66 @@
                     </div>
 
                     <div class="col-sm-12 mb-5">
+                        <label class="form-label required">{{ __('messages.ad.target_page') }}:</label>
+                        <div class="d-flex flex-wrap gap-4 mt-2">
+                            <div class="form-check form-check-custom form-check-solid">
+                                <input class="form-check-input page-checkbox page-all-checkbox" type="checkbox" name="page[]" value="all" id="addPageAll">
+                                <label class="form-check-label fw-bold text-gray-700" for="addPageAll">
+                                    {{ __('messages.ad.pages.all') }}
+                                </label>
+                            </div>
+                            <div class="form-check form-check-custom form-check-solid">
+                                <input class="form-check-input page-checkbox" type="checkbox" name="page[]" value="candidate_register" id="addPageCandidateRegister">
+                                <label class="form-check-label text-gray-700" for="addPageCandidateRegister">
+                                    {{ __('messages.ad.pages.candidate_register') }}
+                                </label>
+                            </div>
+                            <div class="form-check form-check-custom form-check-solid">
+                                <input class="form-check-input page-checkbox" type="checkbox" name="page[]" value="employer_register" id="addPageEmployerRegister">
+                                <label class="form-check-label text-gray-700" for="addPageEmployerRegister">
+                                    {{ __('messages.ad.pages.employer_register') }}
+                                </label>
+                            </div>
+                            <div class="form-check form-check-custom form-check-solid">
+                                <input class="form-check-input page-checkbox" type="checkbox" name="page[]" value="candidate_login" id="addPageCandidateLogin">
+                                <label class="form-check-label text-gray-700" for="addPageCandidateLogin">
+                                    {{ __('messages.ad.pages.candidate_login') }}
+                                </label>
+                            </div>
+                            <div class="form-check form-check-custom form-check-solid">
+                                <input class="form-check-input page-checkbox" type="checkbox" name="page[]" value="employer_login" id="addPageEmployerLogin">
+                                <label class="form-check-label text-gray-700" for="addPageEmployerLogin">
+                                    {{ __('messages.ad.pages.employer_login') }}
+                                </label>
+                            </div>
+                            <div class="form-check form-check-custom form-check-solid">
+                                <input class="form-check-input page-checkbox" type="checkbox" name="page[]" value="home" id="addPageHome">
+                                <label class="form-check-label text-gray-700" for="addPageHome">
+                                    {{ __('messages.ad.pages.home') }}
+                                </label>
+                            </div>
+                            <div class="form-check form-check-custom form-check-solid">
+                                <input class="form-check-input page-checkbox" type="checkbox" name="page[]" value="blog" id="addPageBlog">
+                                <label class="form-check-label text-gray-700" for="addPageBlog">
+                                    {{ __('messages.ad.pages.blog') }}
+                                </label>
+                            </div>
+                            <div class="form-check form-check-custom form-check-solid">
+                                <input class="form-check-input page-checkbox" type="checkbox" name="page[]" value="jobs" id="addPageJobs">
+                                <label class="form-check-label text-gray-700" for="addPageJobs">
+                                    {{ __('messages.ad.pages.jobs') }}
+                                </label>
+                            </div>
+                            <div class="form-check form-check-custom form-check-solid">
+                                <input class="form-check-input page-checkbox" type="checkbox" name="page[]" value="job_details" id="addPageJobDetails">
+                                <label class="form-check-label text-gray-700" for="addPageJobDetails">
+                                    {{ __('messages.ad.pages.job_details') }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12 mb-5">
                         {{ Form::label('description', __('messages.ad.description') . ':', ['class' => 'form-label']) }}
                         {{ Form::textarea('description', null, ['class' => 'form-control', 'id' => 'description', 'rows' => 3, 'placeholder' => __('messages.ad.description')]) }}
                     </div>

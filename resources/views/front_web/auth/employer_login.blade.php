@@ -33,13 +33,13 @@
         <section class="py-100">
             <div class="container">
                 @php
-                    $registerLeftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT);
-                    $registerRightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT);
+                    $registerLeftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT, \App\Models\Ad::PAGE_EMPLOYER_LOGIN);
+                    $registerRightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT, \App\Models\Ad::PAGE_EMPLOYER_LOGIN);
                     $hasRegisterSideAds = $registerLeftAds->isNotEmpty() || $registerRightAds->isNotEmpty();
                 @endphp
                 <div class="row align-items-start justify-content-center">
                     @if ($hasRegisterSideAds)
-                        <div class="col-xl-3 col-lg-3 d-none d-lg-block mb-4">
+                        <div class="col-xl-3 col-lg-3 d-none d-lg-block mb-4 text-start">
                             @include('front_web.common.register_side_ad', ['ads' => $registerLeftAds])
                         </div>
                         <div class="col-xl-6 col-lg-6">
@@ -153,7 +153,7 @@
                         </form>
                     </div>
                     @if ($hasRegisterSideAds)
-                        <div class="col-xl-3 col-lg-3 d-none d-lg-block mb-4">
+                        <div class="col-xl-3 col-lg-3 d-none d-lg-block mb-4 text-end">
                             @include('front_web.common.register_side_ad', ['ads' => $registerRightAds])
                         </div>
                         <div class="col-12 d-lg-none mt-4">

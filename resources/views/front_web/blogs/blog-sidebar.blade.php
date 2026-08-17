@@ -1,4 +1,4 @@
-<div class="col-lg-4">
+<div class="col-lg-3">
     <div class="Categories br-10 px-40 bg-light mb-40">
         <h5 class="fs-18 text-secondary mb-4">{{ __('web.post_menu.categories') }}</h5>
         @foreach ($blogCategories as $blogCategory)

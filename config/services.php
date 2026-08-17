@@ -62,4 +62,8 @@ return [
         'api_key' => env('GOOGLE_TRANSLATE_API_KEY'),
     ],
 
+    'ffmpeg' => [
+        'binary' => env('FFMPEG_BINARY', 'ffmpeg'),
+    ],
+
 ];

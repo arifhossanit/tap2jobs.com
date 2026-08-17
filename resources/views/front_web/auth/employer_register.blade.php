@@ -66,21 +66,21 @@
         </section>
 
         <!-- start candidate login section -->
-        <section class="py-60">
-            <div class="p-4">
+        <section class="py-60" >
+            <div class="container">
                 @php
-                    $registerLeftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT);
-                    $registerRightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT);
+                    $registerLeftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT, \App\Models\Ad::PAGE_EMPLOYER_REGISTER);
+                    $registerRightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT, \App\Models\Ad::PAGE_EMPLOYER_REGISTER);
                     $hasRegisterSideAds = $registerLeftAds->isNotEmpty() || $registerRightAds->isNotEmpty();
                 @endphp
                 <div class="row align-items-start justify-content-center">
                     @if ($hasRegisterSideAds)
-                        <div class="col-xl-3 col-lg-3 d-none d-lg-block mb-4">
+                        <div class="col-xl-2 col-lg-2 d-none d-lg-block mb-4 text-start">
                             @include('front_web.common.register_side_ad', ['ads' => $registerLeftAds])
                         </div>
-                        <div class="col-xl-6 col-lg-6">
+                        <div class="col-xl-8 col-lg-8">
                     @else
-                        <div class="col-xl-6 col-lg-8 mx-auto">
+                        <div class="col-xl-8 col-lg-8 mx-auto">
                     @endif
                         @include('flash::message')
 
@@ -105,7 +105,7 @@
                                     </div>
                                 </div> --}}
 
-                                <div id="employerValidationErrBox">
+                                <div id="employerValidationErrBox" class="col-12">
                                     @include('layouts.errors')
                                 </div>
 
@@ -596,7 +596,7 @@
                                 </div>
                             @endif
 
-                            <div class="col-3 d-grid my-4">
+                            <div class="col-12 d-grid my-4">
                                 <button type="submit" class="btn btn-secondary btn-secondary-login" id="btnEmployerSave"
                                         data-loading-text="<span class='spinner-border spinner-border-sm'></span> {{ __('messages.common.process') }}">
                                     {{ __('web.register_menu.create_account') }}
@@ -640,6 +640,7 @@
                                     @endif
                                 </div>
                             </div>
+                            </div>
                         </form>
 
                         <div class="modal fade employer-register-add-industry-modal" id="registerAddIndustryModal"
@@ -682,7 +683,7 @@
                         </div>
                     </div>
                     @if ($hasRegisterSideAds)
-                        <div class="col-xl-3 col-lg-3 d-none d-lg-block mb-4">
+                        <div class="col-xl-2 col-lg-2 d-none d-lg-block mb-4 text-end">
                             @include('front_web.common.register_side_ad', ['ads' => $registerRightAds])
                         </div>
                         <div class="col-12 d-lg-none mt-4">

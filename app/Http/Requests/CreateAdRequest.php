@@ -32,7 +32,8 @@ class CreateAdRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'ad_image.mimes' => __('messages.image_slider.image_extension_message'),
+            'ad_image.mimes' => __('messages.ad.media_extension_message'),
+            'ad_image.max' => __('messages.ad.media_size_message'),
             'position.required' => __('messages.ad.position_required'),
             'link_url.url' => __('messages.ad.valid_url'),
         ];

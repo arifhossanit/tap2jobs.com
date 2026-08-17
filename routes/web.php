@@ -70,12 +70,6 @@ use Illuminate\Support\Facades\Artisan;
 |
 */
 
-Route::get(
-    '/',
-    function () {
-        return view('front_web.home.home');
-    }
-)->name('web.home');
 
 Auth::routes(['verify' => true, 'register' => false]);
 Route::middleware('setLanguage')->group(
@@ -114,8 +108,6 @@ Route::get('theme-mode', [UserController::class, 'changeThemeMode'])->name('them
 
 Route::any('subscription-update', [SubscriptionController::class, 'updateSubscription'])->name('subscription-update');
 
-//Route::get('/home', [HomeController::class, 'index'])->name('home');
-Route::get('/', [Web\WebController::class, 'index'])->name('front');
 
 Route::middleware('setLanguage')->group(function () {
     Route::post('news-letter', [Web\WebController::class, 'newsLetter'])->name('news-letter.create');

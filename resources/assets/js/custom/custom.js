@@ -144,9 +144,9 @@ function loadCustom() {
     source = null;
     jsrender = require("jsrender");
 
-    $('input:text:not([readonly="readonly"])')
-        .first()
-        .focus();
+    // $('input:text:not([readonly="readonly"])')
+    //     .first()
+    //     .focus();
 
     // infy loader js
     stopLoader();

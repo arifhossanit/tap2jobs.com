@@ -41,7 +41,7 @@ class AdTable extends LivewireTableComponent
         });
 
         $this->setTdAttributes(function (Column $column, $row, $columnIndex, $rowIndex) {
-            if (in_array($columnIndex, [3, 4])) {
+            if (in_array($columnIndex, [3, 4, 5])) {
                 return [
                     'class' => 'text-center',
                 ];
@@ -79,6 +79,10 @@ class AdTable extends LivewireTableComponent
             Column::make(__('messages.ad.position'), 'position')
                 ->sortable()
                 ->view('ads.table_components.position'),
+
+            Column::make(__('messages.ad.media_status'), 'media_processing_status')
+                ->sortable()
+                ->view('ads.table_components.media_status'),
 
             Column::make(__('messages.image_slider.is_active'), 'is_active')
                 ->sortable()

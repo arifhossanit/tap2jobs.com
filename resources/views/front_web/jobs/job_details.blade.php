@@ -146,12 +146,12 @@
                         @else
                             @if ($isActive && !$job->is_suspended && \Carbon\Carbon::today()->toDateString() < $job->job_expiry_date->toDateString())
                                 <div class="hero-desc d-flex flex-wrap">
-                                    <div class="desc d-flex me-4 pe-2">
+                                    {{-- <div class="desc d-flex pe-2">
                                         <button class="btn btn-primary  mb-3"
                                             onclick="window.location='{{ route('candidate.register') }}'">{{ __('messages.front_job_details.register_to_apply') }}
                                         </button>
-                                    </div>
-                                    <div class="desc d-flex me-4 pe-2">
+                                    </div> --}}
+                                    <div class="desc d-flex pe-2">
                                         <button class="btn btn-primary  mb-3"
                                             onclick="window.location='{{ route('front.candidate.login') }}'">
                                             {{ __('messages.front_job_details.apply_for_job') }}

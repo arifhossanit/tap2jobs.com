@@ -39,6 +39,15 @@
         <section class="blog-detail-section">
             <div class="container">
                 <div class="row justify-content-center">
+                    @php
+                        $leftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT, \App\Models\Ad::PAGE_BLOG_DETAILS);
+                        $rightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT, \App\Models\Ad::PAGE_BLOG_DETAILS);
+                    @endphp
+                    @if($leftAds->count() > 0)
+                        <div class="col-lg-2">
+                            @include('front_web.common.register_side_ad', ['ads' => $leftAds])
+                        </div>
+                    @endif
                     <div class="col-lg-8">
                         <div class="blog-detail py-60">
                             <h5 class="fs-4 mb-3 text-secondary">
@@ -103,37 +112,86 @@
                             @if (count($assignCategories) > 0)
                                 <div class="designer-details d-flex flex-wrap mb-3">
                                     @forelse($assignCategories as $categoryBadges)
-                                        <span
-                                            class="p-2 m-1  badge bg-{{ getJobOtherColor($loop->index) }}">{{ $categoryBadges }}</span>
+                                        <span class="p-2 m-1 badge bg-{{ getJobOtherColor($loop->index) }}">{{ $categoryBadges }}</span>
                                     @empty
                                         <span> {{ __('messages.employer_menu.no_data_available') }} </span>
                                     @endforelse
                                 </div>
                             @endif
-                            <div class="dark-mode mb-40 text-break">
-                                <p class="fs-16 text-gray mb-0 ">
-                                    {!! !empty($blog->description) ? nl2br($blog->description) : __('messages.n/a') !!}
+                            <div class="blog-desc mt-40 mb-40">
+                                <p class="fs-16 text-gray text-break">
+                                    {!! html_entity_decode($blog->description) !!}
                                 </p>
                             </div>
-                            <div class="designer-details d-flex justify-content-between">
-                                <div class="prev-post mb-2">
+                        <div class="blog-share d-sm-flex justify-content-between align-items-center bg-light py-4 px-3 mb-40 br-10">
+                            <div class="d-flex mb-sm-0 mb-3 align-items-center">
+                                <h5 class="fs-18 text-secondary mb-0 {{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }}">
+                                    {{ __('web.post_menu.categories') }} :
+                                </h5>
+                                <div class="tag-section mb-0">
+                                    @foreach ($blog->postAssignCategories as $counter => $category)
+                                        @if ($counter < 1)
+                                            <a href="{{ route('front.blog.category', $category->id) }}"
+                                                class="badge text-gray bg-white fs-14">
+                                                {!! html_entity_decode($category->name) !!}
+                                            </a>
+                                        @elseif($counter == 1)
+                                            <span class="badge text-gray bg-white fs-14">
+                                                {{ '+' . ($loop->count - 1) }}
+                                            </span>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                            <div class="share-icon d-flex align-items-center">
+                                <h5 class="fs-18 text-secondary mb-0 {{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }}">
+                                    @lang('web.web_blog.share_this_post') :</h5>
+                                <ul class="d-flex mb-0">
+                                    <li>
+                                        <a href="{{ $url['facebook'] }}" target="_blank" title="Share on Facebook" class="me-3">
+                                            <i class="fa-brands fa-facebook-f fs-18 text-primary"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ $url['twitter'] }}" target="_blank" title="Share on Twitter" class="me-3">
+                                            <i class="fa-brands fa-twitter fs-18 text-primary"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ $url['gmail'] }}" target="_blank" title="Share on Google" class="me-3">
+                                            <i class="fa-brands fa-google fs-18 text-primary"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ $url['pinterest'] }}" target="_blank" title="Share on Pinterest" class="me-3">
+                                            <i class="fa-brands fa-pinterest fs-18 text-primary"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ $url['linkedin'] }}" target="_blank" title="Share on Linkedin">
+                                            <i class="fa-brands fa-linkedin-in fs-18 text-primary"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="next-prev-post bg-light py-4 px-3 mb-40 br-10">
+                            <div class="row">
+                                <div class="col-sm-6 {{ getFrontSelectLanguage() == 'ar' ? 'text-end border-end' : 'border-end' }} mb-sm-0 mb-3">
                                     @if ($prevPost)
-                                        <div class="card p-3">
+                                        <div class="next-post">
                                             <a href="{{ route('front.posts.details', $prevPost->id) }}"
-                                                class="text-gray primary-link-hover">
-
-                                                    <small><i class="fa fa-angle-left"></i></small>
-                                                    {{ __('messages.post.previous_post') }}
-
+                                                class="fs-16 text-primary mb-1 primary-link-hover">
+                                                <small><i class="fa fa-angle-left"></i></small> {{ __('messages.post.previous_post') }}
                                             </a>
                                         </div>
                                     @endif
                                 </div>
-                                <div class="next-post mb-2">
+                                <div class="col-sm-6 text-sm-end {{ getFrontSelectLanguage() == 'ar' ? 'text-start' : 'text-end' }}">
                                     @if ($nextPost)
-                                        <div class="card p-3">
+                                        <div class="prev-post">
                                             <a href="{{ route('front.posts.details', $nextPost->id) }}"
-                                                class="text-gray primary-link-hover">
+                                                class="fs-16 text-primary mb-1 primary-link-hover">
 
                                                     {{ __('messages.post.next_post') }} <small><i
                                                             class="fa fa-angle-right"></i></small>
@@ -249,6 +307,11 @@
                             {{ Form::close() }}
                         </div>
                     </div>
+                    @if($rightAds->count() > 0)
+                        <div class="col-lg-2">
+                            @include('front_web.common.register_side_ad', ['ads' => $rightAds])
+                        </div>
+                    @endif
                 </div>
             </div>
         </section>

@@ -35,7 +35,15 @@
         <section class="mani-blog recent-blog-section py-60">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-8">
+                    <div class="col-lg-2">
+                        @php
+                            $leftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT, \App\Models\Ad::PAGE_BLOG);
+                        @endphp
+                        @if($leftAds->count() > 0)
+                            @include('front_web.common.register_side_ad', ['ads' => $leftAds])
+                        @endif
+                    </div>
+                    <div class="col-lg-7">
                         <div class="blog-card">
                             @if (count($blogs) > 0)
                                 @foreach ($blogs as $blog)

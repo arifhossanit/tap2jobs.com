@@ -581,7 +581,7 @@
 
     .bd-directory__layout {
         display: grid;
-        grid-template-columns: 1fr 263px;
+        grid-template-columns: minmax(0, 1fr) 263px;
         gap: 16px;
         align-items: stretch;
     }
@@ -592,6 +592,8 @@
         border-radius: 4px;
         padding: 0 var(--bd-card-padding) 14px;
         box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+        min-width: 0;
+        overflow: hidden;
     }
 
     .bd-category-card__title {
@@ -630,19 +632,25 @@
 
     .bd-category-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         column-gap: 28px;
         row-gap: 2px;
+    }
+
+    .bd-category-grid > div {
+        min-width: 0;
     }
 
     .bd-category-grid a {
         color: #4e4e4e;
         font-size: 14px;
-        display: block;
+        display: flex;
+        align-items: flex-start;
         padding: 7px 0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        white-space: normal;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        line-height: 1.4;
     }
 
     .bd-category-grid a::before {
@@ -650,8 +658,9 @@
         color: #3f4c58;
         font-size: 25px;
         vertical-align: -2px;
-        line-height: 0;
+        line-height: 1;
         margin-right: 7px;
+        flex-shrink: 0;
     }
 
     .bd-more {
