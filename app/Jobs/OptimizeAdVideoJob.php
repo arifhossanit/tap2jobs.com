@@ -97,11 +97,17 @@ class OptimizeAdVideoJob implements ShouldQueue
                 throw new Exception('Optimized video output was not created.');
             }
 
-            $ad->clearMediaCollection(Ad::PATH);
-            $ad->addMedia($outputPath)
+            $oldMedia = $ad->getMedia(Ad::PATH);
+            $oldMediaIds = $oldMedia->pluck('id')->map(fn ($id) => (int) $id)->all();
+            $minimumOldOrder = (int) ($oldMedia->min('order_column') ?? 0);
+            $optimizedMedia = $ad->addMedia($outputPath)
                 ->usingFileName('ad-'.$ad->id.'-optimized.mp4')
                 ->withCustomProperties(['optimized' => true])
                 ->toMediaCollection(Ad::PATH, config('app.media_disc'));
+            $optimizedMedia->order_column = $minimumOldOrder - 1;
+            $optimizedMedia->save();
+
+            Media::query()->whereIn('id', $oldMediaIds)->get()->each->delete();
 
             $ad->update([
                 'media_processing_status' => Ad::MEDIA_STATUS_READY,

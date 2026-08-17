@@ -349,6 +349,7 @@ return [
     ],
 
     'web_blog' => [
+        'share_this_post' => 'পোস্টটি শেয়ার করুন',
         'comments' => 'মন্তব্য',
         'recent_posts' => 'সাম্প্রতিক পোস্ট',
         'your_name' => 'আপনার নাম লিখুন',

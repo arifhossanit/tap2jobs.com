@@ -331,6 +331,7 @@ return [
     ],
 
     'web_blog' => [
+        'share_this_post' => 'شارك هذا المنشور',
         'comments' => 'تعليقات',
         'recent_posts' => 'المشاركات الاخيرة',
         'your_name' => 'أدخل أسمك',

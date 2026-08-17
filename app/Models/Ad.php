@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Image\Manipulations;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -107,18 +108,6 @@ class Ad extends Model implements HasMedia
         'media_processed_at',
     ];
 
-    public static $rules = [
-        'title' => 'nullable|max:150',
-        'description' => 'nullable|max:500',
-        'link_url' => 'nullable|url|max:255',
-        'cta_text' => 'nullable|max:50',
-        'position' => 'required|in:header,register_left,register_right',
-        'page' => 'nullable|array',
-        'page.*' => 'in:all,candidate_register,employer_register,candidate_login,employer_login,home,blog,blog_details,jobs,job_details',
-        'sort_order' => 'nullable|integer|min:0',
-        'ad_image' => 'nullable|file|mimes:jpeg,jpg,png,webp,mp4,webm,ogg|max:51200',
-    ];
-
     protected $casts = [
         'id' => 'integer',
         'title' => 'string',
@@ -158,10 +147,16 @@ class Ad extends Model implements HasMedia
 
     public function getAdMediaUrlAttribute()
     {
-        $media = $this->getFirstMedia(self::PATH);
+        $media = $this->getFirstAvailableAdMedia();
         if (! empty($media)) {
-            $url = $this->isImageMedia($media)
-                ? $media->getAvailableFullUrl([self::OPTIMIZED_CONVERSION])
+            $conversionDisk = $media->conversions_disk ?: $media->disk;
+            $hasOptimizedFile = $this->isOptimizableImageMedia($media)
+                && $media->hasGeneratedConversion(self::OPTIMIZED_CONVERSION)
+                && Storage::disk($conversionDisk)->exists(
+                    $media->getPathRelativeToRoot(self::OPTIMIZED_CONVERSION)
+                );
+            $url = $hasOptimizedFile
+                ? $media->getFullUrl(self::OPTIMIZED_CONVERSION)
                 : $media->getFullUrl();
 
             $url = str_replace('\\', '/', $url);
@@ -175,7 +170,7 @@ class Ad extends Model implements HasMedia
 
     public function getAdMediaTypeAttribute(): ?string
     {
-        $media = $this->getFirstMedia(self::PATH);
+        $media = $this->getFirstAvailableAdMedia();
 
         if (empty($media)) {
             return null;
@@ -192,14 +187,14 @@ class Ad extends Model implements HasMedia
 
     public function isVideoAd(): bool
     {
-        $media = $this->getFirstMedia(self::PATH);
+        $media = $this->getFirstAvailableAdMedia();
 
         return ! empty($media) && $this->isVideoMedia($media);
     }
 
     public function registerMediaConversions(Media $media = null): void
     {
-        if ($media && ! $this->isImageMedia($media)) {
+        if ($media && ! $this->isOptimizableImageMedia($media)) {
             return;
         }
 
@@ -216,9 +211,21 @@ class Ad extends Model implements HasMedia
         return str_starts_with((string) $media->mime_type, 'image/');
     }
 
+    private function isOptimizableImageMedia(Media $media): bool
+    {
+        return $this->isImageMedia($media) && $media->mime_type !== 'image/svg+xml';
+    }
+
     private function isVideoMedia(Media $media): bool
     {
         return str_starts_with((string) $media->mime_type, 'video/');
+    }
+
+    private function getFirstAvailableAdMedia(): ?Media
+    {
+        return $this->getMedia(self::PATH)->first(function (Media $media) {
+            return Storage::disk($media->disk)->exists($media->getPathRelativeToRoot());
+        });
     }
 
     public function scopeActive(Builder $query): Builder
@@ -242,9 +249,7 @@ class Ad extends Model implements HasMedia
                 ->orWhere('page', self::PAGE_ALL)
                 ->orWhere('page', $page)
                 ->orWhere('page', 'LIKE', '%"'.self::PAGE_ALL.'"%')
-                ->orWhere('page', 'LIKE', '%"'.$page.'"%')
-                ->orWhere('page', 'LIKE', '%'.self::PAGE_ALL.'%')
-                ->orWhere('page', 'LIKE', '%'.$page.'%');
+                ->orWhere('page', 'LIKE', '%"'.$page.'"%');
         });
     }
 

@@ -31,7 +31,7 @@
                                       data-bs-original-title="{{ __('messages.tooltip.change_image') }}">
                                     <label>
                                         <i class="fa-solid fa-pen" id="profileImageIcon"></i>
-                                        {{ Form::file('ad_image', ['class' => 'image-upload d-none', 'id' => 'editAdImage', 'accept' => '.png, .jpg, .jpeg, .webp, .mp4, .webm, .ogg']) }}
+                                        {{ Form::file('ad_image', ['class' => 'image-upload d-none', 'id' => 'editAdImage', 'accept' => '.png, .jpg, .jpeg, .webp, .svg, .mp4, .webm, .ogg']) }}
                                     </label>
                                 </span>
                             </div>
@@ -67,60 +67,17 @@
                     <div class="col-sm-12 mb-5">
                         <label class="form-label required">{{ __('messages.ad.target_page') }}:</label>
                         <div class="d-flex flex-wrap gap-4 mt-2">
-                            <div class="form-check form-check-custom form-check-solid">
-                                <input class="form-check-input edit-page-checkbox edit-page-all-checkbox" type="checkbox" name="page[]" value="all" id="editPageAll">
-                                <label class="form-check-label fw-bold text-gray-700" for="editPageAll">
-                                    {{ __('messages.ad.pages.all') }}
-                                </label>
-                            </div>
-                            <div class="form-check form-check-custom form-check-solid">
-                                <input class="form-check-input edit-page-checkbox" type="checkbox" name="page[]" value="candidate_register" id="editPageCandidateRegister">
-                                <label class="form-check-label text-gray-700" for="editPageCandidateRegister">
-                                    {{ __('messages.ad.pages.candidate_register') }}
-                                </label>
-                            </div>
-                            <div class="form-check form-check-custom form-check-solid">
-                                <input class="form-check-input edit-page-checkbox" type="checkbox" name="page[]" value="employer_register" id="editPageEmployerRegister">
-                                <label class="form-check-label text-gray-700" for="editPageEmployerRegister">
-                                    {{ __('messages.ad.pages.employer_register') }}
-                                </label>
-                            </div>
-                            <div class="form-check form-check-custom form-check-solid">
-                                <input class="form-check-input edit-page-checkbox" type="checkbox" name="page[]" value="candidate_login" id="editPageCandidateLogin">
-                                <label class="form-check-label text-gray-700" for="editPageCandidateLogin">
-                                    {{ __('messages.ad.pages.candidate_login') }}
-                                </label>
-                            </div>
-                            <div class="form-check form-check-custom form-check-solid">
-                                <input class="form-check-input edit-page-checkbox" type="checkbox" name="page[]" value="employer_login" id="editPageEmployerLogin">
-                                <label class="form-check-label text-gray-700" for="editPageEmployerLogin">
-                                    {{ __('messages.ad.pages.employer_login') }}
-                                </label>
-                            </div>
-                            <div class="form-check form-check-custom form-check-solid">
-                                <input class="form-check-input edit-page-checkbox" type="checkbox" name="page[]" value="home" id="editPageHome">
-                                <label class="form-check-label text-gray-700" for="editPageHome">
-                                    {{ __('messages.ad.pages.home') }}
-                                </label>
-                            </div>
-                            <div class="form-check form-check-custom form-check-solid">
-                                <input class="form-check-input edit-page-checkbox" type="checkbox" name="page[]" value="blog" id="editPageBlog">
-                                <label class="form-check-label text-gray-700" for="editPageBlog">
-                                    {{ __('messages.ad.pages.blog') }}
-                                </label>
-                            </div>
-                            <div class="form-check form-check-custom form-check-solid">
-                                <input class="form-check-input edit-page-checkbox" type="checkbox" name="page[]" value="jobs" id="editPageJobs">
-                                <label class="form-check-label text-gray-700" for="editPageJobs">
-                                    {{ __('messages.ad.pages.jobs') }}
-                                </label>
-                            </div>
-                            <div class="form-check form-check-custom form-check-solid">
-                                <input class="form-check-input edit-page-checkbox" type="checkbox" name="page[]" value="job_details" id="editPageJobDetails">
-                                <label class="form-check-label text-gray-700" for="editPageJobDetails">
-                                    {{ __('messages.ad.pages.job_details') }}
-                                </label>
-                            </div>
+                            @foreach ($pages as $pageValue => $pageLabel)
+                                @php($pageId = 'editPage'.\Illuminate\Support\Str::studly($pageValue))
+                                <div class="form-check form-check-custom form-check-solid">
+                                    <input class="form-check-input edit-page-checkbox {{ $pageValue === \App\Models\Ad::PAGE_ALL ? 'edit-page-all-checkbox' : '' }}"
+                                           type="checkbox" name="page[]" value="{{ $pageValue }}" id="{{ $pageId }}">
+                                    <label class="form-check-label {{ $pageValue === \App\Models\Ad::PAGE_ALL ? 'fw-bold' : '' }} text-gray-700"
+                                           for="{{ $pageId }}">
+                                        {{ $pageLabel }}
+                                    </label>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
 

@@ -29,6 +29,7 @@
         "pragmarx/countries": "^0.7.0",
         "rappasoft/laravel-livewire-tables": "^3.2",
         "rennokki/laravel-eloquent-query-cache": "^3.4",
+        "rhukster/dom-sanitizer": "^1.0.14",
         "spatie/laravel-cookie-consent": "^3.2",
         "spatie/laravel-medialibrary": "^10.7",
         "spatie/laravel-permission": "^5.8",

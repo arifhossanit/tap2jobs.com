@@ -114,7 +114,7 @@ listenSubmit("#addAdNewForm", function (e) {
     $.ajax({
         url: route("ads.store"),
         type: "POST",
-        data: new FormData($(this)[0]),
+        data: buildAdFormData(this, ".page-all-checkbox"),
         dataType: "JSON",
         processData: false,
         contentType: false,
@@ -146,7 +146,7 @@ listenSubmit("#editAdForm", function (event) {
     $.ajax({
         url: route("ads.update", adUpdateId),
         type: "POST",
-        data: new FormData($(this)[0]),
+        data: buildAdFormData(this, ".edit-page-all-checkbox"),
         dataType: "JSON",
         processData: false,
         contentType: false,
@@ -261,6 +261,17 @@ function getAdUploadErrorMessage(result) {
     }
 
     return "The media could not be uploaded. Please try again.";
+}
+
+function buildAdFormData(form, allPageSelector) {
+    const formData = new FormData(form);
+
+    if ($(form).find(allPageSelector).is(":checked")) {
+        formData.delete("page[]");
+        formData.append("page[]", "all");
+    }
+
+    return formData;
 }
 
 function clearAdPreview(selector, text) {
