@@ -1,16 +1,4 @@
 {
-<<<<<<< HEAD
-    "/js/app.js": "/js/app.js?id=ebea11a0af8b80feef009b16bea588fb",
-    "/assets/js/web/js/news_letter/news_letter.js": "/assets/js/web/js/news_letter/news_letter.js?id=30b6a3fc4e0ca6cb799d3c8a80ec2396",
-    "/js/pages.js": "/js/pages.js?id=f3e7a44bba29b8f9c62049c2351a90f3",
-    "/js/front_pages.js": "/js/front_pages.js?id=e3d8916af9cdf444d9f95ecfe6dae1ee",
-    "/assets/js/custom/custom.js": "/assets/js/custom/custom.js?id=ca03ceadbcc9a81c4de6b184f045de78",
-    "/assets/css/web_contact.css": "/assets/css/web_contact.css?id=d68dd7aae92b0847e0676b97c70ab465",
-    "/assets/css/custom-auth.css": "/assets/css/custom-auth.css?id=ece78e0e899e7eefef36d15fafca519e",
-    "/assets/css/custom-dark.css": "/assets/css/custom-dark.css?id=cb30012ea7f0706aad162d47519d326b",
-    "/assets/css/custom.css": "/assets/css/custom.css?id=855272017da757b5822b9c4a5b050c6e",
-    "/js/currency.js": "/js/currency.js?id=f82b9edec39daeb65b27c058acc950ba",
-=======
     "/js/app.js": "/js/app.js?id=62c3fd82a91ea11203cf9b2bb40397b0",
     "/assets/js/web/js/news_letter/news_letter.js": "/assets/js/web/js/news_letter/news_letter.js?id=68270cfb1876459533bb5dddc6cb254a",
     "/js/pages.js": "/js/pages.js?id=df1377bde4aac0a150c1f99d5acb70a3",
@@ -20,8 +8,7 @@
     "/assets/css/custom-auth.css": "/assets/css/custom-auth.css?id=cecefbf737ece808eef57c37c5c3c98d",
     "/assets/css/custom-dark.css": "/assets/css/custom-dark.css?id=c86d47c3327744156eff9a24edf09e03",
     "/assets/css/custom.css": "/assets/css/custom.css?id=6d518b4a55997e9750a44f3d2d518bed",
-    "/js/currency.js": "/js/currency.js?id=70c210ff7d7c3df6ad4da8629a0b6f9a",
->>>>>>> e16247e6ca4c2bba24630ede8c04450df222808b
+    "/js/currency.js": "/js/currency.js?id=f82b9edec39daeb65b27c058acc950ba",
     "/assets/css/fonts/slick.eot": "/assets/css/fonts/slick.eot?id=4bb08b6ed048eaf8be2a371ffc8faec2",
     "/assets/css/fonts/slick.svg": "/assets/css/fonts/slick.svg?id=f97e3bbf73254b0112091d0192f17aec",
     "/assets/css/fonts/slick.ttf": "/assets/css/fonts/slick.ttf?id=74144acfc01b478e4e42106977bfa954",
@@ -40,6 +27,7 @@
     "/assets/img/china.svg": "/assets/img/china.svg?id=ded34c7fb724554d70ecfd51e9db4e61",
     "/assets/img/close-icon.png": "/assets/img/close-icon.png?id=21acf2253e465fc683bf3883114b95cb",
     "/assets/img/default-user.png": "/assets/img/default-user.png?id=f27ae51e73c8cbb311ed4ca918b0d318",
+    "/assets/img/disability.svg": "/assets/img/disability.svg?id=30fffe80b7c936bc6e14c20f8ce106cb",
     "/assets/img/document.png": "/assets/img/document.png?id=7a49e4f6f94771c329e155a5ae4506d1",
     "/assets/img/employer-image.png": "/assets/img/employer-image.png?id=fa4776212fcdd9d5215253d893f8b856",
     "/assets/img/envelope.png": "/assets/img/envelope.png?id=e73cec6eef64f8ef0eb7332b04485cd0",
@@ -65,7 +53,6 @@
     "/assets/img/turkey.svg": "/assets/img/turkey.svg?id=953fe98281f34a0ae473f3f685b69a85",
     "/assets/img/united-states.svg": "/assets/img/united-states.svg?id=89936807225f225495f154ebdda17d51",
     "/assets/img/user-graduate.png": "/assets/img/user-graduate.png?id=ff54120acfcb6c21c78c8cbe47fc3042",
-    "/assets/img/disability.svg": "/assets/img/disability.svg?id=30fffe80b7c936bc6e14c20f8ce106cb",
     "/images/arrow.svg": "/images/arrow.svg?id=1ecf35d882d8464c9a903042ce73b004",
     "/images/avatar.png": "/images/avatar.png?id=2b93e20af79833f607316b0d3e73922e",
     "/images/favicon.ico": "/images/favicon.ico?id=084b59f3bdde96e986732269d4eed9dd",
