@@ -6,12 +6,6 @@
         : $row->getCustomProperty('title', $row->name);
 @endphp
 
-<div class="py-2 text-primary">
+<div class="py-1 text-dark font-weight-semibold">
     {{ $resumeTitle }}
-    @if($isApplicationCv)
-        <span class="badge bg-light-info text-info ms-2">{{ __('messages.candidate_profile.generated') }}</span>
-    @endif
-    @if($isDefaultResume)
-        <span class="badge bg-light-primary text-primary ms-2">{{ __('messages.candidate_profile.selected') }}</span>
-    @endif
 </div>

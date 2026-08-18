@@ -39,15 +39,15 @@
         ];
     @endphp
 
-    <div class="mb-xl-8 candidate-other-info-page">
-        <div class="candidate-education-panel" id="candidateSkillInformation">
-            <div class="candidate-education-panel__header">
-                <h1>{{ __('messages.candidate_profile.skill') }}</h1>
-                <div class="candidate-education-panel__actions">
+    <div class="mb-xl-8 candidate-other-info-page candidate-profile-accordion" id="candidateOtherInformationAccordion">
+        <div class="candidate-education-panel candidate-profile-section" id="candidateSkillInformation">
+            <div class="candidate-profile-section__header">
+                <span>{{ __('messages.candidate_profile.skill') }}</span>
+                <span class="candidate-profile-section__header-actions">
                     <button type="button" class="candidate-education-add" data-skill-add-action>
                         <i class="fa-solid fa-plus"></i> {{ __('messages.candidate_profile.add_skill') }}
                     </button>
-                    <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
+                    <button type="button" class="candidate-profile-section__toggle" data-bs-toggle="collapse"
                             data-bs-target="#candidateSkillInformationPanelBody" aria-expanded="true"
                             aria-controls="candidateSkillInformationPanelBody"
                             data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
@@ -55,9 +55,10 @@
                         <span>{{ __('messages.candidate_profile.collapse') }}</span>
                         <i class="fa-solid fa-chevron-up"></i>
                     </button>
-                </div>
+                </span>
             </div>
-            <div id="candidateSkillInformationPanelBody" class="collapse show candidate-profile-section__collapse">
+            <div id="candidateSkillInformationPanelBody" class="collapse show candidate-profile-section__collapse"
+                 data-bs-parent="#candidateOtherInformationAccordion">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <div class="candidate-skill-manager"
                          data-update-url="{{ route('candidate.general.profile.update') }}"
@@ -140,9 +141,9 @@
                                 </div>
                             </div>
 
-                            <div class="candidate-skill-form__actions">
-                                <button type="submit" class="candidate-skill-save">{{ __('messages.candidate_profile.save') }}</button>
-                                <button type="button" class="candidate-skill-close" data-skill-close>{{ __('messages.candidate_profile.close') }}</button>
+                            <div class="candidate-skill-form__actions candidate-profile-section-actions">
+                                <button type="submit" class="btn btn-primary candidate-skill-save">{{ __('messages.candidate_profile.save') }}</button>
+                                <button type="button" class="btn btn-secondary candidate-skill-close" data-skill-close>{{ __('messages.candidate_profile.close') }}</button>
                             </div>
                         </form>
 
@@ -160,24 +161,25 @@
             </div>
         </div>
 
-        <div class="candidate-education-panel" id="candidateExtracurricularActivities">
-            <div class="candidate-education-panel__header collapsed">
-                <h1>{{ __('messages.candidate_profile.extracurricular_activities') }}</h1>
-                <div class="candidate-education-panel__actions">
+        <div class="candidate-education-panel candidate-profile-section" id="candidateExtracurricularActivities">
+            <div class="candidate-profile-section__header collapsed">
+                <span>{{ __('messages.candidate_profile.extracurricular_activities') }}</span>
+                <span class="candidate-profile-section__header-actions">
                     <button type="button" class="candidate-education-add d-none" data-activity-add-action>
                         <i class="fa-solid fa-plus"></i> {{ __('messages.candidate_profile.add_extracurricular_activities') }}
                     </button>
-                    <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
+                    <button type="button" class="candidate-profile-section__toggle" data-bs-toggle="collapse"
                             data-bs-target="#candidateExtracurricularActivitiesPanelBody" aria-expanded="false"
                             aria-controls="candidateExtracurricularActivitiesPanelBody"
                             data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
                             data-expand-label="{{ __('messages.candidate_profile.expand') }}">
                         <span>{{ __('messages.candidate_profile.expand') }}</span>
-                        <i class="fa-solid fa-chevron-down"></i>
+                        <i class="fa-solid fa-chevron-up"></i>
                     </button>
-                </div>
+                </span>
             </div>
-            <div id="candidateExtracurricularActivitiesPanelBody" class="collapse candidate-profile-section__collapse">
+            <div id="candidateExtracurricularActivitiesPanelBody" class="collapse candidate-profile-section__collapse"
+                 data-bs-parent="#candidateOtherInformationAccordion">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <div class="candidate-activity-summary" data-activity-summary>
                         <div class="candidate-activity-list {{ $candidateExtraCurricularItems->count() ? '' : 'd-none' }}" data-activity-list>
@@ -219,34 +221,35 @@
                         <p class="candidate-activity-count">
                             {{ __('messages.candidate_profile.you_wrote') }} <strong data-activity-character-count>0/500</strong> {{ __('messages.candidate_profile.characters') }}
                         </p>
-                        <div class="candidate-skill-form__actions candidate-activity-form__actions mt-5">
-                            <button type="submit" class="candidate-skill-save">{{ __('messages.candidate_profile.save') }}</button>
-                            <button type="button" class="candidate-skill-close" data-activity-close>{{ __('messages.candidate_profile.close') }}</button>
+                        <div class="candidate-skill-form__actions candidate-activity-form__actions candidate-profile-section-actions mt-5">
+                            <button type="submit" class="btn btn-primary candidate-skill-save">{{ __('messages.candidate_profile.save') }}</button>
+                            <button type="button" class="btn btn-secondary candidate-skill-close" data-activity-close>{{ __('messages.candidate_profile.close') }}</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
 
-        <div class="candidate-education-panel" id="candidateLanguageProficiency">
-            <div class="candidate-education-panel__header collapsed">
-                <h1>{{ __('messages.candidate_profile.language_proficiency') }}</h1>
-                <div class="candidate-education-panel__actions">
+        <div class="candidate-education-panel candidate-profile-section" id="candidateLanguageProficiency">
+            <div class="candidate-profile-section__header collapsed">
+                <span>{{ __('messages.candidate_profile.language_proficiency') }}</span>
+                <span class="candidate-profile-section__header-actions">
                     <button type="button" class="candidate-education-add d-none" data-language-edit-action>
                         <i class="fa-solid fa-plus"></i>
                         {{ __('messages.candidate_profile.add_language') }}
                     </button>
-                    <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
+                    <button type="button" class="candidate-profile-section__toggle" data-bs-toggle="collapse"
                             data-bs-target="#candidateLanguageProficiencyPanelBody" aria-expanded="false"
                             aria-controls="candidateLanguageProficiencyPanelBody"
                             data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
                             data-expand-label="{{ __('messages.candidate_profile.expand') }}">
                         <span>{{ __('messages.candidate_profile.expand') }}</span>
-                        <i class="fa-solid fa-chevron-down"></i>
+                        <i class="fa-solid fa-chevron-up"></i>
                     </button>
-                </div>
+                </span>
             </div>
-            <div id="candidateLanguageProficiencyPanelBody" class="collapse candidate-profile-section__collapse">
+            <div id="candidateLanguageProficiencyPanelBody" class="collapse candidate-profile-section__collapse"
+                 data-bs-parent="#candidateOtherInformationAccordion">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <div class="candidate-other-summary" data-language-summary>
                         <div class="candidate-language-list {{ count($candidateLanguageNames) ? '' : 'd-none' }}" data-language-chip-list>
@@ -369,9 +372,9 @@
                             @endforeach
                         </div>
 
-                        <div class="candidate-skill-form__actions">
-                            <button type="submit" class="candidate-skill-save">{{ __('messages.candidate_profile.save') }}</button>
-                            <button type="button" class="candidate-skill-close" data-language-close>{{ __('messages.candidate_profile.close') }}</button>
+                        <div class="candidate-skill-form__actions candidate-profile-section-actions">
+                            <button type="submit" class="btn btn-primary candidate-skill-save">{{ __('messages.candidate_profile.save') }}</button>
+                            <button type="button" class="btn btn-secondary candidate-skill-close" data-language-close>{{ __('messages.candidate_profile.close') }}</button>
                         </div>
 
                         @if(count($data['language'] ?? []))
@@ -388,25 +391,26 @@
             </div>
         </div>
 
-        <div class="candidate-education-panel" id="candidateLinkAccount">
-            <div class="candidate-education-panel__header collapsed">
-                <h1>{{ __('messages.candidate_profile.link_account') }}</h1>
-                <div class="candidate-education-panel__actions">
+        <div class="candidate-education-panel candidate-profile-section" id="candidateLinkAccount">
+            <div class="candidate-profile-section__header collapsed">
+                <span>{{ __('messages.candidate_profile.link_account') }}</span>
+                <span class="candidate-profile-section__header-actions">
                     <button type="button" class="candidate-education-add d-none" data-link-add-action>
                         <i class="fa-solid fa-plus"></i>
                         {{ __('messages.candidate_profile.add_link_account') }}
                     </button>
-                    <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
+                    <button type="button" class="candidate-profile-section__toggle" data-bs-toggle="collapse"
                             data-bs-target="#candidateLinkAccountPanelBody" aria-expanded="false"
                             aria-controls="candidateLinkAccountPanelBody"
                             data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
                             data-expand-label="{{ __('messages.candidate_profile.expand') }}">
                         <span>{{ __('messages.candidate_profile.expand') }}</span>
-                        <i class="fa-solid fa-chevron-down"></i>
+                        <i class="fa-solid fa-chevron-up"></i>
                     </button>
-                </div>
+                </span>
             </div>
-            <div id="candidateLinkAccountPanelBody" class="collapse candidate-profile-section__collapse">
+            <div id="candidateLinkAccountPanelBody" class="collapse candidate-profile-section__collapse"
+                 data-bs-parent="#candidateOtherInformationAccordion">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <div class="candidate-link-manager">
                         <div class="candidate-link-list" data-link-list>
@@ -460,9 +464,9 @@
                                            data-link-url-input placeholder="{{ __('messages.candidate_profile.enter_url') }}">
                                 </div>
                             </div>
-                            <div class="candidate-skill-form__actions">
-                                <button type="submit" class="candidate-skill-save" data-link-submit>{{ __('messages.candidate_profile.save') }}</button>
-                                <button type="button" class="candidate-skill-close" data-link-close>{{ __('messages.candidate_profile.close') }}</button>
+                            <div class="candidate-skill-form__actions candidate-profile-section-actions">
+                                <button type="submit" class="btn btn-primary candidate-skill-save" data-link-submit>{{ __('messages.candidate_profile.save') }}</button>
+                                <button type="button" class="btn btn-secondary candidate-skill-close" data-link-close>{{ __('messages.candidate_profile.close') }}</button>
                             </div>
                         </form>
                     </div>
@@ -470,25 +474,26 @@
             </div>
         </div>
 
-        <div class="candidate-education-panel" id="candidateReference">
-            <div class="candidate-education-panel__header collapsed">
-                <h1>{{ __('messages.candidate_profile.reference') }}</h1>
-                <div class="candidate-education-panel__actions">
+        <div class="candidate-education-panel candidate-profile-section" id="candidateReference">
+            <div class="candidate-profile-section__header collapsed">
+                <span>{{ __('messages.candidate_profile.reference') }}</span>
+                <span class="candidate-profile-section__header-actions">
                     <button type="button" class="candidate-education-add d-none" data-reference-add-action>
                         <i class="fa-solid fa-plus"></i>
                         {{ __('messages.candidate_profile.add_reference') }}
                     </button>
-                    <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
+                    <button type="button" class="candidate-profile-section__toggle" data-bs-toggle="collapse"
                             data-bs-target="#candidateReferencePanelBody" aria-expanded="false"
                             aria-controls="candidateReferencePanelBody"
                             data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
                             data-expand-label="{{ __('messages.candidate_profile.expand') }}">
                         <span>{{ __('messages.candidate_profile.expand') }}</span>
-                        <i class="fa-solid fa-chevron-down"></i>
+                        <i class="fa-solid fa-chevron-up"></i>
                     </button>
-                </div>
+                </span>
             </div>
-            <div id="candidateReferencePanelBody" class="collapse candidate-profile-section__collapse">
+            <div id="candidateReferencePanelBody" class="collapse candidate-profile-section__collapse"
+                 data-bs-parent="#candidateOtherInformationAccordion">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <div class="candidate-reference-list" data-reference-list>
                         <form class="candidate-reference-form d-none" data-reference-form
@@ -550,9 +555,9 @@
                                               name="address" data-reference-field-input="address"></textarea>
                                 </div>
                             </div>
-                            <div class="candidate-skill-form__actions">
-                                <button type="submit" class="candidate-skill-save" data-reference-submit>{{ __('messages.candidate_profile.save') }}</button>
-                                <button type="button" class="candidate-skill-close" data-reference-close>{{ __('messages.candidate_profile.close') }}</button>
+                            <div class="candidate-skill-form__actions candidate-profile-section-actions">
+                                <button type="submit" class="btn btn-primary candidate-skill-save" data-reference-submit>{{ __('messages.candidate_profile.save') }}</button>
+                                <button type="button" class="btn btn-secondary candidate-skill-close" data-reference-close>{{ __('messages.candidate_profile.close') }}</button>
                             </div>
                         </form>
 
@@ -643,8 +648,6 @@
                 return value.replace(/[0-9]/g, function (d) { return bd[d]; });
             };
 
-            const otherSectionLinks = document.querySelectorAll('[data-other-section-link]');
-            const otherSectionBodies = document.querySelectorAll('.candidate-other-info-page .candidate-profile-section__collapse');
             const skillManager = document.querySelector('.candidate-skill-manager');
             const activityForm = document.querySelector('[data-activity-form]');
             const languageForm = document.querySelector('[data-language-form]');
@@ -2195,111 +2198,6 @@
                 });
             }
 
-            const setActiveOtherSection = function (panelId) {
-                otherSectionLinks.forEach(function (link) {
-                    link.classList.toggle('active', link.dataset.otherSectionLink === panelId);
-                });
-            };
-
-            const closeOtherSections = function (activeSection) {
-                if (typeof bootstrap === 'undefined') {
-                    return;
-                }
-
-                otherSectionBodies.forEach(function (section) {
-                    if (section !== activeSection) {
-                        bootstrap.Collapse.getOrCreateInstance(section, { toggle: false }).hide();
-                    }
-                });
-            };
-
-            otherSectionBodies.forEach(function (section) {
-                const toggle = document.querySelector('[data-bs-target="#' + section.id + '"]');
-                if (!toggle) {
-                    return;
-                }
-
-                const label = toggle.querySelector('span');
-                const icon = toggle.querySelector('i');
-                const header = toggle.closest('.candidate-education-panel__header');
-                const panel = section.closest('.candidate-education-panel');
-
-                const setPanelToggleState = function (isOpen) {
-                    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-                    if (label) {
-                        label.textContent = isOpen
-                            ? (toggle.dataset.collapseLabel || '{{ __('messages.candidate_profile.collapse') }}')
-                            : (toggle.dataset.expandLabel || '{{ __('messages.candidate_profile.expand') }}');
-                    }
-                    if (icon) {
-                        icon.classList.toggle('fa-chevron-up', isOpen);
-                        icon.classList.toggle('fa-chevron-down', !isOpen);
-                    }
-                    if (header) {
-                        header.classList.toggle('collapsed', !isOpen);
-                    }
-                    const skillAddAction = header ? header.querySelector('[data-skill-add-action]') : null;
-                    if (skillAddAction) {
-                        skillAddAction.classList.toggle('d-none', !isOpen);
-                    }
-                    const activityAddAction = header ? header.querySelector('[data-activity-add-action]') : null;
-                    if (activityAddAction) {
-                        activityAddAction.classList.toggle('d-none', !isOpen);
-                    }
-                    const languageEditAction = header ? header.querySelector('[data-language-edit-action]') : null;
-                    if (languageEditAction) {
-                        languageEditAction.classList.toggle('d-none', !isOpen);
-                    }
-                    const linkAddAction = header ? header.querySelector('[data-link-add-action]') : null;
-                    if (linkAddAction) {
-                        linkAddAction.dataset.sectionOpen = isOpen ? 'true' : 'false';
-                        linkAddAction.classList.toggle('d-none', !isOpen || document.querySelectorAll('[data-link-item]').length >= 5);
-                    }
-                    const referenceAddAction = header ? header.querySelector('[data-reference-add-action]') : null;
-                    if (referenceAddAction) {
-                        referenceAddAction.classList.toggle('d-none', !isOpen);
-                    }
-                };
-
-                section.addEventListener('shown.bs.collapse', function () {
-                    closeOtherSections(section);
-                    setPanelToggleState(true);
-                    if (panel) {
-                        setActiveOtherSection(panel.id);
-                    }
-                });
-                section.addEventListener('hidden.bs.collapse', function () {
-                    setPanelToggleState(false);
-                });
-
-                if (header) {
-                    header.addEventListener('click', function (event) {
-                        if (event.target.closest('button, a, input, select, textarea, label')) {
-                            return;
-                        }
-                        toggle.click();
-                    });
-                }
-
-                setPanelToggleState(section.classList.contains('show'));
-            });
-
-            otherSectionLinks.forEach(function (link) {
-                link.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const panel = document.getElementById(link.dataset.otherSectionLink);
-                    const section = panel ? panel.querySelector('.candidate-profile-section__collapse') : null;
-
-                    if (!panel || !section || typeof bootstrap === 'undefined') {
-                        return;
-                    }
-
-                    closeOtherSections(section);
-                    bootstrap.Collapse.getOrCreateInstance(section, { toggle: false }).show();
-                    setActiveOtherSection(panel.id);
-                    window.scrollCandidateProfileSection(panel);
-                });
-            });
         });
     </script>
 @endpush

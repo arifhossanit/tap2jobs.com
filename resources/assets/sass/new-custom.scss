@@ -1551,6 +1551,29 @@
     position: relative;
   }
 
+  .horizontal-menu .nav-item .nav-link .horizontal-menu-icon {
+    align-items: center;
+    display: inline-flex;
+    flex: 0 0 20px;
+    height: 20px;
+    justify-content: center;
+    line-height: 1;
+    padding: 0 !important;
+    width: 20px;
+
+    i {
+      display: block;
+      line-height: 1;
+    }
+  }
+
+  .horizontal-menu-title {
+    align-items: center;
+    display: inline-flex;
+    line-height: 20px;
+    margin-left: 5px;
+  }
+
   .horizontal-menu .nav-item:first-child .nav-link,
   .horizontal-menu .nav-item:last-child .nav-link {
     padding-left: 16px !important;
@@ -1932,8 +1955,44 @@
   text-decoration: none;
 }
 
-.candidate-personal-form {
+.candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form {
+  display: grid !important;
+  gap: 18px 28px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   margin-top: 4px;
+
+  > [class*="col-"] {
+    flex: initial;
+    margin-bottom: 0 !important;
+    max-width: none;
+    padding-left: 0;
+    padding-right: 0;
+    width: auto;
+  }
+
+  > .col-12 {
+    grid-column: 1 / -1;
+  }
+
+  .form-label {
+    color: #0f1b3d;
+    font-size: 14px;
+    font-weight: 400;
+    margin-bottom: 10px;
+  }
+
+  .form-control,
+  .form-select {
+    border-color: #cfd6e2;
+    border-radius: 6px;
+    color: #0f1b3d;
+    font-size: 14px;
+    min-height: 38px;
+  }
+
+  .iti {
+    width: 100%;
+  }
 }
 
 .candidate-objective-head {
@@ -5493,6 +5552,10 @@
     grid-template-columns: 1fr;
   }
 
+  .candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form {
+    grid-template-columns: 1fr;
+  }
+
   .candidate-objective-head {
     display: block;
   }
@@ -5679,4 +5742,82 @@
   .candidate-education-form-field--full {
     grid-column: auto;
   }
+}
+
+#candidateEducationAccordion .candidate-profile-section__toggle .fa-chevron-up,
+#candidateEmploymentAccordion .candidate-profile-section__toggle .fa-chevron-up,
+#candidateOtherInformationAccordion .candidate-profile-section__toggle .fa-chevron-up,
+#candidateAccomplishmentAccordion .candidate-profile-section__toggle .fa-chevron-up {
+  transition: transform 0.18s ease;
+}
+
+#candidateEducationAccordion .candidate-profile-section__toggle[aria-expanded="false"] .fa-chevron-up,
+#candidateEmploymentAccordion .candidate-profile-section__toggle[aria-expanded="false"] .fa-chevron-up,
+#candidateOtherInformationAccordion .candidate-profile-section__toggle[aria-expanded="false"] .fa-chevron-up,
+#candidateAccomplishmentAccordion .candidate-profile-section__toggle[aria-expanded="false"] .fa-chevron-up {
+  transform: rotate(180deg);
+}
+
+.candidate-resume-action-btn {
+  align-items: center;
+  background: #f4f6fa;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 14px;
+  height: 34px;
+  justify-content: center;
+  padding: 0;
+  transition: background-color .18s ease, color .18s ease;
+  width: 34px;
+
+  i {
+    font-size: 15px;
+    line-height: 1;
+  }
+
+  &--preview {
+    color: #6571ff;
+
+    &:hover,
+    &:focus {
+      background-color: #6571ff;
+      color: #fff;
+    }
+  }
+
+  &--delete {
+    color: #f64e60;
+
+    &:hover,
+    &:focus {
+      background-color: #f64e60;
+      color: #fff;
+    }
+  }
+}
+
+.candidate-resume-page {
+  .livewire-tables-pagination,
+  .livewire-tables-per-page,
+  div[wire\:key*="pagination"],
+  .pagination,
+  .d-flex:has(.pagination),
+  div:has(> select[wire\:model*="perPage"]),
+  div:has(> .pagination) {
+    display: none !important;
+  }
+}
+
+.candidate-profile-section-actions,
+.candidate-skill-form__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.candidate-education-inline-form {
+  scroll-margin-top: 150px;
 }

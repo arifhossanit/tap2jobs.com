@@ -4,7 +4,7 @@
     <div class="mb-xl-8 candidate-resume-page">
         <section class="candidate-profile-section">
             <div class="candidate-profile-section__header">
-                <h1>{{ __('messages.candidate_profile.resume') }}</h1>
+                <span>{{ __('messages.candidate_profile.resume') }}</span>
             </div>
             <div class="candidate-profile-section__body">
                 {{-- <p class="text-muted mb-5">{{ __('messages.candidate_profile.application_cv_help') }}</p> --}}

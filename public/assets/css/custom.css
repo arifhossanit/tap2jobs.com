@@ -1508,6 +1508,29 @@
   padding: 24px 16px !important;
   position: relative;
 }
+.candidate-dashboard-header .horizontal-menu .nav-item .nav-link .horizontal-menu-icon,
+.employer-dashboard-header .horizontal-menu .nav-item .nav-link .horizontal-menu-icon {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 20px;
+  height: 20px;
+  justify-content: center;
+  line-height: 1;
+  padding: 0 !important;
+  width: 20px;
+}
+.candidate-dashboard-header .horizontal-menu .nav-item .nav-link .horizontal-menu-icon i,
+.employer-dashboard-header .horizontal-menu .nav-item .nav-link .horizontal-menu-icon i {
+  display: block;
+  line-height: 1;
+}
+.candidate-dashboard-header .horizontal-menu-title,
+.employer-dashboard-header .horizontal-menu-title {
+  align-items: center;
+  display: inline-flex;
+  line-height: 20px;
+  margin-left: 5px;
+}
 .candidate-dashboard-header .horizontal-menu .nav-item:first-child .nav-link,
 .candidate-dashboard-header .horizontal-menu .nav-item:last-child .nav-link,
 .employer-dashboard-header .horizontal-menu .nav-item:first-child .nav-link,
@@ -1884,8 +1907,39 @@
   text-decoration: none;
 }
 
-.candidate-personal-form {
+.candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form {
+  display: grid !important;
+  gap: 18px 28px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   margin-top: 4px;
+}
+.candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form > [class*=col-] {
+  flex: initial;
+  margin-bottom: 0 !important;
+  max-width: none;
+  padding-left: 0;
+  padding-right: 0;
+  width: auto;
+}
+.candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form > .col-12 {
+  grid-column: 1/-1;
+}
+.candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form .form-label {
+  color: #0f1b3d;
+  font-size: 14px;
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+.candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form .form-control,
+.candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form .form-select {
+  border-color: #cfd6e2;
+  border-radius: 6px;
+  color: #0f1b3d;
+  font-size: 14px;
+  min-height: 38px;
+}
+.candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form .iti {
+  width: 100%;
 }
 
 .candidate-objective-head {
@@ -5091,6 +5145,9 @@
     gap: 16px;
     grid-template-columns: 1fr;
   }
+  .candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form {
+    grid-template-columns: 1fr;
+  }
   .candidate-objective-head {
     display: block;
   }
@@ -5239,4 +5296,72 @@
   .candidate-education-form-field--full {
     grid-column: auto;
   }
+}
+#candidateEducationAccordion .candidate-profile-section__toggle .fa-chevron-up,
+#candidateEmploymentAccordion .candidate-profile-section__toggle .fa-chevron-up,
+#candidateOtherInformationAccordion .candidate-profile-section__toggle .fa-chevron-up,
+#candidateAccomplishmentAccordion .candidate-profile-section__toggle .fa-chevron-up {
+  transition: transform 0.18s ease;
+}
+
+#candidateEducationAccordion .candidate-profile-section__toggle[aria-expanded=false] .fa-chevron-up,
+#candidateEmploymentAccordion .candidate-profile-section__toggle[aria-expanded=false] .fa-chevron-up,
+#candidateOtherInformationAccordion .candidate-profile-section__toggle[aria-expanded=false] .fa-chevron-up,
+#candidateAccomplishmentAccordion .candidate-profile-section__toggle[aria-expanded=false] .fa-chevron-up {
+  transform: rotate(180deg);
+}
+
+.candidate-resume-action-btn {
+  align-items: center;
+  background: #f4f6fa;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 14px;
+  height: 34px;
+  justify-content: center;
+  padding: 0;
+  transition: background-color 0.18s ease, color 0.18s ease;
+  width: 34px;
+}
+.candidate-resume-action-btn i {
+  font-size: 15px;
+  line-height: 1;
+}
+.candidate-resume-action-btn--preview {
+  color: #6571ff;
+}
+.candidate-resume-action-btn--preview:hover, .candidate-resume-action-btn--preview:focus {
+  background-color: #6571ff;
+  color: #fff;
+}
+.candidate-resume-action-btn--delete {
+  color: #f64e60;
+}
+.candidate-resume-action-btn--delete:hover, .candidate-resume-action-btn--delete:focus {
+  background-color: #f64e60;
+  color: #fff;
+}
+
+.candidate-resume-page .livewire-tables-pagination,
+.candidate-resume-page .livewire-tables-per-page,
+.candidate-resume-page div[wire\:key*=pagination],
+.candidate-resume-page .pagination,
+.candidate-resume-page .d-flex:has(.pagination),
+.candidate-resume-page div:has(> select[wire\:model*=perPage]),
+.candidate-resume-page div:has(> .pagination) {
+  display: none !important;
+}
+
+.candidate-profile-section-actions,
+.candidate-skill-form__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.candidate-education-inline-form {
+  scroll-margin-top: 150px;
 }

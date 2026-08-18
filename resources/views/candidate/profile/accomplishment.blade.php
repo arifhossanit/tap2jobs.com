@@ -7,16 +7,16 @@
         $candidateProjects = $data['candidateProjects'] ?? collect();
         $candidateOthers = $data['candidateOthers'] ?? collect();
     @endphp
-    <div class="mb-xl-8 candidate-accomplishment-page">
-        <div class="candidate-education-panel" id="candidatePortfolioInformation">
-            <div class="candidate-education-panel__header">
-                <h1>{{ __('messages.candidate_profile.portfolio') }} <span class="candidate-portfolio-limit">{{ __('messages.candidate_profile.max_2') }}</span></h1>
-                <div class="candidate-education-panel__actions">
+    <div class="mb-xl-8 candidate-accomplishment-page candidate-profile-accordion" id="candidateAccomplishmentAccordion">
+        <div class="candidate-education-panel candidate-profile-section" id="candidatePortfolioInformation">
+            <div class="candidate-profile-section__header">
+                <span>{{ __('messages.candidate_profile.portfolio') }} <span class="candidate-portfolio-limit">{{ __('messages.candidate_profile.max_2') }}</span></span>
+                <span class="candidate-profile-section__header-actions">
                     <button type="button" class="candidate-education-add" data-portfolio-add-action>
                         <i class="fa-solid fa-plus"></i>
                         {{ __('messages.candidate_profile.add_portfolio') }}
                     </button>
-                    <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
+                    <button type="button" class="candidate-profile-section__toggle" data-bs-toggle="collapse"
                             data-bs-target="#candidatePortfolioInformationPanelBody" aria-expanded="true"
                             aria-controls="candidatePortfolioInformationPanelBody"
                             data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
@@ -24,9 +24,10 @@
                         <span>{{ __('messages.candidate_profile.collapse') }}</span>
                         <i class="fa-solid fa-chevron-up"></i>
                     </button>
-                </div>
+                </span>
             </div>
-            <div id="candidatePortfolioInformationPanelBody" class="collapse show candidate-profile-section__collapse">
+            <div id="candidatePortfolioInformationPanelBody" class="collapse show candidate-profile-section__collapse"
+                 data-bs-parent="#candidateAccomplishmentAccordion">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <div class="candidate-portfolio-list" data-portfolio-list>
                         <form class="candidate-portfolio-form d-none" data-portfolio-form
@@ -114,25 +115,26 @@
             </div>
         </div>
 
-        <div class="candidate-education-panel" id="candidatePublicationInformation">
-            <div class="candidate-education-panel__header collapsed">
-                <h1>{{ __('messages.candidate_profile.publication') }} <span class="candidate-portfolio-limit">{{ __('messages.candidate_profile.max_5') }}</span></h1>
-                <div class="candidate-education-panel__actions">
+        <div class="candidate-education-panel candidate-profile-section" id="candidatePublicationInformation">
+            <div class="candidate-profile-section__header collapsed">
+                <span>{{ __('messages.candidate_profile.publication') }} <span class="candidate-portfolio-limit">{{ __('messages.candidate_profile.max_5') }}</span></span>
+                <span class="candidate-profile-section__header-actions">
                     <button type="button" class="candidate-education-add d-none" data-publication-add-action>
                         <i class="fa-solid fa-plus"></i>
                         {{ __('messages.candidate_profile.add_publication') }}
                     </button>
-                    <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
+                    <button type="button" class="candidate-profile-section__toggle" data-bs-toggle="collapse"
                             data-bs-target="#candidatePublicationInformationPanelBody" aria-expanded="false"
                             aria-controls="candidatePublicationInformationPanelBody"
                             data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
                             data-expand-label="{{ __('messages.candidate_profile.expand') }}">
                         <span>{{ __('messages.candidate_profile.expand') }}</span>
-                        <i class="fa-solid fa-chevron-down"></i>
+                        <i class="fa-solid fa-chevron-up"></i>
                     </button>
-                </div>
+                </span>
             </div>
-            <div id="candidatePublicationInformationPanelBody" class="collapse candidate-profile-section__collapse">
+            <div id="candidatePublicationInformationPanelBody" class="collapse candidate-profile-section__collapse"
+                 data-bs-parent="#candidateAccomplishmentAccordion">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <div class="candidate-publication-list" data-publication-list>
                         <form class="candidate-publication-form d-none" data-publication-form
@@ -236,25 +238,26 @@
             </div>
         </div>
 
-        <div class="candidate-education-panel" id="candidateAwardHonorInformation">
-            <div class="candidate-education-panel__header collapsed">
-                <h1>{{ __('messages.candidate_profile.award') }} <span class="candidate-portfolio-limit">{{ __('messages.candidate_profile.max_5') }}</span></h1>
-                <div class="candidate-education-panel__actions">
+        <div class="candidate-education-panel candidate-profile-section" id="candidateAwardHonorInformation">
+            <div class="candidate-profile-section__header collapsed">
+                <span>{{ __('messages.candidate_profile.award') }} <span class="candidate-portfolio-limit">{{ __('messages.candidate_profile.max_5') }}</span></span>
+                <span class="candidate-profile-section__header-actions">
                     <button type="button" class="candidate-education-add d-none" data-award-add-action>
                         <i class="fa-solid fa-plus"></i>
                         {{ __('messages.candidate_profile.add_award') }}
                     </button>
-                    <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
+                    <button type="button" class="candidate-profile-section__toggle" data-bs-toggle="collapse"
                             data-bs-target="#candidateAwardHonorInformationPanelBody" aria-expanded="false"
                             aria-controls="candidateAwardHonorInformationPanelBody"
                             data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
                             data-expand-label="{{ __('messages.candidate_profile.expand') }}">
                         <span>{{ __('messages.candidate_profile.expand') }}</span>
-                        <i class="fa-solid fa-chevron-down"></i>
+                        <i class="fa-solid fa-chevron-up"></i>
                     </button>
-                </div>
+                </span>
             </div>
-            <div id="candidateAwardHonorInformationPanelBody" class="collapse candidate-profile-section__collapse">
+            <div id="candidateAwardHonorInformationPanelBody" class="collapse candidate-profile-section__collapse"
+                 data-bs-parent="#candidateAccomplishmentAccordion">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <div class="candidate-publication-list" data-award-list>
                         <form class="candidate-publication-form d-none" data-award-form
@@ -358,25 +361,26 @@
             </div>
         </div>
 
-        <div class="candidate-education-panel" id="candidateProjectInformation">
-            <div class="candidate-education-panel__header collapsed">
-                <h1>{{ __('messages.candidate_profile.project') }} <span class="candidate-portfolio-limit">{{ __('messages.candidate_profile.max_5') }}</span></h1>
-                <div class="candidate-education-panel__actions">
+        <div class="candidate-education-panel candidate-profile-section" id="candidateProjectInformation">
+            <div class="candidate-profile-section__header collapsed">
+                <span>{{ __('messages.candidate_profile.project') }} <span class="candidate-portfolio-limit">{{ __('messages.candidate_profile.max_5') }}</span></span>
+                <span class="candidate-profile-section__header-actions">
                     <button type="button" class="candidate-education-add d-none" data-project-add-action>
                         <i class="fa-solid fa-plus"></i>
                         {{ __('messages.candidate_profile.add_project') }}
                     </button>
-                    <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
+                    <button type="button" class="candidate-profile-section__toggle" data-bs-toggle="collapse"
                             data-bs-target="#candidateProjectInformationPanelBody" aria-expanded="false"
                             aria-controls="candidateProjectInformationPanelBody"
                             data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
                             data-expand-label="{{ __('messages.candidate_profile.expand') }}">
                         <span>{{ __('messages.candidate_profile.expand') }}</span>
-                        <i class="fa-solid fa-chevron-down"></i>
+                        <i class="fa-solid fa-chevron-up"></i>
                     </button>
-                </div>
+                </span>
             </div>
-            <div id="candidateProjectInformationPanelBody" class="collapse candidate-profile-section__collapse">
+            <div id="candidateProjectInformationPanelBody" class="collapse candidate-profile-section__collapse"
+                 data-bs-parent="#candidateAccomplishmentAccordion">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <div class="candidate-project-list" data-project-list>
                         <form class="candidate-project-form d-none" data-project-form
@@ -476,25 +480,26 @@
             </div>
         </div>
 
-        <div class="candidate-education-panel" id="candidateOtherAccomplishmentInformation">
-            <div class="candidate-education-panel__header collapsed">
-                <h1>{{ __('messages.candidate_profile.other') }} <span class="candidate-portfolio-limit">{{ __('messages.candidate_profile.max_5') }}</span></h1>
-                <div class="candidate-education-panel__actions">
+        <div class="candidate-education-panel candidate-profile-section" id="candidateOtherAccomplishmentInformation">
+            <div class="candidate-profile-section__header collapsed">
+                <span>{{ __('messages.candidate_profile.other') }} <span class="candidate-portfolio-limit">{{ __('messages.candidate_profile.max_5') }}</span></span>
+                <span class="candidate-profile-section__header-actions">
                     <button type="button" class="candidate-education-add d-none" data-other-add-action>
                         <i class="fa-solid fa-plus"></i>
                         {{ __('messages.candidate_profile.add_other') }}
                     </button>
-                    <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
+                    <button type="button" class="candidate-profile-section__toggle" data-bs-toggle="collapse"
                             data-bs-target="#candidateOtherAccomplishmentInformationPanelBody" aria-expanded="false"
                             aria-controls="candidateOtherAccomplishmentInformationPanelBody"
                             data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
                             data-expand-label="{{ __('messages.candidate_profile.expand') }}">
                         <span>{{ __('messages.candidate_profile.expand') }}</span>
-                        <i class="fa-solid fa-chevron-down"></i>
+                        <i class="fa-solid fa-chevron-up"></i>
                     </button>
-                </div>
+                </span>
             </div>
-            <div id="candidateOtherAccomplishmentInformationPanelBody" class="collapse candidate-profile-section__collapse">
+            <div id="candidateOtherAccomplishmentInformationPanelBody" class="collapse candidate-profile-section__collapse"
+                 data-bs-parent="#candidateAccomplishmentAccordion">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <div class="candidate-other-list" data-other-list>
                         <form class="candidate-other-form d-none" data-other-form
@@ -600,8 +605,6 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const accomplishmentSectionLinks = document.querySelectorAll('[data-accomplishment-section-link]');
-            const accomplishmentSectionBodies = document.querySelectorAll('.candidate-accomplishment-page .candidate-profile-section__collapse');
             const portfolioList = document.querySelector('[data-portfolio-list]');
             const portfolioForm = document.querySelector('[data-portfolio-form]');
             const portfolioAddActions = document.querySelectorAll('[data-portfolio-add-action]');
@@ -857,24 +860,6 @@
                 });
             });
 
-            const setActiveAccomplishmentSection = function (panelId) {
-                accomplishmentSectionLinks.forEach(function (link) {
-                    link.classList.toggle('active', link.dataset.accomplishmentSectionLink === panelId);
-                });
-            };
-
-            const closeAccomplishmentSections = function (activeSection) {
-                if (typeof bootstrap === 'undefined') {
-                    return;
-                }
-
-                accomplishmentSectionBodies.forEach(function (section) {
-                    if (section !== activeSection) {
-                        bootstrap.Collapse.getOrCreateInstance(section, { toggle: false }).hide();
-                    }
-                });
-            };
-
             if (portfolioList && portfolioForm) {
                 const portfolioTitleInput = portfolioForm.querySelector('[data-portfolio-title-input]');
                 const portfolioUrlInput = portfolioForm.querySelector('[data-portfolio-url-input]');
@@ -949,7 +934,7 @@
                 const refreshPortfolioAddActions = function () {
                     const isMax = portfolioItems().length >= maxPortfolioItems;
                     portfolioAddActions.forEach(function (action) {
-                        const header = action.closest('.candidate-education-panel__header');
+                        const header = action.closest('.candidate-profile-section__header');
                         const sectionOpen = !header || !header.classList.contains('collapsed');
                         action.classList.toggle('d-none', isMax || !sectionOpen);
                     });
@@ -1330,7 +1315,7 @@
                 const refreshPublicationAddActions = function () {
                     const isMax = publicationItems().length >= maxPublicationItems;
                     publicationAddActions.forEach(function (action) {
-                        const header = action.closest('.candidate-education-panel__header');
+                        const header = action.closest('.candidate-profile-section__header');
                         const sectionOpen = !header || !header.classList.contains('collapsed');
                         action.classList.toggle('d-none', isMax || !sectionOpen);
                     });
@@ -1725,7 +1710,7 @@
                 const refreshAwardAddActions = function () {
                     const isMax = awardItems().length >= maxAwardItems;
                     awardAddActions.forEach(function (action) {
-                        const header = action.closest('.candidate-education-panel__header');
+                        const header = action.closest('.candidate-profile-section__header');
                         const sectionOpen = !header || !header.classList.contains('collapsed');
                         action.classList.toggle('d-none', isMax || !sectionOpen);
                     });
@@ -2106,7 +2091,7 @@
                 const refreshProjectAddActions = function () {
                     const isMax = projectItems().length >= maxProjectItems;
                     projectAddActions.forEach(function (action) {
-                        const header = action.closest('.candidate-education-panel__header');
+                        const header = action.closest('.candidate-profile-section__header');
                         const sectionOpen = !header || !header.classList.contains('collapsed');
                         action.classList.toggle('d-none', isMax || !sectionOpen);
                     });
@@ -2498,7 +2483,7 @@
                 const refreshOtherAddActions = function () {
                     const isMax = otherItems().length >= maxOtherItems;
                     otherAddActions.forEach(function (action) {
-                        const header = action.closest('.candidate-education-panel__header');
+                        const header = action.closest('.candidate-profile-section__header');
                         const sectionOpen = !header || !header.classList.contains('collapsed');
                         action.classList.toggle('d-none', isMax || !sectionOpen);
                     });
@@ -2804,97 +2789,6 @@
                 refreshOtherAddActions();
             }
 
-            accomplishmentSectionBodies.forEach(function (section) {
-                const toggle = document.querySelector('[data-bs-target="#' + section.id + '"]');
-                if (!toggle) {
-                    return;
-                }
-
-                const label = toggle.querySelector('span');
-                const icon = toggle.querySelector('i');
-                const header = toggle.closest('.candidate-education-panel__header');
-                const panel = section.closest('.candidate-education-panel');
-
-                const setPanelToggleState = function (isOpen) {
-                    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-                    if (label) {
-                        label.textContent = isOpen
-                            ? (toggle.dataset.collapseLabel || '{{ __('messages.candidate_profile.collapse') }}')
-                            : (toggle.dataset.expandLabel || '{{ __('messages.candidate_profile.expand') }}');
-                    }
-                    if (icon) {
-                        icon.classList.toggle('fa-chevron-up', isOpen);
-                        icon.classList.toggle('fa-chevron-down', !isOpen);
-                    }
-                    if (header) {
-                        header.classList.toggle('collapsed', !isOpen);
-                    }
-                    const portfolioAddAction = header ? header.querySelector('[data-portfolio-add-action]') : null;
-                    if (portfolioAddAction) {
-                        const portfolioCount = document.querySelectorAll('[data-portfolio-item]').length;
-                        portfolioAddAction.classList.toggle('d-none', !isOpen || portfolioCount >= maxPortfolioItems);
-                    }
-                    const publicationAddAction = header ? header.querySelector('[data-publication-add-action]') : null;
-                    if (publicationAddAction) {
-                        const publicationCount = document.querySelectorAll('[data-publication-item]').length;
-                        publicationAddAction.classList.toggle('d-none', !isOpen || publicationCount >= maxPublicationItems);
-                    }
-                    const awardAddAction = header ? header.querySelector('[data-award-add-action]') : null;
-                    if (awardAddAction) {
-                        const awardCount = document.querySelectorAll('[data-award-item]').length;
-                        awardAddAction.classList.toggle('d-none', !isOpen || awardCount >= maxAwardItems);
-                    }
-                    const projectAddAction = header ? header.querySelector('[data-project-add-action]') : null;
-                    if (projectAddAction) {
-                        const projectCount = document.querySelectorAll('[data-project-item]').length;
-                        projectAddAction.classList.toggle('d-none', !isOpen || projectCount >= maxProjectItems);
-                    }
-                    const otherAddAction = header ? header.querySelector('[data-other-add-action]') : null;
-                    if (otherAddAction) {
-                        const otherCount = document.querySelectorAll('[data-other-item]').length;
-                        otherAddAction.classList.toggle('d-none', !isOpen || otherCount >= maxOtherItems);
-                    }
-                };
-
-                section.addEventListener('shown.bs.collapse', function () {
-                    closeAccomplishmentSections(section);
-                    setPanelToggleState(true);
-                    if (panel) {
-                        setActiveAccomplishmentSection(panel.id);
-                    }
-                });
-                section.addEventListener('hidden.bs.collapse', function () {
-                    setPanelToggleState(false);
-                });
-
-                if (header) {
-                    header.addEventListener('click', function (event) {
-                        if (event.target.closest('button, a, input, select, textarea, label')) {
-                            return;
-                        }
-                        toggle.click();
-                    });
-                }
-
-                setPanelToggleState(section.classList.contains('show'));
-            });
-
-            accomplishmentSectionLinks.forEach(function (link) {
-                link.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const panel = document.getElementById(link.dataset.accomplishmentSectionLink);
-                    const section = panel ? panel.querySelector('.candidate-profile-section__collapse') : null;
-
-                    if (!panel || !section || typeof bootstrap === 'undefined') {
-                        return;
-                    }
-
-                    closeAccomplishmentSections(section);
-                    bootstrap.Collapse.getOrCreateInstance(section, { toggle: false }).show();
-                    setActiveAccomplishmentSection(panel.id);
-                    window.scrollCandidateProfileSection(panel);
-                });
-            });
         });
     </script>
 @endpush

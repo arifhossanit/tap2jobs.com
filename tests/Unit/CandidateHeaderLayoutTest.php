@@ -68,19 +68,15 @@ class CandidateHeaderLayoutTest extends TestCase
         $this->assertStringContainsString('flex-wrap: wrap', $styles);
         $this->assertStringContainsString('gap: 4px 18px', $styles);
 
-        $profileViews = [
-            'personal-information.blade.php',
-            'education-training.blade.php',
-            'employment.blade.php',
-            'other-information.blade.php',
-            'accomplishment.blade.php',
-        ];
+        $script = file_get_contents(resource_path('assets/js/candidates/candidate-profile/candidate_career_informations.js'));
 
         $this->assertStringContainsString('window.scrollCandidateProfileSection = function', $menu);
         $this->assertStringContainsString('stickyTop + menuHeight', $menu);
-        foreach ($profileViews as $profileView) {
-            $view = file_get_contents(resource_path('views/candidate/profile/'.$profileView));
-            $this->assertStringContainsString('window.scrollCandidateProfileSection(', $view);
-        }
+        $this->assertStringContainsString('window.scrollCandidateProfileSection(target);', file_get_contents(resource_path('views/candidate/profile/personal-information.blade.php')));
+        $this->assertStringContainsString("menuSelector: '[data-career-section-link]'", $script);
+        $this->assertStringContainsString("menuSelector: '[data-employment-section-link]'", $script);
+        $this->assertStringContainsString("menuSelector: '[data-other-section-link]'", $script);
+        $this->assertStringContainsString("menuSelector: '[data-accomplishment-section-link]'", $script);
+        $this->assertStringContainsString('window.scrollCandidateProfileSection(panel);', $script);
     }
 }

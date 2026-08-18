@@ -51,16 +51,16 @@
         };
     @endphp
 
-    <div class="mb-xl-8 candidate-employment-page">
-        <div class="candidate-education-panel" id="candidateExperienceDetails">
-            <div class="candidate-education-panel__header">
-                <h1>{{ __('messages.candidate_profile.job_experience') }}</h1>
-                <div class="candidate-education-panel__actions">
+    <div class="mb-xl-8 candidate-employment-page candidate-profile-accordion" id="candidateEmploymentAccordion">
+        <div class="candidate-education-panel candidate-profile-section" id="candidateExperienceDetails">
+            <div class="candidate-profile-section__header">
+                <span>{{ __('messages.candidate_profile.job_experience') }}</span>
+                <span class="candidate-profile-section__header-actions">
                     <a href="javascript:void(0)" class="candidate-education-add" data-employment-add-trigger data-employment-add-action>
                         <i class="fa-solid fa-plus"></i>
                         <span>{{ __('messages.candidate_profile.add_experience') }}</span>
                     </a>
-                    <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
+                    <button type="button" class="candidate-profile-section__toggle" data-bs-toggle="collapse"
                             data-bs-target="#candidateExperiencePanelBody" aria-expanded="true"
                             aria-controls="candidateExperiencePanelBody"
                             data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
@@ -68,10 +68,11 @@
                         <span>{{ __('messages.candidate_profile.collapse') }}</span>
                         <i class="fa-solid fa-chevron-up"></i>
                     </button>
-                </div>
+                </span>
             </div>
 
-            <div id="candidateExperiencePanelBody" class="collapse show candidate-profile-section__collapse">
+            <div id="candidateExperiencePanelBody" class="collapse show candidate-profile-section__collapse"
+                 data-bs-parent="#candidateEmploymentAccordion">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     {{ Form::hidden(null, __('messages.candidate_profile.present'), ['id' => 'candidatePresentMsg']) }}
                     <div class="candidate-employment-container">
@@ -180,22 +181,27 @@
             </div>
         </div>
 
-        <div class="candidate-education-panel" id="candidateRetiredArmyEmployment">
-            <div class="candidate-education-panel__header collapsed">
-                <h1>{{ __('messages.candidate_profile.army_experience') }}</h1>
-                <div class="candidate-education-panel__actions">
-                    <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
+        <div class="candidate-education-panel candidate-profile-section" id="candidateRetiredArmyEmployment">
+            <div class="candidate-profile-section__header collapsed">
+                <span>{{ __('messages.candidate_profile.army_experience') }}</span>
+                <span class="candidate-profile-section__header-actions">
+                    <a class="candidate-education-add {{ $hasRetiredArmyEmployment ? 'd-none' : '' }}" href="javascript:void(0)" data-retired-army-add-trigger data-retired-army-add-action>
+                        <i class="fa-solid fa-plus"></i> {{ __('messages.candidate_profile.add_employment_history') }}
+                    </a>
+                    <button type="button" class="candidate-profile-section__toggle" data-bs-toggle="collapse"
                             data-bs-target="#candidateRetiredArmyEmploymentPanelBody" aria-expanded="false"
                             aria-controls="candidateRetiredArmyEmploymentPanelBody"
                             data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
                             data-expand-label="{{ __('messages.candidate_profile.expand') }}">
                         <span>{{ __('messages.candidate_profile.expand') }}</span>
-                        <i class="fa-solid fa-chevron-down"></i>
+                        <i class="fa-solid fa-chevron-up"></i>
                     </button>
-                </div>
+                </span>
             </div>
-            <div id="candidateRetiredArmyEmploymentPanelBody" class="collapse candidate-profile-section__collapse">
+            <div id="candidateRetiredArmyEmploymentPanelBody" class="collapse candidate-profile-section__collapse"
+                 data-bs-parent="#candidateEmploymentAccordion">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
+                    <p class="candidate-skill-empty candidate-retired-army-empty {{ $hasRetiredArmyEmployment ? 'd-none' : '' }}" data-retired-army-empty>---</p>
                     <div class="candidate-retired-army-summary {{ $hasRetiredArmyEmployment ? '' : 'd-none' }}" data-retired-army-summary>
                         <div class="candidate-education-item__head">
                             <h2>{{ __('messages.candidate_profile.information') }}</h2>
@@ -320,8 +326,6 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const employmentSectionLinks = document.querySelectorAll('[data-employment-section-link]');
-            const employmentSectionBodies = document.querySelectorAll('.candidate-employment-page .candidate-profile-section__collapse');
             const addTrigger = document.querySelector('[data-employment-add-trigger]');
             const addFormWrap = document.querySelector('[data-employment-add-form-wrap]');
             const employmentQuillEditors = [];
@@ -417,24 +421,6 @@
                 });
             };
 
-            const setActiveEmploymentSection = function (panelId) {
-                employmentSectionLinks.forEach(function (link) {
-                    link.classList.toggle('active', link.dataset.employmentSectionLink === panelId);
-                });
-            };
-
-            const closeOtherEmploymentSections = function (activeSection) {
-                if (typeof bootstrap === 'undefined') {
-                    return;
-                }
-
-                employmentSectionBodies.forEach(function (section) {
-                    if (section !== activeSection) {
-                        bootstrap.Collapse.getOrCreateInstance(section, { toggle: false }).hide();
-                    }
-                });
-            };
-
             const hideInlineForms = function () {
                 document.querySelectorAll('.candidate-employment-edit-form').forEach(function (form) {
                     form.classList.add('d-none');
@@ -449,78 +435,6 @@
                     addFormWrap.classList.add('d-none');
                 }
             };
-
-            employmentSectionBodies.forEach(function (section) {
-                const toggle = document.querySelector('[data-bs-target="#' + section.id + '"]');
-                if (!toggle) {
-                    return;
-                }
-
-                const label = toggle.querySelector('span');
-                const icon = toggle.querySelector('i');
-                const header = toggle.closest('.candidate-education-panel__header');
-                const panel = section.closest('.candidate-education-panel');
-                const addActions = panel ? panel.querySelectorAll('.candidate-education-panel__header [data-employment-add-action]') : [];
-
-                const setPanelToggleState = function (isOpen) {
-                    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-                    if (label) {
-                        label.textContent = isOpen
-                            ? (toggle.dataset.collapseLabel || '{{ __('messages.candidate_profile.collapse') }}')
-                            : (toggle.dataset.expandLabel || '{{ __('messages.candidate_profile.expand') }}');
-                    }
-                    if (icon) {
-                        icon.classList.toggle('fa-chevron-up', isOpen);
-                        icon.classList.toggle('fa-chevron-down', !isOpen);
-                    }
-                    addActions.forEach(function (addAction) {
-                        addAction.classList.toggle('d-none', !isOpen);
-                    });
-                    if (header) {
-                        header.classList.toggle('collapsed', !isOpen);
-                    }
-                };
-
-                section.addEventListener('shown.bs.collapse', function () {
-                    closeOtherEmploymentSections(section);
-                    setPanelToggleState(true);
-                    if (panel) {
-                        setActiveEmploymentSection(panel.id);
-                    }
-                });
-                section.addEventListener('hidden.bs.collapse', function () {
-                    setPanelToggleState(false);
-                });
-
-                if (header) {
-                    header.addEventListener('click', function (event) {
-                        if (event.target.closest('button, a, input, select, textarea, label, .ql-toolbar, .ql-container')) {
-                            return;
-                        }
-
-                        toggle.click();
-                    });
-                }
-
-                setPanelToggleState(section.classList.contains('show'));
-            });
-
-            employmentSectionLinks.forEach(function (link) {
-                link.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const panel = document.getElementById(link.dataset.employmentSectionLink);
-                    const section = panel ? panel.querySelector('.candidate-profile-section__collapse') : null;
-
-                    if (!panel || !section || typeof bootstrap === 'undefined') {
-                        return;
-                    }
-
-                    closeOtherEmploymentSections(section);
-                    bootstrap.Collapse.getOrCreateInstance(section, { toggle: false }).show();
-                    setActiveEmploymentSection(panel.id);
-                    window.scrollCandidateProfileSection(panel);
-                });
-            });
 
             if (addTrigger && addFormWrap) {
                 addTrigger.addEventListener('click', function (event) {

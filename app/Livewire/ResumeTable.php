@@ -21,6 +21,8 @@ class ResumeTable extends LivewireTableComponent
     {
         $this->setPrimaryKey('id');
 
+        $this->setPaginationStatus(false);
+
         $this->setDefaultSort('created_at', 'desc');
 
         $this->setThAttributes(function (Column $column) {

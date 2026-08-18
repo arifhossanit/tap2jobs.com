@@ -3689,11 +3689,241 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__);
 
 
-document.addEventListener('DOMContentLoaded', loadCandidateCareerInformationData);
 
+function getCandidateProfileAccordionToggle(accordion, sectionId) {
+  return Array.from(accordion.querySelectorAll('[data-bs-target]')).find(function (toggle) {
+    return toggle.getAttribute('data-bs-target') === '#' + sectionId;
+  });
+}
+function initCandidateProfileAccordion(options) {
+  var accordion = document.getElementById(options.accordionId);
+  if (!accordion || accordion.dataset.profileAccordionReady === 'true') {
+    return;
+  }
+  accordion.dataset.profileAccordionReady = 'true';
+  var sectionBodies = Array.from(accordion.querySelectorAll('.candidate-profile-section__collapse'));
+  var menuLinks = options.menuSelector ? Array.from(document.querySelectorAll(options.menuSelector)) : [];
+  var setActiveSection = function setActiveSection(panelId) {
+    if (!options.menuDatasetKey) {
+      return;
+    }
+    menuLinks.forEach(function (link) {
+      link.classList.toggle('active', link.dataset[options.menuDatasetKey] === panelId);
+    });
+  };
+  var setPanelToggleState = function setPanelToggleState(section, expanded) {
+    if (section.classList.contains('collapsing')) {
+      return;
+    }
+    var toggle = getCandidateProfileAccordionToggle(accordion, section.id);
+    if (!toggle) {
+      return;
+    }
+    var label = toggle.querySelector('span');
+    var header = toggle.closest('.candidate-profile-section__header');
+    var panel = section.closest('.candidate-profile-section, .candidate-education-panel');
+    toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    if (label) {
+      label.textContent = expanded ? toggle.dataset.collapseLabel || 'Collapse' : toggle.dataset.expandLabel || 'Expand';
+    }
+    if (header) {
+      header.classList.toggle('collapsed', !expanded);
+    }
+    if (typeof options.syncHeaderActions === 'function') {
+      options.syncHeaderActions(header, expanded, section, panel);
+    } else if (header && options.headerActionsSelector) {
+      header.querySelectorAll(options.headerActionsSelector).forEach(function (action) {
+        action.classList.toggle('d-none', !expanded);
+      });
+    }
+    if (expanded && panel) {
+      setActiveSection(panel.id);
+    }
+  };
+  var refreshSection = function refreshSection(section) {
+    setPanelToggleState(section, section.classList.contains('show'));
+  };
+  sectionBodies.forEach(function (section) {
+    var toggle = getCandidateProfileAccordionToggle(accordion, section.id);
+    var header = toggle ? toggle.closest('.candidate-profile-section__header') : null;
+    section.addEventListener('show.bs.collapse', function () {
+      setPanelToggleState(section, true);
+    });
+    section.addEventListener('shown.bs.collapse', function () {
+      setPanelToggleState(section, true);
+    });
+    section.addEventListener('hide.bs.collapse', function () {
+      setPanelToggleState(section, false);
+    });
+    section.addEventListener('hidden.bs.collapse', function () {
+      setPanelToggleState(section, false);
+    });
+    if (header && toggle) {
+      header.addEventListener('click', function (event) {
+        if (event.target.closest('button, a, input, select, textarea, label, .ql-toolbar, .ql-container')) {
+          return;
+        }
+        toggle.click();
+      });
+    }
+    refreshSection(section);
+    if (typeof MutationObserver !== 'undefined') {
+      var observer = new MutationObserver(function () {
+        refreshSection(section);
+      });
+      observer.observe(section, {
+        attributes: true,
+        attributeFilter: ['class']
+      });
+    }
+  });
+  menuLinks.forEach(function (link) {
+    link.addEventListener('click', function (event) {
+      event.preventDefault();
+      var panelId = link.dataset[options.menuDatasetKey];
+      var panel = document.getElementById(panelId);
+      var section = panel ? panel.querySelector('.candidate-profile-section__collapse') : null;
+      if (!panel || !section || typeof bootstrap === 'undefined') {
+        return;
+      }
+      bootstrap.Collapse.getOrCreateInstance(section, {
+        toggle: false
+      }).show();
+      setActiveSection(panel.id);
+      if (typeof window.scrollCandidateProfileSection === 'function') {
+        window.scrollCandidateProfileSection(panel);
+      } else {
+        panel.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+}
+function initCandidateEducationAccordion() {
+  initCandidateProfileAccordion({
+    accordionId: 'candidateEducationAccordion',
+    menuSelector: '[data-career-section-link]',
+    menuDatasetKey: 'careerSectionLink',
+    headerActionsSelector: '[data-panel-add-action], [data-certification-add-action]'
+  });
+}
+function initCandidateEmploymentAccordion() {
+  initCandidateProfileAccordion({
+    accordionId: 'candidateEmploymentAccordion',
+    menuSelector: '[data-employment-section-link]',
+    menuDatasetKey: 'employmentSectionLink',
+    syncHeaderActions: function syncHeaderActions(header, expanded) {
+      if (!header) {
+        return;
+      }
+      header.querySelectorAll('[data-employment-add-action]').forEach(function (action) {
+        action.classList.toggle('d-none', !expanded);
+      });
+      var retiredArmyAddAction = header.querySelector('[data-retired-army-add-action]');
+      var retiredArmySummary = document.querySelector('[data-retired-army-summary]');
+      var hasRetiredArmyEmployment = retiredArmySummary && !retiredArmySummary.classList.contains('d-none');
+      if (retiredArmyAddAction) {
+        retiredArmyAddAction.classList.toggle('d-none', !expanded || hasRetiredArmyEmployment);
+      }
+    }
+  });
+}
+function initCandidateOtherInformationAccordion() {
+  initCandidateProfileAccordion({
+    accordionId: 'candidateOtherInformationAccordion',
+    menuSelector: '[data-other-section-link]',
+    menuDatasetKey: 'otherSectionLink',
+    headerActionsSelector: '[data-skill-add-action], [data-activity-add-action], [data-language-edit-action], [data-reference-add-action]',
+    syncHeaderActions: function syncHeaderActions(header, expanded) {
+      if (!header) {
+        return;
+      }
+      header.querySelectorAll('[data-skill-add-action], [data-activity-add-action], [data-language-edit-action], [data-reference-add-action]').forEach(function (action) {
+        action.classList.toggle('d-none', !expanded);
+      });
+      var linkAddAction = header.querySelector('[data-link-add-action]');
+      if (linkAddAction) {
+        linkAddAction.dataset.sectionOpen = expanded ? 'true' : 'false';
+        linkAddAction.classList.toggle('d-none', !expanded || document.querySelectorAll('[data-link-item]').length >= 5);
+      }
+    }
+  });
+}
+function initCandidateAccomplishmentAccordion() {
+  var itemLimits = [{
+    action: '[data-portfolio-add-action]',
+    item: '[data-portfolio-item]',
+    max: 2
+  }, {
+    action: '[data-publication-add-action]',
+    item: '[data-publication-item]',
+    max: 5
+  }, {
+    action: '[data-award-add-action]',
+    item: '[data-award-item]',
+    max: 5
+  }, {
+    action: '[data-project-add-action]',
+    item: '[data-project-item]',
+    max: 5
+  }, {
+    action: '[data-other-add-action]',
+    item: '[data-other-item]',
+    max: 5
+  }];
+  initCandidateProfileAccordion({
+    accordionId: 'candidateAccomplishmentAccordion',
+    menuSelector: '[data-accomplishment-section-link]',
+    menuDatasetKey: 'accomplishmentSectionLink',
+    syncHeaderActions: function syncHeaderActions(header, expanded) {
+      if (!header) {
+        return;
+      }
+      itemLimits.forEach(function (limit) {
+        var action = header.querySelector(limit.action);
+        if (!action) {
+          return;
+        }
+        action.classList.toggle('d-none', !expanded || document.querySelectorAll(limit.item).length >= limit.max);
+      });
+    }
+  });
+}
+function bootCandidateCareerInformationData() {
+  initCandidateEducationAccordion();
+  initCandidateEmploymentAccordion();
+  initCandidateOtherInformationAccordion();
+  initCandidateAccomplishmentAccordion();
+  var pageMarker = document.getElementById('indexCareerInfoData');
+  if (!pageMarker || pageMarker.dataset.educationUiInitialized === 'true') {
+    return;
+  }
+  pageMarker.dataset.educationUiInitialized = 'true';
+  loadCandidateCareerInformationData();
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootCandidateCareerInformationData, {
+    once: true
+  });
+} else {
+  bootCandidateCareerInformationData();
+}
+document.addEventListener('turbo:load', bootCandidateCareerInformationData);
 function loadCandidateCareerInformationData() {
   if (!$('#indexCareerInfoData').length) {
     return;
+  }
+  function scrollToEducationInlineForm(targetElement) {
+    var formElement = targetElement || document.querySelector('[data-education-add-form]') || document.querySelector('[data-training-add-form]');
+    if (!formElement) return;
+    var stickyOffset = 150;
+    var targetTop = formElement.getBoundingClientRect().top + window.pageYOffset - stickyOffset;
+    window.scrollTo({
+      top: targetTop,
+      behavior: 'smooth'
+    });
   }
   var educationCustomSelectSelector = '.candidate-education-form-grid select.form-select:not([data-education-major-select])';
   function closeEducationCustomSelects() {

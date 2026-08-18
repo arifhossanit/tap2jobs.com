@@ -91,7 +91,16 @@
             ],
         ];
     @endphp
-    <div class="mb-xl-8 candidate-career-info-page">
+    <script>
+        window.candidateEducationExamTitleOptions = @json($educationExamTitleOptions);
+        window.candidateEducationMajorGroupOptions = @json($educationMajorGroupOptions);
+        window.candidateEducationLevelMeta = @json($educationLevelMeta);
+        window.candidateProfileUseBanglaNumber = @json(app()->getLocale() === 'bn');
+        window.candidateProfileEducationLabel = @json(__('messages.candidate_profile.education'));
+        window.candidateProfileTrainingLabel = @json(__('messages.candidate_profile.training'));
+        window.candidateProfileCertificationLabel = @json(__('messages.candidate_profile.professional_certification'));
+    </script>
+    <div class="mb-xl-8 candidate-career-info-page candidate-profile-accordion" id="candidateEducationAccordion">
         <div class="border-0 d-none">
             <div class="d-md-flex align-items-center justify-content-between mb-5 mx-3">
                 <h1 class="mb-0">{{ __('messages.candidate_profile.experience') }}</h1>
@@ -162,15 +171,15 @@
             </div>
         </div>
 
-        <div class="candidate-education-panel" id="candidateEducationDetails">
-            <div class="candidate-education-panel__header" data-education-section-header>
-                <h1>{{ __('messages.candidate_profile.education') }}</h1>
-                <div class="candidate-education-panel__actions">
+        <div class="candidate-education-panel candidate-profile-section" id="candidateEducationDetails">
+            <div class="candidate-profile-section__header" data-education-section-header>
+                <span>{{ __('messages.candidate_profile.education') }}</span>
+                <span class="candidate-profile-section__header-actions">
                     <a href="javascript:void(0)" class="candidate-education-add" data-inline-education-add data-panel-add-action>
                         <i class="fa-solid fa-plus"></i>
                         <span>{{ __('messages.candidate_profile.add_education') }}</span>
                     </a>
-                    <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
+                    <button type="button" class="candidate-profile-section__toggle" data-bs-toggle="collapse"
                         data-bs-target="#candidateEducationPanelBody" aria-expanded="true"
                         aria-controls="candidateEducationPanelBody" data-education-panel-toggle
                         data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
@@ -178,10 +187,11 @@
                         <span>{{ __('messages.candidate_profile.collapse') }}</span>
                         <i class="fa-solid fa-chevron-up"></i>
                     </button>
-                </div>
+                </span>
             </div>
 
-            <div id="candidateEducationPanelBody" class="collapse show candidate-profile-section__collapse">
+            <div id="candidateEducationPanelBody" class="collapse show candidate-profile-section__collapse"
+                 data-bs-parent="#candidateEducationAccordion">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                 <div class="candidate-education-inline-form d-none" data-education-add-form>
                     <h2 data-education-form-title>{{ __('messages.candidate_profile.education') }} {{ $candidateProfileNumber($data['candidateEducations']->count() + 1) }}</h2>
@@ -472,25 +482,26 @@
             </div>
         </div>
 
-        <div class="candidate-education-panel" id="candidateTrainingDetails">
-            <div class="candidate-education-panel__header collapsed">
-                <h1>{{ __('messages.candidate_profile.training') }}</h1>
-                <div class="candidate-education-panel__actions">
+        <div class="candidate-education-panel candidate-profile-section" id="candidateTrainingDetails">
+            <div class="candidate-profile-section__header collapsed">
+                <span>{{ __('messages.candidate_profile.training') }}</span>
+                <span class="candidate-profile-section__header-actions">
                     <a href="javascript:void(0)" class="candidate-education-add d-none" data-panel-add-action>
                         <i class="fa-solid fa-plus"></i>
                         <span>{{ __('messages.candidate_profile.add_training') }}</span>
                     </a>
-                    <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
+                    <button type="button" class="candidate-profile-section__toggle" data-bs-toggle="collapse"
                         data-bs-target="#candidateTrainingPanelBody" aria-expanded="false"
                         aria-controls="candidateTrainingPanelBody"
                         data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
                         data-expand-label="{{ __('messages.candidate_profile.expand') }}">
                         <span>{{ __('messages.candidate_profile.expand') }}</span>
-                        <i class="fa-solid fa-chevron-down"></i>
+                        <i class="fa-solid fa-chevron-up"></i>
                     </button>
-                </div>
+                </span>
             </div>
-            <div id="candidateTrainingPanelBody" class="collapse candidate-profile-section__collapse">
+            <div id="candidateTrainingPanelBody" class="collapse candidate-profile-section__collapse"
+                 data-bs-parent="#candidateEducationAccordion">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <div class="candidate-training-container">
                         <div class="{{ $candidateTrainings->count() ? 'd-none' : '' }}" id="notfoundTraining">
@@ -611,25 +622,26 @@
             </div>
         </div>
 
-        <div class="candidate-education-panel" id="candidateProfessionalCertification">
-            <div class="candidate-education-panel__header collapsed">
-                <h1>{{ __('messages.candidate_profile.professional_certification') }}</h1>
-                <div class="candidate-education-panel__actions">
+        <div class="candidate-education-panel candidate-profile-section" id="candidateProfessionalCertification">
+            <div class="candidate-profile-section__header collapsed">
+                <span>{{ __('messages.candidate_profile.professional_certification') }}</span>
+                <span class="candidate-profile-section__header-actions">
                     <a href="javascript:void(0)" class="candidate-education-add d-none" data-certification-add-action>
                         <i class="fa-solid fa-plus"></i>
                         <span>{{ __('messages.candidate_profile.add_professional_certification') }}</span>
                     </a>
-                    <button type="button" class="candidate-education-collapse" data-bs-toggle="collapse"
+                    <button type="button" class="candidate-profile-section__toggle" data-bs-toggle="collapse"
                         data-bs-target="#candidateProfessionalCertificationPanelBody" aria-expanded="false"
                         aria-controls="candidateProfessionalCertificationPanelBody"
                         data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
                         data-expand-label="{{ __('messages.candidate_profile.expand') }}">
                         <span>{{ __('messages.candidate_profile.expand') }}</span>
-                        <i class="fa-solid fa-chevron-down"></i>
+                        <i class="fa-solid fa-chevron-up"></i>
                     </button>
-                </div>
+                </span>
             </div>
-            <div id="candidateProfessionalCertificationPanelBody" class="collapse candidate-profile-section__collapse">
+            <div id="candidateProfessionalCertificationPanelBody" class="collapse candidate-profile-section__collapse"
+                 data-bs-parent="#candidateEducationAccordion">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <div class="candidate-certification-container">
                         @foreach ($candidateCertificationItems as $candidateCertification)
@@ -804,14 +816,6 @@
 @endsection
 @push('scripts')
     <script>
-        window.candidateEducationExamTitleOptions = @json($educationExamTitleOptions);
-        window.candidateEducationMajorGroupOptions = @json($educationMajorGroupOptions);
-        window.candidateEducationLevelMeta = @json($educationLevelMeta);
-        window.candidateProfileUseBanglaNumber = @json(app()->getLocale() === 'bn');
-        window.candidateProfileEducationLabel = @json(__('messages.candidate_profile.education'));
-        window.candidateProfileTrainingLabel = @json(__('messages.candidate_profile.training'));
-        window.candidateProfileCertificationLabel = @json(__('messages.candidate_profile.professional_certification'));
-
         document.addEventListener('DOMContentLoaded', function () {
             const formatCandidateProfileNumber = function (number) {
                 const value = String(number);
@@ -841,99 +845,6 @@
             const getNumberedSectionTitle = function (label, number) {
                 return label + ' ' + formatCandidateProfileNumber(number);
             };
-
-            const careerSectionLinks = document.querySelectorAll('[data-career-section-link]');
-            const careerSectionBodies = document.querySelectorAll('.candidate-education-panel .candidate-profile-section__collapse');
-
-            const setActiveCareerSection = function (panelId) {
-                careerSectionLinks.forEach(function (link) {
-                    link.classList.toggle('active', link.dataset.careerSectionLink === panelId);
-                });
-            };
-
-            const closeOtherCareerSections = function (activeSection) {
-                if (typeof bootstrap === 'undefined') {
-                    return;
-                }
-
-                careerSectionBodies.forEach(function (section) {
-                    if (section !== activeSection) {
-                        bootstrap.Collapse.getOrCreateInstance(section, { toggle: false }).hide();
-                    }
-                });
-            };
-
-            careerSectionBodies.forEach(function (section) {
-                const toggle = document.querySelector('[data-bs-target="#' + section.id + '"]');
-                if (!toggle) {
-                    return;
-                }
-
-                const label = toggle.querySelector('span');
-                const icon = toggle.querySelector('i');
-                const header = toggle.closest('.candidate-education-panel__header');
-                const panel = section.closest('.candidate-education-panel');
-                const addActions = panel
-                    ? panel.querySelectorAll('.candidate-education-panel__header [data-panel-add-action], .candidate-education-panel__header [data-certification-add-action]')
-                    : [];
-
-                const setPanelToggleState = function (isOpen) {
-                    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-                    if (label) {
-                        label.textContent = isOpen
-                            ? (toggle.dataset.collapseLabel || '{{ __('messages.candidate_profile.collapse') }}')
-                            : (toggle.dataset.expandLabel || '{{ __('messages.candidate_profile.expand') }}');
-                    }
-                    if (icon) {
-                        icon.classList.toggle('fa-chevron-up', isOpen);
-                        icon.classList.toggle('fa-chevron-down', !isOpen);
-                    }
-                    addActions.forEach(function (addAction) {
-                        addAction.classList.toggle('d-none', !isOpen);
-                    });
-                    if (header) {
-                        header.classList.toggle('collapsed', !isOpen);
-                    }
-                };
-
-                section.addEventListener('shown.bs.collapse', function () {
-                    closeOtherCareerSections(section);
-                    setPanelToggleState(true);
-                    if (panel) {
-                        setActiveCareerSection(panel.id);
-                    }
-                });
-                section.addEventListener('hidden.bs.collapse', () => setPanelToggleState(false));
-
-                if (header) {
-                    header.addEventListener('click', function (event) {
-                        if (event.target.closest('button, a, input, select, textarea, label, .ql-toolbar, .ql-container')) {
-                            return;
-                        }
-
-                        toggle.click();
-                    });
-                }
-
-                setPanelToggleState(section.classList.contains('show'));
-            });
-
-            careerSectionLinks.forEach(function (link) {
-                link.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const panel = document.getElementById(link.dataset.careerSectionLink);
-                    const section = panel ? panel.querySelector('.candidate-profile-section__collapse') : null;
-
-                    if (!panel || !section || typeof bootstrap === 'undefined') {
-                        return;
-                    }
-
-                    closeOtherCareerSections(section);
-                    bootstrap.Collapse.getOrCreateInstance(section, { toggle: false }).show();
-                    setActiveCareerSection(panel.id);
-                    window.scrollCandidateProfileSection(panel);
-                });
-            });
 
             const trainingPanel = document.getElementById('candidateTrainingDetails');
             const trainingFormWrap = trainingPanel ? trainingPanel.querySelector('[data-training-form]') : null;
