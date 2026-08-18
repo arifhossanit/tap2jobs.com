@@ -349,6 +349,7 @@ return [
     ],
 
     'web_blog' => [
+        'share_this_post' => 'Share This Post',
         'comments' => 'Comments',
         'recent_posts' => 'Recent Posts',
         'your_name' => 'Enter Your Name',

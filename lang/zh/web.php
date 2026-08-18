@@ -340,6 +340,7 @@ return [
     ],
 
     'web_blog' => [
+        'share_this_post' => '分享这篇文章',
         'comments' => '注释',
         'recent_posts' => '最近的帖子',
         'your_name' => '輸入你的名字',

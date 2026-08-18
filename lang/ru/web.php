@@ -338,6 +338,7 @@ return [
     ],
 
     'web_blog' => [
+        'share_this_post' => 'Поделиться этой публикацией',
         'comments' => 'Комментарии',
         'recent_posts' => 'Недавние Посты',
         'your_name' => 'Введите ваше имя',

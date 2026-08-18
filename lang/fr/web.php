@@ -338,6 +338,7 @@ return [
     ],
 
     'web_blog' => [
+        'share_this_post' => 'Partager cet article',
         'comments' => 'commentaires',
         'recent_posts' => 'Messages récents',
         'your_name' => 'Entrez votre nom',

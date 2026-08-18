@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3beb5d372cde54bce4f74bba58b4425c",
+    "content-hash": "c75245035fe82e77a927aff638b56856",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -6057,6 +6057,51 @@
                 }
             ],
             "time": "2023-04-01T12:26:34+00:00"
+        },
+        {
+            "name": "rhukster/dom-sanitizer",
+            "version": "1.0.14",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rhukster/dom-sanitizer.git",
+                "reference": "4292aa3daa34e0aefb80db06d1811cf0fd14b3d8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rhukster/dom-sanitizer/zipball/4292aa3daa34e0aefb80db06d1811cf0fd14b3d8",
+                "reference": "4292aa3daa34e0aefb80db06d1811cf0fd14b3d8",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "php": ">=7.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Rhukster\\DomSanitizer\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andy Miller",
+                    "email": "rhuk@rhuk.net"
+                }
+            ],
+            "description": "A simple but effective DOM/SVG/MathML Sanitizer for PHP 7.4+",
+            "support": {
+                "issues": "https://github.com/rhukster/dom-sanitizer/issues",
+                "source": "https://github.com/rhukster/dom-sanitizer/tree/1.0.14"
+            },
+            "time": "2026-08-10T22:54:15+00:00"
         },
         {
             "name": "sabberworm/php-css-parser",

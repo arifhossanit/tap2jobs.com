@@ -1,5 +1,4 @@
 /node_modules
-/public/uploads
 /storage/*.key
 /vendor
 .playwright-mcp/
@@ -7,7 +6,6 @@
 .env.backup
 /.phpunit.cache
 Homestead.json
-/public/assets
 Homestead.yaml
 npm-debug.log
 yarn-error.log
@@ -17,6 +15,13 @@ yarn-error.log
 branch_structure.json
 temp_auto_push.bat
 temp_interactive_push.bat
-.gitignore
 /.vscode
 /.cursor
+/public/**/*.png
+/public/**/*.jpg
+/public/**/*.jpeg
+/public/**/*.webp
+/public/**/*.svg
+/public/**/*.mp4
+/public/**/*.mkv
+/public/**/*.pdf

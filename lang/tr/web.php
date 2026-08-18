@@ -339,6 +339,7 @@ return [
     ],
 
     'web_blog' => [
+        'share_this_post' => 'Bu Gönderiyi Paylaş',
         'comments' => 'Yorumlar',
         'recent_posts' => 'yakın zamanda Gönderilenler',
         'your_name' => 'Adınızı giriniz',

@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateAdRequest;
+use App\Http\Requests\UpdateAdRequest;
 use App\Models\Ad;
 use App\Repositories\AdRepository;
-use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class AdController extends AppBaseController
@@ -34,15 +33,9 @@ class AdController extends AppBaseController
 
     public function store(CreateAdRequest $request): JsonResponse
     {
-        $input = $request->all();
-        $pages = $request->input('page', []);
-        
-        if (in_array('all', $pages)) {
-            $input['page'] = ['all'];
-        } else {
-            $input['page'] = array_values(array_unique($pages));
-        }
-        $input['is_active'] = (isset($input['is_active'])) ? 1 : 0;
+        $input = $request->validated();
+        $input['page'] = array_values(array_unique($input['page']));
+        $input['is_active'] = $request->boolean('is_active');
         $input['sort_order'] = isset($input['sort_order']) && $input['sort_order'] !== ''
             ? (int) $input['sort_order']
             : 0;
@@ -59,34 +52,11 @@ class AdController extends AppBaseController
         return $this->sendResponse($ad, __('messages.flash.ad_retrieved'));
     }
 
-    public function update(Request $request, Ad $ad): JsonResponse
+    public function update(UpdateAdRequest $request, Ad $ad): JsonResponse
     {
-        $request->validate([
-            'title' => 'nullable|max:150',
-            'description' => 'nullable|max:500',
-            'link_url' => 'nullable|url|max:255',
-            'cta_text' => 'nullable|max:50',
-            'position' => 'required|in:header,register_left,register_right',
-            'page' => 'nullable|array',
-            'page.*' => 'in:all,candidate_register,employer_register,candidate_login,employer_login,home',
-            'sort_order' => 'nullable|integer|min:0',
-            'ad_image' => 'nullable|file|mimes:jpeg,jpg,png,webp,mp4,webm,ogg|max:51200',
-        ], [
-            'ad_image.mimes' => __('messages.ad.media_extension_message'),
-            'ad_image.max' => __('messages.ad.media_size_message'),
-            'position.required' => __('messages.ad.position_required'),
-            'link_url.url' => __('messages.ad.valid_url'),
-        ]);
-        
-        $input = $request->all();
-        $pages = $request->input('page', []);
-        
-        if (in_array('all', $pages)) {
-            $input['page'] = ['all'];
-        } else {
-            $input['page'] = array_values(array_unique($pages));
-        }
-        $input['is_active'] = (isset($input['is_active'])) ? 1 : 0;
+        $input = $request->validated();
+        $input['page'] = array_values(array_unique($input['page']));
+        $input['is_active'] = $request->boolean('is_active');
         $input['sort_order'] = isset($input['sort_order']) && $input['sort_order'] !== ''
             ? (int) $input['sort_order']
             : 0;

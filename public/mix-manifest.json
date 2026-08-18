@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
     "/js/app.js": "/js/app.js?id=ebea11a0af8b80feef009b16bea588fb",
     "/assets/js/web/js/news_letter/news_letter.js": "/assets/js/web/js/news_letter/news_letter.js?id=30b6a3fc4e0ca6cb799d3c8a80ec2396",
     "/js/pages.js": "/js/pages.js?id=f3e7a44bba29b8f9c62049c2351a90f3",
@@ -9,6 +10,18 @@
     "/assets/css/custom-dark.css": "/assets/css/custom-dark.css?id=cb30012ea7f0706aad162d47519d326b",
     "/assets/css/custom.css": "/assets/css/custom.css?id=855272017da757b5822b9c4a5b050c6e",
     "/js/currency.js": "/js/currency.js?id=f82b9edec39daeb65b27c058acc950ba",
+=======
+    "/js/app.js": "/js/app.js?id=62c3fd82a91ea11203cf9b2bb40397b0",
+    "/assets/js/web/js/news_letter/news_letter.js": "/assets/js/web/js/news_letter/news_letter.js?id=68270cfb1876459533bb5dddc6cb254a",
+    "/js/pages.js": "/js/pages.js?id=df1377bde4aac0a150c1f99d5acb70a3",
+    "/js/front_pages.js": "/js/front_pages.js?id=22bf94da16d131babb5a79fa10b337ef",
+    "/assets/js/custom/custom.js": "/assets/js/custom/custom.js?id=56467f4eb1ffcbf78392b75537e83e63",
+    "/assets/css/web_contact.css": "/assets/css/web_contact.css?id=c7d2d915fca0b1223816d83bebe3bdef",
+    "/assets/css/custom-auth.css": "/assets/css/custom-auth.css?id=cecefbf737ece808eef57c37c5c3c98d",
+    "/assets/css/custom-dark.css": "/assets/css/custom-dark.css?id=c86d47c3327744156eff9a24edf09e03",
+    "/assets/css/custom.css": "/assets/css/custom.css?id=6d518b4a55997e9750a44f3d2d518bed",
+    "/js/currency.js": "/js/currency.js?id=70c210ff7d7c3df6ad4da8629a0b6f9a",
+>>>>>>> e16247e6ca4c2bba24630ede8c04450df222808b
     "/assets/css/fonts/slick.eot": "/assets/css/fonts/slick.eot?id=4bb08b6ed048eaf8be2a371ffc8faec2",
     "/assets/css/fonts/slick.svg": "/assets/css/fonts/slick.svg?id=f97e3bbf73254b0112091d0192f17aec",
     "/assets/css/fonts/slick.ttf": "/assets/css/fonts/slick.ttf?id=74144acfc01b478e4e42106977bfa954",
