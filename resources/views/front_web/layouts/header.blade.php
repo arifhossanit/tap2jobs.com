@@ -157,38 +157,38 @@
                                                     </span>
                                                 @endif
                                             </button>
-                                            <div class="dropdown-menu dropdown-menu-end front-user-dropdown-menu p-0 shadow-lg border-0 rounded-3"
-                                                 style="width: 320px; max-height: 420px; overflow: hidden;"
-                                                 aria-labelledby="frontNotificationDropdown">
-                                                <div class="d-flex align-items-center justify-content-between px-3 py-3 bg-light border-bottom">
-                                                    <h6 class="fw-bold mb-0 text-dark fs-6 d-flex align-items-center gap-2">
-                                                        <i class="fa-solid fa-bell text-primary"></i> {{ __('messages.notification.notifications') }}
-                                                    </h6>
-                                                    @if($unreadCount > 0)
-                                                        <a href="javascript:void(0)" class="text-primary fs-7 text-decoration-none read-all-notification-btn">{{ __('messages.notification.mark_all_as_read') ?? 'Mark all as read' }}</a>
-                                                    @endif
-                                                </div>
-                                                <div class="notification-scroll-body" style="max-height: 320px; overflow-y: auto;">
-                                                    @if($notifications && $notifications->isNotEmpty())
-                                                        @foreach($notifications as $notification)
-                                                            <div class="dropdown-item border-bottom p-3 text-wrap d-flex align-items-start gap-3 read-notification-item" data-id="{{ $notification->id }}" style="cursor: pointer;">
-                                                                <div class="rounded-circle bg-primary bg-opacity-10 p-2 text-primary d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; flex-shrink: 0;">
-                                                                    <i class="{{ getNotificationIcon($notification->type) }} fs-6"></i>
-                                                                </div>
-                                                                <div class="w-100">
-                                                                    <p class="mb-1 fw-semibold text-dark fs-7 lh-sm">{{ $notification->title }}</p>
-                                                                    <span class="text-muted fs-8"><i class="fa-regular fa-clock me-1"></i>{{ $notification->created_at->diffForHumans() }}</span>
-                                                                </div>
-                                                            </div>
-                                                        @endforeach
-                                                    @else
-                                                        <div class="p-4 text-center text-muted">
-                                                            <i class="fa-regular fa-bell-slash fs-3 mb-2 d-block text-secondary"></i>
-                                                            <span class="fs-7">{{ __('messages.notification.empty_notifications') ?? 'No notifications found' }}</span>
-                                                        </div>
-                                                    @endif
-                                                </div>
-                                            </div>
+                                             <div class="dropdown-menu dropdown-menu-end front-user-dropdown-menu p-0 shadow-lg border-0 rounded-3"
+                                                  style="width: 320px; max-height: 420px; overflow: hidden;"
+                                                  aria-labelledby="frontNotificationDropdown">
+                                                 <div class="d-flex align-items-center justify-content-between px-3 py-2 bg-light border-bottom">
+                                                     <h6 class="fw-bold mb-0 text-dark fs-7 d-flex align-items-center gap-2">
+                                                         <i class="fa-solid fa-bell text-primary"></i> {{ __('messages.notification.notifications') }}
+                                                     </h6>
+                                                     @if($unreadCount > 0)
+                                                         <a href="javascript:void(0)" class="text-primary fs-8 text-decoration-none read-all-notification-btn">{{ __('messages.notification.mark_all_as_read') ?? 'Mark all as read' }}</a>
+                                                     @endif
+                                                 </div>
+                                                 <div class="notification-scroll-body" style="max-height: 320px; overflow-y: auto;">
+                                                     @if($notifications && $notifications->isNotEmpty())
+                                                         @foreach($notifications as $notification)
+                                                             <div class="dropdown-item border-bottom py-2 px-3 text-wrap d-flex align-items-start gap-2 read-notification-item" data-id="{{ $notification->id }}" data-url="{{ getNotificationUrl($notification) }}" style="cursor: pointer; transition: background 0.2s ease, opacity 0.2s ease;">
+                                                                 <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center mt-1" style="width: 28px; height: 28px; flex-shrink: 0;">
+                                                                     <i class="{{ getNotificationIcon($notification->type) }}" style="font-size: 0.75rem;"></i>
+                                                                 </div>
+                                                                 <div class="w-100">
+                                                                     <p class="mb-1 fw-semibold text-dark lh-sm" style="font-size: 0.8125rem;">{{ $notification->title }}</p>
+                                                                     <span class="text-muted" style="font-size: 0.725rem;"><i class="fa-regular fa-clock me-1"></i>{{ $notification->created_at->diffForHumans() }}</span>
+                                                                 </div>
+                                                             </div>
+                                                         @endforeach
+                                                     @else
+                                                         <div class="p-4 text-center text-muted">
+                                                             <i class="fa-regular fa-bell-slash fs-3 mb-2 d-block text-secondary"></i>
+                                                             <span class="fs-7">{{ __('messages.notification.empty_notifications') ?? 'No notifications found' }}</span>
+                                                         </div>
+                                                     @endif
+                                                 </div>
+                                             </div>
                                         </li>
                                     @endauth
                                     <li class="nav-item dropdown front-user-dropdown">

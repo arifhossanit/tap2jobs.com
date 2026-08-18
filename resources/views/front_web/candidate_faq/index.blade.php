@@ -65,7 +65,7 @@
 
         .candidate-faq-page .faq-search .btn {
             align-items: center;
-            background: #d8205f;
+            background: #1967d2;
             border: 0;
             border-radius: 6px;
             color: #ffffff;
@@ -92,7 +92,7 @@
         }
 
         .candidate-faq-page .faq-box:hover {
-            border-color: #d8205f;
+            border-color: #1967d2;
             box-shadow: 0 14px 32px rgba(216, 32, 95, 0.12);
             transform: translateY(-3px);
         }
@@ -108,9 +108,9 @@
 
         .candidate-faq-page .faq-icon {
             align-items: center;
-            background: #fce8f0;
+            background: #e5e3f0;
             border-radius: 50%;
-            color: #d8205f;
+            color: #1967d2;
             display: flex;
             font-size: 24px;
             height: 58px;
@@ -176,7 +176,7 @@
             align-items: center;
             background: #ffffff;
             border-radius: 50%;
-            color: #d8205f;
+            color: #1967d2;
             display: inline-flex;
             flex: 0 0 30px;
             height: 30px;
@@ -191,13 +191,13 @@
 
         .candidate-faq-page .accordion-title:not(.collapsed),
         .candidate-faq-page .accordion-title.is-open {
-            background: #d8205f;
+            background: #1967d2;
             color: #ffffff;
         }
 
         .candidate-faq-page .accordion-title:not(.collapsed) .faq-plus-icon,
         .candidate-faq-page .accordion-title.is-open .faq-plus-icon {
-            color: #d8205f;
+            color: #1967d2;
             transform: rotate(45deg) !important;
         }
 

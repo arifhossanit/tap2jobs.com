@@ -11574,6 +11574,7 @@ header .navbar .navbar-collapse .navbar-nav .nav-item .nav-link {
     border: 0;
     border-radius: 8px;
     box-shadow: 0 8px 24px rgba(15, 23, 42, .14);
+    z-index: 9999 !important;
 }
 
 .front-user-name {

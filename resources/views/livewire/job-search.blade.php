@@ -7,15 +7,12 @@
                     <a href="{{ route('front.job.details', $job['job_id']) }}" class="card p-4 border-0 shadow-sm">
                         <div class="d-sm-flex gap-4 align-items-center position-relative">
                             <div class="mb-sm-0 mb-3 flex-shrink-0">
-                                <img src="{{ $job->company->company_url }}" class="card-img" alt="..." style="width: 80px; height: 80px; object-fit: contain;">
+                                <img src="{{ $job->company?->company_url ?? asset('assets/img/infyom-logo.png') }}" class="card-img" alt="..." style="width: 80px; height: 80px; object-fit: contain;">
                             </div>
                             <div class="flex-grow-1">
                                 <div class="card-body p-0">
                                     <h5 class="card-title text-secondary fs-18 mb-0">
                                         {{ html_entity_decode(Str::limit($job['job_title'], 50)) }}
-                                        @if (isset($job->jobShift->shift))
-                                        
-                                        @endif
                                     </h5>
                                     <div class="">
                                         <div class="card-desc d-flex flex-wrap mt-2 ">
@@ -23,7 +20,7 @@
                                               <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
                                                 <img src="{{ asset('img_template/briefcase.svg') }}" class="w-100">
                                               </div>
-                                              <p class="fs-14 text-gray mb-2">{{ $job->jobCategory->name }}</p>
+                                              <p class="fs-14 text-gray mb-2">{{ $job->jobCategory?->name ?? '' }}</p>
                                             </div>
                                             <div class="desc d-flex {{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
                                               <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
@@ -48,9 +45,11 @@
                                             {{ $job->jobsSkill->count() }}+
                                         </p> --}}
 
-                                        <span class="text text-primary fs-14 mb-0">
-                                            {{ $job->jobShift->shift }}
-                                        </span>
+                                         @if(!empty($job->jobShift?->shift))
+                                             <span class="text text-primary fs-14 mb-0">
+                                                 {{ $job->jobShift->shift }}
+                                             </span>
+                                         @endif
                                     </div>
                                 </div>
                             </div>

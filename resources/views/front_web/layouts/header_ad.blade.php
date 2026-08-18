@@ -76,8 +76,7 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        /* Professional static gradient (no animation) */
-        background: linear-gradient(90deg, #1d4ed8 0%, #4338ca 100%);
+        background: #1967d2;
     }
     #siteTopBanner .site-top-banner__inner {
         display: flex !important;
@@ -128,10 +127,10 @@
     #siteTopBanner .site-top-banner__promo:hover {
         filter: brightness(1.05);
     }
-    /* Keep light-blue navbar below the banner in stacking order */
+    /* Keep navbar and its dropdowns above any content ads */
     body > header.bg-gradient {
         position: relative !important;
-        z-index: 1 !important;
+        z-index: 9999 !important;
         margin-top: 0 !important;
         top: auto !important;
     }

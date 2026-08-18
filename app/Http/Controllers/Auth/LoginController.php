@@ -87,14 +87,14 @@ class LoginController extends Controller
 
         if (isset($request->remember)) {
             return $this->authenticated($request, $this->guard()->user())
-                ?: redirect()->intended($this->redirectPath())
+                ?: redirect()->to(RouteServiceProvider::ADMIN_HOME)
                     ->withCookie(\Cookie::make('email', $request->email, 3600))
                     ->withCookie(\Cookie::make('password', $request->password, 3600))
                     ->withCookie(\Cookie::make('remember', 1, 3600));
         }
 
         return $this->authenticated($request, $this->guard()->user())
-            ?: redirect()->intended($this->redirectPath())
+            ?: redirect()->to(RouteServiceProvider::ADMIN_HOME)
                 ->withCookie(\Cookie::forget('email'))
                 ->withCookie(\Cookie::forget('password'))
                 ->withCookie(\Cookie::forget('remember'));

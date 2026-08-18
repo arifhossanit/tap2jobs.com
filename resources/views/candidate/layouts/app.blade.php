@@ -450,7 +450,12 @@
             document.addEventListener('DOMContentLoaded', restoreCandidateHeaderZIndex);
             $(document).on('click', '.read-notification-item', function (e) {
                 let id = $(this).attr('data-id');
+                let targetUrl = $(this).attr('data-url');
                 let element = $(this);
+                
+                // Visual effect: change style to indicate item is being processed & read
+                element.css({ 'opacity': '0.5', 'pointer-events': 'none', 'background-color': '#f8fafc' });
+
                 $.ajax({
                     url: route('read-notification', id),
                     type: 'POST',
@@ -458,16 +463,23 @@
                         '_token': $('meta[name="csrf-token"]').attr('content'),
                     },
                     success: function (result) {
-                        if (result.success) {
+                        let count = parseInt($('#candidateNotificationCount').text());
+                        count = count > 0 ? count - 1 : 0;
+                        if (count === 0) {
+                            $('#candidateNotificationCount').remove();
+                            $('.read-all-notification-btn').remove();
+                        } else {
+                            $('#candidateNotificationCount').text(count);
+                        }
+                        if (targetUrl) {
+                            window.location.href = targetUrl;
+                        } else {
                             element.fadeOut(300, function() { $(this).remove(); });
-                            let count = parseInt($('#candidateNotificationCount').text());
-                            count = count > 0 ? count - 1 : 0;
-                            if (count === 0) {
-                                $('#candidateNotificationCount').remove();
-                                $('.read-all-notification-btn').remove();
-                            } else {
-                                $('#candidateNotificationCount').text(count);
-                            }
+                        }
+                    },
+                    error: function() {
+                        if (targetUrl) {
+                            window.location.href = targetUrl;
                         }
                     }
                 });

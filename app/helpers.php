@@ -671,6 +671,25 @@ if (! function_exists('getNotificationIcon')) {
     }
 }
 
+if (! function_exists('getNotificationUrl')) {
+    function getNotificationUrl($notification)
+    {
+        if (empty($notification)) {
+            return url('/candidate/applied-jobs');
+        }
+
+        if ($notification->notification_for == \App\Models\Notification::CANDIDATE) {
+            return route('candidate.applied.job');
+        } elseif ($notification->notification_for == \App\Models\Notification::EMPLOYER) {
+            return route('job-applications.index');
+        } elseif ($notification->notification_for == \App\Models\Notification::ADMIN) {
+            return url('/admin/dashboard');
+        }
+
+        return url('/candidate/applied-jobs');
+    }
+}
+
 /**
  * @param  Plan  $plan
  * @return bool
