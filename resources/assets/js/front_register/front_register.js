@@ -678,39 +678,8 @@ listenSubmit('#addEmployerNewForm', function (e) {
         message.remove();
     });
     employerForm.querySelectorAll('.is-invalid').forEach(function (input) {
-        input.classList.remove('is-invalid');
-    });
-
-    let isValid = true;
-    let firstInvalidElement = null;
-
-    // Validate standard required form controls
-    const requiredControls = employerForm.querySelectorAll('input[required], select[required], textarea[required]');
-    requiredControls.forEach(function (control) {
-        if (control.disabled) return;
-
-        if (control.type === 'radio') {
-            const name = control.name;
-            const checked = employerForm.querySelector('input[name="' + name + '"]:checked');
-            if (!checked) {
-                isValid = false;
-                control.classList.add('is-invalid');
-                const radioContainer = control.closest('.employer-company-employee-options') || control.parentElement;
-                if (radioContainer) radioContainer.classList.add('is-invalid');
-                if (!firstInvalidElement) firstInvalidElement = control;
-            }
-        } else if (control.type === 'checkbox') {
-            if (!control.checked) {
-                isValid = false;
-                control.classList.add('is-invalid');
-                if (!firstInvalidElement) firstInvalidElement = control;
-            }
-        } else {
-            if (!control.value || !control.value.trim() || !control.checkValidity()) {
-                isValid = false;
-                control.classList.add('is-invalid');
-                if (!firstInvalidElement) firstInvalidElement = control;
-            }
+        if (!input.matches('#employerUsername, #employerConfirmPassword')) {
+            input.classList.remove('is-invalid');
         }
     });
 

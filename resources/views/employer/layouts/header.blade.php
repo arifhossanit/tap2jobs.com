@@ -24,10 +24,9 @@
             <li class="px-xxl-3 px-2 d-flex align-items-stretch">
                 <div class="dropdown d-flex align-items-stretch">
                     <button type="button"
-                            class="btn px-0 text-gray-600 d-flex align-items-center employer-language-toggle"
+                            class="btn dropdown-toggle px-0 text-gray-600 d-flex align-items-center"
                             id="employerLanguageDropdown"
                             data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-solid fa-globe" aria-hidden="true"></i>
                         {{ getCurrentLanguageName() }}
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end border-0 shadow p-2"

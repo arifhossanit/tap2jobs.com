@@ -226,14 +226,6 @@
                     },
                     success: function (result) {
                         if (result.success) {
-                            const savedLogoUrl = result.data?.company_url;
-                            const logoPreview = document.querySelector('.employer-account-logo-picker img');
-
-                            if (savedLogoUrl && logoPreview) {
-                                logoPreview.src = savedLogoUrl + '?v=' + Date.now();
-                            }
-
-                            document.getElementById('employerCompanyLogo').value = '';
                             displaySuccessMessage(result.message);
                         }
                     },
@@ -259,46 +251,6 @@
             });
         }
 
-        const employerAccountSectionHashes = {
-            companyDetailsPanel: '#company-details',
-            contactDetailsPanel: '#contact-details',
-            billingAddressPanel: '#billing-address',
-        };
-
-        function getEmployerAccountScrollOffset() {
-            const fixedHeader = document.querySelector('.fixed-header');
-            const headerHeight = fixedHeader ? fixedHeader.getBoundingClientRect().height : 0;
-
-            return Math.max(headerHeight + 12, 12);
-        }
-
-        function syncEmployerAccountScrollOffset() {
-            document.documentElement.style.setProperty(
-                '--employer-account-scroll-offset',
-                `${getEmployerAccountScrollOffset()}px`
-            );
-        }
-
-        function scrollToEmployerAccountPanel(panel, behavior = 'smooth') {
-            if (!panel) {
-                return;
-            }
-
-            const targetPosition = panel.getBoundingClientRect().top
-                + window.pageYOffset
-                - getEmployerAccountScrollOffset();
-
-            window.scrollTo({ top: Math.max(targetPosition, 0), behavior });
-        }
-
-        function updateEmployerAccountHash(hash, replace = false) {
-            if (!hash || window.location.hash === hash) {
-                return;
-            }
-
-            window.history[replace ? 'replaceState' : 'pushState'](null, '', hash);
-        }
-
         function setEmployerPasswordView(showPassword) {
             const profileForm = document.getElementById('editCompanyForm');
             const passwordPanel = document.getElementById('employerPasswordPanel');
@@ -318,6 +270,7 @@
                 document.querySelectorAll('.employer-account-section-link').forEach(function (link) {
                     link.classList.remove('active');
                 });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
 
@@ -363,9 +316,7 @@
                     setActiveAccountSection('companyDetailsPanel');
                     toggle.setAttribute('aria-expanded', 'true');
                     subnav?.classList.remove('is-collapsed');
-                    const companyPanel = document.getElementById('companyDetailsPanel');
-                    updateEmployerAccountHash(employerAccountSectionHashes.companyDetailsPanel);
-                    scrollToEmployerAccountPanel(companyPanel);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                     return;
                 }
 
@@ -381,8 +332,6 @@
             const passwordLink = event.target.closest('.employer-account-password-link');
             if (passwordLink) {
                 setEmployerPasswordView(true);
-                updateEmployerAccountHash('#change-password');
-                scrollToEmployerAccountPanel(document.getElementById('employerPasswordPanel'));
                 return;
             }
 
@@ -443,28 +392,17 @@
             const applyAccountHash = function () {
                 if (window.location.hash === '#change-password') {
                     setEmployerPasswordView(true);
-                    requestAnimationFrame(function () {
-                        scrollToEmployerAccountPanel(document.getElementById('employerPasswordPanel'), 'auto');
-                    });
                     return;
                 }
 
-                const sectionId = Object.keys(employerAccountSectionHashes).find(function (panelId) {
-                    return employerAccountSectionHashes[panelId] === window.location.hash;
-                });
-
-                if (sectionId) {
-                    const targetPanel = document.getElementById(sectionId);
+                if (window.location.hash === '#company-details') {
                     setEmployerPasswordView(false);
-                    setActiveAccountSection(sectionId);
-                    requestAnimationFrame(function () {
-                        scrollToEmployerAccountPanel(targetPanel, 'auto');
-                    });
+                    setActiveAccountSection('companyDetailsPanel');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             };
 
             window.addEventListener('hashchange', applyAccountHash);
-            window.addEventListener('popstate', applyAccountHash);
             applyAccountHash();
 
             const primaryIndustryInput = document.getElementById('primaryIndustryId');

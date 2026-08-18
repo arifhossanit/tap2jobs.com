@@ -232,19 +232,11 @@ class CompanyController extends AppBaseController
     {
         $input = $request->validated();
 
-        // Keep the uploaded logo as an UploadedFile instance. This is explicit
-        // because the employer form is submitted through multipart AJAX.
-        if ($request->hasFile('image') && $request->file('image')->isValid()) {
-            $input['image'] = $request->file('image');
-        }
-
-        $this->companyRepository->update($input, $company);
+        $company = $this->companyRepository->update($input, $company);
         $message = __('messages.flash.employer_update');
 
         if ($request->expectsJson()) {
-            return $this->sendResponse([
-                'company_url' => $company->fresh()->company_url,
-            ], $message);
+            return $this->sendSuccess($message);
         }
 
         Flash::success($message);

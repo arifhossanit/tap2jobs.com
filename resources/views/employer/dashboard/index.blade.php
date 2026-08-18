@@ -21,7 +21,7 @@
                 <i class="fa-solid fa-plus"></i>
                 {{ __('messages.employer_dashboard.add_job') }}
             </a>
-            <a href="{{ route('company.edit.form', $dashboardEmployer->owner_id) }}"
+            <a href="{{ route('company.edit.form', \Illuminate\Support\Facades\Auth::user()->owner_id) }}"
                class="btn btn-primary employer-dashboard-hero__edit">
                 <i class="fa-solid fa-pen-to-square"></i>
                 {{ __('messages.user.edit_profile') }}

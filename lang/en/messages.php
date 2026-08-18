@@ -167,8 +167,11 @@ return [
         'process' => 'Processing...',
         'saving' => 'Saving...',
         'save_failed' => 'Unable to save changes. Please try again.',
+<<<<<<< HEAD
         'saving' => 'Saving...',
         'save_failed' => 'Unable to save changes. Please try again.',
+=======
+>>>>>>> 449856f691aaef29c4976fd3fc5c6cefab8fde78
         'are_you_sure' => 'Are you sure want to delete this',
         'no_cancel' => 'No, Cancel',
         'yes_delete' => 'Yes, Delete!',
@@ -2173,8 +2176,8 @@ return [
             'warning_indicators' => 'Warning Indicators or Markers in place for hazards, staircase',
             'workstation_adaptations' => 'Workstation or seating adaptations for easy use',
         ],
-        'pricing_policy' => 'Policy of :name recruitment services',
-        'toggle_pricing_policy' => 'Toggle policy',
+        'pricing_policy' => 'Pricing Policy of :name recruitment services',
+        'toggle_pricing_policy' => 'Toggle pricing policy',
         'privacy_policy_agree' => 'I have read and accepted the',
         'privacy_policy' => 'Privacy Policy',
         'add_new_industry_title' => 'Add New Industry',
