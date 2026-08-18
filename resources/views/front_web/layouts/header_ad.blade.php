@@ -62,7 +62,7 @@
         max-height: none !important;
         overflow: hidden !important;
         position: relative !important;
-        z-index: 1100 !important;
+        z-index: 1000 !important;
         margin: 0 !important;
         padding: 0 !important;
         width: 100% !important;
@@ -110,10 +110,10 @@
         justify-content: center;
         background: #facc15;
         color: #0f172a;
-        font-size: 16px;
+        font-size: 25px;
         font-weight: 700;
         padding: 8px 22px;
-        border-radius: 8px;
+        border-radius: 4px;
         box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
         transition: all 0.2s ease-in-out;
         white-space: nowrap;

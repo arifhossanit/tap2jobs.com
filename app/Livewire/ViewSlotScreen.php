@@ -32,16 +32,28 @@ class ViewSlotScreen extends Component
      */
     protected $listeners = ['changeFilter', 'refresh' => '$refresh', 'stageFilter'];
 
-    public function changeFilter($param, $value)
+    public function changeFilter($param, $value = null)
     {
         $this->resetPage();
-        $this->$param = $value;
+        if (is_array($param)) {
+            $value = $param['value'] ?? (count($param) > 1 ? array_values($param)[1] : null);
+            $param = $param['param'] ?? array_values($param)[0] ?? null;
+        }
+        if ($param && property_exists($this, $param)) {
+            $this->$param = $value;
+        }
     }
 
-    public function stageFilter($param, $value)
+    public function stageFilter($param, $value = null)
     {
         $this->resetPage();
-        $this->$param = $value;
+        if (is_array($param)) {
+            $value = $param['value'] ?? (count($param) > 1 ? array_values($param)[1] : null);
+            $param = $param['param'] ?? array_values($param)[0] ?? null;
+        }
+        if ($param && property_exists($this, $param)) {
+            $this->$param = $value;
+        }
     }
 
     /**

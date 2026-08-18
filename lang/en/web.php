@@ -39,7 +39,7 @@ return [
     'easy_to_find_your' => 'It’s Easy to Find Your',
     'admin' => 'Admin',
     'add_post_job' => 'Post Job',
-    'post_job_ad_free' => 'আপনার চাকরির বিজ্ঞাপন পোস্ট করুন একদম ফ্রি-তে!!!',
+    'post_job_ad_free' => 'Post your job ad for free!!!',
     'more' => 'More',
 
     //common keys

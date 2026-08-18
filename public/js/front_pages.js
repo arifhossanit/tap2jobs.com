@@ -1320,20 +1320,33 @@ function IOInitImageUpload(box) {
       var image = new Image();
       image.src = e.target.result;
       image.onload = function () {
+        thumb.innerHTML = '';
         thumb.style.backgroundImage = 'url(' + e.target.result + ')';
       };
     };
     reader.readAsDataURL(file);
   } // Check Image Type
 
+  function previewVideo(file) {
+    var thumb = box.querySelector('.previewImage');
+    var videoUrl = URL.createObjectURL(file);
+    thumb.style.backgroundImage = 'none';
+    thumb.innerHTML = '<video src="' + videoUrl + '" controls muted playsinline preload="metadata" style="width:100%;height:100%;object-fit:contain;background:#000;border-radius:inherit;"></video>';
+  }
   function checkType(file) {
     var imageType = /image.*/;
-    if (!file.type.match(imageType)) {
-      throw 'File Type is not match.';
-    } else if (!file) {
+    var videoType = /video.*/;
+    if (!file) {
       throw 'File not found.';
-    } else {
+    } else if (file.type.match(imageType)) {
       previewImage(file);
+    } else if (file.type.match(videoType)) {
+      previewVideo(file);
+    } else {
+      uploadField.value = '';
+      if (typeof displayErrorMessage === 'function') {
+        displayErrorMessage('Unsupported file type.');
+      }
     }
   }
 } // every load initialize the Image component on document load
@@ -1366,6 +1379,12 @@ window.IOInitSidebar = function () {
     $('body').toggleClass('collapsed-menu');
   }); // for responsive sidebar
 
+  $(document).on('show.bs.collapse', '.aside-submenu', function () {
+    $(this).closest('.aside-item-collapse').addClass('collapse-submenu');
+  });
+  $(document).on('hide.bs.collapse', '.aside-submenu', function () {
+    $(this).closest('.aside-item-collapse').removeClass('collapse-submenu');
+  });
   $(window).resize(function () {
     if ($(window).width() > 1200) {
       $('.aside-collapse-btn').click(function () {
@@ -1567,12 +1586,73 @@ function loadFrontRegisterData() {
     resetModalForm('#employeeForm', '#employerValidationErrBox');
   });
   loadEmployerRegistrationForm();
+  loadCandidateRegistrationForm();
+}
+function loadCandidateRegistrationForm() {
+  var form = document.getElementById('addCandidateNewForm');
+  if (!form) {
+    return;
+  }
+  form.addEventListener('blur', function (e) {
+    if (e.target && e.target.hasAttribute('required')) {
+      if (!e.target.value || !e.target.value.trim() || !e.target.checkValidity()) {
+        e.target.classList.add('is-invalid');
+      } else {
+        e.target.classList.remove('is-invalid');
+      }
+    }
+  }, true);
+  form.addEventListener('input', function (e) {
+    if (e.target && e.target.classList.contains('is-invalid')) {
+      if (e.target.value && e.target.value.trim() && e.target.checkValidity()) {
+        e.target.classList.remove('is-invalid');
+      }
+    }
+  });
+  form.addEventListener('change', function (e) {
+    if (e.target && e.target.classList.contains('is-invalid')) {
+      if (e.target.checkValidity()) {
+        e.target.classList.remove('is-invalid');
+      }
+    }
+  });
 }
 function loadEmployerRegistrationForm() {
   var form = document.getElementById('addEmployerNewForm');
   if (!form) {
     return;
   }
+  form.addEventListener('blur', function (e) {
+    if (e.target && e.target.hasAttribute('required')) {
+      if (!e.target.value || !e.target.value.trim() || !e.target.checkValidity()) {
+        e.target.classList.add('is-invalid');
+      } else {
+        e.target.classList.remove('is-invalid');
+      }
+    }
+  }, true);
+  form.addEventListener('input', function (e) {
+    if (e.target && e.target.classList.contains('is-invalid')) {
+      if (e.target.value && e.target.value.trim() && e.target.checkValidity()) {
+        e.target.classList.remove('is-invalid');
+      }
+    }
+  });
+  form.addEventListener('change', function (e) {
+    if (e.target && e.target.classList.contains('is-invalid')) {
+      if (e.target.checkValidity()) {
+        e.target.classList.remove('is-invalid');
+      }
+    }
+    if (e.target && e.target.name === 'employee_range') {
+      var options = form.querySelector('.employer-company-employee-options');
+      if (options) options.classList.remove('is-invalid');
+    }
+    if (e.target && e.target.closest('#registerIndustryOptions')) {
+      var _options = document.getElementById('registerIndustryOptions');
+      if (_options) _options.classList.remove('is-invalid');
+    }
+  });
   var username = document.getElementById('employerUsername');
   var usernameFeedback = document.getElementById('employerUsernameFeedback');
   var password = document.getElementById('employerPassword');
@@ -1971,11 +2051,49 @@ function loadEmployerRegistrationForm() {
 }
 listenSubmit('#addCandidateNewForm', function (e) {
   e.preventDefault();
-  // if ($('#isGoogleReCaptchaEnabled').val()) {
-  //     if (!checkGoogleReCaptcha(1)) {
-  //         return true;
-  //     }
-  // }
+  var candidateForm = this;
+  candidateForm.querySelectorAll('.is-invalid').forEach(function (input) {
+    input.classList.remove('is-invalid');
+  });
+  var isValid = true;
+  var firstInvalidElement = null;
+  var requiredControls = candidateForm.querySelectorAll('input[required], select[required], textarea[required]');
+  requiredControls.forEach(function (control) {
+    if (control.disabled) return;
+    if (control.type === 'checkbox') {
+      if (!control.checked) {
+        isValid = false;
+        control.classList.add('is-invalid');
+        if (!firstInvalidElement) firstInvalidElement = control;
+      }
+    } else {
+      if (!control.value || !control.value.trim() || !control.checkValidity()) {
+        isValid = false;
+        control.classList.add('is-invalid');
+        if (!firstInvalidElement) firstInvalidElement = control;
+      }
+    }
+  });
+  var password = document.getElementById('candidatePassword');
+  var confirmPassword = document.getElementById('candidateConfirmPassword');
+  if (password && confirmPassword && confirmPassword.value !== password.value) {
+    isValid = false;
+    confirmPassword.classList.add('is-invalid');
+    if (!firstInvalidElement) firstInvalidElement = confirmPassword;
+  }
+  if (!isValid) {
+    displayErrorMessage('Please fill in all required fields.');
+    if (firstInvalidElement) {
+      firstInvalidElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+      setTimeout(function () {
+        firstInvalidElement.focus();
+      }, 100);
+    }
+    return;
+  }
   processingBtn('#addCandidateNewForm', '#btnCandidateSave', 'loading');
   $.ajax({
     url: route('front.save.register'),
@@ -1985,13 +2103,27 @@ listenSubmit('#addCandidateNewForm', function (e) {
       if (result.success) {
         displaySuccessMessage(result.message);
         setTimeout(function () {
-          var redirectUrl = result.data && result.data.redirect_url ? result.data.redirect_url : route('front.candidate.login');
-          visitRegisterRedirect(redirectUrl);
+          window.location.href = result.data.redirectUrl;
         }, 1500);
       }
     },
     error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
+      var response = result.responseJSON || {};
+      var errors = response.errors || {};
+      var firstErrorKey = Object.keys(errors)[0];
+      var firstMessage = firstErrorKey && errors[firstErrorKey] ? errors[firstErrorKey][0] : response.message || 'Registration could not be completed. Please review the form.';
+      if (firstErrorKey) {
+        var field = candidateForm.querySelector('[name="' + firstErrorKey + '"]');
+        if (field) {
+          field.classList.add('is-invalid');
+          field.focus();
+          field.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }
+      }
+      displayErrorMessage(firstMessage);
     },
     complete: function complete() {
       processingBtn('#addCandidateNewForm', '#btnCandidateSave');
@@ -2013,20 +2145,33 @@ listenSubmit('#addEmployerNewForm', function (e) {
     }
   });
   if (usernameInput && employerForm.dataset.usernameAvailable === 'false') {
+    isValid = false;
     showLiveRegistrationError(usernameInput, usernameFeedback, 'This Username already exists. Try another.');
-    usernameInput.focus();
-    return;
+    usernameInput.classList.add('is-invalid');
+    if (!firstInvalidElement) firstInvalidElement = usernameInput;
   }
   if (confirmPasswordInput && !confirmPasswordInput.checkValidity()) {
-    confirmPasswordInput.reportValidity();
-    return;
+    isValid = false;
+    confirmPasswordInput.classList.add('is-invalid');
+    if (!firstInvalidElement) firstInvalidElement = confirmPasswordInput;
   }
-  if (!document.querySelector('#registerIndustryOptions input[type="checkbox"]:checked')) {
-    displayErrorMessage('Please select at least one industry.');
-    document.getElementById('registerIndustryOptions').scrollIntoView({
-      behavior: 'smooth',
-      block: 'center'
-    });
+  var industryOptions = document.getElementById('registerIndustryOptions');
+  if (industryOptions && !industryOptions.querySelector('input[type="checkbox"]:checked')) {
+    isValid = false;
+    industryOptions.classList.add('is-invalid');
+    if (!firstInvalidElement) firstInvalidElement = industryOptions;
+  }
+  if (!isValid) {
+    displayErrorMessage('Please fill in all required fields.');
+    if (firstInvalidElement) {
+      firstInvalidElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+      setTimeout(function () {
+        firstInvalidElement.focus();
+      }, 100);
+    }
     return;
   }
   processingBtn('#addEmployerNewForm', '#btnEmployerSave', 'loading');
@@ -2044,8 +2189,7 @@ listenSubmit('#addEmployerNewForm', function (e) {
       if (result.success) {
         displaySuccessMessage(result.message);
         setTimeout(function () {
-          var redirectUrl = result.data && result.data.redirect_url ? result.data.redirect_url : route('front.employee.login');
-          visitRegisterRedirect(redirectUrl);
+          window.location.href = result.data.redirectUrl;
         }, 1500);
       }
     },
@@ -2335,7 +2479,6 @@ function loadTestimonialSlider() {
 
 document.addEventListener('DOMContentLoaded', loadApplyJobData);
 function loadApplyJobData() {
-  $('#resumeId').select2();
   listenClick('.save-draft', function (e) {
     e.preventDefault();
     submitForm('#applyJobForm', 'draft', '#draftJobSave', '#applyJobSave', '#g-recaptcha');
@@ -2407,7 +2550,7 @@ function loadJobDetailsData() {
         console.log('sd');
         if (result.success) {
           $('#favorite').empty();
-          result.data ? $('#favorite').html('<i class="fa-solid fa-bookmark text-primary featured"></i>') : $('#favorite').html('<i class="fa-regular fa-bookmark text-primary"></i>');
+          result.data ? $('#favorite').html('<i class="fa-solid fa-bookmark featured"></i>') : $('#favorite').html('<i class="fa-regular fa-bookmark"></i>');
           displaySuccessMessage(result.message);
         }
       },
@@ -2428,8 +2571,7 @@ listenSubmit('#reportJobAbuse', function (e) {
       if (result.success) {
         displaySuccessMessage(result.message);
         $('#reportJobAbuseModal').modal('hide');
-        $(".reportJobAbuse").attr('disabled', true);
-        $(".reportJobAbuse").text(Lang.get('js.already_reported'));
+        $(".reportJobAbuse").attr('disabled', true).attr('title', Lang.get('js.already_reported')).attr('aria-label', Lang.get('js.already_reported'));
         $('.modal-backdrop').remove();
         $('.close-modal').click();
       }
@@ -2486,148 +2628,130 @@ listenHiddenBsModal('#reportJobAbuseModal', function () {
 $(window).scrollTop(0);
 document.addEventListener('DOMContentLoaded', loadJobSearchData);
 function loadJobSearchData() {
-  var salaryFromSlider = $('#salaryFrom');
-  var salaryToSlider = $('#salaryTo');
-  if (!$('#salaryFrom').length && !$('#salaryTo').length) {
-    return;
-  }
+  var salaryRangeSlider = $('#salaryRange');
   var jobExperienceSlider = $('#jobExperience');
-  if (!salaryFromSlider.length && !salaryToSlider.length && !jobExperienceSlider.length) {
+  if (!salaryRangeSlider.length && !jobExperienceSlider.length) {
     return;
   }
-  $('#searchCategories').select2();
-  $('#searchSkill').select2();
-  $('#searchGender').select2();
-  $('#searchCareerLevel').select2();
-  $('#searchFunctionalArea').select2();
-  var input = JSON.parse($('#input').val());
-  $('input[name=job-type]').prop('checked', false);
-  if ($('#jobExperience').length) {
-    var rangEle = $('#jobExperience').siblings()[1];
-    if (typeof rangEle !== "undefined") {
-      rangEle.remove();
+  ['#searchCategories', '#searchSkill', '#searchGender', '#searchCareerLevel', '#searchFunctionalArea'].forEach(function (selector) {
+    if ($(selector).length) {
+      $(selector).select2({
+        width: '100%'
+      });
     }
+  });
+  var input = $('#input').val() ? JSON.parse($('#input').val()) : {};
+  var currentLanguage = typeof lancode !== 'undefined' ? lancode : document.documentElement.lang || 'en';
+  var localizeNumber = function localizeNumber(value) {
+    var number = String(value);
+    if (currentLanguage !== 'bn') {
+      return number;
+    }
+    var banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    return number.replace(/\d/g, function (digit) {
+      return banglaDigits[digit];
+    });
+  };
+  var prettifyNumber = function prettifyNumber(value) {
+    return localizeNumber(String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+  };
+  if (jobExperienceSlider.length) {
+    var _input$jobExperience;
+    var maximumExperience = Math.max(1, Number(jobExperienceSlider.data('max')) || 30);
+    var hasExperienceRange = Object.prototype.hasOwnProperty.call(input, 'jobExperienceFrom') || Object.prototype.hasOwnProperty.call(input, 'jobExperienceTo');
+    var legacyExperience = (_input$jobExperience = input.jobExperience) !== null && _input$jobExperience !== void 0 ? _input$jobExperience : input.experience;
+    var selectedExperienceFrom = hasExperienceRange ? Number(input.jobExperienceFrom || 0) : 0;
+    var selectedExperienceTo = hasExperienceRange ? Number(input.jobExperienceTo || maximumExperience) : legacyExperience !== undefined ? Number(legacyExperience) : maximumExperience;
+    selectedExperienceFrom = Math.min(Math.max(0, selectedExperienceFrom), maximumExperience);
+    selectedExperienceTo = Math.min(Math.max(selectedExperienceFrom, selectedExperienceTo), maximumExperience);
+    var dispatchExperienceFilter = function dispatchExperienceFilter(from, to) {
+      Livewire.dispatch('changeExperienceRange', {
+        from: from,
+        to: to,
+        maximum: maximumExperience
+      });
+    };
     $('#jobExperience').ionRangeSlider({
-      type: 'single',
+      type: 'double',
       min: 0,
+      from: selectedExperienceFrom,
+      to: selectedExperienceTo,
       step: 1,
-      max: 30,
+      max: maximumExperience,
       max_postfix: '+',
+      prettify: localizeNumber,
       onFinish: function onFinish(data) {
-        Livewire.dispatch('changeFilter', {
-          param: 'jobExperience',
-          value: data.from
-        });
+        dispatchExperienceFilter(data.from, data.to);
       }
     });
-    $('#jobExperience').addClass('irs-hidden-input');
+    jobExperienceSlider.addClass('irs-hidden-input');
   }
-  // $("#salaryFrom").ionRangeSlider({
-  //     min: 0,
-  //     max: 150000,
-  //     from: 0,
-  // });
-  if (salaryFromSlider.length) {
-    var rangEle = $('#salaryFrom').siblings()[1];
-    if (typeof rangEle !== "undefined") {
-      rangEle.remove();
-    }
-    $("#salaryFrom").ionRangeSlider({
-      type: 'single',
+  if (salaryRangeSlider.length) {
+    var salaryMaximum = Number(salaryRangeSlider.data('max')) || 150000;
+    salaryRangeSlider.ionRangeSlider({
+      type: 'double',
       min: 0,
-      step: 100,
-      max: 150000,
+      max: salaryMaximum,
+      from: 0,
+      to: salaryMaximum,
+      step: 1000,
       max_postfix: '+',
+      prettify: prettifyNumber,
       onFinish: function onFinish(data) {
-        Livewire.dispatch('changeFilter', {
-          param: 'salaryFrom',
-          value: data.from
+        Livewire.dispatch('changeSalaryRange', {
+          from: data.from,
+          to: data.to,
+          maximum: salaryMaximum
         });
       }
     });
-    $('#salaryFrom').addClass('irs-hidden-input');
+    salaryRangeSlider.addClass('irs-hidden-input');
   }
-  if (salaryToSlider.length) {
-    var rangEle = salaryToSlider.siblings()[1];
-    if (typeof rangEle !== "undefined") {
-      rangEle.remove();
-    }
-    salaryToSlider.ionRangeSlider({
-      type: 'single',
-      min: 0,
-      step: 100,
-      max: 150000,
-      max_postfix: '+',
-      onFinish: function onFinish(data) {
-        Livewire.dispatch('changeFilter', {
-          param: 'salaryTo',
-          value: data.from
-        });
-      }
-    });
-    salaryToSlider.addClass('irs-hidden-input');
-  }
-  if (input.length > 0 && input.location != '') {
+  if (input.location) {
     $('#searchByLocation').val(input.location);
-    Livewire.dispatch('changeFilter', {
-      param: 'searchByLocation',
-      value: input.location
-    });
-  }
-  if (input.length > 0 && input.keywords != '') {
-    Livewire.dispatch('changeFilter', {
-      param: 'title',
-      value: input.keywords
-    });
-  }
-
-  // $(document).on('change', '.jobType',function () {
-  if ($(window).width() > 991) {
-    $('#search-jobs-filter').show();
-    $('#collapseBtn').hide();
-  } else {
-    $('.job-post-sidebar').hide();
-    $('#collapseBtn').click(function () {
-      $('.job-post-sidebar').show();
-    });
   }
   listenClick('.reset-filter', function (event) {
     event.preventDefault();
     Livewire.dispatch('resetFilter');
-    salaryFromSlider.data('ionRangeSlider').update({
-      from: 0,
-      to: 0
-    });
-    salaryToSlider.data('ionRangeSlider').update({
-      from: 0,
-      to: 0
-    });
-    jobExperienceSlider.data('ionRangeSlider').update({
-      from: 0,
-      to: 0
-    });
+    var salaryInstance = salaryRangeSlider.data('ionRangeSlider');
+    var experienceInstance = jobExperienceSlider.data('ionRangeSlider');
+    if (salaryInstance) {
+      salaryInstance.update({
+        from: 0,
+        to: Number(salaryRangeSlider.data('max')) || 150000
+      });
+    }
+    if (experienceInstance) {
+      experienceInstance.update({
+        from: 0,
+        to: Number(jobExperienceSlider.data('max')) || 30
+      });
+    }
     $('#searchByLocation').val("");
     $('#searchFunctionalArea').val('').trigger("change");
     $('#searchCareerLevel').val('').trigger("change");
-    $('#searchGender').val('').val('').trigger("change");
-    $('#searchSkill').val('').val('').trigger("change");
+    $('#searchGender').val('').trigger("change");
+    $('#searchSkill').val('').trigger("change");
     $("#searchCategories").val('').trigger("change");
     $('.jobType').prop('checked', false);
+    $('#fresherJobs').prop('checked', false);
   });
 }
 listenChange('.jobType', function () {
   var jobType = [];
-  $('input:checkbox[name=job-type]:checked').each(function () {
+  $('.jobType:checked').each(function () {
     jobType.push($(this).val());
   });
-  if (jobType.length > 0) {
-    Livewire.dispatch('changeFilter', {
-      param: 'types',
-      value: jobType
-    });
-  } else {
-    Livewire.dispatch('resetFilter');
-  }
+  Livewire.dispatch('changeFilter', {
+    param: 'types',
+    value: jobType
+  });
+});
+listenChange('#fresherJobs', function () {
+  Livewire.dispatch('changeFilter', {
+    param: 'freshersOnly',
+    value: $(this).is(':checked')
+  });
 });
 document.addEventListener('livewire:load', function () {
   window.livewire.hook('message.processed', function () {
@@ -2990,6 +3114,74 @@ function loadwebCustomData() {
     loadCaptchaForCompanyRegistration();
   }, 500);
 }
+
+// Global Red Focus Form Validation System
+document.addEventListener('blur', function (e) {
+  if (e.target && e.target.hasAttribute && e.target.hasAttribute('required')) {
+    if (!e.target.value || !e.target.value.trim() || !e.target.checkValidity()) {
+      e.target.classList.add('is-invalid');
+    } else {
+      e.target.classList.remove('is-invalid');
+    }
+  }
+}, true);
+document.addEventListener('input', function (e) {
+  if (e.target && e.target.classList && e.target.classList.contains('is-invalid')) {
+    if (e.target.value && e.target.value.trim() && e.target.checkValidity()) {
+      e.target.classList.remove('is-invalid');
+    }
+  }
+});
+document.addEventListener('change', function (e) {
+  if (e.target && e.target.classList && e.target.classList.contains('is-invalid')) {
+    if (e.target.checkValidity()) {
+      e.target.classList.remove('is-invalid');
+    }
+  }
+});
+window.validateFormWithRedFocus = function (form) {
+  if (!form) return true;
+  var isValid = true;
+  var firstInvalid = null;
+  form.classList.add('was-validated');
+  var requiredControls = form.querySelectorAll('input[required], select[required], textarea[required]');
+  requiredControls.forEach(function (control) {
+    if (control.disabled) return;
+    if (control.type === 'radio') {
+      var name = control.name;
+      var checked = form.querySelector('input[name="' + name + '"]:checked');
+      if (!checked) {
+        isValid = false;
+        control.classList.add('is-invalid');
+        var container = control.closest('.employer-company-employee-options') || control.closest('.form-group') || control.parentElement;
+        if (container) container.classList.add('is-invalid');
+        if (!firstInvalid) firstInvalid = control;
+      }
+    } else if (control.type === 'checkbox') {
+      if (!control.checked) {
+        isValid = false;
+        control.classList.add('is-invalid');
+        if (!firstInvalid) firstInvalid = control;
+      }
+    } else {
+      if (!control.value || !control.value.trim() || !control.checkValidity()) {
+        isValid = false;
+        control.classList.add('is-invalid');
+        if (!firstInvalid) firstInvalid = control;
+      }
+    }
+  });
+  if (!isValid && firstInvalid) {
+    firstInvalid.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center'
+    });
+    setTimeout(function () {
+      firstInvalid.focus();
+    }, 100);
+  }
+  return isValid;
+};
 window.manageFrontAjaxErrors = function (data) {
   var errorDivId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'editValidationErrorsBox';
   if (data.status == 404) {

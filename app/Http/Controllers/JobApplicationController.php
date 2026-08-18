@@ -15,8 +15,10 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Mail\CandidateStatusUpdateMail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 /**
@@ -92,35 +94,68 @@ class JobApplicationController extends AppBaseController
             return $this->sendError(__('messages.common.seems_message'));
         }
 
-        $jobApplication = JobApplication::with(['candidate.user', 'job'])->findOrFail($id);
-        $candidateUserId = $jobApplication->candidate->user->id;
+        $jobApplication = JobApplication::with(['candidate.user', 'job.company.user'])->findOrFail($id);
+        $candidateUser = $jobApplication->candidate->user;
+        $candidateUserId = $candidateUser->id;
         $jobTitle = $jobApplication->job->job_title;
+        $companyName = $jobApplication->job->company->user->full_name ?? config('app.name');
+
         if (! in_array($jobApplication->status, [JobApplication::REJECTED, JobApplication::COMPLETE])) {
             $jobApplication->update(['status' => $status]);
 
-            $status == JobApplication::REJECTED ? NotificationSetting::where('key', 'CANDIDATE_REJECTED_FOR_JOB')->first()->value == 1 ?
-                addNotification([
-                    Notification::CANDIDATE_REJECTED_FOR_JOB,
-                    $candidateUserId,
-                    Notification::CANDIDATE,
-                    'Your application is Rejected for '.$jobTitle,
-                ]) : false : false;
+            $statusText = null;
+            $messageBody = '';
 
-            $status == JobApplication::COMPLETE ? NotificationSetting::where('key', 'CANDIDATE_SELECTED_FOR_JOB')->first()->value == 1 ?
-                addNotification([
-                    Notification::CANDIDATE_SELECTED_FOR_JOB,
-                    $candidateUserId,
-                    Notification::CANDIDATE,
-                    'You are selected for '.$jobTitle,
-                ]) : false : false;
+            if ($status == JobApplication::REJECTED) {
+                $statusText = 'Rejected';
+                $messageBody = "We regret to inform you that your application for \"{$jobTitle}\" has been rejected.";
+                if (NotificationSetting::where('key', 'CANDIDATE_REJECTED_FOR_JOB')->first()?->value == 1) {
+                    addNotification([
+                        Notification::CANDIDATE_REJECTED_FOR_JOB,
+                        $candidateUserId,
+                        Notification::CANDIDATE,
+                        'Your application is Rejected for '.$jobTitle,
+                    ]);
+                }
+            } elseif ($status == JobApplication::COMPLETE) {
+                $statusText = 'Selected / Hired';
+                $messageBody = "Congratulations! You have been selected for the position of \"{$jobTitle}\".";
+                if (NotificationSetting::where('key', 'CANDIDATE_SELECTED_FOR_JOB')->first()?->value == 1) {
+                    addNotification([
+                        Notification::CANDIDATE_SELECTED_FOR_JOB,
+                        $candidateUserId,
+                        Notification::CANDIDATE,
+                        'You are selected for '.$jobTitle,
+                    ]);
+                }
+            } elseif ($status == JobApplication::SHORT_LIST) {
+                $statusText = 'Shortlisted';
+                $messageBody = "Great news! Your application for \"{$jobTitle}\" has been shortlisted.";
+                if (NotificationSetting::where('key', 'CANDIDATE_SHORTLISTED_FOR_JOB')->first()?->value == 1) {
+                    addNotification([
+                        Notification::CANDIDATE_SHORTLISTED_FOR_JOB,
+                        $candidateUserId,
+                        Notification::CANDIDATE,
+                        'Your application is Shortlisted for '.$jobTitle,
+                    ]);
+                }
+            }
 
-            $status == JobApplication::SHORT_LIST ? NotificationSetting::where('key', 'CANDIDATE_SHORTLISTED_FOR_JOB')->first()->value == 1 ?
-                addNotification([
-                    Notification::CANDIDATE_SHORTLISTED_FOR_JOB,
-                    $candidateUserId,
-                    Notification::CANDIDATE,
-                    'Your application is Shortlisted for '.$jobTitle,
-                ]) : false : false;
+            // Dispatch Queueable Email to Candidate
+            if (! empty($candidateUser->email) && isset($statusText)) {
+                try {
+                    Mail::to($candidateUser->email)->send(new CandidateStatusUpdateMail([
+                        'candidate_name' => $candidateUser->full_name,
+                        'job_title' => $jobTitle,
+                        'company_name' => $companyName,
+                        'status_text' => $statusText,
+                        'message_body' => $messageBody,
+                        'subject' => "Application {$statusText} for {$jobTitle}",
+                    ]));
+                } catch (\Exception $e) {
+                    \Log::error('Queueable status email error: ' . $e->getMessage());
+                }
+            }
 
             return $this->sendSuccess(__('messages.flash.status_change'));
         }
@@ -151,23 +186,40 @@ class JobApplicationController extends AppBaseController
         }
     }
 
-//    /**
-//     * @param  Request  $request
-//     *
-//     *
-//     * @return JsonResponse
-//     */
-//    public function getJobStage(Request $request)
-//    {
-//        $jobApplication = JobApplication::findOrFail($request->get('jobApplicationId'));
-//
-//        return $this->sendResponse($jobApplication,'Job Stage retrieve successfully.');
-//    }
-
     public function changeJobStage(Request $request): JsonResponse
     {
-        $jobApplication = JobApplication::findOrFail($request->get('job_application_id'));
+        $jobApplication = JobApplication::with(['candidate.user', 'job.company.user'])->findOrFail($request->get('job_application_id'));
         $jobApplication->update(['job_stage_id' => $request->get('job_stage')]);
+
+        $stage = JobStage::find($request->get('job_stage'));
+        $stageName = $stage ? $stage->name : 'New Stage';
+        $jobTitle = $jobApplication->job->job_title;
+        $candidateUser = $jobApplication->candidate->user;
+        $companyName = $jobApplication->job->company->user->full_name ?? config('app.name');
+
+        // Add In-App Bell Notification
+        addNotification([
+            Notification::CANDIDATE_SHORTLISTED_FOR_JOB,
+            $candidateUser->id,
+            Notification::CANDIDATE,
+            "Your application for \"{$jobTitle}\" advanced to stage: {$stageName}",
+        ]);
+
+        // Dispatch Queueable Email to Candidate
+        if (! empty($candidateUser->email)) {
+            try {
+                Mail::to($candidateUser->email)->send(new CandidateStatusUpdateMail([
+                    'candidate_name' => $candidateUser->full_name,
+                    'job_title' => $jobTitle,
+                    'company_name' => $companyName,
+                    'status_text' => "Advanced to Stage: {$stageName}",
+                    'message_body' => "Your application for \"{$jobTitle}\" has advanced to the stage: {$stageName}.",
+                    'subject' => "Application Stage Updated for {$jobTitle}",
+                ]));
+            } catch (\Exception $e) {
+                \Log::error('Queueable stage email error: ' . $e->getMessage());
+            }
+        }
 
         return $this->sendSuccess(__('messages.flash.job_stage_change'));
     }
@@ -180,32 +232,26 @@ class JobApplicationController extends AppBaseController
         try {
             $applicationId = $request->route('jobApplicationId');
 
-            $CustomerJobId = JobApplication::where('id', $applicationId)->whereHas('job', function ($q) {
+            $CustomerJobId = JobApplication::with(['candidate.user', 'job'])->where('id', $applicationId)->whereHas('job', function ($q) {
                 $q->where('company_id', getLoggedInUser()->company->id);
             })->first();
 
             if ($CustomerJobId) {
-                $getUniqueJobStages = JobApplicationSchedule::whereJobApplicationId($applicationId)
-                    ->toBase()->get()->unique('stage_id')
-                    ->pluck('stage_id')->toArray();
+                $jobApplication = $CustomerJobId;
 
                 /** @var JobStage $jobStage */
-                $jobStage = JobStage::whereCompanyId(getLoggedInUser()->owner_id)->toBase()
-                    ->whereIn('id', $getUniqueJobStages)
-                    ->pluck('name', 'id');
-                $lastStage = JobApplicationSchedule::latest()->first();
+                $jobStage = JobStage::whereCompanyId(getLoggedInUser()->owner_id)->pluck('name', 'id');
+                $lastStage = JobApplicationSchedule::whereJobApplicationId($applicationId)->latest()->first();
 
                 /** @var JobApplicationSchedule $jobApplicationSchedules */
                 $jobApplicationSchedules = JobApplicationSchedule::whereJobApplicationId($applicationId);
                 $lastRecord = $jobApplicationSchedules->latest()->first();
 
-                /** @var JobApplication $jobApplicationStage */
-                $jobApplicationStage = JobApplication::whereId($applicationId)
-                    ->first();
-
                 $isStageMatch = false;
                 if (! empty($lastRecord)) {
-                    $isStageMatch = ! ($lastRecord->stage_id == $jobApplicationStage->job_stage_id);
+                    $isStageMatch = ! ($lastRecord->stage_id == $jobApplication->job_stage_id);
+                } else {
+                    $isStageMatch = true;
                 }
 
                 $isSelectedRejectedSlot = 1;
@@ -220,7 +266,7 @@ class JobApplicationController extends AppBaseController
                 }
 
                 return view('employer.job_applications.view_slot_screen',
-                    compact('jobStage', 'lastStage', 'isSelectedRejectedSlot', 'isStageMatch', 'applicationId'));
+                    compact('jobStage', 'lastStage', 'isSelectedRejectedSlot', 'isStageMatch', 'applicationId', 'jobApplication'));
             } else {
                 return view('errors.404');
             }

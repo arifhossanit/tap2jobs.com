@@ -1,5 +1,5 @@
 <div class="modal fade" tabindex="-1" role="dialog" id="showModal" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">{{ __('messages.job.notes') }}</h3>

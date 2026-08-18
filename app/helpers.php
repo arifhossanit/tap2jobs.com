@@ -1244,3 +1244,54 @@ if (! function_exists('resolveIntendedRedirectUrl')) {
         return $intended;
     }
 }
+
+if (! function_exists('storeIntendedUrlFromPrevious')) {
+    /**
+     * Store the previous URL into session('url.intended') if it's an internal application URL
+     * and not an authentication/registration/logout page.
+     */
+    function storeIntendedUrlFromPrevious(): void
+    {
+        if (session()->has('url.intended')) {
+            return;
+        }
+
+        $previousUrl = url()->previous();
+        if (empty($previousUrl) || ! isSameApplicationUrl($previousUrl)) {
+            return;
+        }
+
+        $parsedPath = parse_url($previousUrl, PHP_URL_PATH) ?? '';
+
+        $ignoredPaths = ['login', 'register', 'logout', 'password', 'email/verify'];
+        foreach ($ignoredPaths as $ignored) {
+            if (str_contains($parsedPath, $ignored)) {
+                return;
+            }
+        }
+
+        session(['url.intended' => $previousUrl]);
+    }
+}
+
+/**
+ * Convert URLs in plain text to clickable HTML links.
+ *
+ * @param string|null $text
+ * @return string
+ */
+if (! function_exists('linkify')) {
+    function linkify($text)
+    {
+        if (empty($text)) {
+            return '';
+        }
+        $escaped = e($text);
+        $pattern = '/(https?:\/\/[^\s<]+)/i';
+        $replacement = '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary text-decoration-underline fw-semibold">$1</a>';
+
+        return nl2br(preg_replace($pattern, $replacement, $escaped));
+    }
+}
+
+

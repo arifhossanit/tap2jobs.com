@@ -70,10 +70,12 @@ class SocialAuthController extends AppBaseController
         Auth::loginUsingId($user->id, true);
 
         if (Auth::user()->hasRole('Candidate') && $type == Candidate::CANDIDATE_LOGIN_TYPE) {
-            return redirect(RouteServiceProvider::CANDIDATE_HOME);
+            $redirectUrl = resolveIntendedRedirectUrl(RouteServiceProvider::CANDIDATE_HOME, Auth::user());
+            return redirect()->to($redirectUrl);
         }
         if (Auth::user()->hasRole('Employer') && $type == Candidate::CANDIDATE_EMP_TYPE) {
-            return redirect(RouteServiceProvider::EMPLOYER_HOME);
+            $redirectUrl = resolveIntendedRedirectUrl(RouteServiceProvider::EMPLOYER_HOME, Auth::user());
+            return redirect()->to($redirectUrl);
         }
 
         Auth::logout();

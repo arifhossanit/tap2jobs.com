@@ -66,7 +66,8 @@ class LoginController extends Controller
      */
     protected function employeeLogin()
     {
-//        return view('web.auth.employer_login');
+        storeIntendedUrlFromPrevious();
+
         return view('front_web.auth.employer_login');
     }
 
@@ -75,7 +76,8 @@ class LoginController extends Controller
      */
     protected function candidateLogin()
     {
-//        return view('web.auth.candidate_login');
+        storeIntendedUrlFromPrevious();
+
         return view('front_web.auth.candidate_login');
     }
 

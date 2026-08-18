@@ -56,8 +56,7 @@
                                     <span>{{ $profileCompletion['percentage'] ?? 0 }}%</span>
                                 </div>
                                 <div class="candidate-profile-completion__content">
-                                    <span>Profile Filled</span>
-                                    <strong>{{ $profileCompletion['completed'] ?? 0 }}/{{ $profileCompletion['total'] ?? 10 }} Completed</strong>
+                                    <span>Profile Complited</span>                                    
                                     <a href="{{ route('candidate.profile') }}">{{ __('messages.user.edit_profile') }}</a>
                                 </div>
                             </div>

@@ -113,4 +113,9 @@ class JobApplicationSchedule extends Model
     {
         return $this->belongsTo(JobApplication::class);
     }
+
+    public function jobStage(): BelongsTo
+    {
+        return $this->belongsTo(JobStage::class, 'stage_id');
+    }
 }

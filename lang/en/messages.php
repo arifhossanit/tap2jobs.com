@@ -1617,7 +1617,7 @@ return [
         'time' => 'Time',
         'date' => 'Date',
         'batch' => 'Batch',
-        'history' => 'History',
+        'history' => 'Details',
         'slot_preference' => 'Slot Preference',
         'reject_all_slot' => 'Reject All Slot',
         'you_have_rejected_all_slot' => 'You Have Rejected All Slot',

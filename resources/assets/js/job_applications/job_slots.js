@@ -23,10 +23,10 @@ function loadJobSlotData () {
     let data = $('#stages').select2('val');
     $('#stages').on('change', function (e) {
         data = $('#stages').select2('val');
-        Livewire.dispatch('changeFilter', 'stage', data);
+        Livewire.dispatch('changeFilter', ['stage', data]);
     });
-    Livewire.dispatch('changeFilter', 'stage', data);
-    Livewire.dispatch('stageFilter', 'jobApplicationId', JobApplicationId);
+    Livewire.dispatch('changeFilter', ['stage', data]);
+    Livewire.dispatch('stageFilter', ['jobApplicationId', JobApplicationId]);
 
     listenClick('.edit-slot-btn', function (event) {
         //  if (ajaxCallIsRunning) {

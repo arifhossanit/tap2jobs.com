@@ -32,6 +32,7 @@ class RegisterController extends AppBaseController
      */
     public function candidateRegister(): View
     {
+        storeIntendedUrlFromPrevious();
         $isGoogleReCaptchaEnabled = $this->webRegisterRepository->getSettingForReCaptcha();
 
         return view('front_web.auth.candidate_register', compact('isGoogleReCaptchaEnabled'));
@@ -42,6 +43,7 @@ class RegisterController extends AppBaseController
      */
     public function employerRegister(): View
     {
+        storeIntendedUrlFromPrevious();
         $isGoogleReCaptchaEnabled = $this->webRegisterRepository->getSettingForReCaptcha();
         $countries = getCountries();
         $bangladeshId = Country::where('name', 'Bangladesh')->value('id');

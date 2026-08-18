@@ -104,6 +104,33 @@
     @endif
     <link href="{{ mix('css/front-pages.css') }}" rel="stylesheet" type="text/css">
 
+    <style>
+        /* When ANY modal is open, dim & blur ALL background elements (top promo banner, header, nav, page content, footer) */
+        body.modal-open #siteTopBanner,
+        body.modal-open header,
+        body.modal-open .header-padding,
+        body.modal-open main,
+        body.modal-open footer,
+        body.modal-open > *:not(.modal):not(.modal-backdrop):not(script):not(style) {
+            filter: blur(6px) brightness(0.55) !important;
+            transition: filter 0.25s ease-in-out !important;
+            pointer-events: none !important;
+        }
+
+        .modal-backdrop {
+            z-index: 100000 !important;
+            background-color: rgba(15, 23, 42, 0.6) !important;
+        }
+        .modal {
+            z-index: 100005 !important;
+        }
+        .modal-content {
+            border: 0 !important;
+            border-radius: 16px !important;
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.4) !important;
+        }
+    </style>
+
     @yield('page_css')
     @livewireStyles
     <link rel="stylesheet" type="text/css" href="{{ asset('vendor/rappasoft/livewire-tables/css/laravel-livewire-tables.min.css') }}">

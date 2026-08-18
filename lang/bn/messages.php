@@ -1606,7 +1606,7 @@ return [
         'time' => 'সময়',
         'date' => 'তারিখ',
         'batch' => 'ব্যাচ',
-        'history' => 'ইতিহাস',
+        'history' => '',
         'slot_preference' => 'স্লট পছন্দ',
         'reject_all_slot' => 'সব স্লট প্রত্যাখ্যান',
         'you_have_rejected_all_slot' => 'আপনি সমস্ত স্লট প্রত্যাখ্যান করেছেন',

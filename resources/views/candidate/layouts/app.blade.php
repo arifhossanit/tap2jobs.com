@@ -177,6 +177,212 @@
         body.candidate-front-shell .header-padding {
             display: none !important;
         }
+
+        /* Modal Z-Index and Background Blur/Dim when modal is open */
+        body.modal-open #siteTopBanner,
+        body.modal-open header,
+        body.modal-open .candidate-front-layout-main,
+        body.modal-open footer,
+        body.modal-open > *:not(.modal):not(.modal-backdrop):not(script):not(style) {
+            filter: blur(6px) brightness(0.55) !important;
+            transition: filter 0.25s ease-in-out !important;
+            pointer-events: none !important;
+        }
+
+        .modal-backdrop {
+            z-index: 100000 !important;
+            background-color: rgba(15, 23, 42, 0.6) !important;
+        }
+
+        .modal {
+            z-index: 100005 !important;
+        }
+
+        .modal-content {
+            border: 0 !important;
+            border-radius: 4px !important;
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.4) !important;
+        }
+
+        /* Professional Slot Modal Custom CSS */
+        #scheduleSlotBookModal .modal-content {
+            background: #ffffff !important;
+            overflow: hidden !important;
+        }
+
+        #scheduleSlotBookModal .modal-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+            padding: 1.25rem 1.5rem !important;
+        }
+
+        #scheduleSlotBookModal .modal-title {
+            font-size: 1.15rem !important;
+            font-weight: 700 !important;
+            color: #0f172a !important;
+        }
+
+        #scheduleSlotBookModal .slot-card-item {
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.25rem;
+        #scheduleSlotBookModal .slot-card-item {
+            cursor: pointer !important;
+            transition: all 0.2s ease-in-out;
+            user-select: none;
+        }
+
+        #scheduleSlotBookModal .slot-card-item:hover {
+            border-color: #2563eb !important;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1) !important;
+        }
+
+        #scheduleSlotBookModal .slot-card-item:has(input[type="radio"]:checked),
+        #scheduleSlotBookModal .slot-card-item.active-slot-card {
+            border-color: #2563eb !important;
+            background-color: #eff6ff !important;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.15) !important;
+        }
+
+        #scheduleSlotBookModal .slot-card-item.selected {
+            border-color: #10b981 !important;
+            background: #f0fdf4 !important;
+        }
+
+        .slot-radio-wrap {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        #scheduleSlotBookModal {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        #scheduleSlotBookModal .slot-radio-wrap:hover {
+            background: #eff6ff;
+            border-color: #3b82f6;
+        }
+
+        #scheduleSlotBookModal .history-card-item {
+            background: #f8fafc;
+            border-left: 4px solid #6366f1;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        #scheduleSlotBookModal .modal-footer {
+            background: #f8fafc !important;
+            border-top: 1px solid #e2e8f0 !important;
+            padding: 1rem 1.5rem !important;
+        }
+
+        #scheduleSlotBookModal .modal-footer .btn {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            font-size: 0.9rem !important;
+            letter-spacing: 0.2px !important;
+        }
+
+        #scheduleSlotBookModal #scheduleInterviewBtnSave {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+            color: #ffffff !important;
+            border: none !important;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25) !important;
+        }
+
+        #scheduleSlotBookModal #scheduleInterviewBtnSave:hover {
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+            color: #ffffff !important;
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.4) !important;
+            transform: translateY(-2px) !important;
+        }
+
+        #scheduleSlotBookModal #scheduleInterviewBtnSave:active {
+            transform: translateY(0) !important;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3) !important;
+        }
+
+        #scheduleSlotBookModal #rejectSlotBtnSave {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+            color: #ffffff !important;
+            border: none !important;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2) !important;
+        }
+
+        #scheduleSlotBookModal #rejectSlotBtnSave:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+            color: #ffffff !important;
+            box-shadow: 0 6px 18px rgba(239, 68, 68, 0.35) !important;
+            transform: translateY(-2px) !important;
+        }
+
+        #scheduleSlotBookModal #rejectSlotBtnSave:active {
+            transform: translateY(0) !important;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25) !important;
+        }
+
+        #scheduleSlotBookModal #scheduleInterviewBtnCancel {
+            background: #ffffff !important;
+            color: #475569 !important;
+            border: 1px solid #cbd5e1 !important;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04) !important;
+        }
+
+        #scheduleSlotBookModal #scheduleInterviewBtnCancel:hover {
+            background: #f8fafc !important;
+            color: #0f172a !important;
+            border-color: #94a3b8 !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+            transform: translateY(-1px) !important;
+        }
+
+        #scheduleSlotBookModal #scheduleInterviewBtnCancel:active {
+            transform: translateY(0) !important;
+        }
+
+        #scheduleSlotBookModal .modal-dialog {
+            max-height: calc(100vh - 40px) !important;
+            margin-top: 20px !important;
+            margin-bottom: 20px !important;
+        }
+
+        #scheduleSlotBookModal .modal-content {
+            max-height: calc(100vh - 40px) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden !important;
+        }
+
+        #scheduleSlotBookModal .modal-body {
+            max-height: 65vh !important;
+            overflow-y: auto !important;
+            scrollbar-width: thin !important;
+            scrollbar-color: #3b82f6 #f1f5f9 !important;
+        }
+
+        #scheduleSlotBookModal .modal-body::-webkit-scrollbar {
+            width: 8px !important;
+            display: block !important;
+        }
+
+        #scheduleSlotBookModal .modal-body::-webkit-scrollbar-track {
+            background: #f1f5f9 !important;
+            border-radius: 6px !important;
+        }
+
+        #scheduleSlotBookModal .modal-body::-webkit-scrollbar-thumb {
+            background: #3b82f6 !important;
+            border-radius: 6px !important;
+        }
+
+        #scheduleSlotBookModal .modal-body::-webkit-scrollbar-thumb:hover {
+            background: #2563eb !important;
+        }
     </style>
 </head>
 <script data-turbo-eval="false">
@@ -242,9 +448,46 @@
 
             document.addEventListener('DOMContentLoaded', closeCandidateHeaderDropdowns);
             document.addEventListener('DOMContentLoaded', restoreCandidateHeaderZIndex);
-            document.addEventListener('turbo:load', function () {
-                closeCandidateHeaderDropdowns();
-                restoreCandidateHeaderZIndex();
+            $(document).on('click', '.read-notification-item', function (e) {
+                let id = $(this).attr('data-id');
+                let element = $(this);
+                $.ajax({
+                    url: route('read-notification', id),
+                    type: 'POST',
+                    data: {
+                        '_token': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function (result) {
+                        if (result.success) {
+                            element.fadeOut(300, function() { $(this).remove(); });
+                            let count = parseInt($('#candidateNotificationCount').text());
+                            count = count > 0 ? count - 1 : 0;
+                            if (count === 0) {
+                                $('#candidateNotificationCount').remove();
+                                $('.read-all-notification-btn').remove();
+                            } else {
+                                $('#candidateNotificationCount').text(count);
+                            }
+                        }
+                    }
+                });
+            });
+
+            $(document).on('click', '.read-all-notification-btn', function (e) {
+                $.ajax({
+                    url: route('read-all-notification'),
+                    type: 'POST',
+                    data: {
+                        '_token': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function (result) {
+                        if (result.success) {
+                            $('.notification-scroll-body').html('<div class="p-4 text-center text-muted"><i class="fa-regular fa-bell-slash fs-3 mb-2 d-block text-secondary"></i><span class="fs-7">No notifications found</span></div>');
+                            $('#candidateNotificationCount').remove();
+                            $('.read-all-notification-btn').remove();
+                        }
+                    }
+                });
             });
         })();
     </script>

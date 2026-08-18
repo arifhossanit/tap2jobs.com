@@ -19,6 +19,273 @@ listenClick('.admins-delete-btn', function (event) {
 
 /***/ },
 
+/***/ "./resources/assets/js/ads/ads.js"
+/*!****************************************!*\
+  !*** ./resources/assets/js/ads/ads.js ***!
+  \****************************************/
+() {
+
+Livewire.hook("element.init", function () {
+  loadAdData();
+});
+function loadAdData() {
+  if (!$("#addAdNewForm").length && !$("#editAdForm").length) {
+    return;
+  }
+  listenHiddenBsModal("#addAdsModal", function () {
+    resetModalForm("#addAdNewForm", "#validationErrorsBox");
+    clearAdPreview("#previewImage", $("#adChooseMediaText").val());
+    resetAdUploadProgress("ad");
+  });
+  listenHiddenBsModal("#editAdsModal", function () {
+    resetModalForm("#editAdForm", "#editValidationErrorsBox");
+    clearAdPreview("#editPreviewImage", $("#adNoMediaSelectedText").val());
+    resetAdUploadProgress("editAd");
+  });
+}
+listenClick(".ad-delete-btn", function (event) {
+  var deleteAdId = $(event.currentTarget).attr("data-id");
+  deleteItem(route("ads.destroy", deleteAdId), Lang.get("js.ad"));
+});
+listenClick(".ad-edit-btn", function (event) {
+  var editAdId = $(event.currentTarget).attr("data-id");
+  adRenderData(editAdId);
+});
+function adRenderData(editAdId) {
+  $.ajax({
+    url: route("ads.edit", editAdId),
+    type: "GET",
+    success: function success(result) {
+      if (result.success) {
+        var element = document.createElement("textarea");
+        element.innerHTML = result.data.title || "";
+        $("#adId").val(result.data.id);
+        $("#editTitle").val(element.value);
+        $("#editPosition").val(result.data.position);
+        $("#editDescription").val(result.data.description || "");
+        $("#editLinkUrl").val(result.data.link_url || "");
+        $("#editCtaText").val(result.data.cta_text || "");
+        $("#editSortOrder").val(result.data.sort_order || 0);
+        var targetPages = result.data.page_array || result.data.page || ["all"];
+        if (typeof targetPages === "string") {
+          try {
+            targetPages = JSON.parse(targetPages);
+          } catch (e) {
+            targetPages = [targetPages];
+          }
+        }
+        if (!Array.isArray(targetPages) || targetPages.length === 0) {
+          targetPages = ["all"];
+        }
+        $(".edit-page-checkbox").prop("checked", false);
+        if (targetPages.includes("all")) {
+          $(".edit-page-checkbox").prop("checked", true);
+        } else {
+          targetPages.forEach(function (pageVal) {
+            $('.edit-page-checkbox[value="' + pageVal + '"]').prop("checked", true);
+          });
+          if ($(".edit-page-checkbox:not(.edit-page-all-checkbox):checked").length === $(".edit-page-checkbox:not(.edit-page-all-checkbox)").length) {
+            $(".edit-page-all-checkbox").prop("checked", true);
+          }
+        }
+        var mediaUrl = result.data.ad_media_url || result.data.ad_image_url;
+        if (isEmpty(mediaUrl)) {
+          clearAdPreview("#editPreviewImage", $("#adNoMediaSelectedText").val());
+        } else if (result.data.ad_media_type === "video") {
+          setAdVideoPreview("#editPreviewImage", mediaUrl);
+        } else {
+          setAdImagePreview("#editPreviewImage", mediaUrl);
+        }
+        result.data.is_active == 1 ? $("#editIsActive").prop("checked", true) : $("#editIsActive").prop("checked", false);
+        $("#editAdsModal").appendTo("body").modal("show");
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+}
+listenSubmit("#addAdNewForm", function (e) {
+  e.preventDefault();
+  processingBtn("#addAdNewForm", "#adSaveBtn", "loading");
+  resetAdUploadProgress("ad");
+  $.ajax({
+    url: route("ads.store"),
+    type: "POST",
+    data: buildAdFormData(this, ".page-all-checkbox"),
+    dataType: "JSON",
+    processData: false,
+    contentType: false,
+    xhr: function xhr() {
+      return adUploadProgressXhr("ad");
+    },
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        $("#addAdsModal").modal("hide");
+        Livewire.dispatch("refreshDatatable");
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(getAdUploadErrorMessage(result));
+      processingBtn("#addAdNewForm", "#adSaveBtn");
+    },
+    complete: function complete() {
+      processingBtn("#addAdNewForm", "#adSaveBtn");
+    }
+  });
+});
+listenSubmit("#editAdForm", function (event) {
+  event.preventDefault();
+  processingBtn("#editAdForm", "#editAdSaveBtn", "loading");
+  resetAdUploadProgress("editAd");
+  var adUpdateId = $("#adId").val();
+  $.ajax({
+    url: route("ads.update", adUpdateId),
+    type: "POST",
+    data: buildAdFormData(this, ".edit-page-all-checkbox"),
+    dataType: "JSON",
+    processData: false,
+    contentType: false,
+    xhr: function xhr() {
+      return adUploadProgressXhr("editAd");
+    },
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        $("#editAdsModal").modal("hide");
+        Livewire.dispatch("refreshDatatable");
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(getAdUploadErrorMessage(result));
+      processingBtn("#editAdForm", "#editAdSaveBtn");
+    },
+    complete: function complete() {
+      processingBtn("#editAdForm", "#editAdSaveBtn");
+    }
+  });
+});
+listenClick(".addAdModal", function () {
+  $("#addAdsModal").appendTo("body").modal("show");
+});
+listenChange(".isActiveAd", function () {
+  var isActiveAdId = $(this).attr("data-id");
+  changeIsActiveAdRenderData(isActiveAdId);
+});
+function changeIsActiveAdRenderData(isActiveAdId) {
+  $.ajax({
+    url: route("ads.change-is-active", isActiveAdId),
+    method: "post",
+    cache: false,
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        Livewire.dispatch("refreshDatatable");
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    }
+  });
+}
+listenChange("#adStatusFilter", function () {
+  Livewire.dispatch("changeStatusFilter", {
+    status: $(this).val()
+  });
+});
+listenClick("#adStatusFilter-ResetFilter", function () {
+  $("#adStatusFilter").val(2).change();
+  hideDropdownManually($("#adFilterBtn"), $(".dropdown-menu"));
+});
+function hideDropdownManually(button, menu) {
+  button.dropdown("toggle");
+}
+function adUploadProgressXhr(prefix) {
+  var xhr = $.ajaxSettings.xhr();
+  if (xhr.upload) {
+    xhr.upload.addEventListener("progress", function (event) {
+      if (!event.lengthComputable) {
+        return;
+      }
+      var percent = Math.round(event.loaded / event.total * 100);
+      updateAdUploadProgress(prefix, percent);
+    }, false);
+  }
+  return xhr;
+}
+function updateAdUploadProgress(prefix, percent) {
+  var progress = $("#" + prefix + "UploadProgress");
+  var progressBar = $("#" + prefix + "UploadProgressBar");
+  var progressText = $("#" + prefix + "UploadProgressText");
+  progress.removeClass("d-none");
+  progressBar.css("width", percent + "%").attr("aria-valuenow", percent);
+  progressText.text(percent >= 100 ? $("#adSavingMediaText").val() : percent + "%");
+}
+function resetAdUploadProgress(prefix) {
+  updateAdUploadProgress(prefix, 0);
+  $("#" + prefix + "UploadProgress").addClass("d-none");
+}
+function getAdUploadErrorMessage(result) {
+  if (result.responseJSON && result.responseJSON.message) {
+    return result.responseJSON.message;
+  }
+  if (result.status === 413) {
+    return "The media is larger than the server upload limit. Increase PHP upload_max_filesize and post_max_size, then restart the server.";
+  }
+  if (result.status === 0) {
+    return "Upload failed before the server responded. Please check the connection and server upload limit.";
+  }
+  return "The media could not be uploaded. Please try again.";
+}
+function buildAdFormData(form, allPageSelector) {
+  var formData = new FormData(form);
+  if ($(form).find(allPageSelector).is(":checked")) {
+    formData["delete"]("page[]");
+    formData.append("page[]", "all");
+  }
+  return formData;
+}
+function clearAdPreview(selector, text) {
+  $(selector).css("background-image", "none").html('<span class="text-muted fs-12 px-2">' + text + "</span>");
+}
+function setAdImagePreview(selector, mediaUrl) {
+  $(selector).empty().css("background-image", 'url("' + mediaUrl + '")');
+}
+function setAdVideoPreview(selector, mediaUrl) {
+  $(selector).css("background-image", "none").html('<video src="' + mediaUrl + '" autoplay muted loop playsinline preload="metadata" style="width:100%;height:100%;object-fit:contain;background:#000;border-radius:inherit;"></video>');
+}
+listenChange(".page-all-checkbox", function () {
+  if ($(this).is(":checked")) {
+    $(".page-checkbox").prop("checked", true);
+  } else {
+    $(".page-checkbox").prop("checked", false);
+  }
+});
+listenChange(".page-checkbox:not(.page-all-checkbox)", function () {
+  if (!$(this).is(":checked")) {
+    $(".page-all-checkbox").prop("checked", false);
+  } else if ($(".page-checkbox:not(.page-all-checkbox):checked").length === $(".page-checkbox:not(.page-all-checkbox)").length) {
+    $(".page-all-checkbox").prop("checked", true);
+  }
+});
+listenChange(".edit-page-all-checkbox", function () {
+  if ($(this).is(":checked")) {
+    $(".edit-page-checkbox").prop("checked", true);
+  } else {
+    $(".edit-page-checkbox").prop("checked", false);
+  }
+});
+listenChange(".edit-page-checkbox:not(.edit-page-all-checkbox)", function () {
+  if (!$(this).is(":checked")) {
+    $(".edit-page-all-checkbox").prop("checked", false);
+  } else if ($(".edit-page-checkbox:not(.edit-page-all-checkbox):checked").length === $(".edit-page-checkbox:not(.edit-page-all-checkbox)").length) {
+    $(".edit-page-all-checkbox").prop("checked", true);
+  }
+});
+
+/***/ },
+
 /***/ "./resources/assets/js/blog_categories/blog_categories.js"
 /*!****************************************************************!*\
   !*** ./resources/assets/js/blog_categories/blog_categories.js ***!
@@ -608,9 +875,8 @@ Livewire.hook('element.init', function () {
   loadAppliedJobsData();
 });
 var filterJobId = null;
+var selectedAppliedJobId = null;
 function loadAppliedJobsData() {
-  // window.livewire.restart();
-
   if (!$('#jobApplicationStatus').length) {
     return;
   }
@@ -619,13 +885,9 @@ function loadAppliedJobsData() {
     Livewire.dispatch('changeFilter', {
       value: $(this).val()
     });
-    // Livewire.dispatch('changeFilter', 'jobApplicationStatus',
-    // $(this).val());
     Livewire.dispatch('refresh');
     Livewire.dispatch('refreshDatatable');
   });
-
-  // document.addEventListener('livewire:load', function (event) {
   Livewire.hook('message.processed', function () {
     $('#jobApplicationStatus').select2({
       width: '100%'
@@ -635,7 +897,6 @@ function loadAppliedJobsData() {
       $('.alert').fadeOut('fast');
     }, 4000);
   });
-  // });
 }
 document.addEventListener('deleted', function () {
   swal({
@@ -650,7 +911,6 @@ document.addEventListener('deleted', function () {
     confirmButtonColor: '#F62947',
     timer: 2000
   });
-  // displaySuccessMessage(Lang.get('messages.applied_job.applied_jobs') + Lang.get('messages.common.has_been_deleted'));
 });
 document.addEventListener('notDeleted', function () {
   swal({
@@ -664,7 +924,6 @@ document.addEventListener('notDeleted', function () {
     reverseButtons: true,
     confirmButtonColor: '#F62947'
   });
-  // displayErrorMessage(Lang.get('messages.flash.job_cant_delete'));
 });
 listenClick('.apply-job-note', function (event) {
   var appliedJobId = $(event.currentTarget).attr('data-id');
@@ -714,85 +973,79 @@ document.addEventListener('appliedJob:error', function () {
     reverseButtons: true,
     confirmButtonColor: '#F62947'
   });
-  // displayErrorMessage(Lang.get('messages.common.seems_message'));
 });
+function linkifyText(text) {
+  if (!text) return '';
+  var urlPattern = /(https?:\/\/[^\s<]+)/gi;
+  return text.replace(urlPattern, function (url) {
+    return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" class="text-primary text-decoration-underline fw-bold">' + url + '</a>';
+  });
+}
 listenClick('.schedule-slot-book', function (event) {
   var appliedJobId = $(event.currentTarget).attr('data-id');
+  selectedAppliedJobId = appliedJobId;
   $.ajax({
     url: route('show.schedule.slot', appliedJobId),
     type: 'POST',
     success: function success(result) {
-      if (result.success) {
-        if (!isEmpty(result.data)) {
-          //slot rejected
-          if (result.data.rejectedSlot) {
-            if (!isEmpty(result.data.employer_cancel_note)) {
-              $('#scheduleSlotBookValidationErrorsBox').removeClass('d-none').html(result.data.company_fullName + Lang.get('js.cancel_your_selected_slot') + '<br>' + '<b>Reason</b>:- ' + result.data.employer_cancel_note);
-              $('#scheduleInterviewBtnSave,#rejectSlotBtnSave').addClass('d-none');
-            } else {
-              $('#scheduleSlotBookValidationErrorsBox').removeClass('d-none').html(Lang.get('js.you_have_rejected_all_slot'));
-              $('#scheduleInterviewBtnSave,#rejectSlotBtnSave').addClass('d-none');
-            }
-            $('#scheduleInterviewBtnSave,#rejectSlotBtnSave').addClass('d-none');
-          }
-          if (result.data.scheduleSelect >= 0) {
-            $('#scheduleInterviewBtnSave,#rejectSlotBtnSave').addClass('d-none');
-          }
-          if (!result.data.rejectedSlot) {
-            $('#scheduleInterviewBtnSave,#rejectSlotBtnSave').removeClass('d-none');
-            var index = 0;
-            $.each(result.data, function (i, v) {
-              if (!isEmpty(v.job_Schedule_Id)) {
-                index++;
-                var data = {
-                  'index': index,
-                  'notes': v.notes,
-                  'schedule_date': v.schedule_date,
-                  'schedule_time': v.schedule_time,
-                  'schedule_id': v.job_Schedule_Id
-                };
-                $('.slot-main-div').append(prepareTemplateRender('#scheduleSlotBookHtmlTemplate', data));
-                $('.choose-slot-textarea').removeClass('d-none');
-                $('#scheduleSlotBookValidationErrorsBox').addClass('d-none');
-              }
-            });
-          }
-
-          //display selected slot
-          if (result.data.selectSlot.length != 0) {
-            $.each(result.data.selectSlot, function (i, v) {
-              var data = {
-                'notes': !isEmpty(v.notes) ? v.notes : 'New Slot Send.',
-                'schedule_date': v.date,
-                'schedule_time': v.time
-              };
-              $('.slot-main-div').append(prepareTemplateRender('#selectedSlotBookHtmlTemplate', data));
-            });
-            $('#selectedSlotBookValidationErrorsBox').removeClass('d-none').html(Lang.get('js.you_have_selected_this_slot'));
-          }
-
-          //history
-          if (!isEmpty(result.data)) {
-            $('#historyMainDiv').removeClass('d-none');
-            $.each(result.data, function (i, v) {
-              if ($.type(v) == 'object' && isEmpty(v.job_Schedule_Id)) {
-                if (!isEmpty(v.notes)) {
-                  var data = {
-                    'notes': v.notes,
-                    'companyName': v.company_name,
-                    'schedule_created_at': v.schedule_created_at
-                  };
-                  $('#historyDiv').prepend(prepareTemplateRender('#chooseSlotHistoryHtmlTemplate', data));
-                }
-              }
-            });
+      if (result.success && !isEmpty(result.data)) {
+        // Check if candidate already selected a slot in the current batch
+        if (result.data.selectSlot && result.data.selectSlot.length > 0) {
+          $('#scheduleInterviewBtnSave,#rejectSlotBtnSave').addClass('d-none');
+          $.each(result.data.selectSlot, function (i, v) {
+            var data = {
+              'notes': !isEmpty(v.notes) ? linkifyText(v.notes) : 'New Slot Send.',
+              'schedule_date': v.date,
+              'schedule_time': v.time
+            };
+            $('.slot-main-div').append(prepareTemplateRender('#selectedSlotBookHtmlTemplate', data));
+          });
+          $('#selectedSlotBookValidationErrorsBox').removeClass('d-none').html(Lang.get('js.you_have_selected_this_slot'));
+        }
+        // Check if candidate rejected all slots in current batch
+        else if (result.data.rejectedSlot) {
+          $('#scheduleInterviewBtnSave,#rejectSlotBtnSave').addClass('d-none');
+          if (!isEmpty(result.data.employer_cancel_note)) {
+            $('#scheduleSlotBookValidationErrorsBox').removeClass('d-none').html(result.data.company_fullName + Lang.get('js.cancel_your_selected_slot') + '<br>' + '<b>Reason</b>:- ' + linkifyText(result.data.employer_cancel_note));
           } else {
-            $('#historyMainDiv').addClass('d-none');
-          }
-          if (result.data.scheduleSelect == 1) {
-            $('#scheduleInterviewBtnSave,#rejectSlotBtnSave').addClass('d-none');
+            $('#scheduleSlotBookValidationErrorsBox').removeClass('d-none').html(Lang.get('js.you_have_rejected_all_slot'));
           }
         }
+        // Available new slots to choose from
+        else {
+          $('#scheduleInterviewBtnSave,#rejectSlotBtnSave').removeClass('d-none');
+          var index = 0;
+          $.each(result.data, function (i, v) {
+            if (!isEmpty(v.job_Schedule_Id)) {
+              index++;
+              var data = {
+                'index': index,
+                'notes': linkifyText(v.notes),
+                'schedule_date': v.schedule_date,
+                'schedule_time': v.schedule_time,
+                'schedule_id': v.job_Schedule_Id
+              };
+              $('.slot-main-div').append(prepareTemplateRender('#scheduleSlotBookHtmlTemplate', data));
+              $('.choose-slot-textarea').removeClass('d-none');
+              $('#scheduleSlotBookValidationErrorsBox').addClass('d-none');
+            }
+          });
+        }
+
+        // Render History (past stage schedules)
+        $('#historyMainDiv').removeClass('d-none');
+        $.each(result.data, function (i, v) {
+          if ($.type(v) == 'object' && isEmpty(v.job_Schedule_Id)) {
+            var data = {
+              'notes': linkifyText(v.notes),
+              'companyName': v.company_name,
+              'stageName': v.stage_name || 'Stage',
+              'slotDateTime': v.slot_date_time || '',
+              'schedule_created_at': v.schedule_created_at
+            };
+            $('#historyDiv').prepend(prepareTemplateRender('#chooseSlotHistoryHtmlTemplate', data));
+          }
+        });
         $('#scheduleSlotBookModal').appendTo('body').modal('show');
       }
     },
@@ -802,8 +1055,8 @@ listenClick('.schedule-slot-book', function (event) {
   });
 });
 listenHiddenBsModal('#scheduleSlotBookModal', function () {
+  selectedAppliedJobId = null;
   $('.slot-main-div').html('');
-  $('.choose-slot-textarea textarea').val('');
   $('.choose-slot-textarea').addClass('d-none');
   $('#selectedSlotBookValidationErrorsBox').addClass('d-none');
   $('#historyDiv').html('');
@@ -819,7 +1072,12 @@ listenClick('#scheduleInterviewBtnSave', function () {
 listenSubmit('#scheduleSlotBookForm', function (e) {
   e.preventDefault();
   $('#scheduleInterviewBtnSave,#rejectSlotBtnSave').attr('disabled', true);
-  var appliedJobId = $('.schedule-slot-book').attr('data-id');
+  var appliedJobId = selectedAppliedJobId;
+  if (isEmpty(appliedJobId)) {
+    displayErrorMessage(Lang.get('js.seems_message'));
+    $('#scheduleInterviewBtnSave,#rejectSlotBtnSave').attr('disabled', false);
+    return;
+  }
   var scheduleId;
   var formData = new FormData($(this)[0]);
   $.each($('.slot-book'), function (i) {
@@ -827,7 +1085,9 @@ listenSubmit('#scheduleSlotBookForm', function (e) {
       scheduleId = $(this).data('schedule');
     }
   });
-  formData.append('rejectSlot', $('#rejectSlotBtnSave').val());
+  if (!isEmpty($('#rejectSlotBtnSave').val())) {
+    formData.append('rejectSlot', $('#rejectSlotBtnSave').val());
+  }
   formData.append('schedule_id', scheduleId);
   $.ajax({
     url: route('choose.preference', appliedJobId),
@@ -2978,12 +3238,9 @@ function loadCandidateGeneralData() {
     $('#salaryCurrencyId,#stateId,#industryId,#careerLevelId,#functionalAreaId,#presentCountryDisplay,#permanentCountryId,#permanentStateId').select2({
       width: '100%'
     });
-    $('.candidate-preferred-select').each(function () {
-      $(this).select2({
-        width: '100%',
-        placeholder: $(this).data('placeholder') || '',
-        closeOnSelect: false
-      });
+    $('#createCityStateID').select2({
+      width: '100%',
+      dropdownParent: $('#createCityModal')
     });
   }
   if ($('#skillId').length && $('#languageId').length) {
@@ -3162,6 +3419,33 @@ $(document).on('keyup', '#googlePlusUrl', function () {
 $(document).on('keyup', '#pinterestUrl', function () {
   this.value = this.value.toLowerCase();
 });
+
+// City modal handlers for candidate profile
+// (jobs/create-edit.js registers .createCityModal only on job forms)
+$(document).on('click', '.createCityModal', function () {
+  if (!$('#candidateProfileUpdate').length || !$('#createCityModal').length) {
+    return;
+  }
+  var $modalState = $('#createCityStateID');
+  var state = $('#stateId').val();
+
+  // Keep modal states in sync with the profile state dropdown (country-filtered)
+  if ($modalState.length && $('#stateId').length) {
+    $modalState.empty();
+    $('#stateId option').each(function () {
+      $modalState.append($(this).clone());
+    });
+    $modalState.val(state).trigger('change');
+  }
+  $('#createCityModal').appendTo('body').modal('show');
+});
+$(document).on('hidden.bs.modal', '#createCityModal', function () {
+  if (!$('#candidateProfileUpdate').length) {
+    return;
+  }
+  $('#createCityStateID').val('').trigger('change');
+  resetModalForm('#createCityForm', '#cityValidationErrorsBox');
+});
 $(document).on('submit', '#candidateProfileUpdate', function (e) {
   e.preventDefault();
   var form = this;
@@ -3266,6 +3550,36 @@ $(document).on('submit', '#candidateProfileUpdate', function (e) {
 listenClick('.uploadResumeModal', function () {
   $('#candidateResumeModal').appendTo('body').modal('show');
 });
+listenClick('.preview-resume', function (event) {
+  event.preventDefault();
+  var button = $(event.currentTarget);
+  var modal = $('#candidateResumePreviewModal');
+  var frame = $('#candidateResumePreviewFrame');
+  var loading = modal.find('.candidate-resume-preview-loading');
+  var unavailable = modal.find('.candidate-resume-preview-unavailable');
+  modal.appendTo('body');
+  modal.find('#candidateResumePreviewTitle').text(button.data('title'));
+  frame.addClass('d-none').attr('src', '');
+  unavailable.addClass('d-none');
+  if (String(button.data('previewable')) === '1') {
+    loading.removeClass('d-none');
+    frame.removeClass('d-none').attr('src', button.data('url'));
+    window.setTimeout(function () {
+      loading.addClass('d-none');
+    }, 1200);
+  } else {
+    loading.addClass('d-none');
+    unavailable.removeClass('d-none');
+  }
+  modal.modal('show');
+});
+listen('load', '#candidateResumePreviewFrame', function () {
+  $('.candidate-resume-preview-loading').addClass('d-none');
+});
+listen('hidden.bs.modal', '#candidateResumePreviewModal', function () {
+  $('#candidateResumePreviewFrame').attr('src', '').addClass('d-none');
+  $(this).find('.candidate-resume-preview-loading').removeClass('d-none');
+});
 listenSubmit('#addCandidateResumeForm', function (e) {
   var empty = $('#uploadResumeTitle').val().trim().replace(/ \r\n\t/g, '') === '';
   if (empty) {
@@ -3303,6 +3617,30 @@ listenSubmit('#addCandidateResumeForm', function (e) {
       setTimeout(function () {
         processingBtn('#addCandidateResumeForm', '#candidateSaveBtn');
       }, 1000);
+    }
+  });
+});
+listenChange('.candidate-default-resume-select', function () {
+  var select = $(this);
+  var previousValue = select.attr('data-current-value');
+  select.prop('disabled', true);
+  $.ajax({
+    url: select.data('url'),
+    type: 'PUT',
+    data: {
+      resume_id: select.val()
+    },
+    success: function success(result) {
+      select.attr('data-current-value', select.val());
+      displaySuccessMessage(result.message);
+      Livewire.dispatch('refreshDatatable');
+    },
+    error: function error(result) {
+      select.val(previousValue);
+      displayErrorMessage(result.responseJSON && result.responseJSON.message ? result.responseJSON.message : Lang.get('js.something_went_wrong'));
+    },
+    complete: function complete() {
+      select.prop('disabled', false);
     }
   });
 });
@@ -3593,6 +3931,20 @@ function loadCandidateCareerInformationData() {
     $('[data-education-form-title]').removeClass('d-none');
     $('.candidate-education-container').removeClass('d-none');
   }
+  function scrollToEducationInlineForm() {
+    var form = document.querySelector('[data-education-add-form]');
+    if (!form) {
+      return;
+    }
+    window.setTimeout(function () {
+      var stickyOffset = 150;
+      var top = window.scrollY + form.getBoundingClientRect().top - stickyOffset;
+      window.scrollTo({
+        top: Math.max(0, top),
+        behavior: 'smooth'
+      });
+    }, 100);
+  }
   listenClick('[data-inline-education-add]', function () {
     closeEducationInlineForms();
     $('[data-education-edit-form]').addClass('d-none');
@@ -3601,6 +3953,7 @@ function loadCandidateCareerInformationData() {
     setEducationFormTitle('[data-education-add-form]', $('.candidate-education-container .candidate-education').length + 1);
     updateEducationFormLayout('#addNewEducationForm');
     initEducationQuillEditors();
+    scrollToEducationInlineForm();
   });
   listenClick('[data-education-add-close], [data-education-edit-close]', function () {
     closeEducationInlineForms();
@@ -6589,7 +6942,10 @@ function loadCustom() {
   Handlebars = __webpack_require__(/*! handlebars */ "./node_modules/handlebars/dist/cjs/handlebars.js");
   source = null;
   jsrender = __webpack_require__(/*! jsrender */ "./node_modules/jsrender/jsrender.js");
-  $('input:text:not([readonly="readonly"])').first().focus();
+
+  // $('input:text:not([readonly="readonly"])')
+  //     .first()
+  //     .focus();
 
   // infy loader js
   stopLoader();
@@ -6870,6 +7226,28 @@ function closeFrontLanguageDropdowns(restoreFocus) {
     }
   });
 }
+function closeFrontUserDropdowns(restoreFocus) {
+  $(".front-user-dropdown.is-open").each(function () {
+    var dropdown = $(this);
+    dropdown.removeClass("is-open");
+    dropdown.find(".front-user-dropdown-menu").removeClass("show");
+    dropdown.find(".front-user-dropdown-toggle").attr("aria-expanded", "false");
+    if (restoreFocus) {
+      dropdown.find(".front-user-dropdown-toggle").trigger("focus");
+    }
+  });
+}
+listenClick(".front-user-dropdown-toggle", function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+  var dropdown = $(this).closest(".front-user-dropdown");
+  var menu = dropdown.find(".front-user-dropdown-menu");
+  var willOpen = !dropdown.hasClass("is-open");
+  closeFrontUserDropdowns(false);
+  dropdown.toggleClass("is-open", willOpen);
+  menu.toggleClass("show", willOpen);
+  $(this).attr("aria-expanded", willOpen ? "true" : "false");
+});
 listenClick(".language-dropdown-btn", function (e) {
   e.preventDefault();
   e.stopPropagation();
@@ -6906,10 +7284,14 @@ listenWithOutTarget("click", function (e) {
   if (!$(e.target).closest(".language-dropdown").length) {
     closeFrontLanguageDropdowns(false);
   }
+  if (!$(e.target).closest(".front-user-dropdown").length) {
+    closeFrontUserDropdowns(false);
+  }
 });
 listenWithOutTarget("keydown", function (e) {
   if (e.key === "Escape") {
     closeFrontLanguageDropdowns(true);
+    closeFrontUserDropdowns(true);
   }
 });
 listenClick("#readNotification", function (e) {
@@ -7141,20 +7523,33 @@ function IOInitImageUpload(box) {
       var image = new Image();
       image.src = e.target.result;
       image.onload = function () {
+        thumb.innerHTML = '';
         thumb.style.backgroundImage = 'url(' + e.target.result + ')';
       };
     };
     reader.readAsDataURL(file);
   } // Check Image Type
 
+  function previewVideo(file) {
+    var thumb = box.querySelector('.previewImage');
+    var videoUrl = URL.createObjectURL(file);
+    thumb.style.backgroundImage = 'none';
+    thumb.innerHTML = '<video src="' + videoUrl + '" controls muted playsinline preload="metadata" style="width:100%;height:100%;object-fit:contain;background:#000;border-radius:inherit;"></video>';
+  }
   function checkType(file) {
     var imageType = /image.*/;
-    if (!file.type.match(imageType)) {
-      throw 'File Type is not match.';
-    } else if (!file) {
+    var videoType = /video.*/;
+    if (!file) {
       throw 'File not found.';
-    } else {
+    } else if (file.type.match(imageType)) {
       previewImage(file);
+    } else if (file.type.match(videoType)) {
+      previewVideo(file);
+    } else {
+      uploadField.value = '';
+      if (typeof displayErrorMessage === 'function') {
+        displayErrorMessage('Unsupported file type.');
+      }
     }
   }
 } // every load initialize the Image component on document load
@@ -7187,6 +7582,12 @@ window.IOInitSidebar = function () {
     $('body').toggleClass('collapsed-menu');
   }); // for responsive sidebar
 
+  $(document).on('show.bs.collapse', '.aside-submenu', function () {
+    $(this).closest('.aside-item-collapse').addClass('collapse-submenu');
+  });
+  $(document).on('hide.bs.collapse', '.aside-submenu', function () {
+    $(this).closest('.aside-item-collapse').removeClass('collapse-submenu');
+  });
   $(window).resize(function () {
     if ($(window).width() > 1200) {
       $('.aside-collapse-btn').click(function () {
@@ -7349,47 +7750,61 @@ function loadPhoneNumberCountry() {
 () {
 
 listenChange('#countryId', function () {
+  var selectedCountry = $(this).val();
+  var selectedState = $('#stateId').val();
+  var selectedCity = $('#cityId').val();
+  $('#stateId').empty().append($('<option value=""></option>').text(Lang.get('js.select_state')));
+  $('#cityId').empty().append($('<option value=""></option>').text(Lang.get('js.select_city')));
+  if (!selectedCountry) {
+    $('#stateId, #cityId').trigger('change.select2');
+    return;
+  }
   $.ajax({
     url: route('states-list'),
     type: 'get',
     dataType: 'json',
     data: {
-      postal: $(this).val()
+      postal: selectedCountry
     },
     success: function success(data) {
-      $('#stateId').empty();
-      if (data.data.length != 0) {
-        $.each(data.data, function (i, v) {
-          $('#stateId').append($('<option></option>').attr('value', i).text(v));
-        });
-      } else {
-        $('#stateId').append($('<option value=""></option>').text(Lang.get('js.select_state')));
+      $.each(data.data || {}, function (i, v) {
+        $('#stateId').append($('<option></option>').attr('value', i).text(v));
+      });
+      var stateStillExists = selectedState && $('#stateId option[value="' + selectedState + '"]').length > 0;
+      $('#stateId').val(stateStillExists ? selectedState : '').trigger('change.select2');
+      if (stateStillExists) {
+        loadCities(selectedState, selectedCity);
       }
-      $('#stateId').trigger('change');
     }
   });
 });
 listenChange('#stateId', function () {
+  loadCities($(this).val(), null);
+});
+function loadCities(stateId) {
+  var selectedCity = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+  $('#cityId').empty().append($('<option value=""></option>').text(Lang.get('js.select_city')));
+  if (!stateId) {
+    $('#cityId').trigger('change.select2');
+    return;
+  }
   $.ajax({
     url: route('cities-list'),
     type: 'get',
     dataType: 'json',
     data: {
-      state: $(this).val(),
+      state: stateId,
       country: $('#countryId').val()
     },
     success: function success(data) {
-      $('#cityId').empty();
-      if (data.data.length != 0) {
-        $.each(data.data, function (i, v) {
-          $('#cityId').append($('<option></option>').attr('value', i).text(v));
-        });
-      } else {
-        $('#cityId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
-      }
+      $.each(data.data || {}, function (i, v) {
+        $('#cityId').append($('<option></option>').attr('value', i).text(v));
+      });
+      var cityStillExists = selectedCity && $('#cityId option[value="' + selectedCity + '"]').length > 0;
+      $('#cityId').val(cityStillExists ? selectedCity : '').trigger('change.select2');
     }
   });
-});
+}
 
 /***/ },
 
@@ -7755,15 +8170,10 @@ function loadEmployerDashboardData() {
     }).done(prepareJobsReport);
   };
   window.prepareJobsReport = function (result) {
-    $('#employerDashboardChart').html('');
     var data = result.data;
+    $('#jobContainer').html('').append('<canvas id="employerDashboardChart"></canvas>');
     if (data.totalJobApplication === 0) {
-      $('#jobContainer').html('');
-      $('#jobContainer').append('<div align="center" class="pt50 h150">No Records Found</div>');
-      return true;
-    } else {
-      $('#jobContainer').html('');
-      $('#jobContainer').append('<canvas id="employerDashboardChart"></canvas>');
+      $('#jobContainer').append('<div class="text-center text-muted mt-3">No Records Found</div>');
     }
     var barChartData = {
       labels: data.dates.dateArr,
@@ -8086,38 +8496,55 @@ listenClick('.view-invoice', function () {
 () {
 
 document.addEventListener('DOMContentLoaded', loadFaqsData);
+function createFaqQuill(selector) {
+  if (!$(selector).length) {
+    return null;
+  }
+  return new Quill(selector, {
+    modules: {
+      toolbar: [['bold', 'italic', 'underline', 'strike'], ['clean']],
+      keyboard: {
+        bindings: {
+          tab: 'disabled'
+        }
+      }
+    },
+    placeholder: Lang.get('js.enter_description'),
+    theme: 'snow'
+  });
+}
+function decodeHtml(value) {
+  var element = document.createElement('textarea');
+  element.innerHTML = value || '';
+  return element.value;
+}
+function setQuillValue(editor, value) {
+  if (editor) {
+    editor.root.innerHTML = decodeHtml(value);
+  }
+}
+function resetQuillValue(editor) {
+  if (editor) {
+    editor.setContents([{
+      insert: ''
+    }]);
+  }
+}
+function getQuillHtml(editor) {
+  var input = JSON.stringify(editor.root.innerHTML);
+  return input.replace(/"/g, '');
+}
+function requireQuillContent(editor) {
+  return editor && editor.getText().trim().length > 0;
+}
 function loadFaqsData() {
-  if (!$('#addFaqDescriptionQuillData').length && !$('#editFaqDescriptionQuillData').length) {
+  if (!$('#addFaqDescriptionEnQuillData').length && !$('#editFaqDescriptionEnQuillData').length) {
     return;
   }
-  if ($('#addFaqDescriptionQuillData').length) {
-    window.addFaqDescriptionQuill = new Quill('#addFaqDescriptionQuillData', {
-      modules: {
-        toolbar: [['bold', 'italic', 'underline', 'strike'], ['clean']],
-        keyboard: {
-          bindings: {
-            tab: 'disabled'
-          }
-        }
-      },
-      placeholder: Lang.get('js.enter_description'),
-      theme: 'snow'
-    });
-  }
-  if ($('#editFaqDescriptionQuillData').length) {
-    window.editFaqDescriptionQuill = new Quill('#editFaqDescriptionQuillData', {
-      modules: {
-        toolbar: [['bold', 'italic', 'underline', 'strike'], ['clean']],
-        keyboard: {
-          bindings: {
-            tab: 'disabled'
-          }
-        }
-      },
-      placeholder: Lang.get('js.enter_description'),
-      theme: 'snow'
-    });
-  }
+  window.addFaqDescriptionEnQuill = createFaqQuill('#addFaqDescriptionEnQuillData');
+  window.addFaqDescriptionBnQuill = createFaqQuill('#addFaqDescriptionBnQuillData');
+  window.editFaqDescriptionEnQuill = createFaqQuill('#editFaqDescriptionEnQuillData');
+  window.editFaqDescriptionBnQuill = createFaqQuill('#editFaqDescriptionBnQuillData');
   listenClick('.faqs-edit-btn', function (event) {
     var editFaqId = $(event.currentTarget).attr('data-id');
     $.ajax({
@@ -8125,12 +8552,12 @@ function loadFaqsData() {
       type: 'GET',
       success: function success(result) {
         if (result.success) {
-          var element = document.createElement('textarea');
-          element.innerHTML = result.data.title;
           $('#faqId').val(result.data.id);
-          $('#editFaqTitle').val(element.value);
-          element.innerHTML = result.data.description;
-          editFaqDescriptionQuill.root.innerHTML = element.value;
+          $('#editFaqCategoryId').val(result.data.faq_category_id || '');
+          $('#editFaqTitleEn').val(decodeHtml(result.data.title_en || result.data.title));
+          $('#editFaqTitleBn').val(decodeHtml(result.data.title_bn || ''));
+          setQuillValue(editFaqDescriptionEnQuill, result.data.description_en || result.data.description);
+          setQuillValue(editFaqDescriptionBnQuill, result.data.description_bn || '');
           $('#editFAQsModal').appendTo('body').modal('show');
         }
       },
@@ -8141,12 +8568,8 @@ function loadFaqsData() {
   });
   listenHiddenBsModal('#addFAQsModal', function () {
     resetModalForm('#addFAQsForm', '#validationErrorsBox');
-    addFaqDescriptionQuill.setContents([{
-      insert: ''
-    }]);
-    editFaqDescriptionQuill.setContents([{
-      insert: ''
-    }]);
+    resetQuillValue(addFaqDescriptionEnQuill);
+    resetQuillValue(addFaqDescriptionBnQuill);
   });
 }
 listenClick('.addFaqModal', function () {
@@ -8161,10 +8584,8 @@ listenClick('.faq-show-btn', function (event) {
       if (result.success) {
         $('#showFaqName').html('');
         $('#showFaqDescription').html('');
-        $('#showFaqName').append(result.data.title);
-        var element = document.createElement('textarea');
-        element.innerHTML = result.data.description;
-        $('#showFaqDescription').append(element.value);
+        $('#showFaqName').append(decodeHtml(result.data.title_en || result.data.title));
+        $('#showFaqDescription').append(decodeHtml(result.data.description_en || result.data.description));
         $('#showFaqModal').appendTo('body').modal('show');
       }
     },
@@ -8179,16 +8600,17 @@ listenClick('.faqs-delete-btn', function (event) {
 });
 listenHiddenBsModal('#editFAQsModal', function () {
   resetModalForm('#editFAQsForm', '#editValidationErrorsBox');
+  resetQuillValue(editFaqDescriptionEnQuill);
+  resetQuillValue(editFaqDescriptionBnQuill);
 });
 listenSubmit('#addFAQsForm', function (e) {
   e.preventDefault();
-  var addFaqEditorContent = addFaqDescriptionQuill.root.innerHTML;
-  if (addFaqDescriptionQuill.getText().trim().length === 0) {
+  if (!requireQuillContent(addFaqDescriptionEnQuill) || !requireQuillContent(addFaqDescriptionBnQuill)) {
     displayErrorMessage(Lang.get('js.description_required'));
     return false;
   }
-  var input = JSON.stringify(addFaqEditorContent);
-  $('#faqs_desc').val(input.replace(/"/g, ''));
+  $('#faqs_desc_en').val(getQuillHtml(addFaqDescriptionEnQuill));
+  $('#faqs_desc_bn').val(getQuillHtml(addFaqDescriptionBnQuill));
   processingBtn('#addFAQsForm', '#addFaqSaveBtn', 'loading');
   $.ajax({
     url: route('faqs.store'),
@@ -8198,7 +8620,9 @@ listenSubmit('#addFAQsForm', function (e) {
       if (result.success) {
         displaySuccessMessage(result.message);
         $('#addFAQsModal').modal('hide');
-        Livewire.dispatch('refreshDatatable');
+        setTimeout(function () {
+          window.location.reload();
+        }, 800);
       }
     },
     error: function error(result) {
@@ -8211,13 +8635,12 @@ listenSubmit('#addFAQsForm', function (e) {
 });
 listenSubmit('#editFAQsForm', function (event) {
   event.preventDefault();
-  var editFaqEditorContent = editFaqDescriptionQuill.root.innerHTML;
-  if (editFaqDescriptionQuill.getText().trim().length === 0) {
+  if (!requireQuillContent(editFaqDescriptionEnQuill) || !requireQuillContent(editFaqDescriptionBnQuill)) {
     displayErrorMessage(Lang.get('js.description_required'));
     return false;
   }
-  var input = JSON.stringify(editFaqEditorContent);
-  $('#edit_faqs_desc').val(input.replace(/"/g, ""));
+  $('#edit_faqs_desc_en').val(getQuillHtml(editFaqDescriptionEnQuill));
+  $('#edit_faqs_desc_bn').val(getQuillHtml(editFaqDescriptionBnQuill));
   processingBtn('#editFAQsForm', '#editFaqSaveBtn', 'loading');
   var updateFaqId = $('#faqId').val();
   $.ajax({
@@ -8228,7 +8651,9 @@ listenSubmit('#editFAQsForm', function (event) {
       if (result.success) {
         displaySuccessMessage(result.message);
         $('#editFAQsModal').modal('hide');
-        Livewire.dispatch('refreshDatatable');
+        setTimeout(function () {
+          window.location.reload();
+        }, 800);
       }
     },
     error: function error(result) {
@@ -9453,19 +9878,17 @@ listenClick('.inquiry-show-btn', function (event) {
         $('#showInquiresCreatedAt').html('');
         $('#showUpdatedAt').html('');
         $('#showInquiresMessage').html('');
-        $('#showInquiresName').append(result.data.name);
-        $('#showInquiresEmail').append(result.data.email);
+        $('#showInquiresName').text(result.data.name);
+        $('#showInquiresEmail').text(result.data.email);
         if (isEmpty(result.data.phone_no)) {
-          $('#showInquiresPhoneNo').append('N/A');
+          $('#showInquiresPhoneNo').text('N/A');
         } else {
-          $('#showInquiresPhoneNo').append(result.data.phone_no);
+          $('#showInquiresPhoneNo').text(result.data.phone_no);
         }
-        $('#showInquiresSubject').append(result.data.subject);
+        $('#showInquiresSubject').text(result.data.subject);
         $('#showInquiresCreatedAt').text(moment(result.data.created_at, 'YYYY-MM-DD hh:mm:ss').format('Do MMM, YYYY'));
         $('#showUpdatedAt').text(moment(result.data.updated_at, 'YYYY-MM-DD hh:mm:ss').format('Do MMM, YYYY'));
-        var element = document.createElement('textarea');
-        element.innerHTML = !isEmpty(result.data.message) ? result.data.message : 'N/A';
-        $('#showInquiresMessage').append(element.value);
+        $('#showInquiresMessage').text(!isEmpty(result.data.message) ? result.data.message : 'N/A');
         $('#showInquiryModal').appendTo('body').modal('show');
         ajaxCallCompleted();
       }
@@ -9892,10 +10315,10 @@ function loadJobSlotData() {
   var data = $('#stages').select2('val');
   $('#stages').on('change', function (e) {
     data = $('#stages').select2('val');
-    Livewire.dispatch('changeFilter', 'stage', data);
+    Livewire.dispatch('changeFilter', ['stage', data]);
   });
-  Livewire.dispatch('changeFilter', 'stage', data);
-  Livewire.dispatch('stageFilter', 'jobApplicationId', JobApplicationId);
+  Livewire.dispatch('changeFilter', ['stage', data]);
+  Livewire.dispatch('stageFilter', ['jobApplicationId', JobApplicationId]);
   listenClick('.edit-slot-btn', function (event) {
     //  if (ajaxCallIsRunning) {
     //     return;
@@ -11287,7 +11710,11 @@ function loadEmployeeCreateEditData() {
   if ($("#editDetails").length) {
     window.editJobDescription = new Quill("#editDetails", {
       modules: {
-        toolbar: [["bold", "italic", "underline", "strike"], ["clean"]],
+        toolbar: [["bold", "italic", "underline", "strike"], [{
+          list: "ordered"
+        }, {
+          list: "bullet"
+        }], ["clean"]],
         keyboard: {
           bindings: {
             tab: "disabled"
@@ -11301,7 +11728,11 @@ function loadEmployeeCreateEditData() {
       // Initialize Quill editor for key responsibilities
       window.editResponse = new Quill("#editResponse", {
         modules: {
-          toolbar: [["bold", "italic", "underline", "strike"], ["clean"]],
+          toolbar: [["bold", "italic", "underline", "strike"], [{
+            list: "ordered"
+          }, {
+            list: "bullet"
+          }], ["clean"]],
           keyboard: {
             bindings: {
               tab: "disabled"
@@ -11311,14 +11742,18 @@ function loadEmployeeCreateEditData() {
         placeholder: Lang.get("js.enter_key_responsibilities"),
         theme: "snow"
       });
-      editJobDescription.root.innerHTML = $("#editJobDescription").val();
-      editResponse.root.innerHTML = $("#edit_responsibilities").val();
+      setQuillHtml(editJobDescription, "#editJobDescription");
+      setQuillHtml(editResponse, "#edit_responsibilities");
     }
   }
   if ($("#details").length) {
     window.details = new Quill("#details", {
       modules: {
-        toolbar: [["bold", "italic", "underline", "strike"], ["clean"]],
+        toolbar: [["bold", "italic", "underline", "strike"], [{
+          list: "ordered"
+        }, {
+          list: "bullet"
+        }], ["clean"]],
         keyboard: {
           bindings: {
             tab: "disabled"
@@ -11331,7 +11766,11 @@ function loadEmployeeCreateEditData() {
     if ($("#response").length) {
       window.response = new Quill("#response", {
         modules: {
-          toolbar: [["bold", "italic", "underline", "strike"], ["clean"]],
+          toolbar: [["bold", "italic", "underline", "strike"], [{
+            list: "ordered"
+          }, {
+            list: "bullet"
+          }], ["clean"]],
           keyboard: {
             bindings: {
               tab: "disabled"
@@ -11341,6 +11780,8 @@ function loadEmployeeCreateEditData() {
         placeholder: Lang.get("js.enter_key_responsibilities"),
         theme: "snow"
       });
+      details.root.innerHTML = $("#job_desc").val() || "";
+      response.root.innerHTML = $("#key_responsibilities").val() || "";
     }
   }
   if (!$("#createJobForm").length && !$("#editJobForm").length) {
@@ -11410,8 +11851,25 @@ function loadEmployeeCreateEditData() {
   $("#fromSalary").on("wheel", function (e) {
     $(this).trigger("keyup");
   });
-  $("#jobTypeId,#jobCategoryId,#careerLevelsId,#jobShiftId,#countryId,#stateId,#cityId,#salaryPeriodsId,#requiredDegreeLevelId,#functionalAreaId").select2({
-    width: !$(".jobEmployeePanel").val() ? "calc(100% - 44px)" : "100%"
+  function initializeJobSelect2(selector, options) {
+    $(selector).each(function () {
+      var select = $(this);
+      var selectedValue = select.val();
+      if (select.hasClass("select2-hidden-accessible")) {
+        select.select2("destroy");
+      }
+      select.select2(options);
+      if (selectedValue !== null && selectedValue !== "") {
+        select.val(selectedValue).trigger("change.select2");
+      }
+    });
+  }
+  var countrySelect = $("#countryId");
+  if (countrySelect.length && !countrySelect.val()) {
+    countrySelect.val(countrySelect.find("option").first().val());
+  }
+  initializeJobSelect2("#jobTypeId,#jobCategoryId,#careerLevelsId,#jobShiftId,#countryId,#stateId,#cityId,#salaryPeriodsId,#requiredDegreeLevelId,#functionalAreaId", {
+    width: "calc(100% - 44px)"
   });
   $("#preferenceId,#currencyId,#createCityStateID").select2({
     width: "100%"
@@ -12152,20 +12610,59 @@ listenSubmit("#createSalaryPeriodForm", function () {
   });
   return false;
 });
-listenClick("#jobsSaveBtn, #saveDraft", function (e) {
-  console.log($(this).val());
-  if ($(this).val() == "draft") {
-    $("#saveAsDraft").attr("value", "1");
-  }
-  processingBtn("#createJobForm", $(this), "loading");
-  var editor_content1 = details.root.innerHTML;
-  var input = JSON.stringify(editor_content1);
-  if (details.getText().trim().length === 0) {
-    displayErrorMessage(Lang.get("js.description_required"));
-    processingBtn("#createJobForm", $(this));
+function prepareJobFormForSubmission(formSelector) {
+  var form = $(formSelector)[0];
+  if (!form) {
     return false;
   }
-  $("#job_desc").val(input.replace(/"/g, ""));
+  ["#fromSalary", "#toSalary"].forEach(function (selector) {
+    var field = $(form).find(selector)[0];
+    if (field && field.value !== "") {
+      field.value = removeCommas(field.value).trim();
+    }
+  });
+  $(form).find("select.select2-hidden-accessible").each(function () {
+    var select = $(this);
+    var selectedIds = (select.select2("data") || []).map(function (item) {
+      return item.id;
+    }).filter(function (id) {
+      return id !== null && id !== undefined && id !== "";
+    });
+    if ((!select.val() || select.val().length === 0) && selectedIds.length) {
+      select.val(select.prop("multiple") ? selectedIds : selectedIds[0]);
+    }
+  });
+  var countrySelect = $(form).find("#countryId");
+  if (countrySelect.length && !countrySelect.val()) {
+    countrySelect.val(countrySelect.find("option").first().val()).trigger("change.select2");
+  }
+  if (!form.checkValidity()) {
+    displayErrorMessage(Lang.get("js.required_field_messages"));
+    var invalidSelect = $(form).find("select:invalid").first();
+    if (invalidSelect.length && invalidSelect.hasClass("select2-hidden-accessible")) {
+      invalidSelect.select2("open");
+    } else {
+      $(form).find(":invalid").first().trigger("focus");
+    }
+    return false;
+  }
+  return true;
+}
+function setQuillHtml(editor, selector) {
+  if (!editor || !$(selector).length) {
+    return;
+  }
+  editor.clipboard.dangerouslyPasteHTML(0, $(selector).val() || "");
+}
+listenClick("#jobsSaveBtn, #saveDraft", function (e) {
+  e.preventDefault();
+  $("#saveAsDraft").val($(this).val() === "draft" ? "1" : "0");
+  var editor_content1 = details.root.innerHTML;
+  if (details.getText().trim().length === 0) {
+    displayErrorMessage(Lang.get("js.description_required"));
+    return false;
+  }
+  $("#job_desc").val(editor_content1);
   // if (!checkSummerNoteEmpty('#details',
   //     'Job Description field is required.', 1)) {
   //     e.preventDefault();
@@ -12173,45 +12670,45 @@ listenClick("#jobsSaveBtn, #saveDraft", function (e) {
   //     return false;
   // }
   var keyResponsibilitiesContent = response.root.innerHTML;
-  var respose = JSON.stringify(keyResponsibilitiesContent);
   if (response.getText().trim().length === 0) {
     displayErrorMessage(Lang.get("js.key_responsibilities_required"));
-    processingBtn("#createJobForm", $(this));
     return false;
   }
-  $("#key_responsibilities").val(respose.replace(/"/g, ""));
+  $("#key_responsibilities").val(keyResponsibilitiesContent);
   if ($("#salaryToErrorMsg").text() !== "") {
     $("#toSalary").focus();
     $("#saveJob,#draftJob").attr("disabled", false);
-    processingBtn("#createJobForm", $(this));
     return false;
   }
+  if (!prepareJobFormForSubmission("#createJobForm")) {
+    return false;
+  }
+  processingBtn("#createJobForm", $(this), "loading");
   $("#createJobForm")[0].submit();
 });
 listenClick("#editJobsSaveBtn, #saveDraft", function (e) {
-  processingBtn("#editJobForm", $(this), "loading");
+  e.preventDefault();
   var editor_content2 = editJobDescription.root.innerHTML;
-  var input2 = JSON.stringify(editor_content2);
   if (editJobDescription.getText().trim().length === 0) {
     displayErrorMessage(Lang.get("js.description_required"));
-    processingBtn("#editJobForm", "#editJobsSaveBtn");
     return false;
   }
-  $("#editJobDescription").val(input2.replace(/"/g, ""));
+  $("#editJobDescription").val(editor_content2);
   var editor_content3 = editResponse.root.innerHTML;
-  var input3 = JSON.stringify(editor_content3);
   if (editResponse.getText().trim().length === 0) {
     displayErrorMessage(Lang.get("js.key_responsibilities_required"));
-    processingBtn("#editJobForm", "#editJobsSaveBtn");
     return false;
   }
-  $("#edit_responsibilities").val(input3.replace(/"/g, ""));
+  $("#edit_responsibilities").val(editor_content3);
   if ($("#salaryToErrorMsg").text() !== "") {
     $("#toSalary").focus();
     $("#saveJob,#draftJob").attr("disabled", false);
-    processingBtn("#editJobForm", "#editJobsSaveBtn");
     return false;
   }
+  if (!prepareJobFormForSubmission("#editJobForm")) {
+    return false;
+  }
+  processingBtn("#editJobForm", $(this), "loading");
   $("#editJobForm")[0].submit();
 });
 
@@ -12556,7 +13053,6 @@ function changeStatus(jobId, jobStatus) {
 listenClick('.employer-job-delete-btn', function (event) {
   var jobId = $(this).attr('data-id');
   deleteItem(route('job.destroy', jobId), Lang.get('js.job'));
-  Livewire.dispatch('refreshDatatable');
 });
 listenClick('.copy-btn', function (event) {
   var copyUrlId = $(event.currentTarget).data('job-id');
@@ -49542,6 +50038,7 @@ webpackContext.id = "./node_modules/moment/locale sync recursive ^\\.\\/.*$";
 /******/ 	__webpack_require__("./resources/assets/js/header_sliders/header_sliders.js");
 /******/ 	__webpack_require__("./resources/assets/js/privacy_policy/privacy_policy.js");
 /******/ 	__webpack_require__("./resources/assets/js/branding_sliders/branding_sliders.js");
+/******/ 	__webpack_require__("./resources/assets/js/ads/ads.js");
 /******/ 	__webpack_require__("./resources/assets/js/home/home.js");
 /******/ 	__webpack_require__("./resources/assets/js/employer/dashboard.js");
 /******/ 	__webpack_require__("./resources/assets/js/employer/follower.js");

@@ -138,7 +138,59 @@
                             </div>
                         @else
                             <div class="d-flex align-items-center gap-xl-4 gap-3 mt-lg-0 mt-2 ms-xl-3 ms-lg-2">
-                                <ul class="navbar-nav align-items-center py-2 py-lg-0 front-user-nav">
+                                <ul class="navbar-nav align-items-center py-2 py-lg-0 front-user-nav d-flex flex-row align-items-center gap-2">
+                                    @auth
+                                        @php
+                                            $notifications = getNotification(\App\Models\Notification::CANDIDATE);
+                                            if(Auth::user()->hasRole('Employer')) {
+                                                $notifications = getNotification(\App\Models\Notification::EMPLOYER);
+                                            }
+                                            $unreadCount = $notifications ? $notifications->count() : 0;
+                                        @endphp
+                                        <li class="nav-item dropdown front-user-dropdown me-2">
+                                            <button class="btn dropdown-toggle front-user-dropdown-toggle d-flex align-items-center position-relative p-2"
+                                                    type="button" id="frontNotificationDropdown" aria-expanded="false" style="border:none; background:transparent;">
+                                                <i class="fa-solid fa-bell fs-4 text-primary"></i>
+                                                @if($unreadCount > 0)
+                                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger fs-8 p-1" style="width: 18px; height: 18px; line-height: 10px;" id="candidateNotificationCount">
+                                                        {{ $unreadCount }}
+                                                    </span>
+                                                @endif
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-end front-user-dropdown-menu p-0 shadow-lg border-0 rounded-3"
+                                                 style="width: 320px; max-height: 420px; overflow: hidden;"
+                                                 aria-labelledby="frontNotificationDropdown">
+                                                <div class="d-flex align-items-center justify-content-between px-3 py-3 bg-light border-bottom">
+                                                    <h6 class="fw-bold mb-0 text-dark fs-6 d-flex align-items-center gap-2">
+                                                        <i class="fa-solid fa-bell text-primary"></i> {{ __('messages.notification.notifications') }}
+                                                    </h6>
+                                                    @if($unreadCount > 0)
+                                                        <a href="javascript:void(0)" class="text-primary fs-7 text-decoration-none read-all-notification-btn">{{ __('messages.notification.mark_all_as_read') ?? 'Mark all as read' }}</a>
+                                                    @endif
+                                                </div>
+                                                <div class="notification-scroll-body" style="max-height: 320px; overflow-y: auto;">
+                                                    @if($notifications && $notifications->isNotEmpty())
+                                                        @foreach($notifications as $notification)
+                                                            <div class="dropdown-item border-bottom p-3 text-wrap d-flex align-items-start gap-3 read-notification-item" data-id="{{ $notification->id }}" style="cursor: pointer;">
+                                                                <div class="rounded-circle bg-primary bg-opacity-10 p-2 text-primary d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; flex-shrink: 0;">
+                                                                    <i class="{{ getNotificationIcon($notification->type) }} fs-6"></i>
+                                                                </div>
+                                                                <div class="w-100">
+                                                                    <p class="mb-1 fw-semibold text-dark fs-7 lh-sm">{{ $notification->title }}</p>
+                                                                    <span class="text-muted fs-8"><i class="fa-regular fa-clock me-1"></i>{{ $notification->created_at->diffForHumans() }}</span>
+                                                                </div>
+                                                            </div>
+                                                        @endforeach
+                                                    @else
+                                                        <div class="p-4 text-center text-muted">
+                                                            <i class="fa-regular fa-bell-slash fs-3 mb-2 d-block text-secondary"></i>
+                                                            <span class="fs-7">{{ __('messages.notification.empty_notifications') ?? 'No notifications found' }}</span>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </li>
+                                    @endauth
                                     <li class="nav-item dropdown front-user-dropdown">
                                         <button class="btn dropdown-toggle front-user-dropdown-toggle d-flex align-items-center"
                                             type="button" id="frontUserDropdown" aria-expanded="false"

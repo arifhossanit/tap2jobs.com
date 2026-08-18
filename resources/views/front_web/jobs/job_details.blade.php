@@ -153,7 +153,7 @@
                                     </div> --}}
                                     <div class="desc d-flex pe-2">
                                         <button class="btn btn-primary  mb-3"
-                                            onclick="window.location='{{ route('front.candidate.login') }}'">
+                                            onclick="window.location='{{ route('show.apply-job-form', $job->job_id) }}'">
                                             {{ __('messages.front_job_details.apply_for_job') }}
                                         </button>
                                     </div>

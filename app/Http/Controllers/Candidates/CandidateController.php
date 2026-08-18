@@ -1152,6 +1152,7 @@ class CandidateController extends AppBaseController
 
         /** @var JobApplicationSchedule $jobApplicationSchedules */
         $jobApplicationSchedules = JobApplicationSchedule::with([
+            'jobStage',
             'jobApplication.job.company' => function ($query) {
                 $query->without('job.company.user.city', 'job.company.user.state', 'job.company.user.country',
                     'job.company.user.media');
@@ -1168,9 +1169,16 @@ class CandidateController extends AppBaseController
         $data = [];
 
         foreach ($jobApplicationSchedules->get() as $jobApplicationSchedule) {
+            $stageName = $jobApplicationSchedule->jobStage?->name ?? 'Stage';
+            $slotDateTime = ! empty($jobApplicationSchedule->date) 
+                ? Carbon::parse($jobApplicationSchedule->date)->translatedFormat('jS M Y') . ' • ' . $jobApplicationSchedule->time 
+                : '';
+
             $data[] = [
-                'notes' => ! empty($jobApplicationSchedule->notes) ? $jobApplicationSchedule->notes : __('messages.job_stage.new_slot_send'),
+                'notes' => ! empty($jobApplicationSchedule->notes) ? $jobApplicationSchedule->notes : '',
                 'company_name' => $jobApplicationSchedule->jobApplication?->job?->company?->user?->full_name ?? '',
+                'stage_name' => $stageName,
+                'slot_date_time' => $slotDateTime,
                 'schedule_created_at' => Carbon::parse($jobApplicationSchedule->created_at)->translatedFormat('jS M Y, h:i A'),
             ];
         }
