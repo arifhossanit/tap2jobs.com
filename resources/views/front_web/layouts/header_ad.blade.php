@@ -4,7 +4,7 @@
      The previous image / video based header-ad banner function is
      temporarily COMMENTED OUT below (kept for later re-use).
      Currently the strip renders a multi-colour GRADIENT bar with
-     the promo text:  "Post your Job Ad for Free"  (ফ্রিতে জব অ্যাড দিন)
+     the promo text:  "Post your Job Ad for Free"  (আপনার চাকরির বিজ্ঞাপন পোস্ট করুন একদম ফ্রি-তে!!!)
      IMPORTANT: Do NOT use id/class/aria containing "ad" / "ads" / "advert".
      Browser ad blockers hide those selectors even when HTML is present.
      The strip is always visible above the navbar; no JS hide-on-load.

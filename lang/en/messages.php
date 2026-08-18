@@ -167,11 +167,6 @@ return [
         'process' => 'Processing...',
         'saving' => 'Saving...',
         'save_failed' => 'Unable to save changes. Please try again.',
-<<<<<<< HEAD
-        'saving' => 'Saving...',
-        'save_failed' => 'Unable to save changes. Please try again.',
-=======
->>>>>>> 449856f691aaef29c4976fd3fc5c6cefab8fde78
         'are_you_sure' => 'Are you sure want to delete this',
         'no_cancel' => 'No, Cancel',
         'yes_delete' => 'Yes, Delete!',
