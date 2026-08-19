@@ -2413,24 +2413,50 @@
 }
 
 .flatpickr-calendar.candidate-accomplishment-calendar {
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  padding: 12px 14px;
   max-width: calc(100vw - 24px);
+  background: #ffffff;
+  font-family: inherit;
 }
-.flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-current-month {
-  align-items: center;
-  display: flex;
-  gap: 6px;
-  justify-content: center;
-  overflow: visible;
-}
-.flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-month,
 .flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-months {
   overflow: visible;
   position: relative;
   z-index: 20;
+  margin-bottom: 8px;
 }
-.flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-innerContainer {
-  position: relative;
-  z-index: 1;
+.flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-months .flatpickr-prev-month,
+.flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-months .flatpickr-next-month {
+  height: 32px;
+  width: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+.flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-months .flatpickr-prev-month:hover,
+.flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-months .flatpickr-next-month:hover {
+  background: #f1f5f9;
+  color: #1967d2;
+}
+.flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-months .flatpickr-prev-month svg,
+.flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-months .flatpickr-next-month svg {
+  fill: currentColor;
+  height: 14px;
+  width: 14px;
+}
+.flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-current-month {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  overflow: visible;
+  padding-top: 2px;
 }
 .flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-month-wrapper,
 .flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-year-wrapper {
@@ -2439,43 +2465,50 @@
 }
 .flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-month-select,
 .flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-year-select {
-  background: transparent;
-  border: 0;
-  color: #0f1b3d;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #0f172a;
   cursor: pointer;
-  font: inherit;
+  font-size: 14px;
   font-weight: 600;
-  line-height: 1;
+  line-height: 1.2;
   outline: 0;
-  padding: 0;
-  width: auto;
+  padding: 5px 10px;
+  transition: all 0.2s ease;
+}
+.flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-month-select:hover,
+.flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-year-select:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #1967d2;
 }
 .flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-year-select {
   color: #1967d2;
 }
 .flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-picker-menu {
-  background: #fff;
-  border: 1px solid #d6dce6;
-  border-radius: 4px;
-  box-shadow: 0 3px 10px rgba(15, 27, 61, 0.12);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
   left: 50%;
-  max-height: 300px;
+  max-height: 240px;
   overflow-y: auto;
-  padding: 0;
+  padding: 6px;
   position: absolute;
-  top: 28px;
+  top: 36px;
   transform: translateX(-50%);
   width: 160px;
   z-index: 100;
 }
 .flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-picker-menu::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 .flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-picker-menu::-webkit-scrollbar-track {
   background: transparent;
 }
 .flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-picker-menu::-webkit-scrollbar-thumb {
-  background: #c9c9c9;
+  background: #cbd5e1;
   border-radius: 99px;
 }
 .flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-month-menu {
@@ -2484,18 +2517,27 @@
 .flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-picker-option {
   background: transparent;
   border: 0;
-  color: #0f1b3d;
+  border-radius: 6px;
+  color: #334155;
   display: block;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 500;
   line-height: 1.2;
-  min-height: 28px;
+  min-height: 32px;
   outline: 0;
-  padding: 6px 12px;
+  padding: 7px 12px;
   text-align: center;
+  transition: all 0.15s ease;
   width: 100%;
 }
-.flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-picker-option:hover, .flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-picker-option[aria-selected=true] {
-  background: #f8fafc;
+.flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-picker-option:hover {
+  background: #f1f5f9;
+  color: #1967d2;
+}
+.flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-picker-option[aria-selected=true] {
+  background: #1967d2;
+  color: #ffffff;
+  font-weight: 600;
 }
 .flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-innerContainer,
 .flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-rContainer,
@@ -2509,12 +2551,53 @@
 .flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-weekdaycontainer {
   width: 100% !important;
 }
+.flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-weekdays {
+  margin-top: 6px;
+  margin-bottom: 4px;
+}
+.flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-weekday {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
 .flatpickr-calendar.candidate-accomplishment-calendar .dayContainer {
   display: grid !important;
   grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
 }
 .flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-day {
+  border-radius: 8px !important;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 500;
+  height: 34px;
+  line-height: 34px;
+  max-width: 34px;
   justify-self: center;
+  transition: all 0.15s ease;
+}
+.flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-day:hover {
+  background: #f1f5f9 !important;
+  color: #1967d2 !important;
+  border-color: transparent !important;
+}
+.flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-day.today {
+  border: 1.5px solid #1967d2 !important;
+  color: #1967d2 !important;
+  background: transparent !important;
+  font-weight: 600;
+}
+.flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-day.selected, .flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-day.selected:hover {
+  background: #1967d2 !important;
+  border-color: #1967d2 !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(25, 103, 210, 0.3);
+}
+.flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-day.flatpickr-disabled, .flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-day.prevMonthDay, .flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-day.nextMonthDay {
+  color: #cbd5e1 !important;
 }
 
 .candidate-publication-editor {

@@ -632,6 +632,9 @@
 
                 if (typeof flatpickr !== 'undefined') {
                     const resizeCalendar = function (calendar) {
+                        if (!calendar) {
+                            return;
+                        }
                         const field = input.closest('.candidate-skill-form__field') || input.closest('.candidate-publication-date-field');
                         const width = field ? Math.round(field.getBoundingClientRect().width) : 0;
 
@@ -642,6 +645,9 @@
                     };
 
                     const applyHeaderDropdowns = function (instance) {
+                        if (!instance || !instance.calendarContainer) {
+                            return;
+                        }
                         const calendar = instance.calendarContainer;
                         const monthSelect = calendar.querySelector('.flatpickr-current-month .flatpickr-monthDropdown-months');
                         const yearWrapper = calendar.querySelector('.flatpickr-current-month .numInputWrapper');
@@ -1030,6 +1036,10 @@
                     }
 
                     closePortfolioForm();
+                    portfolioForm.querySelectorAll('.is-invalid').forEach(function (element) {
+                        element.classList.remove('is-invalid');
+                    });
+                    portfolioForm.classList.remove('was-validated');
                     activePortfolioItem = item || null;
                     if (portfolioEditingId) {
                         portfolioEditingId.value = item ? (item.dataset.portfolioId || '') : '';
@@ -1054,12 +1064,10 @@
                         const footerAdd = portfolioList.querySelector('.candidate-portfolio-add-outline');
                         portfolioList.insertBefore(portfolioForm, footerAdd || null);
                     }
+                    portfolioForm.querySelectorAll('.is-invalid').forEach(function (element) {
+                        element.classList.remove('is-invalid');
+                    });
                     portfolioTitleInput.focus();
-                    if (portfolioQuill) {
-                        setTimeout(function () {
-                            portfolioQuill.focus();
-                        }, 0);
-                    }
                     refreshPortfolioAddActions();
                 };
 
@@ -1384,6 +1392,10 @@
 
                 const closePublicationForm = function () {
                     publicationForm.classList.add('d-none');
+                    publicationForm.querySelectorAll('.is-invalid').forEach(function (element) {
+                        element.classList.remove('is-invalid');
+                    });
+                    publicationForm.classList.remove('was-validated');
                     if (publicationEditingId) {
                         publicationEditingId.value = '';
                     }
@@ -1419,6 +1431,11 @@
                     }
 
                     closePublicationForm();
+                    publicationForm.querySelectorAll('.is-invalid').forEach(function (element) {
+                        element.classList.remove('is-invalid');
+                    });
+                    publicationForm.classList.remove('was-validated');
+
                     activePublicationItem = item || null;
                     if (publicationEditingId) {
                         publicationEditingId.value = item ? (item.dataset.publicationId || '') : '';
@@ -1443,6 +1460,9 @@
                         const footerAdd = publicationList.querySelector('.candidate-publication-add-outline');
                         publicationList.insertBefore(publicationForm, footerAdd || null);
                     }
+                    publicationForm.querySelectorAll('.is-invalid').forEach(function (element) {
+                        element.classList.remove('is-invalid');
+                    });
                     publicationTitleInput.focus();
                     refreshPublicationAddActions();
                 };
@@ -1779,6 +1799,10 @@
 
                 const closeAwardForm = function () {
                     awardForm.classList.add('d-none');
+                    awardForm.querySelectorAll('.is-invalid').forEach(function (element) {
+                        element.classList.remove('is-invalid');
+                    });
+                    awardForm.classList.remove('was-validated');
                     if (awardEditingId) {
                         awardEditingId.value = '';
                     }
@@ -1809,6 +1833,11 @@
                         return;
                     }
                     closeAwardForm();
+                    awardForm.querySelectorAll('.is-invalid').forEach(function (element) {
+                        element.classList.remove('is-invalid');
+                    });
+                    awardForm.classList.remove('was-validated');
+
                     activeAwardItem = item || null;
                     if (awardEditingId) {
                         awardEditingId.value = item ? (item.dataset.awardId || '') : '';
@@ -1830,6 +1859,9 @@
                         const footerAdd = awardList.querySelector('.candidate-publication-add-outline');
                         awardList.insertBefore(awardForm, footerAdd || null);
                     }
+                    awardForm.querySelectorAll('.is-invalid').forEach(function (element) {
+                        element.classList.remove('is-invalid');
+                    });
                     awardTitleInput.focus();
                     refreshAwardEmpty();
                     refreshAwardAddActions();
@@ -2166,6 +2198,10 @@
                         return;
                     }
                     projectForm.classList.add('d-none');
+                    projectForm.querySelectorAll('.is-invalid').forEach(function (element) {
+                        element.classList.remove('is-invalid');
+                    });
+                    projectForm.classList.remove('was-validated');
                     if (projectEditingId) {
                         projectEditingId.value = '';
                     }
@@ -2199,6 +2235,11 @@
                         return;
                     }
                     closeProjectForm();
+                    projectForm.querySelectorAll('.is-invalid').forEach(function (element) {
+                        element.classList.remove('is-invalid');
+                    });
+                    projectForm.classList.remove('was-validated');
+
                     activeProjectItem = item || null;
                     if (projectEditingId) {
                         projectEditingId.value = item ? (item.dataset.projectId || '') : '';
@@ -2220,6 +2261,9 @@
                         const footerAdd = projectList.querySelector('.candidate-project-add-outline');
                         projectList.insertBefore(projectForm, footerAdd || null);
                     }
+                    projectForm.querySelectorAll('.is-invalid').forEach(function (element) {
+                        element.classList.remove('is-invalid');
+                    });
                     projectTitleInput.focus();
                     refreshProjectEmpty();
                     refreshProjectAddActions();
@@ -2552,6 +2596,10 @@
 
                 const closeOtherForm = function () {
                     otherForm.classList.add('d-none');
+                    otherForm.querySelectorAll('.is-invalid').forEach(function (element) {
+                        element.classList.remove('is-invalid');
+                    });
+                    otherForm.classList.remove('was-validated');
                     if (otherEditingId) {
                         otherEditingId.value = '';
                     }
@@ -2585,6 +2633,11 @@
                         return;
                     }
                     closeOtherForm();
+                    otherForm.querySelectorAll('.is-invalid').forEach(function (element) {
+                        element.classList.remove('is-invalid');
+                    });
+                    otherForm.classList.remove('was-validated');
+
                     activeOtherItem = item || null;
                     if (otherEditingId) {
                         otherEditingId.value = item ? (item.dataset.otherId || '') : '';
@@ -2606,6 +2659,9 @@
                         const footerAdd = otherList.querySelector('.candidate-other-add-outline');
                         otherList.insertBefore(otherForm, footerAdd || null);
                     }
+                    otherForm.querySelectorAll('.is-invalid').forEach(function (element) {
+                        element.classList.remove('is-invalid');
+                    });
                     otherTitleInput.focus();
                     refreshOtherEmpty();
                     refreshOtherAddActions();

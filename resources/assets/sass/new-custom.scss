@@ -2516,26 +2516,52 @@
 }
 
 .flatpickr-calendar.candidate-accomplishment-calendar {
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  padding: 12px 14px;
   max-width: calc(100vw - 24px);
+  background: #ffffff;
+  font-family: inherit;
 
-  .flatpickr-current-month {
-    align-items: center;
-    display: flex;
-    gap: 6px;
-    justify-content: center;
-    overflow: visible;
-  }
-
-  .flatpickr-month,
   .flatpickr-months {
     overflow: visible;
     position: relative;
     z-index: 20;
+    margin-bottom: 8px;
+
+    .flatpickr-prev-month,
+    .flatpickr-next-month {
+      height: 32px;
+      width: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      color: #64748b;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #f1f5f9;
+        color: #1967d2;
+      }
+
+      svg {
+        fill: currentColor;
+        height: 14px;
+        width: 14px;
+      }
+    }
   }
 
-  .flatpickr-innerContainer {
-    position: relative;
-    z-index: 1;
+  .flatpickr-current-month {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    overflow: visible;
+    padding-top: 2px;
   }
 
   .candidate-accomplishment-month-wrapper,
@@ -2546,16 +2572,23 @@
 
   .candidate-accomplishment-month-select,
   .candidate-accomplishment-year-select {
-    background: transparent;
-    border: 0;
-    color: #0f1b3d;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    color: #0f172a;
     cursor: pointer;
-    font: inherit;
+    font-size: 14px;
     font-weight: 600;
-    line-height: 1;
+    line-height: 1.2;
     outline: 0;
-    padding: 0;
-    width: auto;
+    padding: 5px 10px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #1967d2;
+    }
   }
 
   .candidate-accomplishment-year-select {
@@ -2563,22 +2596,22 @@
   }
 
   .candidate-accomplishment-picker-menu {
-    background: #fff;
-    border: 1px solid #d6dce6;
-    border-radius: 4px;
-    box-shadow: 0 3px 10px rgba(15, 27, 61, 0.12);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
     left: 50%;
-    max-height: 300px;
+    max-height: 240px;
     overflow-y: auto;
-    padding: 0;
+    padding: 6px;
     position: absolute;
-    top: 28px;
+    top: 36px;
     transform: translateX(-50%);
     width: 160px;
     z-index: 100;
 
     &::-webkit-scrollbar {
-      width: 6px;
+      width: 5px;
     }
 
     &::-webkit-scrollbar-track {
@@ -2586,7 +2619,7 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background: #c9c9c9;
+      background: #cbd5e1;
       border-radius: 99px;
     }
   }
@@ -2598,19 +2631,28 @@
   .candidate-accomplishment-picker-option {
     background: transparent;
     border: 0;
-    color: #0f1b3d;
+    border-radius: 6px;
+    color: #334155;
     display: block;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 500;
     line-height: 1.2;
-    min-height: 28px;
+    min-height: 32px;
     outline: 0;
-    padding: 6px 12px;
+    padding: 7px 12px;
     text-align: center;
+    transition: all 0.15s ease;
     width: 100%;
 
-    &:hover,
+    &:hover {
+      background: #f1f5f9;
+      color: #1967d2;
+    }
+
     &[aria-selected="true"] {
-      background: #f8fafc;
+      background: #1967d2;
+      color: #ffffff;
+      font-weight: 600;
     }
   }
 
@@ -2628,13 +2670,63 @@
     width: 100% !important;
   }
 
+  .flatpickr-weekdays {
+    margin-top: 6px;
+    margin-bottom: 4px;
+  }
+
+  .flatpickr-weekday {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
   .dayContainer {
     display: grid !important;
     grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 2px;
   }
 
   .flatpickr-day {
+    border-radius: 8px !important;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 500;
+    height: 34px;
+    line-height: 34px;
+    max-width: 34px;
     justify-self: center;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background: #f1f5f9 !important;
+      color: #1967d2 !important;
+      border-color: transparent !important;
+    }
+
+    &.today {
+      border: 1.5px solid #1967d2 !important;
+      color: #1967d2 !important;
+      background: transparent !important;
+      font-weight: 600;
+    }
+
+    &.selected,
+    &.selected:hover {
+      background: #1967d2 !important;
+      border-color: #1967d2 !important;
+      color: #ffffff !important;
+      font-weight: 600;
+      box-shadow: 0 4px 10px rgba(25, 103, 210, 0.3);
+    }
+
+    &.flatpickr-disabled,
+    &.prevMonthDay,
+    &.nextMonthDay {
+      color: #cbd5e1 !important;
+    }
   }
 }
 
