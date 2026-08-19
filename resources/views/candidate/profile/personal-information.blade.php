@@ -50,8 +50,11 @@
                     </button>
                     <button class="candidate-profile-section__toggle" type="button" data-bs-toggle="collapse"
                             data-bs-target="#candidatePersonalDetails" aria-expanded="true"
-                            aria-controls="candidatePersonalDetails">
-                        {{ __('messages.candidate_profile.collapse') }} <i class="fa-solid fa-chevron-up"></i>
+                            aria-controls="candidatePersonalDetails"
+                            data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
+                            data-expand-label="{{ __('messages.candidate_profile.expand') }}">
+                        <span>{{ __('messages.candidate_profile.collapse') }}</span>
+                        <i class="fa-solid fa-chevron-up"></i>
                     </button>
                 </span>
             </div>
@@ -274,8 +277,11 @@
                     </button>
                     <button class="candidate-profile-section__toggle" type="button" data-bs-toggle="collapse"
                             data-bs-target="#candidateAddressDetails" aria-expanded="false"
-                            aria-controls="candidateAddressDetails">
-                        {{ __('messages.candidate_profile.expand') }} <i class="fa-solid fa-chevron-down"></i>
+                            aria-controls="candidateAddressDetails"
+                            data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
+                            data-expand-label="{{ __('messages.candidate_profile.expand') }}">
+                        <span>{{ __('messages.candidate_profile.expand') }}</span>
+                        <i class="fa-solid fa-chevron-up"></i>
                     </button>
                 </span>
             </div>
@@ -438,8 +444,11 @@
                     </button>
                     <button class="candidate-profile-section__toggle" type="button" data-bs-toggle="collapse"
                             data-bs-target="#candidateCareerApplication" aria-expanded="false"
-                            aria-controls="candidateCareerApplication">
-                        {{ __('messages.candidate_profile.expand') }} <i class="fa-solid fa-chevron-down"></i>
+                            aria-controls="candidateCareerApplication"
+                            data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
+                            data-expand-label="{{ __('messages.candidate_profile.expand') }}">
+                        <span>{{ __('messages.candidate_profile.expand') }}</span>
+                        <i class="fa-solid fa-chevron-up"></i>
                     </button>
                 </span>
             </div>
@@ -600,8 +609,11 @@
                     </button>
                     <button class="candidate-profile-section__toggle" type="button" data-bs-toggle="collapse"
                             data-bs-target="#candidatePreferredArea" aria-expanded="false"
-                            aria-controls="candidatePreferredArea">
-                        {{ __('messages.candidate_profile.expand') }} <i class="fa-solid fa-chevron-down"></i>
+                            aria-controls="candidatePreferredArea"
+                            data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
+                            data-expand-label="{{ __('messages.candidate_profile.expand') }}">
+                        <span>{{ __('messages.candidate_profile.expand') }}</span>
+                        <i class="fa-solid fa-chevron-up"></i>
                     </button>
                 </span>
             </div>
@@ -770,8 +782,11 @@
                     </button>
                     <button class="candidate-profile-section__toggle" type="button" data-bs-toggle="collapse"
                             data-bs-target="#candidateRelevantInformation" aria-expanded="false"
-                            aria-controls="candidateRelevantInformation">
-                        {{ __('messages.candidate_profile.expand') }} <i class="fa-solid fa-chevron-down"></i>
+                            aria-controls="candidateRelevantInformation"
+                            data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
+                            data-expand-label="{{ __('messages.candidate_profile.expand') }}">
+                        <span>{{ __('messages.candidate_profile.expand') }}</span>
+                        <i class="fa-solid fa-chevron-up"></i>
                     </button>
                 </span>
             </div>
@@ -868,8 +883,11 @@
                     </button>
                     <button class="candidate-profile-section__toggle" type="button" data-bs-toggle="collapse"
                             data-bs-target="#candidateDisabilityInformation" aria-expanded="false"
-                            aria-controls="candidateDisabilityInformation">
-                        {{ __('messages.candidate_profile.expand') }} <i class="fa-solid fa-chevron-down"></i>
+                            aria-controls="candidateDisabilityInformation"
+                            data-collapse-label="{{ __('messages.candidate_profile.collapse') }}"
+                            data-expand-label="{{ __('messages.candidate_profile.expand') }}">
+                        <span>{{ __('messages.candidate_profile.expand') }}</span>
+                        <i class="fa-solid fa-chevron-up"></i>
                     </button>
                 </span>
             </div>
@@ -1085,12 +1103,20 @@
                     return;
                 }
 
-                header.classList.toggle('collapsed', !expanded);
-                toggle.innerHTML = expanded
-                    ? candidateProfileCollapseText + ' <i class="fa-solid fa-chevron-up"></i>'
-                    : candidateProfileExpandText + ' <i class="fa-solid fa-chevron-down"></i>';
+                toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
 
-                const editAction = header.querySelector('.candidate-section-edit-action, .candidate-personal-edit-action, .candidate-address-edit-action');
+                const label = toggle.querySelector('span');
+                if (label) {
+                    label.textContent = expanded
+                        ? (toggle.dataset.collapseLabel || candidateProfileCollapseText)
+                        : (toggle.dataset.expandLabel || candidateProfileExpandText);
+                }
+
+                if (header) {
+                    header.classList.toggle('collapsed', !expanded);
+                }
+
+                const editAction = header ? header.querySelector('.candidate-section-edit-action, .candidate-personal-edit-action, .candidate-address-edit-action') : null;
                 if (editAction) {
                     editAction.classList.toggle('d-none', !expanded || header.classList.contains('candidate-profile-section__header--editing'));
                 }
@@ -1110,9 +1136,16 @@
             });
 
             accordion.querySelectorAll('.candidate-profile-section__collapse').forEach(function (section) {
+                section.addEventListener('show.bs.collapse', function () {
+                    setActiveSection(section.id);
+                    setHeaderState(section, true);
+                });
                 section.addEventListener('shown.bs.collapse', function () {
                     setActiveSection(section.id);
                     setHeaderState(section, true);
+                });
+                section.addEventListener('hide.bs.collapse', function () {
+                    setHeaderState(section, false);
                 });
                 section.addEventListener('hidden.bs.collapse', function () {
                     setHeaderState(section, false);
@@ -1121,7 +1154,7 @@
 
             accordion.querySelectorAll('.candidate-profile-section__header').forEach(function (header) {
                 header.addEventListener('click', function (event) {
-                    if (event.target.closest('button, a, input, select, textarea, label')) {
+                    if (event.target.closest('button, a, input, select, textarea, label, .ql-toolbar, .ql-container')) {
                         return;
                     }
 

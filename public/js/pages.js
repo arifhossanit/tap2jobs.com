@@ -3900,11 +3900,28 @@ function initCandidateAccomplishmentAccordion() {
     }
   });
 }
+function initCandidatePersonalInformationAccordion() {
+  initCandidateProfileAccordion({
+    accordionId: 'candidateProfileAccordion',
+    menuSelector: '[data-profile-section-link]',
+    menuDatasetKey: 'profileSectionLink',
+    syncHeaderActions: function syncHeaderActions(header, expanded) {
+      if (!header) {
+        return;
+      }
+      var editAction = header.querySelector('.candidate-section-edit-action, .candidate-personal-edit-action, .candidate-address-edit-action');
+      if (editAction) {
+        editAction.classList.toggle('d-none', !expanded || header.classList.contains('candidate-profile-section__header--editing'));
+      }
+    }
+  });
+}
 function bootCandidateCareerInformationData() {
   initCandidateEducationAccordion();
   initCandidateEmploymentAccordion();
   initCandidateOtherInformationAccordion();
   initCandidateAccomplishmentAccordion();
+  initCandidatePersonalInformationAccordion();
   var pageMarker = document.getElementById('indexCareerInfoData');
   if (!pageMarker || pageMarker.dataset.educationUiInitialized === 'true') {
     return;

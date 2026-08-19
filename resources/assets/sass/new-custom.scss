@@ -5770,14 +5770,16 @@
 #candidateEducationAccordion .candidate-profile-section__toggle .fa-chevron-up,
 #candidateEmploymentAccordion .candidate-profile-section__toggle .fa-chevron-up,
 #candidateOtherInformationAccordion .candidate-profile-section__toggle .fa-chevron-up,
-#candidateAccomplishmentAccordion .candidate-profile-section__toggle .fa-chevron-up {
+#candidateAccomplishmentAccordion .candidate-profile-section__toggle .fa-chevron-up,
+#candidateProfileAccordion .candidate-profile-section__toggle .fa-chevron-up {
   transition: transform 0.18s ease;
 }
 
 #candidateEducationAccordion .candidate-profile-section__toggle[aria-expanded="false"] .fa-chevron-up,
 #candidateEmploymentAccordion .candidate-profile-section__toggle[aria-expanded="false"] .fa-chevron-up,
 #candidateOtherInformationAccordion .candidate-profile-section__toggle[aria-expanded="false"] .fa-chevron-up,
-#candidateAccomplishmentAccordion .candidate-profile-section__toggle[aria-expanded="false"] .fa-chevron-up {
+#candidateAccomplishmentAccordion .candidate-profile-section__toggle[aria-expanded="false"] .fa-chevron-up,
+#candidateProfileAccordion .candidate-profile-section__toggle[aria-expanded="false"] .fa-chevron-up {
   transform: rotate(180deg);
 }
 
