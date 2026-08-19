@@ -3827,15 +3827,9 @@ function initCandidateEmploymentAccordion() {
       if (!header) {
         return;
       }
-      header.querySelectorAll('[data-employment-add-action]').forEach(function (action) {
+      header.querySelectorAll('[data-employment-add-action], [data-retired-army-add-action]').forEach(function (action) {
         action.classList.toggle('d-none', !expanded);
       });
-      var retiredArmyAddAction = header.querySelector('[data-retired-army-add-action]');
-      var retiredArmySummary = document.querySelector('[data-retired-army-summary]');
-      var hasRetiredArmyEmployment = retiredArmySummary && !retiredArmySummary.classList.contains('d-none');
-      if (retiredArmyAddAction) {
-        retiredArmyAddAction.classList.toggle('d-none', !expanded || hasRetiredArmyEmployment);
-      }
     }
   });
 }

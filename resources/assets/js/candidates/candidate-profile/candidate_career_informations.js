@@ -161,16 +161,9 @@ function initCandidateEmploymentAccordion() {
                 return;
             }
 
-            header.querySelectorAll('[data-employment-add-action]').forEach(function (action) {
+            header.querySelectorAll('[data-employment-add-action], [data-retired-army-add-action]').forEach(function (action) {
                 action.classList.toggle('d-none', !expanded);
             });
-
-            const retiredArmyAddAction = header.querySelector('[data-retired-army-add-action]');
-            const retiredArmySummary = document.querySelector('[data-retired-army-summary]');
-            const hasRetiredArmyEmployment = retiredArmySummary && !retiredArmySummary.classList.contains('d-none');
-            if (retiredArmyAddAction) {
-                retiredArmyAddAction.classList.toggle('d-none', !expanded || hasRetiredArmyEmployment);
-            }
         },
     });
 }

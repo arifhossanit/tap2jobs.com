@@ -185,8 +185,9 @@
             <div class="candidate-profile-section__header collapsed">
                 <span>{{ __('messages.candidate_profile.army_experience') }}</span>
                 <span class="candidate-profile-section__header-actions">
-                    <a class="candidate-education-add {{ $hasRetiredArmyEmployment ? 'd-none' : '' }}" href="javascript:void(0)" data-retired-army-add-trigger data-retired-army-add-action>
-                        <i class="fa-solid fa-plus"></i> {{ __('messages.candidate_profile.add_employment_history') }}
+                    <a class="candidate-education-add" href="javascript:void(0)" data-retired-army-add-trigger data-retired-army-add-action>
+                        <i class="fa-solid fa-plus"></i>
+                        <span>{{ __('messages.candidate_profile.add_employment_history') }}</span>
                     </a>
                     <button type="button" class="candidate-profile-section__toggle" data-bs-toggle="collapse"
                             data-bs-target="#candidateRetiredArmyEmploymentPanelBody" aria-expanded="false"
@@ -202,122 +203,182 @@
                  data-bs-parent="#candidateEmploymentAccordion">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <p class="candidate-skill-empty candidate-retired-army-empty {{ $hasRetiredArmyEmployment ? 'd-none' : '' }}" data-retired-army-empty>---</p>
-                    <div class="candidate-retired-army-summary {{ $hasRetiredArmyEmployment ? '' : 'd-none' }}" data-retired-army-summary>
-                        <div class="candidate-education-item__head">
-                            <h2>{{ __('messages.candidate_profile.information') }}</h2>
-                            <div class="candidate-education-item__actions">
-                                <a href="javascript:void(0)" class="candidate-education-action candidate-education-action--edit"
-                                   data-retired-army-edit>
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                    <span>{{ __('messages.common.edit') }}</span>
-                                </a>
-                                <a href="javascript:void(0)" class="candidate-education-action candidate-education-action--delete"
-                                   data-retired-army-delete>
-                                    <i class="fa-solid fa-trash-can"></i>
-                                    <span>{{ __('messages.common.delete') }}</span>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="candidate-education-detail-grid candidate-retired-army-detail-grid">
-                            <div class="candidate-education-detail-column">
-                                <div class="candidate-education-detail">
-                                    <span>{{ __('messages.candidate_profile.ba_no') }}</span>
-                                    <strong data-retired-army-value="baNo">{{ $retiredArmyBaNo ?: '---' }}</strong>
-                                </div>
-                                <div class="candidate-education-detail">
-                                    <span>{{ __('messages.candidate_profile.type') }}</span>
-                                    <strong data-retired-army-value="type">{{ $retiredArmyEmployment->type ?? '---' }}</strong>
-                                </div>
-                                <div class="candidate-education-detail">
-                                    <span>{{ __('messages.candidate_profile.trade') }}</span>
-                                    <strong data-retired-army-value="trade">{{ $retiredArmyEmployment->trade ?? '---' }}</strong>
-                                </div>
-                                <div class="candidate-education-detail">
-                                    <span>{{ __('messages.candidate_profile.date_of_commission') }}</span>
-                                    <strong data-retired-army-value="commissionDate">{{ $hasRetiredArmyEmployment ? $formatExperienceDate($retiredArmyEmployment->date_of_commission) : '---' }}</strong>
-                                </div>
-                            </div>
-                            <div class="candidate-education-detail-column">
-                                <div class="candidate-education-detail">
-                                    <span>{{ __('messages.candidate_profile.ranks') }}</span>
-                                    <strong data-retired-army-value="rank">{{ $retiredArmyEmployment->rank ?? '---' }}</strong>
-                                </div>
-                                <div class="candidate-education-detail">
-                                    <span>{{ __('messages.candidate_profile.arms') }}</span>
-                                    <strong data-retired-army-value="arms">{{ $retiredArmyEmployment->arms ?? '---' }}</strong>
-                                </div>
-                                <div class="candidate-education-detail">
-                                    <span>{{ __('messages.candidate_profile.course') }}</span>
-                                    <strong data-retired-army-value="course">{{ $retiredArmyEmployment->course ?? '---' }}</strong>
-                                </div>
-                                <div class="candidate-education-detail">
-                                    <span>{{ __('messages.candidate_profile.date_of_retirement') }}</span>
-                                    <strong data-retired-army-value="retirementDate">{{ $hasRetiredArmyEmployment ? $formatExperienceDate($retiredArmyEmployment->date_of_retirement) : '---' }}</strong>
-                                </div>
-                            </div>
-	                        </div>
-                            <button type="button" class="candidate-retired-army-add" data-retired-army-edit>
-                                <i class="fa-solid fa-plus"></i>
-                                <span>{{ __('messages.candidate_profile.add_experience_at_bangladesh_army') }}</span>
-                            </button>
-	                    </div>
 
-                    <form class="candidate-retired-army-form d-none"
-                          data-retired-army-form
-                          data-action="{{ route('candidate.retired-army-employment.update') }}"
-                          data-delete-action="{{ route('candidate.retired-army-employment.destroy') }}">
-                        <h2>{{ __('messages.candidate_profile.information') }}</h2>
-                        <div class="candidate-retired-army-grid">
-                            <div class="candidate-education-form-field">
-                                {{ Form::label('ba_no_prefix', __('messages.candidate_profile.ba_no'), ['class' => 'form-label required']) }}
-                                <div class="candidate-retired-army-ba-group">
-                                    {{ Form::select('ba_no_prefix', ['' => __('messages.candidate_profile.select_ba_no'), 'BA' => 'BA', 'BSS' => 'BSS', 'JC' => 'JC'], $retiredArmyEmployment->ba_no_prefix ?? null, ['class' => 'form-select']) }}
-                                    {{ Form::text('ba_no', $retiredArmyEmployment->ba_no ?? null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_ba_no')]) }}
+                    <div class="candidate-education candidate-education-list-item candidate-employment-list-item {{ $hasRetiredArmyEmployment ? '' : 'd-none' }}" data-retired-army-item>
+                        <div class="candidate-retired-army-summary" data-retired-army-summary>
+                            <div class="candidate-education-item__head">
+                                <h2>{{ __('messages.candidate_profile.information') }}</h2>
+                                <div class="candidate-education-item__actions">
+                                    <a href="javascript:void(0)" class="candidate-education-action candidate-education-action--edit"
+                                       data-retired-army-edit>
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                        <span>{{ __('messages.common.edit') }}</span>
+                                    </a>
+                                    <a href="javascript:void(0)" class="candidate-education-action candidate-education-action--delete"
+                                       data-retired-army-delete>
+                                        <i class="fa-solid fa-trash-can"></i>
+                                        <span>{{ __('messages.common.delete') }}</span>
+                                    </a>
                                 </div>
                             </div>
-                            <div class="candidate-education-form-field">
-                                {{ Form::label('rank', __('messages.candidate_profile.ranks'), ['class' => 'form-label required']) }}
-                                {{ Form::select('rank', ['' => __('messages.candidate_profile.enter_rank'), 'Captain' => 'Captain', 'Major' => 'Major', 'Colonel' => 'Colonel'], $retiredArmyEmployment->rank ?? null, ['class' => 'form-select', 'required']) }}
-                            </div>
-                            <div class="candidate-education-form-field">
-                                {{ Form::label('type', __('messages.candidate_profile.type'), ['class' => 'form-label required']) }}
-                                {{ Form::select('type', ['' => __('messages.candidate_profile.enter_type'), 'Commissioned' => 'Commissioned', 'Non Commissioned' => 'Non Commissioned'], $retiredArmyEmployment->type ?? null, ['class' => 'form-select', 'required']) }}
-                            </div>
-                            <div class="candidate-education-form-field">
-                                {{ Form::label('arms', __('messages.candidate_profile.arms'), ['class' => 'form-label required']) }}
-                                {{ Form::select('arms', ['' => __('messages.candidate_profile.enter_type'), 'Infantry' => 'Infantry', 'Artillery' => 'Artillery', 'Signals' => 'Signals'], $retiredArmyEmployment->arms ?? null, ['class' => 'form-select', 'required']) }}
-                            </div>
-                            <div class="candidate-education-form-field">
-                                {{ Form::label('trade', __('messages.candidate_profile.trade'), ['class' => 'form-label']) }}
-                                {{ Form::text('trade', $retiredArmyEmployment->trade ?? null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_type')]) }}
-                            </div>
-                            <div class="candidate-education-form-field">
-                                {{ Form::label('course', __('messages.candidate_profile.course'), ['class' => 'form-label']) }}
-                                {{ Form::text('course', $retiredArmyEmployment->course ?? null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_type')]) }}
-                            </div>
-                            <div class="candidate-education-form-field">
-                                {{ Form::label('date_of_commission', __('messages.candidate_profile.date_of_commission'), ['class' => 'form-label required']) }}
-                                <div class="candidate-employment-date-input">
-                                    <i class="fa-regular fa-calendar candidate-employment-date-icon"></i>
-                                    {{ Form::text('date_of_commission', $hasRetiredArmyEmployment ? $formatExperienceDate($retiredArmyEmployment->date_of_commission) : null, ['class' => 'form-control', 'required', 'placeholder' => 'mm/dd/yy', 'autocomplete' => 'off', 'data-employment-date' => 'start']) }}
+                            <div class="candidate-education-detail-grid candidate-retired-army-detail-grid">
+                                <div class="candidate-education-detail-column">
+                                    <div class="candidate-education-detail">
+                                        <span>{{ __('messages.candidate_profile.ba_no') }}</span>
+                                        <strong data-retired-army-value="baNo">{{ $retiredArmyBaNo ?: '---' }}</strong>
+                                    </div>
+                                    <div class="candidate-education-detail">
+                                        <span>{{ __('messages.candidate_profile.type') }}</span>
+                                        <strong data-retired-army-value="type">{{ $retiredArmyEmployment->type ?? '---' }}</strong>
+                                    </div>
+                                    <div class="candidate-education-detail">
+                                        <span>{{ __('messages.candidate_profile.trade') }}</span>
+                                        <strong data-retired-army-value="trade">{{ $retiredArmyEmployment->trade ?? '---' }}</strong>
+                                    </div>
+                                    <div class="candidate-education-detail">
+                                        <span>{{ __('messages.candidate_profile.date_of_commission') }}</span>
+                                        <strong data-retired-army-value="commissionDate">{{ $hasRetiredArmyEmployment ? $formatExperienceDate($retiredArmyEmployment->date_of_commission) : '---' }}</strong>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="candidate-education-form-field">
-                                {{ Form::label('date_of_retirement', __('messages.candidate_profile.date_of_retirement'), ['class' => 'form-label required']) }}
-                                <div class="candidate-employment-date-input">
-                                    <i class="fa-regular fa-calendar candidate-employment-date-icon"></i>
-                                    {{ Form::text('date_of_retirement', $hasRetiredArmyEmployment ? $formatExperienceDate($retiredArmyEmployment->date_of_retirement) : null, ['class' => 'form-control', 'required', 'placeholder' => 'mm/dd/yy', 'autocomplete' => 'off', 'data-employment-date' => 'end']) }}
+                                <div class="candidate-education-detail-column">
+                                    <div class="candidate-education-detail">
+                                        <span>{{ __('messages.candidate_profile.ranks') }}</span>
+                                        <strong data-retired-army-value="rank">{{ $retiredArmyEmployment->rank ?? '---' }}</strong>
+                                    </div>
+                                    <div class="candidate-education-detail">
+                                        <span>{{ __('messages.candidate_profile.arms') }}</span>
+                                        <strong data-retired-army-value="arms">{{ $retiredArmyEmployment->arms ?? '---' }}</strong>
+                                    </div>
+                                    <div class="candidate-education-detail">
+                                        <span>{{ __('messages.candidate_profile.course') }}</span>
+                                        <strong data-retired-army-value="course">{{ $retiredArmyEmployment->course ?? '---' }}</strong>
+                                    </div>
+                                    <div class="candidate-education-detail">
+                                        <span>{{ __('messages.candidate_profile.date_of_retirement') }}</span>
+                                        <strong data-retired-army-value="retirementDate">{{ $hasRetiredArmyEmployment ? $formatExperienceDate($retiredArmyEmployment->date_of_retirement) : '---' }}</strong>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <p class="candidate-retired-army-note">
-                            <strong>{{ __('messages.candidate_profile.note') }}:</strong> {{ __('messages.candidate_profile.military_service_note') }}
-                        </p>
-                        <div class="candidate-profile-section-actions candidate-employment-form-actions">
-                            <button type="submit" class="candidate-skill-save" data-retired-army-save>{{ __('messages.common.save') }}</button>
-                            <button type="button" class="candidate-skill-close" data-retired-army-close>{{ __('messages.common.close') }}</button>
-                        </div>
-                    </form>
+
+                        <form class="candidate-retired-army-form candidate-retired-army-edit-form d-none"
+                              data-retired-army-edit-form
+                              data-retired-army-form
+                              data-action="{{ route('candidate.retired-army-employment.update') }}"
+                              data-delete-action="{{ route('candidate.retired-army-employment.destroy') }}">
+                            <h2>{{ __('messages.candidate_profile.information') }}</h2>
+                            <div class="candidate-retired-army-grid">
+                                <div class="candidate-education-form-field">
+                                    {{ Form::label('ba_no_prefix', __('messages.candidate_profile.ba_no'), ['class' => 'form-label required']) }}
+                                    <div class="candidate-retired-army-ba-group">
+                                        {{ Form::select('ba_no_prefix', ['' => __('messages.candidate_profile.select_ba_no'), 'BA' => 'BA', 'BSS' => 'BSS', 'JC' => 'JC'], $retiredArmyEmployment->ba_no_prefix ?? null, ['class' => 'form-select']) }}
+                                        {{ Form::text('ba_no', $retiredArmyEmployment->ba_no ?? null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_ba_no')]) }}
+                                    </div>
+                                </div>
+                                <div class="candidate-education-form-field">
+                                    {{ Form::label('rank', __('messages.candidate_profile.ranks'), ['class' => 'form-label required']) }}
+                                    {{ Form::select('rank', ['' => __('messages.candidate_profile.enter_rank'), 'Captain' => 'Captain', 'Major' => 'Major', 'Colonel' => 'Colonel'], $retiredArmyEmployment->rank ?? null, ['class' => 'form-select', 'required']) }}
+                                </div>
+                                <div class="candidate-education-form-field">
+                                    {{ Form::label('type', __('messages.candidate_profile.type'), ['class' => 'form-label required']) }}
+                                    {{ Form::select('type', ['' => __('messages.candidate_profile.enter_type'), 'Commissioned' => 'Commissioned', 'Non Commissioned' => 'Non Commissioned'], $retiredArmyEmployment->type ?? null, ['class' => 'form-select', 'required']) }}
+                                </div>
+                                <div class="candidate-education-form-field">
+                                    {{ Form::label('arms', __('messages.candidate_profile.arms'), ['class' => 'form-label required']) }}
+                                    {{ Form::select('arms', ['' => __('messages.candidate_profile.enter_type'), 'Infantry' => 'Infantry', 'Artillery' => 'Artillery', 'Signals' => 'Signals'], $retiredArmyEmployment->arms ?? null, ['class' => 'form-select', 'required']) }}
+                                </div>
+                                <div class="candidate-education-form-field">
+                                    {{ Form::label('trade', __('messages.candidate_profile.trade'), ['class' => 'form-label']) }}
+                                    {{ Form::text('trade', $retiredArmyEmployment->trade ?? null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_type')]) }}
+                                </div>
+                                <div class="candidate-education-form-field">
+                                    {{ Form::label('course', __('messages.candidate_profile.course'), ['class' => 'form-label']) }}
+                                    {{ Form::text('course', $retiredArmyEmployment->course ?? null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_type')]) }}
+                                </div>
+                                <div class="candidate-education-form-field">
+                                    {{ Form::label('date_of_commission', __('messages.candidate_profile.date_of_commission'), ['class' => 'form-label required']) }}
+                                    <div class="candidate-employment-date-input">
+                                        <i class="fa-regular fa-calendar candidate-employment-date-icon"></i>
+                                        {{ Form::text('date_of_commission', $hasRetiredArmyEmployment ? $formatExperienceDate($retiredArmyEmployment->date_of_commission) : null, ['class' => 'form-control', 'required', 'placeholder' => 'mm/dd/yy', 'autocomplete' => 'off', 'data-employment-date' => 'start']) }}
+                                    </div>
+                                </div>
+                                <div class="candidate-education-form-field">
+                                    {{ Form::label('date_of_retirement', __('messages.candidate_profile.date_of_retirement'), ['class' => 'form-label required']) }}
+                                    <div class="candidate-employment-date-input">
+                                        <i class="fa-regular fa-calendar candidate-employment-date-icon"></i>
+                                        {{ Form::text('date_of_retirement', $hasRetiredArmyEmployment ? $formatExperienceDate($retiredArmyEmployment->date_of_retirement) : null, ['class' => 'form-control', 'required', 'placeholder' => 'mm/dd/yy', 'autocomplete' => 'off', 'data-employment-date' => 'end']) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="candidate-retired-army-note">
+                                <strong>{{ __('messages.candidate_profile.note') }}:</strong> {{ __('messages.candidate_profile.military_service_note') }}
+                            </p>
+                            <div class="candidate-profile-section-actions candidate-employment-form-actions">
+                                <button type="submit" class="candidate-skill-save" data-retired-army-save>{{ __('messages.common.save') }}</button>
+                                <button type="button" class="candidate-skill-close" data-retired-army-edit-close>{{ __('messages.common.close') }}</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="candidate-education candidate-education-list-item candidate-employment-list-item candidate-retired-army-add-form-wrap d-none"
+                         data-retired-army-add-form-wrap>
+                        <form class="candidate-retired-army-form candidate-retired-army-add-form"
+                              data-retired-army-add-form
+                              data-retired-army-form
+                              data-action="{{ route('candidate.retired-army-employment.update') }}">
+                            <h2>{{ __('messages.candidate_profile.information') }}</h2>
+                            <div class="candidate-retired-army-grid">
+                                <div class="candidate-education-form-field">
+                                    {{ Form::label('ba_no_prefix', __('messages.candidate_profile.ba_no'), ['class' => 'form-label required']) }}
+                                    <div class="candidate-retired-army-ba-group">
+                                        {{ Form::select('ba_no_prefix', ['' => __('messages.candidate_profile.select_ba_no'), 'BA' => 'BA', 'BSS' => 'BSS', 'JC' => 'JC'], null, ['class' => 'form-select']) }}
+                                        {{ Form::text('ba_no', null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_ba_no')]) }}
+                                    </div>
+                                </div>
+                                <div class="candidate-education-form-field">
+                                    {{ Form::label('rank', __('messages.candidate_profile.ranks'), ['class' => 'form-label required']) }}
+                                    {{ Form::select('rank', ['' => __('messages.candidate_profile.enter_rank'), 'Captain' => 'Captain', 'Major' => 'Major', 'Colonel' => 'Colonel'], null, ['class' => 'form-select', 'required']) }}
+                                </div>
+                                <div class="candidate-education-form-field">
+                                    {{ Form::label('type', __('messages.candidate_profile.type'), ['class' => 'form-label required']) }}
+                                    {{ Form::select('type', ['' => __('messages.candidate_profile.enter_type'), 'Commissioned' => 'Commissioned', 'Non Commissioned' => 'Non Commissioned'], null, ['class' => 'form-select', 'required']) }}
+                                </div>
+                                <div class="candidate-education-form-field">
+                                    {{ Form::label('arms', __('messages.candidate_profile.arms'), ['class' => 'form-label required']) }}
+                                    {{ Form::select('arms', ['' => __('messages.candidate_profile.enter_type'), 'Infantry' => 'Infantry', 'Artillery' => 'Artillery', 'Signals' => 'Signals'], null, ['class' => 'form-select', 'required']) }}
+                                </div>
+                                <div class="candidate-education-form-field">
+                                    {{ Form::label('trade', __('messages.candidate_profile.trade'), ['class' => 'form-label']) }}
+                                    {{ Form::text('trade', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_type')]) }}
+                                </div>
+                                <div class="candidate-education-form-field">
+                                    {{ Form::label('course', __('messages.candidate_profile.course'), ['class' => 'form-label']) }}
+                                    {{ Form::text('course', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_type')]) }}
+                                </div>
+                                <div class="candidate-education-form-field">
+                                    {{ Form::label('date_of_commission', __('messages.candidate_profile.date_of_commission'), ['class' => 'form-label required']) }}
+                                    <div class="candidate-employment-date-input">
+                                        <i class="fa-regular fa-calendar candidate-employment-date-icon"></i>
+                                        {{ Form::text('date_of_commission', null, ['class' => 'form-control', 'required', 'placeholder' => 'mm/dd/yy', 'autocomplete' => 'off', 'data-employment-date' => 'start']) }}
+                                    </div>
+                                </div>
+                                <div class="candidate-education-form-field">
+                                    {{ Form::label('date_of_retirement', __('messages.candidate_profile.date_of_retirement'), ['class' => 'form-label required']) }}
+                                    <div class="candidate-employment-date-input">
+                                        <i class="fa-regular fa-calendar candidate-employment-date-icon"></i>
+                                        {{ Form::text('date_of_retirement', null, ['class' => 'form-control', 'required', 'placeholder' => 'mm/dd/yy', 'autocomplete' => 'off', 'data-employment-date' => 'end']) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="candidate-retired-army-note">
+                                <strong>{{ __('messages.candidate_profile.note') }}:</strong> {{ __('messages.candidate_profile.military_service_note') }}
+                            </p>
+                            <div class="candidate-profile-section-actions candidate-employment-form-actions">
+                                <button type="submit" class="candidate-skill-save" data-retired-army-save>{{ __('messages.common.save') }}</button>
+                                <button type="button" class="candidate-skill-close" data-retired-army-add-close>{{ __('messages.common.close') }}</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -466,39 +527,69 @@
                 });
             });
 
+            const retiredArmyItem = document.querySelector('[data-retired-army-item]');
             const retiredArmySummary = document.querySelector('[data-retired-army-summary]');
-            const retiredArmyForm = document.querySelector('[data-retired-army-form]');
+            const retiredArmyEditForm = document.querySelector('[data-retired-army-edit-form]');
+            const retiredArmyAddFormWrap = document.querySelector('[data-retired-army-add-form-wrap]');
+            const retiredArmyAddForm = document.querySelector('[data-retired-army-add-form]');
             let hasRetiredArmyEmployment = {{ $hasRetiredArmyEmployment ? 'true' : 'false' }};
-            const showRetiredArmySummary = function () {
+
+            const showRetiredArmySummaryView = function () {
+                if (retiredArmyItem) {
+                    retiredArmyItem.classList.remove('d-none');
+                }
                 if (retiredArmySummary) {
                     retiredArmySummary.classList.remove('d-none');
                 }
-                if (retiredArmyForm) {
-                    retiredArmyForm.classList.add('d-none');
+                if (retiredArmyEditForm) {
+                    retiredArmyEditForm.classList.add('d-none');
                 }
             };
-            const showRetiredArmyForm = function () {
+
+            const showRetiredArmyEditFormView = function () {
+                if (retiredArmyItem) {
+                    retiredArmyItem.classList.remove('d-none');
+                }
                 if (retiredArmySummary) {
                     retiredArmySummary.classList.add('d-none');
                 }
-                if (retiredArmyForm) {
-                    retiredArmyForm.classList.remove('d-none');
+                if (retiredArmyEditForm) {
+                    retiredArmyEditForm.classList.remove('d-none');
+                }
+                if (retiredArmyAddFormWrap) {
+                    retiredArmyAddFormWrap.classList.add('d-none');
                 }
             };
+
+            const showRetiredArmyAddFormView = function () {
+                if (retiredArmyEditForm) {
+                    retiredArmyEditForm.classList.add('d-none');
+                }
+                if (hasRetiredArmyEmployment && retiredArmySummary) {
+                    retiredArmySummary.classList.remove('d-none');
+                }
+                if (retiredArmyAddFormWrap) {
+                    retiredArmyAddFormWrap.classList.remove('d-none');
+                    retiredArmyAddFormWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+                if (retiredArmyAddForm) {
+                    retiredArmyAddForm.reset();
+                }
+                const emptyState = document.querySelector('[data-retired-army-empty]');
+                if (emptyState) {
+                    emptyState.classList.add('d-none');
+                }
+            };
+
             const retiredArmyAddTrigger = document.querySelector('[data-retired-army-add-trigger]');
-            const syncRetiredArmyAddButton = function () {
-                if (retiredArmyAddTrigger) {
-                    retiredArmyAddTrigger.classList.toggle('d-none', hasRetiredArmyEmployment);
-                }
-            };
             if (retiredArmyAddTrigger) {
                 retiredArmyAddTrigger.addEventListener('click', function (event) {
                     event.preventDefault();
-                    showRetiredArmyForm();
-                    const emptyState = document.querySelector('[data-retired-army-empty]');
-                    if (emptyState) {
-                        emptyState.classList.add('d-none');
+                    const panelBody = document.getElementById('candidateRetiredArmyEmploymentPanelBody');
+                    if (panelBody && typeof bootstrap !== 'undefined') {
+                        bootstrap.Collapse.getOrCreateInstance(panelBody, { toggle: false }).show();
                     }
+                    showRetiredArmyAddFormView();
                 });
             }
 
@@ -529,12 +620,12 @@
                     year: 'numeric',
                 }).replace(/ /g, ' ');
             };
-            const setRetiredArmyFormValue = function (name, value) {
-                if (!retiredArmyForm) {
+            const setRetiredArmyFormValue = function (form, name, value) {
+                if (!form) {
                     return;
                 }
 
-                const field = retiredArmyForm.querySelector('[name="' + name + '"]');
+                const field = form.querySelector('[name="' + name + '"]');
                 if (field) {
                     field.value = value || '';
                 }
@@ -551,15 +642,18 @@
                 setRetiredArmyValue('commissionDate', formatRetiredArmyDate(employment.date_of_commission));
                 setRetiredArmyValue('retirementDate', formatRetiredArmyDate(employment.date_of_retirement));
 
-                setRetiredArmyFormValue('ba_no_prefix', employment.ba_no_prefix);
-                setRetiredArmyFormValue('ba_no', employment.ba_no);
-                setRetiredArmyFormValue('rank', employment.rank);
-                setRetiredArmyFormValue('type', employment.type);
-                setRetiredArmyFormValue('arms', employment.arms);
-                setRetiredArmyFormValue('trade', employment.trade);
-                setRetiredArmyFormValue('course', employment.course);
-                setRetiredArmyFormValue('date_of_commission', formatRetiredArmyDate(employment.date_of_commission));
-                setRetiredArmyFormValue('date_of_retirement', formatRetiredArmyDate(employment.date_of_retirement));
+                [retiredArmyEditForm, retiredArmyAddForm].forEach(function (form) {
+                    if (!form) return;
+                    setRetiredArmyFormValue(form, 'ba_no_prefix', employment.ba_no_prefix);
+                    setRetiredArmyFormValue(form, 'ba_no', employment.ba_no);
+                    setRetiredArmyFormValue(form, 'rank', employment.rank);
+                    setRetiredArmyFormValue(form, 'type', employment.type);
+                    setRetiredArmyFormValue(form, 'arms', employment.arms);
+                    setRetiredArmyFormValue(form, 'trade', employment.trade);
+                    setRetiredArmyFormValue(form, 'course', employment.course);
+                    setRetiredArmyFormValue(form, 'date_of_commission', formatRetiredArmyDate(employment.date_of_commission));
+                    setRetiredArmyFormValue(form, 'date_of_retirement', formatRetiredArmyDate(employment.date_of_retirement));
+                });
             };
             const employmentFormData = function (form) {
                 const formData = new FormData(form);
@@ -592,19 +686,39 @@
             document.querySelectorAll('[data-retired-army-edit]').forEach(function (button) {
                 button.addEventListener('click', function (event) {
                     event.preventDefault();
-                    showRetiredArmyForm();
+                    showRetiredArmyEditFormView();
                 });
             });
 
-            if (retiredArmyForm) {
-                retiredArmyForm.addEventListener('submit', function (event) {
+            document.querySelectorAll('[data-retired-army-edit-close]').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    showRetiredArmySummaryView();
+                });
+            });
+
+            document.querySelectorAll('[data-retired-army-add-close]').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    if (retiredArmyAddFormWrap) {
+                        retiredArmyAddFormWrap.classList.add('d-none');
+                    }
+                    if (!hasRetiredArmyEmployment) {
+                        const emptyState = document.querySelector('[data-retired-army-empty]');
+                        if (emptyState) {
+                            emptyState.classList.remove('d-none');
+                        }
+                    }
+                });
+            });
+
+            document.querySelectorAll('[data-retired-army-form]').forEach(function (form) {
+                form.addEventListener('submit', function (event) {
                     event.preventDefault();
 
                     const token = document.querySelector('meta[name="csrf-token"]');
-                    const formData = employmentFormData(retiredArmyForm);
+                    const formData = employmentFormData(form);
                     formData.append('_method', 'PUT');
 
-                    fetch(retiredArmyForm.dataset.action, {
+                    fetch(form.dataset.action, {
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': token ? token.content : '',
@@ -622,8 +736,20 @@
                     }).then(function (data) {
                         applyRetiredArmyEmployment(data.data || {});
                         hasRetiredArmyEmployment = true;
-                        syncRetiredArmyAddButton();
-                        showRetiredArmySummary();
+                        if (retiredArmyItem) {
+                            retiredArmyItem.classList.remove('d-none');
+                        }
+                        showRetiredArmySummaryView();
+                        if (retiredArmyAddFormWrap) {
+                            retiredArmyAddFormWrap.classList.add('d-none');
+                        }
+                        if (retiredArmyAddForm) {
+                            retiredArmyAddForm.reset();
+                        }
+                        const emptyState = document.querySelector('[data-retired-army-empty]');
+                        if (emptyState) {
+                            emptyState.classList.add('d-none');
+                        }
                         if (typeof displaySuccessMessage === 'function') {
                             displaySuccessMessage(data.message);
                         }
@@ -635,19 +761,17 @@
                         }
                     });
                 });
-            }
+            });
 
             document.querySelectorAll('[data-retired-army-delete]').forEach(function (button) {
                 button.addEventListener('click', function (event) {
                     event.preventDefault();
 
-                    if (!retiredArmyForm || !retiredArmyForm.dataset.deleteAction) {
-                        return;
-                    }
+                    const deleteUrl = (retiredArmyEditForm && retiredArmyEditForm.dataset.deleteAction) || '{{ route('candidate.retired-army-employment.destroy') }}';
 
                     const removeEmployment = function () {
                         const token = document.querySelector('meta[name="csrf-token"]');
-                        fetch(retiredArmyForm.dataset.deleteAction, {
+                        fetch(deleteUrl, {
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': token ? token.content : '',
@@ -666,10 +790,19 @@
                             ['baNo', 'rank', 'type', 'arms', 'trade', 'course', 'commissionDate', 'retirementDate'].forEach(function (name) {
                                 setRetiredArmyValue(name, '');
                             });
-                            retiredArmyForm.reset();
+                            if (retiredArmyEditForm) retiredArmyEditForm.reset();
+                            if (retiredArmyAddForm) retiredArmyAddForm.reset();
                             hasRetiredArmyEmployment = false;
-                            syncRetiredArmyAddButton();
-                            showRetiredArmyForm();
+                            if (retiredArmyItem) {
+                                retiredArmyItem.classList.add('d-none');
+                            }
+                            if (retiredArmyAddFormWrap) {
+                                retiredArmyAddFormWrap.classList.add('d-none');
+                            }
+                            const emptyState = document.querySelector('[data-retired-army-empty]');
+                            if (emptyState) {
+                                emptyState.classList.remove('d-none');
+                            }
                             if (typeof displaySuccessMessage === 'function') {
                                 displaySuccessMessage(data.message);
                             }
@@ -701,22 +834,6 @@
 
                     if (window.confirm('Are you sure want to delete this')) {
                         removeEmployment();
-                    }
-                });
-            });
-
-            document.querySelectorAll('[data-retired-army-close]').forEach(function (button) {
-                button.addEventListener('click', function () {
-                    if (hasRetiredArmyEmployment) {
-                        showRetiredArmySummary();
-                    } else {
-                        if (retiredArmyForm) {
-                            retiredArmyForm.classList.add('d-none');
-                        }
-                        const emptyState = document.querySelector('[data-retired-army-empty]');
-                        if (emptyState) {
-                            emptyState.classList.remove('d-none');
-                        }
                     }
                 });
             });
