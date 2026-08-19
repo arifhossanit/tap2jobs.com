@@ -78,10 +78,21 @@ class CityController extends AppBaseController
      */
     public function destroy(City $city): JsonResponse
     {
-        if (Job::whereCityId($city->id)->count() > 0) {
+        $activeJob = Job::where('city_id', $city->id)->exists();
+        $activeUser = \App\Models\User::where('city_id', $city->id)->exists();
+        $activeCandidate = \App\Models\Candidate::where('permanent_city_id', $city->id)->exists();
+        $activeExperience = \App\Models\CandidateExperience::where('city_id', $city->id)->exists();
+        $activeEducation = \App\Models\CandidateEducation::where('city_id', $city->id)->exists();
+
+        if ($activeJob || $activeUser || $activeCandidate || $activeExperience || $activeEducation) {
             return $this->sendError(__('messages.flash.city_cant_delete'));
         }
-        $city->delete();
+
+        try {
+            $city->delete();
+        } catch (\Exception $e) {
+            return $this->sendError(__('messages.flash.city_cant_delete'));
+        }
 
         return $this->sendSuccess(__('messages.flash.city_delete'));
     }

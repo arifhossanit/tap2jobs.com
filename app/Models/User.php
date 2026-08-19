@@ -239,7 +239,7 @@ class User extends Authenticatable implements HasMedia
             return $media->getAvailableFullUrl([self::PROFILE_WEBP_CONVERSION]);
         }
 
-        return asset('assets/img/infyom-logo.png');
+        return asset('assets/img/user.png');
     }
 
     public function registerMediaConversions(Media $media = null): void

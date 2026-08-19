@@ -59,7 +59,7 @@ class DatabaseSeeder extends Seeder
 //        $this->call(CmsServicesSeeder::class);
         $this->call(FAQSeeder::class);
         $this->call(BangladeshJobMarketSeeder::class);
-        $this->call(ExportedUsersCompaniesSeeder::class);
-        $this->call(ExportedJobsSeeder::class);
+        // $this->call(ExportedUsersCompaniesSeeder::class);
+        // $this->call(ExportedJobsSeeder::class);
     }
 }

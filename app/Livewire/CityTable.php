@@ -36,7 +36,7 @@ class CityTable extends LivewireTableComponent
     {
         $this->setPrimaryKey('id');
 
-        $this->setDefaultSort('cities.created_at', 'desc');
+        $this->setDefaultSort('state.name', 'asc');
 
         $this->setTableAttributes([
             'default' => false,
@@ -85,7 +85,8 @@ class CityTable extends LivewireTableComponent
                 ->searchable(),
             Column::make(__('messages.city.state_name'), 'state.name')
                 ->sortable(function (Builder $query, $direction) {
-                    return $query->orderBy(State::select('name')->whereColumn('state_id', 'states.id'), $direction);
+                    return $query->orderBy(State::select('name')->whereColumn('cities.state_id', 'states.id'), $direction)
+                        ->orderBy('cities.name', 'asc');
                 })
                 ->searchable(),
             Column::make(__('messages.common.action'), 'id')

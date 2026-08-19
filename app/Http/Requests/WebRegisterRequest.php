@@ -21,16 +21,12 @@ class WebRegisterRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'first_name' => 'required',
-            'email' => 'required|email:filter|unique:users',
-            'phone' => 'required|numeric|unique:users,phone',
-            'password' => 'nullable|same:password_confirmation|min:6',
             'privacyPolicy' => 'required',
             'type' => 'required|in:1,2',
         ];
 
         if ((int) $this->input('type') === 2) {
-            $rules += [
+            $rules = array_merge($rules, [
                 'username' => ['required', 'string', 'max:100', 'regex:/^[\p{L}\p{M}\p{N}._-]+$/u', 'unique:users,username'],
                 'company_name' => 'required|string|max:180',
                 'company_name_bn' => 'nullable|string|max:180',
@@ -72,16 +68,21 @@ class WebRegisterRequest extends FormRequest
                 'email' => 'required|email:filter|max:170|unique:users,email',
                 'phone' => ['required', 'string', 'regex:/^\d{4,15}$/'],
                 'region_code' => ['required', 'string', 'regex:/^\d{1,4}$/'],
+                'password' => 'required|same:password_confirmation|min:6',
                 'has_disability_facilities' => 'nullable|boolean',
                 'disability_inclusion_policy' => 'required_if:has_disability_facilities,1|nullable|boolean',
                 'disability_inclusion_support' => 'required_if:disability_inclusion_policy,0|nullable|boolean',
                 'disability_inclusion_training' => 'required_if:has_disability_facilities,1|nullable|boolean',
                 'disability_facilities' => 'nullable|array',
                 'disability_facilities.*' => 'string|in:accessible_documentation,accessible_washrooms,adapted_transport,assistive_software,flexible_shifts,work_from_home,ramps_lifts,reasonable_accommodation,warning_indicators,workstation_adaptations',
-            ];
+            ]);
         } else {
-            $rules['first_name'] = 'required|string|max:180';
-            $rules['email'] = 'required|email:filter|max:170|unique:users,email';
+            $rules = array_merge($rules, [
+                'first_name' => 'required|string|max:180',
+                'email' => 'required|email:filter|max:170|unique:users,email',
+                'phone' => 'required|numeric|unique:users,phone',
+                'password' => 'required|same:password_confirmation|min:6',
+            ]);
         }
 
         if (getSettingValue('enable_google_recaptcha')) {
@@ -120,6 +121,7 @@ class WebRegisterRequest extends FormRequest
         $regionCode = preg_replace('/\D+/', '', (string) $this->input('region_code'));
 
         $this->merge([
+            'first_name' => $this->input('company_name'),
             'industry_ids' => $industryIds,
             'custom_industries' => $customIndustries,
             'has_disability_facilities' => $hasDisabilityFacilities,

@@ -559,6 +559,13 @@ function loadCandidateGeneralData() {
     });
 
     $('.candidate-preferred-select').each(function () {
+        if (!$(this).hasClass('select2-hidden-accessible')) {
+            $(this).select2({
+                width: '100%',
+                closeOnSelect: false,
+                placeholder: $(this).data('placeholder') || ''
+            });
+        }
         renderPreferredSelectChips($(this));
     }).on('change', function () {
         renderPreferredSelectChips($(this));

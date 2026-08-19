@@ -15,15 +15,16 @@
                     <i class="fa-solid fa-face-frown me-5"></i>
                 </div>
                 <div class=" mb-5">
-                    {{ Form::label('name',__('messages.common.name').(':'), ['class' => 'form-label']) }}
-                    <span class="required"></span>
-                    {{ Form::text('name', null, ['id'=>'stateName','class' => 'form-control','required','placeholder' => __('messages.common.name')]) }}
-                </div>
-                <div class=" mb-5">
                     {{ Form::label('country_id',__('messages.state.country_name').(':'),['class' => 'form-label']) }}
                     <span class="required"></span>
                     {{ Form::select('country_id', $countries, null, ['class' => 'form-control','required','id' => 'countryID','placeholder' => __('messages.company.select_country')]) }}
                 </div>
+                <div class=" mb-5">
+                    {{ Form::label('name',__('messages.common.name').(':'), ['class' => 'form-label']) }}
+                    <span class="required"></span>
+                    {{ Form::text('name', null, ['id'=>'stateName','class' => 'form-control','required','placeholder' => __('messages.common.name')]) }}
+                </div>
+                
             </div>
             <div class="modal-footer pt-0">
                 {{ Form::button(__('messages.common.save'), ['type' => 'submit','class' => 'btn btn-primary m-0','id' => 'stateBtnSave','data-loading-text' => "<span class='spinner-border spinner-border-sm'></span> ".__('messages.common.process')]) }}

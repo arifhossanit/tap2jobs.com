@@ -15,7 +15,7 @@
                         <div class="col-lg-1 col-sm-2 col-3">
                             <div class="candidate-profile-img mt-md-0 mt-3">
                                 <img
-                                        src="{{ (!empty($candidateDetails->user->avatar)) ? $candidateDetails->user->avatar : asset('assets/img/infyom-logo.png') }}"
+                                        src="{{ (!empty($candidateDetails->user->avatar)) ? $candidateDetails->user->avatar : asset('assets/img/user.png') }}"
                                         alt="candidate profile">
                             </div>
                         </div>

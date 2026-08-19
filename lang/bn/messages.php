@@ -8,6 +8,7 @@ return [
     'job_categories' => 'চাকরির বিভাগ',
     'settings' => 'সেটিংস',
     'general' => 'সাধারণ',
+    'references' => 'রেফারেন্স',
     'company_sizes' => 'কোম্পানির আকার',
     'job_skills' => 'চাকরির স্কিল',
     'job_types' => 'জব ন্যাচার',
@@ -1549,6 +1550,7 @@ return [
         'read_notification' => 'বিজ্ঞপ্তি সফলভাবে পড়া হয়েছে',
     ],
     'country' => [
+        'locations' => 'লোকেশন',
         'short_code' => 'সংক্ষিপ্ত কোড',
         'phone_code' => 'ফোন কোড',
         'countries' => 'দেশ',

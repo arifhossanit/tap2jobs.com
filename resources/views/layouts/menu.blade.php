@@ -1,22 +1,36 @@
 @php
     $iconPad = checkLanguageSession() == 'ar' ? 'ps-3' : 'pe-3';
     $employersActive = Request::is('admin/employers*', 'admin/reported-employers*');
-    $candidatesActive = Request::is('admin/candidates*', 'admin/degree-levels*', 'admin/reported-candidates*', 'admin/resumes*', 'admin/selected-candidate*');
+    $candidatesActive = Request::is('admin/candidates*', 'admin/reported-candidates*', 'admin/resumes*', 'admin/selected-candidate*');
     $jobsActive = Request::is('admin/jobs*', 'admin/pending-jobs*', 'admin/job-categories*', 'admin/job-types*', 'admin/job-tags*', 'admin/job-shifts*', 'admin/reported-jobs*', 'admin/job-notification*', 'admin/expired-jobs*');
     $blogsActive = Request::is('admin/post-categories*', 'admin/posts*', 'admin/post-comments*');
     $subscriptionsActive = Request::is('admin/plans*', 'admin/transactions*');
     $countriesActive = Request::is('admin/countries*', 'admin/states*', 'admin/cities*');
+    $educationActive = Request::is('admin/degree-levels*', 'admin/education-degree-titles*', 'admin/education-major-groups*', 'admin/education-boards*');
     $generalActive = Request::is('admin/marital-status*', 'admin/skills*', 'admin/salary-periods*', 'admin/industries*', 'admin/company-sizes*', 'admin/functional-areas*', 'admin/career-levels*', 'admin/salary-currencies*', 'admin/ownership-types*', 'admin/languages*');
+    $referencesActive = $countriesActive || $educationActive || $generalActive;
     $cmsActive = Request::is('admin/noticeboards*', 'admin/faqs*', 'admin/inquires*', 'admin/notification-settings*', 'admin/privacy-policy*', 'admin/front-settings*', 'admin/email-template*', 'admin/settings*');
     $cmsSlidersActive = Request::is('admin/testimonials*', 'admin/branding-sliders*', 'admin/header-sliders*', 'admin/image-sliders*', 'admin/ads*');
     $frontCmsActive = Request::is('admin/cms-services*', 'admin/cms-about-us*');
 @endphp
+
+<!-- SECTION: MAIN -->
+<li class="sidebar-section-header px-4 pt-3 pb-1 text-uppercase text-muted fw-bold fs-8 d-flex align-items-center" style="letter-spacing: 0.08em; font-size: 11px;">
+    <span>MAIN</span>
+    <span class="flex-grow-1 ms-3 border-bottom"></span>
+</li>
 
 <li class="nav-item {{ Request::is('admin/dashboard*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-3" aria-current="page" href="{{ route('admin.dashboard') }}">
         <span class="aside-menu-icon {{ $iconPad }}"><i class="fas fa fa-digital-tachograph"></i></span>
         <span class="aside-menu-title">{{ __('messages.dashboard') }}</span>
     </a>
+</li>
+
+<!-- SECTION: USER MANAGEMENT -->
+<li class="sidebar-section-header px-4 pt-4 pb-1 text-uppercase text-muted fw-bold fs-8 d-flex align-items-center" style="letter-spacing: 0.08em; font-size: 11px;">
+    <span>MANAGEMENT</span>
+    <span class="flex-grow-1 ms-3 border-bottom"></span>
 </li>
 
 <li class="nav-item aside-item-collapse {{ $employersActive ? 'active collapse-submenu' : '' }}">
@@ -26,14 +40,16 @@
         <span class="aside-menu-title">{{ __('messages.employers') }}</span>
         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
     </a>
-    <ul class="aside-submenu nav flex-column collapse {{ $employersActive ? 'show' : '' }}" id="asideEmployersMenu">
+    <ul class="aside-submenu nav flex-column collapse {{ $employersActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideEmployersMenu">
         <li class="nav-item {{ Request::is('admin/employers*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('company.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.employers') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/reported-employers*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('reported.companies') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.company.reported_employers') }}</span>
             </a>
         </li>
@@ -54,29 +70,28 @@
         <span class="aside-menu-title">{{ __('messages.candidates') }}</span>
         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
     </a>
-    <ul class="aside-submenu nav flex-column collapse {{ $candidatesActive ? 'show' : '' }}" id="asideCandidatesMenu">
+    <ul class="aside-submenu nav flex-column collapse {{ $candidatesActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideCandidatesMenu">
         <li class="nav-item {{ Request::is('admin/candidates*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('candidates.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.candidates') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/degree-levels*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('requiredDegreeLevel.index') }}">
-                <span class="aside-menu-title">{{ __('messages.required_degree_levels') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/reported-candidates*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('reported.candidates') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.candidate.reported_candidates') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/resumes*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('resumes.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.all_resumes') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/selected-candidate*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('selected.candidate') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.selected_candidate') }}</span>
             </a>
         </li>
@@ -90,79 +105,68 @@
         <span class="aside-menu-title">{{ __('messages.jobs') }}</span>
         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
     </a>
-    <ul class="aside-submenu nav flex-column collapse {{ $jobsActive ? 'show' : '' }}" id="asideJobsMenu">
+    <ul class="aside-submenu nav flex-column collapse {{ $jobsActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideJobsMenu">
         <li class="nav-item {{ Request::is('admin/jobs*') && !Request::is('admin/job-categories*', 'admin/job-types*', 'admin/job-tags*', 'admin/job-shifts*', 'admin/job-notification*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('admin.jobs.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.jobs') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/pending-jobs*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('admin.PendingJobs.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.pending_jobs.pending_jobs') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/job-categories*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('job-categories.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.job_categories') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/job-types*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('jobType.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.job_types') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/job-tags*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('jobTag.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.job_tags') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/job-shifts*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('jobShift.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.job_shifts') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/reported-jobs*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('reported.jobs') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.reported_jobs') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/job-notification*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('job-notification.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.job_notification.job_notifications') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/expired-jobs*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('admin.jobs.expiredJobs') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.expired_jobs') }}</span>
             </a>
         </li>
     </ul>
 </li>
 
-<li class="nav-item aside-item-collapse {{ $blogsActive ? 'active collapse-submenu' : '' }}">
-    <a class="nav-link d-flex align-items-center py-3" data-bs-toggle="collapse" href="#asideBlogsMenu"
-       role="button" aria-expanded="{{ $blogsActive ? 'true' : 'false' }}" aria-controls="asideBlogsMenu">
-        <span class="aside-menu-icon {{ $iconPad }}"><i class="far fa-list-alt"></i></span>
-        <span class="aside-menu-title">{{ __('messages.blogs') }}</span>
-        <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
-    </a>
-    <ul class="aside-submenu nav flex-column collapse {{ $blogsActive ? 'show' : '' }}" id="asideBlogsMenu">
-        <li class="nav-item {{ Request::is('admin/post-categories*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('post-categories.index') }}">
-                <span class="aside-menu-title">{{ __('messages.post_category.post_categories') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/posts*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('posts.index') }}">
-                <span class="aside-menu-title">{{ __('messages.post.posts') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/post-comments*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('post.comments') }}">
-                <span class="aside-menu-title">{{ __('messages.post_comments') }}</span>
-            </a>
-        </li>
-    </ul>
+<!-- SECTION: SUBSCRIPTIONS & REFERENCES -->
+<li class="sidebar-section-header px-4 pt-4 pb-1 text-uppercase text-muted fw-bold fs-8 d-flex align-items-center" style="letter-spacing: 0.08em; font-size: 11px;">
+    <span>REFERENCES & DATA</span>
+    <span class="flex-grow-1 ms-3 border-bottom"></span>
 </li>
 
 <li class="nav-item aside-item-collapse {{ $subscriptionsActive ? 'active collapse-submenu' : '' }}">
@@ -172,14 +176,16 @@
         <span class="aside-menu-title">{{ __('messages.plan.subscriptions') }}</span>
         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
     </a>
-    <ul class="aside-submenu nav flex-column collapse {{ $subscriptionsActive ? 'show' : '' }}" id="asideSubscriptionsMenu">
+    <ul class="aside-submenu nav flex-column collapse {{ $subscriptionsActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideSubscriptionsMenu">
         <li class="nav-item {{ Request::is('admin/plans*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('plans.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.subscriptions_plans') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/transactions*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('admin.transactions.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.transactions') }}</span>
             </a>
         </li>
@@ -193,88 +199,174 @@
     </a>
 </li>
 
-<li class="nav-item aside-item-collapse {{ $countriesActive ? 'active collapse-submenu' : '' }}">
-    <a class="nav-link d-flex align-items-center py-3" data-bs-toggle="collapse" href="#asideCountriesMenu"
-       role="button" aria-expanded="{{ $countriesActive ? 'true' : 'false' }}" aria-controls="asideCountriesMenu">
-        <span class="aside-menu-icon {{ $iconPad }}"><i class="fas fa-globe-americas"></i></span>
-        <span class="aside-menu-title">{{ __('messages.country.countries') }}</span>
+<li class="nav-item aside-item-collapse {{ $referencesActive ? 'active collapse-submenu' : '' }}">
+    <a class="nav-link d-flex align-items-center py-3" data-bs-toggle="collapse" href="#asideReferencesMenu"
+       role="button" aria-expanded="{{ $referencesActive ? 'true' : 'false' }}" aria-controls="asideReferencesMenu">
+        <span class="aside-menu-icon {{ $iconPad }}"><i class="fas fa-layer-group"></i></span>
+        <span class="aside-menu-title">{{ __('messages.references') }}</span>
         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
     </a>
-    <ul class="aside-submenu nav flex-column collapse {{ $countriesActive ? 'show' : '' }}" id="asideCountriesMenu">
-        <li class="nav-item {{ Request::is('admin/countries*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('countries.index') }}">
-                <span class="aside-menu-title">{{ __('messages.country.countries') }}</span>
+    <ul class="aside-submenu nav flex-column collapse {{ $referencesActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideReferencesMenu">
+        
+        <!-- Child Submenu: Location -->
+        <li class="nav-item aside-item-collapse {{ $countriesActive ? 'active collapse-submenu' : '' }}">
+            <a class="nav-link d-flex align-items-center py-2 pe-3" data-bs-toggle="collapse" href="#asideLocationMenu"
+               role="button" aria-expanded="{{ $countriesActive ? 'true' : 'false' }}" aria-controls="asideLocationMenu">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
+                <span class="aside-menu-title me-auto">{{ __('messages.country.locations') }}</span>
+                <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
             </a>
+            <ul class="aside-submenu nav flex-column collapse {{ $countriesActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideLocationMenu">
+                <li class="nav-item {{ Request::is('admin/countries*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('countries.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.country.countries') }}</span>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::is('admin/states*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('states.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.state.states') }}</span>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::is('admin/cities*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('cities.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.city.cities') }}</span>
+                    </a>
+                </li>
+            </ul>
         </li>
-        <li class="nav-item {{ Request::is('admin/states*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('states.index') }}">
-                <span class="aside-menu-title">{{ __('messages.state.states') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/cities*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('cities.index') }}">
-                <span class="aside-menu-title">{{ __('messages.city.cities') }}</span>
-            </a>
-        </li>
-    </ul>
-</li>
 
-<li class="nav-item aside-item-collapse {{ $generalActive ? 'active collapse-submenu' : '' }}">
-    <a class="nav-link d-flex align-items-center py-3" data-bs-toggle="collapse" href="#asideGeneralMenu"
-       role="button" aria-expanded="{{ $generalActive ? 'true' : 'false' }}" aria-controls="asideGeneralMenu">
-        <span class="aside-menu-icon {{ $iconPad }}"><i class="fas fa-life-ring"></i></span>
-        <span class="aside-menu-title">{{ __('messages.general') }}</span>
-        <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
-    </a>
-    <ul class="aside-submenu nav flex-column collapse {{ $generalActive ? 'show' : '' }}" id="asideGeneralMenu">
+        <!-- Child Submenu: Education -->
+        <li class="nav-item aside-item-collapse {{ $educationActive ? 'active collapse-submenu' : '' }}">
+            <a class="nav-link d-flex align-items-center py-2 pe-3" data-bs-toggle="collapse" href="#asideEducationMenu"
+               role="button" aria-expanded="{{ $educationActive ? 'true' : 'false' }}" aria-controls="asideEducationMenu">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
+                <span class="aside-menu-title me-auto">{{ __('messages.candidate_profile.education') }}</span>
+                <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
+            </a>
+            <ul class="aside-submenu nav flex-column collapse {{ $educationActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideEducationMenu">
+                <li class="nav-item {{ Request::is('admin/degree-levels*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('requiredDegreeLevel.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.required_degree_levels') }}</span>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::is('admin/education-degree-titles*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('educationDegreeTitles.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">Degree Titles</span>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::is('admin/education-major-groups*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('educationMajorGroups.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">Major / Groups</span>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::is('admin/education-boards*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('educationBoards.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">Education Boards</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
         <li class="nav-item {{ Request::is('admin/marital-status*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('maritalStatus.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.marital_statuses') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/skills*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('skills.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.skills') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/salary-periods*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('salaryPeriod.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.salary_periods') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/industries*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('industry.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.industries') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/company-sizes*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('companySize.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.company_sizes') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/functional-areas*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('functionalArea.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.functional_areas') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/career-levels*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('careerLevel.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.career_levels') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/salary-currencies*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('salaryCurrency.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.salary_currencies') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/ownership-types*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('ownerShipType.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.ownership_types') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/languages*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('languages.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.languages') }}</span>
+            </a>
+        </li>
+    </ul>
+</li>
+
+<!-- SECTION: CONTENT & CMS -->
+<li class="sidebar-section-header px-4 pt-4 pb-1 text-uppercase text-muted fw-bold fs-8 d-flex align-items-center" style="letter-spacing: 0.08em; font-size: 11px;">
+    <span>CONTENT & CMS</span>
+    <span class="flex-grow-1 ms-3 border-bottom"></span>
+</li>
+
+<li class="nav-item aside-item-collapse {{ $blogsActive ? 'active collapse-submenu' : '' }}">
+    <a class="nav-link d-flex align-items-center py-3" data-bs-toggle="collapse" href="#asideBlogsMenu"
+       role="button" aria-expanded="{{ $blogsActive ? 'true' : 'false' }}" aria-controls="asideBlogsMenu">
+        <span class="aside-menu-icon {{ $iconPad }}"><i class="far fa-list-alt"></i></span>
+        <span class="aside-menu-title">{{ __('messages.blogs') }}</span>
+        <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
+    </a>
+    <ul class="aside-submenu nav flex-column collapse {{ $blogsActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideBlogsMenu">
+        <li class="nav-item {{ Request::is('admin/post-categories*') ? 'active' : '' }}">
+            <a class="nav-link d-flex align-items-center py-2" href="{{ route('post-categories.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
+                <span class="aside-menu-title">{{ __('messages.post_category.post_categories') }}</span>
+            </a>
+        </li>
+        <li class="nav-item {{ Request::is('admin/posts*') ? 'active' : '' }}">
+            <a class="nav-link d-flex align-items-center py-2" href="{{ route('posts.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
+                <span class="aside-menu-title">{{ __('messages.post.posts') }}</span>
+            </a>
+        </li>
+        <li class="nav-item {{ Request::is('admin/post-comments*') ? 'active' : '' }}">
+            <a class="nav-link d-flex align-items-center py-2" href="{{ route('post.comments') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
+                <span class="aside-menu-title">{{ __('messages.post_comments') }}</span>
             </a>
         </li>
     </ul>
@@ -287,44 +379,52 @@
         <span class="aside-menu-title">{{ __('messages.cms') }}</span>
         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
     </a>
-    <ul class="aside-submenu nav flex-column collapse {{ $cmsActive ? 'show' : '' }}" id="asideCmsMenu">
+    <ul class="aside-submenu nav flex-column collapse {{ $cmsActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideCmsMenu">
         <li class="nav-item {{ Request::is('admin/noticeboards*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('noticeboards.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.noticeboards') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/faqs*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('faqs.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.faq.faq') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/inquires*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('inquires.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.inquires') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/notification-settings*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('notification.settings.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.setting.notification_settings') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/privacy-policy*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('privacy.policy.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.setting.privacy_policy') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/front-settings*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('front.settings.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.setting.front_settings') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/email-template*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('email.template.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.email_templates') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/settings*') && !Request::is('admin/notification-settings*', 'admin/front-settings*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('settings.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.settings') }}</span>
             </a>
         </li>
@@ -338,29 +438,34 @@
         <span class="aside-menu-title">{{ __('messages.cms_sliders') }}</span>
         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
     </a>
-    <ul class="aside-submenu nav flex-column collapse {{ $cmsSlidersActive ? 'show' : '' }}" id="asideCmsSlidersMenu">
+    <ul class="aside-submenu nav flex-column collapse {{ $cmsSlidersActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideCmsSlidersMenu">
         <li class="nav-item {{ Request::is('admin/testimonials*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('testimonials.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.testimonials') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/branding-sliders*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('branding.sliders.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.branding_sliders') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/header-sliders*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('header.sliders.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.header_sliders') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/image-sliders*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('image-sliders.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.image_sliders') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/ads*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('ads.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.ads') }}</span>
             </a>
         </li>
@@ -374,14 +479,16 @@
         <span class="aside-menu-title">{{ __('messages.front_cms') }}</span>
         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
     </a>
-    <ul class="aside-submenu nav flex-column collapse {{ $frontCmsActive ? 'show' : '' }}" id="asideFrontCmsMenu">
+    <ul class="aside-submenu nav flex-column collapse {{ $frontCmsActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideFrontCmsMenu">
         <li class="nav-item {{ Request::is('admin/cms-services*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('cms.services.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.cms_services') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/cms-about-us*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('cms.about-us.service') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.about_us_services') }}</span>
             </a>
         </li>

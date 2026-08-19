@@ -23,6 +23,9 @@ use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\JobShiftController;
 use App\Http\Controllers\JobStageController;
+use App\Http\Controllers\EducationBoardController;
+use App\Http\Controllers\EducationDegreeTitleController;
+use App\Http\Controllers\EducationMajorGroupController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\PaystackController;
 use App\Http\Controllers\CandidateController;
@@ -215,6 +218,27 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
                   'degree-levels/{requiredDegreeLevel}',
                   [RequiredDegreeLevelController::class, 'destroy']
          )->name('requiredDegreeLevel.destroy');
+
+         // Education Boards
+         Route::get('education-boards', [EducationBoardController::class, 'index'])->name('educationBoards.index');
+         Route::post('education-boards', [EducationBoardController::class, 'store'])->name('educationBoards.store');
+         Route::get('education-boards/{educationBoard}/edit', [EducationBoardController::class, 'edit'])->name('educationBoards.edit');
+         Route::put('education-boards/{educationBoard}', [EducationBoardController::class, 'update'])->name('educationBoards.update');
+         Route::delete('education-boards/{educationBoard}', [EducationBoardController::class, 'destroy'])->name('educationBoards.destroy');
+
+         // Education Degree Titles
+         Route::get('education-degree-titles', [EducationDegreeTitleController::class, 'index'])->name('educationDegreeTitles.index');
+         Route::post('education-degree-titles', [EducationDegreeTitleController::class, 'store'])->name('educationDegreeTitles.store');
+         Route::get('education-degree-titles/{educationDegreeTitle}/edit', [EducationDegreeTitleController::class, 'edit'])->name('educationDegreeTitles.edit');
+         Route::put('education-degree-titles/{educationDegreeTitle}', [EducationDegreeTitleController::class, 'update'])->name('educationDegreeTitles.update');
+         Route::delete('education-degree-titles/{educationDegreeTitle}', [EducationDegreeTitleController::class, 'destroy'])->name('educationDegreeTitles.destroy');
+
+         // Education Major Groups
+         Route::get('education-major-groups', [EducationMajorGroupController::class, 'index'])->name('educationMajorGroups.index');
+         Route::post('education-major-groups', [EducationMajorGroupController::class, 'store'])->name('educationMajorGroups.store');
+         Route::get('education-major-groups/{educationMajorGroup}/edit', [EducationMajorGroupController::class, 'edit'])->name('educationMajorGroups.edit');
+         Route::put('education-major-groups/{educationMajorGroup}', [EducationMajorGroupController::class, 'update'])->name('educationMajorGroups.update');
+         Route::delete('education-major-groups/{educationMajorGroup}', [EducationMajorGroupController::class, 'destroy'])->name('educationMajorGroups.destroy');
 
          // All Candidate Resumes
          Route::get('resumes', [CandidateController::class, 'resumes'])->name('resumes.index');

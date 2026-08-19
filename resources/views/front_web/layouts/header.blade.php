@@ -24,30 +24,10 @@
                             <a class="header-navbar-color text-gray nav-link {{ Request::is('search-jobs') || Request::is('job-details*') ? 'header-navbar-color-active' : '' }}"
                                 href="{{ route('front.search.jobs') }}">{{ __('web.jobs') }}</a>
                         </li>
-                        {{-- <li class="nav-item">
-                            <a class="header-navbar-color text-gray nav-link {{ Request::is('company-lists') || Request::is('company-details*') ? 'header-navbar-color-active' : '' }}"
-                                href="{{ route('front.company.lists') }}">{{ __('web.companies') }}</a>
-                        </li> --}}
                         <li class="nav-item">
                             <a class="header-navbar-color text-gray nav-link {{ Request::is('posts*') || Request::is('blogs*') ? 'header-navbar-color-active' : '' }}"
                                 href="{{ route('front.blogs') }}">{{ __('web.blogs') }}</a>
                         </li>
-                        {{-- @if(auth()->guest() || auth()->user()?->hasRole('Employer'))
-                            <li class="nav-item">
-                                <a class="header-navbar-color text-gray nav-link {{ Request::is('company-lists') || Request::is('company-details*') ? 'header-navbar-color-active' : '' }}"
-                                    href="{{ route('job.create') }}">{{ __('web.add_post_job') }}</a>
-                            </li>
-                        @endif --}}
-                        {{--
-                        @auth
-                            @role('Employer|Admin')
-                                <li class="nav-item">
-                                    <a class="header-navbar-color text-gray nav-link {{ Request::is('candidate-lists') || Request::is('candidate-details*') ? 'header-navbar-color-active' : '' }}"
-                                        href="{{ route('front.candidate.lists') }}">{{ __('web.job_seekers') }}</a>
-                                </li>
-                            @endrole
-                        @endauth
-                        --}}
                         <li class="nav-item">
                             <div class="dropdown language-dropdown"
                                  data-language-url="{{ route('front.change-language') }}">
@@ -83,12 +63,6 @@
                             </div>
                         </li>
 
-                        {{-- <div class="d-flex align-items-center gap-xl-4 gap-3 mt-lg-0 mt-2 ms-xl-3 ms-lg-2">
-                            <button class="btn btn-secondary" type="submit">Login</button>
-                            <button class="btn btn-primary" type="submit">
-                                Register
-                            </button>
-                        </div> --}}
                         @if (!Auth::check())
                             <div class="d-flex align-items-center gap-xl-4 gap-3 mt-lg-0 mt-2 ms-xl-3 ms-lg-2">
                                 <ul class="navbar-nav d-flex flex-row align-items-center py-2 py-lg-0">
@@ -96,12 +70,6 @@
                                         <a href="{{ route('front.candidate.login') }}"
                                             class="nav-link btn btn-secondary btn-secondary-login {{ getFrontSelectLanguage() == 'ar' ? 'ms-2' : 'me-2' }} mb-3 mb-lg-0 nav-link">{{ __('web.login') }}</a>
                                         <ul class="nav submenu">
-                                            {{-- <li class="nav-item mb-3 mt-2">
-                                                <a href="{{ route('admin.login') }}"
-                                                    class="nav-link text-gray d-flex align-items-center {{ request()->routeIs('admin.login') ? ' active' : '' }}">
-                                                    @lang('web.admin')
-                                                </a>
-                                            </li> --}}
                                             <li class="nav-item mb-3 mt-2">
                                                 <a href="{{ route('front.candidate.login') }}"
                                                     class="nav-link text-gray d-flex align-items-center {{ request()->routeIs('front.candidate.login') ? ' active' : '' }}">
@@ -118,7 +86,7 @@
                                     </li>
                                     <li class="nav-item register_btn">
                                         <a href="{{ route('candidate.register') }}"
-                                            class="btn btn-primary  mb-3 mb-lg-0">{{ __('web.register') }}</a>
+                                            class="btn btn-primary mb-3 mb-lg-0">{{ __('web.register') }}</a>
                                         <ul class="nav submenu">
                                             <li class="nav-item mb-3 mt-2 ">
                                                 <a href="{{ route('candidate.register') }}"
@@ -152,7 +120,7 @@
                                                     type="button" id="frontNotificationDropdown" aria-expanded="false" style="border:none; background:transparent;">
                                                 <i class="fa-solid fa-bell fs-4 text-primary"></i>
                                                 @if($unreadCount > 0)
-                                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger fs-8 p-1" style="width: 18px; height: 18px; line-height: 10px;" id="candidateNotificationCount">
+                                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger fs-8 p-1" style="min-width: 18px; height: 18px; line-height: 10px;" id="candidateNotificationCount">
                                                         {{ $unreadCount }}
                                                     </span>
                                                 @endif
@@ -189,116 +157,116 @@
                                                      @endif
                                                  </div>
                                              </div>
-                                        </li>
-                                    @endauth
-                                    <li class="nav-item dropdown front-user-dropdown">
-                                        <button class="btn dropdown-toggle front-user-dropdown-toggle d-flex align-items-center"
-                                            type="button" id="frontUserDropdown" aria-expanded="false"
-                                            aria-controls="frontUserDropdownMenu">
-                                            <img src="{{ getLoggedInUser()->avatar }}" class="front-user-avatar"
-                                                alt="{{ getLoggedInUser()->full_name }}">
-                                            {{-- <span class="text-truncate">{{ getLoggedInUser()->full_name }}</span> --}}
-                                        </button>
-                                        <div class="dropdown-menu dropdown-menu-end front-user-dropdown-menu p-4"
-                                            id="frontUserDropdownMenu"
-                                            aria-labelledby="frontUserDropdown">
-                                            <div class="front-user-summary text-center border-bottom pb-4">
-                                                <img src="{{ getLoggedInUser()->avatar }}" class="front-user-summary-avatar mb-3"
-                                                    alt="{{ getLoggedInUser()->full_name }}">
-                                                <h3 class="front-user-name mb-1">{{ getLoggedInUser()->full_name }}</h3>
-                                                <p class="front-user-email mb-0 text-truncate">{{ getLoggedInUser()->email }}</p>
-                                            </div>
-                                            <ul class="front-user-menu-list list-unstyled pt-3 mb-0">
-                                                <li>
-                                                    <a href="{{ dashboardURL() }}" class="dropdown-item">
-                                                        <span class="front-user-menu-icon"><i class="fa-solid fa-gauge-high"></i></span>
-                                                        {{ __('web.go_to_dashboard') }}
-                                                    </a>
-                                                </li>
-                                            @role('Candidate')
-                                                <li>
-                                                    <a href="{{ route('candidate.profile') }}" class="dropdown-item">
-                                                        <span class="front-user-menu-icon"><i class="fa-solid fa-user"></i></span>
-                                                        {{ __('web.my_profile') }}
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('favourite.jobs') }}" class="dropdown-item">
-                                                        <span class="front-user-menu-icon"><i class="fa-solid fa-heart"></i></span>
-                                                        {{ __('messages.favourite_jobs') }}
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('favourite.companies') }}" class="dropdown-item">
-                                                        <span class="front-user-menu-icon"><i class="fa-solid fa-building-circle-check"></i></span>
-                                                        {{ __('messages.candidate_dashboard.followings') }}
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('candidate.applied.job') }}" class="dropdown-item">
-                                                        <span class="front-user-menu-icon"><i class="fa-solid fa-briefcase"></i></span>
-                                                        {{ __('messages.applied_job.applied_jobs') }}
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('candidate.job.alert') }}" class="dropdown-item">
-                                                        <span class="front-user-menu-icon"><i class="fa-solid fa-bell"></i></span>
-                                                        {{ __('messages.job.job_alert') }}
-                                                    </a>
-                                                </li>
-                                            @endrole
-                                            @role('Employer')
-                                                <li>
-                                                    <a href="{{ route('company.edit.form', \Illuminate\Support\Facades\Auth::user()->owner_id) }}"
-                                                         class="dropdown-item">
-                                                        <span class="front-user-menu-icon"><i class="fa-solid fa-user"></i></span>
-                                                        {{ __('web.my_profile') }}
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('job.index') }}" class="dropdown-item">
-                                                        <span class="front-user-menu-icon"><i class="fa-solid fa-briefcase"></i></span>
-                                                        {{ __('messages.employer_menu.jobs') }}
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('followers.index') }}" class="dropdown-item">
-                                                        <span class="front-user-menu-icon"><i class="fa-solid fa-users"></i></span>
-                                                        {{ __('messages.employer_menu.followers') }}
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('manage-subscription.index') }}" class="dropdown-item">
-                                                        <span class="front-user-menu-icon"><i class="fa-solid fa-credit-card"></i></span>
-                                                        {{ __('messages.employer_menu.manage_subscriptions') }}
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('transactions.index') }}" class="dropdown-item">
-                                                        <span class="front-user-menu-icon"><i class="fa-solid fa-receipt"></i></span>
-                                                        {{ __('messages.employer_menu.transactions') }}
-                                                    </a>
-                                                </li>
-                                            @endrole
-                                            <li>
-                                                <a href="{{ url('logout') }}" class="dropdown-item"
-                                                    onclick="event.preventDefault(); localStorage.clear();  document.getElementById('logout-form').submit();">
-                                                    <span class="front-user-menu-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
-                                                    {{ __('web.logout') }}
-                                                </a>
-                                            </li>
-                                            </ul>
-                                        </div>
-                                        <form id="logout-form" action="{{ url('/logout') }}" method="POST" class="d-none">
-                                            {{ csrf_field() }}
-                                        </form>
-                                    </li>
-                                </ul>
-                            </div>
-                        @endif
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </nav>
+                                         </li>
+                                     @endauth
+                                     <li class="nav-item dropdown front-user-dropdown">
+                                         <button class="btn dropdown-toggle front-user-dropdown-toggle d-flex align-items-center p-0 border-0"
+                                             type="button" id="frontUserDropdown" aria-expanded="false"
+                                             aria-controls="frontUserDropdownMenu" style="background:transparent;">
+                                             <img src="{{ getLoggedInUser()->avatar }}" class="front-user-avatar"
+                                                 alt="{{ getLoggedInUser()->full_name }}" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
+                                         </button>
+                                         <div class="dropdown-menu dropdown-menu-end front-user-dropdown-menu p-3 shadow-lg border-0 rounded-3"
+                                             id="frontUserDropdownMenu"
+                                             aria-labelledby="frontUserDropdown" style="min-width: 250px;">
+                                             <div class="front-user-summary d-flex align-items-center border-bottom pb-3 mb-2 text-start">
+                                                 <img src="{{ getLoggedInUser()->avatar }}" class="front-user-summary-avatar me-3 flex-shrink-0"
+                                                     alt="{{ getLoggedInUser()->full_name }}" style="width: 44px; height: 44px; margin: 0; border-radius: 50%; object-fit: cover;">
+                                                 <div class="front-user-info overflow-hidden ms-1">
+                                                     <h3 class="front-user-name fs-6 fw-bold mb-0 text-truncate text-dark">{{ getLoggedInUser()->full_name }}</h3>
+                                                     <p class="front-user-email fs-7 text-muted mb-0 text-truncate">{{ getLoggedInUser()->email }}</p>
+                                                 </div>
+                                             </div>
+                                             <ul class="front-user-menu-list list-unstyled mb-0">
+                                                 <li>
+                                                     <a href="{{ dashboardURL() }}" class="dropdown-item py-2 px-2 d-flex align-items-center gap-2 rounded">
+                                                         <span class="front-user-menu-icon text-muted" style="width: 20px;"><i class="fa-solid fa-gauge-high"></i></span>
+                                                         <span>{{ __('web.go_to_dashboard') }}</span>
+                                                     </a>
+                                                 </li>
+                                             @role('Candidate')
+                                                 <li>
+                                                     <a href="{{ route('candidate.profile') }}" class="dropdown-item py-2 px-2 d-flex align-items-center gap-2 rounded">
+                                                         <span class="front-user-menu-icon text-muted" style="width: 20px;"><i class="fa-solid fa-user"></i></span>
+                                                         <span>{{ __('web.my_profile') }}</span>
+                                                     </a>
+                                                 </li>
+                                                 <li>
+                                                     <a href="{{ route('favourite.jobs') }}" class="dropdown-item py-2 px-2 d-flex align-items-center gap-2 rounded">
+                                                         <span class="front-user-menu-icon text-muted" style="width: 20px;"><i class="fa-solid fa-heart"></i></span>
+                                                         <span>{{ __('messages.favourite_jobs') }}</span>
+                                                     </a>
+                                                 </li>
+                                                 <li>
+                                                     <a href="{{ route('favourite.companies') }}" class="dropdown-item py-2 px-2 d-flex align-items-center gap-2 rounded">
+                                                         <span class="front-user-menu-icon text-muted" style="width: 20px;"><i class="fa-solid fa-building-circle-check"></i></span>
+                                                         <span>{{ __('messages.candidate_dashboard.followings') }}</span>
+                                                     </a>
+                                                 </li>
+                                                 <li>
+                                                     <a href="{{ route('candidate.applied.job') }}" class="dropdown-item py-2 px-2 d-flex align-items-center gap-2 rounded">
+                                                         <span class="front-user-menu-icon text-muted" style="width: 20px;"><i class="fa-solid fa-briefcase"></i></span>
+                                                         <span>{{ __('messages.applied_job.applied_jobs') }}</span>
+                                                     </a>
+                                                 </li>
+                                                 <li>
+                                                     <a href="{{ route('candidate.job.alert') }}" class="dropdown-item py-2 px-2 d-flex align-items-center gap-2 rounded">
+                                                         <span class="front-user-menu-icon text-muted" style="width: 20px;"><i class="fa-solid fa-bell"></i></span>
+                                                         <span>{{ __('messages.job.job_alert') }}</span>
+                                                     </a>
+                                                 </li>
+                                             @endrole
+                                             @role('Employer')
+                                                 <li>
+                                                     <a href="{{ route('company.edit.form', \Illuminate\Support\Facades\Auth::user()->owner_id) }}" class="dropdown-item py-2 px-2 d-flex align-items-center gap-2 rounded">
+                                                         <span class="front-user-menu-icon text-muted" style="width: 20px;"><i class="fa-solid fa-user"></i></span>
+                                                         <span>{{ __('web.my_profile') }}</span>
+                                                     </a>
+                                                 </li>
+                                                 <li>
+                                                     <a href="{{ route('job.index') }}" class="dropdown-item py-2 px-2 d-flex align-items-center gap-2 rounded">
+                                                         <span class="front-user-menu-icon text-muted" style="width: 20px;"><i class="fa-solid fa-briefcase"></i></span>
+                                                         <span>{{ __('messages.employer_menu.jobs') }}</span>
+                                                     </a>
+                                                 </li>
+                                                 <li>
+                                                     <a href="{{ route('followers.index') }}" class="dropdown-item py-2 px-2 d-flex align-items-center gap-2 rounded">
+                                                         <span class="front-user-menu-icon text-muted" style="width: 20px;"><i class="fa-solid fa-users"></i></span>
+                                                         <span>{{ __('messages.employer_menu.followers') }}</span>
+                                                     </a>
+                                                 </li>
+                                                 <li>
+                                                     <a href="{{ route('manage-subscription.index') }}" class="dropdown-item py-2 px-2 d-flex align-items-center gap-2 rounded">
+                                                         <span class="front-user-menu-icon text-muted" style="width: 20px;"><i class="fa-solid fa-credit-card"></i></span>
+                                                         <span>{{ __('messages.employer_menu.manage_subscriptions') }}</span>
+                                                     </a>
+                                                 </li>
+                                                 <li>
+                                                     <a href="{{ route('transactions.index') }}" class="dropdown-item py-2 px-2 d-flex align-items-center gap-2 rounded">
+                                                         <span class="front-user-menu-icon text-muted" style="width: 20px;"><i class="fa-solid fa-receipt"></i></span>
+                                                         <span>{{ __('messages.employer_menu.transactions') }}</span>
+                                                     </a>
+                                                 </li>
+                                             @endrole
+                                                 <li>
+                                                     <a href="{{ url('logout') }}" class="dropdown-item py-2 px-2 d-flex align-items-center gap-2 rounded text-danger"
+                                                         onclick="event.preventDefault(); localStorage.clear(); document.getElementById('logout-form').submit();">
+                                                         <span class="front-user-menu-icon text-danger" style="width: 20px;"><i class="fa-solid fa-right-from-bracket"></i></span>
+                                                         <span>{{ __('web.logout') }}</span>
+                                                     </a>
+                                                 </li>
+                                             </ul>
+                                         </div>
+                                         <form id="logout-form" action="{{ url('/logout') }}" method="POST" class="d-none">
+                                             {{ csrf_field() }}
+                                         </form>
+                                     </li>
+                                 </ul>
+                             </div>
+                         @endif
+                     </ul>
+                 </div>
+             </div>
+         </div>
+     </nav>
 </header>

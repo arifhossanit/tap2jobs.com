@@ -715,7 +715,7 @@ window.isOnlyContainWhiteSpace = function(value) {
     return value.trim().replace(/ \r\n\t/g, "") === "";
 };
 
-let defaultAvatarImageUrl = "asset('assets/img/infyom-logo.png')";
+let defaultAvatarImageUrl = "asset('assets/img/user.png')";
 window.defaultImagePreview = function(imagePreviewSelector, id = null) {
     if (id == 1) {
         $(imagePreviewSelector).css(

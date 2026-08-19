@@ -132,12 +132,14 @@
                     </button>
                     <div class="dropdown-menu candidate-user-dropdown-menu p-4 pb-4" aria-labelledby="candidateUserDropdown"
                          data-bs-auto-close="outside">
-                        <div class="text-center border-bottom pb-5 ">
-                            <div class="image image-circle image-tiny mb-5">
-                                <img src="{{ getLoggedInUser()->avatar }}" class="img-fluid" alt="profile image">
+                        <div class="d-flex align-items-center border-bottom pb-4 text-start">
+                            <div class="image image-circle image-tiny me-3 flex-shrink-0 mb-0 ms-2">
+                                <img src="{{ getLoggedInUser()->avatar }}" class="img-fluid" alt="profile image" style="width: 44px; height: 44px; object-fit: cover; border-radius: 50%;">
                             </div>
-                            <h3 class="text-gray-900">{{\Illuminate\Support\Facades\Auth::user()->full_name}}</h3>
-                            <h4 class="mb-0 fw-400 fs-6">{{\Illuminate\Support\Facades\Auth::user()->email}}</h4>
+                            <div class="overflow-hidden ms-2">
+                                <h3 class="text-gray-900 fs-6 fw-bold mb-0 text-truncate">{{\Illuminate\Support\Facades\Auth::user()->full_name}}</h3>
+                                <h4 class="mb-0 fw-400 fs-7 text-muted text-truncate">{{\Illuminate\Support\Facades\Auth::user()->email}}</h4>
+                            </div>
                         </div>
                         <ul class="pt-4 pe-0">
                             <li>

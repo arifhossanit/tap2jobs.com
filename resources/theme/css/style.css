@@ -20270,7 +20270,7 @@ ul {
     transition: color .2s ease, background-color .2s ease
 }
 
-.aside-menu-container__aside-menu .nav-item.collapse-submenu .aside-menu-collapse-icon {
+.aside-menu-container__aside-menu .nav-item.collapse-submenu > .nav-link > .aside-menu-collapse-icon {
     transform: rotate(90deg)
 }
 

@@ -87,12 +87,14 @@
                 </button>
                 <div class="dropdown-menu py-7 pb-4 my-2" aria-labelledby="dropdownMenuButton1"
                      data-bs-auto-close="outside">
-                    <div class="text-center border-bottom pb-5">
-                        <div class="image image-circle image-tiny mb-5">
-                            <img src="{{ getLoggedInUser()->avatar }}" class="img-fluid" alt="profile image">
+                    <div class="d-flex align-items-center border-bottom pb-4 px-4 text-start">
+                        <div class="image image-circle image-tiny me-3 flex-shrink-0 mb-0">
+                            <img src="{{ getLoggedInUser()->avatar }}" class="img-fluid" alt="profile image" style="width: 44px; height: 44px; object-fit: cover; border-radius: 50%;">
                         </div>
-                        <h3 class="text-gray-900">{{ getLoggedInUser()->full_name }}</h3>
-                        <h4 class="mb-0 fw-400 fs-6">{{ getLoggedInUser()->email }}</h4>
+                        <div class="overflow-hidden ms-2">
+                            <h3 class="text-gray-900 fs-6 fw-bold mb-0 text-truncate">{{ getLoggedInUser()->full_name }}</h3>
+                            <h4 class="mb-0 fw-400 fs-7 text-muted text-truncate">{{ getLoggedInUser()->email }}</h4>
+                        </div>
                     </div>
                     <ul class="pt-4 pe-0">
                         <li>

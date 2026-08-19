@@ -5821,3 +5821,21 @@
 .candidate-education-inline-form {
   scroll-margin-top: 150px;
 }
+
+/* Select2 Selected Item Background and Text Color Fix */
+.select2-container--default .select2-results__option[aria-selected=true],
+.select2-container--bootstrap5 .select2-dropdown .select2-results__options .select2-results__option.select2-results__option--selected,
+.select2-container--bootstrap5 .select2-dropdown .select2-results__options .select2-results__option[aria-selected=true],
+.select2-container--bootstrap-5 .select2-dropdown .select2-results__options .select2-results__option.select2-results__option--selected,
+.select2-container--bootstrap-5 .select2-dropdown .select2-results__options .select2-results__option[aria-selected=true] {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+}
+
+/* Hovered / Highlighted option */
+.select2-container--default .select2-results__option--highlighted[aria-selected],
+.select2-container--bootstrap5 .select2-dropdown .select2-results__options .select2-results__option.select2-results__option--highlighted,
+.select2-container--bootstrap-5 .select2-dropdown .select2-results__options .select2-results__option.select2-results__option--highlighted {
+    background-color: #1d4ed8 !important;
+    color: #ffffff !important;
+}

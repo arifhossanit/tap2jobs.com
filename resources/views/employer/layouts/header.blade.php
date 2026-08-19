@@ -27,6 +27,7 @@
                             class="btn dropdown-toggle px-0 text-gray-600 d-flex align-items-center"
                             id="employerLanguageDropdown"
                             data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-globe {{ checkLanguageSession() == 'ar' ? 'ms-1' : 'me-1' }}"></i>
                         {{ getCurrentLanguageName() }}
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end border-0 shadow p-2"
@@ -116,19 +117,21 @@
                             data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="image image-circle image-mini d-flex align-items-center {{ checkLanguageSession() == 'ar' ? 'ms-sm-3' : 'me-sm-3' }}">
                             <img src="{{ $loggedInEmployer->avatar }}"
-                                 class="img-fluid" alt="{{ $employerHeaderName }}">
+                                 class="img-fluid" alt="{{ $employerHeaderName }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;">
                         </div>
                     </button>
-                    <div class="dropdown-menu p-4 pb-4" aria-labelledby="employerUserDropdown"
-                         data-bs-auto-close="outside">
-                        <div class="text-center border-bottom pb-5 ">
-                            <div class="image image-circle image-tiny mb-5">
-                                <img src="{{ $loggedInEmployer->avatar }}" class="img-fluid" alt="{{ $employerHeaderName }}">
+                    <div class="dropdown-menu border p-4 pb-4" aria-labelledby="employerUserDropdown"
+                         data-bs-auto-close="outside" style="min-width: 250px;">
+                        <div class="d-flex align-items-center border-bottom pb-4 mb-3 text-start">
+                            <div class="image image-circle image-tiny me-3 flex-shrink-0 mb-0" style="width: 44px; height: 44px;">
+                                <img src="{{ $loggedInEmployer->avatar }}" class="img-fluid" alt="{{ $employerHeaderName }}" style="width: 44px; height: 44px; object-fit: cover; border-radius: 50%;">
                             </div>
-                            <h3 class="text-gray-900">{{ $employerHeaderName }}</h3>
-                            <h4 class="mb-0 fw-400 fs-6">{{ $loggedInEmployer->email }}</h4>
+                            <div class="overflow-hidden ms-1">
+                                <h3 class="text-gray-900 fs-6 fw-bold mb-0 text-truncate">{{ $employerHeaderName }}</h3>
+                                <h4 class="mb-0 fw-400 fs-7 text-muted text-truncate">{{ $loggedInEmployer->email }}</h4>
+                            </div>
                         </div>
-                        <ul class="pt-4 pe-0">
+                        <ul class="pe-0">
                             <li>
                                 <a href="{{ route('company.edit.form', \Illuminate\Support\Facades\Auth::user()->owner_id) }}#company-details" class="dropdown-item text-gray-900 {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}">
                                      <span class="dropdown-icon {{ checkLanguageSession() == 'ar' ? 'ms-4' : 'me-4' }} text-gray-600">

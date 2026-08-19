@@ -609,11 +609,11 @@
                  data-bs-parent="#candidateProfileAccordion">
                 <div class="candidate-profile-section__body">
                     @php
-                        $functionalOptions = collect($data['functionalArea'] ?? [])->take(8);
-                        $specialSkillOptions = collect($data['skills'] ?? [])->take(8);
-                        $districtOptions = collect($data['districts'] ?? [])->take(40);
-                        $countryOptions = collect($data['outsideCountries'] ?? [])->take(80);
-                        $organizationOptions = collect($data['organizationTypes'] ?? [])->take(30);
+                        $functionalOptions = collect($data['functionalArea'] ?? []);
+                        $specialSkillOptions = collect($data['skills'] ?? []);
+                        $districtOptions = collect($data['districts'] ?? []);
+                        $countryOptions = collect($data['outsideCountries'] ?? []);
+                        $organizationOptions = collect($data['organizationTypes'] ?? []);
 
                         $preferredFunctional = collect($user->candidate->preferred_functional_categories ?? [])->map(fn ($id) => (string) $id)->toArray();
                         $preferredSkills = collect($user->candidate->preferred_special_skills ?? [])->map(fn ($id) => (string) $id)->toArray();

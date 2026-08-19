@@ -286,13 +286,19 @@
     }
 }
 
-.aside-menu-container__aside-menu .nav-item.aside-item-collapse > .nav-link .aside-menu-collapse-icon {
-    transition: transform 0.2s ease;
+.aside-menu-container__aside-menu .aside-menu-collapse-icon {
+    transition: transform 0.2s ease !important;
+    transform: rotate(0deg) !important;
 }
 
-.aside-menu-container__aside-menu .nav-item.aside-item-collapse > .nav-link[aria-expanded="true"] .aside-menu-collapse-icon,
-.aside-menu-container__aside-menu .nav-item.collapse-submenu > .nav-link .aside-menu-collapse-icon {
-    transform: rotate(90deg);
+.aside-menu-container__aside-menu .nav-item > .nav-link[aria-expanded="true"] > .aside-menu-collapse-icon,
+.aside-menu-container__aside-menu .nav-item > .nav-link[aria-expanded="true"] .aside-menu-collapse-icon {
+    transform: rotate(90deg) !important;
+}
+
+.aside-menu-container__aside-menu .nav-item > .nav-link[aria-expanded="false"] > .aside-menu-collapse-icon,
+.aside-menu-container__aside-menu .nav-item > .nav-link[aria-expanded="false"] .aside-menu-collapse-icon {
+    transform: rotate(0deg) !important;
 }
 
 .aside-menu-container__aside-menu .nav-item ul.aside-submenu .nav-item.active > .nav-link {

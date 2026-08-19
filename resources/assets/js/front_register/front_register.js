@@ -674,12 +674,34 @@ listenSubmit('#addEmployerNewForm', function (e) {
     const usernameFeedback = document.getElementById('employerUsernameFeedback');
     const confirmPasswordInput = document.getElementById('employerConfirmPassword');
 
+    let isValid = true;
+    let firstInvalidElement = null;
+
     employerForm.querySelectorAll('.employer-server-validation-message').forEach(function (message) {
         message.remove();
     });
     employerForm.querySelectorAll('.is-invalid').forEach(function (input) {
         if (!input.matches('#employerUsername, #employerConfirmPassword')) {
             input.classList.remove('is-invalid');
+        }
+    });
+
+    const requiredControls = employerForm.querySelectorAll('input[required], select[required], textarea[required]');
+    requiredControls.forEach(function (control) {
+        if (control.disabled) return;
+
+        if (control.type === 'checkbox') {
+            if (!control.checked) {
+                isValid = false;
+                control.classList.add('is-invalid');
+                if (!firstInvalidElement) firstInvalidElement = control;
+            }
+        } else {
+            if (!control.value || !control.value.trim() || !control.checkValidity()) {
+                isValid = false;
+                control.classList.add('is-invalid');
+                if (!firstInvalidElement) firstInvalidElement = control;
+            }
         }
     });
 

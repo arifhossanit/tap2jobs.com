@@ -2113,19 +2113,21 @@ footer .social-icon a:focus {
     border-color: #1967d2 !important;
 }
 
-.select2-container--default .select2-results__option[aria-selected=true] {
-    background-color: #bad5ff !important;
-    color: #000 !important;
+.select2-container--default .select2-results__option[aria-selected=true],
+.select2-container--bootstrap5 .select2-dropdown .select2-results__options .select2-results__option.select2-results__option--selected,
+.select2-container--bootstrap5 .select2-dropdown .select2-results__options .select2-results__option[aria-selected=true] {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
 }
 
 .select2-results__option.select2-results__option--highlighted {
-    background-color: #1967d2 !important;
+    background-color: #1d4ed8 !important;
     color: #ffffff !important;
 }
 
 .select2-results__option.select2-results__option--highlighted:first-child {
-    background-color: #1967d2 !important;
-    color: #bfc8c6 !important;
+    background-color: #1d4ed8 !important;
+    color: #ffffff !important;
 }
 
 .select2-results__option {
