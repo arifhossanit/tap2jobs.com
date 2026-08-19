@@ -314,8 +314,8 @@
                             <strong>{{ __('messages.candidate_profile.note') }}:</strong> {{ __('messages.candidate_profile.military_service_note') }}
                         </p>
                         <div class="candidate-profile-section-actions candidate-employment-form-actions">
-                            <button type="submit" class="btn btn-primary" data-retired-army-save>{{ __('messages.common.save') }}</button>
-                            <button type="button" class="btn btn-secondary" data-retired-army-close>{{ __('messages.common.close') }}</button>
+                            <button type="submit" class="candidate-skill-save" data-retired-army-save>{{ __('messages.common.save') }}</button>
+                            <button type="button" class="candidate-skill-close" data-retired-army-close>{{ __('messages.common.close') }}</button>
                         </div>
                     </form>
                 </div>

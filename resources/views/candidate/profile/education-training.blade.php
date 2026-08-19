@@ -274,8 +274,8 @@
                         </div>
                     </div>
                     <div class="candidate-profile-section-actions">
-                        {{ Form::button(__('messages.common.save'), ['type' => 'submit', 'class' => 'btn btn-primary', 'id' => 'btnEducationSave']) }}
-                        <button type="button" class="btn btn-outline-secondary" data-education-add-close>{{ __('messages.common.close') }}</button>
+                        {{ Form::button(__('messages.common.save'), ['type' => 'submit', 'class' => 'candidate-skill-save', 'id' => 'btnEducationSave']) }}
+                        <button type="button" class="candidate-skill-close" data-education-add-close>{{ __('messages.common.close') }}</button>
                     </div>
                     {{ Form::close() }}
                 </div>
@@ -362,8 +362,8 @@
                         </div>
                     </div>
                     <div class="candidate-profile-section-actions">
-                        {{ Form::button(__('messages.common.save'), ['type' => 'submit', 'class' => 'btn btn-primary', 'id' => 'editEducationSave']) }}
-                        <button type="button" class="btn btn-outline-secondary" data-education-edit-close>{{ __('messages.common.close') }}</button>
+                        {{ Form::button(__('messages.common.save'), ['type' => 'submit', 'class' => 'candidate-skill-save', 'id' => 'editEducationSave']) }}
+                        <button type="button" class="candidate-skill-close" data-education-edit-close>{{ __('messages.common.close') }}</button>
                     </div>
                     {{ Form::close() }}
                 </div>
@@ -477,7 +477,7 @@
                                     @endif
                                 </div>
                             </div>
-                            <div class="candidate-education-detail candidate-education-detail--full pt-5">
+                            <div class="candidate-education-detail candidate-education-detail--full">
                                 <span>{{ __('messages.candidate_profile.achievement') }}</span>
                                 <strong>{!! filled($candidateEducation->achievement) ? $candidateEducation->achievement : '---' !!}</strong>
                             </div>
@@ -619,8 +619,8 @@
                             </div>
                         </div>
                         <div class="candidate-profile-section-actions">
-                            {{ Form::button(__('messages.common.save'), ['type' => 'submit', 'class' => 'btn btn-primary', 'id' => 'candidateTrainingSave']) }}
-                            <button type="button" class="btn btn-outline-secondary" data-training-close>{{ __('messages.common.close') }}</button>
+                            {{ Form::button(__('messages.common.save'), ['type' => 'submit', 'class' => 'candidate-skill-save', 'id' => 'candidateTrainingSave']) }}
+                            <button type="button" class="candidate-skill-close" data-training-close>{{ __('messages.common.close') }}</button>
                         </div>
                         {{ Form::close() }}
                     </div>
@@ -730,8 +730,8 @@
                             </div>
                         </div>
                         <div class="candidate-profile-section-actions">
-                            {{ Form::button(__('messages.common.save'), ['type' => 'submit', 'class' => 'btn btn-primary']) }}
-                            <button type="button" class="btn btn-outline-secondary" data-certification-close>{{ __('messages.common.close') }}</button>
+                            {{ Form::button(__('messages.common.save'), ['type' => 'submit', 'class' => 'candidate-skill-save']) }}
+                            <button type="button" class="candidate-skill-close" data-certification-close>{{ __('messages.common.close') }}</button>
                         </div>
                         {{ Form::close() }}
                     </div>

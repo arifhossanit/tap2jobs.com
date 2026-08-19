@@ -73,8 +73,8 @@
     </div>
 </div>
 <div class="candidate-profile-section-actions candidate-employment-form-actions">
-    {{ Form::button(__('messages.common.save'), ['type' => 'submit', 'class' => 'btn btn-primary']) }}
-    <button type="button" class="btn btn-secondary" data-employment-form-close>
+    {{ Form::button(__('messages.common.save'), ['type' => 'submit', 'class' => 'candidate-skill-save']) }}
+    <button type="button" class="candidate-skill-close" data-employment-form-close>
         {{ __('messages.common.close') }}
     </button>
 </div>

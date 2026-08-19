@@ -256,8 +256,8 @@
                         </div>
                         <div class="col-12">
                             <div class="candidate-profile-section-actions">
-                                {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary btnSave', 'formaction' => route('candidate-profile.personal-details.update'), 'formnovalidate' => true, 'data-scoped-ajax-submit' => true]) }}
-                                <button type="button" class="btn btn-outline-secondary" data-personal-edit-close>{{ __('messages.common.close') }}</button>
+                                {{ Form::submit(__('messages.common.save'), ['class' => 'candidate-skill-save', 'formaction' => route('candidate-profile.personal-details.update'), 'formnovalidate' => true, 'data-scoped-ajax-submit' => true]) }}
+                                <button type="button" class="candidate-skill-close" data-personal-edit-close>{{ __('messages.common.close') }}</button>
                             </div>
                         </div>
                     </div>
@@ -421,8 +421,8 @@
                             </div>
                         </div>
                         <div class="candidate-profile-section-actions candidate-address-actions">
-                            {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary btnSave', 'formaction' => route('candidate-profile.address-details.update'), 'formnovalidate' => true, 'data-scoped-ajax-submit' => true]) }}
-                            <button type="button" class="btn btn-outline-secondary" data-address-edit-close>{{ __('messages.common.close') }}</button>
+                            {{ Form::submit(__('messages.common.save'), ['class' => 'candidate-skill-save', 'formaction' => route('candidate-profile.address-details.update'), 'formnovalidate' => true, 'data-scoped-ajax-submit' => true]) }}
+                            <button type="button" class="candidate-skill-close" data-address-edit-close>{{ __('messages.common.close') }}</button>
                         </div>
                     </div>
                 </div>
@@ -582,8 +582,8 @@
                         </div>
                         <div class="col-12">
                             <div class="candidate-profile-section-actions">
-                                {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary', 'formaction' => route('candidate-profile.career-application.update'), 'formnovalidate' => true, 'data-scoped-ajax-submit' => true]) }}
-                                <button type="button" class="btn btn-light btn-active-light-primary" data-career-edit-close>{{ __('messages.common.close') }}</button>
+                                {{ Form::submit(__('messages.common.save'), ['class' => 'candidate-skill-save', 'formaction' => route('candidate-profile.career-application.update'), 'formnovalidate' => true, 'data-scoped-ajax-submit' => true]) }}
+                                <button type="button" class="candidate-skill-close" data-career-edit-close>{{ __('messages.common.close') }}</button>
                             </div>
                         </div>
                     </div>
@@ -753,8 +753,8 @@
                         </div>
 
                         <div class="candidate-profile-section-actions">
-                            {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary', 'formaction' => route('candidate-profile.preferred-area.update'), 'formnovalidate' => true, 'data-scoped-ajax-submit' => true]) }}
-                            <button type="button" class="btn btn-light btn-active-light-primary" data-preferred-edit-close>{{ __('messages.common.close') }}</button>
+                            {{ Form::submit(__('messages.common.save'), ['class' => 'candidate-skill-save', 'formaction' => route('candidate-profile.preferred-area.update'), 'formnovalidate' => true, 'data-scoped-ajax-submit' => true]) }}
+                            <button type="button" class="candidate-skill-close" data-preferred-edit-close>{{ __('messages.common.close') }}</button>
                         </div>
                     </div>
                 </div>
@@ -851,8 +851,8 @@
                         </div>
 
                         <div class="candidate-profile-section-actions">
-                            {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary', 'formaction' => route('candidate-profile.relevant-information.update'), 'formnovalidate' => true, 'data-scoped-ajax-submit' => true]) }}
-                            <button type="button" class="btn btn-light btn-active-light-primary" data-relevant-edit-close>{{ __('messages.common.close') }}</button>
+                            {{ Form::submit(__('messages.common.save'), ['class' => 'candidate-skill-save', 'formaction' => route('candidate-profile.relevant-information.update'), 'formnovalidate' => true, 'data-scoped-ajax-submit' => true]) }}
+                            <button type="button" class="candidate-skill-close" data-relevant-edit-close>{{ __('messages.common.close') }}</button>
                         </div>
                     </div>
                 </div>
@@ -1022,8 +1022,8 @@
                             {{ __('messages.candidate_profile.disability_support_suffix') }}
                         </p>
                         <div class="candidate-profile-section-actions">
-                            {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary', 'formaction' => route('candidate-profile.disability-information.update'), 'formnovalidate' => true, 'data-scoped-ajax-submit' => true]) }}
-                            <button type="button" class="btn btn-light btn-active-light-primary" data-disability-edit-close>{{ __('messages.common.close') }}</button>
+                            {{ Form::submit(__('messages.common.save'), ['class' => 'candidate-skill-save', 'formaction' => route('candidate-profile.disability-information.update'), 'formnovalidate' => true, 'data-scoped-ajax-submit' => true]) }}
+                            <button type="button" class="candidate-skill-close" data-disability-edit-close>{{ __('messages.common.close') }}</button>
                         </div>
                     </div>
                 </div>

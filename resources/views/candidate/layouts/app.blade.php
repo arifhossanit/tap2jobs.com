@@ -21,11 +21,10 @@
     @else
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('css/plugins.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ asset('css/custom.css') }}">
-        @endif
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/custom.css') }}?v={{ filemtime(public_path('assets/css/custom.css')) }}">
+    @endif
     <link rel="stylesheet" type="text/css" href="{{ mix('css/footer.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ mix('css/front-pages.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/custom.css') }}?v={{ filemtime(public_path('assets/css/custom.css')) }}">
     @livewireStyles
     <link rel="stylesheet" type="text/css" href="{{ asset('vendor/rappasoft/livewire-tables/css/laravel-livewire-tables.min.css') }}">
 
