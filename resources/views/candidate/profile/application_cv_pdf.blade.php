@@ -105,7 +105,7 @@
         'Preferred Country' => $preferredCountries->implode(', '),
         'Preferred Organization' => $preferredOrganizations->implode(', '),
     ])->filter();
-    $personalRows = collect([
+    $personalRows = $candidate->include_sensitive_personal_data_in_cv ? collect([
         "Father's Name" => $candidate->father_name,
         "Mother's Name" => $candidate->mother_name,
         'Date of Birth' => $user->dob?->format('d M, Y'),
@@ -118,7 +118,7 @@
         'Blood Group' => $candidate->blood_group,
         'Height (Meter)' => $candidate->height,
         'Weight (Kg)' => $candidate->weight,
-    ])->filter(fn ($value) => filled($value));
+    ])->filter(fn ($value) => filled($value)) : collect();
     $svgIcon = fn (string $svg): string => 'data:image/svg+xml;base64,'.base64_encode($svg);
     $contactIcons = [
         'location' => $svgIcon('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#454b54" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>'),

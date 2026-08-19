@@ -124,7 +124,7 @@
                                         <a href="{{ route('front.candidate.details', $candidate->unique_id) }}"
                                             class="text-secondary primary-link-hover">
                                             <h5 class="card-title   fs-20 mb-0">
-                                                {!! $candidate->user->full_name !!}</h5>
+                                                {{ $candidate->user->full_name }}</h5>
                                         </a>
                                     </div>
                                     <div class="d-flex">
@@ -180,7 +180,7 @@
                                     <div class="card-body p-0 ">
                                         <a href="{{ route('front.candidate.details', $candidate->unique_id) }}"
                                             class="text-secondary primary-link-hover">
-                                            <h5 class="card-title text-secondary fs-18 mb-0">{!! $candidate->user->full_name !!}
+                                            <h5 class="card-title text-secondary fs-18 mb-0">{{ $candidate->user->full_name }}
                                             </h5>
                                         </a>
                                         <div class="">

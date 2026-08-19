@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use HTMLPurifier;
 use HTMLPurifier_Config;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 /**
  * Class CreateCandidateExperienceRequest
@@ -52,7 +53,19 @@ class CreateCandidateExperienceRequest extends FormRequest
      */
     public function rules(): array
     {
-        return CandidateExperience::$rules;
+        $rules = CandidateExperience::$rules;
+        $rules['state_id'] = [
+            'nullable',
+            Rule::exists('states', 'id')->where(fn ($query) => $query->where('country_id', $this->input('country_id'))),
+        ];
+        $rules['city_id'] = [
+            'nullable',
+            Rule::exists('cities', 'id')->where(fn ($query) => $query->where('state_id', $this->input('state_id'))),
+        ];
+        $rules['start_date'] = 'required|date|before_or_equal:today';
+        $rules['end_date'] = 'required_unless:currently_working,1|nullable|date|after_or_equal:start_date|before_or_equal:today';
+
+        return $rules;
     }
 
     /**

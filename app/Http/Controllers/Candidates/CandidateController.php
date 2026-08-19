@@ -6,6 +6,7 @@ use App\Http\Controllers\AppBaseController;
 use App\Http\Requests\CandidateUpdateAddressDetailsRequest;
 use App\Http\Requests\CandidateUpdateAwardRequest;
 use App\Http\Requests\CandidateUpdateCareerApplicationRequest;
+use App\Http\Requests\CandidateUpdateCvPrivacyRequest;
 use App\Http\Requests\CandidateUpdateDisabilityInformationRequest;
 use App\Http\Requests\CandidateUpdateExtraCurricularRequest;
 use App\Http\Requests\CandidateUpdateGeneralInformationRequest;
@@ -20,6 +21,7 @@ use App\Http\Requests\CandidateUpdateProjectRequest;
 use App\Http\Requests\CandidateUpdatePublicationRequest;
 use App\Http\Requests\CandidateUpdateReferenceRequest;
 use App\Http\Requests\CandidateUpdateRelevantInformationRequest;
+use App\Http\Requests\CandidateResumeUploadRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\UpdateCandidateProfileRequest;
 use App\Models\CandidateEducation;
@@ -141,6 +143,15 @@ class CandidateController extends AppBaseController
         ];
         $sectionName = ($request->section === null) ? 'personal-information' : $request->section;
         $sectionName = $sectionAliases[$sectionName] ?? $sectionName;
+        $allowedSections = [
+            'personal-information',
+            'employment',
+            'education-training',
+            'other-information',
+            'accomplishment',
+            'resume',
+        ];
+        abort_unless(in_array($sectionName, $allowedSections, true), 404);
         $data['sectionName'] = $sectionName;
         if ($sectionName == 'personal-information') {
             if (! empty($user->country_id)) {
@@ -288,7 +299,7 @@ class CandidateController extends AppBaseController
      */
     public function updateProfile(CandidateUpdateProfileRequest $request): RedirectResponse
     {
-        $this->candidateRepository->updateProfile($request->all());
+        $this->candidateRepository->updateProfile($request->validated());
 
         Flash::success(__('messages.flash.candidate_profile'));
 
@@ -844,7 +855,7 @@ class CandidateController extends AppBaseController
      */
     public function updateGeneralInformation(CandidateUpdateGeneralInformationRequest $request): JsonResponse
     {
-        $user = $this->candidateRepository->updateGeneralInformation($request->all());
+        $user = $this->candidateRepository->updateGeneralInformation($request->validated());
         $user['candidateSkill'] = $user->candidateSkill()->pluck('name')->toArray();
         $user['candidateLanguageItems'] = $this->candidateLanguageItems($user)
             ->map(function ($language) {
@@ -908,7 +919,7 @@ class CandidateController extends AppBaseController
      */
     public function updateOnlineProfile(CandidateUpdateOnlineProfileRequest $request): JsonResponse
     {
-        $user = $this->candidateRepository->updateGeneralInformation($request->all());
+        $user = $this->candidateRepository->updateGeneralInformation($request->validated());
         $user['onlineProfileLayout'] = view('candidate.profile.career_informations.show_online_profile',
             compact('user'))->render();
         $user['editonlineProfileLayout'] = view('candidate.profile.career_informations.edit_online_profile',
@@ -945,13 +956,9 @@ class CandidateController extends AppBaseController
     /**
      * @return mixed
      */
-    public function uploadResume(Request $request)
+    public function uploadResume(CandidateResumeUploadRequest $request)
     {
-        $input = $request->validate([
-            'title' => ['required', 'string', 'max:150'],
-            'file' => ['required', 'file', 'mimes:jpg,jpeg,pdf,doc,docx', 'max:10240'],
-        ]);
-        $this->candidateRepository->uploadResume($input);
+        $this->candidateRepository->uploadResume($request->validated());
 
         return $this->sendSuccess(__('messages.flash.resume_update'));
     }
@@ -979,6 +986,17 @@ class CandidateController extends AppBaseController
         $this->applicationCvService->makeDefault($candidate, $resume);
 
         return $this->sendSuccess(__('messages.candidate_profile.default_cv_updated'));
+    }
+
+    public function updateCvPrivacy(CandidateUpdateCvPrivacyRequest $request): RedirectResponse
+    {
+        $candidate = Auth::user()->candidate;
+        $candidate->update($request->validated());
+        $this->applicationCvService->ensure($candidate->fresh());
+
+        Flash::success(__('messages.candidate_profile.cv_privacy_updated'));
+
+        return redirect(route('candidate.profile', ['section' => 'resume']));
     }
 
     public function downloadResume(int $media): Media
@@ -1079,7 +1097,7 @@ class CandidateController extends AppBaseController
 
     public function profileUpdate(UpdateCandidateProfileRequest $request): JsonResponse
     {
-        $input = $request->all();
+        $input = $request->validated();
 
         try {
             $employer = $this->candidateRepository->profileUpdate($input);
@@ -1106,15 +1124,20 @@ class CandidateController extends AppBaseController
      */
     public function deletedResume(Media $media)
     {
-        $mediaFile = Media::where('id', $media->id)->where('model_id', getLoggedInUser()->candidate->id)->first();
+        $mediaFile = Media::query()
+            ->whereKey($media->id)
+            ->where('model_type', \App\Models\Candidate::class)
+            ->where('model_id', getLoggedInUser()->candidate->id)
+            ->where('collection_name', \App\Models\Candidate::RESUME_PATH)
+            ->first();
 
         if ($mediaFile) {
-            if ($media->getCustomProperty(ApplicationCvService::APPLICATION_CV_PROPERTY, false)) {
+            if ($mediaFile->getCustomProperty(ApplicationCvService::APPLICATION_CV_PROPERTY, false)) {
                 return $this->sendError(__('messages.candidate_profile.application_cv_delete_error'));
             }
 
-            $wasDefault = (bool) $media->getCustomProperty('is_default', false);
-            $media->delete();
+            $wasDefault = (bool) $mediaFile->getCustomProperty('is_default', false);
+            $mediaFile->delete();
 
             if ($wasDefault) {
                 $candidate = getLoggedInUser()->candidate;

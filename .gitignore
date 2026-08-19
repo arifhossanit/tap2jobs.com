@@ -18,3 +18,13 @@ temp_interactive_push.bat
 /.vscode
 /.cursor
 tests/Unit/*
+!tests/Unit/CandidateCvPrivacyTest.php
+!tests/Unit/CandidateProfileMassAssignmentTest.php
+!tests/Unit/CandidateProfilePrivacyTest.php
+!tests/Unit/CandidateProfileSectionTest.php
+!tests/Unit/CandidateProfileValidationTest.php
+!tests/Unit/CandidateProfileXssTest.php
+!tests/Unit/CandidateResumeAuthorizationTest.php
+!tests/Unit/CandidateResumeFileSecurityTest.php
+!tests/Unit/CandidateResumePrivateStorageTest.php
+!tests/Unit/CandidateUniqueIdTest.php

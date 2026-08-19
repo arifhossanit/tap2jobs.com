@@ -113,14 +113,9 @@ class CandidateRepository extends BaseRepository
      */
     public function getUniqueCandidateId()
     {
-        $candidateUniqueId = Str::random(12);
-        while (true) {
-            $isExist = Candidate::whereUniqueId($candidateUniqueId)->exists();
-            if ($isExist) {
-                self::getUniqueCandidateId();
-            }
-            break;
-        }
+        do {
+            $candidateUniqueId = Str::random(12);
+        } while (Candidate::whereUniqueId($candidateUniqueId)->exists());
 
         return $candidateUniqueId;
     }
@@ -209,7 +204,7 @@ class CandidateRepository extends BaseRepository
 
             $userInput = Arr::only($input,
                 [
-                    'first_name', 'last_name', 'email', 'password', 'phone',
+                    'first_name', 'last_name', 'email', 'phone',
                     'country_id', 'state_id', 'city_id', 'gender', 'dob', 'facebook_url', 'twitter_url', 'linkedin_url',
                     'pinterest_url', 'google_plus_url', 'region_code',
                 ]);
@@ -527,7 +522,6 @@ class CandidateRepository extends BaseRepository
                 'pinterest_url',
             ]);
             $user->update($userInput);
-            $user->candidate->update($input);
             if (! empty($input['candidateSkillsUpdated'])) {
                 $this->syncCandidateSkills($user, $input);
             }
@@ -1281,7 +1275,7 @@ class CandidateRepository extends BaseRepository
                         'is_default' => false,
                         ApplicationCvService::APPLICATION_CV_PROPERTY => false,
                         'title' => $input['title'],
-                    ])->usingFileName($fileExtension)->toMediaCollection(Candidate::RESUME_PATH, config('app.media_disc'));
+                    ])->usingFileName($fileExtension)->toMediaCollection(Candidate::RESUME_PATH, config('app.resume_disk'));
 
                 return true;
             });
@@ -1352,7 +1346,12 @@ class CandidateRepository extends BaseRepository
         $user = Auth::user();
 
         try {
-            $user->update($input);
+            $user->update(Arr::only($input, [
+                'first_name',
+                'last_name',
+                'email',
+                'phone',
+            ]));
             if ((isset($input['image']))) {
                 $user->clearMediaCollection(User::PROFILE);
                 $user->addMedia($input['image'])

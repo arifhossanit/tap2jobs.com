@@ -177,6 +177,7 @@ class Candidate extends Model implements HasMedia
         'immediate_available',
         'available_at',
         'last_change',
+        'include_sensitive_personal_data_in_cv',
     ];
 
     /**
@@ -244,6 +245,7 @@ class Candidate extends Model implements HasMedia
         'immediate_available' => 'boolean',
         'available_at' => 'date',
         'last_change' => 'integer',
+        'include_sensitive_personal_data_in_cv' => 'boolean',
     ];
 
     /**
@@ -256,12 +258,12 @@ class Candidate extends Model implements HasMedia
         'last_name' => 'required|max:180',
         'email' => 'required|email:filter|unique:users,email',
         'password' => 'nullable|same:password_confirmation|min:6',
-        'gender' => 'required',
-        'dob' => 'nullable|date',
+        'gender' => 'required|integer|in:0,1',
+        'dob' => 'nullable|date|before_or_equal:today',
         'current_salary' => 'nullable|numeric|min:0|max:999999999',
         'expected_salary' => 'nullable|numeric|min:0|max:999999999',
         'phone' => 'nullable',
-        'marital_status_id' => 'required',
+        'marital_status_id' => 'required|integer|exists:marital_status,id',
     ];
 
     protected $appends = ['country_name', 'state_name', 'city_name', 'full_location', 'candidate_url'];

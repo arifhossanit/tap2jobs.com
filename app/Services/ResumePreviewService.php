@@ -12,6 +12,10 @@ use ZipArchive;
 
 class ResumePreviewService
 {
+    public function __construct(private ResumeFileSecurityService $fileSecurity)
+    {
+    }
+
     public function preview(Media $media): Response
     {
         if ($media->mime_type === 'application/pdf' || str_starts_with($media->mime_type, 'image/')) {
@@ -42,6 +46,8 @@ class ResumePreviewService
         if ($zip->open($media->getPath()) !== true) {
             throw new RuntimeException('Unable to open the CV document.');
         }
+
+        $this->fileSecurity->assertSafeDocxArchive($zip);
 
         $documentXml = $zip->getFromName('word/document.xml');
         $zip->close();

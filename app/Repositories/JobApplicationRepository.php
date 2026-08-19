@@ -10,7 +10,6 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
@@ -168,17 +167,16 @@ class JobApplicationRepository extends BaseRepository
     public function downloadMedia(JobApplication $jobApplication): array
     {
         try {
-            $documentMedia = Media::find($jobApplication->resume_id);
-            if ($documentMedia == null) {
-                $documentMedia = Media::where('model_id', $jobApplication->candidate_id)->where('collection_name',
-                    'resumes')->latest()->first();
-            }
-            $documentPath = $documentMedia->getPath();
-            if (config('app.media_disc') === 'public') {
-                $documentPath = (Str::after($documentMedia->getUrl(), '/uploads'));
-            }
+            $candidateResumes = Media::query()
+                ->where('model_type', Candidate::class)
+                ->where('model_id', $jobApplication->candidate_id)
+                ->where('collection_name', Candidate::RESUME_PATH);
 
-            $file = Storage::disk(config('app.media_disc'))->get($documentPath);
+            $documentMedia = (clone $candidateResumes)
+                ->whereKey($jobApplication->resume_id)
+                ->first() ?? $candidateResumes->latest()->firstOrFail();
+
+            $file = Storage::disk($documentMedia->disk)->get($documentMedia->getPathRelativeToRoot());
 
             $headers = [
                 'Content-Type' => $documentMedia->mime_type,

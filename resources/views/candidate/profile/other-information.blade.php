@@ -142,8 +142,8 @@
                             </div>
 
                             <div class="candidate-skill-form__actions candidate-profile-section-actions">
-                                <button type="submit" class="candidate-skill-save">{{ __('messages.candidate_profile.save') }}</button>
-                                <button type="button" class="candidate-skill-close" data-skill-close>{{ __('messages.candidate_profile.close') }}</button>
+                                <button type="submit" class="btn btn-primary candidate-skill-save">{{ __('messages.candidate_profile.save') }}</button>
+                                <button type="button" class="btn btn-secondary candidate-skill-close" data-skill-close>{{ __('messages.candidate_profile.close') }}</button>
                             </div>
                         </form>
 
@@ -222,8 +222,8 @@
                             {{ __('messages.candidate_profile.you_wrote') }} <strong data-activity-character-count>0/500</strong> {{ __('messages.candidate_profile.characters') }}
                         </p>
                         <div class="candidate-skill-form__actions candidate-activity-form__actions candidate-profile-section-actions mt-5">
-                            <button type="submit" class="candidate-skill-save">{{ __('messages.candidate_profile.save') }}</button>
-                            <button type="button" class="candidate-skill-close" data-activity-close>{{ __('messages.candidate_profile.close') }}</button>
+                            <button type="submit" class="btn btn-primary candidate-skill-save">{{ __('messages.candidate_profile.save') }}</button>
+                            <button type="button" class="btn btn-secondary candidate-skill-close" data-activity-close>{{ __('messages.candidate_profile.close') }}</button>
                         </div>
                     </form>
                 </div>
@@ -373,8 +373,8 @@
                         </div>
 
                         <div class="candidate-skill-form__actions candidate-profile-section-actions">
-                            <button type="submit" class="candidate-skill-save">{{ __('messages.candidate_profile.save') }}</button>
-                            <button type="button" class="candidate-skill-close" data-language-close>{{ __('messages.candidate_profile.close') }}</button>
+                            <button type="submit" class="btn btn-primary candidate-skill-save">{{ __('messages.candidate_profile.save') }}</button>
+                            <button type="button" class="btn btn-secondary candidate-skill-close" data-language-close>{{ __('messages.candidate_profile.close') }}</button>
                         </div>
 
                         @if(count($data['language'] ?? []))
@@ -465,8 +465,8 @@
                                 </div>
                             </div>
                             <div class="candidate-skill-form__actions candidate-profile-section-actions">
-                                <button type="submit" class="candidate-skill-save" data-link-submit>{{ __('messages.candidate_profile.save') }}</button>
-                                <button type="button" class="candidate-skill-close" data-link-close>{{ __('messages.candidate_profile.close') }}</button>
+                                <button type="submit" class="btn btn-primary candidate-skill-save" data-link-submit>{{ __('messages.candidate_profile.save') }}</button>
+                                <button type="button" class="btn btn-secondary candidate-skill-close" data-link-close>{{ __('messages.candidate_profile.close') }}</button>
                             </div>
                         </form>
                     </div>
@@ -556,8 +556,8 @@
                                 </div>
                             </div>
                             <div class="candidate-skill-form__actions candidate-profile-section-actions">
-                                <button type="submit" class="candidate-skill-save" data-reference-submit>{{ __('messages.candidate_profile.save') }}</button>
-                                <button type="button" class="candidate-skill-close" data-reference-close>{{ __('messages.candidate_profile.close') }}</button>
+                                <button type="submit" class="btn btn-primary candidate-skill-save" data-reference-submit>{{ __('messages.candidate_profile.save') }}</button>
+                                <button type="button" class="btn btn-secondary candidate-skill-close" data-reference-close>{{ __('messages.candidate_profile.close') }}</button>
                             </div>
                         </form>
 

@@ -269,18 +269,20 @@ class CandidateController extends AppBaseController
     public function downloadResume($media)
     {
         try {
-            if (Auth::user()->hasRole('Admin')) {
-                $mediaFile = Media::where('id', $media)->first();
+            $mediaFile = Media::query()
+                ->whereKey($media)
+                ->where('model_type', Candidate::class)
+                ->where('collection_name', Candidate::RESUME_PATH)
+                ->when(! Auth::user()->hasRole('Admin'), function ($query) {
+                    $query->where('model_id', getLoggedInUser()->candidate->id);
+                })
+                ->first();
 
+            if ($mediaFile) {
                 return $mediaFile;
-            } else {
-                $mediaFile = Media::where('id', $media)->where('model_id', getLoggedInUser()->candidate->id)->first();
-                if ($mediaFile) {
-                    return $mediaFile;
-                } else {
-                    return view('errors.404');
-                }
             }
+
+            return view('errors.404');
         } catch (\Exception $e) {
             return view('errors.404');
         }
@@ -288,7 +290,11 @@ class CandidateController extends AppBaseController
 
     public function deleteResume($id)
     {
-        $media = Media::where('model_id', $id)->where('model_type', Candidate::class)->first();
+        $media = Media::query()
+            ->where('model_id', $id)
+            ->where('model_type', Candidate::class)
+            ->where('collection_name', Candidate::RESUME_PATH)
+            ->firstOrFail();
         $media->delete();
 
         return $this->sendSuccess(__('messages.flash.resume_delete'));

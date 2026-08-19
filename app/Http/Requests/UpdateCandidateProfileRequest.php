@@ -29,7 +29,7 @@ class UpdateCandidateProfileRequest extends FormRequest
             'last_name' => 'required|max:150',
             'email' => 'required|email|unique:users,email,'.$id.'|regex:/^[\w\-\.\+]+\@[a-zA-Z0-9\.\-]+\.[a-zA-z0-9]{2,4}$/',
             'phone' => 'nullable|min:10|max:10',
-            'image' => 'nullable|mimes:jpeg,jpg,png',
+            'image' => 'nullable|mimes:jpeg,jpg,png|max:1024',
         ];
 
         return $rules;

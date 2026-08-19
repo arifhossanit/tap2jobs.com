@@ -51,10 +51,19 @@ class CreateCandidateEducationRequest extends FormRequest
         $rules['result'] = 'required|max:150';
         $rules['marks_percentage'] = 'required_if:result,First Division/Class,Second Division/Class,Third Division/Class|nullable|numeric|min:0|max:100';
         $rules['cgpa'] = 'required_if:result,Grade|nullable|numeric|min:0|max:100';
+        $rules['cgpa'] .= '|lte:scale';
         $rules['scale'] = 'required_if:result,Grade|nullable|integer|min:1|max:100';
         $rules['year'] = 'required|integer|min:1900|max:'.$this->maxEducationYear();
 
         $rules['degree_title'] = 'required|string|max:150';
+        $rules['state_id'] = [
+            'nullable',
+            Rule::exists('states', 'id')->where(fn ($query) => $query->where('country_id', $this->input('country_id'))),
+        ];
+        $rules['city_id'] = [
+            'nullable',
+            Rule::exists('cities', 'id')->where(fn ($query) => $query->where('state_id', $this->input('state_id'))),
+        ];
 
         $levelType = $this->educationLevelType();
         if (in_array($levelType, ['psc', 'jsc'], true)) {

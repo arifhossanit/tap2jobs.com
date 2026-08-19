@@ -59,7 +59,7 @@ class ApplicationCvService
                     'is_default' => false,
                     'generated_at' => now()->toIso8601String(),
                 ])
-                ->toMediaCollection(Candidate::RESUME_PATH, config('app.media_disc'));
+                ->toMediaCollection(Candidate::RESUME_PATH, config('app.resume_disk'));
 
             $resumes->push($applicationCv);
         }

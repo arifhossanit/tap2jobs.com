@@ -259,7 +259,7 @@
                         </div>
                         <div class="col-12">
                             <div class="candidate-profile-section-actions">
-                                {{ Form::submit(__('messages.common.save'), ['class' => 'candidate-skill-save', 'formaction' => route('candidate-profile.personal-details.update'), 'formnovalidate' => true, 'data-scoped-ajax-submit' => true]) }}
+                                {{ Form::submit(__('messages.common.save'), ['id' => 'btnSave', 'class' => 'candidate-skill-save', 'formaction' => route('candidate-profile.personal-details.update'), 'formnovalidate' => true, 'data-scoped-ajax-submit' => true]) }}
                                 <button type="button" class="candidate-skill-close" data-personal-edit-close>{{ __('messages.common.close') }}</button>
                             </div>
                         </div>

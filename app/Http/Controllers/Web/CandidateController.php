@@ -25,7 +25,13 @@ class CandidateController extends AppBaseController
      */
     public function getCandidateDetails($uniqueId): View
     {
-        $candidate = Candidate::whereUniqueId($uniqueId)->first();
+        $candidate = Candidate::query()
+            ->whereUniqueId($uniqueId)
+            ->whereHas('user', function ($query) {
+                $query->where('is_active', true)
+                    ->whereNotNull('email_verified_at');
+            })
+            ->firstOrFail();
         $data = $this->candidateRepository->getCandidateDetail($candidate->id);
 
         return view('front_web.candidate.candidate_details')->with($data);

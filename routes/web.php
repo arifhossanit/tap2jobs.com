@@ -704,7 +704,8 @@ Route::middleware('auth', 'role:Employer', 'xss', 'verified.user')->prefix('empl
                   'job-applications/{jobApplication}',
                   [JobApplicationController::class, 'destroy']
          )->name('job.application.destroy');
-         Route::get('resume-download/{jobApplication}', [JobApplicationController::class, 'downloadMedia']);
+         Route::get('resume-download/{jobApplication}', [JobApplicationController::class, 'downloadMedia'])
+                  ->name('employer.resume.download');
          //    Route::post('job-applications/get-job-stage/{Id}', [JobApplicationController::class, 'getJobStage'])->name('get.job.stage');
          Route::post('job-applications/{jobId}/job-stage', [JobApplicationController::class, 'changeJobStage'])->name('change.job.stage');
          Route::get('jobs/{jobId}/applications/{jobApplicationId}/slots', [JobApplicationController::class, 'viewSlotsScreen'])->name('view.slot.screen');
@@ -813,18 +814,12 @@ Route::middleware('xss', 'setLanguage')->group(function () {
                   [Web\PostController::class, 'getBlogDetailsByCategory']
          )->name('front.blog.category');
 
-         //Candidate Show routes
-         Route::get(
-                  'candidate-details/{uniqueId}',
-                  [Web\CandidateController::class, 'getCandidateDetails']
-         )->name('front.candidate.details');
-
          //Change language
          Route::post('/change-language', [Web\HomeController::class, 'changeLanguage'])
                   ->name('front.change-language');
 });
 
-Route::middleware('xss', 'verified.user', 'setLanguage')->group(function () {
+Route::middleware('auth', 'role:Admin|Employer', 'xss', 'verified.user', 'setLanguage')->group(function () {
     Route::get(
         'candidate-details/{uniqueId}',
         [Web\CandidateController::class, 'getCandidateDetails']
@@ -877,8 +872,9 @@ Route::middleware('auth', 'role:Candidate', 'xss', 'verified.user')->prefix('can
 
     Route::post('/resumes', [Candidates\CandidateController::class, 'uploadResume'])->name('candidate.resumes');
     Route::put('/resumes/default', [Candidates\CandidateController::class, 'selectDefaultResume'])->name('candidate.resumes.default');
+    Route::put('/resumes/privacy', [Candidates\CandidateController::class, 'updateCvPrivacy'])->name('candidate.resumes.privacy');
     Route::get('/resumes/{media}/preview', [Candidates\CandidateController::class, 'previewResume'])->name('candidate.resumes.preview');
-    Route::get('/media/{media?}', [CandidateController::class, 'downloadResume'])->name('download.resume');
+    Route::get('/media/{media}', [Candidates\CandidateController::class, 'downloadResume'])->name('download.resume');
     Route::delete('/resumes/{media}', [Candidates\CandidateController::class, 'deletedResume'])->name('download.destroy');
 
     Route::post('experience', [Candidates\CandidateProfileController::class, 'createExperience'])->name('candidate.create-experience');

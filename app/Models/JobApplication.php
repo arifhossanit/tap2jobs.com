@@ -142,13 +142,7 @@ class JobApplication extends Model
      */
     public function getResumeUrlAttribute()
     {
-        /** @var Media $media */
-        $media = Media::find($this->resume_id);
-        if (! empty($media)) {
-            return $media->getFullUrl();
-        }
-
-        return null;
+        return $this->exists ? route('employer.resume.download', $this) : null;
     }
 
     public function applicationSchedule(): HasMany
