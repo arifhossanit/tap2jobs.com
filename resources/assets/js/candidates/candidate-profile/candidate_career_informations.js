@@ -708,29 +708,62 @@ function loadCandidateCareerInformationData() {
         $field.find('input, select, textarea').prop('disabled', !isVisible);
     }
 
+    function updateEducationOtherTitleLayout(form, customValue) {
+        const $form = $(form);
+        const $titleSelect = $form.find('[data-education-title-select]');
+        const $otherField = $form.find('[data-education-other-title-field]');
+        const $otherInput = $form.find('[data-education-other-title-input]');
+        const selectedVal = ($titleSelect.val() || '').trim();
+        const isOther = selectedVal === 'Others' || selectedVal === 'Other';
+
+        if (isOther) {
+            $otherField.removeClass('d-none');
+            $otherInput.prop('disabled', false).prop('required', true);
+            if (typeof customValue !== 'undefined' && customValue !== 'Others' && customValue !== 'Other') {
+                $otherInput.val(customValue || '');
+            }
+        } else {
+            $otherField.addClass('d-none');
+            $otherInput.prop('disabled', true).prop('required', false).val('');
+        }
+    }
+
     function setEducationSelectOptions($select, options, placeholder, selectedValue) {
         $select.empty();
         $select.append($('<option></option>').attr('value', '').text(placeholder));
 
-        options.forEach(function (option) {
+        const hasOthersOption = options.some(function (opt) {
+            return opt.toLowerCase() === 'others' || opt.toLowerCase() === 'other';
+        });
+
+        const listOptions = hasOthersOption ? options : options.concat(['Others']);
+
+        listOptions.forEach(function (option) {
             $select.append($('<option></option>').attr('value', option).text(option));
         });
 
-        const hasSelectedOption = $select.find('option').filter(function () {
-            return this.value === selectedValue;
-        }).length > 0;
+        const isExactMatch = listOptions.some(function (opt) {
+            return opt === selectedValue;
+        });
 
-        if (selectedValue && !hasSelectedOption) {
-            $select.append($('<option></option>').attr('value', selectedValue).text(selectedValue));
+        let targetVal = selectedValue || '';
+        let customVal = '';
+
+        if (selectedValue && !isExactMatch) {
+            targetVal = 'Others';
+            customVal = selectedValue;
         }
 
-        $select.val(selectedValue || '');
+        $select.val(targetVal);
 
         if ($select.hasClass('select2-hidden-accessible')) {
             $select.trigger('change.select2');
         }
 
         refreshEducationCustomSelect($select);
+
+        const $form = $select.closest('form');
+        updateEducationOtherTitleLayout($form, customVal);
     }
 
     function setEducationTitleOptions($form, levelType, selectedTitle) {
@@ -907,6 +940,13 @@ function loadCandidateCareerInformationData() {
     listenChange('#degreeLevelId, #editDegreeLevel', function (event) {
         updateEducationFormLayout($(event.currentTarget).closest('form'));
         refreshEducationCustomSelect($(event.currentTarget));
+    });
+
+    listenChange('[data-education-title-select]', function (event) {
+        const $select = $(event.currentTarget);
+        const $form = $select.closest('form');
+        updateEducationOtherTitleLayout($form);
+        refreshEducationCustomSelect($select);
     });
 
     listenChange('[data-education-result-select]', function (event) {
@@ -1301,16 +1341,43 @@ function renderEducationTemplate(educationArray) {
     $('#notfoundEducation').addClass('d-none');
 };
 
+    function getEducationFormData($form) {
+        let formData = $form.serializeArray();
+        const $titleSelect = $form.find('[data-education-title-select]');
+        const selectedVal = ($titleSelect.val() || '').trim();
+        const isOther = selectedVal === 'Others' || selectedVal === 'Other';
+
+        if (isOther) {
+            const customTitle = ($form.find('[data-education-other-title-input]').val() || '').trim();
+            if (!customTitle) {
+                return null;
+            }
+            formData = formData.map(function (item) {
+                if (item.name === 'degree_title') {
+                    return { name: 'degree_title', value: customTitle };
+                }
+                return item;
+            });
+        }
+
+        return $.param(formData);
+    }
+
 listenSubmit('#addNewEducationForm', function (e) {
     e.preventDefault();
     if (typeof window.syncEducationQuillEditors === 'function') {
         window.syncEducationQuillEditors();
     }
+    const dataToSend = getEducationFormData($(this));
+    if (dataToSend === null) {
+        displayErrorMessage('Please enter your Exam/Degree Title.');
+        return false;
+    }
     processingBtn('#addNewEducationForm', '#btnEducationSave', 'loading');
     $.ajax({
         url: route('candidate.create-education'),
         type: 'POST',
-        data: $(this).serialize(),
+        data: dataToSend,
         success: function (result) {
             if (result.success) {
                 $('#notfoundEducation').addClass('d-none');
@@ -1337,13 +1404,18 @@ listenSubmit('#editCareerEducationForm', function (event) {
     if (typeof window.syncEducationQuillEditors === 'function') {
         window.syncEducationQuillEditors();
     }
+    const dataToSend = getEducationFormData($(this));
+    if (dataToSend === null) {
+        displayErrorMessage('Please enter your Exam/Degree Title.');
+        return false;
+    }
     processingBtn('#editCareerEducationForm', '#editEducationSave',
         'loading');
     const educationId = $('#educationId').val();
     $.ajax({
         url: route('candidate.update-education', educationId),
         type: 'put',
-        data: $(this).serialize(),
+        data: dataToSend,
         success: function (result) {
             if (result.success) {
                 displaySuccessMessage(result.message);

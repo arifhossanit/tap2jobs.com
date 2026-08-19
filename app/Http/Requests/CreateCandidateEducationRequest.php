@@ -54,17 +54,7 @@ class CreateCandidateEducationRequest extends FormRequest
         $rules['scale'] = 'required_if:result,Grade|nullable|integer|min:1|max:100';
         $rules['year'] = 'required|integer|min:1900|max:'.$this->maxEducationYear();
 
-        if (Schema::hasTable('education_degree_titles')) {
-            $rules['degree_title'] = [
-                'required',
-                'max:150',
-                Rule::exists('education_degree_titles', 'name')->where(function ($query) use ($degreeLevelId) {
-                    return $query
-                        ->where('required_degree_level_id', $degreeLevelId)
-                        ->where('is_active', true);
-                }),
-            ];
-        }
+        $rules['degree_title'] = 'required|string|max:150';
 
         $levelType = $this->educationLevelType();
         if (in_array($levelType, ['psc', 'jsc'], true)) {

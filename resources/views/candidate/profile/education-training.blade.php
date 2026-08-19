@@ -205,6 +205,9 @@
                         <div class="candidate-education-form-field">
                             {{ Form::label('degree_title', __('messages.candidate_profile.exam_degree_title'), ['class' => 'form-label required']) }}
                             {{ Form::select('degree_title', ['' => 'Select your Exam/Degree Title'], null, ['class' => 'form-select', 'required', 'data-education-title-select' => true, 'data-placeholder' => 'Select your Exam/Degree Title']) }}
+                            <div class="mt-2 d-none" data-education-other-title-field>
+                                {{ Form::text('other_degree_title', null, ['class' => 'form-control', 'placeholder' => 'Select your Exam/Degree Title', 'data-education-other-title-input' => true, 'autocomplete' => 'off']) }}
+                            </div>
                         </div>
                         <label class="candidate-education-check candidate-education-form-field--full" data-education-summary-row>
                             {{ Form::checkbox('show_summary', 1, false, ['class' => 'form-check-input']) }}
@@ -290,6 +293,9 @@
                         <div class="candidate-education-form-field">
                             {{ Form::label('degree_title', __('messages.candidate_profile.exam_degree_title'), ['class' => 'form-label required']) }}
                             {{ Form::select('degree_title', ['' => 'Select your Exam/Degree Title'], null, ['class' => 'form-select', 'required', 'id' => 'editDegreeTitle', 'data-education-title-select' => true, 'data-placeholder' => 'Select your Exam/Degree Title']) }}
+                            <div class="mt-2 d-none" data-education-other-title-field>
+                                {{ Form::text('other_degree_title', null, ['class' => 'form-control', 'placeholder' => 'Select your Exam/Degree Title', 'data-education-other-title-input' => true, 'autocomplete' => 'off']) }}
+                            </div>
                         </div>
                         <label class="candidate-education-check candidate-education-form-field--full" data-education-summary-row>
                             {{ Form::checkbox('show_summary', 1, false, ['class' => 'form-check-input']) }}
