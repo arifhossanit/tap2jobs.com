@@ -81,12 +81,14 @@ function loadCandidateGeneralData() {
         event.stopPropagation();
         $('.candidate-personal-summary').addClass('d-none');
         $('.candidate-personal-form').removeClass('d-none');
+        $('.candidate-personal-image-actions').removeClass('d-none');
         $(this).addClass('d-none').closest('.candidate-profile-section__header').addClass('candidate-profile-section__header--editing');
     });
 
     $('[data-personal-edit-close]').on('click', function (event) {
         event.preventDefault();
         $('.candidate-personal-form').addClass('d-none');
+        $('.candidate-personal-image-actions').addClass('d-none');
         $('.candidate-personal-summary').removeClass('d-none');
         $('[data-personal-edit-toggle]').removeClass('d-none')
             .closest('.candidate-profile-section__header').removeClass('candidate-profile-section__header--editing');

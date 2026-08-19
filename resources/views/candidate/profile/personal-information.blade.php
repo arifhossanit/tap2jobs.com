@@ -60,7 +60,7 @@
                 <div class="candidate-profile-section__body">
                     <div class="candidate-personal-image-row">
                         <img src="{{ $user->avatar }}" data-original-src="{{ $user->avatar }}" alt="{{ __('messages.candidate_profile.personal_details') }}" class="candidate-personal-avatar" id="candidatePersonalAvatar">
-                        <div>
+                        <div class="candidate-personal-image-actions d-none">
                             <button type="button" class="candidate-personal-image-btn" data-candidate-image-modal-open>
                                 {{ __('messages.tooltip.change_image') }}
                             </button>

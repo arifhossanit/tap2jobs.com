@@ -7,6 +7,10 @@ use App\Http\Requests\UpdateCityRequest;
 use App\Models\City;
 use App\Models\Job;
 use App\Models\State;
+use App\Models\User;
+use App\Models\Candidate;
+use App\Models\CandidateExperience;
+use App\Models\CandidateEducation;
 use App\Repositories\CityRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -17,9 +21,6 @@ use Illuminate\View\View;
 
 class CityController extends AppBaseController
 {
-    /**
-     * @var CityRepository
-     */
     private $cityRepository;
 
     public function __construct(CityRepository $cityRepository)
@@ -27,12 +28,6 @@ class CityController extends AppBaseController
         $this->cityRepository = $cityRepository;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @param  Request  $request
-     * @return Application|Factory|Response|View
-     */
     public function index(): View
     {
         $states = State::toBase()->orderBy('name')->pluck('name', 'id');
@@ -40,9 +35,6 @@ class CityController extends AppBaseController
         return view('cities.index', compact('states'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(CreateCityRequest $request): JsonResponse
     {
         $input = $request->all();
@@ -51,17 +43,11 @@ class CityController extends AppBaseController
         return $this->sendResponse($state, __('messages.flash.city_save'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(City $city): JsonResponse
     {
         return $this->sendResponse($city, __('messages.flash.city_retrieved'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdateCityRequest $request, City $city): JsonResponse
     {
         $input = $request->all();
@@ -70,19 +56,13 @@ class CityController extends AppBaseController
         return $this->sendSuccess(__('messages.flash.city_update'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     *
-     * @throws \Exception
-     */
     public function destroy(City $city): JsonResponse
     {
         $activeJob = Job::where('city_id', $city->id)->exists();
-        $activeUser = \App\Models\User::where('city_id', $city->id)->exists();
-        $activeCandidate = \App\Models\Candidate::where('permanent_city_id', $city->id)->exists();
-        $activeExperience = \App\Models\CandidateExperience::where('city_id', $city->id)->exists();
-        $activeEducation = \App\Models\CandidateEducation::where('city_id', $city->id)->exists();
+        $activeUser = User::where('city_id', $city->id)->exists();
+        $activeCandidate = Candidate::where('permanent_city_id', $city->id)->exists();
+        $activeExperience = CandidateExperience::where('city_id', $city->id)->exists();
+        $activeEducation = CandidateEducation::where('city_id', $city->id)->exists();
 
         if ($activeJob || $activeUser || $activeCandidate || $activeExperience || $activeEducation) {
             return $this->sendError(__('messages.flash.city_cant_delete'));
