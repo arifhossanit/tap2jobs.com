@@ -1140,6 +1140,7 @@ return [
         'course' => 'Course',
         'date_of_commission' => 'Date of Commission',
         'date_of_retirement' => 'Date of Retirement',
+        'add_employment_history' => 'Add Employment History',
         'add_experience_at_bangladesh_army' => 'Add Experience at Bangladesh Army',
         'note' => 'Note',
         'military_service_note' => 'Please, write your Military Service Information in Employment History.',

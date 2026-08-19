@@ -1255,6 +1255,7 @@
                         fields.duration.value = '';
                     });
                 }
+                }
             document.addEventListener('click', function (event) {
                 const deleteExpBtn = event.target.closest('.delete-experience');
                 if (!deleteExpBtn) {

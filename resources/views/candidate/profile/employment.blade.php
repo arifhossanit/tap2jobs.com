@@ -262,7 +262,7 @@
                             </button>
 	                    </div>
 
-                    <form class="candidate-retired-army-form {{ $hasRetiredArmyEmployment ? 'd-none' : '' }}"
+                    <form class="candidate-retired-army-form d-none"
                           data-retired-army-form
                           data-action="{{ route('candidate.retired-army-employment.update') }}"
                           data-delete-action="{{ route('candidate.retired-army-employment.destroy') }}">
@@ -485,6 +485,23 @@
                     retiredArmyForm.classList.remove('d-none');
                 }
             };
+            const retiredArmyAddTrigger = document.querySelector('[data-retired-army-add-trigger]');
+            const syncRetiredArmyAddButton = function () {
+                if (retiredArmyAddTrigger) {
+                    retiredArmyAddTrigger.classList.toggle('d-none', hasRetiredArmyEmployment);
+                }
+            };
+            if (retiredArmyAddTrigger) {
+                retiredArmyAddTrigger.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    showRetiredArmyForm();
+                    const emptyState = document.querySelector('[data-retired-army-empty]');
+                    if (emptyState) {
+                        emptyState.classList.add('d-none');
+                    }
+                });
+            }
+
             const setRetiredArmyValue = function (name, value) {
                 document.querySelectorAll('[data-retired-army-value="' + name + '"]').forEach(function (element) {
                     element.textContent = value || (name === 'baNo' ? '-' : '---');
@@ -605,6 +622,7 @@
                     }).then(function (data) {
                         applyRetiredArmyEmployment(data.data || {});
                         hasRetiredArmyEmployment = true;
+                        syncRetiredArmyAddButton();
                         showRetiredArmySummary();
                         if (typeof displaySuccessMessage === 'function') {
                             displaySuccessMessage(data.message);
@@ -650,6 +668,7 @@
                             });
                             retiredArmyForm.reset();
                             hasRetiredArmyEmployment = false;
+                            syncRetiredArmyAddButton();
                             showRetiredArmyForm();
                             if (typeof displaySuccessMessage === 'function') {
                                 displaySuccessMessage(data.message);
@@ -690,6 +709,14 @@
                 button.addEventListener('click', function () {
                     if (hasRetiredArmyEmployment) {
                         showRetiredArmySummary();
+                    } else {
+                        if (retiredArmyForm) {
+                            retiredArmyForm.classList.add('d-none');
+                        }
+                        const emptyState = document.querySelector('[data-retired-army-empty]');
+                        if (emptyState) {
+                            emptyState.classList.remove('d-none');
+                        }
                     }
                 });
             });

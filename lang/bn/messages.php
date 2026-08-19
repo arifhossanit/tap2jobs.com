@@ -1131,6 +1131,7 @@ return [
         'course' => 'কোর্স',
         'date_of_commission' => 'কমিশনের তারিখ',
         'date_of_retirement' => 'অবসরের তারিখ',
+        'add_employment_history' => 'কর্মসংস্থানের ইতিহাস যোগ করুন',
         'add_experience_at_bangladesh_army' => 'বাংলাদেশ সেনাবাহিনীতে অভিজ্ঞতা যোগ করুন',
         'note' => 'নোট',
         'military_service_note' => 'অনুগ্রহ করে, কর্মসংস্থান ইতিহাসে আপনার সামরিক সেবার তথ্য লিখুন।',
