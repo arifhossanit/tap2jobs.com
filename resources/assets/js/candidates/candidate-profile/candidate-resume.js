@@ -153,3 +153,36 @@
      $('#customFile').siblings('.custom-file-label').addClass('selected').html('Choose file');
      resetModalForm('#addCandidateResumeForm', '#validationErrorsBox');
  });
+
+listenSubmit('#candidateCvPrivacyForm', function (e) {
+    e.preventDefault();
+    const form = $(this);
+    const btn = form.find('#saveCvPrivacyBtn');
+    btn.prop('disabled', true);
+    btn.find('.btn-spinner').removeClass('d-none');
+    btn.find('.btn-icon').addClass('d-none');
+
+    $.ajax({
+        url: form.attr('action'),
+        type: 'POST',
+        data: form.serialize(),
+        success: function (result) {
+            if (result.success) {
+                displaySuccessMessage(result.message);
+            } else {
+                displayErrorMessage(result.message || (typeof Lang !== 'undefined' ? Lang.get('js.something_went_wrong') : 'Something went wrong'));
+            }
+        },
+        error: function (result) {
+            let errorMsg = result.responseJSON && result.responseJSON.message
+                ? result.responseJSON.message
+                : (typeof Lang !== 'undefined' ? Lang.get('js.something_went_wrong') : 'Something went wrong');
+            displayErrorMessage(errorMsg);
+        },
+        complete: function () {
+            btn.prop('disabled', false);
+            btn.find('.btn-spinner').addClass('d-none');
+            btn.find('.btn-icon').removeClass('d-none');
+        }
+    });
+});

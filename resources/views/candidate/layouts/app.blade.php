@@ -226,6 +226,8 @@
             border: 1.5px solid #e2e8f0;
             border-radius: 12px;
             padding: 1.25rem;
+        }
+
         #scheduleSlotBookModal .slot-card-item {
             cursor: pointer !important;
             transition: all 0.2s ease-in-out;

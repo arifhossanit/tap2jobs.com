@@ -988,11 +988,15 @@ class CandidateController extends AppBaseController
         return $this->sendSuccess(__('messages.candidate_profile.default_cv_updated'));
     }
 
-    public function updateCvPrivacy(CandidateUpdateCvPrivacyRequest $request): RedirectResponse
+    public function updateCvPrivacy(CandidateUpdateCvPrivacyRequest $request): \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
     {
         $candidate = Auth::user()->candidate;
         $candidate->update($request->validated());
         $this->applicationCvService->ensure($candidate->fresh());
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return $this->sendSuccess(__('messages.candidate_profile.cv_privacy_updated'));
+        }
 
         Flash::success(__('messages.candidate_profile.cv_privacy_updated'));
 

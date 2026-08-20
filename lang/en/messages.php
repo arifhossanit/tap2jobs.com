@@ -1174,7 +1174,7 @@ return [
         'application_cv' => 'Default',
         'resume' => 'Resume',
         'application_cv_help' => 'Your Default CV is generated automatically from your latest profile information. You may also upload another CV and choose which one will be selected for job applications.',
-        'include_sensitive_personal_data_in_cv' => 'Include sensitive personal details in my generated CV',
+        'include_sensitive_personal_data_in_cv' => 'Include sensitive personal details in my CV',
         'cv_sensitive_data_help' => 'Off by default. When enabled, the generated CV includes parents’ names, date of birth, National ID, passport, religion, blood group, height and weight.',
         'cv_privacy_updated' => 'CV privacy preference updated successfully.',
         'select_default_cv' => 'Select the CV for job applications',
