@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\AppBaseController;
 use App\Http\Requests\WebRegisterRequest;
 use App\Providers\RouteServiceProvider;
+use App\Models\CompanySize;
 use App\Models\Country;
 use App\Models\Industry;
 use App\Models\IndustryType;
@@ -52,6 +53,9 @@ class RegisterController extends AppBaseController
         $industryRecords = Industry::whereNull('created_by')
             ->orderBy('name')
             ->get(['id', 'name', 'industry_type_id']);
+        $companySizes = CompanySize::all()
+            ->sortBy(fn (CompanySize $companySize) => CompanySize::parseRange($companySize->size)[0] ?? PHP_INT_MAX)
+            ->pluck('size');
 
         return view('front_web.auth.employer_register', compact(
             'isGoogleReCaptchaEnabled',
@@ -59,7 +63,8 @@ class RegisterController extends AppBaseController
             'bangladeshId',
             'states',
             'industryTypes',
-            'industryRecords'
+            'industryRecords',
+            'companySizes'
         ));
     }
 

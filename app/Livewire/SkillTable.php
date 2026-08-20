@@ -12,6 +12,8 @@ class SkillTable extends LivewireTableComponent
      */
     protected $model = Skill::class;
 
+    protected ?string $bulkDeleteModel = Skill::class;
+
     /**
      * @var bool
      */
@@ -72,5 +74,11 @@ class SkillTable extends LivewireTableComponent
             Column::make(__('messages.common.action'), 'id')
                 ->view('skills.table-components.action_button'),
         ];
+    }
+
+    protected function isBulkDeleteBlocked($record): bool
+    {
+        return $record->candidate()->where('skill_id', $record->id)->exists()
+            || $record->jobs()->where('skill_id', $record->id)->exists();
     }
 }

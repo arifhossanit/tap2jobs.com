@@ -8,6 +8,8 @@ use Rappasoft\LaravelLivewireTables\Views\Column;
 class EducationBoardTable extends LivewireTableComponent
 {
     protected $model = EducationBoard::class;
+
+    protected ?string $bulkDeleteModel = EducationBoard::class;
     public $showButtonOnHeader = true;
     public $buttonComponent = 'education_boards.table-components.add_button';
     public $showFilterOnHeader = false;

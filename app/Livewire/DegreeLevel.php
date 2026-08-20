@@ -76,7 +76,7 @@ class DegreeLevel extends Component
 
     public function degreeLevel(): LengthAwarePaginator
     {
-        $query = RequiredDegreeLevel::query()->select('required_degree_levels.*');
+        $query = RequiredDegreeLevel::query()->select('education_degree_levels.*');
 
         $query->when(isset($this->searchByDegreeLevel) && $this->searchByDegreeLevel != '',
             function (Builder $q) {

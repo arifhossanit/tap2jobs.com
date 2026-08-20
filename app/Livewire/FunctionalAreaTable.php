@@ -12,6 +12,13 @@ class FunctionalAreaTable extends LivewireTableComponent
      */
     protected $model = FunctionalArea::class;
 
+    protected ?string $bulkDeleteModel = FunctionalArea::class;
+
+    protected array $bulkDeleteBlockedChecks = [
+        ['App\Models\Candidate', 'functional_area_id'],
+        ['App\Models\Job', 'functional_area_id'],
+    ];
+
     /**
      * @var bool
      */

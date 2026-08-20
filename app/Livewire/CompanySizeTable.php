@@ -13,6 +13,12 @@ class CompanySizeTable extends LivewireTableComponent
      */
     protected $model = CompanySize::class;
 
+    protected ?string $bulkDeleteModel = CompanySize::class;
+
+    protected array $bulkDeleteBlockedChecks = [
+        ['App\Models\Company', 'company_size_id'],
+    ];
+
     /**
      * @var bool
      */

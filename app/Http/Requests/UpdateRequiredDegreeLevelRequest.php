@@ -21,7 +21,7 @@ class UpdateRequiredDegreeLevelRequest extends FormRequest
     public function rules(): array
     {
         $rules = RequiredDegreeLevel::$rules;
-        $rules['name'] = 'required|max:160|unique:required_degree_levels,name,'.$this->route('requiredDegreeLevel')->id;
+        $rules['name'] = 'required|max:160|unique:education_degree_levels,name,'.$this->route('requiredDegreeLevel')->id;
 
         return $rules;
     }

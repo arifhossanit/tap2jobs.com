@@ -162,6 +162,7 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          // Profile Reference Options
          Route::get('profile-references/{scope}/{type}', [ProfileReferenceOptionController::class, 'index'])->name('profileReferenceOptions.index');
          Route::post('profile-references/{scope}/{type}', [ProfileReferenceOptionController::class, 'store'])->name('profileReferenceOptions.store');
+         Route::delete('profile-references/{scope}/{type}/bulk-delete', [ProfileReferenceOptionController::class, 'bulkDestroy'])->name('profileReferenceOptions.bulkDestroy');
          Route::get('profile-references/{scope}/{type}/{id}/edit', [ProfileReferenceOptionController::class, 'edit'])->name('profileReferenceOptions.edit');
          Route::put('profile-references/{scope}/{type}/{id}', [ProfileReferenceOptionController::class, 'update'])->name('profileReferenceOptions.update');
          Route::delete('profile-references/{scope}/{type}/{id}', [ProfileReferenceOptionController::class, 'destroy'])->name('profileReferenceOptions.destroy');

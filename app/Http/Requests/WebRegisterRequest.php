@@ -31,7 +31,7 @@ class WebRegisterRequest extends FormRequest
                 'company_name' => 'required|string|max:180',
                 'company_name_bn' => 'nullable|string|max:180',
                 'established_in' => 'required|integer|min:1800|max:'.date('Y'),
-                'employee_range' => 'required|in:1-25,26-50,51-100,101-500,501-1000,1000+',
+                'employee_range' => 'required|exists:company_sizes,size',
                 'country_id' => 'required|integer|exists:countries,id',
                 'state_id' => [
                     'required',

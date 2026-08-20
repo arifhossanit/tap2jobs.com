@@ -9,6 +9,12 @@ class JobTypeTable extends LivewireTableComponent
 {
     protected $model = JobType::class;
 
+    protected ?string $bulkDeleteModel = JobType::class;
+
+    protected array $bulkDeleteBlockedChecks = [
+        ['App\Models\Job', 'job_type_id'],
+    ];
+
     public $showButtonOnHeader = true;
     public $showFilterOnHeader = false;
 

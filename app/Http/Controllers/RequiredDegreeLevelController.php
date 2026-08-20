@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateRequiredDegreeLevelRequest;
 use App\Http\Requests\UpdateRequiredDegreeLevelRequest;
+use App\Models\CandidateEducation;
+use App\Models\EducationDegreeTitle;
+use App\Models\EducationMajorGroup;
 use App\Models\Job;
 use App\Models\RequiredDegreeLevel;
 use App\Repositories\RequiredDegreeLevelRepository;
@@ -82,10 +85,16 @@ class RequiredDegreeLevelController extends AppBaseController
      */
     public function destroy(RequiredDegreeLevel $requiredDegreeLevel): JsonResponse
     {
-        $jobModels = [
+        $degreeLevelModels = [
+            CandidateEducation::class,
             Job::class,
         ];
-        $result = canDelete($jobModels, 'degree_level_id', $requiredDegreeLevel->id);
+        $requiredDegreeLevelModels = [
+            EducationDegreeTitle::class,
+            EducationMajorGroup::class,
+        ];
+        $result = canDelete($degreeLevelModels, 'degree_level_id', $requiredDegreeLevel->id)
+            || canDelete($requiredDegreeLevelModels, 'required_degree_level_id', $requiredDegreeLevel->id);
         if ($result) {
             return $this->sendError(__('messages.flash.degree_level_cant_delete'));
         }

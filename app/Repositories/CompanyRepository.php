@@ -78,7 +78,9 @@ class CompanyRepository extends BaseRepository
         $data['industries'] = $data['industryRecords']->pluck('name', 'id');
         $data['industryTypes'] = IndustryType::orderBy('sort_order')->pluck('name', 'id');
         $data['ownerShipTypes'] = OwnerShipType::pluck('name', 'id');
-        $data['companySize'] = CompanySize::pluck('size', 'id');
+        $data['companySize'] = CompanySize::all()
+            ->sortBy(fn (CompanySize $companySize) => CompanySize::parseRange($companySize->size)[0] ?? PHP_INT_MAX)
+            ->pluck('size', 'id');
         $data['countries'] = getCountries();
 
         return $data;
@@ -178,6 +180,9 @@ class CompanyRepository extends BaseRepository
 
             $input['company_name'] = $input['name'];
             $input['contact_person_designation'] = $input['ceo'] ?? null;
+            if (isset($input['employee_range'])) {
+                $input['company_size_id'] = CompanySize::where('size', $input['employee_range'])->value('id');
+            }
 
             $company->update($input);
 

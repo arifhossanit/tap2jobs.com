@@ -12,6 +12,14 @@ class SalaryCurrencyTable extends LivewireTableComponent
      */
     protected $model = SalaryCurrency::class;
 
+    protected ?string $bulkDeleteModel = SalaryCurrency::class;
+
+    protected array $bulkDeleteBlockedChecks = [
+        ['App\Models\Plan', 'salary_currency_id'],
+        ['App\Models\Job', 'currency_id'],
+        ['App\Models\Candidate', 'salary_currency'],
+    ];
+
     public $showButtonOnHeader = true;
 
     /**

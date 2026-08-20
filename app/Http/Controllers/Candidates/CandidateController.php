@@ -215,7 +215,7 @@ class CandidateController extends AppBaseController
                 foreach ($data['candidateEducations'] as $education) {
                     $education->country = getCountryName($education->country_id);
                 }
-                $hasEducationLookupSchema = Schema::hasColumn('required_degree_levels', 'code')
+                $hasEducationLookupSchema = Schema::hasColumn('education_degree_levels', 'code')
                     && Schema::hasTable('education_degree_titles')
                     && Schema::hasTable('education_major_groups')
                     && Schema::hasTable('education_boards');

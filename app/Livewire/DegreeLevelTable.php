@@ -12,6 +12,15 @@ class DegreeLevelTable extends LivewireTableComponent
      */
     protected $model = RequiredDegreeLevel::class;
 
+    protected ?string $bulkDeleteModel = RequiredDegreeLevel::class;
+
+    protected array $bulkDeleteBlockedChecks = [
+        ['App\Models\CandidateEducation', 'degree_level_id'],
+        ['App\Models\EducationDegreeTitle', 'required_degree_level_id'],
+        ['App\Models\EducationMajorGroup', 'required_degree_level_id'],
+        ['App\Models\Job', 'degree_level_id'],
+    ];
+
     /**
      * @var bool
      */

@@ -30,6 +30,7 @@ use App\Mail\EmailJobToFriend;
 use App\Mail\EmailToCandidate;
 use App\Models\FunctionalArea;
 use App\Models\JobApplication;
+use App\Models\ProfileReferenceOption;
 use App\Models\SalaryCurrency;
 use App\Models\NotificationSetting;
 use App\Models\RequiredDegreeLevel;
@@ -115,6 +116,7 @@ class JobRepository extends BaseRepository
         $data['jobSkill'] = Skill::pluck('name', 'id');
         $data['jobTag'] = Tag::pluck('name', 'id');
         $data['requiredDegreeLevel'] = RequiredDegreeLevel::pluck('name', 'id');
+        $data['employmentStatus'] = $this->employmentStatusOptions();
         $data['countries'] = getJobCountries();
         $defaultCountryId = getSettingValue('default_country_id');
         $data['default_country_id'] = ! empty($defaultCountryId) ? (int) $defaultCountryId : null;
@@ -160,6 +162,7 @@ class JobRepository extends BaseRepository
             if (isset($input['state_id']) && ! is_numeric($input['state_id'])) {
                 $input['state_id'] = null;
             }
+            $input['functional_area_id'] = $this->resolveFunctionalAreaId($input['functional_area_id']);
             if (Auth::user()->hasRole('Admin')) {
                 $input['is_created_by_admin'] = 1;
             }
@@ -167,7 +170,7 @@ class JobRepository extends BaseRepository
             $job = $this->create($input);
 
             if (isset($input['jobsSkill']) && ! empty($input['jobsSkill'])) {
-                $job->jobsSkill()->sync($input['jobsSkill']);
+                $job->jobsSkill()->sync($this->resolveJobSkillIds($input['jobsSkill']));
             }
             if (isset($input['jobTag']) && ! empty($input['jobTag'])) {
                 $job->jobsTag()->sync($input['jobTag']);
@@ -221,6 +224,7 @@ class JobRepository extends BaseRepository
             if (isset($input['state_id']) && ! is_numeric($input['state_id'])) {
                 $input['state_id'] = null;
             }
+            $input['functional_area_id'] = $this->resolveFunctionalAreaId($input['functional_area_id']);
             $old_status = $job->status;
 
             if ($job->status == Job::STATUS_DRAFT) {
@@ -244,7 +248,7 @@ class JobRepository extends BaseRepository
             $job->update($input);
 
             if (isset($input['jobsSkill']) && ! empty($input['jobsSkill'])) {
-                $job->jobsSkill()->sync($input['jobsSkill']);
+                $job->jobsSkill()->sync($this->resolveJobSkillIds($input['jobsSkill']));
             }
             if (isset($input['jobTag']) && ! empty($input['jobTag'])) {
                 $job->jobsTag()->sync($input['jobTag']);
@@ -438,5 +442,61 @@ class JobRepository extends BaseRepository
             'user.media', 'user.country', 'user.state', 'user.city',
         ])->select('reported_jobs.*')->orderBy('created_at',
             'desc')->findOrFail($reportedJobID);
+    }
+
+    private function resolveJobSkillIds(array $skills): array
+    {
+        return collect($skills)
+            ->map(function ($skill) {
+                $skill = trim((string) $skill);
+
+                if ($skill === '') {
+                    return null;
+                }
+
+                if (is_numeric($skill)) {
+                    return (int) $skill;
+                }
+
+                $existingSkill = Skill::whereRaw('LOWER(name) = ?', [mb_strtolower($skill)])->first();
+
+                return ($existingSkill ?: Skill::create([
+                    'name' => $skill,
+                    'description' => null,
+                    'is_default' => false,
+                ]))->id;
+            })
+            ->filter()
+            ->unique()
+            ->values()
+            ->toArray();
+    }
+
+    private function resolveFunctionalAreaId(string|int $functionalArea): int
+    {
+        $functionalArea = trim((string) $functionalArea);
+
+        if (is_numeric($functionalArea)) {
+            return (int) $functionalArea;
+        }
+
+        $existingFunctionalArea = FunctionalArea::whereRaw('LOWER(name) = ?', [mb_strtolower($functionalArea)])->first();
+
+        return ($existingFunctionalArea ?: FunctionalArea::create([
+            'name' => $functionalArea,
+            'is_default' => false,
+        ]))->id;
+    }
+
+    private function employmentStatusOptions(): array
+    {
+        $options = ProfileReferenceOption::options(
+            ProfileReferenceOption::TYPE_JOB_EMPLOYMENT_STATUS,
+            [ProfileReferenceOption::SCOPE_EMPLOYER]
+        );
+
+        return $options ?: collect(Job::EMPLOYMENT_STATUSES)
+            ->mapWithKeys(fn ($label, $value) => [$value => __($label)])
+            ->toArray();
     }
 }

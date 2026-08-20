@@ -8,6 +8,8 @@ use Rappasoft\LaravelLivewireTables\Views\Column;
 class EducationMajorGroupTable extends LivewireTableComponent
 {
     protected $model = EducationMajorGroup::class;
+
+    protected ?string $bulkDeleteModel = EducationMajorGroup::class;
     public $showButtonOnHeader = true;
     public $buttonComponent = 'education_major_groups.table-components.add_button';
     public $showFilterOnHeader = false;

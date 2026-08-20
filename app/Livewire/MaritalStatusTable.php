@@ -12,6 +12,12 @@ class MaritalStatusTable extends LivewireTableComponent
      */
     protected $model = MaritalStatus::class;
 
+    protected ?string $bulkDeleteModel = MaritalStatus::class;
+
+    protected array $bulkDeleteBlockedChecks = [
+        ['App\Models\Candidate', 'marital_status_id'],
+    ];
+
     /**
      * @var bool
      */

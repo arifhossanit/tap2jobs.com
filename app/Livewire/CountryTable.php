@@ -11,6 +11,13 @@ class CountryTable extends LivewireTableComponent
      * @var string
      */
     protected $model = Country::class;
+
+    protected ?string $bulkDeleteModel = Country::class;
+
+    protected array $bulkDeleteBlockedChecks = [
+        ['App\Models\State', 'country_id'],
+        ['App\Models\Job', 'country_id'],
+    ];
     public $showFilterOnHeader = false;
 
     /**

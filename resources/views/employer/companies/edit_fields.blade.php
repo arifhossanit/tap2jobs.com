@@ -37,17 +37,13 @@
             <div class="col-12 mb-5">
                 <div class="employer-account-field-heading required-heading">{{ __('messages.employer_account.number_of_employees') }}</div>
                 @php
-                    $employeeSizeOrder = ['1-25', '26-50', '51-100', '101-500', '501-1000', '1000+'];
                     $legacySize = $data['companySize'][$company->company_size_id] ?? null;
-                    $selectedEmployeeRange = $company->employee_range ?? match ($legacySize) {
-                        '5-10', '11-20' => '1-25',
-                        '21-50' => '26-50',
-                        '51-100' => '51-100',
-                        default => null,
-                    };
+                    $selectedEmployeeRange = in_array($company->employee_range, $data['companySize']->values()->all(), true)
+                        ? $company->employee_range
+                        : $legacySize;
                 @endphp
                 <div class="employer-company-size-options">
-                    @foreach ($employeeSizeOrder as $sizeLabel)
+                    @foreach ($data['companySize'] as $sizeLabel)
                         <label class="employer-choice-card">
                             {{ Form::radio('employee_range', $sizeLabel, $selectedEmployeeRange === $sizeLabel, ['required']) }}
                             <span>{{ $sizeLabel }}</span>

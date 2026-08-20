@@ -74,15 +74,7 @@ class WebRegisterRepository
                         'New Candidate Registered',
                     ]) : false;
             } else {
-                $legacySizeMap = [
-                    '1-25' => '5-10',
-                    '26-50' => '21-50',
-                    '51-100' => '51-100',
-                    '101-500' => '51-100',
-                    '501-1000' => '51-100',
-                    '1000+' => '51-100',
-                ];
-                $companySizeId = CompanySize::where('size', $legacySizeMap[$input['employee_range']])->value('id')
+                $companySizeId = CompanySize::where('size', $input['employee_range'])->value('id')
                     ?: CompanySize::value('id');
                 $industryIds = array_values(array_unique($input['industry_ids'] ?? []));
                 foreach ($input['custom_industries'] ?? [] as $customIndustry) {

@@ -86,7 +86,7 @@ class UpdateCompanyRequest extends FormRequest
 
             $rules['contact_person_name'] = 'required|string|max:180';
             $rules['billing_address'] = 'required|string|max:255';
-            $rules['employee_range'] = 'required|in:1-25,26-50,51-100,101-500,501-1000,1000+';
+            $rules['employee_range'] = 'required|exists:company_sizes,size';
             $rules['industry_ids'] = 'required|array|min:1';
             $industryExistsRule = Rule::exists('industries', 'id');
             $industryExistsRule->where(function ($query) {

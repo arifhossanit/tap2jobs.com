@@ -14,6 +14,16 @@ class CityTable extends LivewireTableComponent
      * @var string
      */
     protected $model = City::class;
+
+    protected ?string $bulkDeleteModel = City::class;
+
+    protected array $bulkDeleteBlockedChecks = [
+        ['App\Models\Job', 'city_id'],
+        ['App\Models\User', 'city_id'],
+        ['App\Models\Candidate', 'permanent_city_id'],
+        ['App\Models\CandidateExperience', 'city_id'],
+        ['App\Models\CandidateEducation', 'city_id'],
+    ];
     protected string $tableName = 'cities';
 
     /**

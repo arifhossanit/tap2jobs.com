@@ -12,6 +12,12 @@ class OwnershipTypeTable extends LivewireTableComponent
      */
     protected $model = OwnerShipType::class;
 
+    protected ?string $bulkDeleteModel = OwnerShipType::class;
+
+    protected array $bulkDeleteBlockedChecks = [
+        ['App\Models\Company', 'ownership_type_id'],
+    ];
+
     /**
      * @var bool
      */

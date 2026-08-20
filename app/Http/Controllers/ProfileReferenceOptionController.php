@@ -65,6 +65,31 @@ class ProfileReferenceOptionController extends AppBaseController
         return $this->sendSuccess('Reference option deleted successfully.');
     }
 
+    public function bulkDestroy(Request $request, string $scope, string $type): JsonResponse
+    {
+        $this->guardScopeType($scope, $type);
+
+        $input = $request->validate([
+            'ids' => ['required', 'array'],
+            'ids.*' => ['integer'],
+        ]);
+
+        $deleted = 0;
+
+        foreach ($input['ids'] as $id) {
+            $profileReferenceOption = ProfileReferenceOption::findRecord($type, (int) $id);
+
+            if (! $profileReferenceOption || $profileReferenceOption->scope !== $scope) {
+                continue;
+            }
+
+            $profileReferenceOption->delete();
+            $deleted++;
+        }
+
+        return $this->sendSuccess($deleted.' reference option(s) deleted successfully.');
+    }
+
     private function validatedInput(Request $request, string $scope, string $type, ?ProfileReferenceOption $option = null): array
     {
         $value = filled($request->input('value')) ? trim((string) $request->input('value')) : trim((string) $request->input('label'));

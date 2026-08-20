@@ -10,6 +10,10 @@ use Rappasoft\LaravelLivewireTables\Exceptions\DataTableConfigurationException;
  */
 class LivewireTableComponent extends DataTableComponent
 {
+    protected ?string $bulkDeleteModel = null;
+
+    protected array $bulkDeleteBlockedChecks = [];
+
     protected bool $columnSelectStatus = false;
 
     public bool $paginationStatus = true;
@@ -30,6 +34,74 @@ class LivewireTableComponent extends DataTableComponent
     public function configure(): void
     {
         // TODO: Implement configure() method.
+    }
+
+    public function bulkActions(): array
+    {
+        if (empty($this->bulkDeleteModel)) {
+            return $this->bulkActions ?? [];
+        }
+
+        $this->bulkActionConfirms['bulkDelete'] = 'Are you sure you want to delete the selected records?';
+
+        return array_merge($this->bulkActions ?? [], [
+            'bulkDelete' => 'Delete Selected',
+        ]);
+    }
+
+    public function bulkDelete(): void
+    {
+        if (empty($this->bulkDeleteModel)) {
+            return;
+        }
+
+        $deleted = 0;
+        $skipped = 0;
+
+        foreach ($this->getSelected() as $id) {
+            $record = $this->bulkDeleteModel::find($id);
+
+            if (! $record) {
+                continue;
+            }
+
+            if ($this->isBulkDeleteBlocked($record)) {
+                $skipped++;
+                continue;
+            }
+
+            $this->deleteBulkDeleteRecord($record);
+            $deleted++;
+        }
+
+        $this->clearSelected();
+        $this->dispatch('refreshDatatable');
+
+        if ($deleted > 0 && $skipped > 0) {
+            $this->dispatch('success', message: $deleted.' selected record(s) deleted. '.$skipped.' in-use record(s) skipped.');
+        } elseif ($deleted > 0) {
+            $this->dispatch('success', message: 'Selected record(s) deleted successfully.');
+        } elseif ($skipped > 0) {
+            $this->dispatch('error', message: 'Selected record(s) are already in use.');
+        }
+    }
+
+    protected function isBulkDeleteBlocked($record): bool
+    {
+        foreach ($this->bulkDeleteBlockedChecks as $check) {
+            [$model, $column] = $check;
+
+            if ($model::where($column, $record->id)->exists()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function deleteBulkDeleteRecord($record): void
+    {
+        $record->delete();
     }
 
     public function columns(): array

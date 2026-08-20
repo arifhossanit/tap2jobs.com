@@ -62,7 +62,7 @@ class CandidateEducation extends Model
      * @var array
      */
     public static $rules = [
-        'degree_level_id' => 'required|exists:required_degree_levels,id',
+        'degree_level_id' => 'required|exists:education_degree_levels,id',
         'degree_title' => 'required|max:150',
         'country_id' => 'required|exists:countries,id',
         'state_id' => 'nullable|exists:states,id',

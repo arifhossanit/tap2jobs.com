@@ -2,7 +2,8 @@
     $iconPad = checkLanguageSession() == 'ar' ? 'ps-3' : 'pe-3';
     $employersActive = Request::is('admin/employers*', 'admin/reported-employers*');
     $candidatesActive = Request::is('admin/candidates*', 'admin/reported-candidates*', 'admin/resumes*', 'admin/selected-candidate*');
-    $jobsActive = Request::is('admin/jobs*', 'admin/pending-jobs*', 'admin/job-categories*', 'admin/job-types*', 'admin/job-tags*', 'admin/job-shifts*', 'admin/reported-jobs*', 'admin/job-notification*', 'admin/expired-jobs*');
+    $jobsActive = Request::is('admin/jobs*', 'admin/pending-jobs*', 'admin/reported-jobs*', 'admin/job-notification*', 'admin/expired-jobs*')
+        && ! Request::is('admin/job-categories*', 'admin/job-types*', 'admin/job-tags*', 'admin/job-shifts*');
     $blogsActive = Request::is('admin/post-categories*', 'admin/posts*', 'admin/post-comments*');
     $subscriptionsActive = Request::is('admin/plans*', 'admin/transactions*');
     $countriesActive = Request::is('admin/countries*', 'admin/states*', 'admin/cities*');
@@ -10,9 +11,9 @@
     $armyActive = Request::is('admin/profile-references/candidate/army_ba_no_prefix*', 'admin/profile-references/candidate/army_rank*', 'admin/profile-references/candidate/army_employment_type*', 'admin/profile-references/candidate/army_arms*');
     $profileReferenceMenuGroups = \App\Models\ProfileReferenceOption::menuGroups();
     $profileReferenceTypeLabels = \App\Models\ProfileReferenceOption::typeLabels();
-    $referenceGeneralActive = Request::is('admin/profile-references/common*', 'admin/countries*', 'admin/states*', 'admin/cities*', 'admin/skills*', 'admin/industries*', 'admin/functional-areas*', 'admin/career-levels*', 'admin/salary-currencies*', 'admin/ownership-types*');
-    $referenceCandidateActive = Request::is('admin/profile-references/candidate*', 'admin/degree-levels*', 'admin/education-degree-titles*', 'admin/education-major-groups*', 'admin/education-boards*', 'admin/marital-status*', 'admin/languages*');
-    $referenceEmployerActive = Request::is('admin/profile-references/employer*', 'admin/salary-periods*', 'admin/company-sizes*');
+    $referenceGeneralActive = Request::is('admin/profile-references/common*', 'admin/countries*', 'admin/states*', 'admin/cities*', 'admin/degree-levels*', 'admin/skills*', 'admin/industries*', 'admin/functional-areas*', 'admin/career-levels*', 'admin/salary-currencies*', 'admin/ownership-types*');
+    $referenceCandidateActive = Request::is('admin/profile-references/candidate*', 'admin/education-degree-titles*', 'admin/education-major-groups*', 'admin/education-boards*', 'admin/marital-status*', 'admin/languages*');
+    $referenceEmployerActive = Request::is('admin/profile-references/employer*', 'admin/job-categories*', 'admin/job-types*', 'admin/job-tags*', 'admin/job-shifts*', 'admin/salary-periods*', 'admin/company-sizes*');
     $referencesActive = $referenceGeneralActive || $referenceCandidateActive || $referenceEmployerActive;
     $cmsActive = Request::is('admin/noticeboards*', 'admin/faqs*', 'admin/inquires*', 'admin/notification-settings*', 'admin/privacy-policy*', 'admin/front-settings*', 'admin/email-template*', 'admin/settings*');
     $cmsSlidersActive = Request::is('admin/testimonials*', 'admin/branding-sliders*', 'admin/header-sliders*', 'admin/image-sliders*', 'admin/ads*');
@@ -121,30 +122,6 @@
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('admin.PendingJobs.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.pending_jobs.pending_jobs') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/job-categories*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('job-categories.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.job_categories') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/job-types*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('jobType.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.job_types') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/job-tags*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('jobTag.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.job_tags') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/job-shifts*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('jobShift.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.job_shifts') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/reported-jobs*') ? 'active' : '' }}">
@@ -256,6 +233,12 @@
                         </a>
                     </li>
                 @endforeach
+                <li class="nav-item {{ Request::is('admin/degree-levels*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('requiredDegreeLevel.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.required_degree_levels') }}</span>
+                    </a>
+                </li>
                 <li class="nav-item {{ Request::is('admin/skills*') ? 'active' : '' }}">
                     <a class="nav-link d-flex align-items-center py-2" href="{{ route('skills.index') }}">
                         <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
@@ -311,12 +294,6 @@
                         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
                     </a>
                     <ul class="aside-submenu nav flex-column collapse {{ $educationActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideEducationMenu">
-                        <li class="nav-item {{ Request::is('admin/degree-levels*') ? 'active' : '' }}">
-                            <a class="nav-link d-flex align-items-center py-2" href="{{ route('requiredDegreeLevel.index') }}">
-                                <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
-                                <span class="aside-menu-title">{{ __('messages.required_degree_levels') }}</span>
-                            </a>
-                        </li>
                         <li class="nav-item {{ Request::is('admin/education-degree-titles*') ? 'active' : '' }}">
                             <a class="nav-link d-flex align-items-center py-2" href="{{ route('educationDegreeTitles.index') }}">
                                 <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
@@ -419,6 +396,30 @@
                 <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
             </a>
             <ul class="aside-submenu nav flex-column collapse {{ $referenceEmployerActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideReferenceEmployerMenu">
+                <li class="nav-item {{ Request::is('admin/job-categories*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('job-categories.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.job_categories') }}</span>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::is('admin/job-types*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('jobType.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.job_types') }}</span>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::is('admin/job-shifts*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('jobShift.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.job_shifts') }}</span>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::is('admin/job-tags*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('jobTag.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.job_tags') }}</span>
+                    </a>
+                </li>
                 <li class="nav-item {{ Request::is('admin/salary-periods*') ? 'active' : '' }}">
                     <a class="nav-link d-flex align-items-center py-2" href="{{ route('salaryPeriod.index') }}">
                         <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>

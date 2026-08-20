@@ -20,7 +20,7 @@ class EducationDegreeTitleController extends AppBaseController
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'required_degree_level_id' => 'required|exists:required_degree_levels,id',
+            'required_degree_level_id' => 'required|exists:education_degree_levels,id',
             'name' => 'required|max:170',
         ]);
 
@@ -41,7 +41,7 @@ class EducationDegreeTitleController extends AppBaseController
     public function update(Request $request, EducationDegreeTitle $educationDegreeTitle): JsonResponse
     {
         $request->validate([
-            'required_degree_level_id' => 'required|exists:required_degree_levels,id',
+            'required_degree_level_id' => 'required|exists:education_degree_levels,id',
             'name' => 'required|max:170',
         ]);
 

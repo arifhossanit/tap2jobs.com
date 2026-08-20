@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Concerns;
 
 use App\Models\City;
+use App\Models\ProfileReferenceOption;
+use App\Models\Skill;
 use App\Models\State;
 use Illuminate\Validation\Rule;
 
@@ -16,6 +18,12 @@ trait ValidatesJob
         $isEmployerJobForm = $this->routeIs('job.store', 'job.update');
         $experienceUnit = $this->input('experience_unit');
         $experienceRequirement = trim((string) $this->input('experience_requirement'));
+        $jobsSkill = collect($this->input('jobsSkill', []))
+            ->map(fn ($skill) => trim((string) $skill))
+            ->filter()
+            ->unique(fn ($skill) => mb_strtolower($skill))
+            ->values()
+            ->toArray();
 
         $this->merge([
             'salary_from' => removeCommaFromNumbers($this->input('salary_from')),
@@ -31,6 +39,7 @@ trait ValidatesJob
             'experience_requirement' => $experienceRequirement,
             'freshers_encouraged' => $this->boolean('freshers_encouraged'),
             'experience' => $this->minimumExperienceYears($experienceUnit, $experienceRequirement),
+            'jobsSkill' => $jobsSkill,
         ]);
     }
 
@@ -73,10 +82,21 @@ trait ValidatesJob
             'salary_period_id' => ['required', 'integer', Rule::exists('salary_periods', 'id')],
             'job_type_id' => ['required', 'integer', Rule::exists('job_types', 'id')],
             'job_category_id' => ['required', 'integer', Rule::exists('job_categories', 'id')],
-            'functional_area_id' => ['required', 'integer', Rule::exists('functional_areas', 'id')],
+            'functional_area_id' => [
+                'required',
+                'string',
+                'max:150',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    $value = trim((string) $value);
+
+                    if (is_numeric($value) && ! \App\Models\FunctionalArea::whereKey((int) $value)->exists()) {
+                        $fail(__('validation.exists', ['attribute' => $attribute]));
+                    }
+                },
+            ],
             'career_level_id' => ['nullable', 'integer', Rule::exists('career_levels', 'id')],
             'job_shift_id' => ['nullable', 'integer', Rule::exists('job_shifts', 'id')],
-            'degree_level_id' => ['nullable', 'integer', Rule::exists('required_degree_levels', 'id')],
+            'degree_level_id' => ['nullable', 'integer', Rule::exists('education_degree_levels', 'id')],
             'no_preference' => ['nullable', 'integer', Rule::in([0, 1, 2])],
             'experience' => ['required', 'integer', 'min:0', 'max:60'],
             'experience_unit' => ['required', Rule::in(['month', 'year', 'month_year'])],
@@ -99,7 +119,7 @@ trait ValidatesJob
             'job_expiry_date' => ['required', 'date', 'after_or_equal:today'],
             'employment_status' => [
                 $isEmployerJobForm ? 'required' : 'nullable',
-                Rule::in(['full_time', 'part_time', 'contractual', 'internship', 'freelance']),
+                Rule::in($this->employmentStatusValues()),
             ],
             'work_from_office' => ['required', 'boolean'],
             'work_from_home' => ['required', 'boolean'],
@@ -107,7 +127,19 @@ trait ValidatesJob
             'hide_salary' => ['required', 'boolean'],
             'is_freelance' => ['required', 'boolean'],
             'jobsSkill' => ['required', 'array', 'min:1'],
-            'jobsSkill.*' => ['required', 'integer', 'distinct', Rule::exists('skills', 'id')],
+            'jobsSkill.*' => [
+                'required',
+                'string',
+                'max:150',
+                'distinct:ignore_case',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    $value = trim((string) $value);
+
+                    if (is_numeric($value) && ! Skill::whereKey((int) $value)->exists()) {
+                        $fail(__('validation.exists', ['attribute' => $attribute]));
+                    }
+                },
+            ],
             'jobTag' => ['nullable', 'array'],
             'jobTag.*' => ['integer', 'distinct', Rule::exists('tags', 'id')],
         ];
@@ -127,5 +159,15 @@ trait ValidatesJob
         }
 
         return min(60, $minimum);
+    }
+
+    private function employmentStatusValues(): array
+    {
+        $values = ProfileReferenceOption::values(
+            ProfileReferenceOption::TYPE_JOB_EMPLOYMENT_STATUS,
+            [ProfileReferenceOption::SCOPE_EMPLOYER]
+        );
+
+        return $values ?: array_keys(\App\Models\Job::EMPLOYMENT_STATUSES);
     }
 }

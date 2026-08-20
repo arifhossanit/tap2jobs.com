@@ -124,14 +124,6 @@
         <span class="required"></span>
         {{ Form::text('vacancy',  null, ['id'=>'vacancyId','class' => 'form-control','required', 'min' => 1, 'max' => 4294967295, 'placeholder' => __('messages.job.vacancy'), 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")']) }}
     </div>
-    <div class="col-xl-3 col-md-3 col-sm-12 mb-5">
-        <label class="form-label">{{ __('messages.job.is_freelance').':' }}</label><br>
-        <label class="form-check form-switch form-switch-sm {{ checkLanguageSession() == 'ar' ? 'float-end' : 'float-start' }}">
-            <input type="checkbox" name="is_freelance" class="form-check-input"
-                   value="1"
-                   id="freelance" {{ old('is_freelance', isset($job) ? $job->is_freelance : false) ? 'checked' : '' }}>
-        </label>
-    </div>
     <!-- Submit Field -->
     <div class="d-flex justify-content-end mt-5">
         <input name="saveAsDraft" type="hidden" value="" id="saveAsDraft">

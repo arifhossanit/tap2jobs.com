@@ -9,6 +9,8 @@ class JobTagTable extends LivewireTableComponent
 {
     protected $model = Tag::class;
 
+    protected ?string $bulkDeleteModel = Tag::class;
+
     public $showButtonOnHeader = true;
     public $showFilterOnHeader = false;
 
@@ -73,5 +75,10 @@ class JobTagTable extends LivewireTableComponent
             Column::make(__('messages.common.action'), 'id')
                 ->view('job_tags.table_components.action_button'),
         ];
+    }
+
+    protected function isBulkDeleteBlocked($record): bool
+    {
+        return $record->jobs()->where('tag_id', $record->id)->exists();
     }
 }

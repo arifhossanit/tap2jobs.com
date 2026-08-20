@@ -12,6 +12,13 @@ class IndustriesTable extends LivewireTableComponent
      */
     protected $model = Industry::class;
 
+    protected ?string $bulkDeleteModel = Industry::class;
+
+    protected array $bulkDeleteBlockedChecks = [
+        ['App\Models\Candidate', 'industry_id'],
+        ['App\Models\Company', 'industry_id'],
+    ];
+
     /**
      * @var bool
      */

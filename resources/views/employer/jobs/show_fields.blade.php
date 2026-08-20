@@ -124,10 +124,18 @@
         <p  class="fw-bolder fs-6 text-gray-800">{{ $job->salary_to }}</p>
     </div>
     <div class="form-group col-xl-3 col-md-3 col-sm-12">
-{{--        {{ Form::label('is_freelance', __('messages.job.is_freelance').':') }}--}}
-        {{ Form::label('is_freelance', __('messages.job.is_freelance').':', ['class' => 'form-label fs-6 fw-bolder text-gray-700 mb-3']) }}
+        @php
+            $employmentStatusLabels = \App\Models\ProfileReferenceOption::options(
+                \App\Models\ProfileReferenceOption::TYPE_JOB_EMPLOYMENT_STATUS,
+                [\App\Models\ProfileReferenceOption::SCOPE_EMPLOYER]
+            );
+            $employmentStatusLabels = $employmentStatusLabels ?: collect(\App\Models\Job::EMPLOYMENT_STATUSES)
+                ->mapWithKeys(fn ($label, $value) => [$value => __($label)])
+                ->toArray();
+        @endphp
+        {{ Form::label('employment_status', __('messages.job.employment_status').':', ['class' => 'form-label fs-6 fw-bolder text-gray-700 mb-3']) }}
 
-        <p  class="fw-bolder fs-6 text-gray-800">{{ $job->is_freelance == 1 ? __('messages.common.yes') : __('messages.common.no') }}</p>
+        <p  class="fw-bolder fs-6 text-gray-800">{{ $employmentStatusLabels[$job->employment_status] ?? __('messages.n/a') }}</p>
     </div>
     <div class="form-group col-xl-3 col-md-3 col-sm-12">
 {{--        {{ Form::label('hide_salary', __('messages.job.hide_salary').':') }}--}}

@@ -32,10 +32,10 @@ class RequiredDegreeLevel extends Model
      * @var array
      */
     public static $rules = [
-        'name' => 'required|max:160|unique:required_degree_levels',
+        'name' => 'required|max:160|unique:education_degree_levels',
     ];
 
-    public $table = 'required_degree_levels';
+    public $table = 'education_degree_levels';
 
     public $fillable = [
         'name',

@@ -219,7 +219,7 @@
                                                             {{ __('messages.employer_register.number_of_employees') }} <span class="text-danger">*</span>
                                                         </label>
                                                         <div class="employer-company-employee-options">
-                                                            @foreach (['1-25', '26-50', '51-100', '101-500', '501-1000', '1000+'] as $employeeRange)
+                                                            @foreach ($companySizes as $employeeRange)
                                                                 <label for="employeeRange{{ $loop->index }}">
                                                                     <input type="radio" name="employee_range"
                                                                            id="employeeRange{{ $loop->index }}"
@@ -643,40 +643,40 @@
                             </div>
                         </form>
 
-                        <div class="modal fade employer-register-add-industry-modal" id="registerAddIndustryModal"
+                        <div class="modal fade employer-register-industry-modal" id="registerAddIndustryModal"
                              tabindex="-1" aria-labelledby="registerAddIndustryModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <div class="employer-register-add-industry-modal-heading">
-                                            <span class="employer-register-add-industry-modal-icon">
+                            <div class="modal-dialog modal-dialog-centered employer-register-industry-modal__dialog">
+                                <div class="modal-content employer-register-industry-modal__content">
+                                    <div class="modal-header employer-register-industry-modal__header">
+                                        <div class="employer-register-industry-modal__heading">
+                                            <span class="employer-register-industry-modal__icon">
                                                 <i class="fa-solid fa-plus"></i>
                                             </span>
                                             <div>
-                                                <h2 class="modal-title" id="registerAddIndustryModalLabel">{{ __('messages.employer_register.add_new_industry_title') }}</h2>
-                                                <p>{{ __('messages.employer_register.specify_industry') }}</p>
+                                                <h2 class="modal-title employer-register-industry-modal__title" id="registerAddIndustryModalLabel">{{ __('messages.employer_register.add_new_industry_title') }}</h2>
+                                                <p class="employer-register-industry-modal__subtitle">{{ __('messages.employer_register.specify_industry') }}</p>
                                             </div>
                                         </div>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close employer-register-industry-modal__close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <div class="modal-body">
-                                        <div class="alert alert-danger d-none" id="registerIndustryModalError"></div>
-                                        <div class="mb-4">
-                                            <label for="registerModalIndustryType" class="form-label">{{ __('messages.employer_register.industry_type') }}</label>
-                                            <select class="form-select" id="registerModalIndustryType">
+                                    <div class="modal-body employer-register-industry-modal__body">
+                                        <div class="alert alert-danger d-none employer-register-industry-modal__error" id="registerIndustryModalError"></div>
+                                        <div class="employer-register-industry-modal__field">
+                                            <label for="registerModalIndustryType" class="form-label employer-register-industry-modal__label">{{ __('messages.employer_register.industry_type') }}</label>
+                                            <select class="form-select employer-register-industry-modal__control" id="registerModalIndustryType">
                                                 @foreach ($industryTypes as $industryTypeId => $industryTypeName)
                                                     <option value="{{ $industryTypeId }}">{{ $industryTypeName }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div>
-                                            <label for="registerModalIndustryName" class="form-label">{{ __('messages.employer_register.your_industry_name') }}</label>
-                                            <input type="text" class="form-control" id="registerModalIndustryName"
+                                        <div class="employer-register-industry-modal__field">
+                                            <label for="registerModalIndustryName" class="form-label employer-register-industry-modal__label">{{ __('messages.employer_register.your_industry_name') }}</label>
+                                            <input type="text" class="form-control employer-register-industry-modal__control" id="registerModalIndustryName"
                                                    maxlength="150" placeholder="{{ __('messages.employer_register.type_industry_name') }}">
                                         </div>
                                     </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-success" id="registerAddIndustryButton">{{ __('messages.employer_register.add') }}</button>
+                                    <div class="modal-footer employer-register-industry-modal__footer">
+                                        <button type="button" class="btn btn-success employer-register-industry-modal__submit" id="registerAddIndustryButton">{{ __('messages.employer_register.add') }}</button>
                                     </div>
                                 </div>
                             </div>

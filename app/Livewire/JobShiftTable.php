@@ -9,6 +9,12 @@ class JobShiftTable extends LivewireTableComponent
 {
     protected $model = JobShift::class;
 
+    protected ?string $bulkDeleteModel = JobShift::class;
+
+    protected array $bulkDeleteBlockedChecks = [
+        ['App\Models\Job', 'job_shift_id'],
+    ];
+
     public $showButtonOnHeader = true;
     public $showFilterOnHeader = false;
 

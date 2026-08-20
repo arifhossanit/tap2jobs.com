@@ -9,6 +9,13 @@ class CareerLevelTable extends LivewireTableComponent
 {
     protected $model = CareerLevel::class;
 
+    protected ?string $bulkDeleteModel = CareerLevel::class;
+
+    protected array $bulkDeleteBlockedChecks = [
+        ['App\Models\Candidate', 'career_level_id'],
+        ['App\Models\Job', 'career_level_id'],
+    ];
+
     public $showButtonOnHeader = true;
 
     public $buttonComponent = 'career_levels.table-components.add_button';

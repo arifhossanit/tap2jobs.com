@@ -12,6 +12,8 @@ class LanguageTable extends LivewireTableComponent
      */
     protected $model = Language::class;
 
+    protected ?string $bulkDeleteModel = Language::class;
+
     /**
      * @var bool
      */
@@ -85,5 +87,23 @@ class LanguageTable extends LivewireTableComponent
             Column::make(__('messages.common.action'), 'id')
                 ->view('languages.table-components.action_button'),
         ];
+    }
+
+    protected function isBulkDeleteBlocked($record): bool
+    {
+        return $record->candidate()->where('language_id', $record->id)->exists();
+    }
+
+    protected function deleteBulkDeleteRecord($record): void
+    {
+        $path = base_path('lang/').$record->iso_code;
+
+        $record->delete();
+
+        if (\File::exists($path)) {
+            \File::deleteDirectory($path);
+        }
+
+        \Artisan::call('lang:js');
     }
 }

@@ -1803,7 +1803,19 @@ function loadEmployerRegistrationForm() {
   var modalIndustryName = document.getElementById('registerModalIndustryName');
   var modalIndustryError = document.getElementById('registerIndustryModalError');
   var addIndustryButton = document.getElementById('registerAddIndustryButton');
+  var addIndustryModal = document.getElementById('registerAddIndustryModal');
   var customIndustrySequence = 0;
+  if (addIndustryModal && addIndustryModal.parentElement !== document.body) {
+    document.body.appendChild(addIndustryModal);
+  }
+  if (addIndustryModal) {
+    addIndustryModal.addEventListener('show.bs.modal', function () {
+      document.body.classList.add('employer-register-industry-modal-open');
+    });
+    addIndustryModal.addEventListener('hidden.bs.modal', function () {
+      document.body.classList.remove('employer-register-industry-modal-open');
+    });
+  }
   var refreshIndustries = function refreshIndustries(resetExpansion) {
     if (!industryType || !industryOptions) {
       return;
@@ -1959,12 +1971,11 @@ function loadEmployerRegistrationForm() {
     industrySearch.value = '';
     updateIndustryPicker();
     refreshIndustries(true);
-    var modalElement = document.getElementById('registerAddIndustryModal');
-    var modalInstance = window.bootstrap && modalElement ? window.bootstrap.Modal.getInstance(modalElement) : null;
+    var modalInstance = window.bootstrap && addIndustryModal ? window.bootstrap.Modal.getInstance(addIndustryModal) : null;
     if (modalInstance) {
       modalInstance.hide();
-    } else if (modalElement) {
-      var closeButton = modalElement.querySelector('[data-bs-dismiss="modal"]');
+    } else if (addIndustryModal) {
+      var closeButton = addIndustryModal.querySelector('[data-bs-dismiss="modal"]');
       if (closeButton) {
         closeButton.click();
       }

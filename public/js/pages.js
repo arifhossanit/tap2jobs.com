@@ -12480,8 +12480,39 @@ function loadEmployeeCreateEditData() {
   if (countrySelect.length && !countrySelect.val()) {
     countrySelect.val(countrySelect.find("option").first().val());
   }
-  initializeJobSelect2("#jobTypeId,#jobCategoryId,#careerLevelsId,#jobShiftId,#countryId,#stateId,#cityId,#salaryPeriodsId,#requiredDegreeLevelId,#functionalAreaId", {
+  initializeJobSelect2("#jobTypeId,#jobCategoryId,#careerLevelsId,#jobShiftId,#countryId,#stateId,#cityId,#salaryPeriodsId,#requiredDegreeLevelId", {
     width: "calc(100% - 44px)"
+  });
+  $("#functionalAreaId").select2({
+    width: !$(".jobEmployeePanel").val() ? "calc(100% - 44px)" : "100%",
+    placeholder: $("#functionalAreaId option:first").text(),
+    tags: true,
+    createTag: function createTag(params) {
+      var term = $.trim(params.term);
+      if (!term) {
+        return null;
+      }
+      var alreadyExists = $("#functionalAreaId option").toArray().some(function (option) {
+        return $.trim(option.text).toLowerCase() === term.toLowerCase();
+      });
+      if (alreadyExists) {
+        return null;
+      }
+      return {
+        id: term,
+        text: term,
+        newTag: true
+      };
+    },
+    insertTag: function insertTag(data, tag) {
+      data.unshift(tag);
+    },
+    templateResult: function templateResult(data) {
+      if (data.newTag) {
+        return 'Add "' + data.text + '"';
+      }
+      return data.text;
+    }
   });
   $("#preferenceId,#currencyId,#createCityStateID").select2({
     width: "100%"
@@ -12496,7 +12527,34 @@ function loadEmployeeCreateEditData() {
   });
   $("#SkillId").select2({
     width: !$(".jobEmployeePanel").val() ? "calc(100% - 44px)" : "100%",
-    placeholder: Lang.get("js.select_job_skill")
+    placeholder: Lang.get("js.select_job_skill"),
+    tags: true,
+    createTag: function createTag(params) {
+      var term = $.trim(params.term);
+      if (!term) {
+        return null;
+      }
+      var alreadyExists = $("#SkillId option").toArray().some(function (option) {
+        return $.trim(option.text).toLowerCase() === term.toLowerCase();
+      });
+      if (alreadyExists) {
+        return null;
+      }
+      return {
+        id: term,
+        text: term,
+        newTag: true
+      };
+    },
+    insertTag: function insertTag(data, tag) {
+      data.unshift(tag);
+    },
+    templateResult: function templateResult(data) {
+      if (data.newTag) {
+        return 'Add "' + data.text + '"';
+      }
+      return data.text;
+    }
   });
   $("#tagId").select2({
     width: !$(".jobEmployeePanel").val() ? "calc(100% - 44px)" : "100%",

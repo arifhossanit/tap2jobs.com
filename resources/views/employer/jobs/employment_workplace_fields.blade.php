@@ -1,24 +1,30 @@
 <div class="col-md-6 col-sm-12 mb-5 job-employment-choice">
     @php
+        $employmentStatuses = $data['employmentStatus'] ?? collect(\App\Models\Job::EMPLOYMENT_STATUSES)
+            ->mapWithKeys(fn ($label, $value) => [$value => __($label)])
+            ->toArray();
+        $defaultEmploymentStatus = array_key_exists(\App\Models\Job::EMPLOYMENT_STATUS_FULL_TIME, $employmentStatuses)
+            ? \App\Models\Job::EMPLOYMENT_STATUS_FULL_TIME
+            : array_key_first($employmentStatuses);
         $employmentStatus = old(
             'employment_status',
             isset($job) && $job->employment_status
                 ? $job->employment_status
-                : \App\Models\Job::EMPLOYMENT_STATUS_INTERNSHIP
+                : $defaultEmploymentStatus
         );
     @endphp
     <span class="form-label d-block">
         {{ __('messages.job.employment_status') }}<span class="required"></span>
     </span>
     <div class="job-choice-list" role="radiogroup" aria-label="{{ __('messages.job.employment_status') }}">
-        @foreach (\App\Models\Job::EMPLOYMENT_STATUSES as $value => $label)
+        @foreach ($employmentStatuses as $value => $label)
             @php
                 $employmentStatusId = 'employmentStatus'.str_replace(' ', '', ucwords(str_replace('_', ' ', $value)));
             @endphp
             <input class="job-choice-input" type="radio" name="employment_status"
                    id="{{ $employmentStatusId }}" value="{{ $value }}"
                    {{ $employmentStatus === $value ? 'checked' : '' }} required>
-            <label class="job-choice-label" for="{{ $employmentStatusId }}">{{ __($label) }}</label>
+            <label class="job-choice-label" for="{{ $employmentStatusId }}">{{ $label }}</label>
         @endforeach
     </div>
 </div>

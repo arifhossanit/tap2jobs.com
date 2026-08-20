@@ -180,10 +180,10 @@ class BangladeshJobMarketSeeder extends Seeder
             'Flexible Shift' => $this->firstId('job_shifts', 'shift', 'Flexible Shift', ['description' => 'Flexible Shift', 'is_default' => true], $now),
         ];
         $degreeLevelMap = [
-            'HSC' => $this->firstId('required_degree_levels', 'name', 'HSC', ['is_default' => true], $now),
-            'Diploma' => $this->firstId('required_degree_levels', 'name', 'Diploma', ['is_default' => true], $now),
-            'Bachelor' => $this->firstId('required_degree_levels', 'name', 'Bachelor', ['is_default' => true], $now),
-            'Masters' => $this->firstId('required_degree_levels', 'name', 'Masters', ['is_default' => true], $now),
+            'HSC' => $this->firstId('education_degree_levels', 'name', 'HSC', ['is_default' => true], $now),
+            'Diploma' => $this->firstId('education_degree_levels', 'name', 'Diploma', ['is_default' => true], $now),
+            'Bachelor' => $this->firstId('education_degree_levels', 'name', 'Bachelor', ['is_default' => true], $now),
+            'Masters' => $this->firstId('education_degree_levels', 'name', 'Masters', ['is_default' => true], $now),
         ];
         $jobCategoryMap = [
             'IT and Software' => $this->firstId('job_categories', 'name', 'IT and Software', ['description' => 'IT and Software', 'is_featured' => true, 'is_default' => true], $now),

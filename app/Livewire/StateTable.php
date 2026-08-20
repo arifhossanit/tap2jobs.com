@@ -14,6 +14,13 @@ class StateTable extends LivewireTableComponent
      * @var string
      */
     protected $model = State::class;
+
+    protected ?string $bulkDeleteModel = State::class;
+
+    protected array $bulkDeleteBlockedChecks = [
+        ['App\Models\City', 'state_id'],
+        ['App\Models\Job', 'state_id'],
+    ];
     protected string $tableName = 'states';
 
     /**

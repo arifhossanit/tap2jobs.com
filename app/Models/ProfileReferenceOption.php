@@ -26,6 +26,11 @@ class ProfileReferenceOption extends Model
     public const TYPE_ARMY_RANK = 'army_rank';
     public const TYPE_ARMY_EMPLOYMENT_TYPE = 'army_employment_type';
     public const TYPE_ARMY_ARMS = 'army_arms';
+    public const TYPE_JOB_GENDER_PREFERENCE = 'job_gender_preference';
+    public const TYPE_JOB_EMPLOYMENT_STATUS = 'job_employment_status';
+    public const TYPE_JOB_WORKPLACE = 'job_workplace';
+    public const TYPE_JOB_EXPERIENCE_UNIT = 'job_experience_unit';
+    public const TYPE_EMPLOYER_DISABILITY_FACILITY = 'employer_disability_facility';
 
     public $fillable = [
         'scope',
@@ -56,6 +61,11 @@ class ProfileReferenceOption extends Model
             self::TYPE_ARMY_RANK => 'Rank',
             self::TYPE_ARMY_EMPLOYMENT_TYPE => 'Employment Type',
             self::TYPE_ARMY_ARMS => 'Arms',
+            self::TYPE_JOB_GENDER_PREFERENCE => 'Gender Preference',
+            self::TYPE_JOB_EMPLOYMENT_STATUS => 'Employment Type',
+            self::TYPE_JOB_WORKPLACE => 'Workplace',
+            self::TYPE_JOB_EXPERIENCE_UNIT => 'Experience Unit',
+            self::TYPE_EMPLOYER_DISABILITY_FACILITY => 'Disability Facilities',
         ];
     }
 
@@ -71,19 +81,24 @@ class ProfileReferenceOption extends Model
     public static function tableMap(): array
     {
         return [
-            self::TYPE_GENDER => 'profile_genders',
-            self::TYPE_RELIGION => 'profile_religions',
-            self::TYPE_BLOOD_GROUP => 'profile_blood_groups',
-            self::TYPE_DISABILITY_DIFFICULTY => 'profile_disability_difficulties',
-            self::TYPE_SKILL_LEARNING_SOURCE => 'profile_skill_learning_sources',
-            self::TYPE_LANGUAGE_PROFICIENCY => 'profile_language_proficiencies',
-            self::TYPE_ONLINE_PROFILE_PLATFORM => 'profile_online_profile_platforms',
-            self::TYPE_REFERENCE_RELATION => 'profile_reference_relations',
-            self::TYPE_EDUCATION_RESULT => 'profile_education_results',
-            self::TYPE_ARMY_BA_NO_PREFIX => 'profile_army_ba_no_prefixes',
-            self::TYPE_ARMY_RANK => 'profile_army_ranks',
-            self::TYPE_ARMY_EMPLOYMENT_TYPE => 'profile_army_employment_types',
-            self::TYPE_ARMY_ARMS => 'profile_army_arms',
+            self::TYPE_GENDER => 'reference_genders',
+            self::TYPE_RELIGION => 'reference_religions',
+            self::TYPE_BLOOD_GROUP => 'reference_blood_groups',
+            self::TYPE_DISABILITY_DIFFICULTY => 'reference_disability_difficulties',
+            self::TYPE_SKILL_LEARNING_SOURCE => 'reference_skill_learning_sources',
+            self::TYPE_LANGUAGE_PROFICIENCY => 'reference_language_proficiencies',
+            self::TYPE_ONLINE_PROFILE_PLATFORM => 'reference_online_profile_platforms',
+            self::TYPE_REFERENCE_RELATION => 'reference_relations',
+            self::TYPE_EDUCATION_RESULT => 'reference_education_results',
+            self::TYPE_ARMY_BA_NO_PREFIX => 'reference_army_ba_no_prefixes',
+            self::TYPE_ARMY_RANK => 'reference_army_ranks',
+            self::TYPE_ARMY_EMPLOYMENT_TYPE => 'reference_army_employment_types',
+            self::TYPE_ARMY_ARMS => 'reference_army_arms',
+            self::TYPE_JOB_GENDER_PREFERENCE => 'reference_job_gender_preferences',
+            self::TYPE_JOB_EMPLOYMENT_STATUS => 'reference_job_employment_statuses',
+            self::TYPE_JOB_WORKPLACE => 'reference_job_workplaces',
+            self::TYPE_JOB_EXPERIENCE_UNIT => 'reference_job_experience_units',
+            self::TYPE_EMPLOYER_DISABILITY_FACILITY => 'reference_employer_disability_facilities',
         ];
     }
 
@@ -114,6 +129,11 @@ class ProfileReferenceOption extends Model
             ],
             self::SCOPE_EMPLOYER => [
                 self::TYPE_REFERENCE_RELATION,
+                self::TYPE_JOB_GENDER_PREFERENCE,
+                self::TYPE_JOB_EMPLOYMENT_STATUS,
+                self::TYPE_JOB_WORKPLACE,
+                self::TYPE_JOB_EXPERIENCE_UNIT,
+                self::TYPE_EMPLOYER_DISABILITY_FACILITY,
             ],
         ];
     }
@@ -180,6 +200,46 @@ class ProfileReferenceOption extends Model
             ],
             self::TYPE_ARMY_ARMS => [
                 self::SCOPE_CANDIDATE => ['Infantry', 'Artillery', 'Signals'],
+            ],
+            self::TYPE_JOB_GENDER_PREFERENCE => [
+                self::SCOPE_EMPLOYER => ['2' => 'Both', '1' => 'Male', '0' => 'Female'],
+            ],
+            self::TYPE_JOB_EMPLOYMENT_STATUS => [
+                self::SCOPE_EMPLOYER => [
+                    'full_time' => 'Full Time',
+                    'part_time' => 'Part Time',
+                    'contractual' => 'Contractual',
+                    'internship' => 'Internship',
+                    'freelance' => 'Freelance',
+                ],
+            ],
+            self::TYPE_JOB_WORKPLACE => [
+                self::SCOPE_EMPLOYER => [
+                    'work_from_office' => 'Work From Office',
+                    'work_from_home' => 'Work From Home',
+                    'hybrid' => 'Hybrid',
+                ],
+            ],
+            self::TYPE_JOB_EXPERIENCE_UNIT => [
+                self::SCOPE_EMPLOYER => [
+                    'month' => 'Month',
+                    'year' => 'Year',
+                    'month_year' => 'Month/Year',
+                ],
+            ],
+            self::TYPE_EMPLOYER_DISABILITY_FACILITY => [
+                self::SCOPE_EMPLOYER => [
+                    'accessible_documentation' => 'Accessible documentation',
+                    'accessible_washrooms' => 'Accessible washrooms',
+                    'adapted_transport' => 'Adapted transport',
+                    'assistive_software' => 'Assistive software',
+                    'flexible_shifts' => 'Flexible shifts',
+                    'work_from_home' => 'Work from home',
+                    'ramps_lifts' => 'Ramps and lifts',
+                    'reasonable_accommodation' => 'Reasonable accommodation',
+                    'warning_indicators' => 'Warning indicators',
+                    'workstation_adaptations' => 'Workstation adaptations',
+                ],
             ],
         ];
     }
@@ -288,7 +348,7 @@ class ProfileReferenceOption extends Model
             }
 
             foreach ($items as $value => $label) {
-                if (is_int($value) && $type !== self::TYPE_GENDER) {
+                if (is_int($value) && ! in_array($type, [self::TYPE_GENDER, self::TYPE_JOB_GENDER_PREFERENCE], true)) {
                     $value = (string) $label;
                 }
 

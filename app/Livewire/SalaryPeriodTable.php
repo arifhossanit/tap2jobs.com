@@ -9,6 +9,12 @@ class SalaryPeriodTable extends LivewireTableComponent
 {
     protected $model = SalaryPeriod::class;
 
+    protected ?string $bulkDeleteModel = SalaryPeriod::class;
+
+    protected array $bulkDeleteBlockedChecks = [
+        ['App\Models\Job', 'salary_period_id'],
+    ];
+
     /**
      * @var bool
      */

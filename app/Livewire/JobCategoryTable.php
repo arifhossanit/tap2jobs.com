@@ -10,6 +10,12 @@ use Rappasoft\LaravelLivewireTables\Views\Filters\SelectFilter;
 class JobCategoryTable extends LivewireTableComponent
 {
     protected $model = JobCategory::class;
+
+    protected ?string $bulkDeleteModel = JobCategory::class;
+
+    protected array $bulkDeleteBlockedChecks = [
+        ['App\Models\Job', 'job_category_id'],
+    ];
     protected string $tableName = 'job-categories';
     protected $listeners = ['resetPage', 'refreshDatatable' => '$refresh', 'changeFeaturedFilter'];
     public $featured = JobCategory::ALL;
