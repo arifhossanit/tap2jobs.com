@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\ProfileReferenceOption;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CandidateUpdateGeneralInformationRequest extends FormRequest
 {
@@ -19,6 +21,9 @@ class CandidateUpdateGeneralInformationRequest extends FormRequest
      */
     public function rules(): array
     {
+        $skillSourceValues = ProfileReferenceOption::values(ProfileReferenceOption::TYPE_SKILL_LEARNING_SOURCE);
+        $languageLevelValues = ProfileReferenceOption::values(ProfileReferenceOption::TYPE_LANGUAGE_PROFICIENCY);
+
         return [
             'candidateSkillsUpdated' => 'nullable|boolean',
             'candidateSkills' => 'nullable|array',
@@ -27,20 +32,20 @@ class CandidateUpdateGeneralInformationRequest extends FormRequest
             'candidateSkillNames.*' => 'required_with:candidateSkillsUpdated|string|max:150',
             'candidateSkillSources' => 'nullable|array',
             'candidateSkillSources.*' => 'nullable|array',
-            'candidateSkillSources.*.*' => 'nullable|string|in:Self,Job,Educational,Professional Training,NTVQF',
+            'candidateSkillSources.*.*' => ['nullable', 'string', Rule::in($skillSourceValues)],
             'candidateLanguageUpdated' => 'nullable|boolean',
             'candidateLanguage' => 'nullable|array',
             'candidateLanguage.*' => 'nullable|integer|exists:languages,id',
             'candidateLanguageNames' => 'nullable|array|max:20',
             'candidateLanguageNames.*' => 'required_with:candidateLanguageUpdated|string|max:150',
             'candidateLanguageLevels' => 'nullable|array',
-            'candidateLanguageLevels.*' => 'nullable|string|in:Basic,Conversational,Fluent,Native,High,Medium,Low',
+            'candidateLanguageLevels.*' => ['nullable', 'string', Rule::in(array_unique(array_merge(['Basic', 'Conversational', 'Fluent', 'Native'], $languageLevelValues)))],
             'candidateLanguageReadingLevels' => 'nullable|array',
-            'candidateLanguageReadingLevels.*' => 'required_with:candidateLanguageUpdated|string|in:High,Medium,Low',
+            'candidateLanguageReadingLevels.*' => ['required_with:candidateLanguageUpdated', 'string', Rule::in($languageLevelValues)],
             'candidateLanguageWritingLevels' => 'nullable|array',
-            'candidateLanguageWritingLevels.*' => 'required_with:candidateLanguageUpdated|string|in:High,Medium,Low',
+            'candidateLanguageWritingLevels.*' => ['required_with:candidateLanguageUpdated', 'string', Rule::in($languageLevelValues)],
             'candidateLanguageSpeakingLevels' => 'nullable|array',
-            'candidateLanguageSpeakingLevels.*' => 'required_with:candidateLanguageUpdated|string|in:High,Medium,Low',
+            'candidateLanguageSpeakingLevels.*' => ['required_with:candidateLanguageUpdated', 'string', Rule::in($languageLevelValues)],
             'first_name' => 'required|max:150',
             'last_name' => 'required|max:150',
             'phone' => 'nullable|min:10|max:10',

@@ -258,7 +258,7 @@ class Candidate extends Model implements HasMedia
         'last_name' => 'required|max:180',
         'email' => 'required|email:filter|unique:users,email',
         'password' => 'nullable|same:password_confirmation|min:6',
-        'gender' => 'required|integer|in:0,1',
+        'gender' => 'required|integer',
         'dob' => 'nullable|date|before_or_equal:today',
         'current_salary' => 'nullable|numeric|min:0|max:999999999',
         'expected_salary' => 'nullable|numeric|min:0|max:999999999',

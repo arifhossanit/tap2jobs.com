@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\CompanySize;
+use App\Rules\ValidCompanySizeRange;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateCompanySizeRequest extends FormRequest
@@ -20,6 +21,14 @@ class CreateCompanySizeRequest extends FormRequest
      */
     public function rules(): array
     {
-        return CompanySize::$rules;
+        $rules = CompanySize::$rules;
+        $rules['size'] = [
+            'required',
+            'unique:company_sizes,size',
+            'regex:/^[0-9+\s\-]+$/',
+            new ValidCompanySizeRange(),
+        ];
+
+        return $rules;
     }
 }

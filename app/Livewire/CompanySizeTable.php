@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\CompanySize;
+use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 
 class CompanySizeTable extends LivewireTableComponent
@@ -27,7 +28,7 @@ class CompanySizeTable extends LivewireTableComponent
     {
         $this->setPrimaryKey('id');
 
-        $this->setDefaultSort('created_at', 'desc');
+        $this->setDefaultSort('size', 'asc');
 
         $this->setTableAttributes([
             'default' => false,
@@ -59,6 +60,12 @@ class CompanySizeTable extends LivewireTableComponent
 
         $this->setQueryStringStatus(false);
     }
+
+    public function builder(): Builder
+    {
+        return CompanySize::query()->orderByRaw('CAST(size AS UNSIGNED) ASC');
+    }
+
     public function placeholder()
     {
         return view('livewire_lazy_load/listing-skeleton');
@@ -67,7 +74,11 @@ class CompanySizeTable extends LivewireTableComponent
     public function columns(): array
     {
         return [
-            Column::make(__('messages.company_size.size'), 'size')->searchable()->sortable(),
+            Column::make(__('messages.company_size.size'), 'size')
+                ->searchable()
+                ->sortable(function (Builder $query, string $direction) {
+                    return $query->orderByRaw("CAST(size AS UNSIGNED) {$direction}");
+                }),
             Column::make(__('messages.common.created_date'), 'created_at')
                 ->sortable()
                 ->view('company_sizes.table-components.created_at'),

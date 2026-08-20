@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\CompanySize;
+use App\Rules\ValidCompanySizeRange;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCompanySizeRequest extends FormRequest
@@ -21,8 +22,14 @@ class UpdateCompanySizeRequest extends FormRequest
     public function rules(): array
     {
         $companySize = $this->route('companySize');
+        $companySizeId = is_object($companySize) ? $companySize->id : $companySize;
         $rules = CompanySize::$rules;
-        $rules['size'] = 'required|unique:company_sizes,size,'.$companySize->id;
+        $rules['size'] = [
+            'required',
+            'unique:company_sizes,size,'.$companySizeId,
+            'regex:/^[0-9+\s\-]+$/',
+            new ValidCompanySizeRange((int) $companySizeId),
+        ];
 
         return $rules;
     }

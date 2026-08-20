@@ -26,6 +26,10 @@ class SubscriptionRepository
           */
          public function createStripeCustomer(User $user): bool
          {
+                  if (! config('app.subscriptions_enabled')) {
+                           return true;
+                  }
+
                   try {
                            $plan = $this->getDefaultPlan();
 

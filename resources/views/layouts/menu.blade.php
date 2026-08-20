@@ -6,9 +6,14 @@
     $blogsActive = Request::is('admin/post-categories*', 'admin/posts*', 'admin/post-comments*');
     $subscriptionsActive = Request::is('admin/plans*', 'admin/transactions*');
     $countriesActive = Request::is('admin/countries*', 'admin/states*', 'admin/cities*');
-    $educationActive = Request::is('admin/degree-levels*', 'admin/education-degree-titles*', 'admin/education-major-groups*', 'admin/education-boards*');
-    $generalActive = Request::is('admin/marital-status*', 'admin/skills*', 'admin/salary-periods*', 'admin/industries*', 'admin/company-sizes*', 'admin/functional-areas*', 'admin/career-levels*', 'admin/salary-currencies*', 'admin/ownership-types*', 'admin/languages*');
-    $referencesActive = $countriesActive || $educationActive || $generalActive;
+    $educationActive = Request::is('admin/degree-levels*', 'admin/education-degree-titles*', 'admin/education-major-groups*', 'admin/education-boards*', 'admin/profile-references/candidate/education_result*');
+    $armyActive = Request::is('admin/profile-references/candidate/army_ba_no_prefix*', 'admin/profile-references/candidate/army_rank*', 'admin/profile-references/candidate/army_employment_type*', 'admin/profile-references/candidate/army_arms*');
+    $profileReferenceMenuGroups = \App\Models\ProfileReferenceOption::menuGroups();
+    $profileReferenceTypeLabels = \App\Models\ProfileReferenceOption::typeLabels();
+    $referenceGeneralActive = Request::is('admin/profile-references/common*', 'admin/countries*', 'admin/states*', 'admin/cities*', 'admin/skills*', 'admin/industries*', 'admin/functional-areas*', 'admin/career-levels*', 'admin/salary-currencies*', 'admin/ownership-types*');
+    $referenceCandidateActive = Request::is('admin/profile-references/candidate*', 'admin/degree-levels*', 'admin/education-degree-titles*', 'admin/education-major-groups*', 'admin/education-boards*', 'admin/marital-status*', 'admin/languages*');
+    $referenceEmployerActive = Request::is('admin/profile-references/employer*', 'admin/salary-periods*', 'admin/company-sizes*');
+    $referencesActive = $referenceGeneralActive || $referenceCandidateActive || $referenceEmployerActive;
     $cmsActive = Request::is('admin/noticeboards*', 'admin/faqs*', 'admin/inquires*', 'admin/notification-settings*', 'admin/privacy-policy*', 'admin/front-settings*', 'admin/email-template*', 'admin/settings*');
     $cmsSlidersActive = Request::is('admin/testimonials*', 'admin/branding-sliders*', 'admin/header-sliders*', 'admin/image-sliders*', 'admin/ads*');
     $frontCmsActive = Request::is('admin/cms-services*', 'admin/cms-about-us*');
@@ -207,132 +212,234 @@
         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
     </a>
     <ul class="aside-submenu nav flex-column collapse {{ $referencesActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideReferencesMenu">
-        
-        <!-- Child Submenu: Location -->
-        <li class="nav-item aside-item-collapse {{ $countriesActive ? 'active collapse-submenu' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2 pe-3" data-bs-toggle="collapse" href="#asideLocationMenu"
-               role="button" aria-expanded="{{ $countriesActive ? 'true' : 'false' }}" aria-controls="asideLocationMenu">
+        <li class="nav-item aside-item-collapse {{ $referenceGeneralActive ? 'active collapse-submenu' : '' }}">
+            <a class="nav-link d-flex align-items-center py-2 pe-3" data-bs-toggle="collapse" href="#asideReferenceGeneralMenu"
+               role="button" aria-expanded="{{ $referenceGeneralActive ? 'true' : 'false' }}" aria-controls="asideReferenceGeneralMenu">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title me-auto">{{ __('messages.country.locations') }}</span>
+                <span class="aside-menu-title me-auto">General</span>
                 <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
             </a>
-            <ul class="aside-submenu nav flex-column collapse {{ $countriesActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideLocationMenu">
-                <li class="nav-item {{ Request::is('admin/countries*') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('countries.index') }}">
+            <ul class="aside-submenu nav flex-column collapse {{ $referenceGeneralActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideReferenceGeneralMenu">
+                <li class="nav-item aside-item-collapse {{ $countriesActive ? 'active collapse-submenu' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2 pe-3" data-bs-toggle="collapse" href="#asideLocationMenu"
+                       role="button" aria-expanded="{{ $countriesActive ? 'true' : 'false' }}" aria-controls="asideLocationMenu">
                         <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
-                        <span class="aside-menu-title">{{ __('messages.country.countries') }}</span>
+                        <span class="aside-menu-title me-auto">{{ __('messages.country.locations') }}</span>
+                        <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
+                    </a>
+                    <ul class="aside-submenu nav flex-column collapse {{ $countriesActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideLocationMenu">
+                        <li class="nav-item {{ Request::is('admin/countries*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-2" href="{{ route('countries.index') }}">
+                                <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                                <span class="aside-menu-title">{{ __('messages.country.countries') }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('admin/states*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-2" href="{{ route('states.index') }}">
+                                <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                                <span class="aside-menu-title">{{ __('messages.state.states') }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('admin/cities*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-2" href="{{ route('cities.index') }}">
+                                <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                                <span class="aside-menu-title">{{ __('messages.city.cities') }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                @foreach($profileReferenceMenuGroups[\App\Models\ProfileReferenceOption::SCOPE_COMMON] ?? [] as $profileReferenceType)
+                    <li class="nav-item {{ Request::is('admin/profile-references/common/'.$profileReferenceType) ? 'active' : '' }}">
+                        <a class="nav-link d-flex align-items-center py-2" href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_COMMON, $profileReferenceType]) }}">
+                            <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                            <span class="aside-menu-title">{{ $profileReferenceTypeLabels[$profileReferenceType] ?? $profileReferenceType }}</span>
+                        </a>
+                    </li>
+                @endforeach
+                <li class="nav-item {{ Request::is('admin/skills*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('skills.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.skills') }}</span>
                     </a>
                 </li>
-                <li class="nav-item {{ Request::is('admin/states*') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('states.index') }}">
+                <li class="nav-item {{ Request::is('admin/industries*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('industry.index') }}">
                         <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
-                        <span class="aside-menu-title">{{ __('messages.state.states') }}</span>
+                        <span class="aside-menu-title">{{ __('messages.industries') }}</span>
                     </a>
                 </li>
-                <li class="nav-item {{ Request::is('admin/cities*') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('cities.index') }}">
+                <li class="nav-item {{ Request::is('admin/functional-areas*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('functionalArea.index') }}">
                         <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
-                        <span class="aside-menu-title">{{ __('messages.city.cities') }}</span>
+                        <span class="aside-menu-title">{{ __('messages.functional_areas') }}</span>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::is('admin/career-levels*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('careerLevel.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.career_levels') }}</span>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::is('admin/salary-currencies*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('salaryCurrency.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.salary_currencies') }}</span>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::is('admin/ownership-types*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('ownerShipType.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.ownership_types') }}</span>
                     </a>
                 </li>
             </ul>
         </li>
 
-        <!-- Child Submenu: Education -->
-        <li class="nav-item aside-item-collapse {{ $educationActive ? 'active collapse-submenu' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2 pe-3" data-bs-toggle="collapse" href="#asideEducationMenu"
-               role="button" aria-expanded="{{ $educationActive ? 'true' : 'false' }}" aria-controls="asideEducationMenu">
+        <li class="nav-item aside-item-collapse {{ $referenceCandidateActive ? 'active collapse-submenu' : '' }}">
+            <a class="nav-link d-flex align-items-center py-2 pe-3" data-bs-toggle="collapse" href="#asideReferenceCandidateMenu"
+               role="button" aria-expanded="{{ $referenceCandidateActive ? 'true' : 'false' }}" aria-controls="asideReferenceCandidateMenu">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title me-auto">{{ __('messages.candidate_profile.education') }}</span>
+                <span class="aside-menu-title me-auto">Candidate</span>
                 <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
             </a>
-            <ul class="aside-submenu nav flex-column collapse {{ $educationActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideEducationMenu">
-                <li class="nav-item {{ Request::is('admin/degree-levels*') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('requiredDegreeLevel.index') }}">
+            <ul class="aside-submenu nav flex-column collapse {{ $referenceCandidateActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideReferenceCandidateMenu">
+                <li class="nav-item aside-item-collapse {{ $educationActive ? 'active collapse-submenu' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2 pe-3" data-bs-toggle="collapse" href="#asideEducationMenu"
+                       role="button" aria-expanded="{{ $educationActive ? 'true' : 'false' }}" aria-controls="asideEducationMenu">
                         <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
-                        <span class="aside-menu-title">{{ __('messages.required_degree_levels') }}</span>
+                        <span class="aside-menu-title me-auto">{{ __('messages.candidate_profile.education') }}</span>
+                        <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
+                    </a>
+                    <ul class="aside-submenu nav flex-column collapse {{ $educationActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideEducationMenu">
+                        <li class="nav-item {{ Request::is('admin/degree-levels*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-2" href="{{ route('requiredDegreeLevel.index') }}">
+                                <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                                <span class="aside-menu-title">{{ __('messages.required_degree_levels') }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('admin/education-degree-titles*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-2" href="{{ route('educationDegreeTitles.index') }}">
+                                <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                                <span class="aside-menu-title">Degree Titles</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('admin/education-major-groups*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-2" href="{{ route('educationMajorGroups.index') }}">
+                                <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                                <span class="aside-menu-title">Major / Groups</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('admin/education-boards*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-2" href="{{ route('educationBoards.index') }}">
+                                <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                                <span class="aside-menu-title">Education Boards</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('admin/profile-references/candidate/education_result*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-2" href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_CANDIDATE, \App\Models\ProfileReferenceOption::TYPE_EDUCATION_RESULT]) }}">
+                                <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                                <span class="aside-menu-title">{{ $profileReferenceTypeLabels[\App\Models\ProfileReferenceOption::TYPE_EDUCATION_RESULT] ?? 'Education Result' }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item {{ Request::is('admin/marital-status*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('maritalStatus.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.marital_statuses') }}</span>
                     </a>
                 </li>
-                <li class="nav-item {{ Request::is('admin/education-degree-titles*') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('educationDegreeTitles.index') }}">
+                <li class="nav-item {{ Request::is('admin/languages*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('languages.index') }}">
                         <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
-                        <span class="aside-menu-title">Degree Titles</span>
+                        <span class="aside-menu-title">{{ __('messages.languages') }}</span>
                     </a>
                 </li>
-                <li class="nav-item {{ Request::is('admin/education-major-groups*') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('educationMajorGroups.index') }}">
+                <li class="nav-item aside-item-collapse {{ $armyActive ? 'active collapse-submenu' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2 pe-3" data-bs-toggle="collapse" href="#asideArmyMenu"
+                       role="button" aria-expanded="{{ $armyActive ? 'true' : 'false' }}" aria-controls="asideArmyMenu">
                         <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
-                        <span class="aside-menu-title">Major / Groups</span>
+                        <span class="aside-menu-title me-auto">Army info</span>
+                        <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
                     </a>
+                    <ul class="aside-submenu nav flex-column collapse {{ $armyActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideArmyMenu">
+                        <li class="nav-item {{ Request::is('admin/profile-references/candidate/army_ba_no_prefix*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-2" href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_CANDIDATE, \App\Models\ProfileReferenceOption::TYPE_ARMY_BA_NO_PREFIX]) }}">
+                                <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                                <span class="aside-menu-title">{{ $profileReferenceTypeLabels[\App\Models\ProfileReferenceOption::TYPE_ARMY_BA_NO_PREFIX] ?? 'BA No Prefix' }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('admin/profile-references/candidate/army_rank*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-2" href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_CANDIDATE, \App\Models\ProfileReferenceOption::TYPE_ARMY_RANK]) }}">
+                                <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                                <span class="aside-menu-title">{{ $profileReferenceTypeLabels[\App\Models\ProfileReferenceOption::TYPE_ARMY_RANK] ?? 'Rank' }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('admin/profile-references/candidate/army_employment_type*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-2" href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_CANDIDATE, \App\Models\ProfileReferenceOption::TYPE_ARMY_EMPLOYMENT_TYPE]) }}">
+                                <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                                <span class="aside-menu-title">{{ $profileReferenceTypeLabels[\App\Models\ProfileReferenceOption::TYPE_ARMY_EMPLOYMENT_TYPE] ?? 'Employment Type' }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('admin/profile-references/candidate/army_arms*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-2" href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_CANDIDATE, \App\Models\ProfileReferenceOption::TYPE_ARMY_ARMS]) }}">
+                                <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                                <span class="aside-menu-title">{{ $profileReferenceTypeLabels[\App\Models\ProfileReferenceOption::TYPE_ARMY_ARMS] ?? 'Arms' }}</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
-                <li class="nav-item {{ Request::is('admin/education-boards*') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('educationBoards.index') }}">
-                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
-                        <span class="aside-menu-title">Education Boards</span>
-                    </a>
-                </li>
+                @php
+                    $armyTypes = [
+                        \App\Models\ProfileReferenceOption::TYPE_ARMY_BA_NO_PREFIX,
+                        \App\Models\ProfileReferenceOption::TYPE_ARMY_RANK,
+                        \App\Models\ProfileReferenceOption::TYPE_ARMY_EMPLOYMENT_TYPE,
+                        \App\Models\ProfileReferenceOption::TYPE_ARMY_ARMS,
+                    ];
+                @endphp
+                @foreach($profileReferenceMenuGroups[\App\Models\ProfileReferenceOption::SCOPE_CANDIDATE] ?? [] as $profileReferenceType)
+                    @if($profileReferenceType === \App\Models\ProfileReferenceOption::TYPE_EDUCATION_RESULT || in_array($profileReferenceType, $armyTypes, true))
+                        @continue
+                    @endif
+                    <li class="nav-item {{ Request::is('admin/profile-references/candidate/'.$profileReferenceType) ? 'active' : '' }}">
+                        <a class="nav-link d-flex align-items-center py-2" href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_CANDIDATE, $profileReferenceType]) }}">
+                            <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                            <span class="aside-menu-title">{{ $profileReferenceTypeLabels[$profileReferenceType] ?? $profileReferenceType }}</span>
+                        </a>
+                    </li>
+                @endforeach
             </ul>
         </li>
 
-        <li class="nav-item {{ Request::is('admin/marital-status*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('maritalStatus.index') }}">
+        <li class="nav-item aside-item-collapse {{ $referenceEmployerActive ? 'active collapse-submenu' : '' }}">
+            <a class="nav-link d-flex align-items-center py-2 pe-3" data-bs-toggle="collapse" href="#asideReferenceEmployerMenu"
+               role="button" aria-expanded="{{ $referenceEmployerActive ? 'true' : 'false' }}" aria-controls="asideReferenceEmployerMenu">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.marital_statuses') }}</span>
+                <span class="aside-menu-title me-auto">Employer</span>
+                <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
             </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/skills*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('skills.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.skills') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/salary-periods*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('salaryPeriod.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.salary_periods') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/industries*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('industry.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.industries') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/company-sizes*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('companySize.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.company_sizes') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/functional-areas*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('functionalArea.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.functional_areas') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/career-levels*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('careerLevel.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.career_levels') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/salary-currencies*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('salaryCurrency.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.salary_currencies') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/ownership-types*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('ownerShipType.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.ownership_types') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/languages*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('languages.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.languages') }}</span>
-            </a>
+            <ul class="aside-submenu nav flex-column collapse {{ $referenceEmployerActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideReferenceEmployerMenu">
+                <li class="nav-item {{ Request::is('admin/salary-periods*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('salaryPeriod.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.salary_periods') }}</span>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::is('admin/company-sizes*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('companySize.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.company_sizes') }}</span>
+                    </a>
+                </li>
+                @foreach($profileReferenceMenuGroups[\App\Models\ProfileReferenceOption::SCOPE_EMPLOYER] ?? [] as $profileReferenceType)
+                    <li class="nav-item {{ Request::is('admin/profile-references/employer/'.$profileReferenceType) ? 'active' : '' }}">
+                        <a class="nav-link d-flex align-items-center py-2" href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_EMPLOYER, $profileReferenceType]) }}">
+                            <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                            <span class="aside-menu-title">{{ $profileReferenceTypeLabels[$profileReferenceType] ?? $profileReferenceType }}</span>
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
         </li>
     </ul>
 </li>

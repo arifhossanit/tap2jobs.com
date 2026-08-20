@@ -5495,12 +5495,10 @@
   box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04) !important;
   transition: all 0.25s ease-in-out;
 }
-
 .cv-privacy-card:hover {
   border-color: #cbd5e1 !important;
   box-shadow: 0 6px 24px rgba(15, 23, 42, 0.08) !important;
 }
-
 .cv-privacy-card .cv-privacy-icon-wrapper {
   background-color: rgba(37, 99, 235, 0.1) !important;
   color: #2563eb !important;
@@ -5508,11 +5506,9 @@
   height: 52px;
   border-radius: 50% !important;
 }
-
 .cv-privacy-card .custom-toggle-switch {
   position: relative;
 }
-
 .cv-privacy-card .custom-toggle-switch .custom-switch-input {
   width: 52px !important;
   height: 28px !important;
@@ -5525,20 +5521,66 @@
   transition: background-color 0.25s ease-in-out, background-position 0.25s ease-in-out, border-color 0.25s ease-in-out, box-shadow 0.25s ease-in-out !important;
   margin-top: 0 !important;
 }
-
 .cv-privacy-card .custom-toggle-switch .custom-switch-input:focus {
   border-color: #3b82f6 !important;
   box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25) !important;
 }
-
 .cv-privacy-card .custom-toggle-switch .custom-switch-input:checked {
   background-color: #2563eb !important;
   border-color: #2563eb !important;
   background-position: right center !important;
 }
-
 .cv-privacy-card .custom-toggle-switch .form-check-label {
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
   line-height: 1.4;
   color: #1e293b !important;
+}
+
+/* Admin Sidebar Width Adjustment */
+.aside-menu-container {
+  width: 290px !important;
+  min-width: 290px !important;
+}
+
+@media (min-width: 1200px) {
+  .wrapper {
+    padding-left: 290px !important;
+  }
+  body.collapsed-menu .wrapper,
+  .collapsed-menu .wrapper {
+    padding-left: 80px !important;
+  }
+}
+@media (max-width: 1199px) {
+  .aside-menu-container {
+    left: -290px !important;
+    max-width: 290px !important;
+    width: calc(100% - 30px) !important;
+  }
+  .aside-menu-container.collapsed-menu {
+    left: 0 !important;
+  }
+}
+@media (min-width: 1200px) {
+  html[dir=rtl] .wrapper {
+    padding-right: 290px !important;
+    padding-left: 0 !important;
+  }
+  html[dir=rtl] body.collapsed-menu .wrapper,
+  html[dir=rtl] .collapsed-menu .wrapper {
+    padding-right: 80px !important;
+    padding-left: 0 !important;
+  }
+}
+@media (max-width: 1199px) {
+  html[dir=rtl] .aside-menu-container {
+    right: -290px !important;
+    left: auto !important;
+  }
+  html[dir=rtl] .aside-menu-container.collapsed-menu {
+    right: 0 !important;
+    left: auto !important;
+  }
 }

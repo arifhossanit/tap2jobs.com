@@ -65,6 +65,7 @@ class JobApplicationController extends AppBaseController
                 $employerId,
                 Notification::EMPLOYER,
                 'Job Application submitted for '.$job->job_title,
+                ['job_id' => $job->id],
             ]);
         }
 

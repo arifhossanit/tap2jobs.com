@@ -73,6 +73,17 @@
         $educationExamTitleOptions = ($data['educationDegreeTitleOptions'] ?? collect())->toArray();
         $educationMajorGroupOptions = ($data['educationMajorGroupOptions'] ?? collect())->toArray();
         $educationLevelMeta = ($data['educationLevelMeta'] ?? collect())->toArray();
+        $educationResultOptions = $data['profileReferenceOptions']['education_result'] ?? [
+            'First Division/Class' => 'First Division/Class',
+            'Second Division/Class' => 'Second Division/Class',
+            'Third Division/Class' => 'Third Division/Class',
+            'Grade' => 'Grade',
+            'Appeared' => 'Appeared',
+            'Enrolled' => 'Enrolled',
+            'Awarded' => 'Awarded',
+            'Do not mention' => 'Do not mention',
+            'Pass' => 'Pass',
+        ];
 
         $candidateTrainings = $data['candidateTrainings'] ?? collect();
 
@@ -242,7 +253,7 @@
                         </div>
                         <div class="candidate-education-form-field" data-education-result-field>
                             {{ Form::label('result', __('messages.candidate_profile.result'), ['class' => 'form-label required']) }}
-                            {{ Form::select('result', ['First Division/Class' => 'First Division/Class', 'Second Division/Class' => 'Second Division/Class', 'Third Division/Class' => 'Third Division/Class', 'Grade' => 'Grade', 'Appeared' => 'Appeared', 'Enrolled' => 'Enrolled', 'Awarded' => 'Awarded', 'Do not mention' => 'Do not mention', 'Pass' => 'Pass'], null, ['class' => 'form-select', 'required', 'placeholder' => 'Enter your Result', 'data-education-result-select' => true]) }}
+                            {{ Form::select('result', $educationResultOptions, null, ['class' => 'form-select', 'required', 'placeholder' => 'Enter your Result', 'data-education-result-select' => true]) }}
                         </div>
                         <div class="candidate-education-form-field" data-education-marks-field>
                             {{ Form::label('marks_percentage', 'Marks(%)', ['class' => 'form-label required']) }}
@@ -330,7 +341,7 @@
                         </div>
                         <div class="candidate-education-form-field" data-education-result-field>
                             {{ Form::label('result', __('messages.candidate_profile.result'), ['class' => 'form-label required']) }}
-                            {{ Form::select('result', ['First Division/Class' => 'First Division/Class', 'Second Division/Class' => 'Second Division/Class', 'Third Division/Class' => 'Third Division/Class', 'Grade' => 'Grade', 'Appeared' => 'Appeared', 'Enrolled' => 'Enrolled', 'Awarded' => 'Awarded', 'Do not mention' => 'Do not mention', 'Pass' => 'Pass'], null, ['class' => 'form-select', 'required', 'id' => 'editResult', 'placeholder' => 'Enter your Result', 'data-education-result-select' => true]) }}
+                            {{ Form::select('result', $educationResultOptions, null, ['class' => 'form-select', 'required', 'id' => 'editResult', 'placeholder' => 'Enter your Result', 'data-education-result-select' => true]) }}
                         </div>
                         <div class="candidate-education-form-field" data-education-marks-field>
                             {{ Form::label('marks_percentage', 'Marks(%)', ['class' => 'form-label required']) }}

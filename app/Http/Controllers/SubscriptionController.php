@@ -36,6 +36,13 @@ class SubscriptionController extends AppBaseController
         $this->subscriptionRepository = $subscriptionRepository;
     }
 
+    private function abortIfSubscriptionsDisabled(): void
+    {
+        if (! config('app.subscriptions_enabled')) {
+            abort(404);
+        }
+    }
+
     /**
      * @return Factory|View
      *
@@ -43,6 +50,8 @@ class SubscriptionController extends AppBaseController
      */
     public function index(): View
     {
+        $this->abortIfSubscriptionsDisabled();
+
         /** @var PlanRepository $planRepo */
         $planRepo = app(PlanRepository::class);
         $plans = $planRepo->getPlans();
@@ -57,6 +66,8 @@ class SubscriptionController extends AppBaseController
      */
     public function purchaseSubscription(Request $request)
     {
+        $this->abortIfSubscriptionsDisabled();
+
         $user = Auth::user();
         $pendingApproval = Transaction::where('user_id', $user->id)->where('is_approved', Transaction::PENDING)->first();
 
@@ -108,6 +119,8 @@ class SubscriptionController extends AppBaseController
      */
     public function paymentSuccess(Request $request): RedirectResponse
     {
+        $this->abortIfSubscriptionsDisabled();
+
         $sessionId = $request->get('session_id');
         if (empty($sessionId)) {
             throw new UnprocessableEntityHttpException('session_id required');
@@ -126,11 +139,15 @@ class SubscriptionController extends AppBaseController
      */
     public function handleFailedPayment(): View
     {
+        $this->abortIfSubscriptionsDisabled();
+
         return view('transactions.failed_payments');
     }
 
     public function cancelSubscription(Request $request): JsonResponse
     {
+        $this->abortIfSubscriptionsDisabled();
+
         $input = $request->all();
 
         /** @var User $user */
@@ -158,6 +175,8 @@ class SubscriptionController extends AppBaseController
      */
     public function purchaseTrialSubscription(): JsonResponse
     {
+        $this->abortIfSubscriptionsDisabled();
+
         /** @var User $user */
         $user = Auth::user();
 
@@ -174,6 +193,8 @@ class SubscriptionController extends AppBaseController
      */
     public function updateSubscription(Request $request)
     {
+        $this->abortIfSubscriptionsDisabled();
+
         $envSetting = getEnvSetting();
         if (! empty($envSetting['stripe_webhook_key'])) {
             $stripeWebHookSecret = $envSetting['stripe_webhook_key'];
@@ -211,6 +232,8 @@ class SubscriptionController extends AppBaseController
      */
     public function showPaymentSelect(Plan $plan): View
     {
+        $this->abortIfSubscriptionsDisabled();
+
         return view('pricing.payment_methods', compact('plan'));
     }
 
@@ -219,6 +242,8 @@ class SubscriptionController extends AppBaseController
      */
     public function manuallyPayment(Plan $plan): RedirectResponse
     {
+        $this->abortIfSubscriptionsDisabled();
+
         $user = Auth::user();
 
         $pendingApproval = Transaction::where('user_id', $user->id)->where('is_approved', Transaction::PENDING)->first();
@@ -259,6 +284,8 @@ class SubscriptionController extends AppBaseController
      */
     public function changeTransactionStatus(Request $request)
     {
+        $this->abortIfSubscriptionsDisabled();
+
         $input = $request->all();
         $approve_by = Auth::user()->id;
         $transaction = Transaction::where('id', $input['id'])->first();

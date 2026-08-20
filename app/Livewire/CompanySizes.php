@@ -83,6 +83,8 @@ class CompanySizes extends Component
                 '%'.strtolower($this->searchByCompanySize).'%');
         });
 
+        $query->orderByRaw('CAST(size AS UNSIGNED) ASC');
+
         $all = $query->paginate($this->perPage);
         $currentPage = $all->currentPage();
         $lastPage = $all->lastPage();

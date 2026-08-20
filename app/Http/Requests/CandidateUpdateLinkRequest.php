@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\ProfileReferenceOption;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -15,7 +16,7 @@ class CandidateUpdateLinkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'platform' => ['required', 'string', Rule::in(['Facebook', 'GitHub', 'LinkedIn', 'Twitter', 'Website'])],
+            'platform' => ['required', 'string', Rule::in(ProfileReferenceOption::values(ProfileReferenceOption::TYPE_ONLINE_PROFILE_PLATFORM))],
             'url' => ['required', 'url', 'max:191'],
         ];
     }

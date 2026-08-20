@@ -5,10 +5,10 @@ function loadCompanySizeData() {
         return;
     }
     $('#size, #editCompanySize').keypress(function (e) {
-        if (e.which != 8 && e.which != 0 && String.fromCharCode(e.which) !=
-            '-' && (e.which < 48 || e.which > 57)) {
+        let char = String.fromCharCode(e.which);
+        if (e.which != 8 && e.which != 0 && char != '-' && char != '+' && char != ' ' && (e.which < 48 || e.which > 57)) {
             $('#errMsg, #errEditMsg').
-                html('Digits Only').
+                html('Numbers, +, - only').
                 show().
                 fadeOut('slow');
             return false;

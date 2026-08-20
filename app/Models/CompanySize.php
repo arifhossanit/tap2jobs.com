@@ -34,7 +34,7 @@ class CompanySize extends Model
      * @var array
      */
     public static $rules = [
-        'size' => 'required|unique:company_sizes,size|regex:/^\d*-*\d*$/',
+        'size' => 'required|unique:company_sizes,size|regex:/^[0-9+\s\-]+$/',
     ];
 
     public $table = 'company_sizes';
@@ -54,4 +54,26 @@ class CompanySize extends Model
         'size' => 'string',
         'is_default' => 'boolean',
     ];
+
+    /**
+     * Parse size string into numeric bounds [min, max].
+     * Example: "1-50" -> [1, 50], "500+" -> [500, PHP_INT_MAX], "50" -> [50, 50]
+     */
+    public static function parseRange(string $sizeStr): ?array
+    {
+        $clean = trim($sizeStr);
+        if (preg_match('/^(\d+)\s*-\s*(\d+)$/', $clean, $matches)) {
+            $min = (int) $matches[1];
+            $max = (int) $matches[2];
+
+            return [$min, $max];
+        } elseif (preg_match('/^(\d+)\s*\+$/', $clean, $matches)) {
+            return [(int) $matches[1], PHP_INT_MAX];
+        } elseif (preg_match('/^(\d+)$/', $clean, $matches)) {
+            return [(int) $matches[1], (int) $matches[1]];
+        }
+
+        return null;
+    }
 }
+

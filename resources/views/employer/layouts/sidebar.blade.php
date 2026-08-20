@@ -58,12 +58,14 @@
                 {{ __('messages.employer_menu.transactions') }}
             </a>
         </li>
-        <li class="nav-item d-xl-none {{ Request::is('employer/manage-subscription*') ? 'active' : ''}}">
-            <a class="nav-link header-navbar-color text-gray py-3" aria-current="page"
-               href="{{ route('manage-subscription.index') }}">
-                {{ __('messages.employer_menu.manage_subscriptions') }}
-            </a>
-        </li>
+        @if (config('app.subscriptions_enabled'))
+            <li class="nav-item d-xl-none {{ Request::is('employer/manage-subscription*') ? 'active' : ''}}">
+                <a class="nav-link header-navbar-color text-gray py-3" aria-current="page"
+                   href="{{ route('manage-subscription.index') }}">
+                    {{ __('messages.employer_menu.manage_subscriptions') }}
+                </a>
+            </li>
+        @endif
         {{-- end side bar menu for bar--}}
     </ul>
 </div>

@@ -19,6 +19,7 @@ use App\Models\JobType;
 use App\Models\Language;
 use App\Models\MaritalStatus;
 use App\Models\OwnerShipType;
+use App\Models\ProfileReferenceOption;
 use App\Models\SalaryCurrency;
 use App\Models\Skill;
 use App\Models\State;
@@ -104,6 +105,24 @@ class CandidateRepository extends BaseRepository
             $query->where('id', '!=', $bangladeshId);
         })->toBase()->orderBy('name', 'ASC')->pluck('name', 'id');
         $data['organizationTypes'] = OwnerShipType::toBase()->orderBy('name', 'ASC')->pluck('name', 'id');
+        $data['profileReferenceOptions'] = [
+            'gender' => ProfileReferenceOption::options(ProfileReferenceOption::TYPE_GENDER),
+            'religion' => ProfileReferenceOption::options(ProfileReferenceOption::TYPE_RELIGION),
+            'blood_group' => ProfileReferenceOption::options(ProfileReferenceOption::TYPE_BLOOD_GROUP),
+            'disability_difficulty' => ProfileReferenceOption::options(ProfileReferenceOption::TYPE_DISABILITY_DIFFICULTY),
+            'skill_learning_source' => ProfileReferenceOption::options(ProfileReferenceOption::TYPE_SKILL_LEARNING_SOURCE),
+            'language_proficiency' => ProfileReferenceOption::options(ProfileReferenceOption::TYPE_LANGUAGE_PROFICIENCY),
+            'online_profile_platform' => ProfileReferenceOption::options(ProfileReferenceOption::TYPE_ONLINE_PROFILE_PLATFORM),
+            'candidate_reference_relation' => ProfileReferenceOption::options(ProfileReferenceOption::TYPE_REFERENCE_RELATION, [
+                ProfileReferenceOption::SCOPE_COMMON,
+                ProfileReferenceOption::SCOPE_CANDIDATE,
+            ]),
+            'education_result' => ProfileReferenceOption::options(ProfileReferenceOption::TYPE_EDUCATION_RESULT),
+            'army_ba_no_prefix' => ProfileReferenceOption::options(ProfileReferenceOption::TYPE_ARMY_BA_NO_PREFIX),
+            'army_rank' => ProfileReferenceOption::options(ProfileReferenceOption::TYPE_ARMY_RANK),
+            'army_employment_type' => ProfileReferenceOption::options(ProfileReferenceOption::TYPE_ARMY_EMPLOYMENT_TYPE),
+            'army_arms' => ProfileReferenceOption::options(ProfileReferenceOption::TYPE_ARMY_ARMS),
+        ];
 
         return $data;
     }
@@ -1141,7 +1160,8 @@ class CandidateRepository extends BaseRepository
         $skillIds = array_values($input['candidateSkills'] ?? []);
         $skillNames = array_values($input['candidateSkillNames'] ?? []);
         $skillSources = array_values($input['candidateSkillSources'] ?? []);
-        $allowedSources = ['Self', 'Job', 'Educational', 'Professional Training', 'NTVQF'];
+        $allowedSources = ProfileReferenceOption::values(ProfileReferenceOption::TYPE_SKILL_LEARNING_SOURCE);
+        $defaultSource = $allowedSources[0] ?? 'Professional Training';
         $resolvedSkillIds = [];
         $sourcesBySkillId = [];
 
@@ -1166,7 +1186,7 @@ class CandidateRepository extends BaseRepository
 
             $resolvedSkillIds[] = $skill->id;
             $sources = array_values(array_intersect($skillSources[$index] ?? [], $allowedSources));
-            $sourcesBySkillId[$skill->id] = count($sources) ? $sources : ['Professional Training'];
+            $sourcesBySkillId[$skill->id] = count($sources) ? $sources : [$defaultSource];
         }
 
         $resolvedSkillIds = array_values(array_unique($resolvedSkillIds));
@@ -1181,7 +1201,7 @@ class CandidateRepository extends BaseRepository
             ->get()
             ->each(function (CandidateSkill $candidateSkill) use ($sourcesBySkillId) {
                 $candidateSkill->sources()->delete();
-                foreach ($sourcesBySkillId[$candidateSkill->skill_id] ?? ['Professional Training'] as $source) {
+                foreach ($sourcesBySkillId[$candidateSkill->skill_id] ?? [] as $source) {
                     $candidateSkill->sources()->create(['source' => $source]);
                 }
             });
@@ -1195,7 +1215,7 @@ class CandidateRepository extends BaseRepository
         $readingLevels = array_values($input['candidateLanguageReadingLevels'] ?? []);
         $writingLevels = array_values($input['candidateLanguageWritingLevels'] ?? []);
         $speakingLevels = array_values($input['candidateLanguageSpeakingLevels'] ?? []);
-        $allowedLevels = ['High', 'Medium', 'Low'];
+        $allowedLevels = ProfileReferenceOption::values(ProfileReferenceOption::TYPE_LANGUAGE_PROFICIENCY);
         $syncData = [];
 
         foreach ($languageNames as $index => $languageName) {

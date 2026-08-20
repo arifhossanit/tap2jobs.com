@@ -5,26 +5,10 @@
 @endpush
 @section('section')
     @php
-        $genderOptions = ['0' => __('messages.common.male'), '1' => __('messages.common.female'), '2' => __('messages.candidate_profile.other')];
-        $religionOptions = [
-            '' => __('messages.candidate_profile.select_religion'),
-            'Islam' => 'Islam',
-            'Hinduism' => 'Hinduism',
-            'Christianity' => 'Christianity',
-            'Buddhism' => 'Buddhism',
-            'Other' => __('messages.candidate_profile.other'),
-        ];
-        $bloodGroups = [
-            '' => __('messages.candidate_profile.select_blood_group'),
-            'A+' => 'A+',
-            'A-' => 'A-',
-            'B+' => 'B+',
-            'B-' => 'B-',
-            'AB+' => 'AB+',
-            'AB-' => 'AB-',
-            'O+' => 'O+',
-            'O-' => 'O-',
-        ];
+        $profileReferenceOptions = $data['profileReferenceOptions'] ?? [];
+        $genderOptions = $profileReferenceOptions['gender'] ?? ['0' => __('messages.common.male'), '1' => __('messages.common.female'), '2' => __('messages.candidate_profile.other')];
+        $religionOptions = ['' => __('messages.candidate_profile.select_religion')] + ($profileReferenceOptions['religion'] ?? []);
+        $bloodGroups = ['' => __('messages.candidate_profile.select_blood_group')] + ($profileReferenceOptions['blood_group'] ?? []);
         $profileDisplayValue = function ($value) {
             return filled($value) ? $value : '---';
         };
@@ -898,19 +882,9 @@
                         $hasDisabilityId = $user->candidate->has_disability_id ?? null;
                         $showDisabilityDetails = (string) $hasDisabilityId === '1';
                         $disabilityShowOnProfile = $user->candidate->disability_id_show_on_profile ?? true;
-                        $difficultyOptions = [
-                            '' => __('messages.candidate_profile.select_your_difficulty'),
-                            'no_difficulty' => __('messages.candidate_profile.no_difficulty'),
-                            'some_difficulty' => __('messages.candidate_profile.some_difficulty'),
-                            'a_lot_of_difficulty' => __('messages.candidate_profile.a_lot_of_difficulty'),
-                            'cannot_do' => __('messages.candidate_profile.cannot_do'),
-                        ];
-                        $difficultySummaryOptions = [
-                            'no_difficulty' => __('messages.candidate_profile.no_difficulty'),
-                            'some_difficulty' => __('messages.candidate_profile.yes_some_difficulties'),
-                            'a_lot_of_difficulty' => __('messages.candidate_profile.yes_lot_of_difficulties'),
-                            'cannot_do' => __('messages.candidate_profile.cannot_do'),
-                        ];
+                        $difficultyOptions = ['' => __('messages.candidate_profile.select_your_difficulty')]
+                            + ($profileReferenceOptions['disability_difficulty'] ?? []);
+                        $difficultySummaryOptions = $profileReferenceOptions['disability_difficulty'] ?? [];
                         $disabilitySummaryItems = [
                             [
                                 'label' => __('messages.candidate_profile.national_disability_id'),

@@ -3683,6 +3683,35 @@ listen('hide.bs.modal', '#candidateResumeModal', function () {
   $('#customFile').siblings('.custom-file-label').addClass('selected').html('Choose file');
   resetModalForm('#addCandidateResumeForm', '#validationErrorsBox');
 });
+listenSubmit('#candidateCvPrivacyForm', function (e) {
+  e.preventDefault();
+  var form = $(this);
+  var btn = form.find('#saveCvPrivacyBtn');
+  btn.prop('disabled', true);
+  btn.find('.btn-spinner').removeClass('d-none');
+  btn.find('.btn-icon').addClass('d-none');
+  $.ajax({
+    url: form.attr('action'),
+    type: 'POST',
+    data: form.serialize(),
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+      } else {
+        displayErrorMessage(result.message || (typeof Lang !== 'undefined' ? Lang.get('js.something_went_wrong') : 'Something went wrong'));
+      }
+    },
+    error: function error(result) {
+      var errorMsg = result.responseJSON && result.responseJSON.message ? result.responseJSON.message : typeof Lang !== 'undefined' ? Lang.get('js.something_went_wrong') : 'Something went wrong';
+      displayErrorMessage(errorMsg);
+    },
+    complete: function complete() {
+      btn.prop('disabled', false);
+      btn.find('.btn-spinner').addClass('d-none');
+      btn.find('.btn-icon').removeClass('d-none');
+    }
+  });
+});
 
 /***/ },
 
@@ -6725,8 +6754,9 @@ function loadCompanySizeData() {
     return;
   }
   $('#size, #editCompanySize').keypress(function (e) {
-    if (e.which != 8 && e.which != 0 && String.fromCharCode(e.which) != '-' && (e.which < 48 || e.which > 57)) {
-      $('#errMsg, #errEditMsg').html('Digits Only').show().fadeOut('slow');
+    var _char = String.fromCharCode(e.which);
+    if (e.which != 8 && e.which != 0 && _char != '-' && _char != '+' && _char != ' ' && (e.which < 48 || e.which > 57)) {
+      $('#errMsg, #errEditMsg').html('Numbers, +, - only').show().fadeOut('slow');
       return false;
     }
   });

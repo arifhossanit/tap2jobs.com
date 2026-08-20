@@ -399,6 +399,10 @@ class JobRepository extends BaseRepository
      */
     public function canCreateMoreJobs(): bool
     {
+        if (! config('app.subscriptions_enabled')) {
+            return true;
+        }
+
         /** @var Company $company */
         $company = Company::whereUserId(Auth::id())->first();
 

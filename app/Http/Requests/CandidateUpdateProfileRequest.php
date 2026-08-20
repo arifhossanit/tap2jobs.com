@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Models\ProfileReferenceOption;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class CandidateUpdateProfileRequest extends FormRequest
 {
@@ -33,6 +35,7 @@ class CandidateUpdateProfileRequest extends FormRequest
     public function rules(): array
     {
         $id = Auth::user()->id;
+        $difficultyValues = ProfileReferenceOption::values(ProfileReferenceOption::TYPE_DISABILITY_DIFFICULTY);
 
         return [
             'candidateSkills' => 'nullable',
@@ -40,10 +43,10 @@ class CandidateUpdateProfileRequest extends FormRequest
             'last_name' => 'required|max:150',
             'father_name' => 'max:150',
             'mother_name' => 'nullable|max:150',
-            'religion' => 'nullable|max:100',
+            'religion' => ['nullable', 'max:100', Rule::in(ProfileReferenceOption::values(ProfileReferenceOption::TYPE_RELIGION))],
             'email' => 'required|email:filter|unique:users,email,'.$id,
             'dob' => 'nullable|date|before_or_equal:today',
-            'gender' => 'required|integer|in:0,1',
+            'gender' => ['required', Rule::in(ProfileReferenceOption::values(ProfileReferenceOption::TYPE_GENDER))],
             'phone' => 'nullable',
             'secondary_mobile' => 'nullable|max:30',
             'marital_status_id' => 'required|integer|exists:marital_status,id',
@@ -53,7 +56,7 @@ class CandidateUpdateProfileRequest extends FormRequest
             'passport_issue_date' => 'nullable|date|before_or_equal:today',
             'alternate_email' => 'nullable|email:filter|max:150',
             'emergency_contact' => 'nullable|max:30',
-            'blood_group' => 'nullable|max:10',
+            'blood_group' => ['nullable', 'max:10', Rule::in(ProfileReferenceOption::values(ProfileReferenceOption::TYPE_BLOOD_GROUP))],
             'height' => 'nullable|numeric|min:0|max:999',
             'weight' => 'nullable|numeric|min:0|max:999',
             'objective' => 'nullable|max:2000',
@@ -75,12 +78,12 @@ class CandidateUpdateProfileRequest extends FormRequest
             'has_disability_id' => 'nullable|boolean',
             'disability_id_number' => 'nullable|max:100',
             'disability_id_show_on_profile' => 'nullable|boolean',
-            'disability_difficulty_seeing' => 'nullable|in:no_difficulty,some_difficulty,a_lot_of_difficulty,cannot_do',
-            'disability_difficulty_hearing' => 'nullable|in:no_difficulty,some_difficulty,a_lot_of_difficulty,cannot_do',
-            'disability_difficulty_remembering' => 'nullable|in:no_difficulty,some_difficulty,a_lot_of_difficulty,cannot_do',
-            'disability_difficulty_walking' => 'nullable|in:no_difficulty,some_difficulty,a_lot_of_difficulty,cannot_do',
-            'disability_difficulty_communicating' => 'nullable|in:no_difficulty,some_difficulty,a_lot_of_difficulty,cannot_do',
-            'disability_difficulty_self_care' => 'nullable|in:no_difficulty,some_difficulty,a_lot_of_difficulty,cannot_do',
+            'disability_difficulty_seeing' => ['nullable', Rule::in($difficultyValues)],
+            'disability_difficulty_hearing' => ['nullable', Rule::in($difficultyValues)],
+            'disability_difficulty_remembering' => ['nullable', Rule::in($difficultyValues)],
+            'disability_difficulty_walking' => ['nullable', Rule::in($difficultyValues)],
+            'disability_difficulty_communicating' => ['nullable', Rule::in($difficultyValues)],
+            'disability_difficulty_self_care' => ['nullable', Rule::in($difficultyValues)],
             'current_salary' => 'nullable|numeric|min:0|max:999999999',
             'expected_salary' => 'nullable|numeric|min:0|max:999999999',
             'password' => 'nullable|min:6|required_with:password_confirmation|same:password_confirmation',

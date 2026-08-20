@@ -28,7 +28,32 @@
         $candidateLanguageNames = $candidateLanguageItems->pluck('language')->toArray();
         $candidateExtraCurricularItems = $data['candidateExtraCurriculars'] ?? collect();
         $candidateReferenceItems = $data['candidateReferences'] ?? collect();
-        $skillLearnOptions = ['Self', 'Job', 'Educational', 'Professional Training', 'NTVQF'];
+        $profileReferenceOptions = $data['profileReferenceOptions'] ?? [];
+        $skillLearnOptions = $profileReferenceOptions['skill_learning_source'] ?? [
+            'Self' => 'Self',
+            'Job' => 'Job',
+            'Educational' => 'Educational',
+            'Professional Training' => 'Professional Training',
+            'NTVQF' => 'NTVQF',
+        ];
+        $languageProficiencyOptions = $profileReferenceOptions['language_proficiency'] ?? [
+            'High' => __('messages.candidate_profile.high'),
+            'Medium' => __('messages.candidate_profile.medium'),
+            'Low' => __('messages.candidate_profile.low'),
+        ];
+        $onlineProfilePlatformOptions = $profileReferenceOptions['online_profile_platform'] ?? [
+            'Facebook' => 'Facebook',
+            'GitHub' => 'GitHub',
+            'LinkedIn' => 'LinkedIn',
+            'Twitter' => 'Twitter',
+            'Website' => 'Website',
+        ];
+        $candidateReferenceRelationOptions = $profileReferenceOptions['candidate_reference_relation'] ?? [
+            'Relative' => __('messages.candidate_profile.relative'),
+            'Academic' => __('messages.candidate_profile.academic'),
+            'Professional' => __('messages.candidate_profile.professional'),
+            'Other' => __('messages.candidate_profile.other'),
+        ];
         $candidateLinkAccounts = $data['candidateLinks'] ?? collect();
         $candidateLinkIcons = [
             'Facebook' => 'fa-brands fa-facebook',
@@ -128,14 +153,14 @@
                                             'NTVQF' => 'ntvqf',
                                         ];
                                     @endphp
-                                    @foreach($skillLearnOptions as $source)
+                                    @foreach($skillLearnOptions as $source => $sourceLabel)
                                         @php
                                             $sourceKey = $sourceKeyMap[$source] ?? 'professional_training';
                                         @endphp
                                         <label class="candidate-skill-source">
                                             <input type="checkbox" value="{{ $source }}" data-skill-source
                                                    {{ $source === 'Professional Training' ? 'checked' : '' }}>
-                                            <span>{{ __('messages.candidate_profile.' . $sourceKey) }}</span>
+                                            <span>{{ $sourceLabel ?: __('messages.candidate_profile.' . $sourceKey) }}</span>
                                         </label>
                                     @endforeach
                                 </div>
@@ -324,27 +349,27 @@
                                 <label for="candidateLanguageReading">{{ __('messages.candidate_profile.reading') }} <span class="text-danger">*</span></label>
                                 <select class="form-control" id="candidateLanguageReading" data-language-reading-input>
                                     <option value="">{{ __('messages.candidate_profile.select_reading') }}</option>
-                                    <option value="High">{{ __('messages.candidate_profile.high') }}</option>
-                                    <option value="Medium">{{ __('messages.candidate_profile.medium') }}</option>
-                                    <option value="Low">{{ __('messages.candidate_profile.low') }}</option>
+                                    @foreach($languageProficiencyOptions as $levelValue => $levelLabel)
+                                        <option value="{{ $levelValue }}">{{ $levelLabel }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="candidate-skill-form__field">
                                 <label for="candidateLanguageWriting">{{ __('messages.candidate_profile.writing') }} <span class="text-danger">*</span></label>
                                 <select class="form-control" id="candidateLanguageWriting" data-language-writing-input>
                                     <option value="">{{ __('messages.candidate_profile.select_writing') }}</option>
-                                    <option value="High">{{ __('messages.candidate_profile.high') }}</option>
-                                    <option value="Medium">{{ __('messages.candidate_profile.medium') }}</option>
-                                    <option value="Low">{{ __('messages.candidate_profile.low') }}</option>
+                                    @foreach($languageProficiencyOptions as $levelValue => $levelLabel)
+                                        <option value="{{ $levelValue }}">{{ $levelLabel }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="candidate-skill-form__field">
                                 <label for="candidateLanguageSpeaking">{{ __('messages.candidate_profile.speaking') }} <span class="text-danger">*</span></label>
                                 <select class="form-control" id="candidateLanguageSpeaking" data-language-speaking-input>
                                     <option value="">{{ __('messages.candidate_profile.select_speaking') }}</option>
-                                    <option value="High">{{ __('messages.candidate_profile.high') }}</option>
-                                    <option value="Medium">{{ __('messages.candidate_profile.medium') }}</option>
-                                    <option value="Low">{{ __('messages.candidate_profile.low') }}</option>
+                                    @foreach($languageProficiencyOptions as $levelValue => $levelLabel)
+                                        <option value="{{ $levelValue }}">{{ $levelLabel }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -451,11 +476,9 @@
                                     <label for="candidateLinkPlatform">{{ __('messages.candidate_profile.account_type') }} <span class="text-danger">*</span></label>
                                     <select class="form-control" id="candidateLinkPlatform" name="platform" data-link-platform-input>
                                         <option value="">{{ __('messages.candidate_profile.select_account_type') }}</option>
-                                        <option value="Facebook">Facebook</option>
-                                        <option value="GitHub">GitHub</option>
-                                        <option value="LinkedIn">LinkedIn</option>
-                                        <option value="Twitter">Twitter</option>
-                                        <option value="Website">Website</option>
+                                        @foreach($onlineProfilePlatformOptions as $platformValue => $platformLabel)
+                                            <option value="{{ $platformValue }}">{{ $platformLabel }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="candidate-skill-form__field">
@@ -528,10 +551,9 @@
                                     <label for="candidateReferenceRelation">{{ __('messages.candidate_profile.relation') }}</label>
                                     <select class="form-control" id="candidateReferenceRelation" name="relation" data-reference-field-input="relation">
                                         <option value="">{{ __('messages.candidate_profile.select_relation') }}</option>
-                                        <option value="Relative">{{ __('messages.candidate_profile.relative') }}</option>
-                                        <option value="Academic">{{ __('messages.candidate_profile.academic') }}</option>
-                                        <option value="Professional">{{ __('messages.candidate_profile.professional') }}</option>
-                                        <option value="Other">{{ __('messages.candidate_profile.other') }}</option>
+                                        @foreach($candidateReferenceRelationOptions as $relationValue => $relationLabel)
+                                            <option value="{{ $relationValue }}">{{ $relationLabel }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="candidate-skill-form__field">

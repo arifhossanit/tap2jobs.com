@@ -291,3 +291,50 @@
     background-position: 0% 50%;
   }
 }
+
+/* Admin Sidebar Width Adjustment */
+.aside-menu-container {
+  width: 310px !important;
+  min-width: 310px !important;
+}
+
+@media (min-width: 1200px) {
+  .wrapper {
+    padding-left: 310px !important;
+  }
+  body.collapsed-menu .wrapper,
+  .collapsed-menu .wrapper {
+    padding-left: 80px !important;
+  }
+}
+@media (max-width: 1199px) {
+  .aside-menu-container {
+    left: -290px !important;
+    max-width: 290px !important;
+    width: calc(100% - 30px) !important;
+  }
+  .aside-menu-container.collapsed-menu {
+    left: 0 !important;
+  }
+}
+@media (min-width: 1200px) {
+  html[dir=rtl] .wrapper {
+    padding-right: 290px !important;
+    padding-left: 0 !important;
+  }
+  html[dir=rtl] body.collapsed-menu .wrapper,
+  html[dir=rtl] .collapsed-menu .wrapper {
+    padding-right: 80px !important;
+    padding-left: 0 !important;
+  }
+}
+@media (max-width: 1199px) {
+  html[dir=rtl] .aside-menu-container {
+    right: -290px !important;
+    left: auto !important;
+  }
+  html[dir=rtl] .aside-menu-container.collapsed-menu {
+    right: 0 !important;
+    left: auto !important;
+  }
+}

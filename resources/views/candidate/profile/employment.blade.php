@@ -32,6 +32,11 @@
         $retiredArmyBaNo = $hasRetiredArmyEmployment
             ? collect([$retiredArmyEmployment->ba_no_prefix, $retiredArmyEmployment->ba_no])->filter()->implode(' ')
             : '';
+        $profileReferenceOptions = $data['profileReferenceOptions'] ?? [];
+        $armyBaNoPrefixOptions = ['' => __('messages.candidate_profile.select_ba_no')] + ($profileReferenceOptions['army_ba_no_prefix'] ?? []);
+        $armyRankOptions = ['' => __('messages.candidate_profile.enter_rank')] + ($profileReferenceOptions['army_rank'] ?? []);
+        $armyTypeOptions = ['' => __('messages.candidate_profile.enter_type')] + ($profileReferenceOptions['army_employment_type'] ?? []);
+        $armyArmsOptions = ['' => __('messages.candidate_profile.enter_type')] + ($profileReferenceOptions['army_arms'] ?? []);
         $locationText = function ($experience) {
             return collect([
                 $experience->company_location ?? null,
@@ -271,21 +276,21 @@
                                 <div class="candidate-education-form-field">
                                     {{ Form::label('ba_no_prefix', __('messages.candidate_profile.ba_no'), ['class' => 'form-label required']) }}
                                     <div class="candidate-retired-army-ba-group">
-                                        {{ Form::select('ba_no_prefix', ['' => __('messages.candidate_profile.select_ba_no'), 'BA' => 'BA', 'BSS' => 'BSS', 'JC' => 'JC'], $retiredArmyEmployment->ba_no_prefix ?? null, ['class' => 'form-select']) }}
+                                        {{ Form::select('ba_no_prefix', $armyBaNoPrefixOptions, $retiredArmyEmployment->ba_no_prefix ?? null, ['class' => 'form-select']) }}
                                         {{ Form::text('ba_no', $retiredArmyEmployment->ba_no ?? null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_ba_no')]) }}
                                     </div>
                                 </div>
                                 <div class="candidate-education-form-field">
                                     {{ Form::label('rank', __('messages.candidate_profile.ranks'), ['class' => 'form-label required']) }}
-                                    {{ Form::select('rank', ['' => __('messages.candidate_profile.enter_rank'), 'Captain' => 'Captain', 'Major' => 'Major', 'Colonel' => 'Colonel'], $retiredArmyEmployment->rank ?? null, ['class' => 'form-select', 'required']) }}
+                                    {{ Form::select('rank', $armyRankOptions, $retiredArmyEmployment->rank ?? null, ['class' => 'form-select', 'required']) }}
                                 </div>
                                 <div class="candidate-education-form-field">
                                     {{ Form::label('type', __('messages.candidate_profile.type'), ['class' => 'form-label required']) }}
-                                    {{ Form::select('type', ['' => __('messages.candidate_profile.enter_type'), 'Commissioned' => 'Commissioned', 'Non Commissioned' => 'Non Commissioned'], $retiredArmyEmployment->type ?? null, ['class' => 'form-select', 'required']) }}
+                                    {{ Form::select('type', $armyTypeOptions, $retiredArmyEmployment->type ?? null, ['class' => 'form-select', 'required']) }}
                                 </div>
                                 <div class="candidate-education-form-field">
                                     {{ Form::label('arms', __('messages.candidate_profile.arms'), ['class' => 'form-label required']) }}
-                                    {{ Form::select('arms', ['' => __('messages.candidate_profile.enter_type'), 'Infantry' => 'Infantry', 'Artillery' => 'Artillery', 'Signals' => 'Signals'], $retiredArmyEmployment->arms ?? null, ['class' => 'form-select', 'required']) }}
+                                    {{ Form::select('arms', $armyArmsOptions, $retiredArmyEmployment->arms ?? null, ['class' => 'form-select', 'required']) }}
                                 </div>
                                 <div class="candidate-education-form-field">
                                     {{ Form::label('trade', __('messages.candidate_profile.trade'), ['class' => 'form-label']) }}
@@ -331,21 +336,21 @@
                                 <div class="candidate-education-form-field">
                                     {{ Form::label('ba_no_prefix', __('messages.candidate_profile.ba_no'), ['class' => 'form-label required']) }}
                                     <div class="candidate-retired-army-ba-group">
-                                        {{ Form::select('ba_no_prefix', ['' => __('messages.candidate_profile.select_ba_no'), 'BA' => 'BA', 'BSS' => 'BSS', 'JC' => 'JC'], null, ['class' => 'form-select']) }}
+                                        {{ Form::select('ba_no_prefix', $armyBaNoPrefixOptions, null, ['class' => 'form-select']) }}
                                         {{ Form::text('ba_no', null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_ba_no')]) }}
                                     </div>
                                 </div>
                                 <div class="candidate-education-form-field">
                                     {{ Form::label('rank', __('messages.candidate_profile.ranks'), ['class' => 'form-label required']) }}
-                                    {{ Form::select('rank', ['' => __('messages.candidate_profile.enter_rank'), 'Captain' => 'Captain', 'Major' => 'Major', 'Colonel' => 'Colonel'], null, ['class' => 'form-select', 'required']) }}
+                                    {{ Form::select('rank', $armyRankOptions, null, ['class' => 'form-select', 'required']) }}
                                 </div>
                                 <div class="candidate-education-form-field">
                                     {{ Form::label('type', __('messages.candidate_profile.type'), ['class' => 'form-label required']) }}
-                                    {{ Form::select('type', ['' => __('messages.candidate_profile.enter_type'), 'Commissioned' => 'Commissioned', 'Non Commissioned' => 'Non Commissioned'], null, ['class' => 'form-select', 'required']) }}
+                                    {{ Form::select('type', $armyTypeOptions, null, ['class' => 'form-select', 'required']) }}
                                 </div>
                                 <div class="candidate-education-form-field">
                                     {{ Form::label('arms', __('messages.candidate_profile.arms'), ['class' => 'form-label required']) }}
-                                    {{ Form::select('arms', ['' => __('messages.candidate_profile.enter_type'), 'Infantry' => 'Infantry', 'Artillery' => 'Artillery', 'Signals' => 'Signals'], null, ['class' => 'form-select', 'required']) }}
+                                    {{ Form::select('arms', $armyArmsOptions, null, ['class' => 'form-select', 'required']) }}
                                 </div>
                                 <div class="candidate-education-form-field">
                                     {{ Form::label('trade', __('messages.candidate_profile.trade'), ['class' => 'form-label']) }}

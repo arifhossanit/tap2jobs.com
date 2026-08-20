@@ -618,6 +618,10 @@ if (! function_exists('addNotification')) {
             'title' => $data[3],
         ];
 
+        if (isset($data[4])) {
+            $notificationRecord['meta'] = $data[4];
+        }
+
         Notification::create($notificationRecord);
     }
 }
@@ -681,7 +685,13 @@ if (! function_exists('getNotificationUrl')) {
         if ($notification->notification_for == \App\Models\Notification::CANDIDATE) {
             return route('candidate.applied.job');
         } elseif ($notification->notification_for == \App\Models\Notification::EMPLOYER) {
-            return route('job-applications.index');
+            $jobId = data_get($notification->meta, 'job_id');
+
+            if ($jobId && \Illuminate\Support\Facades\Route::has('job-applications')) {
+                return route('job-applications', ['jobId' => $jobId]);
+            }
+
+            return route('job.index');
         } elseif ($notification->notification_for == \App\Models\Notification::ADMIN) {
             return url('/admin/dashboard');
         }

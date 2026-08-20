@@ -123,27 +123,39 @@
        href="{{ route('cities.index') }}">{{ __('messages.city.cities') }}</a>
 </li>
 
-<li class="nav-item position-relative mx-xl-3 mt-3 mb-xl-0 {{ !Request::is('admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}">
+<li class="nav-item position-relative mx-xl-3 mt-3 mb-xl-0 {{ !Request::is('admin/profile-references*','admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('admin/profile-references/common*') ? 'active' : '' }}"
+       href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_COMMON, \App\Models\ProfileReferenceOption::TYPE_GENDER]) }}">General</a>
+</li>
+<li class="nav-item position-relative mx-xl-3 mt-3 mb-xl-0 {{ !Request::is('admin/profile-references*','admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('admin/profile-references/candidate*') ? 'active' : '' }}"
+       href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_CANDIDATE, \App\Models\ProfileReferenceOption::TYPE_RELIGION]) }}">Candidate</a>
+</li>
+<li class="nav-item position-relative mx-xl-3 mt-3 mb-xl-0 {{ !Request::is('admin/profile-references*','admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('admin/profile-references/employer*') ? 'active' : '' }}"
+       href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_EMPLOYER, \App\Models\ProfileReferenceOption::TYPE_REFERENCE_RELATION]) }}">Employer</a>
+</li>
+<li class="nav-item position-relative mx-xl-3 mt-3 mb-xl-0 {{ !Request::is('admin/profile-references*','admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/marital-status*') ? 'active' : '' }}"
        href="{{ route('maritalStatus.index') }}">{{ __('messages.marital_statuses') }}</a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mt-3 mb-xl-0 {{ !Request::is('admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}">
+<li class="nav-item position-relative mx-xl-3 mt-3 mb-xl-0 {{ !Request::is('admin/profile-references*','admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/skills*') ? 'active' : '' }}"
        href="{{ route('skills.index') }}">{{ __('messages.skills') }}</a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mt-3 mb-xl-0 {{ !Request::is('admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}">
+<li class="nav-item position-relative mx-xl-3 mt-3 mb-xl-0 {{ !Request::is('admin/profile-references*','admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/salary-periods*') ? 'active' : '' }}"
        href="{{ route('salaryPeriod.index') }}">{{ __('messages.salary_periods') }}</a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mt-3 mb-xl-0 {{ !Request::is('admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}">
+<li class="nav-item position-relative mx-xl-3 mt-3 mb-xl-0 {{ !Request::is('admin/profile-references*','admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/industries*') ? 'active' : '' }}"
        href="{{ route('industry.index') }}">{{ __('messages.industries') }}</a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mt-3 mb-xl-0 {{ !Request::is('admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}">
+<li class="nav-item position-relative mx-xl-3 mt-3 mb-xl-0 {{ !Request::is('admin/profile-references*','admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/company-sizes*') ? 'active' : '' }}"
        href="{{ route('companySize.index') }}">{{ __('messages.company_sizes') }}</a>
 </li>
-<div class="{{ !Request::is('admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}">
+<div class="{{ !Request::is('admin/profile-references*','admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}">
     <li class="nav-item d-none d-xl-grid dropdown dropdown-hover">
         <a class="nav-link d-flex align-items-center py-3 ps-2" aria-current="page"
            href="javascript:void(0)">
@@ -151,23 +163,23 @@
         </a>
         <ul class="horizontal-submenu dropdown-menu top-100">
             <li>
-                <a class="dropdown-item {{ checkLanguageSession() == 'ar' ? 'text-end' : 'text-start' }} {{ Request::is('admin/functional-areas*') ? 'active' : '' }}{{ !Request::is('admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}"
+                <a class="dropdown-item {{ checkLanguageSession() == 'ar' ? 'text-end' : 'text-start' }} {{ Request::is('admin/functional-areas*') ? 'active' : '' }}{{ !Request::is('admin/profile-references*','admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}"
                    href="{{ route('functionalArea.index') }}">{{ __('messages.functional_areas') }}</a>
             </li>
             <li>
-                <a class="dropdown-item {{ checkLanguageSession() == 'ar' ? 'text-end' : 'text-start' }} {{ Request::is('admin/career-levels*') ? 'active' : '' }} {{ !Request::is('admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}"
+                <a class="dropdown-item {{ checkLanguageSession() == 'ar' ? 'text-end' : 'text-start' }} {{ Request::is('admin/career-levels*') ? 'active' : '' }} {{ !Request::is('admin/profile-references*','admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}"
                    href="{{ route('careerLevel.index') }}">{{ __('messages.career_levels') }}</a>
             </li>
             <li>
-                <a class="dropdown-item {{ checkLanguageSession() == 'ar' ? 'text-end' : 'text-start' }} {{ Request::is('admin/salary-currencies*') ? 'active' : '' }} {{ !Request::is('admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}"
+                <a class="dropdown-item {{ checkLanguageSession() == 'ar' ? 'text-end' : 'text-start' }} {{ Request::is('admin/salary-currencies*') ? 'active' : '' }} {{ !Request::is('admin/profile-references*','admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}"
                    href="{{ route('salaryCurrency.index') }}">{{ __('messages.salary_currencies') }}</a>
             </li>
             <li>
-                <a class="dropdown-item {{ checkLanguageSession() == 'ar' ? 'text-end' : 'text-start' }} {{ Request::is('admin/ownership-types*') ? 'active' : '' }} {{ !Request::is('admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}"
+                <a class="dropdown-item {{ checkLanguageSession() == 'ar' ? 'text-end' : 'text-start' }} {{ Request::is('admin/ownership-types*') ? 'active' : '' }} {{ !Request::is('admin/profile-references*','admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}"
                    href="{{ route('ownerShipType.index') }}">{{ __('messages.ownership_types') }}</a>
             </li>
             <li>
-                <a class="dropdown-item {{ checkLanguageSession() == 'ar' ? 'text-end' : 'text-start' }} {{ Request::is('admin/languages*') ? 'active' : '' }} {{ !Request::is('admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}"
+                <a class="dropdown-item {{ checkLanguageSession() == 'ar' ? 'text-end' : 'text-start' }} {{ Request::is('admin/languages*') ? 'active' : '' }} {{ !Request::is('admin/profile-references*','admin/marital-status*','admin/skills*','admin/salary-periods*','admin/industries*','admin/company-sizes*','admin/functional-areas*','admin/career-levels*','admin/salary-currencies*','admin/ownership-types*','admin/languages*') ? 'd-none' : '' }}"
                    href="{{ route('languages.index') }}">{{ __('messages.languages') }}</a>
             </li>
         </ul>

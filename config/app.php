@@ -61,6 +61,7 @@ return [
 
     'media_disc' => env('MEDIA_DISK', 'public'),
     'resume_disk' => env('RESUME_DISK', 'private'),
+    'subscriptions_enabled' => env('SUBSCRIPTIONS_ENABLED', false),
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

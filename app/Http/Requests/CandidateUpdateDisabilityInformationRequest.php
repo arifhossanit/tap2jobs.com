@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\ProfileReferenceOption;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CandidateUpdateDisabilityInformationRequest extends FormRequest
 {
@@ -22,7 +24,7 @@ class CandidateUpdateDisabilityInformationRequest extends FormRequest
 
     public function rules(): array
     {
-        $difficultyRule = 'nullable|in:no_difficulty,some_difficulty,a_lot_of_difficulty,cannot_do';
+        $difficultyRule = ['nullable', Rule::in(ProfileReferenceOption::values(ProfileReferenceOption::TYPE_DISABILITY_DIFFICULTY))];
 
         return [
             'has_disability_id' => 'required|boolean',

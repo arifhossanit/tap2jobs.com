@@ -10,7 +10,7 @@ class CandidateRetiredArmyEmployment extends Model
     public $table = 'candidate_retired_army_employments';
 
     public static $rules = [
-        'ba_no_prefix' => 'nullable|in:BA,BSS,JC',
+        'ba_no_prefix' => 'nullable',
         'ba_no' => 'required|max:50',
         'rank' => 'required|max:100',
         'type' => 'required|max:100',

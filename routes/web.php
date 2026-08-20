@@ -53,6 +53,7 @@ use App\Http\Controllers\BrandingSliderController;
 use App\Http\Controllers\AdController;
 use App\Http\Controllers\FunctionalAreaController;
 use App\Http\Controllers\JobApplicationController;
+use App\Http\Controllers\ProfileReferenceOptionController;
 use App\Http\Controllers\SalaryCurrencyController;
 use App\Http\Controllers\JobNotificationController;
 use App\Http\Controllers\TranslationManagerController;
@@ -157,6 +158,13 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          Route::get('company-sizes/{companySize}/edit', [CompanySizeController::class, 'edit'])->name('companySize.edit');
          Route::put('company-sizes/{companySize}', [CompanySizeController::class, 'update'])->name('companySize.update');
          Route::delete('company-sizes/{companySize}', [CompanySizeController::class, 'destroy'])->name('companySize.destroy');
+
+         // Profile Reference Options
+         Route::get('profile-references/{scope}/{type}', [ProfileReferenceOptionController::class, 'index'])->name('profileReferenceOptions.index');
+         Route::post('profile-references/{scope}/{type}', [ProfileReferenceOptionController::class, 'store'])->name('profileReferenceOptions.store');
+         Route::get('profile-references/{scope}/{type}/{id}/edit', [ProfileReferenceOptionController::class, 'edit'])->name('profileReferenceOptions.edit');
+         Route::put('profile-references/{scope}/{type}/{id}', [ProfileReferenceOptionController::class, 'update'])->name('profileReferenceOptions.update');
+         Route::delete('profile-references/{scope}/{type}/{id}', [ProfileReferenceOptionController::class, 'destroy'])->name('profileReferenceOptions.destroy');
 
          //Skills
          Route::get('skills', [SkillController::class, 'index'])->name('skills.index');

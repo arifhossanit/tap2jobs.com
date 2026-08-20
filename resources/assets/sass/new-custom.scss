@@ -6012,3 +6012,60 @@
         }
     }
 }
+
+/* Admin Sidebar Width Adjustment */
+.aside-menu-container {
+    width: 290px !important;
+    min-width: 290px !important;
+}
+
+@media (min-width: 1200px) {
+    .wrapper {
+        padding-left: 290px !important;
+    }
+
+    body.collapsed-menu .wrapper,
+    .collapsed-menu .wrapper {
+        padding-left: 80px !important;
+    }
+}
+
+@media (max-width: 1199px) {
+    .aside-menu-container {
+        left: -290px !important;
+        max-width: 290px !important;
+        width: calc(100% - 30px) !important;
+    }
+
+    .aside-menu-container.collapsed-menu {
+        left: 0 !important;
+    }
+}
+
+html[dir="rtl"] {
+    @media (min-width: 1200px) {
+        .wrapper {
+            padding-right: 290px !important;
+            padding-left: 0 !important;
+        }
+
+        body.collapsed-menu .wrapper,
+        .collapsed-menu .wrapper {
+            padding-right: 80px !important;
+            padding-left: 0 !important;
+        }
+    }
+
+    @media (max-width: 1199px) {
+        .aside-menu-container {
+            right: -290px !important;
+            left: auto !important;
+        }
+
+        .aside-menu-container.collapsed-menu {
+            right: 0 !important;
+            left: auto !important;
+        }
+    }
+}
+

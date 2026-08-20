@@ -3,8 +3,10 @@
 namespace App\Http\Requests;
 
 use App\Models\CandidateRetiredArmyEmployment;
+use App\Models\ProfileReferenceOption;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CreateCandidateRetiredArmyEmploymentRequest extends FormRequest
 {
@@ -30,7 +32,13 @@ class CreateCandidateRetiredArmyEmploymentRequest extends FormRequest
 
     public function rules(): array
     {
-        return CandidateRetiredArmyEmployment::$rules;
+        $rules = CandidateRetiredArmyEmployment::$rules;
+        $rules['ba_no_prefix'] = ['nullable', Rule::in(ProfileReferenceOption::values(ProfileReferenceOption::TYPE_ARMY_BA_NO_PREFIX))];
+        $rules['rank'] = ['required', 'max:100', Rule::in(ProfileReferenceOption::values(ProfileReferenceOption::TYPE_ARMY_RANK))];
+        $rules['type'] = ['required', 'max:100', Rule::in(ProfileReferenceOption::values(ProfileReferenceOption::TYPE_ARMY_EMPLOYMENT_TYPE))];
+        $rules['arms'] = ['required', 'max:100', Rule::in(ProfileReferenceOption::values(ProfileReferenceOption::TYPE_ARMY_ARMS))];
+
+        return $rules;
     }
 
     private function normalizeDate(?string $value): ?string

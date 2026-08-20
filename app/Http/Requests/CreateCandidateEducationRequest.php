@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\CandidateEducation;
+use App\Models\ProfileReferenceOption;
 use App\Models\RequiredDegreeLevel;
 use HTMLPurifier;
 use HTMLPurifier_Config;
@@ -48,7 +49,7 @@ class CreateCandidateEducationRequest extends FormRequest
         $rules = CandidateEducation::$rules;
         $degreeLevelId = $this->input('degree_level_id');
         $rules['foreign_university_country'] = 'required_if:foreign_institute,1|nullable|max:120';
-        $rules['result'] = 'required|max:150';
+        $rules['result'] = ['required', 'max:150', Rule::in(ProfileReferenceOption::values(ProfileReferenceOption::TYPE_EDUCATION_RESULT))];
         $rules['marks_percentage'] = 'required_if:result,First Division/Class,Second Division/Class,Third Division/Class|nullable|numeric|min:0|max:100';
         $rules['cgpa'] = 'required_if:result,Grade|nullable|numeric|min:0|max:100';
         $rules['cgpa'] .= '|lte:scale';

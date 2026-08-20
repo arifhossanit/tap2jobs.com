@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\ProfileReferenceOption;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -19,7 +20,7 @@ class CandidateUpdateReferenceRequest extends FormRequest
             'designation' => ['required', 'string', 'max:191'],
             'organization' => ['required', 'string', 'max:191'],
             'email' => ['nullable', 'email', 'max:191'],
-            'relation' => ['nullable', 'string', Rule::in(['Relative', 'Academic', 'Professional', 'Other'])],
+            'relation' => ['nullable', 'string', Rule::in(ProfileReferenceOption::values(ProfileReferenceOption::TYPE_REFERENCE_RELATION))],
             'mobile' => ['nullable', 'string', 'max:30'],
             'office_phone' => ['nullable', 'string', 'max:30'],
             'residential_phone' => ['nullable', 'string', 'max:30'],
