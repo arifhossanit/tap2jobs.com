@@ -151,14 +151,17 @@
                                                 href="{{ route('admin.jobs.show', $recentJobs->id) }}">{{ $recentJobs->job_title }}</a>
                                         </td>
                                         <td>
-                                            <a class="text-decoration-none"
-                                                href="{{ route('company.show', $recentJobs->company_id) }}">{{ $recentJobs->company->user->full_name }}</a>
+                                            @if ($recentJobs->company?->user)
+                                                <a class="text-decoration-none"
+                                                    href="{{ route('company.show', $recentJobs->company_id) }}">{{ $recentJobs->company->user->full_name }}</a>
+                                            @else
+                                                {{ __('messages.n/a') }}
+                                            @endif
                                         </td>
                                         <td>{{ $recentJobs->created_at->diffForhumans() }}</td>
-                                        <td>{{ $recentJobs->jobCategory->name }}</td>
-                                        <td>{{ Str::limit($recentJobs->jobType->name, 50, '...') }}</td>
-                                        <td>{{ !empty($recentJobs->jobShift) ? $recentJobs->jobShift->shift : __('messages.n/a') }}
-                                        </td>
+                                        <td>{{ $recentJobs->jobCategory?->name ?? __('messages.n/a') }}</td>
+                                        <td>{{ Str::limit($recentJobs->jobType?->name ?? __('messages.n/a'), 50, '...') }}</td>
+                                        <td>{{ $recentJobs->jobShift?->shift ?? __('messages.n/a') }}</td>
                                         <td>
                                             <i
                                                 class="pl-4 {{ $recentJobs->activeFeatured ? 'fas fa-check-circle text-success' : 'fas fa-times-circle text-danger' }}"></i>
@@ -166,7 +169,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="text-center">
+                                        <td colspan="7" class="text-center">
                                             {{ __('messages.employer_menu.no_data_available') }}
                                             .
                                         </td>
