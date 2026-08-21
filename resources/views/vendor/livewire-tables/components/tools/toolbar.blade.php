@@ -6,6 +6,18 @@
     @include($component->getConfigurableAreaFor('before-toolbar'), $component->getParametersForConfigurableArea('before-toolbar'))
 @endif
 
+@php
+    $hasToolbarControls = $component->isTailwind()
+        || $component->reorderIsEnabled()
+        || ($component->filtersAreEnabled() && $component->filtersVisibilityIsEnabled() && $component->hasVisibleFilters())
+        || $component->columnSelectIsEnabled()
+        || $component->hasConfigurableAreaFor('toolbar-left-start')
+        || $component->hasConfigurableAreaFor('toolbar-left-end')
+        || $component->hasConfigurableAreaFor('toolbar-right-start')
+        || $component->hasConfigurableAreaFor('toolbar-right-end');
+@endphp
+
+@if ($hasToolbarControls)
 <div @class([
         'd-md-flex justify-content-between mb-3' => $component->isBootstrap(),
         'md:flex md:justify-between mb-4 px-4 md:p-0' => $component->isTailwind(),
@@ -49,7 +61,7 @@
             @include($component->getConfigurableAreaFor('toolbar-right-start'), $component->getParametersForConfigurableArea('toolbar-right-start'))
         @endif
 
-        @if ($component->showBulkActionsDropdownAlpine())
+        @if ($component->isTailwind() && $component->showBulkActionsDropdownAlpine())
             <x-livewire-tables::tools.toolbar.items.bulk-actions />
         @endif
 
@@ -67,6 +79,7 @@
         @endif
     </div>
 </div>
+@endif
 @if (
     $component->filtersAreEnabled() &&
     $component->filtersVisibilityIsEnabled() &&

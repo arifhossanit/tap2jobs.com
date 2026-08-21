@@ -1,34 +1,61 @@
 @aware(['component', 'tableName'])
+@if($component->isBootstrap())
+    <style>
+        .livewire-table-bulk-actions-button {
+            background-color: #fff !important;
+            border-color: #adb5bd !important;
+            color: #060917 !important;
+            font-weight: 500;
+        }
+
+        .livewire-table-bulk-actions-button:hover,
+        .livewire-table-bulk-actions-button:focus,
+        .livewire-table-bulk-actions-button.show {
+            background-color: #f5f7fa !important;
+            border-color: #89919a !important;
+            color: #060917 !important;
+        }
+
+        .livewire-table-bulk-actions-button.dropdown-toggle::after {
+            border-color: #060917 !important;
+        }
+    </style>
+@endif
 <div
     x-data="{ open: false, childElementOpen: false, isTailwind: @js($component->isTailwind()), isBootstrap: @js($component->isBootstrap()) }"
     x-cloak x-show="(selectedItems.length > 0 || alwaysShowBulkActions)"
     @class([
-        'mb-3 mb-md-0' => $component->isBootstrap(),
+        'dropdown me-2' => $component->isBootstrap(),
         'w-full md:w-auto mb-4 md:mb-0' => $component->isTailwind(),
     ])
 >
     <div @class([
-            'dropdown d-block d-md-inline' => $component->isBootstrap(),
+            'd-inline-block' => $component->isBootstrap(),
             'relative inline-block text-left z-10 w-full md:w-auto' => $component->isTailwind(),
         ])
     >
         <button
             @class([
-                'btn dropdown-toggle d-block d-md-inline' => $component->isBootstrap(),
+                'livewire-table-bulk-actions-button btn dropdown-toggle d-inline-flex align-items-center gap-2' => $component->isBootstrap(),
                 'inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600' => $component->isTailwind(),
             ])
             type="button"
             id="{{ $tableName }}-bulkActionsDropdown" 
-            
-                        
             @if($component->isTailwind())
-                        x-on:click="open = !open"
-                        @else
-                        data-toggle="dropdown" data-bs-toggle="dropdown"
-                        @endif
+                x-on:click="open = !open"
+            @else
+                data-toggle="dropdown" data-bs-toggle="dropdown"
+            @endif
             aria-haspopup="true" aria-expanded="false">
 
             @lang('Bulk Actions')
+            @if($component->isBootstrap())
+                <span
+                    class="badge rounded-pill bg-primary"
+                    x-text="selectedItems.length"
+                    aria-label="{{ __('Selected rows') }}"
+                ></span>
+            @endif
             @if($component->isTailwind())
                 <x-heroicon-m-chevron-down class="-mr-1 ml-2 h-5 w-5" />
             @endif
@@ -51,9 +78,19 @@
                     <div class="py-1" role="menu" aria-orientation="vertical">
                         @foreach ($component->getBulkActions() as $action => $title)
                             <button
-                                wire:click="{{ $action }}"
+                                wire:loading.attr="disabled"
+                                wire:target="{{ $action }}"
                                 @if($component->hasConfirmationMessage($action))
-                                    wire:confirm="{{ $component->getBulkActionConfirmMessage($action) }}"
+                                    x-on:click.prevent.stop="
+                                        open = false;
+                                        window.confirmDeleteAction(
+                                            @js($component->getBulkActionConfirmMessage($action)),
+                                            () => $wire.{{ $action }}()
+                                        );
+                                    "
+                                @else
+                                    wire:click="{{ $action }}"
+                                    x-on:click="open = false"
                                 @endif
                                 wire:key="{{ $tableName }}-bulk-action-{{ $action }}"
                                 type="button"
@@ -69,25 +106,34 @@
         @else
             <div
                 @class([
-                    'dropdown-menu dropdown-menu-right w-100' => $component->isBootstrap4(),
-                    'dropdown-menu dropdown-menu-end w-100' => $component->isBootstrap5(),
+                    'dropdown-menu dropdown-menu-right shadow-sm' => $component->isBootstrap4(),
+                    'dropdown-menu dropdown-menu-end shadow-sm' => $component->isBootstrap5(),
                 ])
+                style="min-width: 13rem;"
                 aria-labelledby="{{ $tableName }}-bulkActionsDropdown"
             >
                 @foreach ($component->getBulkActions() as $action => $title)
-                    <a
-                        href="#"
+                    <button
+                        type="button"
                         @if($component->hasConfirmationMessage($action))
-                            wire:confirm="{{ $component->getBulkActionConfirmMessage($action) }}"
+                            x-on:click.prevent.stop="
+                                window.confirmDeleteAction(
+                                    @js($component->getBulkActionConfirmMessage($action)),
+                                    () => $wire.{{ $action }}()
+                                );
+                            "
+                        @else
+                            wire:click="{{ $action }}"
                         @endif
-                        wire:click="{{ $action }}"
+                        wire:loading.attr="disabled"
+                        wire:target="{{ $action }}"
                         wire:key="{{ $tableName }}-bulk-action-{{ $action }}"
                         @class([
                             'dropdown-item' => $component->isBootstrap(),
                         ])
                     >
                         {{ $title }}
-                    </a>
+                    </button>
                 @endforeach
             </div>
         @endif

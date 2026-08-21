@@ -7398,11 +7398,45 @@ window.displayErrorMessage = function (message) {
   }
   toastr.error(message, errorTitle);
 };
-window.deleteItem = function (url, header) {
-  var callFunction = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+window.displayDeleteSuccessMessage = function (message) {
   swal({
+    icon: "success",
+    title: Lang.get("js.deleted") + " !",
+    text: message,
+    buttons: {
+      confirm: Lang.get("js.ok")
+    },
+    reverseButtons: true,
+    confirmButtonColor: "#F62947",
+    timer: 2000
+  });
+};
+window.displayDeleteErrorMessage = function (message) {
+  swal({
+    title: Lang.get("js.error"),
+    icon: "error",
+    text: message,
+    type: "error",
+    buttons: {
+      confirm: Lang.get("js.ok")
+    },
+    reverseButtons: true,
+    confirmButtonColor: "#F62947",
+    timer: 4000
+  });
+};
+window.addEventListener("bulk-action-feedback", function (event) {
+  var feedback = event.detail || {};
+  if (feedback.type === "success") {
+    window.displayDeleteSuccessMessage(feedback.message);
+  } else if (feedback.type === "error") {
+    window.displayDeleteErrorMessage(feedback.message);
+  }
+});
+window.confirmDeleteAction = function (message, onConfirm) {
+  return swal({
     title: Lang.get("js.delete") + " !",
-    text: Lang.get("js.are_you_sure") + ' "' + header + '" ?',
+    text: message,
     buttons: {
       confirm: Lang.get("js.yes_delete"),
       cancel: Lang.get("js.no_cancel")
@@ -7412,9 +7446,15 @@ window.deleteItem = function (url, header) {
     cancelButtonColor: "#ADB5BD",
     icon: "warning"
   }).then(function (willDelete) {
-    if (willDelete) {
-      deleteItemAjax(url, header, callFunction);
+    if (willDelete && typeof onConfirm === "function") {
+      onConfirm();
     }
+  });
+};
+window.deleteItem = function (url, header) {
+  var callFunction = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+  window.confirmDeleteAction(Lang.get("js.are_you_sure") + ' "' + header + '" ?', function () {
+      deleteItemAjax(url, header, callFunction);
   });
 };
 function deleteItemAjax(url, header) {
@@ -7429,34 +7469,13 @@ function deleteItemAjax(url, header) {
         Livewire.dispatch("refresh");
         Livewire.dispatch('resetPage');
       }
-      swal({
-        icon: "success",
-        title: Lang.get("js.deleted") + " !",
-        text: header + " " + Lang.get("js.has_been_deleted"),
-        buttons: {
-          confirm: Lang.get("js.ok")
-        },
-        reverseButtons: true,
-        confirmButtonColor: "#F62947",
-        timer: 2000
-      });
+      window.displayDeleteSuccessMessage(header + " " + Lang.get("js.has_been_deleted"));
       if (callFunction) {
         eval(callFunction);
       }
     },
     error: function error(data) {
-      swal({
-        title: Lang.get("js.error"),
-        icon: "error",
-        text: data.responseJSON.message,
-        type: "error",
-        buttons: {
-          confirm: Lang.get("js.ok")
-        },
-        reverseButtons: true,
-        confirmButtonColor: "#F62947",
-        timer: 4000
-      });
+      window.displayDeleteErrorMessage(data.responseJSON.message);
     }
   });
 }

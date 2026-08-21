@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Exceptions\DataTableConfigurationException;
+use Throwable;
 
 /**
  * Class LivewireTableComponent
@@ -55,35 +56,74 @@ class LivewireTableComponent extends DataTableComponent
             return;
         }
 
+        $selectedIds = array_values(array_unique($this->getSelected()));
+
+        if (empty($selectedIds)) {
+            $this->dispatchBulkActionFeedback('error', 'Please select at least one record.');
+
+            return;
+        }
+
         $deleted = 0;
         $skipped = 0;
+        $failed = 0;
 
-        foreach ($this->getSelected() as $id) {
-            $record = $this->bulkDeleteModel::find($id);
+        foreach ($selectedIds as $id) {
+            try {
+                $record = $this->bulkDeleteModel::find($id);
 
-            if (! $record) {
-                continue;
+                if (! $record) {
+                    $failed++;
+                    continue;
+                }
+
+                if ($this->isBulkDeleteBlocked($record)) {
+                    $skipped++;
+                    continue;
+                }
+
+                $this->deleteBulkDeleteRecord($record);
+                $deleted++;
+            } catch (Throwable $exception) {
+                report($exception);
+                $failed++;
             }
-
-            if ($this->isBulkDeleteBlocked($record)) {
-                $skipped++;
-                continue;
-            }
-
-            $this->deleteBulkDeleteRecord($record);
-            $deleted++;
         }
 
         $this->clearSelected();
-        $this->dispatch('refreshDatatable');
 
-        if ($deleted > 0 && $skipped > 0) {
-            $this->dispatch('success', message: $deleted.' selected record(s) deleted. '.$skipped.' in-use record(s) skipped.');
+        if ($failed > 0) {
+            $message = $deleted.' record(s) deleted.';
+
+            if ($skipped > 0) {
+                $message .= ' '.$skipped.' in-use record(s) skipped.';
+            }
+
+            $message .= ' '.$failed.' record(s) could not be deleted.';
+
+            $this->dispatchBulkActionFeedback('error', $message);
+        } elseif ($deleted > 0 && $skipped > 0) {
+            $this->dispatchBulkActionFeedback('success', $deleted.' record(s) deleted. '.$skipped.' in-use record(s) skipped.');
         } elseif ($deleted > 0) {
-            $this->dispatch('success', message: 'Selected record(s) deleted successfully.');
+            $message = $deleted === 1
+                ? '1 selected record deleted successfully.'
+                : $deleted.' selected records deleted successfully.';
+
+            $this->dispatchBulkActionFeedback('success', $message);
         } elseif ($skipped > 0) {
-            $this->dispatch('error', message: 'Selected record(s) are already in use.');
+            $message = $skipped === 1
+                ? '1 selected record is already in use.'
+                : $skipped.' selected records are already in use.';
+
+            $this->dispatchBulkActionFeedback('error', $message);
+        } else {
+            $this->dispatchBulkActionFeedback('error', 'No selected records could be deleted.');
         }
+    }
+
+    protected function dispatchBulkActionFeedback(string $type, string $message): void
+    {
+        $this->dispatch('bulk-action-feedback', type: $type, message: $message);
     }
 
     protected function isBulkDeleteBlocked($record): bool

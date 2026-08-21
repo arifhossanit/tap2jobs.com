@@ -38,8 +38,6 @@
             @endif
 
 
-            <x-livewire-tables::table.tr.bulk-actions :rows="$rows" :displayMinimisedOnReorder="true" />
-
             @forelse ($rows as $rowIndex => $row)
                 <x-livewire-tables::table.tr wire:key="{{ $tableName }}-row-wrap-{{ $row->{$this->getPrimaryKey()} }}"
                     :row="$row" :rowIndex="$rowIndex">

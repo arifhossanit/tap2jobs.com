@@ -54,6 +54,9 @@
                     ],
                 ])
             @endif
+            @if ($component->showBulkActionsDropdownAlpine())
+                <x-livewire-tables::tools.toolbar.items.bulk-actions />
+            @endif
             @if ($component->showButtonOnHeader)
                 @include($component->buttonComponent)
             @endif
