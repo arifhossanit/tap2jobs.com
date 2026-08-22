@@ -48,10 +48,32 @@ class StateController extends AppBaseController
      */
     public function store(CreateStateRequest $request): JsonResponse
     {
-        $input = $request->all();
-        $state = $this->stateRepository->create($input);
+        $countryId = $request->input('country_id');
+        $rawNames = str_replace(["\r\n", "\n", "\r"], ',', $request->input('name'));
+        $names = array_values(array_unique(array_filter(array_map('trim', explode(',', $rawNames)))));
 
-        return $this->sendResponse($state, __('messages.flash.state_save'));
+        $lastCreatedState = null;
+        $createdCount = 0;
+
+        foreach ($names as $name) {
+            if (empty($name)) {
+                continue;
+            }
+            $exists = State::where('country_id', $countryId)->where('name', $name)->exists();
+            if (! $exists) {
+                $lastCreatedState = State::create([
+                    'country_id' => $countryId,
+                    'name' => $name,
+                ]);
+                $createdCount++;
+            }
+        }
+
+        if ($createdCount === 0 && ! empty($names)) {
+            $lastCreatedState = State::where('country_id', $countryId)->where('name', $names[0])->first();
+        }
+
+        return $this->sendResponse($lastCreatedState, __('messages.flash.state_save'));
     }
 
     /**
@@ -76,10 +98,16 @@ class StateController extends AppBaseController
     public function import(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv',
+            'country_id' => 'required|exists:countries,id',
+            'file' => ['required', 'file', function ($attribute, $value, $fail) {
+                $ext = strtolower($value->getClientOriginalExtension());
+                if (!in_array($ext, ['csv', 'xls', 'xlsx'])) {
+                    $fail('The file field must be a file of type: csv, xls, xlsx.');
+                }
+            }],
         ]);
 
-        $import = new StatesImport;
+        $import = new StatesImport($request->input('country_id'));
         Excel::import($import, $request->file('file'));
 
         if ($import->failures()->isNotEmpty()) {

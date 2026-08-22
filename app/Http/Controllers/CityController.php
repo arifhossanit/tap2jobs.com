@@ -39,10 +39,33 @@ class CityController extends AppBaseController
 
     public function store(CreateCityRequest $request): JsonResponse
     {
-        $input = $request->all();
-        $state = $this->cityRepository->create($input);
+        $stateId = $request->input('state_id');
+        $rawNames = str_replace(["\r\n", "\n", "\r"], ',', $request->input('name'));
 
-        return $this->sendResponse($state, __('messages.flash.city_save'));
+        $names = array_values(array_unique(array_filter(array_map('trim', explode(',', $rawNames)))));
+
+        $lastCreatedCity = null;
+        $createdCount = 0;
+
+        foreach ($names as $name) {
+            if (empty($name)) {
+                continue;
+            }
+            $exists = City::where('state_id', $stateId)->where('name', $name)->exists();
+            if (! $exists) {
+                $lastCreatedCity = City::create([
+                    'state_id' => $stateId,
+                    'name' => $name,
+                ]);
+                $createdCount++;
+            }
+        }
+
+        if ($createdCount === 0 && ! empty($names)) {
+            $lastCreatedCity = City::where('state_id', $stateId)->where('name', $names[0])->first();
+        }
+
+        return $this->sendResponse($lastCreatedCity, __('messages.flash.city_save'));
     }
 
     public function edit(City $city): JsonResponse
@@ -61,10 +84,16 @@ class CityController extends AppBaseController
     public function import(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv',
+            'state_id' => 'required|exists:states,id',
+            'file' => ['required', 'file', function ($attribute, $value, $fail) {
+                $ext = strtolower($value->getClientOriginalExtension());
+                if (!in_array($ext, ['csv', 'xls', 'xlsx'])) {
+                    $fail('The file field must be a file of type: csv, xls, xlsx.');
+                }
+            }],
         ]);
 
-        $import = new CitiesImport;
+        $import = new CitiesImport($request->input('state_id'));
         Excel::import($import, $request->file('file'));
 
         if ($import->failures()->isNotEmpty()) {

@@ -10,5 +10,6 @@
         </div>
         @include('education_major_groups.add_modal')
         @include('education_major_groups.edit_modal')
+        @include('education_major_groups.import_modal')
     </div>
 @endsection

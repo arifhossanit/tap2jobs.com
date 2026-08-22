@@ -159,6 +159,15 @@ class ProfileReferenceOption extends Model
         ];
     }
 
+    public static function commonDedicatedRouteNames(): array
+    {
+        return [
+            self::TYPE_GENDER => 'genders',
+            self::TYPE_LANGUAGE_PROFICIENCY => 'languageProficiencies',
+            self::TYPE_ONLINE_PROFILE_PLATFORM => 'onlineProfilePlatforms',
+        ];
+    }
+
     public static function employerDedicatedRouteNames(): array
     {
         return [
@@ -173,6 +182,10 @@ class ProfileReferenceOption extends Model
 
     public static function dedicatedRouteName(string $scope, string $type): ?string
     {
+        if ($scope === self::SCOPE_COMMON) {
+            return self::commonDedicatedRouteNames()[$type] ?? null;
+        }
+
         if ($scope === self::SCOPE_CANDIDATE) {
             return self::candidateDedicatedRouteNames()[$type] ?? null;
         }

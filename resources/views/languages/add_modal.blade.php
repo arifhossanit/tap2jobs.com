@@ -17,12 +17,12 @@
                 <div class="mb-5">
                     {{ Form::label('language',__('messages.language.language').(':'), ['class' => 'form-label']) }}
                     <span class="required"></span>
-                    {{ Form::text('language', null, ['class' => 'form-control','required','id'=>'languages','placeholder' => __('messages.language.language')] ) }}
+                    {{ Form::textarea('language', null, ['class' => 'form-control','required','id'=>'languages','rows' => 3,'placeholder' => 'Enter name or multiple names (separated by commas or new lines)'] ) }}
                 </div>
                 <div class="mb-5">
                     {{ Form::label('iso_code',__('messages.language.iso_code').(':'),['class' => 'form-label']) }}
-                    <span class="required"></span>
-                    {{ Form::text('iso_code', '', ['class' => 'form-control','required', 'id' => 'languageIsoCode','placeholder' => __('messages.language.iso_code')]) }}
+                    <small class="text-muted">(Optional for multiple)</small>
+                    {{ Form::text('iso_code', '', ['class' => 'form-control', 'id' => 'languageIsoCode','placeholder' => __('messages.language.iso_code')]) }}
                 </div>
             </div>
             <div class="modal-footer pt-0">

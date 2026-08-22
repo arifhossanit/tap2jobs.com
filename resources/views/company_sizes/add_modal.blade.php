@@ -17,7 +17,7 @@
                 <div class="mb-5">
                     {{ Form::label('size', __('messages.company_size.size').(':'), ['class' => 'form-label']) }}
                     <span class="required"></span>
-                    {{ Form::text('size', null, ['id'=>'size','class' => 'form-control','required','placeholder' => __('messages.company_size.size')]) }}
+                    {{ Form::textarea('size', null, ['id'=>'size','class' => 'form-control','required','rows' => 3, 'placeholder' => 'Enter size or multiple sizes (separated by commas or new lines)']) }}
                 </div>
             </div>
             <div class="modal-footer pt-0">

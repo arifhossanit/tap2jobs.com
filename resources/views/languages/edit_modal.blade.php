@@ -18,7 +18,7 @@
                 <div class="mb-5">
                     {{ Form::label('language',__('messages.language.language').(':'), ['class' => 'form-label']) }}
                     <span class="required"></span>
-                    {{ Form::text('language', null, ['id'=>'editLanguage','class' => 'form-control','required','placeholder' => __('messages.language.language')]) }}
+                    {{ Form::textarea('language', null, ['id'=>'editLanguage','class' => 'form-control','required', 'rows' => 3, 'placeholder' => __('messages.language.language')]) }}
                 </div>
                 <div class="mb-5">
                     {{ Form::label('iso_code',__('messages.language.iso_code').(':'),['class' => 'form-label']) }}

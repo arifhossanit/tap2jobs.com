@@ -15,6 +15,7 @@
     </div>
     @include('cities.add_modal')
     @include('cities.edit_modal')
+    @include('cities.import_modal')
     {{Form::hidden('citiesData',true,['id'=>'indexCitiesData'])}}
 @endsection
 

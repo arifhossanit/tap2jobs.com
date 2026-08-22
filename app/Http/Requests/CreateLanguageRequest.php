@@ -20,7 +20,10 @@ class CreateLanguageRequest extends FormRequest
      */
     public function rules(): array
     {
-        return Language::$rules;
+        return [
+            'language' => 'required|string',
+            'iso_code' => 'nullable|string|max:150',
+        ];
     }
 
     public function messages(): array

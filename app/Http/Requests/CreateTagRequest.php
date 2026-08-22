@@ -20,6 +20,9 @@ class CreateTagRequest extends FormRequest
      */
     public function rules(): array
     {
-        return Tag::$rules;
+        return [
+            'name' => 'required|string',
+            'description' => 'nullable',
+        ];
     }
 }

@@ -7,6 +7,7 @@ use App\Models\ProfileReferenceOption;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
@@ -38,25 +39,69 @@ class ProfileReferenceOptionController extends AppBaseController
     {
         $this->guardScopeType($scope, $type);
 
-        $input = $this->validatedInput($request, $scope, $type);
-        $option = ProfileReferenceOption::createRecord($type, $input);
+        $request->validate([
+            'label' => ['required', 'string'],
+        ]);
 
-        return $this->sendResponse($option, 'Reference option saved successfully.');
+        $rawLabels = str_replace(["\r\n", "\n", "\r"], ',', $request->input('label'));
+        $labels = array_values(array_unique(array_filter(array_map('trim', explode(',', $rawLabels)))));
+
+        $lastCreatedOption = null;
+        $createdCount = 0;
+
+        foreach ($labels as $label) {
+            if (empty($label)) {
+                continue;
+            }
+
+            $value = (count($labels) === 1 && filled($request->input('value')))
+                ? trim((string) $request->input('value'))
+                : $label;
+
+            $table = ProfileReferenceOption::tableFor($type);
+            $exists = \DB::table($table)
+                ->where('scope', $scope)
+                ->where(function ($q) use ($label, $value) {
+                    $q->where('label', $label)->orWhere('value', $value);
+                })
+                ->exists();
+
+            if (! $exists) {
+                $lastCreatedOption = ProfileReferenceOption::createRecord($type, [
+                    'scope' => $scope,
+                    'label' => $label,
+                    'value' => $value,
+                    'sort_order' => $request->input('sort_order', 0),
+                    'is_active' => $request->boolean('is_active', true),
+                ]);
+                $createdCount++;
+            }
+        }
+
+        if ($createdCount === 0 && ! empty($labels)) {
+            $table = ProfileReferenceOption::tableFor($type);
+            $existing = \DB::table($table)->where('scope', $scope)->where('label', $labels[0])->first();
+            if ($existing) {
+                $lastCreatedOption = ProfileReferenceOption::findRecord($type, $existing->id);
+            }
+        }
+
+        return $this->sendResponse($lastCreatedOption, 'Reference option saved successfully.');
     }
 
-    public function edit(string $scope, string $type, int $id): JsonResponse
+    public function edit(string $scope, string $type, $id): JsonResponse
     {
         $this->guardScopeType($scope, $type);
-        $profileReferenceOption = $this->findOption($type, $id);
+        $profileReferenceOption = $this->findOption($type, (int) $id);
         abort_unless($profileReferenceOption->scope === $scope, 404);
 
         return $this->sendResponse($profileReferenceOption, 'Reference option retrieved successfully.');
     }
 
-    public function update(Request $request, string $scope, string $type, int $id): JsonResponse
+    public function update(Request $request, string $scope, string $type, $id): JsonResponse
     {
         $this->guardScopeType($scope, $type);
-        $profileReferenceOption = $this->findOption($type, $id);
+        $profileReferenceOption = $this->findOption($type, (int) $id);
         abort_unless($profileReferenceOption->scope === $scope, 404);
 
         $input = $this->validatedInput($request, $scope, $type, $profileReferenceOption);
@@ -70,7 +115,12 @@ class ProfileReferenceOptionController extends AppBaseController
         $this->guardScopeType($scope, $type);
 
         $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv',
+            'file' => ['required', 'file', function ($attribute, $value, $fail) {
+                $ext = strtolower($value->getClientOriginalExtension());
+                if (!in_array($ext, ['csv', 'xls', 'xlsx'])) {
+                    $fail('The file field must be a file of type: csv, xls, xlsx.');
+                }
+            }],
         ]);
 
         $import = new ProfileReferenceOptionsImport($scope, $type);
@@ -89,10 +139,10 @@ class ProfileReferenceOptionController extends AppBaseController
             : back();
     }
 
-    public function destroy(string $scope, string $type, int $id): JsonResponse
+    public function destroy(string $scope, string $type, $id): JsonResponse
     {
         $this->guardScopeType($scope, $type);
-        $profileReferenceOption = $this->findOption($type, $id);
+        $profileReferenceOption = $this->findOption($type, (int) $id);
         abort_unless($profileReferenceOption->scope === $scope, 404);
         $profileReferenceOption->delete();
 
@@ -122,6 +172,55 @@ class ProfileReferenceOptionController extends AppBaseController
         }
 
         return $this->sendSuccess($deleted.' reference option(s) deleted successfully.');
+    }
+
+    public function dedicatedIndex(): View|RedirectResponse
+    {
+        [$scope, $type] = $this->scopeTypeFromDedicatedRoute();
+
+        return $this->index($scope, $type);
+    }
+
+    public function dedicatedStore(Request $request): JsonResponse
+    {
+        [$scope, $type] = $this->scopeTypeFromDedicatedRoute();
+
+        return $this->store($request, $scope, $type);
+    }
+
+    public function dedicatedImport(Request $request)
+    {
+        [$scope, $type] = $this->scopeTypeFromDedicatedRoute();
+
+        return $this->import($request, $scope, $type);
+    }
+
+    public function dedicatedBulkDestroy(Request $request): JsonResponse
+    {
+        [$scope, $type] = $this->scopeTypeFromDedicatedRoute();
+
+        return $this->bulkDestroy($request, $scope, $type);
+    }
+
+    public function dedicatedEdit($id): JsonResponse
+    {
+        [$scope, $type] = $this->scopeTypeFromDedicatedRoute();
+
+        return $this->edit($scope, $type, $id);
+    }
+
+    public function dedicatedUpdate(Request $request, $id): JsonResponse
+    {
+        [$scope, $type] = $this->scopeTypeFromDedicatedRoute();
+
+        return $this->update($request, $scope, $type, $id);
+    }
+
+    public function dedicatedDestroy($id): JsonResponse
+    {
+        [$scope, $type] = $this->scopeTypeFromDedicatedRoute();
+
+        return $this->destroy($scope, $type, $id);
     }
 
     private function validatedInput(Request $request, string $scope, string $type, ?ProfileReferenceOption $option = null): array
@@ -159,13 +258,39 @@ class ProfileReferenceOptionController extends AppBaseController
         abort_unless(ProfileReferenceOption::isAllowedForScope($scope, $type), 404);
     }
 
-    private function findOption(string $type, int $id): ProfileReferenceOption
+    private function findOption(string $type, $id): ProfileReferenceOption
     {
         abort_unless(array_key_exists($type, ProfileReferenceOption::tableMap()), 404);
 
-        $option = ProfileReferenceOption::findRecord($type, $id);
+        $option = ProfileReferenceOption::findRecord($type, (int) $id);
         abort_if($option === null, 404);
 
         return $option;
+    }
+
+    private function scopeTypeFromDedicatedRoute(): array
+    {
+        $routeName = request()->route()?->getName();
+        $routeBaseName = Str::before((string) $routeName, '.');
+
+        foreach (ProfileReferenceOption::commonDedicatedRouteNames() as $type => $dedicatedRouteName) {
+            if ($dedicatedRouteName === $routeBaseName) {
+                return [ProfileReferenceOption::SCOPE_COMMON, $type];
+            }
+        }
+
+        foreach (ProfileReferenceOption::candidateDedicatedRouteNames() as $type => $dedicatedRouteName) {
+            if ($dedicatedRouteName === $routeBaseName) {
+                return [ProfileReferenceOption::SCOPE_CANDIDATE, $type];
+            }
+        }
+
+        foreach (ProfileReferenceOption::employerDedicatedRouteNames() as $type => $dedicatedRouteName) {
+            if ($dedicatedRouteName === $routeBaseName) {
+                return [ProfileReferenceOption::SCOPE_EMPLOYER, $type];
+            }
+        }
+
+        abort(404);
     }
 }

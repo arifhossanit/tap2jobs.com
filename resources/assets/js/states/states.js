@@ -21,8 +21,19 @@ function loadStateData() {
         dropdownParent: $("#editStateModal")
     });
 
+    $("#importCountryId").select2({
+        width: "100%",
+        dropdownParent: $("#importStateModal")
+    });
+
     listenClick(".addStateModal", function() {
         $("#addStateModal")
+            .appendTo("body")
+            .modal("show");
+    });
+
+    listenClick(".importStateModal", function() {
+        $("#importStateModal")
             .appendTo("body")
             .modal("show");
     });
@@ -67,6 +78,13 @@ function loadStateData() {
 
     listenHiddenBsModal("#editStateModal", function() {
         resetModalForm("#editStateForm", "#editValidationErrorsBox");
+    });
+
+    listenHiddenBsModal("#importStateModal", function() {
+        $("#importCountryId")
+            .val("")
+            .trigger("change");
+        resetModalForm("#importStateForm", "#importStateValidationErrorsBox");
     });
 
     listenClick("#resetFilter", function() {
@@ -119,6 +137,39 @@ listenSubmit("#editStateForm", function(event) {
         },
         complete: function() {
             processingBtn("#editStateForm", "#editStateBtnSave");
+        }
+    });
+});
+
+listenSubmit("#importStateForm", function(e) {
+    e.preventDefault();
+    processingBtn("#importStateForm", "#importStateBtnSave", "loading");
+    let formData = new FormData(this);
+    $.ajax({
+        url: route("states.import"),
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(result) {
+            if (result.message || result.success) {
+                displaySuccessMessage(result.message || "States imported successfully.");
+                $("#importStateModal").modal("hide");
+                Livewire.dispatch("refreshDatatable");
+            }
+        },
+        error: function(result) {
+            let message = result.responseJSON?.message || "Unable to import file.";
+            if (result.responseJSON?.errors) {
+                let firstError = Object.values(result.responseJSON.errors)[0];
+                if (Array.isArray(firstError)) {
+                    message = firstError[0];
+                }
+            }
+            displayErrorMessage(message);
+        },
+        complete: function() {
+            processingBtn("#importStateForm", "#importStateBtnSave");
         }
     });
 });

@@ -14,7 +14,7 @@
                 <div class="mb-5">
                     {{ Form::label('name',__('messages.job_tag.name').(':'), ['class' => 'form-label']) }}
                     <span class="required"></span>
-                    {{ Form::text('name', null, ['id'=>'jobTagName','class' => 'form-control','required', 'placeholder' => __('messages.job_tag.name')]) }}
+                    {{ Form::textarea('name', null, ['id'=>'jobTagName','class' => 'form-control','required', 'rows' => 3, 'placeholder' => 'Enter name or multiple names (separated by commas or new lines)']) }}
                 </div>
                 <div class="form-group col-sm-12 mb-5">
                     {{ Form::label('description', __('messages.job_tag.description').(':'),['class' => 'form-label']) }}

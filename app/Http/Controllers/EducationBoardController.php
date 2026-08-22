@@ -20,15 +20,34 @@ class EducationBoardController extends AppBaseController
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'name' => 'required|max:120|unique:education_boards,name',
+            'name' => 'required|string',
         ]);
 
-        $board = EducationBoard::create([
-            'name' => $request->name,
-            'is_active' => true,
-        ]);
+        $rawNames = str_replace(["\r\n", "\n", "\r"], ',', $request->name);
+        $names = array_values(array_unique(array_filter(array_map('trim', explode(',', $rawNames)))));
 
-        return $this->sendResponse($board, __('messages.flash.education_board_save') ?? 'Education Board saved successfully.');
+        $lastCreatedBoard = null;
+        $createdCount = 0;
+
+        foreach ($names as $name) {
+            if (empty($name)) {
+                continue;
+            }
+            $exists = EducationBoard::where('name', $name)->exists();
+            if (! $exists) {
+                $lastCreatedBoard = EducationBoard::create([
+                    'name' => $name,
+                    'is_active' => true,
+                ]);
+                $createdCount++;
+            }
+        }
+
+        if ($createdCount === 0 && ! empty($names)) {
+            $lastCreatedBoard = EducationBoard::where('name', $names[0])->first();
+        }
+
+        return $this->sendResponse($lastCreatedBoard, __('messages.flash.education_board_save') ?? 'Education Board saved successfully.');
     }
 
     public function edit(EducationBoard $educationBoard): JsonResponse
@@ -52,7 +71,12 @@ class EducationBoardController extends AppBaseController
     public function import(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv',
+            'file' => ['required', 'file', function ($attribute, $value, $fail) {
+                $ext = strtolower($value->getClientOriginalExtension());
+                if (!in_array($ext, ['csv', 'xls', 'xlsx'])) {
+                    $fail('The file field must be a file of type: csv, xls, xlsx.');
+                }
+            }],
         ]);
 
         $import = new EducationBoardsImport;

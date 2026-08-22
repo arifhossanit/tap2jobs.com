@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateSalaryPeriodRequest;
 use App\Http\Requests\UpdateSalaryPeriodRequest;
+use App\Imports\SalaryPeriodsImport;
 use App\Models\Job;
 use App\Models\SalaryPeriod;
 use App\Repositories\SalaryPeriodRepository;
@@ -12,6 +13,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SalaryPeriodController extends AppBaseController
 {
@@ -41,10 +43,31 @@ class SalaryPeriodController extends AppBaseController
      */
     public function store(CreateSalaryPeriodRequest $request): JsonResponse
     {
-        $input = $request->all();
-        $salaryPeriod = $this->salaryPeriodRepository->create($input);
+        $rawPeriods = str_replace(["\r\n", "\n", "\r"], ',', $request->period);
+        $periods = array_values(array_unique(array_filter(array_map('trim', explode(',', $rawPeriods)))));
 
-        return $this->sendResponse($salaryPeriod, __('messages.flash.salary_period_save'));
+        $lastPeriod = null;
+        $createdCount = 0;
+
+        foreach ($periods as $period) {
+            if (empty($period)) {
+                continue;
+            }
+
+            $exists = SalaryPeriod::where('period', $period)->exists();
+            if (! $exists) {
+                $input = $request->all();
+                $input['period'] = $period;
+                $lastPeriod = $this->salaryPeriodRepository->create($input);
+                $createdCount++;
+            }
+        }
+
+        if ($createdCount === 0 && ! empty($periods)) {
+            $lastPeriod = SalaryPeriod::where('period', $periods[0])->first();
+        }
+
+        return $this->sendResponse($lastPeriod, __('messages.flash.salary_period_save'));
     }
 
     /**
@@ -72,6 +95,43 @@ class SalaryPeriodController extends AppBaseController
         $this->salaryPeriodRepository->update($input, $salaryPeriod->id);
 
         return $this->sendSuccess(__('messages.flash.salary_period_update'));
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => ['required', 'file', function ($attribute, $value, $fail) {
+                $ext = strtolower($value->getClientOriginalExtension());
+                if (!in_array($ext, ['csv', 'xls', 'xlsx'])) {
+                    $fail('The file field must be a file of type: csv, xls, xlsx.');
+                }
+            }],
+        ]);
+
+        $import = new SalaryPeriodsImport;
+        Excel::import($import, $request->file('file'));
+
+        if ($import->failures()->isNotEmpty()) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Salary Periods import completed with validation errors. Please fix the failed rows and try again.',
+                ], 422);
+            }
+
+            flash('Salary Periods import completed with validation errors. Please fix the failed rows and try again.')->error();
+
+            return back()->withFailures($import->failures());
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Salary Periods imported successfully.',
+            ]);
+        }
+
+        flash('Salary Periods imported successfully.')->success();
+
+        return back();
     }
 
     /**

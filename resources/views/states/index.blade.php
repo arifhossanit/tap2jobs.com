@@ -12,6 +12,7 @@
     </div>
     @include('states.add_modal')
     @include('states.edit_modal')
+    @include('states.import_modal')
     {{Form::hidden('stateData',true,['id'=>'indexStateData'])}}
 @endsection
 {{--@push('scripts')--}}

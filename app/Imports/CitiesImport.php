@@ -13,19 +13,31 @@ class CitiesImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnFa
 {
     use SkipsFailures;
 
+    private $stateId;
+
+    public function __construct($stateId)
+    {
+        $this->stateId = $stateId;
+    }
+
     public function rules(): array
     {
         return [
-            '*.state_id' => 'required|integer|exists:states,id',
             '*.name' => 'required|string|max:180',
         ];
     }
 
     public function model(array $row): ?City
     {
+        $name = trim((string) ($row['name'] ?? $row['city'] ?? ''));
+
+        if (empty($name)) {
+            return null;
+        }
+
         $attributes = [
-            'state_id' => (int) $row['state_id'],
-            'name' => trim((string) $row['name']),
+            'state_id' => (int) $this->stateId,
+            'name' => $name,
         ];
 
         if (City::where($attributes)->exists()) {

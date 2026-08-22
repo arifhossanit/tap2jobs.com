@@ -20,6 +20,9 @@ class CreateStateRequest extends FormRequest
      */
     public function rules(): array
     {
-        return State::$rules;
+        return [
+            'name' => 'required|string',
+            'country_id' => 'required|exists:countries,id',
+        ];
     }
 }

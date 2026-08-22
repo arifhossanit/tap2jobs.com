@@ -71,12 +71,6 @@
                                             class="nav-link btn btn-secondary btn-secondary-login {{ getFrontSelectLanguage() == 'ar' ? 'ms-2' : 'me-2' }} mb-3 mb-lg-0 nav-link">{{ __('web.login') }}</a>
                                         <ul class="nav submenu">
                                             <li class="nav-item mb-3 mt-2">
-                                                <a href="{{ route('admin.login') }}"
-                                                    class="nav-link text-gray d-flex align-items-center {{ request()->routeIs('admin.login') ? ' active' : '' }}">
-                                                    @lang('web.admin')
-                                                </a>
-                                            </li>
-                                            <li class="nav-item mb-3 mt-2">
                                                 <a href="{{ route('front.candidate.login') }}"
                                                     class="nav-link text-gray d-flex align-items-center {{ request()->routeIs('front.candidate.login') ? ' active' : '' }}">
                                                     {{ __('messages.notification_settings.candidate') }}

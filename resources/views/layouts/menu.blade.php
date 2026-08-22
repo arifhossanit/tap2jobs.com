@@ -11,8 +11,14 @@
     $armyActive = Request::is('admin/army-ba-no-prefixes*', 'admin/army-ranks*', 'admin/army-employment-types*', 'admin/army-arms*', 'admin/profile-references/candidate/army_ba_no_prefix*', 'admin/profile-references/candidate/army_rank*', 'admin/profile-references/candidate/army_employment_type*', 'admin/profile-references/candidate/army_arms*');
     $profileReferenceMenuGroups = \App\Models\ProfileReferenceOption::menuGroups();
     $profileReferenceTypeLabels = \App\Models\ProfileReferenceOption::typeLabels();
+    $commonReferenceRoutes = \App\Models\ProfileReferenceOption::commonDedicatedRouteNames();
     $candidateReferenceRoutes = \App\Models\ProfileReferenceOption::candidateDedicatedRouteNames();
     $employerReferenceRoutes = \App\Models\ProfileReferenceOption::employerDedicatedRouteNames();
+    $commonReferencePaths = [
+        \App\Models\ProfileReferenceOption::TYPE_GENDER => 'genders',
+        \App\Models\ProfileReferenceOption::TYPE_LANGUAGE_PROFICIENCY => 'language-proficiencies',
+        \App\Models\ProfileReferenceOption::TYPE_ONLINE_PROFILE_PLATFORM => 'online-profile-platforms',
+    ];
     $candidateReferencePaths = [
         \App\Models\ProfileReferenceOption::TYPE_RELIGION => 'candidate-religions',
         \App\Models\ProfileReferenceOption::TYPE_BLOOD_GROUP => 'blood-groups',
@@ -33,7 +39,7 @@
         \App\Models\ProfileReferenceOption::TYPE_JOB_EXPERIENCE_UNIT => 'job-experience-units',
         \App\Models\ProfileReferenceOption::TYPE_EMPLOYER_DISABILITY_FACILITY => 'employer-disability-facilities',
     ];
-    $referenceGeneralActive = Request::is('admin/profile-references/common*', 'admin/countries*', 'admin/states*', 'admin/cities*', 'admin/degree-levels*', 'admin/skills*', 'admin/industries*', 'admin/functional-areas*', 'admin/career-levels*', 'admin/salary-currencies*', 'admin/ownership-types*');
+    $referenceGeneralActive = Request::is('admin/profile-references/common*', 'admin/genders*', 'admin/language-proficiencies*', 'admin/online-profile-platforms*', 'admin/countries*', 'admin/states*', 'admin/cities*', 'admin/degree-levels*', 'admin/skills*', 'admin/industries*', 'admin/functional-areas*', 'admin/career-levels*', 'admin/salary-currencies*', 'admin/ownership-types*');
     $referenceCandidateActive = Request::is('admin/profile-references/candidate*', 'admin/education-degree-titles*', 'admin/education-major-groups*', 'admin/education-boards*', 'admin/education-results*', 'admin/candidate-religions*', 'admin/blood-groups*', 'admin/disability-difficulties*', 'admin/skill-learning-sources*', 'admin/candidate-reference-relations*', 'admin/army-ba-no-prefixes*', 'admin/army-ranks*', 'admin/army-employment-types*', 'admin/army-arms*', 'admin/marital-status*', 'admin/languages*');
     $referenceEmployerActive = Request::is('admin/profile-references/employer*', 'admin/employer-reference-relations*', 'admin/job-gender-preferences*', 'admin/job-employment-statuses*', 'admin/job-workplaces*', 'admin/job-experience-units*', 'admin/employer-disability-facilities*', 'admin/job-categories*', 'admin/job-types*', 'admin/job-tags*', 'admin/job-shifts*', 'admin/salary-periods*', 'admin/company-sizes*');
     $referencesActive = $referenceGeneralActive || $referenceCandidateActive || $referenceEmployerActive;
@@ -248,8 +254,8 @@
                     </ul>
                 </li>
                 @foreach($profileReferenceMenuGroups[\App\Models\ProfileReferenceOption::SCOPE_COMMON] ?? [] as $profileReferenceType)
-                    <li class="nav-item {{ Request::is('admin/profile-references/common/'.$profileReferenceType) ? 'active' : '' }}">
-                        <a class="nav-link d-flex align-items-center py-2" href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_COMMON, $profileReferenceType]) }}">
+                    <li class="nav-item {{ Request::is('admin/'.($commonReferencePaths[$profileReferenceType] ?? 'profile-references/common/'.$profileReferenceType).'*', 'admin/profile-references/common/'.$profileReferenceType) ? 'active' : '' }}">
+                        <a class="nav-link d-flex align-items-center py-2" href="{{ isset($commonReferenceRoutes[$profileReferenceType]) ? route($commonReferenceRoutes[$profileReferenceType].'.index') : route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_COMMON, $profileReferenceType]) }}">
                             <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
                             <span class="aside-menu-title">{{ $profileReferenceTypeLabels[$profileReferenceType] ?? $profileReferenceType }}</span>
                         </a>

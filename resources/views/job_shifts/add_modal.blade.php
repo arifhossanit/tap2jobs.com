@@ -14,7 +14,7 @@
                     <div class="mb-5">
                         {{ Form::label('shift',__('messages.job_shift.shift').':', ['class' => 'form-label']) }}
                         <span class="required"></span>
-                        {{ Form::text('shift', null, ['id'=>'jobShift','class' => 'form-control','required', 'placeholder' => __('messages.job_shift.shift')]) }}
+                        {{ Form::textarea('shift', null, ['id'=>'jobShift','class' => 'form-control','required', 'rows' => 3, 'placeholder' => 'Enter shift or multiple shifts (separated by commas or new lines)']) }}
                     </div>
                     <div class="mb-5">
                         {{ Form::label('description',__('messages.job_shift.description').(':'),['class' => 'form-label']) }}

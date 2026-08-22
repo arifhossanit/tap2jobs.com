@@ -17,7 +17,7 @@
                 <div class="mb-5">
                     {{ Form::label('period',__('messages.salary_period.period').(':'), ['class' => 'form-label']) }}
                     <span class="required"></span>
-                    {{ Form::text('period', null, ['id'=>'period','class' => 'form-control','required', 'placeholder' => __('messages.salary_period.period')]) }}
+                    {{ Form::textarea('period', null, ['id'=>'period','class' => 'form-control','required', 'rows' => 3, 'placeholder' => 'Enter period or multiple periods (separated by commas or new lines)']) }}
                 </div>
                 <div class=" mb-5">
                     {{ Form::label('description',__('messages.salary_period.description').(':'),['class' => 'form-label']) }}

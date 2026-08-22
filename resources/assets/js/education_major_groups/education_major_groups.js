@@ -1,8 +1,27 @@
 document.addEventListener('DOMContentLoaded', loadEducationMajorGroupData);
 
 function loadEducationMajorGroupData() {
+    $('#majorDegreeLevelId').select2({
+        width: '100%',
+        dropdownParent: $('#addEducationMajorGroupModal'),
+    });
+
+    $('#editMajorDegreeLevelId').select2({
+        width: '100%',
+        dropdownParent: $('#editEducationMajorGroupModal'),
+    });
+
+    $('#importMajorDegreeLevelId').select2({
+        width: '100%',
+        dropdownParent: $('#importEducationMajorGroupModal'),
+    });
+
     listenClick('.addEducationMajorGroupModal', function () {
         $('#addEducationMajorGroupModal').appendTo('body').modal('show');
+    });
+
+    listenClick('.importEducationMajorGroupModal', function () {
+        $('#importEducationMajorGroupModal').appendTo('body').modal('show');
     });
 
     listenClick('.education-major-group-edit-btn', function (event) {
@@ -13,7 +32,7 @@ function loadEducationMajorGroupData() {
             success: function (result) {
                 if (result.success) {
                     $('#editEducationMajorGroupId').val(result.data.id);
-                    $('#editMajorDegreeLevelId').val(result.data.required_degree_level_id);
+                    $('#editMajorDegreeLevelId').val(result.data.required_degree_level_id).trigger('change');
                     $('#editMajorGroupName').val(result.data.name);
                     $('#editEducationMajorGroupModal').appendTo('body').modal('show');
                 }
@@ -30,11 +49,17 @@ function loadEducationMajorGroupData() {
     });
 
     listenHiddenBsModal('#addEducationMajorGroupModal', function () {
+        $('#majorDegreeLevelId').val('').trigger('change');
         resetModalForm('#addEducationMajorGroupForm', '#educationMajorGroupValidationErrorsBox');
     });
 
     listenHiddenBsModal('#editEducationMajorGroupModal', function () {
         resetModalForm('#editEducationMajorGroupForm', '#editEducationMajorGroupValidationErrorsBox');
+    });
+
+    listenHiddenBsModal('#importEducationMajorGroupModal', function () {
+        $('#importMajorDegreeLevelId').val('').trigger('change');
+        resetModalForm('#importEducationMajorGroupForm', '#importEducationMajorGroupValidationErrorsBox');
     });
 }
 
@@ -81,6 +106,39 @@ listenSubmit('#editEducationMajorGroupForm', function (event) {
         },
         complete: function () {
             processingBtn('#editEducationMajorGroupForm', '#editEducationMajorGroupBtnSave');
+        },
+    });
+});
+
+listenSubmit('#importEducationMajorGroupForm', function (e) {
+    e.preventDefault();
+    processingBtn('#importEducationMajorGroupForm', '#importEducationMajorGroupBtnSave', 'loading');
+    let formData = new FormData(this);
+    $.ajax({
+        url: route('educationMajorGroups.import'),
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (result) {
+            if (result.message || result.success) {
+                displaySuccessMessage(result.message || 'Major / Groups imported successfully.');
+                $('#importEducationMajorGroupModal').modal('hide');
+                Livewire.dispatch('refreshDatatable');
+            }
+        },
+        error: function (result) {
+            let message = result.responseJSON?.message || 'Unable to import file.';
+            if (result.responseJSON?.errors) {
+                let firstError = Object.values(result.responseJSON.errors)[0];
+                if (Array.isArray(firstError)) {
+                    message = firstError[0];
+                }
+            }
+            displayErrorMessage(message);
+        },
+        complete: function () {
+            processingBtn('#importEducationMajorGroupForm', '#importEducationMajorGroupBtnSave');
         },
     });
 });

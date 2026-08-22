@@ -5499,9 +5499,16 @@ function loadCityData() {
     'width': '100%',
     dropdownParent: $('#editCityModal')
   });
+  $('#importStateId').select2({
+    'width': '100%',
+    dropdownParent: $('#importCityModal')
+  });
 }
 listenClick('.addCityModal', function () {
   $('#addCityModal').appendTo('body').modal('show');
+});
+listenClick('.importCityModal', function () {
+  $('#importCityModal').appendTo('body').modal('show');
 });
 listenClick('.cities-edit-btn', function (event) {
   var cityId = $(event.currentTarget).attr('data-id');
@@ -5531,6 +5538,10 @@ listenHiddenBsModal('#addCityModal', function () {
 });
 listenHiddenBsModal('#editCityModal', function () {
   resetModalForm('#editCityForm', '#editValidationErrorsBox');
+});
+listenHiddenBsModal('#importCityModal', function () {
+  $('#importStateId').val('').trigger('change');
+  resetModalForm('#importCityForm', '#importCityValidationErrorsBox');
 });
 listenClick('#resetFilter', function () {
   $('#filter_state').val('').trigger('change');
@@ -5577,6 +5588,39 @@ listenSubmit('#editCityForm', function (event) {
     },
     complete: function complete() {
       processingBtn('#editCityForm', '#btnEditSave');
+    }
+  });
+});
+listenSubmit('#importCityForm', function (e) {
+  e.preventDefault();
+  processingBtn('#importCityForm', '#importCityBtnSave', 'loading');
+  var formData = new FormData(this);
+  $.ajax({
+    url: route('cities.import'),
+    type: 'POST',
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function success(result) {
+      if (result.message || result.success) {
+        displaySuccessMessage(result.message || 'Cities imported successfully.');
+        $('#importCityModal').modal('hide');
+        Livewire.dispatch('refreshDatatable');
+      }
+    },
+    error: function error(result) {
+      var _result$responseJSON, _result$responseJSON2;
+      var message = ((_result$responseJSON = result.responseJSON) === null || _result$responseJSON === void 0 ? void 0 : _result$responseJSON.message) || 'Unable to import file.';
+      if ((_result$responseJSON2 = result.responseJSON) !== null && _result$responseJSON2 !== void 0 && _result$responseJSON2.errors) {
+        var firstError = Object.values(result.responseJSON.errors)[0];
+        if (Array.isArray(firstError)) {
+          message = firstError[0];
+        }
+      }
+      displayErrorMessage(message);
+    },
+    complete: function complete() {
+      processingBtn('#importCityForm', '#importCityBtnSave');
     }
   });
 });
@@ -8436,8 +8480,23 @@ listenSubmit('#editEducationBoardForm', function (event) {
 
 document.addEventListener('DOMContentLoaded', loadEducationDegreeTitleData);
 function loadEducationDegreeTitleData() {
+  $('#degreeLevelId').select2({
+    width: '100%',
+    dropdownParent: $('#addEducationDegreeTitleModal')
+  });
+  $('#editDegreeLevelId').select2({
+    width: '100%',
+    dropdownParent: $('#editEducationDegreeTitleModal')
+  });
+  $('#importDegreeLevelId').select2({
+    width: '100%',
+    dropdownParent: $('#importEducationDegreeTitleModal')
+  });
   listenClick('.addEducationDegreeTitleModal', function () {
     $('#addEducationDegreeTitleModal').appendTo('body').modal('show');
+  });
+  listenClick('.importEducationDegreeTitleModal', function () {
+    $('#importEducationDegreeTitleModal').appendTo('body').modal('show');
   });
   listenClick('.education-degree-title-edit-btn', function (event) {
     var titleId = $(event.currentTarget).attr('data-id');
@@ -8447,7 +8506,7 @@ function loadEducationDegreeTitleData() {
       success: function success(result) {
         if (result.success) {
           $('#editEducationDegreeTitleId').val(result.data.id);
-          $('#editDegreeLevelId').val(result.data.required_degree_level_id);
+          $('#editDegreeLevelId').val(result.data.required_degree_level_id).trigger('change');
           $('#editDegreeTitleName').val(result.data.name);
           $('#editEducationDegreeTitleModal').appendTo('body').modal('show');
         }
@@ -8462,10 +8521,15 @@ function loadEducationDegreeTitleData() {
     deleteItem(route('educationDegreeTitles.destroy', titleId), 'Degree Title');
   });
   listenHiddenBsModal('#addEducationDegreeTitleModal', function () {
+    $('#degreeLevelId').val('').trigger('change');
     resetModalForm('#addEducationDegreeTitleForm', '#educationDegreeTitleValidationErrorsBox');
   });
   listenHiddenBsModal('#editEducationDegreeTitleModal', function () {
     resetModalForm('#editEducationDegreeTitleForm', '#editEducationDegreeTitleValidationErrorsBox');
+  });
+  listenHiddenBsModal('#importEducationDegreeTitleModal', function () {
+    $('#importDegreeLevelId').val('').trigger('change');
+    resetModalForm('#importEducationDegreeTitleForm', '#importEducationDegreeTitleValidationErrorsBox');
   });
 }
 listenSubmit('#addEducationDegreeTitleForm', function (e) {
@@ -8513,6 +8577,39 @@ listenSubmit('#editEducationDegreeTitleForm', function (event) {
     }
   });
 });
+listenSubmit('#importEducationDegreeTitleForm', function (e) {
+  e.preventDefault();
+  processingBtn('#importEducationDegreeTitleForm', '#importEducationDegreeTitleBtnSave', 'loading');
+  var formData = new FormData(this);
+  $.ajax({
+    url: route('educationDegreeTitles.import'),
+    type: 'POST',
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function success(result) {
+      if (result.message || result.success) {
+        displaySuccessMessage(result.message || 'Degree Titles imported successfully.');
+        $('#importEducationDegreeTitleModal').modal('hide');
+        Livewire.dispatch('refreshDatatable');
+      }
+    },
+    error: function error(result) {
+      var _result$responseJSON, _result$responseJSON2;
+      var message = ((_result$responseJSON = result.responseJSON) === null || _result$responseJSON === void 0 ? void 0 : _result$responseJSON.message) || 'Unable to import file.';
+      if ((_result$responseJSON2 = result.responseJSON) !== null && _result$responseJSON2 !== void 0 && _result$responseJSON2.errors) {
+        var firstError = Object.values(result.responseJSON.errors)[0];
+        if (Array.isArray(firstError)) {
+          message = firstError[0];
+        }
+      }
+      displayErrorMessage(message);
+    },
+    complete: function complete() {
+      processingBtn('#importEducationDegreeTitleForm', '#importEducationDegreeTitleBtnSave');
+    }
+  });
+});
 
 /***/ },
 
@@ -8524,8 +8621,23 @@ listenSubmit('#editEducationDegreeTitleForm', function (event) {
 
 document.addEventListener('DOMContentLoaded', loadEducationMajorGroupData);
 function loadEducationMajorGroupData() {
+  $('#majorDegreeLevelId').select2({
+    width: '100%',
+    dropdownParent: $('#addEducationMajorGroupModal')
+  });
+  $('#editMajorDegreeLevelId').select2({
+    width: '100%',
+    dropdownParent: $('#editEducationMajorGroupModal')
+  });
+  $('#importMajorDegreeLevelId').select2({
+    width: '100%',
+    dropdownParent: $('#importEducationMajorGroupModal')
+  });
   listenClick('.addEducationMajorGroupModal', function () {
     $('#addEducationMajorGroupModal').appendTo('body').modal('show');
+  });
+  listenClick('.importEducationMajorGroupModal', function () {
+    $('#importEducationMajorGroupModal').appendTo('body').modal('show');
   });
   listenClick('.education-major-group-edit-btn', function (event) {
     var majorId = $(event.currentTarget).attr('data-id');
@@ -8535,7 +8647,7 @@ function loadEducationMajorGroupData() {
       success: function success(result) {
         if (result.success) {
           $('#editEducationMajorGroupId').val(result.data.id);
-          $('#editMajorDegreeLevelId').val(result.data.required_degree_level_id);
+          $('#editMajorDegreeLevelId').val(result.data.required_degree_level_id).trigger('change');
           $('#editMajorGroupName').val(result.data.name);
           $('#editEducationMajorGroupModal').appendTo('body').modal('show');
         }
@@ -8550,10 +8662,15 @@ function loadEducationMajorGroupData() {
     deleteItem(route('educationMajorGroups.destroy', majorId), 'Major / Group');
   });
   listenHiddenBsModal('#addEducationMajorGroupModal', function () {
+    $('#majorDegreeLevelId').val('').trigger('change');
     resetModalForm('#addEducationMajorGroupForm', '#educationMajorGroupValidationErrorsBox');
   });
   listenHiddenBsModal('#editEducationMajorGroupModal', function () {
     resetModalForm('#editEducationMajorGroupForm', '#editEducationMajorGroupValidationErrorsBox');
+  });
+  listenHiddenBsModal('#importEducationMajorGroupModal', function () {
+    $('#importMajorDegreeLevelId').val('').trigger('change');
+    resetModalForm('#importEducationMajorGroupForm', '#importEducationMajorGroupValidationErrorsBox');
   });
 }
 listenSubmit('#addEducationMajorGroupForm', function (e) {
@@ -8598,6 +8715,39 @@ listenSubmit('#editEducationMajorGroupForm', function (event) {
     },
     complete: function complete() {
       processingBtn('#editEducationMajorGroupForm', '#editEducationMajorGroupBtnSave');
+    }
+  });
+});
+listenSubmit('#importEducationMajorGroupForm', function (e) {
+  e.preventDefault();
+  processingBtn('#importEducationMajorGroupForm', '#importEducationMajorGroupBtnSave', 'loading');
+  var formData = new FormData(this);
+  $.ajax({
+    url: route('educationMajorGroups.import'),
+    type: 'POST',
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function success(result) {
+      if (result.message || result.success) {
+        displaySuccessMessage(result.message || 'Major / Groups imported successfully.');
+        $('#importEducationMajorGroupModal').modal('hide');
+        Livewire.dispatch('refreshDatatable');
+      }
+    },
+    error: function error(result) {
+      var _result$responseJSON, _result$responseJSON2;
+      var message = ((_result$responseJSON = result.responseJSON) === null || _result$responseJSON === void 0 ? void 0 : _result$responseJSON.message) || 'Unable to import file.';
+      if ((_result$responseJSON2 = result.responseJSON) !== null && _result$responseJSON2 !== void 0 && _result$responseJSON2.errors) {
+        var firstError = Object.values(result.responseJSON.errors)[0];
+        if (Array.isArray(firstError)) {
+          message = firstError[0];
+        }
+      }
+      displayErrorMessage(message);
+    },
+    complete: function complete() {
+      processingBtn('#importEducationMajorGroupForm', '#importEducationMajorGroupBtnSave');
     }
   });
 });
@@ -15909,8 +16059,15 @@ function loadStateData() {
     width: "100%",
     dropdownParent: $("#editStateModal")
   });
+  $("#importCountryId").select2({
+    width: "100%",
+    dropdownParent: $("#importStateModal")
+  });
   listenClick(".addStateModal", function () {
     $("#addStateModal").appendTo("body").modal("show");
+  });
+  listenClick(".importStateModal", function () {
+    $("#importStateModal").appendTo("body").modal("show");
   });
   listenClick(".state-edit-btn", function (event) {
     var stateId = $(event.currentTarget).attr("data-id");
@@ -15940,6 +16097,10 @@ function loadStateData() {
   });
   listenHiddenBsModal("#editStateModal", function () {
     resetModalForm("#editStateForm", "#editValidationErrorsBox");
+  });
+  listenHiddenBsModal("#importStateModal", function () {
+    $("#importCountryId").val("").trigger("change");
+    resetModalForm("#importStateForm", "#importStateValidationErrorsBox");
   });
   listenClick("#resetFilter", function () {
     $("#filter_country").val("").trigger("change");
@@ -15987,6 +16148,39 @@ listenSubmit("#editStateForm", function (event) {
     },
     complete: function complete() {
       processingBtn("#editStateForm", "#editStateBtnSave");
+    }
+  });
+});
+listenSubmit("#importStateForm", function (e) {
+  e.preventDefault();
+  processingBtn("#importStateForm", "#importStateBtnSave", "loading");
+  var formData = new FormData(this);
+  $.ajax({
+    url: route("states.import"),
+    type: "POST",
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function success(result) {
+      if (result.message || result.success) {
+        displaySuccessMessage(result.message || "States imported successfully.");
+        $("#importStateModal").modal("hide");
+        Livewire.dispatch("refreshDatatable");
+      }
+    },
+    error: function error(result) {
+      var _result$responseJSON, _result$responseJSON2;
+      var message = ((_result$responseJSON = result.responseJSON) === null || _result$responseJSON === void 0 ? void 0 : _result$responseJSON.message) || "Unable to import file.";
+      if ((_result$responseJSON2 = result.responseJSON) !== null && _result$responseJSON2 !== void 0 && _result$responseJSON2.errors) {
+        var firstError = Object.values(result.responseJSON.errors)[0];
+        if (Array.isArray(firstError)) {
+          message = firstError[0];
+        }
+      }
+      displayErrorMessage(message);
+    },
+    complete: function complete() {
+      processingBtn("#importStateForm", "#importStateBtnSave");
     }
   });
 });

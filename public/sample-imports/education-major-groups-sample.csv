@@ -1,3 +1,5 @@
-required_degree_level_id,name,sort_order,is_active
-1,Test Major Group 001,1,1
-,Test Major Group Without Level,2,1
+name,sort_order,is_active
+Computer Science & Engineering,1,1
+Electrical & Electronic Engineering,2,1
+Accounting & Information Systems,3,1
+General Science,4,1

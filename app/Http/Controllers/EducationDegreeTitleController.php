@@ -23,16 +23,37 @@ class EducationDegreeTitleController extends AppBaseController
     {
         $request->validate([
             'required_degree_level_id' => 'required|exists:education_degree_levels,id',
-            'name' => 'required|max:170',
+            'name' => 'required|string',
         ]);
 
-        $degreeTitle = EducationDegreeTitle::create([
-            'required_degree_level_id' => $request->required_degree_level_id,
-            'name' => $request->name,
-            'is_active' => true,
-        ]);
+        $degreeLevelId = $request->required_degree_level_id;
+        $rawNames = str_replace(["\r\n", "\n", "\r"], ',', $request->name);
 
-        return $this->sendResponse($degreeTitle, 'Degree Title saved successfully.');
+        $names = array_values(array_unique(array_filter(array_map('trim', explode(',', $rawNames)))));
+
+        $lastCreatedTitle = null;
+        $createdCount = 0;
+
+        foreach ($names as $name) {
+            if (empty($name)) {
+                continue;
+            }
+            $exists = EducationDegreeTitle::where('required_degree_level_id', $degreeLevelId)->where('name', $name)->exists();
+            if (! $exists) {
+                $lastCreatedTitle = EducationDegreeTitle::create([
+                    'required_degree_level_id' => $degreeLevelId,
+                    'name' => $name,
+                    'is_active' => true,
+                ]);
+                $createdCount++;
+            }
+        }
+
+        if ($createdCount === 0 && ! empty($names)) {
+            $lastCreatedTitle = EducationDegreeTitle::where('required_degree_level_id', $degreeLevelId)->where('name', $names[0])->first();
+        }
+
+        return $this->sendResponse($lastCreatedTitle, 'Degree Title saved successfully.');
     }
 
     public function edit(EducationDegreeTitle $educationDegreeTitle): JsonResponse
@@ -58,10 +79,16 @@ class EducationDegreeTitleController extends AppBaseController
     public function import(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv',
+            'required_degree_level_id' => 'required|exists:education_degree_levels,id',
+            'file' => ['required', 'file', function ($attribute, $value, $fail) {
+                $ext = strtolower($value->getClientOriginalExtension());
+                if (!in_array($ext, ['csv', 'xls', 'xlsx'])) {
+                    $fail('The file field must be a file of type: csv, xls, xlsx.');
+                }
+            }],
         ]);
 
-        $import = new EducationDegreeTitlesImport;
+        $import = new EducationDegreeTitlesImport($request->input('required_degree_level_id'));
         Excel::import($import, $request->file('file'));
 
         if ($import->failures()->isNotEmpty()) {

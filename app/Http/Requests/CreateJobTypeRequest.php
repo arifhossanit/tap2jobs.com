@@ -20,6 +20,9 @@ class CreateJobTypeRequest extends FormRequest
      */
     public function rules(): array
     {
-        return JobType::$rules;
+        return [
+            'name' => 'required|string',
+            'description' => 'nullable',
+        ];
     }
 }

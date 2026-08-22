@@ -14,7 +14,7 @@
                 <div class="mb-5">
                     {{ Form::label('label', __('messages.common.name').':', ['class' => 'form-label']) }}
                     <span class="required"></span>
-                    {{ Form::text('label', null, ['id'=>'profileReferenceLabel', 'class' => 'form-control', 'required', 'placeholder' => __('messages.common.name')]) }}
+                    {{ Form::textarea('label', null, ['id'=>'profileReferenceLabel', 'class' => 'form-control', 'required', 'rows' => 3, 'placeholder' => 'Enter name or multiple names (separated by commas or new lines)']) }}
                 </div>
                 <div class="mb-5">
                     {{ Form::label('value', 'Stored Value:', ['class' => 'form-label']) }}

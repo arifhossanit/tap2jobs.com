@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateJobShiftRequest;
 use App\Http\Requests\UpdateJobShiftRequest;
+use App\Imports\JobShiftsImport;
 use App\Models\Job;
 use App\Models\JobShift;
 use App\Repositories\JobShiftRepository;
@@ -12,6 +13,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class JobShiftController extends AppBaseController
 {
@@ -41,10 +43,31 @@ class JobShiftController extends AppBaseController
      */
     public function store(CreateJobShiftRequest $request): JsonResponse
     {
-        $input = $request->all();
-        $jobShift = $this->jobShiftRepository->create($input);
+        $rawShifts = str_replace(["\r\n", "\n", "\r"], ',', $request->shift);
+        $shifts = array_values(array_unique(array_filter(array_map('trim', explode(',', $rawShifts)))));
 
-        return $this->sendResponse($jobShift, __('messages.flash.job_shift_save'));
+        $lastJobShift = null;
+        $createdCount = 0;
+
+        foreach ($shifts as $shift) {
+            if (empty($shift)) {
+                continue;
+            }
+
+            $exists = JobShift::where('shift', $shift)->exists();
+            if (! $exists) {
+                $input = $request->all();
+                $input['shift'] = $shift;
+                $lastJobShift = $this->jobShiftRepository->create($input);
+                $createdCount++;
+            }
+        }
+
+        if ($createdCount === 0 && ! empty($shifts)) {
+            $lastJobShift = JobShift::where('shift', $shifts[0])->first();
+        }
+
+        return $this->sendResponse($lastJobShift, __('messages.flash.job_shift_save'));
     }
 
     /**
@@ -72,6 +95,43 @@ class JobShiftController extends AppBaseController
         $this->jobShiftRepository->update($input, $jobShift->id);
 
         return $this->sendSuccess(__('messages.flash.job_shift_update'));
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => ['required', 'file', function ($attribute, $value, $fail) {
+                $ext = strtolower($value->getClientOriginalExtension());
+                if (!in_array($ext, ['csv', 'xls', 'xlsx'])) {
+                    $fail('The file field must be a file of type: csv, xls, xlsx.');
+                }
+            }],
+        ]);
+
+        $import = new JobShiftsImport;
+        Excel::import($import, $request->file('file'));
+
+        if ($import->failures()->isNotEmpty()) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Job Shifts import completed with validation errors. Please fix the failed rows and try again.',
+                ], 422);
+            }
+
+            flash('Job Shifts import completed with validation errors. Please fix the failed rows and try again.')->error();
+
+            return back()->withFailures($import->failures());
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Job Shifts imported successfully.',
+            ]);
+        }
+
+        flash('Job Shifts imported successfully.')->success();
+
+        return back();
     }
 
     /**

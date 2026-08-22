@@ -13,7 +13,7 @@
                 <div class="mb-5">
                     {{ Form::label('name', __('messages.common.name').':', ['class' => 'form-label']) }}
                     <span class="required"></span>
-                    {{ Form::text('name', null, ['id'=>'educationBoardName', 'class' => 'form-control', 'required', 'placeholder' => __('messages.common.name')]) }}
+                    {{ Form::textarea('name', null, ['id'=>'educationBoardName', 'class' => 'form-control', 'required', 'rows' => 3, 'placeholder' => 'Enter name or multiple names (separated by commas or new lines)']) }}
                 </div>
             </div>
             <div class="modal-footer pt-0">

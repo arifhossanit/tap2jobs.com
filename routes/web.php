@@ -122,11 +122,6 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
          Route::get('/dashboard-chart-data', [DashboardController::class, 'dashboardChartData'])->name('dashboard.chart.data');
 
-         // Read notification
-         //    Route::post('/notification/{notification}/read',
-         //        [NotificationController::class, 'readNotification'])->name('read-notification');
-         //    Route::post('/read-all-notification', [NotificationController::class, 'readAllNotification'])->name('read-all-notification');
-
          // subscribers route
          Route::get('subscribers', [SubscriberController::class, 'index'])->name('subscribers.index');
          Route::delete('subscribers/{newsLetter}', [SubscriberController::class, 'destroy'])->name('subscribers.destroy');
@@ -138,26 +133,25 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          // Job Category routes
          Route::get('job-categories', [JobCategoryController::class, 'index'])->name('job-categories.index');
          Route::post('job-categories', [JobCategoryController::class, 'store'])->name('job-categories.store');
+         Route::post('job-categories/import', [JobCategoryController::class, 'import'])->name('job-categories.import');
          Route::get('job-categories/{jobCategory}/edit', [JobCategoryController::class, 'edit'])->name('job-categories.edit');
          Route::get('job-categories/{jobCategory}', [JobCategoryController::class, 'show'])->name('job-categories.show');
          Route::post('job-categories/{jobCategory}', [JobCategoryController::class, 'update'])->name('job-categories.update');
          Route::delete('job-categories/{jobCategory}', [JobCategoryController::class, 'destroy'])->name('job-categories.destroy');
          Route::post('job-categories/{jobCategory}/change-status', [JobCategoryController::class, 'changeStatus'])->name('change-status');
 
-         // settings routes
-         Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
-         Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
-
-         // Privacy Policy routes
-         Route::get('privacy-policy', [PrivacyPolicyController::class, 'index'])->name('privacy.policy.index');
-         Route::post('privacy-policy', [PrivacyPolicyController::class, 'update'])->name('privacy.policy.update');
-
          // Company Size
          Route::get('company-sizes', [CompanySizeController::class, 'index'])->name('companySize.index');
          Route::post('company-sizes', [CompanySizeController::class, 'store'])->name('companySize.store');
+         Route::post('company-sizes/import', [CompanySizeController::class, 'import'])->name('companySize.import');
          Route::get('company-sizes/{companySize}/edit', [CompanySizeController::class, 'edit'])->name('companySize.edit');
          Route::put('company-sizes/{companySize}', [CompanySizeController::class, 'update'])->name('companySize.update');
          Route::delete('company-sizes/{companySize}', [CompanySizeController::class, 'destroy'])->name('companySize.destroy');
+
+         // settings routes
+         Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
+         Route::get('privacy-policy', [PrivacyPolicyController::class, 'index'])->name('privacy.policy.index');
+         Route::post('privacy-policy', [PrivacyPolicyController::class, 'update'])->name('privacy.policy.update');
 
          // Profile Reference Options
          Route::get('profile-references/{scope}/{type}', [ProfileReferenceOptionController::class, 'index'])->name('profileReferenceOptions.index');
@@ -197,6 +191,7 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          // Salary Period
          Route::get('salary-periods', [SalaryPeriodController::class, 'index'])->name('salaryPeriod.index');
          Route::post('salary-periods', [SalaryPeriodController::class, 'store'])->name('salaryPeriod.store');
+         Route::post('salary-periods/import', [SalaryPeriodController::class, 'import'])->name('salaryPeriod.import');
          Route::get('salary-periods/{salaryPeriod}', [SalaryPeriodController::class, 'show'])->name('salaryPeriod.show');
          Route::get('salary-periods/{salaryPeriod}/edit', [SalaryPeriodController::class, 'edit'])->name('salaryPeriod.edit');
          Route::put('salary-periods/{salaryPeriod}', [SalaryPeriodController::class, 'update'])->name('salaryPeriod.update');
@@ -205,6 +200,7 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          // Job Shift
          Route::get('job-shifts', [JobShiftController::class, 'index'])->name('jobShift.index');
          Route::post('job-shifts', [JobShiftController::class, 'store'])->name('jobShift.store');
+         Route::post('job-shifts/import', [JobShiftController::class, 'import'])->name('jobShift.import');
          Route::get('job-shifts/{jobShift}', [JobShiftController::class, 'show'])->name('jobShift.show');
          Route::get('job-shifts/{jobShift}/edit', [JobShiftController::class, 'edit'])->name('jobShift.edit');
          Route::put('job-shifts/{jobShift}', [JobShiftController::class, 'update'])->name('jobShift.update');
@@ -255,6 +251,28 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          Route::put('education-major-groups/{educationMajorGroup}', [EducationMajorGroupController::class, 'update'])->name('educationMajorGroups.update');
          Route::delete('education-major-groups/{educationMajorGroup}', [EducationMajorGroupController::class, 'destroy'])->name('educationMajorGroups.destroy');
 
+         // Common Profile Reference Options
+         foreach ([
+                  'genders' => [\App\Models\ProfileReferenceOption::TYPE_GENDER, 'genders'],
+                  'language-proficiencies' => [\App\Models\ProfileReferenceOption::TYPE_LANGUAGE_PROFICIENCY, 'languageProficiencies'],
+                  'online-profile-platforms' => [\App\Models\ProfileReferenceOption::TYPE_ONLINE_PROFILE_PLATFORM, 'onlineProfilePlatforms'],
+         ] as $commonReferencePath => [$commonReferenceType, $commonReferenceRoute]) {
+             Route::get($commonReferencePath, [ProfileReferenceOptionController::class, 'dedicatedIndex'])
+                      ->name($commonReferenceRoute.'.index');
+             Route::post($commonReferencePath, [ProfileReferenceOptionController::class, 'dedicatedStore'])
+                      ->name($commonReferenceRoute.'.store');
+             Route::post($commonReferencePath.'/import', [ProfileReferenceOptionController::class, 'dedicatedImport'])
+                      ->name($commonReferenceRoute.'.import');
+             Route::delete($commonReferencePath.'/bulk-delete', [ProfileReferenceOptionController::class, 'dedicatedBulkDestroy'])
+                      ->name($commonReferenceRoute.'.bulkDestroy');
+             Route::get($commonReferencePath.'/{id}/edit', [ProfileReferenceOptionController::class, 'dedicatedEdit'])
+                      ->name($commonReferenceRoute.'.edit');
+             Route::put($commonReferencePath.'/{id}', [ProfileReferenceOptionController::class, 'dedicatedUpdate'])
+                      ->name($commonReferenceRoute.'.update');
+             Route::delete($commonReferencePath.'/{id}', [ProfileReferenceOptionController::class, 'dedicatedDestroy'])
+                      ->name($commonReferenceRoute.'.destroy');
+         }
+
          // Candidate Profile Reference Options
          foreach ([
                   'candidate-religions' => [\App\Models\ProfileReferenceOption::TYPE_RELIGION, 'candidateReligions'],
@@ -268,33 +286,19 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
                   'army-employment-types' => [\App\Models\ProfileReferenceOption::TYPE_ARMY_EMPLOYMENT_TYPE, 'armyEmploymentTypes'],
                   'army-arms' => [\App\Models\ProfileReferenceOption::TYPE_ARMY_ARMS, 'armyArms'],
          ] as $candidateReferencePath => [$candidateReferenceType, $candidateReferenceRoute]) {
-             Route::get($candidateReferencePath, [ProfileReferenceOptionController::class, 'index'])
-                      ->defaults('scope', \App\Models\ProfileReferenceOption::SCOPE_CANDIDATE)
-                      ->defaults('type', $candidateReferenceType)
+             Route::get($candidateReferencePath, [ProfileReferenceOptionController::class, 'dedicatedIndex'])
                       ->name($candidateReferenceRoute.'.index');
-             Route::post($candidateReferencePath, [ProfileReferenceOptionController::class, 'store'])
-                      ->defaults('scope', \App\Models\ProfileReferenceOption::SCOPE_CANDIDATE)
-                      ->defaults('type', $candidateReferenceType)
+             Route::post($candidateReferencePath, [ProfileReferenceOptionController::class, 'dedicatedStore'])
                       ->name($candidateReferenceRoute.'.store');
-             Route::post($candidateReferencePath.'/import', [ProfileReferenceOptionController::class, 'import'])
-                      ->defaults('scope', \App\Models\ProfileReferenceOption::SCOPE_CANDIDATE)
-                      ->defaults('type', $candidateReferenceType)
+             Route::post($candidateReferencePath.'/import', [ProfileReferenceOptionController::class, 'dedicatedImport'])
                       ->name($candidateReferenceRoute.'.import');
-             Route::delete($candidateReferencePath.'/bulk-delete', [ProfileReferenceOptionController::class, 'bulkDestroy'])
-                      ->defaults('scope', \App\Models\ProfileReferenceOption::SCOPE_CANDIDATE)
-                      ->defaults('type', $candidateReferenceType)
+             Route::delete($candidateReferencePath.'/bulk-delete', [ProfileReferenceOptionController::class, 'dedicatedBulkDestroy'])
                       ->name($candidateReferenceRoute.'.bulkDestroy');
-             Route::get($candidateReferencePath.'/{id}/edit', [ProfileReferenceOptionController::class, 'edit'])
-                      ->defaults('scope', \App\Models\ProfileReferenceOption::SCOPE_CANDIDATE)
-                      ->defaults('type', $candidateReferenceType)
+             Route::get($candidateReferencePath.'/{id}/edit', [ProfileReferenceOptionController::class, 'dedicatedEdit'])
                       ->name($candidateReferenceRoute.'.edit');
-             Route::put($candidateReferencePath.'/{id}', [ProfileReferenceOptionController::class, 'update'])
-                      ->defaults('scope', \App\Models\ProfileReferenceOption::SCOPE_CANDIDATE)
-                      ->defaults('type', $candidateReferenceType)
+             Route::put($candidateReferencePath.'/{id}', [ProfileReferenceOptionController::class, 'dedicatedUpdate'])
                       ->name($candidateReferenceRoute.'.update');
-             Route::delete($candidateReferencePath.'/{id}', [ProfileReferenceOptionController::class, 'destroy'])
-                      ->defaults('scope', \App\Models\ProfileReferenceOption::SCOPE_CANDIDATE)
-                      ->defaults('type', $candidateReferenceType)
+             Route::delete($candidateReferencePath.'/{id}', [ProfileReferenceOptionController::class, 'dedicatedDestroy'])
                       ->name($candidateReferenceRoute.'.destroy');
          }
 
@@ -307,33 +311,19 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
                   'job-experience-units' => [\App\Models\ProfileReferenceOption::TYPE_JOB_EXPERIENCE_UNIT, 'jobExperienceUnits'],
                   'employer-disability-facilities' => [\App\Models\ProfileReferenceOption::TYPE_EMPLOYER_DISABILITY_FACILITY, 'employerDisabilityFacilities'],
          ] as $employerReferencePath => [$employerReferenceType, $employerReferenceRoute]) {
-             Route::get($employerReferencePath, [ProfileReferenceOptionController::class, 'index'])
-                      ->defaults('scope', \App\Models\ProfileReferenceOption::SCOPE_EMPLOYER)
-                      ->defaults('type', $employerReferenceType)
+             Route::get($employerReferencePath, [ProfileReferenceOptionController::class, 'dedicatedIndex'])
                       ->name($employerReferenceRoute.'.index');
-             Route::post($employerReferencePath, [ProfileReferenceOptionController::class, 'store'])
-                      ->defaults('scope', \App\Models\ProfileReferenceOption::SCOPE_EMPLOYER)
-                      ->defaults('type', $employerReferenceType)
+             Route::post($employerReferencePath, [ProfileReferenceOptionController::class, 'dedicatedStore'])
                       ->name($employerReferenceRoute.'.store');
-             Route::post($employerReferencePath.'/import', [ProfileReferenceOptionController::class, 'import'])
-                      ->defaults('scope', \App\Models\ProfileReferenceOption::SCOPE_EMPLOYER)
-                      ->defaults('type', $employerReferenceType)
+             Route::post($employerReferencePath.'/import', [ProfileReferenceOptionController::class, 'dedicatedImport'])
                       ->name($employerReferenceRoute.'.import');
-             Route::delete($employerReferencePath.'/bulk-delete', [ProfileReferenceOptionController::class, 'bulkDestroy'])
-                      ->defaults('scope', \App\Models\ProfileReferenceOption::SCOPE_EMPLOYER)
-                      ->defaults('type', $employerReferenceType)
+             Route::delete($employerReferencePath.'/bulk-delete', [ProfileReferenceOptionController::class, 'dedicatedBulkDestroy'])
                       ->name($employerReferenceRoute.'.bulkDestroy');
-             Route::get($employerReferencePath.'/{id}/edit', [ProfileReferenceOptionController::class, 'edit'])
-                      ->defaults('scope', \App\Models\ProfileReferenceOption::SCOPE_EMPLOYER)
-                      ->defaults('type', $employerReferenceType)
+             Route::get($employerReferencePath.'/{id}/edit', [ProfileReferenceOptionController::class, 'dedicatedEdit'])
                       ->name($employerReferenceRoute.'.edit');
-             Route::put($employerReferencePath.'/{id}', [ProfileReferenceOptionController::class, 'update'])
-                      ->defaults('scope', \App\Models\ProfileReferenceOption::SCOPE_EMPLOYER)
-                      ->defaults('type', $employerReferenceType)
+             Route::put($employerReferencePath.'/{id}', [ProfileReferenceOptionController::class, 'dedicatedUpdate'])
                       ->name($employerReferenceRoute.'.update');
-             Route::delete($employerReferencePath.'/{id}', [ProfileReferenceOptionController::class, 'destroy'])
-                      ->defaults('scope', \App\Models\ProfileReferenceOption::SCOPE_EMPLOYER)
-                      ->defaults('type', $employerReferenceType)
+             Route::delete($employerReferencePath.'/{id}', [ProfileReferenceOptionController::class, 'dedicatedDestroy'])
                       ->name($employerReferenceRoute.'.destroy');
          }
 
@@ -348,6 +338,7 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          // Job Tags
          Route::get('job-tags', [TagController::class, 'index'])->name('jobTag.index');
          Route::post('job-tags', [TagController::class, 'store'])->name('jobTag.store');
+         Route::post('job-tags/import', [TagController::class, 'import'])->name('jobTag.import');
          Route::get('job-tags/{tag}', [TagController::class, 'show'])->name('jobTag.show');
          Route::get('job-tags/{tag}/edit', [TagController::class, 'edit'])->name('jobTag.edit');
          Route::put('job-tags/{tag}', [TagController::class, 'update'])->name('jobTag.update');
@@ -356,6 +347,7 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          // Job Types
          Route::get('job-types', [JobTypeController::class, 'index'])->name('jobType.index');
          Route::post('job-types', [JobTypeController::class, 'store'])->name('jobType.store');
+         Route::post('job-types/import', [JobTypeController::class, 'import'])->name('jobType.import');
          Route::get('job-types/{jobType}', [JobTypeController::class, 'show'])->name('jobType.show');
          Route::get('job-types/{jobType}/edit', [JobTypeController::class, 'edit'])->name('jobType.edit');
          Route::put('job-types/{jobType}', [JobTypeController::class, 'update'])->name('jobType.update');
@@ -410,6 +402,7 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          // Language routes
          Route::get('languages', [LanguageController::class, 'index'])->name('languages.index');
          Route::post('languages', [LanguageController::class, 'store'])->name('languages.store');
+         Route::post('languages/import', [LanguageController::class, 'import'])->name('languages.import');
          Route::get('languages/{language}/edit', [LanguageController::class, 'edit'])->name('languages.edit');
          Route::get('languages/{language}', [LanguageController::class, 'show'])->name('languages.show');
          Route::put('languages/{language}', [LanguageController::class, 'update'])->name('languages.update');

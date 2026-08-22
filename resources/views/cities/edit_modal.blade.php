@@ -23,7 +23,7 @@
                 <div class="mb-5">
                     {{ Form::label('name',__('messages.common.name').(':'), ['class' => 'form-label']) }}
                     <span class="required"></span>
-                    {{ Form::text('name', null, ['id'=>'editName','class' => 'form-control','required','placeholder' => __('messages.common.name')]) }}
+                    {{ Form::textarea('name', null, ['id'=>'editName','class' => 'form-control','required', 'rows' => 3, 'placeholder' => __('messages.common.name')]) }}
                 </div>
                 
 

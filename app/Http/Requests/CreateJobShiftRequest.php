@@ -20,6 +20,9 @@ class CreateJobShiftRequest extends FormRequest
      */
     public function rules(): array
     {
-        return JobShift::$rules;
+        return [
+            'shift' => 'required|string',
+            'description' => 'nullable',
+        ];
     }
 }

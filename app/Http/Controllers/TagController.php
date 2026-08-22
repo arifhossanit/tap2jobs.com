@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateTagRequest;
 use App\Http\Requests\UpdateTagRequest;
+use App\Imports\JobTagsImport;
 use App\Models\Tag;
 use App\Repositories\JobTagRepository;
 use Exception;
@@ -11,6 +12,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TagController extends AppBaseController
 {
@@ -40,10 +42,31 @@ class TagController extends AppBaseController
      */
     public function store(CreateTagRequest $request): JsonResponse
     {
-        $input = $request->all();
-        $jobTag = $this->jobTagRepository->create($input);
+        $rawNames = str_replace(["\r\n", "\n", "\r"], ',', $request->name);
+        $names = array_values(array_unique(array_filter(array_map('trim', explode(',', $rawNames)))));
 
-        return $this->sendResponse($jobTag, __('messages.flash.job_tag_save'));
+        $lastJobTag = null;
+        $createdCount = 0;
+
+        foreach ($names as $name) {
+            if (empty($name)) {
+                continue;
+            }
+
+            $exists = Tag::where('name', $name)->exists();
+            if (! $exists) {
+                $input = $request->all();
+                $input['name'] = $name;
+                $lastJobTag = $this->jobTagRepository->create($input);
+                $createdCount++;
+            }
+        }
+
+        if ($createdCount === 0 && ! empty($names)) {
+            $lastJobTag = Tag::where('name', $names[0])->first();
+        }
+
+        return $this->sendResponse($lastJobTag, __('messages.flash.job_tag_save'));
     }
 
     /**
@@ -73,6 +96,43 @@ class TagController extends AppBaseController
         $this->jobTagRepository->update($input, $tag->id);
 
         return $this->sendSuccess(__('messages.flash.job_tag_update'));
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => ['required', 'file', function ($attribute, $value, $fail) {
+                $ext = strtolower($value->getClientOriginalExtension());
+                if (!in_array($ext, ['csv', 'xls', 'xlsx'])) {
+                    $fail('The file field must be a file of type: csv, xls, xlsx.');
+                }
+            }],
+        ]);
+
+        $import = new JobTagsImport;
+        Excel::import($import, $request->file('file'));
+
+        if ($import->failures()->isNotEmpty()) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Job Tags import completed with validation errors. Please fix the failed rows and try again.',
+                ], 422);
+            }
+
+            flash('Job Tags import completed with validation errors. Please fix the failed rows and try again.')->error();
+
+            return back()->withFailures($import->failures());
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Job Tags imported successfully.',
+            ]);
+        }
+
+        flash('Job Tags imported successfully.')->success();
+
+        return back();
     }
 
     /**

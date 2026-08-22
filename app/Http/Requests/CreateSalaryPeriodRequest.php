@@ -20,6 +20,9 @@ class CreateSalaryPeriodRequest extends FormRequest
      */
     public function rules(): array
     {
-        return SalaryPeriod::$rules;
+        return [
+            'period' => 'required|string',
+            'description' => 'nullable',
+        ];
     }
 }

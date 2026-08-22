@@ -13,19 +13,31 @@ class StatesImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnFa
 {
     use SkipsFailures;
 
+    private $countryId;
+
+    public function __construct($countryId)
+    {
+        $this->countryId = $countryId;
+    }
+
     public function rules(): array
     {
         return [
-            '*.country_id' => 'required|integer|exists:countries,id',
             '*.name' => 'required|string|max:180',
         ];
     }
 
     public function model(array $row): ?State
     {
+        $name = trim((string) ($row['name'] ?? $row['district'] ?? ''));
+
+        if (empty($name)) {
+            return null;
+        }
+
         $attributes = [
-            'country_id' => (int) $row['country_id'],
-            'name' => trim((string) $row['name']),
+            'country_id' => (int) $this->countryId,
+            'name' => $name,
         ];
 
         if (State::where($attributes)->exists()) {

@@ -20,7 +20,11 @@ class CreateJobCategoryRequest extends FormRequest
      */
     public function rules(): array
     {
-        return JobCategory::$rules;
+        return [
+            'name' => 'required|string',
+            'description' => 'nullable',
+            'customer_image' => 'nullable|mimes:png,jpg,jpeg',
+        ];
     }
 
     /**

@@ -18,7 +18,7 @@
                 <div class="mb-5">
                     {{ Form::label('name',__('messages.job_type.name').(':'), ['class' => 'form-label']) }}
                     <span class="required"></span>
-                    {{ Form::text('name', null, ['id'=>'editJobTypeName','class' => 'form-control','required', 'placeholder' => __('messages.job_type.name')]) }}
+                    {{ Form::textarea('name', null, ['id'=>'editJobTypeName','class' => 'form-control','required', 'rows' => 3, 'placeholder' => __('messages.job_type.name')]) }}
                 </div>
                 <div class="mb-5">
                     {{ Form::label('description', __('messages.job_type.description').(':'),['class' => 'form-label']) }}

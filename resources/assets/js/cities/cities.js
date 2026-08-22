@@ -18,10 +18,19 @@ function loadCityData() {
         dropdownParent: $('#editCityModal'),
     });
 
+    $('#importStateId').select2({
+        'width': '100%',
+        dropdownParent: $('#importCityModal'),
+    });
+
 }
 
 listenClick('.addCityModal', function () {
     $('#addCityModal').appendTo('body').modal('show');
+});
+
+listenClick('.importCityModal', function () {
+    $('#importCityModal').appendTo('body').modal('show');
 });
 
 listenClick('.cities-edit-btn', function (event) {
@@ -58,6 +67,11 @@ listenHiddenBsModal('#addCityModal', function () {
 
 listenHiddenBsModal('#editCityModal', function () {
     resetModalForm('#editCityForm', '#editValidationErrorsBox');
+});
+
+listenHiddenBsModal('#importCityModal', function () {
+    $('#importStateId').val('').trigger('change');
+    resetModalForm('#importCityForm', '#importCityValidationErrorsBox');
 });
 
 listenClick('#resetFilter', function () {
@@ -107,6 +121,39 @@ listenSubmit('#editCityForm', function (event) {
         },
         complete: function () {
             processingBtn('#editCityForm', '#btnEditSave');
+        },
+    });
+});
+
+listenSubmit('#importCityForm', function (e) {
+    e.preventDefault();
+    processingBtn('#importCityForm', '#importCityBtnSave', 'loading');
+    let formData = new FormData(this);
+    $.ajax({
+        url: route('cities.import'),
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (result) {
+            if (result.message || result.success) {
+                displaySuccessMessage(result.message || 'Cities imported successfully.');
+                $('#importCityModal').modal('hide');
+                Livewire.dispatch('refreshDatatable');
+            }
+        },
+        error: function (result) {
+            let message = result.responseJSON?.message || 'Unable to import file.';
+            if (result.responseJSON?.errors) {
+                let firstError = Object.values(result.responseJSON.errors)[0];
+                if (Array.isArray(firstError)) {
+                    message = firstError[0];
+                }
+            }
+            displayErrorMessage(message);
+        },
+        complete: function () {
+            processingBtn('#importCityForm', '#importCityBtnSave');
         },
     });
 });

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateJobCategoryRequest;
 use App\Http\Requests\UpdateJobCategoryRequest;
+use App\Imports\JobCategoriesImport;
 use App\Models\Job;
 use App\Models\JobCategory;
 use App\Repositories\JobCategoryRepository;
@@ -12,6 +13,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class JobCategoryController extends AppBaseController
 {
@@ -46,10 +48,31 @@ class JobCategoryController extends AppBaseController
      */
     public function store(CreateJobCategoryRequest $request)
     {
-        $input = $request->all();
-        $jobCategory = $this->jobCategoryRepository->store($input);
+        $rawNames = str_replace(["\r\n", "\n", "\r"], ',', $request->name);
+        $names = array_values(array_unique(array_filter(array_map('trim', explode(',', $rawNames)))));
 
-        return $this->sendResponse($jobCategory, __('messages.flash.job_category_save'));
+        $lastCategory = null;
+        $createdCount = 0;
+
+        foreach ($names as $name) {
+            if (empty($name)) {
+                continue;
+            }
+
+            $exists = JobCategory::where('name', $name)->exists();
+            if (! $exists) {
+                $input = $request->all();
+                $input['name'] = $name;
+                $lastCategory = $this->jobCategoryRepository->store($input);
+                $createdCount++;
+            }
+        }
+
+        if ($createdCount === 0 && ! empty($names)) {
+            $lastCategory = JobCategory::where('name', $names[0])->first();
+        }
+
+        return $this->sendResponse($lastCategory, __('messages.flash.job_category_save'));
     }
 
     /**
@@ -100,6 +123,43 @@ class JobCategoryController extends AppBaseController
         $jobCategory->delete();
 
         return $this->sendSuccess(__('messages.flash.job_category_delete'));
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => ['required', 'file', function ($attribute, $value, $fail) {
+                $ext = strtolower($value->getClientOriginalExtension());
+                if (!in_array($ext, ['csv', 'xls', 'xlsx'])) {
+                    $fail('The file field must be a file of type: csv, xls, xlsx.');
+                }
+            }],
+        ]);
+
+        $import = new JobCategoriesImport;
+        Excel::import($import, $request->file('file'));
+
+        if ($import->failures()->isNotEmpty()) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Job Categories import completed with validation errors. Please fix the failed rows and try again.',
+                ], 422);
+            }
+
+            flash('Job Categories import completed with validation errors. Please fix the failed rows and try again.')->error();
+
+            return back()->withFailures($import->failures());
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Job Categories imported successfully.',
+            ]);
+        }
+
+        flash('Job Categories imported successfully.')->success();
+
+        return back();
     }
 
     /**

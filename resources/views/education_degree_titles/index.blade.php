@@ -10,5 +10,6 @@
         </div>
         @include('education_degree_titles.add_modal')
         @include('education_degree_titles.edit_modal')
+        @include('education_degree_titles.import_modal')
     </div>
 @endsection

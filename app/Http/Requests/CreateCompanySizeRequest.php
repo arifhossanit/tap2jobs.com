@@ -21,14 +21,8 @@ class CreateCompanySizeRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = CompanySize::$rules;
-        $rules['size'] = [
-            'required',
-            'unique:company_sizes,size',
-            'regex:/^[0-9+\s\-]+$/',
-            new ValidCompanySizeRange(),
+        return [
+            'size' => 'required|string',
         ];
-
-        return $rules;
     }
 }

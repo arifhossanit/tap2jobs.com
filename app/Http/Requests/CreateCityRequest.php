@@ -20,6 +20,9 @@ class CreateCityRequest extends FormRequest
      */
     public function rules(): array
     {
-        return City::$rules;
+        return [
+            'name' => 'required|string',
+            'state_id' => 'required|exists:states,id',
+        ];
     }
 }

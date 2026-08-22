@@ -115,17 +115,17 @@
        href="{{ route('cities.index') }}">{{ __('messages.city.cities') }}</a>
 </li>
 
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/profile-references/common*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/profile-references/common*') ? 'active' : '' }}"
-       href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_COMMON, \App\Models\ProfileReferenceOption::TYPE_GENDER]) }}">General</a>
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/profile-references/common*', 'admin/genders*', 'admin/language-proficiencies*', 'admin/online-profile-platforms*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('admin/profile-references/common*', 'admin/genders*', 'admin/language-proficiencies*', 'admin/online-profile-platforms*') ? 'active' : '' }}"
+       href="{{ route('genders.index') }}">General</a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/profile-references/candidate*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/profile-references/candidate*') ? 'active' : '' }}"
-       href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_CANDIDATE, \App\Models\ProfileReferenceOption::TYPE_RELIGION]) }}">Candidate</a>
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/profile-references/candidate*', 'admin/candidate-religions*', 'admin/blood-groups*', 'admin/disability-difficulties*', 'admin/skill-learning-sources*', 'admin/candidate-reference-relations*', 'admin/education-results*', 'admin/army-ba-no-prefixes*', 'admin/army-ranks*', 'admin/army-employment-types*', 'admin/army-arms*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('admin/profile-references/candidate*', 'admin/candidate-religions*', 'admin/blood-groups*', 'admin/disability-difficulties*', 'admin/skill-learning-sources*', 'admin/candidate-reference-relations*', 'admin/education-results*', 'admin/army-ba-no-prefixes*', 'admin/army-ranks*', 'admin/army-employment-types*', 'admin/army-arms*') ? 'active' : '' }}"
+       href="{{ route('candidateReligions.index') }}">Candidate</a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/profile-references/employer*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/profile-references/employer*') ? 'active' : '' }}"
-       href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_EMPLOYER, \App\Models\ProfileReferenceOption::TYPE_REFERENCE_RELATION]) }}">Employer</a>
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/profile-references/employer*', 'admin/employer-reference-relations*', 'admin/job-gender-preferences*', 'admin/job-employment-statuses*', 'admin/job-workplaces*', 'admin/job-experience-units*', 'admin/employer-disability-facilities*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('admin/profile-references/employer*', 'admin/employer-reference-relations*', 'admin/job-gender-preferences*', 'admin/job-employment-statuses*', 'admin/job-workplaces*', 'admin/job-experience-units*', 'admin/employer-disability-facilities*') ? 'active' : '' }}"
+       href="{{ route('employerReferenceRelations.index') }}">Employer</a>
 </li>
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/marital-status*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/marital-status*') ? 'active' : '' }}"

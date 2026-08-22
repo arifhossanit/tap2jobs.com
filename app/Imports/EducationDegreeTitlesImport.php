@@ -13,10 +13,16 @@ class EducationDegreeTitlesImport implements ToModel, WithHeadingRow, WithValida
 {
     use SkipsFailures;
 
+    private $degreeLevelId;
+
+    public function __construct($degreeLevelId)
+    {
+        $this->degreeLevelId = $degreeLevelId;
+    }
+
     public function rules(): array
     {
         return [
-            '*.required_degree_level_id' => 'required|integer|exists:education_degree_levels,id',
             '*.name' => 'required|string|max:170',
             '*.sort_order' => 'nullable|integer|min:0',
             '*.is_active' => 'nullable|boolean',
@@ -25,9 +31,15 @@ class EducationDegreeTitlesImport implements ToModel, WithHeadingRow, WithValida
 
     public function model(array $row): ?EducationDegreeTitle
     {
+        $name = trim((string) ($row['name'] ?? $row['title'] ?? ''));
+
+        if (empty($name)) {
+            return null;
+        }
+
         $attributes = [
-            'required_degree_level_id' => (int) $row['required_degree_level_id'],
-            'name' => trim((string) $row['name']),
+            'required_degree_level_id' => (int) $this->degreeLevelId,
+            'name' => $name,
         ];
 
         if (EducationDegreeTitle::where($attributes)->exists()) {
