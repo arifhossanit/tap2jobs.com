@@ -64,6 +64,7 @@
             <input type="checkbox" name="hide_salary" class="form-check-input"
                    value="1"
                    id="salary" {{ old('hide_salary', isset($job) ? $job->hide_salary : false) ? 'checked' : '' }}>
+            <input type="hidden" name="is_freelance" value="{{ old('is_freelance', isset($job) ? $job->is_freelance : 0) }}">
         </label>
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">

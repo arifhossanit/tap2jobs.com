@@ -12587,6 +12587,9 @@ function loadEmployeeCreateEditData() {
     });
   }
   $("#toSalary").on("keyup", function () {
+    if ($("#salary").is(":checked")) {
+      return;
+    }
     var fromSalary = parseInt(Math.trunc(removeCommas($("#fromSalary").val())));
     var toSalary = parseInt(Math.trunc(removeCommas($("#toSalary").val())));
     if (toSalary < fromSalary) {
@@ -12610,6 +12613,9 @@ function loadEmployeeCreateEditData() {
     $(this).trigger("keyup");
   });
   $("#fromSalary").on("keyup", function () {
+    if ($("#salary").is(":checked")) {
+      return;
+    }
     var fromSalary = parseInt(Math.trunc(removeCommas($("#fromSalary").val())));
     var toSalary = parseInt(Math.trunc(removeCommas($("#toSalary").val())));
     if (toSalary < fromSalary) {
@@ -12632,6 +12638,22 @@ function loadEmployeeCreateEditData() {
   $("#fromSalary").on("wheel", function (e) {
     $(this).trigger("keyup");
   });
+  function toggleSalaryFields() {
+    var isHideSalary = $("#salary").is(":checked");
+    if (isHideSalary) {
+      $("#fromSalary, #toSalary").prop("disabled", true).prop("required", false).removeAttr("required");
+      $("#salaryToErrorMsg").text("");
+      $("#saveJob").attr("disabled", false);
+    } else {
+      $("#fromSalary, #toSalary").prop("disabled", false).prop("required", true).attr("required", "required");
+    }
+  }
+  if ($("#salary").length) {
+    toggleSalaryFields();
+    $(document).on("change", "#salary", function () {
+      toggleSalaryFields();
+    });
+  }
   function initializeJobSelect2(selector, options) {
     $(selector).each(function () {
       var select = $(this);
@@ -13453,6 +13475,11 @@ function prepareJobFormForSubmission(formSelector) {
   var form = $(formSelector)[0];
   if (!form) {
     return false;
+  }
+  if ($(form).find("#salary").is(":checked")) {
+    $(form).find("#fromSalary, #toSalary").prop("disabled", true).prop("required", false).removeAttr("required");
+  } else if ($(form).find("#salary").length) {
+    $(form).find("#fromSalary, #toSalary").prop("disabled", false).prop("required", true).attr("required", "required");
   }
   ["#fromSalary", "#toSalary"].forEach(function (selector) {
     var field = $(form).find(selector)[0];

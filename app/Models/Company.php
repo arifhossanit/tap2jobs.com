@@ -249,7 +249,7 @@ class Company extends Model implements HasMedia
     public function getCompanyUrlAttribute()
     {
         if (! $this->user) {
-            return asset('assets/img/user.png');
+            return asset('assets/img/employer-image.png');
         }
 
         /** @var Media $media */

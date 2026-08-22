@@ -1929,6 +1929,10 @@
                         return;
                     }
 
+                    if (!deleteButton || !item) {
+                        return;
+                    }
+
                     const textMsg = confirmDeleteText || ((typeof Lang !== 'undefined' && Lang.get('js.are_you_sure'))
                         ? Lang.get('js.are_you_sure') + '?'
                         : 'Are you sure you want to delete this activity?');

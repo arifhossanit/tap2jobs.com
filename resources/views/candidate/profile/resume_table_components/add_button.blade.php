@@ -41,7 +41,7 @@
         @endforeach
     </select>
 
-    <button type="button"
+    {{-- <button type="button"
         class="btn btn-primary candidate-resume-upload-button {{ $hasUploadedResume ? '' : 'uploadResumeModal' }}"
         aria-label="{{ __('messages.candidate_profile.upload_resume') }}"
         title="{{ $hasUploadedResume
@@ -49,5 +49,5 @@
             : __('messages.candidate_profile.upload_resume') }}"
         @disabled($hasUploadedResume)>
         <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
-    </button>
+    </button> --}}
 </div>

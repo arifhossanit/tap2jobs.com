@@ -49,10 +49,15 @@
             }
 
             return $experience->expertises->map(function ($expertise) {
-                $duration = filled($expertise->duration_months) ? ' ('.$expertise->duration_months.' month(s))' : '';
+                $duration = '';
+
+                if (filled($expertise->duration_months)) {
+                    $months = (int) $expertise->duration_months;
+                    $duration = ' ('.$months.' '.\Illuminate\Support\Str::plural('month', $months).')';
+                }
 
                 return $expertise->name.$duration;
-            })->implode(', ');
+            })->filter()->implode(', ');
         };
     @endphp
 
@@ -881,20 +886,6 @@
                 });
             });
 
-            document.addEventListener('input', function (event) {
-                const durationInput = event.target.closest('[data-employment-expertise-duration]');
-                if (!durationInput) {
-                    return;
-                }
-
-                if (Number(durationInput.value) > 12) {
-                    durationInput.value = 12;
-                    if (typeof displayErrorMessage === 'function') {
-                        displayErrorMessage('Duration cannot be more than 12 months.');
-                    }
-                }
-            });
-
             document.addEventListener('click', function (event) {
                 const deleteExpBtn = event.target.closest('.delete-experience');
                 if (deleteExpBtn) {
@@ -1001,20 +992,6 @@
             document.querySelectorAll('[data-employment-form]').forEach(function (form) {
                 form.addEventListener('submit', function (event) {
                     event.preventDefault();
-
-                    const invalidDuration = Array.from(form.querySelectorAll('[data-employment-expertise-duration]')).
-                        find(function (input) {
-                            return input.value !== '' && Number(input.value) > 12;
-                        });
-                    if (invalidDuration) {
-                        invalidDuration.focus();
-                        if (typeof displayErrorMessage === 'function') {
-                            displayErrorMessage('Duration cannot be more than 12 months.');
-                        } else {
-                            alert('Duration cannot be more than 12 months.');
-                        }
-                        return;
-                    }
 
                     syncEmploymentQuillEditors(form);
                     const formData = new FormData(form);

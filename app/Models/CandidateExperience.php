@@ -78,7 +78,7 @@ class CandidateExperience extends Model
         'area_of_expertise.0' => 'required|max:150',
         'area_of_expertise.*' => 'nullable|max:150',
         'expertise_duration' => 'nullable|array|max:10',
-        'expertise_duration.*' => 'nullable|integer|min:0|max:12',
+        'expertise_duration.*' => 'nullable|integer|min:0',
     ];
 
     public $table = 'candidate_experiences';

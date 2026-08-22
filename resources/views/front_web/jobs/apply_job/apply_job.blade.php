@@ -88,12 +88,18 @@
                                             <strong id="selectedCvName">{{ data_get($selectedResume, 'title') }}</strong>
                                             {{-- <small>{{ __('messages.apply_job.selected_for_application') }}</small> --}}
                                         </div>                                        
-                                        <a class="apply-job-selected-cv__preview {{ $selectedResume ? '' : 'd-none' }}"
-                                           id="selectedCvPreview"
-                                           href="{{ $selectedResume ? route('candidate.resumes.preview', $selectedResumeId) : '#' }}"
-                                           target="_blank" rel="noopener">
-                                            <i class="fa-regular fa-eye"></i><span>{{ __('messages.apply_job.preview_cv') }}</span>
-                                        </a>
+                                        <div class="apply-job-selected-cv__actions {{ $selectedResume ? '' : 'd-none' }}">
+                                            <a class="apply-job-selected-cv__edit"
+                                               href="{{ route('candidate.profile', ['section' => 'resume']) }}">
+                                                <i class="fa-regular fa-pen-to-square"></i><span>{{ __('messages.common.edit') }}</span>
+                                            </a>
+                                            <a class="apply-job-selected-cv__preview"
+                                               id="selectedCvPreview"
+                                               href="{{ $selectedResume ? route('candidate.resumes.preview', $selectedResumeId) : '#' }}"
+                                               target="_blank" rel="noopener">
+                                                <i class="fa-regular fa-eye"></i><span>{{ __('messages.apply_job.preview_cv') }}</span>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
 

@@ -25,10 +25,22 @@ trait ValidatesJob
             ->values()
             ->toArray();
 
+        $hideSalary = $this->boolean('hide_salary');
+        $rawSalaryFrom = $this->input('salary_from');
+        $rawSalaryTo = $this->input('salary_to');
+
+        $salaryFrom = ($rawSalaryFrom !== null && $rawSalaryFrom !== '')
+            ? removeCommaFromNumbers($rawSalaryFrom)
+            : ($hideSalary ? 0 : null);
+
+        $salaryTo = ($rawSalaryTo !== null && $rawSalaryTo !== '')
+            ? removeCommaFromNumbers($rawSalaryTo)
+            : ($hideSalary ? 0 : null);
+
         $this->merge([
-            'salary_from' => removeCommaFromNumbers($this->input('salary_from')),
-            'salary_to' => removeCommaFromNumbers($this->input('salary_to')),
-            'hide_salary' => $this->boolean('hide_salary'),
+            'salary_from' => $salaryFrom,
+            'salary_to' => $salaryTo,
+            'hide_salary' => $hideSalary,
             'is_freelance' => $isEmployerJobForm
                 ? $employmentStatus === 'freelance'
                 : $this->boolean('is_freelance'),
@@ -72,6 +84,7 @@ trait ValidatesJob
     protected function jobRules(): array
     {
         $isEmployerJobForm = $this->routeIs('job.store', 'job.update');
+        $hideSalary = $this->boolean('hide_salary');
 
         return [
             'company_id' => ['sometimes', 'required', 'integer', Rule::exists('companies', 'id')],
@@ -114,8 +127,12 @@ trait ValidatesJob
                 'integer',
                 Rule::exists('cities', 'id')->where('state_id', $this->input('state_id')),
             ],
-            'salary_from' => ['required', 'numeric', 'min:0', 'max:999999999'],
-            'salary_to' => ['required', 'numeric', 'min:0', 'max:999999999', 'gte:salary_from'],
+            'salary_from' => $hideSalary
+                ? ['nullable', 'numeric', 'min:0', 'max:999999999']
+                : ['required', 'numeric', 'min:0', 'max:999999999'],
+            'salary_to' => $hideSalary
+                ? ['nullable', 'numeric', 'min:0', 'max:999999999', 'gte:salary_from']
+                : ['required', 'numeric', 'min:0', 'max:999999999', 'gte:salary_from'],
             'job_expiry_date' => ['required', 'date', 'after_or_equal:today'],
             'employment_status' => [
                 $isEmployerJobForm ? 'required' : 'nullable',

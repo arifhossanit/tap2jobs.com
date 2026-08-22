@@ -74,6 +74,15 @@
             $remainingMonths ? $remainingMonths.' month'.($remainingMonths > 1 ? 's' : '') : null,
         ])->filter()->implode(' ');
     };
+    $formatExpertiseDuration = function ($months) {
+        if (! filled($months)) {
+            return '';
+        }
+
+        $months = (int) $months;
+
+        return ' ('.$months.' '.\Illuminate\Support\Str::plural('month', $months).')';
+    };
     $totalExperienceMonths = $experiences->sum(function ($experience) {
         if (!$experience->start_date) return 0;
         return max(1, $experience->start_date->diffInMonths(
@@ -206,7 +215,7 @@
                             <p><strong>{{ $experience->company }}</strong></p>
                             @if($experience->company_location)<p>{{ $experience->company_location }}</p>@endif
                             @if($experience->expertises->isNotEmpty())
-                                <p class="label-line"><strong>Area of Expertise</strong>{{ $experience->expertises->map(fn ($expertise) => $expertise->name.($expertise->duration_months ? ' ('.$expertise->duration_months.' months)' : ''))->implode(', ') }}</p>
+                                <p class="label-line"><strong>Area of Expertise</strong>{{ $experience->expertises->map(fn ($expertise) => $expertise->name.$formatExpertiseDuration($expertise->duration_months))->filter()->implode(', ') }}</p>
                             @endif
                             @if($plainText($experience->description))
                                 <p class="label-line"><strong>Duties/Responsibilities</strong><span class="pre-line">{{ $plainText($experience->description) }}</span></p>

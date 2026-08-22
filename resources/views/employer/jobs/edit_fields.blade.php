@@ -7,7 +7,7 @@
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('job_type_id', __('messages.job.job_type').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{ Form::select('job_type_id', $data['jobType'],null, ['id'=>'jobTypeId','class' => 'form-select','data-control'=>'select2','placeholder' => __('messages.company.select_job_type'),'required','placeholder' => __('messages.job.job_type')]) }}
+        {{ Form::select('job_type_id', $data['jobType'],null, ['id'=>'jobTypeId','class' => 'form-select','data-control'=>'select2','placeholder' => __('messages.job.job_type'),'required']) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('job_category_id', __('messages.job_category.job_category').':', ['class' => 'form-label']) }}
@@ -23,15 +23,14 @@
     <div class="col-xl-12 col-md-12 col-sm-12 mb-5">
         {{ Form::label('description', __('messages.job.description').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{--        {{ Form::textarea('description', null, ['class' => 'form-control' , 'id' => 'details', 'rows' => '5']) }}--}}
         <div id="editDetails" aria-required="true"></div>
-        <textarea name="description" id="editJobDescription" class="d-none">{{ old('description', $job->description) }}</textarea>
+        {{ Form::hidden('description', old('description', $job->description), ['id' => 'editJobDescription', 'required']) }}
     </div>
     <div class="col-xl-12 col-md-6 col-sm-12 mb-5">
          {{ Form::label('key_responsibilities', __('messages.job.key_responsibilities') . ':', ['class' => 'form-label ']) }}<span
              class="required"></span>
          <div id="editResponse" aria-required="true"></div>
-         <textarea name="key_responsibilities" id="edit_responsibilities" class="d-none">{{ old('key_responsibilities', $job->key_responsibilities) }}</textarea>
+         {{ Form::hidden('key_responsibilities', old('key_responsibilities', $job->key_responsibilities), ['id' => 'edit_responsibilities', 'required']) }}
      </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('no_preference', __('messages.candidate.gender').':', ['class' => 'form-label']) }}
@@ -44,7 +43,7 @@
             <div class="input-group-text border-0">
                 <i class="fas fa-calendar-alt"></i>
             </div>
-            <input type="text" name="job_expiry_date" id="availableAt" class="form-control  expiryDatepicker {{(getLoggedInUser()->theme_mode) ? 'bg-light' : 'bg-white'}}" autocomplete="off" required value="{{ old('job_expiry_date', isset($job->job_expiry_date) ? $job->job_expiry_date : null) }}" placeholder="{{__('messages.job.job_expiry_date')}}">
+            <input type="text" name="job_expiry_date" id="availableAt" class="form-control expiryDatepicker {{(getLoggedInUser()->theme_mode) ? 'bg-light' : 'bg-white'}}" autocomplete="off" required value="{{ old('job_expiry_date', isset($job->job_expiry_date) ? $job->job_expiry_date : null) }}" placeholder="{{__('messages.job.job_expiry_date')}}">
         </div>
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
@@ -52,11 +51,19 @@
         <span class="required"></span>
         {{ Form::text('salary_from', null, ['class' => 'form-control salary', 'id' => 'fromSalary', 'required', 'autocomplete' => 'off', 'inputmode' => 'decimal', 'placeholder' => __('messages.job.salary_from')]) }}
     </div>
-    <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+    <div class="col-xl-5 col-md-5 col-sm-12 mb-5">
         {{ Form::label('salary_to', __('messages.job.salary_to').':', ['class' => 'form-label']) }}
         <span class="required"></span>
         {{ Form::text('salary_to', null, ['class' => 'form-control salary', 'id' => 'toSalary', 'required', 'autocomplete' => 'off', 'inputmode' => 'decimal', 'placeholder' => __('messages.job.salary_to')]) }}
         <span id="salaryToErrorMsg" class="text-danger"></span>
+    </div>
+    <div class="col-xl-1 col-md-1 col-sm-12 mb-5">
+        <label class="form-label">{{ __('messages.job.hide_salary').':' }}</label><br>
+        <label class="form-check form-switch form-switch-sm {{ checkLanguageSession() == 'ar' ? 'float-end' : 'float-start' }}">
+            <input type="checkbox" name="hide_salary" class="form-check-input"
+                   value="1"
+                   id="salary" {{ old('hide_salary', isset($job) ? $job->hide_salary : false) ? 'checked' : '' }}>
+        </label>
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('currency_id', __('messages.job.currency').':', ['class' => 'form-label']) }}
@@ -115,19 +122,10 @@
         <span class="required"></span>
         {{ Form::text('vacancy', null, ['id'=>'vacancyId','class' => 'form-control','required', 'min' => 1, 'max' => 4294967295, 'placeholder' => __('messages.job.vacancy'), 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")']) }}
     </div>
-    <div class="col-xl-3 col-md-3 col-sm-12 mb-5">
-        <label class="form-label">{{ __('messages.job.hide_salary').':' }}</label>
-        <label class="form-check form-switch form-switch-sm">
-            <input type="checkbox" name="hide_salary" class="form-check-input"
-                   value="1"
-                   id="salary" {{$job->hide_salary == 1? 'checked' : ''}}>
-        </label>
-    </div>
     <!-- Submit Field -->
     <div class="d-flex justify-content-end mt-5">
         {{ Form::button(__('messages.common.save'), ['type' => 'submit','class' => 'btn btn-primary me-3','id' => 'editJobsSaveBtn','data-loading-text' => "<span class='spinner-border spinner-border-sm'></span> ".__('messages.common.process')]) }}
         <a href="{{ route('job.index') }}"
            class="btn btn-secondary me-2">{{__('messages.common.cancel')}}</a>
     </div>
-
 </div>

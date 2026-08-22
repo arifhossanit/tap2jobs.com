@@ -58,7 +58,7 @@
             <div class="candidate-employment-expertise-row" data-employment-expertise-row>
                 {{ Form::text('area_of_expertise[]', $expertise->name ?? null, ['class' => 'form-control candidate-employment-expertise-name']) }}
                 <div class="candidate-employment-month-field">
-                    {{ Form::number('expertise_duration[]', $expertise->duration_months ?? null, ['class' => 'form-control', 'min' => 0, 'max' => 12, 'data-employment-expertise-duration' => true]) }}
+                    {{ Form::number('expertise_duration[]', $expertise->duration_months ?? null, ['class' => 'form-control', 'min' => 0, 'data-employment-expertise-duration' => true]) }}
                     <span>{{ __('messages.candidate_profile.month_s') }}</span>
                 </div>
                 <button type="button" class="candidate-employment-remove-expertise" aria-label="{{ __('messages.candidate_profile.remove_expertise') }}" data-employment-expertise-remove>

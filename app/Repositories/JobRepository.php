@@ -146,6 +146,7 @@ class JobRepository extends BaseRepository
         return $jobUniqueId;
     }
 
+
     /**
      * @throws \Throwable
      */
@@ -154,8 +155,8 @@ class JobRepository extends BaseRepository
         try {
             DB::beginTransaction();
 
-            $input['salary_from'] = (float) removeCommaFromNumbers($input['salary_from']);
-            $input['salary_to'] = (float) removeCommaFromNumbers($input['salary_to']);
+            $input['salary_from'] = (float) removeCommaFromNumbers($input['salary_from'] ?? 0);
+            $input['salary_to'] = (float) removeCommaFromNumbers($input['salary_to'] ?? 0);
             $input['company_id'] = (isset($input['company_id'])) ? $input['company_id'] : Auth::user()->owner_id;
             $input['job_id'] = $this->getUniqueJobId();
             /** @var Job $job */

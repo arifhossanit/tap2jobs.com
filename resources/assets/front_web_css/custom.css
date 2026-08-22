@@ -2582,15 +2582,34 @@ footer .text-decoration-none {
     padding: 4px 6px;
 }
 
+.apply-job-selected-cv__actions {
+    align-items: center;
+    display: inline-flex;
+    flex: 0 0 auto;
+    gap: 12px;
+}
+
+.apply-job-selected-cv__edit,
 .apply-job-selected-cv__preview {
     align-items: center;
-    color: #137dc5;
     display: inline-flex;
     font-size: 12px;
     font-weight: 600;
     gap: 5px;
     text-decoration: none;
     white-space: nowrap;
+}
+
+.apply-job-selected-cv__edit {
+    color: #526176;
+}
+
+.apply-job-selected-cv__edit:hover {
+    color: #1967d2;
+}
+
+.apply-job-selected-cv__preview {
+    color: #137dc5;
 }
 
 .apply-job-selected-cv__preview:hover {
@@ -2659,7 +2678,7 @@ footer .text-decoration-none {
     .apply-job-form-card { padding: 23px 18px; }
     .apply-job-form-card__header { align-items: flex-start; }
     .apply-job-selected-cv { align-items: flex-start; flex-wrap: wrap; }
-    .apply-job-selected-cv__preview { margin-left: 50px; }
+    .apply-job-selected-cv__actions { margin-left: 50px; }
     .apply-job-form-card__actions { align-items: stretch; flex-direction: column-reverse; }
     .apply-job-form-card__actions .btn { width: 100%; }
 }

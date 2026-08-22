@@ -44,7 +44,7 @@
         </section>
     </div>
 
-    @include('candidate.profile.modals.upload_resume_modal')
+    {{-- @include('candidate.profile.modals.upload_resume_modal') --}}
     @include('candidate.profile.modals.resume_preview_modal')
 @endsection
 
