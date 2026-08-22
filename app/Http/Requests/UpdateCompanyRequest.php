@@ -22,6 +22,17 @@ class UpdateCompanyRequest extends FormRequest
         if ($this->routeIs('company.update.form') && $company instanceof Company) {
             $industryIds = array_values(array_filter((array) $this->input('industry_ids')));
             $normalized['industry_id'] = $industryIds[0] ?? null;
+        $normalized = [
+            'phone' => preg_replace('/\D+/', '', (string) $this->input('phone')),
+            'region_code' => preg_replace('/\D+/', '', (string) $this->input('region_code')),
+            'billing_phone' => preg_replace('/\D+/', '', (string) $this->input('billing_phone')),
+            'billing_region_code' => preg_replace('/\D+/', '', (string) $this->input('billing_region_code')),
+        ];
+
+        $company = $this->route('company');
+        if ($this->routeIs('company.update.form') && $company instanceof Company) {
+            $industryIds = array_values(array_filter((array) $this->input('industry_ids')));
+            $normalized['industry_id'] = $industryIds[0] ?? null;
         }
 
         $this->merge($normalized);

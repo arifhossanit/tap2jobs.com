@@ -62,6 +62,7 @@ class WebRegisterRequest extends FormRequest
                 'details' => 'nullable|string|max:5000',
                 'trade_license_no' => 'nullable|string|max:100',
                 'rl_no' => ['nullable', 'string', 'max:100', 'regex:/^\d+$/'],
+                'rl_no' => ['nullable', 'string', 'max:100', 'regex:/^\d+$/'],
                 'website' => 'nullable|url|max:255',
                 'contact_person_name' => 'required|string|max:180',
                 'contact_person_designation' => 'required|string|max:180',

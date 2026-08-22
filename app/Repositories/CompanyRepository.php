@@ -190,6 +190,7 @@ class CompanyRepository extends BaseRepository
             $userInput = Arr::only($input,
                 [
                     'first_name', 'email', 'phone', 'country_id', 'state_id', 'city_id', 'is_active',
+                    'first_name', 'email', 'phone', 'country_id', 'state_id', 'city_id', 'is_active',
                     'facebook_url', 'twitter_url', 'linkedin_url', 'google_plus_url', 'pinterest_url', 'region_code',
                 ]);
             /** @var User $user */
