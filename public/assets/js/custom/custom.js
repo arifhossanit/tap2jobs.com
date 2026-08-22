@@ -8485,7 +8485,7 @@ window.confirmDeleteAction = function (message, onConfirm) {
 window.deleteItem = function (url, header) {
   var callFunction = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
   window.confirmDeleteAction(Lang.get("js.are_you_sure") + ' "' + header + '" ?', function () {
-      deleteItemAjax(url, header, callFunction);
+    deleteItemAjax(url, header, callFunction);
   });
 };
 function deleteItemAjax(url, header) {

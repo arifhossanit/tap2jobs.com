@@ -12,7 +12,7 @@
                  </div>
                  <div class="p-5">
                      <div class="mb-5">
-                         <label for="selectCity" class="form-label">{{ __('messages.job.city') }}:</label>
+                         <label for="selectState" class="form-label">{{ __('messages.city.state_name') }}:</label>
                          {{ Form::select('state',['0' => __('messages.company.select_state')] + getStateFilter(), null, ['class' => 'form-select', 'id' => 'selectState', 'data-control' => 'select2']) }}
                      </div>
                      <div class="d-flex justify-content-end">
