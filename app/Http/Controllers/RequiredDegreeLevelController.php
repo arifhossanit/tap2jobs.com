@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateRequiredDegreeLevelRequest;
 use App\Http\Requests\UpdateRequiredDegreeLevelRequest;
+use App\Imports\RequiredDegreeLevelsImport;
 use App\Models\CandidateEducation;
 use App\Models\EducationDegreeTitle;
 use App\Models\EducationMajorGroup;
@@ -15,6 +16,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RequiredDegreeLevelController extends AppBaseController
 {
@@ -75,6 +77,28 @@ class RequiredDegreeLevelController extends AppBaseController
         $this->requiredDegreeLevelRepository->update($input, $requiredDegreeLevel->id);
 
         return $this->sendSuccess(__('messages.flash.degree_level_update'));
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        $import = new RequiredDegreeLevelsImport;
+        Excel::import($import, $request->file('file'));
+
+        if ($import->failures()->isNotEmpty()) {
+            $message = 'Degree levels import completed with validation errors. Please fix the failed rows and try again.';
+
+            return $request->expectsJson()
+                ? response()->json(['message' => $message], 422)
+                : back()->withFailures($import->failures());
+        }
+
+        return $request->expectsJson()
+            ? response()->json(['message' => 'Degree levels imported successfully.'])
+            : back();
     }
 
     /**

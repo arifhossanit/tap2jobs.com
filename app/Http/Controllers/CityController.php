@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateCityRequest;
 use App\Http\Requests\UpdateCityRequest;
+use App\Imports\CitiesImport;
 use App\Models\City;
 use App\Models\Job;
 use App\Models\State;
@@ -18,6 +19,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CityController extends AppBaseController
 {
@@ -54,6 +56,38 @@ class CityController extends AppBaseController
         $this->cityRepository->update($input, $city->id);
 
         return $this->sendSuccess(__('messages.flash.city_update'));
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        $import = new CitiesImport;
+        Excel::import($import, $request->file('file'));
+
+        if ($import->failures()->isNotEmpty()) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Cities import completed with validation errors. Please fix the failed rows and try again.',
+                ], 422);
+            }
+
+            flash('Cities import completed with validation errors. Please fix the failed rows and try again.')->error();
+
+            return back()->withFailures($import->failures());
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Cities imported successfully.',
+            ]);
+        }
+
+        flash('Cities imported successfully.')->success();
+
+        return back();
     }
 
     public function destroy(City $city): JsonResponse

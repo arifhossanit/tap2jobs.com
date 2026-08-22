@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateCareerLevelRequest;
 use App\Http\Requests\UpdateCareerLevelRequest;
+use App\Imports\CareerLevelsImport;
 use App\Models\Candidate;
 use App\Models\CareerLevel;
 use App\Models\Job;
@@ -14,6 +15,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CareerLevelController extends AppBaseController
 {
@@ -64,6 +66,28 @@ class CareerLevelController extends AppBaseController
         $this->careerLevelRepository->update($input, $careerLevel->id);
 
         return $this->sendSuccess(__('messages.flash.career_level_update'));
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        $import = new CareerLevelsImport;
+        Excel::import($import, $request->file('file'));
+
+        if ($import->failures()->isNotEmpty()) {
+            $message = 'Career levels import completed with validation errors. Please fix the failed rows and try again.';
+
+            return $request->expectsJson()
+                ? response()->json(['message' => $message], 422)
+                : back()->withFailures($import->failures());
+        }
+
+        return $request->expectsJson()
+            ? response()->json(['message' => 'Career levels imported successfully.'])
+            : back();
     }
 
     /**

@@ -14,17 +14,18 @@
                      id="editValidationErrorsBox">
                     <i class="fa-solid fa-face-frown me-5"></i>
                 </div>
+                <div class="mb-5">
+                    {{ Form::label('state_id',__('messages.city.state_name').(':'),['class' => 'form-label']) }}
+                    <span class="required"></span>
+                    {{ Form::select('state_id', $states, null, ['id'=>'editStateId','class' => 'form-select','required', 'placeholder' => __('messages.company.select_state')]) }}
+                </div>
                 {{ Form::hidden('cityId',null,['id'=>'cityId']) }}
                 <div class="mb-5">
                     {{ Form::label('name',__('messages.common.name').(':'), ['class' => 'form-label']) }}
                     <span class="required"></span>
                     {{ Form::text('name', null, ['id'=>'editName','class' => 'form-control','required','placeholder' => __('messages.common.name')]) }}
                 </div>
-                <div class="mb-5">
-                    {{ Form::label('state_id',__('messages.city.state_name').(':'),['class' => 'form-label']) }}
-                    <span class="required"></span>
-                    {{ Form::select('state_id', $states, null, ['id'=>'editStateId','class' => 'form-select','required', 'placeholder' => __('messages.company.select_state')]) }}
-                </div>
+                
 
             </div>
             <div class="modal-footer pt-0 quill-btn-container">

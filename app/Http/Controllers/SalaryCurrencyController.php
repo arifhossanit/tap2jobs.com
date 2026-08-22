@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateSalaryCurrencyRequest;
 use App\Http\Requests\updateSalaryCurrencyRequest;
+use App\Imports\SalaryCurrenciesImport;
 use App\Models\Candidate;
 use App\Models\Job;
 use App\Models\Plan;
@@ -11,7 +12,9 @@ use App\Models\SalaryCurrency;
 use App\Repositories\SalaryCurrencyRepository;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SalaryCurrencyController extends AppBaseController
 {
@@ -50,6 +53,28 @@ class SalaryCurrencyController extends AppBaseController
         $this->salaryCurrencyRepository->update($input, $currencyId);
 
         return $this->sendSuccess(__('messages.flash.salary_currency_update'));
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        $import = new SalaryCurrenciesImport;
+        Excel::import($import, $request->file('file'));
+
+        if ($import->failures()->isNotEmpty()) {
+            $message = 'Salary currencies import completed with validation errors. Please fix the failed rows and try again.';
+
+            return $request->expectsJson()
+                ? response()->json(['message' => $message], 422)
+                : back()->withFailures($import->failures());
+        }
+
+        return $request->expectsJson()
+            ? response()->json(['message' => 'Salary currencies imported successfully.'])
+            : back();
     }
 
     public function destroy(SalaryCurrency $currency): JsonResponse

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateOwnerShipTypeRequest;
 use App\Http\Requests\UpdateOwnerShipTypeRequest;
+use App\Imports\OwnerShipTypesImport;
 use App\Models\Company;
 use App\Models\OwnerShipType;
 use App\Repositories\OwnerShipTypeRepository;
@@ -12,6 +13,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OwnerShipTypeController extends AppBaseController
 {
@@ -72,6 +74,28 @@ class OwnerShipTypeController extends AppBaseController
         $ownerShipType = $this->ownerShipTypeRepository->update($request->all(), $ownerShipType->id);
 
         return $this->sendSuccess(__('messages.flash.ownership_type_updated'));
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        $import = new OwnerShipTypesImport;
+        Excel::import($import, $request->file('file'));
+
+        if ($import->failures()->isNotEmpty()) {
+            $message = 'Ownership types import completed with validation errors. Please fix the failed rows and try again.';
+
+            return $request->expectsJson()
+                ? response()->json(['message' => $message], 422)
+                : back()->withFailures($import->failures());
+        }
+
+        return $request->expectsJson()
+            ? response()->json(['message' => 'Ownership types imported successfully.'])
+            : back();
     }
 
     /**

@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\EducationBoardsImport;
 use App\Models\EducationBoard;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EducationBoardController extends AppBaseController
 {
@@ -45,6 +47,38 @@ class EducationBoardController extends AppBaseController
         ]);
 
         return $this->sendSuccess(__('messages.flash.education_board_update') ?? 'Education Board updated successfully.');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        $import = new EducationBoardsImport;
+        Excel::import($import, $request->file('file'));
+
+        if ($import->failures()->isNotEmpty()) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Education Boards import completed with validation errors. Please fix the failed rows and try again.',
+                ], 422);
+            }
+
+            flash('Education Boards import completed with validation errors. Please fix the failed rows and try again.')->error();
+
+            return back()->withFailures($import->failures());
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Education Boards imported successfully.',
+            ]);
+        }
+
+        flash('Education Boards imported successfully.')->success();
+
+        return back();
     }
 
     public function destroy(EducationBoard $educationBoard): JsonResponse

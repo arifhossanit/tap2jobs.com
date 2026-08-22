@@ -2,23 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\ProfileReferenceOptionsImport;
 use App\Models\ProfileReferenceOption;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProfileReferenceOptionController extends AppBaseController
 {
-    public function index(string $scope, string $type): View
+    public function index(string $scope, string $type): View|RedirectResponse
     {
         $this->guardScopeType($scope, $type);
+
+        $dedicatedRouteName = ProfileReferenceOption::dedicatedRouteName($scope, $type);
+
+        if (request()->routeIs('profileReferenceOptions.index') && $dedicatedRouteName) {
+            return redirect()->route($dedicatedRouteName.'.index');
+        }
 
         return view('profile_reference_options.index', [
             'typeLabels' => ProfileReferenceOption::typeLabels(),
             'scopeLabels' => ProfileReferenceOption::scopeLabels(),
             'scope' => $scope,
             'type' => $type,
+            'dedicatedRouteName' => $dedicatedRouteName,
             'title' => (ProfileReferenceOption::scopeLabels()[$scope] ?? $scope).' - '.(ProfileReferenceOption::typeLabels()[$type] ?? $type),
             'options' => ProfileReferenceOption::records($type, $scope),
         ]);
@@ -53,6 +63,30 @@ class ProfileReferenceOptionController extends AppBaseController
         $profileReferenceOption->update($input);
 
         return $this->sendSuccess('Reference option updated successfully.');
+    }
+
+    public function import(Request $request, string $scope, string $type)
+    {
+        $this->guardScopeType($scope, $type);
+
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        $import = new ProfileReferenceOptionsImport($scope, $type);
+        Excel::import($import, $request->file('file'));
+
+        if ($import->failures()->isNotEmpty()) {
+            $message = 'Reference options import completed with validation errors. Please fix the failed rows and try again.';
+
+            return $request->expectsJson()
+                ? response()->json(['message' => $message], 422)
+                : back()->withFailures($import->failures());
+        }
+
+        return $request->expectsJson()
+            ? response()->json(['message' => 'Reference options imported successfully.'])
+            : back();
     }
 
     public function destroy(string $scope, string $type, int $id): JsonResponse

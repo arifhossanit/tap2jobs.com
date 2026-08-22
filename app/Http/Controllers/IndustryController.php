@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateIndustryRequest;
 use App\Http\Requests\UpdateIndustryRequest;
+use App\Imports\IndustriesImport;
 use App\Models\Candidate;
 use App\Models\Company;
 use App\Models\Industry;
@@ -15,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class IndustryController extends AppBaseController
 {
@@ -99,6 +101,28 @@ class IndustryController extends AppBaseController
         $this->industryRepository->update($input, $industry->id);
 
         return $this->sendSuccess(__('messages.flash.industry_update'));
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        $import = new IndustriesImport;
+        Excel::import($import, $request->file('file'));
+
+        if ($import->failures()->isNotEmpty()) {
+            $message = 'Industries import completed with validation errors. Please fix the failed rows and try again.';
+
+            return $request->expectsJson()
+                ? response()->json(['message' => $message], 422)
+                : back()->withFailures($import->failures());
+        }
+
+        return $request->expectsJson()
+            ? response()->json(['message' => 'Industries imported successfully.'])
+            : back();
     }
 
     /**

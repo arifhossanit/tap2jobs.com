@@ -14,12 +14,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
+use App\Imports\CountriesImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CountryController extends AppBaseController
 {
-    /**
-     * @var CountryRepository
-     */
     private $countryRepository;
 
     public function __construct(CountryRepository $countryRepository)
@@ -27,20 +26,11 @@ class CountryController extends AppBaseController
         $this->countryRepository = $countryRepository;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @param  Request  $request
-     * @return Application|Factory|Response|View
-     */
     public function index(): View
     {
         return view('countries.index');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(CreateCountryRequest $request): JsonResponse
     {
         $input = $request->all();
@@ -50,17 +40,11 @@ class CountryController extends AppBaseController
         return $this->sendResponse($country, __('messages.flash.country_save'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Country $country): JsonResponse
     {
         return $this->sendResponse($country, __('messages.flash.retrieved'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdateCountryRequest $request, Country $country): JsonResponse
     {
         $input = $request->all();
@@ -71,12 +55,6 @@ class CountryController extends AppBaseController
         return $this->sendSuccess(__('messages.flash.country_update'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     *
-     * @throws \Exception
-     */
     public function destroy(Country $country): JsonResponse
     {
         if (State::where('country_id', $country->id)->count() > 0) {
@@ -88,5 +66,37 @@ class CountryController extends AppBaseController
         $country->delete();
 
         return $this->sendSuccess(__('messages.flash.country_delete'));
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        $import = new CountriesImport;
+        Excel::import($import, $request->file('file'));
+
+        if ($import->failures()->isNotEmpty()) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Countries import completed with validation errors. Please fix the failed rows and try again.',
+                ], 422);
+            }
+
+            flash('Countries import completed with validation errors. Please fix the failed rows and try again.')->error();
+
+            return back()->withFailures($import->failures());
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Countries imported successfully.',
+            ]);
+        }
+
+        flash('Countries imported successfully.')->success();
+
+        return back();
     }
 }

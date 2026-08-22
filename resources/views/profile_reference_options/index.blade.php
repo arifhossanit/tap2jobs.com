@@ -3,9 +3,15 @@
     {{ $title }}
 @endsection
 @section('content')
+    @php
+        $useEducationBoardLayout = filled($dedicatedRouteName);
+    @endphp
     <div class="container-fluid">
         <div class="d-flex flex-column">
             @include('flash::message')
+            @if($useEducationBoardLayout)
+                <livewire:profile-reference-option-table :scope="$scope" :type="$type" lazy/>
+            @else
             <div class="card">
                 <div class="card-header border-0 pt-6">
                     <div class="card-title">
@@ -23,7 +29,7 @@
                 </div>
                 <div class="card-body pt-0">
                     <div class="table-responsive">
-                        <table class="table table-striped align-middle">
+                        <table class="table table-striped">
                             <thead>
                             <tr>
                                 <th>
@@ -35,7 +41,7 @@
                                 <th>Value</th>
                                 <th>Sort</th>
                                 <th>{{ __('messages.common.status') }}</th>
-                                <th>{{ __('messages.common.action') }}</th>
+                                <th class="text-center">{{ __('messages.common.action') }}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -50,19 +56,23 @@
                                     <td>{{ $option->value }}</td>
                                     <td>{{ $option->sort_order }}</td>
                                     <td>{{ $option->is_active ? __('messages.common.active') : __('messages.common.deactive') }}</td>
-                                    <td>
-                                        <a href="javascript:void(0)"
-                                           class="btn px-2 text-primary fs-3 profile-reference-option-edit-btn"
-                                           data-id="{{ $option->id }}"
-                                           data-bs-toggle="tooltip">
-                                            <i class="fa-solid fa-pen-to-square"></i>
-                                        </a>
-                                        <a href="javascript:void(0)"
-                                           class="profile-reference-option-delete-btn btn px-2 text-danger fs-3"
-                                           data-id="{{ $option->id }}"
-                                           data-bs-toggle="tooltip">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </a>
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-center">
+                                            <a href="javascript:void(0)"
+                                               title="{{ __('messages.common.edit') }}"
+                                               class="btn px-2 text-primary fs-3 profile-reference-option-edit-btn"
+                                               data-id="{{ $option->id }}"
+                                               data-bs-toggle="tooltip">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </a>
+                                            <button type="button"
+                                                    title="{{ __('messages.common.delete') }}"
+                                                    class="profile-reference-option-delete-btn btn px-2 text-danger fs-3"
+                                                    data-id="{{ $option->id }}"
+                                                    data-bs-toggle="tooltip">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
@@ -75,6 +85,7 @@
                     </div>
                 </div>
             </div>
+            @endif
         </div>
         @include('profile_reference_options.add_modal')
         @include('profile_reference_options.edit_modal')
@@ -83,9 +94,29 @@
         document.addEventListener('DOMContentLoaded', function () {
             const scope = @json($scope);
             const type = @json($type);
+            const useEducationBoardLayout = @json($useEducationBoardLayout);
+            const dedicatedRouteName = @json($dedicatedRouteName);
+            const routeFor = function (action, id = null) {
+                if (dedicatedRouteName) {
+                    if (id === null) {
+                        return route(dedicatedRouteName + '.' + action);
+                    }
+
+                    return route(dedicatedRouteName + '.' + action, id);
+                }
+
+                if (id === null) {
+                    return route('profileReferenceOptions.' + action, [scope, type]);
+                }
+
+                return route('profileReferenceOptions.' + action, [scope, type, id]);
+            };
             const bulkDeleteBtn = $('#profileReferenceBulkDeleteBtn');
+            const bulkActionsDropdown = $('#profileReferenceBulkActionsDropdown');
+            const selectedCountBadge = $('#profileReferenceSelectedCount');
             const selectAllCheckbox = $('#profileReferenceSelectAll');
 
+            if (! useEducationBoardLayout) {
             const selectedProfileReferenceOptionIds = function () {
                 return $('.profile-reference-option-checkbox:checked').map(function () {
                     return this.value;
@@ -94,20 +125,47 @@
 
             const refreshProfileReferenceBulkDeleteState = function () {
                 const selectedCount = selectedProfileReferenceOptionIds().length;
-                bulkDeleteBtn.toggleClass('d-none', selectedCount === 0).prop('disabled', selectedCount === 0);
+                bulkDeleteBtn.prop('disabled', selectedCount === 0);
+
+                if (useEducationBoardLayout) {
+                    bulkActionsDropdown.prop('disabled', selectedCount === 0);
+                    selectedCountBadge.text(selectedCount).toggleClass('d-none', selectedCount === 0);
+                } else {
+                    bulkDeleteBtn.toggleClass('d-none', selectedCount === 0);
+                }
+
+                const visibleCheckboxes = $('.profile-reference-option-checkbox:visible');
+                const selectedVisibleCount = visibleCheckboxes.filter(':checked').length;
                 selectAllCheckbox.prop(
                     'checked',
-                    $('.profile-reference-option-checkbox').length > 0
-                    && selectedCount === $('.profile-reference-option-checkbox').length
+                    visibleCheckboxes.length > 0
+                    && selectedVisibleCount === visibleCheckboxes.length
                 );
             };
 
-            listenClick('.addProfileReferenceOptionModal', function () {
-                $('#addProfileReferenceOptionModal').appendTo('body').modal('show');
+            listenKeyup('#profileReferenceSearch', function () {
+                const search = this.value.toLowerCase().trim();
+
+                $('#profileReferenceOptionsTable tbody tr[data-search]').each(function () {
+                    const row = $(this);
+                    const matched = row.data('search').includes(search);
+
+                    row.toggle(matched);
+
+                    if (!matched) {
+                        row.find('.profile-reference-option-checkbox').prop('checked', false);
+                    }
+                });
+
+                refreshProfileReferenceBulkDeleteState();
             });
 
             listenChange('#profileReferenceSelectAll', function () {
-                $('.profile-reference-option-checkbox').prop('checked', this.checked);
+                const checkboxes = useEducationBoardLayout
+                    ? $('.profile-reference-option-checkbox:visible')
+                    : $('.profile-reference-option-checkbox');
+
+                checkboxes.prop('checked', this.checked);
                 refreshProfileReferenceBulkDeleteState();
             });
 
@@ -139,7 +197,7 @@
                     }
 
                     $.ajax({
-                        url: route('profileReferenceOptions.bulkDestroy', [scope, type]),
+                        url: routeFor('bulkDestroy'),
                         type: 'DELETE',
                         data: { ids },
                         success: function (result) {
@@ -154,11 +212,16 @@
                     });
                 });
             });
+            }
+
+            listenClick('.addProfileReferenceOptionModal', function () {
+                $('#addProfileReferenceOptionModal').appendTo('body').modal('show');
+            });
 
             listenClick('.profile-reference-option-edit-btn', function (event) {
                 const optionId = event.currentTarget.dataset.id;
                 $.ajax({
-                    url: route('profileReferenceOptions.edit', [scope, type, optionId]),
+                    url: routeFor('edit', optionId),
                     type: 'GET',
                     success: function (result) {
                         if (result.success) {
@@ -175,7 +238,7 @@
 
             listenClick('.profile-reference-option-delete-btn', function (event) {
                 deleteItem(
-                    route('profileReferenceOptions.destroy', [scope, type, event.currentTarget.dataset.id]),
+                    routeFor('destroy', event.currentTarget.dataset.id),
                     'Profile Reference',
                     null,
                     'location.reload()'
@@ -195,7 +258,7 @@
                 event.preventDefault();
                 processingBtn('#addProfileReferenceOptionForm', '#profileReferenceOptionBtnSave', 'loading');
                 $.ajax({
-                    url: route('profileReferenceOptions.store', [scope, type]),
+                    url: routeFor('store'),
                     type: 'POST',
                     data: $(this).serialize(),
                     success: function (result) {
@@ -219,7 +282,7 @@
                 processingBtn('#editProfileReferenceOptionForm', '#editProfileReferenceOptionBtnSave', 'loading');
                 const optionId = $('#editProfileReferenceOptionId').val();
                 $.ajax({
-                    url: route('profileReferenceOptions.update', [scope, type, optionId]),
+                    url: routeFor('update', optionId),
                     type: 'PUT',
                     data: $(this).serialize(),
                     success: function (result) {

@@ -143,6 +143,47 @@ class ProfileReferenceOption extends Model
         return in_array($type, self::menuGroups()[$scope] ?? [], true);
     }
 
+    public static function candidateDedicatedRouteNames(): array
+    {
+        return [
+            self::TYPE_RELIGION => 'candidateReligions',
+            self::TYPE_BLOOD_GROUP => 'bloodGroups',
+            self::TYPE_DISABILITY_DIFFICULTY => 'disabilityDifficulties',
+            self::TYPE_SKILL_LEARNING_SOURCE => 'skillLearningSources',
+            self::TYPE_REFERENCE_RELATION => 'candidateReferenceRelations',
+            self::TYPE_EDUCATION_RESULT => 'educationResults',
+            self::TYPE_ARMY_BA_NO_PREFIX => 'armyBaNoPrefixes',
+            self::TYPE_ARMY_RANK => 'armyRanks',
+            self::TYPE_ARMY_EMPLOYMENT_TYPE => 'armyEmploymentTypes',
+            self::TYPE_ARMY_ARMS => 'armyArms',
+        ];
+    }
+
+    public static function employerDedicatedRouteNames(): array
+    {
+        return [
+            self::TYPE_REFERENCE_RELATION => 'employerReferenceRelations',
+            self::TYPE_JOB_GENDER_PREFERENCE => 'jobGenderPreferences',
+            self::TYPE_JOB_EMPLOYMENT_STATUS => 'jobEmploymentStatuses',
+            self::TYPE_JOB_WORKPLACE => 'jobWorkplaces',
+            self::TYPE_JOB_EXPERIENCE_UNIT => 'jobExperienceUnits',
+            self::TYPE_EMPLOYER_DISABILITY_FACILITY => 'employerDisabilityFacilities',
+        ];
+    }
+
+    public static function dedicatedRouteName(string $scope, string $type): ?string
+    {
+        if ($scope === self::SCOPE_CANDIDATE) {
+            return self::candidateDedicatedRouteNames()[$type] ?? null;
+        }
+
+        if ($scope === self::SCOPE_EMPLOYER) {
+            return self::employerDedicatedRouteNames()[$type] ?? null;
+        }
+
+        return null;
+    }
+
     public static function defaults(): array
     {
         return [

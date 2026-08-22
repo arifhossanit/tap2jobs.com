@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateSkillRequest;
 use App\Http\Requests\UpdateSkillRequest;
+use App\Imports\SkillsImport;
 use App\Models\Skill;
 use App\Repositories\SkillRepository;
 use Exception;
@@ -11,6 +12,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SkillController extends AppBaseController
 {
@@ -71,6 +73,28 @@ class SkillController extends AppBaseController
         $this->skillRepository->update($input, $skill->id);
 
         return $this->sendSuccess(__('messages.flash.skill_update'));
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        $import = new SkillsImport;
+        Excel::import($import, $request->file('file'));
+
+        if ($import->failures()->isNotEmpty()) {
+            $message = 'Skills import completed with validation errors. Please fix the failed rows and try again.';
+
+            return $request->expectsJson()
+                ? response()->json(['message' => $message], 422)
+                : back()->withFailures($import->failures());
+        }
+
+        return $request->expectsJson()
+            ? response()->json(['message' => 'Skills imported successfully.'])
+            : back();
     }
 
     /**

@@ -263,6 +263,18 @@
     @include('user_profile.edit_profile_modal')
     @include('user_profile.change_password_modal')
 
+    <div class="modal fade" id="bulkImportModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Bulk Import</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="bulkImportContent"></div>
+            </div>
+        </div>
+    </div>
+
     <!--begin::Javascript-->
     {{ Form::hidden('profile-phone-no', old('region_code') . old('phone'), ['id' => 'profilePhoneNo']) }}
 
@@ -282,6 +294,69 @@
         }(jQuery));
         $(document).ready(function() {
             $('.alert').delay(5000).slideUp(300);
+        });
+        $(document).on('click', '.bulk-import', function(e) {
+            e.preventDefault();
+
+            let url = $(this).data('url') || '';
+            let sampleFile = $(this).data('sample-file') || '#';
+            let token = $('meta[name="csrf-token"]').attr('content');
+            let content = `<form action="${url}" method="POST" enctype="multipart/form-data" data-turbo="false" id="bulkImportForm">
+                <input type="hidden" name="_token" value="${token}">
+                <div class="input-group">
+                    <input type="file" name="file" class="form-control" accept=".csv,.xlsx,.xls" required>
+                    <button class="btn btn-success" type="submit">Import</button>
+                </div>
+                <a class="d-block mt-3" href="${sampleFile}">Download sample file</a>
+                <small class="text-muted d-block mt-2">Supported file types: CSV, XLSX, XLS.</small>
+            </form>`;
+
+            $('#bulkImportContent').html(content);
+            $('#bulkImportModal').modal('show');
+        });
+        $(document).on('submit', '#bulkImportForm', function(e) {
+            e.preventDefault();
+
+            let form = $(this);
+            let submitButton = form.find('button[type="submit"]');
+            let originalText = submitButton.html();
+
+            submitButton.prop('disabled', true).html('Importing...');
+
+            $.ajax({
+                url: form.attr('action'),
+                method: 'POST',
+                data: new FormData(this),
+                processData: false,
+                contentType: false,
+                headers: {
+                    Accept: 'application/json',
+                },
+                success: function(response) {
+                    $('#bulkImportModal').modal('hide');
+                    if (typeof displaySuccessMessage === 'function') {
+                        displaySuccessMessage(response.message || 'Imported successfully.');
+                    }
+                    if (typeof Livewire !== 'undefined') {
+                        Livewire.dispatch('refreshDatatable');
+                    }
+                },
+                error: function(xhr) {
+                    let message = xhr.responseJSON?.message || 'Unable to import file.';
+                    if (xhr.responseJSON?.errors) {
+                        let firstError = Object.values(xhr.responseJSON.errors)[0];
+                        if (Array.isArray(firstError)) {
+                            message = firstError[0];
+                        }
+                    }
+                    if (typeof displayErrorMessage === 'function') {
+                        displayErrorMessage(message);
+                    }
+                },
+                complete: function() {
+                    submitButton.prop('disabled', false).html(originalText);
+                }
+            });
         });
         $('[data-dismiss=modal]').on('click', function(e) {
             var $t = $(this),

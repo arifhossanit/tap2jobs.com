@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateFunctionalAreaRequest;
 use App\Http\Requests\UpdateFunctionalAreaRequest;
+use App\Imports\FunctionalAreasImport;
 use App\Models\Candidate;
 use App\Models\FunctionalArea;
 use App\Models\Job;
@@ -13,6 +14,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class FunctionalAreaController extends AppBaseController
 {
@@ -63,6 +65,28 @@ class FunctionalAreaController extends AppBaseController
         $this->functionalAreaRepository->update($input, $functionalArea->id);
 
         return $this->sendSuccess(__('messages.flash.functional_area_update'));
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        $import = new FunctionalAreasImport;
+        Excel::import($import, $request->file('file'));
+
+        if ($import->failures()->isNotEmpty()) {
+            $message = 'Functional areas import completed with validation errors. Please fix the failed rows and try again.';
+
+            return $request->expectsJson()
+                ? response()->json(['message' => $message], 422)
+                : back()->withFailures($import->failures());
+        }
+
+        return $request->expectsJson()
+            ? response()->json(['message' => 'Functional areas imported successfully.'])
+            : back();
     }
 
     /**

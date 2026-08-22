@@ -1,0 +1,3 @@
+name,code,show_board,show_major,show_summary_checkbox,sort_order,is_default
+Test Degree Level 001,TDL001,1,0,0,1,0
+Test Degree Level 002,TDL002,0,1,1,2,0

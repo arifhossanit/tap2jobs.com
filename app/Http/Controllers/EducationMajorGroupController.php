@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\EducationMajorGroupsImport;
 use App\Models\EducationMajorGroup;
 use App\Models\RequiredDegreeLevel;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EducationMajorGroupController extends AppBaseController
 {
@@ -51,6 +53,38 @@ class EducationMajorGroupController extends AppBaseController
         ]);
 
         return $this->sendSuccess('Major/Group updated successfully.');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        $import = new EducationMajorGroupsImport;
+        Excel::import($import, $request->file('file'));
+
+        if ($import->failures()->isNotEmpty()) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Major/Groups import completed with validation errors. Please fix the failed rows and try again.',
+                ], 422);
+            }
+
+            flash('Major/Groups import completed with validation errors. Please fix the failed rows and try again.')->error();
+
+            return back()->withFailures($import->failures());
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Major/Groups imported successfully.',
+            ]);
+        }
+
+        flash('Major/Groups imported successfully.')->success();
+
+        return back();
     }
 
     public function destroy(EducationMajorGroup $educationMajorGroup): JsonResponse

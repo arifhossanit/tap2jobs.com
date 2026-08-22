@@ -7,13 +7,35 @@
     $blogsActive = Request::is('admin/post-categories*', 'admin/posts*', 'admin/post-comments*');
     $subscriptionsActive = Request::is('admin/plans*', 'admin/transactions*');
     $countriesActive = Request::is('admin/countries*', 'admin/states*', 'admin/cities*');
-    $educationActive = Request::is('admin/degree-levels*', 'admin/education-degree-titles*', 'admin/education-major-groups*', 'admin/education-boards*', 'admin/profile-references/candidate/education_result*');
-    $armyActive = Request::is('admin/profile-references/candidate/army_ba_no_prefix*', 'admin/profile-references/candidate/army_rank*', 'admin/profile-references/candidate/army_employment_type*', 'admin/profile-references/candidate/army_arms*');
+    $educationActive = Request::is('admin/degree-levels*', 'admin/education-degree-titles*', 'admin/education-major-groups*', 'admin/education-boards*', 'admin/education-results*', 'admin/profile-references/candidate/education_result*');
+    $armyActive = Request::is('admin/army-ba-no-prefixes*', 'admin/army-ranks*', 'admin/army-employment-types*', 'admin/army-arms*', 'admin/profile-references/candidate/army_ba_no_prefix*', 'admin/profile-references/candidate/army_rank*', 'admin/profile-references/candidate/army_employment_type*', 'admin/profile-references/candidate/army_arms*');
     $profileReferenceMenuGroups = \App\Models\ProfileReferenceOption::menuGroups();
     $profileReferenceTypeLabels = \App\Models\ProfileReferenceOption::typeLabels();
+    $candidateReferenceRoutes = \App\Models\ProfileReferenceOption::candidateDedicatedRouteNames();
+    $employerReferenceRoutes = \App\Models\ProfileReferenceOption::employerDedicatedRouteNames();
+    $candidateReferencePaths = [
+        \App\Models\ProfileReferenceOption::TYPE_RELIGION => 'candidate-religions',
+        \App\Models\ProfileReferenceOption::TYPE_BLOOD_GROUP => 'blood-groups',
+        \App\Models\ProfileReferenceOption::TYPE_DISABILITY_DIFFICULTY => 'disability-difficulties',
+        \App\Models\ProfileReferenceOption::TYPE_SKILL_LEARNING_SOURCE => 'skill-learning-sources',
+        \App\Models\ProfileReferenceOption::TYPE_REFERENCE_RELATION => 'candidate-reference-relations',
+        \App\Models\ProfileReferenceOption::TYPE_EDUCATION_RESULT => 'education-results',
+        \App\Models\ProfileReferenceOption::TYPE_ARMY_BA_NO_PREFIX => 'army-ba-no-prefixes',
+        \App\Models\ProfileReferenceOption::TYPE_ARMY_RANK => 'army-ranks',
+        \App\Models\ProfileReferenceOption::TYPE_ARMY_EMPLOYMENT_TYPE => 'army-employment-types',
+        \App\Models\ProfileReferenceOption::TYPE_ARMY_ARMS => 'army-arms',
+    ];
+    $employerReferencePaths = [
+        \App\Models\ProfileReferenceOption::TYPE_REFERENCE_RELATION => 'employer-reference-relations',
+        \App\Models\ProfileReferenceOption::TYPE_JOB_GENDER_PREFERENCE => 'job-gender-preferences',
+        \App\Models\ProfileReferenceOption::TYPE_JOB_EMPLOYMENT_STATUS => 'job-employment-statuses',
+        \App\Models\ProfileReferenceOption::TYPE_JOB_WORKPLACE => 'job-workplaces',
+        \App\Models\ProfileReferenceOption::TYPE_JOB_EXPERIENCE_UNIT => 'job-experience-units',
+        \App\Models\ProfileReferenceOption::TYPE_EMPLOYER_DISABILITY_FACILITY => 'employer-disability-facilities',
+    ];
     $referenceGeneralActive = Request::is('admin/profile-references/common*', 'admin/countries*', 'admin/states*', 'admin/cities*', 'admin/degree-levels*', 'admin/skills*', 'admin/industries*', 'admin/functional-areas*', 'admin/career-levels*', 'admin/salary-currencies*', 'admin/ownership-types*');
-    $referenceCandidateActive = Request::is('admin/profile-references/candidate*', 'admin/education-degree-titles*', 'admin/education-major-groups*', 'admin/education-boards*', 'admin/marital-status*', 'admin/languages*');
-    $referenceEmployerActive = Request::is('admin/profile-references/employer*', 'admin/job-categories*', 'admin/job-types*', 'admin/job-tags*', 'admin/job-shifts*', 'admin/salary-periods*', 'admin/company-sizes*');
+    $referenceCandidateActive = Request::is('admin/profile-references/candidate*', 'admin/education-degree-titles*', 'admin/education-major-groups*', 'admin/education-boards*', 'admin/education-results*', 'admin/candidate-religions*', 'admin/blood-groups*', 'admin/disability-difficulties*', 'admin/skill-learning-sources*', 'admin/candidate-reference-relations*', 'admin/army-ba-no-prefixes*', 'admin/army-ranks*', 'admin/army-employment-types*', 'admin/army-arms*', 'admin/marital-status*', 'admin/languages*');
+    $referenceEmployerActive = Request::is('admin/profile-references/employer*', 'admin/employer-reference-relations*', 'admin/job-gender-preferences*', 'admin/job-employment-statuses*', 'admin/job-workplaces*', 'admin/job-experience-units*', 'admin/employer-disability-facilities*', 'admin/job-categories*', 'admin/job-types*', 'admin/job-tags*', 'admin/job-shifts*', 'admin/salary-periods*', 'admin/company-sizes*');
     $referencesActive = $referenceGeneralActive || $referenceCandidateActive || $referenceEmployerActive;
     $cmsActive = Request::is('admin/noticeboards*', 'admin/faqs*', 'admin/inquires*', 'admin/notification-settings*', 'admin/privacy-policy*', 'admin/front-settings*', 'admin/email-template*', 'admin/settings*');
     $cmsSlidersActive = Request::is('admin/testimonials*', 'admin/branding-sliders*', 'admin/header-sliders*', 'admin/image-sliders*', 'admin/ads*');
@@ -312,8 +334,8 @@
                                 <span class="aside-menu-title">Education Boards</span>
                             </a>
                         </li>
-                        <li class="nav-item {{ Request::is('admin/profile-references/candidate/education_result*') ? 'active' : '' }}">
-                            <a class="nav-link d-flex align-items-center py-2" href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_CANDIDATE, \App\Models\ProfileReferenceOption::TYPE_EDUCATION_RESULT]) }}">
+                        <li class="nav-item {{ Request::is('admin/education-results*', 'admin/profile-references/candidate/education_result*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-2" href="{{ route('educationResults.index') }}">
                                 <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
                                 <span class="aside-menu-title">{{ $profileReferenceTypeLabels[\App\Models\ProfileReferenceOption::TYPE_EDUCATION_RESULT] ?? 'Education Result' }}</span>
                             </a>
@@ -340,26 +362,26 @@
                         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
                     </a>
                     <ul class="aside-submenu nav flex-column collapse {{ $armyActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideArmyMenu">
-                        <li class="nav-item {{ Request::is('admin/profile-references/candidate/army_ba_no_prefix*') ? 'active' : '' }}">
-                            <a class="nav-link d-flex align-items-center py-2" href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_CANDIDATE, \App\Models\ProfileReferenceOption::TYPE_ARMY_BA_NO_PREFIX]) }}">
+                        <li class="nav-item {{ Request::is('admin/army-ba-no-prefixes*', 'admin/profile-references/candidate/army_ba_no_prefix*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-2" href="{{ route($candidateReferenceRoutes[\App\Models\ProfileReferenceOption::TYPE_ARMY_BA_NO_PREFIX].'.index') }}">
                                 <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
                                 <span class="aside-menu-title">{{ $profileReferenceTypeLabels[\App\Models\ProfileReferenceOption::TYPE_ARMY_BA_NO_PREFIX] ?? 'BA No Prefix' }}</span>
                             </a>
                         </li>
-                        <li class="nav-item {{ Request::is('admin/profile-references/candidate/army_rank*') ? 'active' : '' }}">
-                            <a class="nav-link d-flex align-items-center py-2" href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_CANDIDATE, \App\Models\ProfileReferenceOption::TYPE_ARMY_RANK]) }}">
+                        <li class="nav-item {{ Request::is('admin/army-ranks*', 'admin/profile-references/candidate/army_rank*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-2" href="{{ route($candidateReferenceRoutes[\App\Models\ProfileReferenceOption::TYPE_ARMY_RANK].'.index') }}">
                                 <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
                                 <span class="aside-menu-title">{{ $profileReferenceTypeLabels[\App\Models\ProfileReferenceOption::TYPE_ARMY_RANK] ?? 'Rank' }}</span>
                             </a>
                         </li>
-                        <li class="nav-item {{ Request::is('admin/profile-references/candidate/army_employment_type*') ? 'active' : '' }}">
-                            <a class="nav-link d-flex align-items-center py-2" href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_CANDIDATE, \App\Models\ProfileReferenceOption::TYPE_ARMY_EMPLOYMENT_TYPE]) }}">
+                        <li class="nav-item {{ Request::is('admin/army-employment-types*', 'admin/profile-references/candidate/army_employment_type*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-2" href="{{ route($candidateReferenceRoutes[\App\Models\ProfileReferenceOption::TYPE_ARMY_EMPLOYMENT_TYPE].'.index') }}">
                                 <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
                                 <span class="aside-menu-title">{{ $profileReferenceTypeLabels[\App\Models\ProfileReferenceOption::TYPE_ARMY_EMPLOYMENT_TYPE] ?? 'Employment Type' }}</span>
                             </a>
                         </li>
-                        <li class="nav-item {{ Request::is('admin/profile-references/candidate/army_arms*') ? 'active' : '' }}">
-                            <a class="nav-link d-flex align-items-center py-2" href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_CANDIDATE, \App\Models\ProfileReferenceOption::TYPE_ARMY_ARMS]) }}">
+                        <li class="nav-item {{ Request::is('admin/army-arms*', 'admin/profile-references/candidate/army_arms*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-2" href="{{ route($candidateReferenceRoutes[\App\Models\ProfileReferenceOption::TYPE_ARMY_ARMS].'.index') }}">
                                 <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
                                 <span class="aside-menu-title">{{ $profileReferenceTypeLabels[\App\Models\ProfileReferenceOption::TYPE_ARMY_ARMS] ?? 'Arms' }}</span>
                             </a>
@@ -378,8 +400,8 @@
                     @if($profileReferenceType === \App\Models\ProfileReferenceOption::TYPE_EDUCATION_RESULT || in_array($profileReferenceType, $armyTypes, true))
                         @continue
                     @endif
-                    <li class="nav-item {{ Request::is('admin/profile-references/candidate/'.$profileReferenceType) ? 'active' : '' }}">
-                        <a class="nav-link d-flex align-items-center py-2" href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_CANDIDATE, $profileReferenceType]) }}">
+                    <li class="nav-item {{ Request::is('admin/'.($candidateReferencePaths[$profileReferenceType] ?? 'profile-references/candidate/'.$profileReferenceType).'*', 'admin/profile-references/candidate/'.$profileReferenceType) ? 'active' : '' }}">
+                        <a class="nav-link d-flex align-items-center py-2" href="{{ isset($candidateReferenceRoutes[$profileReferenceType]) ? route($candidateReferenceRoutes[$profileReferenceType].'.index') : route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_CANDIDATE, $profileReferenceType]) }}">
                             <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
                             <span class="aside-menu-title">{{ $profileReferenceTypeLabels[$profileReferenceType] ?? $profileReferenceType }}</span>
                         </a>
@@ -433,8 +455,8 @@
                     </a>
                 </li>
                 @foreach($profileReferenceMenuGroups[\App\Models\ProfileReferenceOption::SCOPE_EMPLOYER] ?? [] as $profileReferenceType)
-                    <li class="nav-item {{ Request::is('admin/profile-references/employer/'.$profileReferenceType) ? 'active' : '' }}">
-                        <a class="nav-link d-flex align-items-center py-2" href="{{ route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_EMPLOYER, $profileReferenceType]) }}">
+                    <li class="nav-item {{ Request::is('admin/'.($employerReferencePaths[$profileReferenceType] ?? 'profile-references/employer/'.$profileReferenceType).'*', 'admin/profile-references/employer/'.$profileReferenceType) ? 'active' : '' }}">
+                        <a class="nav-link d-flex align-items-center py-2" href="{{ isset($employerReferenceRoutes[$profileReferenceType]) ? route($employerReferenceRoutes[$profileReferenceType].'.index') : route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_EMPLOYER, $profileReferenceType]) }}">
                             <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
                             <span class="aside-menu-title">{{ $profileReferenceTypeLabels[$profileReferenceType] ?? $profileReferenceType }}</span>
                         </a>

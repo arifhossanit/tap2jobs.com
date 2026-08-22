@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\EducationDegreeTitlesImport;
 use App\Models\EducationDegreeTitle;
 use App\Models\RequiredDegreeLevel;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EducationDegreeTitleController extends AppBaseController
 {
@@ -51,6 +53,38 @@ class EducationDegreeTitleController extends AppBaseController
         ]);
 
         return $this->sendSuccess('Degree Title updated successfully.');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        $import = new EducationDegreeTitlesImport;
+        Excel::import($import, $request->file('file'));
+
+        if ($import->failures()->isNotEmpty()) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Degree Titles import completed with validation errors. Please fix the failed rows and try again.',
+                ], 422);
+            }
+
+            flash('Degree Titles import completed with validation errors. Please fix the failed rows and try again.')->error();
+
+            return back()->withFailures($import->failures());
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Degree Titles imported successfully.',
+            ]);
+        }
+
+        flash('Degree Titles imported successfully.')->success();
+
+        return back();
     }
 
     public function destroy(EducationDegreeTitle $educationDegreeTitle): JsonResponse

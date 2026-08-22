@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateStateRequest;
 use App\Http\Requests\UpdateStateRequest;
+use App\Imports\StatesImport;
 use App\Models\City;
 use App\Models\Country;
 use App\Models\Job;
@@ -15,6 +16,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StateController extends AppBaseController
 {
@@ -69,6 +71,38 @@ class StateController extends AppBaseController
         $this->stateRepository->update($input, $state->id);
 
         return $this->sendSuccess(__('messages.flash.state_update'));
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        $import = new StatesImport;
+        Excel::import($import, $request->file('file'));
+
+        if ($import->failures()->isNotEmpty()) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'States import completed with validation errors. Please fix the failed rows and try again.',
+                ], 422);
+            }
+
+            flash('States import completed with validation errors. Please fix the failed rows and try again.')->error();
+
+            return back()->withFailures($import->failures());
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'States imported successfully.',
+            ]);
+        }
+
+        flash('States imported successfully.')->success();
+
+        return back();
     }
 
     /**
