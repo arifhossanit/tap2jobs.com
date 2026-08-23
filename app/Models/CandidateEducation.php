@@ -67,6 +67,7 @@ class CandidateEducation extends Model
         'country_id' => 'required|exists:countries,id',
         'state_id' => 'nullable|exists:states,id',
         'city_id' => 'nullable|exists:cities,id',
+        'thana_id' => 'nullable|exists:thanas,id',
         'major' => 'nullable|max:150',
         'board' => 'nullable|max:100',
         'institute' => 'required|max:150',
@@ -93,6 +94,7 @@ class CandidateEducation extends Model
         'country_id',
         'state_id',
         'city_id',
+        'thana_id',
         'institute',
         'foreign_institute',
         'foreign_university_country',
@@ -121,6 +123,7 @@ class CandidateEducation extends Model
         'country_id' => 'integer',
         'state_id' => 'integer',
         'city_id' => 'integer',
+        'thana_id' => 'integer',
         'institute' => 'string',
         'foreign_institute' => 'boolean',
         'foreign_university_country' => 'string',
@@ -143,5 +146,10 @@ class CandidateEducation extends Model
     public function degreeLevel(): BelongsTo
     {
         return $this->belongsTo(RequiredDegreeLevel::class, 'degree_level_id');
+    }
+
+    public function thana(): BelongsTo
+    {
+        return $this->belongsTo(Thana::class, 'thana_id');
     }
 }

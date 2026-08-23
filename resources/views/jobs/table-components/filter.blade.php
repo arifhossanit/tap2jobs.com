@@ -25,7 +25,7 @@
                 </div>
                 <div class="mb-5">
                     <label for="filterBtn" class="form-label">{{ __('messages.filter_name.job_status') }}:</label>
-                    {{ Form::select('is_freelance',getTranslatedData(collect($filterHeads[0][3])->sortBy('key')->toArray()),null,['class' => 'form-select io-select2 abc', 'data-control' => 'select2', 'id' => 'JobStatus']) }}
+                    {{ Form::select('job_status',getTranslatedData(collect($filterHeads[0][3])->sortBy('key')->toArray()),null,['class' => 'form-select io-select2 abc', 'data-control' => 'select2', 'id' => 'JobStatus']) }}
                 </div>
                 <div class="d-flex justify-content-end">
                     <button type="reset" class="btn btn-secondary"

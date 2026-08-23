@@ -1,3 +1,33 @@
 level_name,is_default
-Test Career Level 001,0
-Test Career Level 002,0
+Intern,1
+Trainee,1
+Entry Level,1
+Junior Level,1
+Associate,1
+Officer,1
+Senior Officer,1
+Executive,1
+Senior Executive,1
+Assistant Manager,1
+Deputy Manager,1
+Manager,1
+Senior Manager,1
+Assistant General Manager,1
+Deputy General Manager,1
+General Manager,1
+Department Head,1
+Head of Department,1
+Director,1
+Executive Director,1
+Country Manager,1
+Chief Operating Officer,1
+Chief Executive Officer,1
+Consultant,1
+Senior Consultant,1
+Specialist,1
+Senior Specialist,1
+Team Lead,1
+Supervisor,1
+Coordinator,1
+Mid Level,1
+Senior Level,1

@@ -14,11 +14,19 @@ class RequiredDegreeLevelsImport implements ToModel, WithHeadingRow, WithValidat
 {
     use SkipsFailures;
 
+    private int $importedCount = 0;
+
+    private int $skippedCount = 0;
+
+    private array $seenNames = [];
+
+    private array $seenCodes = [];
+
     public function rules(): array
     {
         return [
-            '*.name' => 'required|string|max:160|unique:education_degree_levels,name',
-            '*.code' => 'nullable|string|max:60|unique:education_degree_levels,code',
+            '*.name' => 'required|string|max:160',
+            '*.code' => 'nullable|string|max:60',
             '*.show_board' => 'nullable|boolean',
             '*.show_major' => 'nullable|boolean',
             '*.show_summary_checkbox' => 'nullable|boolean',
@@ -27,11 +35,33 @@ class RequiredDegreeLevelsImport implements ToModel, WithHeadingRow, WithValidat
         ];
     }
 
-    public function model(array $row): RequiredDegreeLevel
+    public function model(array $row): ?RequiredDegreeLevel
     {
+        $name = trim((string) $row['name']);
+        $code = filled(Arr::get($row, 'code')) ? trim((string) $row['code']) : null;
+        $normalizedName = strtolower($name);
+        $normalizedCode = filled($code) ? strtolower((string) $code) : null;
+
+        if (isset($this->seenNames[$normalizedName]) ||
+            RequiredDegreeLevel::where('name', $name)->exists() ||
+            (filled($normalizedCode) && (
+                isset($this->seenCodes[$normalizedCode]) ||
+                RequiredDegreeLevel::where('code', $code)->exists()
+            ))) {
+            $this->skippedCount++;
+
+            return null;
+        }
+
+        $this->seenNames[$normalizedName] = true;
+        if (filled($normalizedCode)) {
+            $this->seenCodes[$normalizedCode] = true;
+        }
+        $this->importedCount++;
+
         return new RequiredDegreeLevel([
-            'name' => trim((string) $row['name']),
-            'code' => filled(Arr::get($row, 'code')) ? trim((string) $row['code']) : null,
+            'name' => $name,
+            'code' => $code,
             'show_board' => $this->toBool(Arr::get($row, 'show_board')),
             'show_major' => $this->toBool(Arr::get($row, 'show_major')),
             'show_summary_checkbox' => $this->toBool(Arr::get($row, 'show_summary_checkbox')),
@@ -43,5 +73,15 @@ class RequiredDegreeLevelsImport implements ToModel, WithHeadingRow, WithValidat
     private function toBool(mixed $value): bool
     {
         return filter_var($value, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    public function importedCount(): int
+    {
+        return $this->importedCount;
+    }
+
+    public function skippedCount(): int
+    {
+        return $this->skippedCount;
     }
 }

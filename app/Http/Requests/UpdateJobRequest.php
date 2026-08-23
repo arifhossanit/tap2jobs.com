@@ -35,7 +35,7 @@ class UpdateJobRequest extends FormRequest
         if ($job instanceof Job) {
             $savedLocation = [];
 
-            foreach (['country_id', 'state_id', 'city_id'] as $field) {
+            foreach (['country_id', 'state_id', 'city_id', 'thana_id'] as $field) {
                 if (! $this->filled($field) && $job->{$field} !== null) {
                     $savedLocation[$field] = $job->{$field};
                 }

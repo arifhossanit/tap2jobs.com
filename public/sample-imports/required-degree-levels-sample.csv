@@ -1,3 +1,7 @@
-name,code,show_board,show_major,show_summary_checkbox,sort_order,is_default
-Test Degree Level 001,TDL001,1,0,0,1,0
-Test Degree Level 002,TDL002,0,1,1,2,0
+﻿name,code,show_board,show_major,show_summary_checkbox,sort_order,is_default
+SSC,ssc,1,0,0,1,1
+HSC,hsc,1,0,0,2,1
+Diploma,diploma,0,1,0,3,1
+Bachelor,bachelor,0,1,1,4,1
+Masters,masters,0,1,1,5,1
+PhD,phd,0,1,1,6,0

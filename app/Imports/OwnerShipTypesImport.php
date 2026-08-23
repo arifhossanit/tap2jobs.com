@@ -14,19 +14,47 @@ class OwnerShipTypesImport implements ToModel, WithHeadingRow, WithValidation, S
 {
     use SkipsFailures;
 
+    private int $importedCount = 0;
+
+    private int $skippedCount = 0;
+
+    private array $seenNames = [];
+
     public function rules(): array
     {
         return [
-            '*.name' => 'required|string|max:150|unique:ownership_types,name',
+            '*.name' => 'required|string|max:150',
             '*.description' => 'nullable|string',
         ];
     }
 
-    public function model(array $row): OwnerShipType
+    public function model(array $row): ?OwnerShipType
     {
+        $name = trim((string) $row['name']);
+        $normalizedName = strtolower($name);
+
+        if (isset($this->seenNames[$normalizedName]) || OwnerShipType::where('name', $name)->exists()) {
+            $this->skippedCount++;
+
+            return null;
+        }
+
+        $this->seenNames[$normalizedName] = true;
+        $this->importedCount++;
+
         return new OwnerShipType([
-            'name' => trim((string) $row['name']),
+            'name' => $name,
             'description' => filled(Arr::get($row, 'description')) ? trim((string) $row['description']) : null,
         ]);
+    }
+
+    public function importedCount(): int
+    {
+        return $this->importedCount;
+    }
+
+    public function skippedCount(): int
+    {
+        return $this->skippedCount;
     }
 }

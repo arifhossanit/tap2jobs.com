@@ -1,3 +1,53 @@
 name,description,is_default
-Test Skill 001,Sample skill for import testing,0
-Test Skill 002,Another sample skill for import testing,0
+Microsoft Excel,Spreadsheet and reporting skills,1
+Data Entry,Fast and accurate data entry,1
+Customer Service,Client communication and support,1
+Sales,Field and corporate sales skills,1
+Digital Marketing,SEO social media and paid campaign skills,1
+Laravel,PHP Laravel web application development,1
+React,Frontend application development with React,1
+Accounting,Bookkeeping accounts and financial reporting,1
+Communication,Professional written and verbal communication,1
+Leadership,Team guidance planning and decision making,1
+Problem Solving,Analytical thinking and issue resolution,1
+Time Management,Task prioritization and deadline management,1
+Negotiation,Deal discussion pricing and stakeholder alignment,1
+Business Development,Lead generation partnership and market growth,1
+Telesales,Phone based sales and customer follow up,1
+Retail Sales,Shop floor customer handling and product sales,1
+Merchandising,Garments buying merchandising and order coordination,1
+Inventory Management,Stock control warehouse and inventory tracking,1
+Procurement,Supplier sourcing purchasing and vendor coordination,1
+Supply Chain,Logistics sourcing distribution and demand planning,1
+Quality Control,Product inspection testing and quality assurance,1
+Production Supervision,Factory floor team and output supervision,1
+Graphic Design,Creative design branding and visual content,1
+Adobe Photoshop,Image editing and creative artwork preparation,1
+Adobe Illustrator,Vector design logo and print artwork preparation,1
+Video Editing,Video post production editing and publishing,1
+Content Writing,Copywriting article writing and content planning,1
+SEO,Search engine optimization keyword and content strategy,1
+Social Media Marketing,Social media planning posting and engagement,1
+Google Ads,Search display and conversion campaign management,1
+Facebook Ads,Meta campaign setup optimization and reporting,1
+WordPress,Website setup theme customization and content management,1
+PHP,Backend web programming with PHP,1
+JavaScript,Frontend programming and browser scripting,1
+Vue.js,Frontend application development with Vue,1
+Node.js,Backend JavaScript application development,1
+MySQL,Database design querying and reporting,1
+SQL,Relational database query and data handling,1
+Python,Automation scripting and backend development,1
+Data Analysis,Data cleaning reporting and business insights,1
+Power BI,Business intelligence dashboard and report creation,1
+MS Word,Document writing formatting and reporting,1
+PowerPoint,Presentation design and slide preparation,1
+Email Communication,Professional email handling and follow up,1
+Typing,Fast and accurate typing skill,1
+Bangla Typing,Bangla keyboard typing and document preparation,1
+English,Professional English reading writing and speaking,1
+Driving,Vehicle driving and field movement,1
+Electrical Maintenance,Electrical troubleshooting repair and maintenance,1
+Mechanical Maintenance,Machine maintenance repair and servicing,1
+Civil Engineering,Construction supervision estimation and site work,1
+AutoCAD,2D drafting design and technical drawing,1

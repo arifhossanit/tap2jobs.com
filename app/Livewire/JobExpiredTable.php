@@ -11,6 +11,7 @@ class JobExpiredTable extends LivewireTableComponent
 {
     protected $model = Job::class;
     public $showFilterOnHeader = false;
+    public ?string $expiryAlert = null;
 
     public function configure(): void
     {
@@ -57,6 +58,10 @@ class JobExpiredTable extends LivewireTableComponent
     public function builder(): Builder
     {
         $query = Job::where('job_expiry_date', '<', Carbon::now()->toDateString());
+
+        if (($this->expiryAlert ?: request()->query('expiry_alert')) === 'expired_yesterday') {
+            $query->whereDate('job_expiry_date', Carbon::yesterday()->toDateString());
+        }
 
         return $query;
     }

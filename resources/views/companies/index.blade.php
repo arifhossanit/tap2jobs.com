@@ -9,7 +9,7 @@
 @section('content')
     <div class="container-fluid">
         <div class="d-flex flex-column ">
-            @include('flash::message')
+            @include('layouts.flash-toasts')
             <livewire:company-table lazy/>
         </div>
     </div>

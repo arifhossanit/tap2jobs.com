@@ -212,6 +212,7 @@ function loadEmployerRegistrationForm () {
     const country = document.getElementById('registerCountryId');
     const state = document.getElementById('registerStateId');
     const city = document.getElementById('registerCityId');
+    const thana = document.getElementById('registerThanaId');
     const countryFlag = document.querySelector('.employer-register-bd-flag');
 
     const fillSelect = function (select, items, placeholder, selectedValue) {
@@ -223,10 +224,31 @@ function loadEmployerRegistrationForm () {
         select.disabled = false;
     };
 
-    const loadCities = function (stateId, selectedCity) {
+    const loadThanas = function (cityId, selectedThana) {
+        if (!thana) {
+            return;
+        }
+
+        if (!cityId) {
+            fillSelect(thana, {}, 'Select Thana');
+            thana.disabled = true;
+            return;
+        }
+
+        thana.disabled = true;
+        fetch(route('register.thanas') + '?city_id=' + encodeURIComponent(cityId), {
+            headers: { 'Accept': 'application/json' }
+        })
+            .then(response => response.json())
+            .then(result => fillSelect(thana, result.data, 'Select Thana', selectedThana))
+            .catch(() => fillSelect(thana, {}, 'Select Thana'));
+    };
+
+    const loadCities = function (stateId, selectedCity, selectedThana) {
         if (!stateId) {
-            fillSelect(city, {}, 'Select Thana');
+            fillSelect(city, {}, 'Select District');
             city.disabled = true;
+            loadThanas(null);
             return;
         }
 
@@ -235,8 +257,11 @@ function loadEmployerRegistrationForm () {
             headers: { 'Accept': 'application/json' }
         })
             .then(response => response.json())
-            .then(result => fillSelect(city, result.data, 'Select Thana', selectedCity))
-            .catch(() => fillSelect(city, {}, 'Select Thana'));
+            .then(result => {
+                fillSelect(city, result.data, 'Select District', selectedCity);
+                loadThanas(city.value, selectedThana);
+            })
+            .catch(() => fillSelect(city, {}, 'Select District'));
     };
 
     if (country && state && city) {
@@ -250,25 +275,33 @@ function loadEmployerRegistrationForm () {
             updateCountryFlag();
             state.disabled = true;
             city.disabled = true;
+            if (thana) {
+                thana.disabled = true;
+            }
             fetch(route('register.states') + '?country_id=' + encodeURIComponent(this.value), {
                 headers: { 'Accept': 'application/json' }
             })
                 .then(response => response.json())
                 .then(result => {
-                    fillSelect(state, result.data, 'Select District');
-                    fillSelect(city, {}, 'Select Thana');
+                    fillSelect(state, result.data, 'Select Division');
+                    fillSelect(city, {}, 'Select District');
                     city.disabled = true;
+                    loadThanas(null);
                 })
-                .catch(() => fillSelect(state, {}, 'Select District'));
+                .catch(() => fillSelect(state, {}, 'Select Division'));
         });
 
         state.addEventListener('change', function () {
             loadCities(this.value);
         });
 
+        city.addEventListener('change', function () {
+            loadThanas(this.value);
+        });
+
         updateCountryFlag();
         if (state.value) {
-            loadCities(state.value, city.dataset.oldCityId);
+            loadCities(state.value, city.dataset.oldCityId, thana ? thana.dataset.oldThanaId : null);
         }
     }
 

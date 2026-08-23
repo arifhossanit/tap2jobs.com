@@ -26,7 +26,7 @@
                 </div>
                 <div class=" mb-5">
                     {{ Form::label('phone_code',__('messages.country.phone_code').(':'),['class' => 'form-label']) }}
-                    {{ Form::text('phone_code', null, ['id'=>'countryPhoneCode','class' => 'form-control', 'maxlength' => '4','onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")', 'placeholder' => __('messages.country.phone_code')]) }}
+                    {{ Form::text('phone_code', null, ['id'=>'countryPhoneCode','class' => 'form-control', 'maxlength' => '5', 'placeholder' => '+880']) }}
                 </div>
             </div>
             <div class="modal-footer pt-0">

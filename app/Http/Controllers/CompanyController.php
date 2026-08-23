@@ -61,8 +61,11 @@ class CompanyController extends AppBaseController
         $data = $this->companyRepository->prepareData();
         $countries = Country::pluck('name', 'id');
         $states = State::toBase()->pluck('name', 'id');
+        $state = old('country_id') ? getStates(old('country_id')) : [];
+        $cities = old('state_id') ? getCities(old('state_id')) : [];
+        $thanas = old('city_id') ? getThanas(old('city_id')) : [];
 
-        return view('companies.create', compact('countries', 'states'))->with('data', $data);
+        return view('companies.create', compact('countries', 'states', 'state', 'cities', 'thanas'))->with('data', $data);
     }
 
     /**
@@ -75,7 +78,8 @@ class CompanyController extends AppBaseController
     public function store(CreateCompanyRequest $request): RedirectResponse
     {
         $input = $request->all();
-        $input['is_active'] = (isset($input['is_active'])) ? 1 : 0;
+        $input['is_active'] = $request->boolean('is_active') ? 1 : 0;
+        $input['location2'] = null;
 
         $company = $this->companyRepository->store($input);
 
@@ -107,14 +111,18 @@ class CompanyController extends AppBaseController
         $countries = Country::pluck('name', 'id');
         $states = State::toBase()->pluck('name', 'id');
         $state = $cities = null;
-        if (isset($user->country_id)) {
-            $state = getStates($user->country_id);
+        $selectedCountryId = old('country_id', $user->country_id);
+        $selectedStateId = old('state_id', $user->state_id);
+        $selectedCityId = old('city_id', $user->city_id);
+        if (isset($selectedCountryId)) {
+            $state = getStates($selectedCountryId);
         }
-        if (isset($user->state_id)) {
-            $cities = getCities($user->state_id);
+        if (isset($selectedStateId)) {
+            $cities = getCities($selectedStateId);
         }
+        $thanas = isset($selectedCityId) ? getThanas($selectedCityId) : null;
 
-        return view('companies.edit', compact('data', 'company', 'cities', 'state', 'user', 'countries', 'states'));
+        return view('companies.edit', compact('data', 'company', 'cities', 'state', 'thanas', 'user', 'countries', 'states'));
     }
 
     /**
@@ -125,7 +133,8 @@ class CompanyController extends AppBaseController
     public function update(Company $company, UpdateCompanyRequest $request): RedirectResponse
     {
         $input = $request->all();
-        $input['is_active'] = (isset($input['is_active'])) ? 1 : 0;
+        $input['is_active'] = $request->boolean('is_active') ? 1 : 0;
+        $input['location2'] = null;
 
         $company = $this->companyRepository->update($input, $company);
 
@@ -207,12 +216,15 @@ class CompanyController extends AppBaseController
             throw new ModelNotFoundException;
         }
         $data = $this->companyRepository->prepareData();
-        $states = $cities = null;
+        $states = $cities = $thanas = null;
         if (isset($user->country_id)) {
             $states = getStates($user->country_id);
         }
         if (isset($user->state_id)) {
             $cities = getCities($user->state_id);
+        }
+        if (isset($user->city_id)) {
+            $thanas = getThanas($user->city_id);
         }
         $isFeaturedEnable = FrontSetting::where('key', 'featured_companies_enable')->first()->value;
         $maxFeaturedJob = FrontSetting::where('key', 'featured_companies_quota')->first()->value;
@@ -220,7 +232,7 @@ class CompanyController extends AppBaseController
         $isFeaturedAvilabal = ($totalFeaturedJob >= $maxFeaturedJob) ? false : true;
 
         return view('employer.companies.edit',
-            compact('data', 'company', 'cities', 'states', 'user', 'isFeaturedEnable', 'isFeaturedAvilabal'));
+            compact('data', 'company', 'cities', 'states', 'thanas', 'user', 'isFeaturedEnable', 'isFeaturedAvilabal'));
     }
 
     /**

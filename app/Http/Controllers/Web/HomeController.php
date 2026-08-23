@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Models\User;
 use App\Models\Job;
 use App\Models\State;
+use App\Models\Company;
 use App\Models\JobType;
 use App\Models\Setting;
 use Carbon\Carbon;
@@ -62,17 +63,63 @@ class HomeController extends AppBaseController
             ->orderBy('name')
             ->take(4)
             ->get();
+
+        $internshipType = JobType::where('name', 'like', '%Intern%')->first();
+        $contractualType = JobType::where('name', 'like', '%Contract%')->first();
+        $partTimeType = JobType::where('name', 'like', '%Part%Time%')->first();
+
+        $data['quickJobTypeIds'] = [
+            'internship' => $internshipType ? $internshipType->id : '',
+            'contractual' => $contractualType ? $contractualType->id : '',
+            'part_time' => $partTimeType ? $partTimeType->id : '',
+        ];
+
         $data['quickLinkCounts'] = [
+            'employer_list' => Company::whereHas('user', function ($q) {
+                $q->where('is_active', 1);
+            })->count(),
             'new_jobs' => $openJobs(Job::query())
-                ->whereDate('created_at', Carbon::today()->toDateString())
+                ->where('created_at', '>=', Carbon::now()->subDays(7))
                 ->count(),
             'deadline_tomorrow' => $openJobs(Job::query())
                 ->whereDate('job_expiry_date', Carbon::tomorrow()->toDateString())
                 ->count(),
+            'internship' => $openJobs(Job::query())
+                ->whereHas('jobType', function ($q) {
+                    $q->where('name', 'like', '%Intern%');
+                })->count(),
+            'contractual' => $openJobs(Job::query())
+                ->whereHas('jobType', function ($q) {
+                    $q->where('name', 'like', '%Contract%');
+                })->count(),
+            'part_time' => $openJobs(Job::query())
+                ->whereHas('jobType', function ($q) {
+                    $q->where('name', 'like', '%Part%Time%');
+                })->count(),
+            'overseas' => $openJobs(Job::query())
+                ->where(function ($q) {
+                    $q->whereNull('country_id')
+                        ->orWhereHas('country', function ($cq) {
+                            $cq->where('short_code', '!=', 'BD');
+                        });
+                })->count(),
+            'work_from_home' => $openJobs(Job::query())
+                ->where(function ($q) {
+                    $q->where('is_freelance', 1)
+                        ->orWhere('job_title', 'like', '%Remote%')
+                        ->orWhere('job_title', 'like', '%Work from Home%')
+                        ->orWhereHas('jobType', function ($jq) {
+                            $jq->where('name', 'like', '%Freelance%');
+                        });
+                })->count(),
+            'fresher_jobs' => $openJobs(Job::query())
+                ->where(function ($q) {
+                    $q->where('freshers_encouraged', 1)
+                        ->orWhere('experience', 0);
+                })->count(),
         ];
+
         $data['categories'] = $this->homeRepository->getCategories();
-        // The home directory presents a useful cross-section of the available job categories.
-        // Keep the count relationship so the category links can show live vacancy totals.
         $data['jobCategories'] = $this->homeRepository->getAllJobCategories();
         $data['jobTypes'] = $this->homeRepository->getAllJobTypes();
         $data['featuredCompanies'] = $this->homeRepository->getFeaturedCompanies();

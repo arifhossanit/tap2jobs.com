@@ -1,3 +1,4 @@
-label,value,sort_order,is_active
-Test Option 001,test_option_001,1,1
-Test Option 002,test_option_002,2,1
+﻿label,value,sort_order,is_active
+Male,male,1,1
+Female,female,2,1
+Other,other,3,1

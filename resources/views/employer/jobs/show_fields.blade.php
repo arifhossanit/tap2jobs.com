@@ -92,6 +92,11 @@
 
         <p  class="fw-bolder fs-6 text-gray-800">{{ !empty($job->city_id) ?$job->city_name:__('messages.n/a') }}</p>
     </div>
+    <div class="form-group col-xl-6 col-md-6 col-sm-12">
+        {{ Form::label('thana', __('messages.thana.thana_name').':', ['class' => 'form-label fs-6 fw-bolder text-gray-700 mb-3']) }}
+
+        <p  class="fw-bolder fs-6 text-gray-800">{{ !empty($job->thana_id) ?$job->thana_name:__('messages.n/a') }}</p>
+    </div>
     <div class="form-group col-xl-12 col-md-12 col-sm-12">
 {{--        {{ Form::label('description', __('messages.job.description').':') }}--}}
         {{ Form::label('description', __('messages.job.description').':', ['class' => 'form-label fs-6 fw-bolder text-gray-700 mb-3']) }}

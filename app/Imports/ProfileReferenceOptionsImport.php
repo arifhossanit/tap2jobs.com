@@ -4,7 +4,6 @@ namespace App\Imports;
 
 use App\Models\ProfileReferenceOption;
 use Illuminate\Support\Arr;
-use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -15,6 +14,12 @@ class ProfileReferenceOptionsImport implements ToModel, WithHeadingRow, WithVali
 {
     use SkipsFailures;
 
+    private int $importedCount = 0;
+
+    private int $skippedCount = 0;
+
+    private array $seenValues = [];
+
     public function __construct(private readonly string $scope, private readonly string $type)
     {
     }
@@ -23,13 +28,7 @@ class ProfileReferenceOptionsImport implements ToModel, WithHeadingRow, WithVali
     {
         return [
             '*.label' => 'required|string|max:150',
-            '*.value' => [
-                'nullable',
-                'string',
-                'max:150',
-                Rule::unique(ProfileReferenceOption::tableFor($this->type), 'value')
-                    ->where(fn ($query) => $query->where('scope', $this->scope)),
-            ],
+            '*.value' => 'nullable|max:150',
             '*.sort_order' => 'nullable|integer|min:0',
             '*.is_active' => 'nullable|boolean',
         ];
@@ -44,12 +43,27 @@ class ProfileReferenceOptionsImport implements ToModel, WithHeadingRow, WithVali
         return $data;
     }
 
-    public function model(array $row): ProfileReferenceOption
+    public function model(array $row): ?ProfileReferenceOption
     {
         $label = trim((string) $row['label']);
         $value = filled(Arr::get($row, 'value')) ? trim((string) $row['value']) : $label;
+        $normalizedValue = strtolower($value);
+        $table = ProfileReferenceOption::tableFor($this->type);
 
-        $record = (new ProfileReferenceOption())->setTable(ProfileReferenceOption::tableFor($this->type));
+        if (isset($this->seenValues[$normalizedValue]) ||
+            (new ProfileReferenceOption())->setTable($table)->newQuery()
+                ->where('scope', $this->scope)
+                ->where('value', (string) $value)
+                ->exists()) {
+            $this->skippedCount++;
+
+            return null;
+        }
+
+        $this->seenValues[$normalizedValue] = true;
+        $this->importedCount++;
+
+        $record = (new ProfileReferenceOption())->setTable($table);
         $record->fill([
             'scope' => $this->scope,
             'label' => $label,
@@ -59,5 +73,15 @@ class ProfileReferenceOptionsImport implements ToModel, WithHeadingRow, WithVali
         ]);
 
         return $record;
+    }
+
+    public function importedCount(): int
+    {
+        return $this->importedCount;
+    }
+
+    public function skippedCount(): int
+    {
+        return $this->skippedCount;
     }
 }

@@ -239,7 +239,7 @@
                                                             {{ __('messages.employer_register.company_address') }} <span class="text-danger">*</span>
                                                         </label>
                                                         <div class="row g-3">
-                                                            <div class="col-md-4">
+                                                            <div class="col-md-3">
                                                                 <div class="employer-company-country-select">
                                                                     <span class="employer-register-bd-flag employer-company-bd-flag"
                                                                           aria-hidden="true"></span>
@@ -255,10 +255,10 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-4">
+                                                            <div class="col-md-3">
                                                                 <select name="state_id" id="registerStateId"
                                                                         class="form-select employer-company-information-control" required>
-                                                                    <option value="">{{ __('messages.employer_register.select_district') }}</option>
+                                                                    <option value="">{{ __('messages.company.select_state') }}</option>
                                                                     @foreach ($states as $stateId => $stateName)
                                                                         <option value="{{ $stateId }}"
                                                                             {{ (int) old('state_id') === (int) $stateId ? 'selected' : '' }}>
@@ -267,11 +267,30 @@
                                                                     @endforeach
                                                                 </select>
                                                             </div>
-                                                            <div class="col-md-4">
+                                                            <div class="col-md-3">
                                                                 <select name="city_id" id="registerCityId"
                                                                         class="form-select employer-company-information-control"
-                                                                        data-old-city-id="{{ old('city_id') }}" required disabled>
-                                                                    <option value="">{{ __('messages.employer_register.select_thana') }}</option>
+                                                                        data-old-city-id="{{ old('city_id') }}" required {{ empty($cities) ? 'disabled' : '' }}>
+                                                                    <option value="">{{ __('messages.company.select_city') }}</option>
+                                                                    @foreach ($cities as $cityId => $cityName)
+                                                                        <option value="{{ $cityId }}"
+                                                                            {{ (int) old('city_id') === (int) $cityId ? 'selected' : '' }}>
+                                                                            {{ $cityName }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <select name="thana_id" id="registerThanaId"
+                                                                        class="form-select employer-company-information-control"
+                                                                        data-old-thana-id="{{ old('thana_id') }}" {{ empty($thanas) ? 'disabled' : '' }}>
+                                                                    <option value="">{{ __('messages.company.select_thana') }}</option>
+                                                                    @foreach ($thanas as $thanaId => $thanaName)
+                                                                        <option value="{{ $thanaId }}"
+                                                                            {{ (int) old('thana_id') === (int) $thanaId ? 'selected' : '' }}>
+                                                                            {{ $thanaName }}
+                                                                        </option>
+                                                                    @endforeach
                                                                 </select>
                                                             </div>
                                                         </div>

@@ -26,6 +26,10 @@ class CandidateUpdateAddressDetailsRequest extends FormRequest
                 'nullable',
                 Rule::exists('cities', 'id')->where(fn ($query) => $query->where('state_id', $this->input('state_id'))),
             ],
+            'thana_id' => [
+                'nullable',
+                Rule::exists('thanas', 'id')->where(fn ($query) => $query->where('city_id', $this->input('city_id'))),
+            ],
             'present_state_division' => 'nullable|max:255',
             'present_post_office' => 'required_if:present_address_type,inside|nullable|max:255',
             'address' => 'required|max:2000',
@@ -41,6 +45,10 @@ class CandidateUpdateAddressDetailsRequest extends FormRequest
             'permanent_city_id' => [
                 'nullable',
                 Rule::exists('cities', 'id')->where(fn ($query) => $query->where('state_id', $this->input('permanent_state_id'))),
+            ],
+            'permanent_thana_id' => [
+                'nullable',
+                Rule::exists('thanas', 'id')->where(fn ($query) => $query->where('city_id', $this->input('permanent_city_id'))),
             ],
             'permanent_post_office' => 'nullable|max:255',
             'permanent_address' => 'nullable|max:2000',

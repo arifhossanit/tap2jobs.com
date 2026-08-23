@@ -54,14 +54,17 @@
             <div class="col-12">
                 <div class="employer-account-field-heading required-heading">{{ __('messages.employer_account.company_address') }}</div>
             </div>
-            <div class="col-xl-4 col-md-6 col-sm-12 mb-5">
+            <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
                 {{ Form::select('country_id', $data['countries'], null, ['id' => 'countryId', 'class' => 'form-select', 'data-control' => 'select2', 'placeholder' => __('messages.company.select_country'), 'required']) }}
             </div>
-            <div class="col-xl-4 col-md-6 col-sm-12 mb-5">
+            <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
                 {{ Form::select('state_id', isset($states) && $states != null ? $states : [], null, ['id' => 'stateId', 'class' => 'form-select', 'data-control' => 'select2', 'placeholder' => __('messages.company.select_state'), 'required']) }}
             </div>
-            <div class="col-xl-4 col-md-6 col-sm-12 mb-5">
+            <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
                 {{ Form::select('city_id', isset($cities) && $cities != null ? $cities : [], null, ['id' => 'cityId', 'class' => 'form-select', 'data-control' => 'select2', 'placeholder' => __('messages.company.select_city'), 'required']) }}
+            </div>
+            <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
+                {{ Form::select('thana_id', isset($thanas) && $thanas != null ? $thanas : [], old('thana_id', $company->user->thana_id ?? null), ['id' => 'thanaId', 'class' => 'form-select', 'data-control' => 'select2', 'placeholder' => __('messages.company.select_thana')]) }}
             </div>
             <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
                 {{ Form::textarea('location', old('location', $company->location ?: $company->company_summary), ['class' => 'form-control employer-company-summary', 'rows' => 3, 'maxlength' => 255, 'required', 'placeholder' => __('messages.employer_register.company_address_en_placeholder')]) }}

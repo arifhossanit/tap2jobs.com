@@ -669,6 +669,8 @@ if (! function_exists('getNotificationIcon')) {
                 return 'fa fa-bell';
             case 12:
                 return 'fa fa-paper-plane';
+            case 17:
+                return 'fa fa-clock';
             default:
                 return 'fa fa-inbox';
         }
@@ -693,6 +695,12 @@ if (! function_exists('getNotificationUrl')) {
 
             return route('job.index');
         } elseif ($notification->notification_for == \App\Models\Notification::ADMIN) {
+            $url = data_get($notification->meta, 'url');
+
+            if (! empty($url)) {
+                return $url;
+            }
+
             return url('/admin/dashboard');
         }
 
@@ -1119,6 +1127,13 @@ if (! function_exists('getCities')) {
     function getCities($stateId)
     {
         return City::where('state_id', $stateId)->orderBy('name')->pluck('name', 'id')->toArray();
+    }
+}
+
+if (! function_exists('getThanas')) {
+    function getThanas($cityId)
+    {
+        return \App\Models\Thana::where('city_id', $cityId)->orderBy('name')->pluck('name', 'id')->toArray();
     }
 }
 if (! function_exists('getFrontSelectLanguage')) {

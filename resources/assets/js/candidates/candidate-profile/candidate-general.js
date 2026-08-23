@@ -110,14 +110,88 @@ function loadCandidateGeneralData() {
             .closest('.candidate-profile-section__header').removeClass('candidate-profile-section__header--editing');
     });
 
-    const loadAddressStates = function (countrySelector, stateSelector, citySelector, selectedState = null, statePlaceholder = 'Select your District') {
+    const resetAddressSelect = function (selector, placeholder) {
+        if (!$(selector).length) {
+            return;
+        }
+
+        $(selector).empty().append($('<option value=""></option>').text(placeholder));
+        $(selector).trigger('change.select2');
+    };
+
+    const loadAddressThanas = function (citySelector, thanaSelector, selectedThana = null) {
+        if (!$(thanaSelector).length) {
+            return;
+        }
+
+        const city = $(citySelector).val();
+        resetAddressSelect(thanaSelector, 'Select your Thana');
+
+        if (!city) {
+            return;
+        }
+
+        $.ajax({
+            url: route('thanas-list'),
+            type: 'get',
+            dataType: 'json',
+            data: { city: city },
+            success: function (data) {
+                $.each(data.data, function (i, v) {
+                    $(thanaSelector).append($('<option></option>').attr('value', i).text(v));
+                });
+                if (selectedThana) {
+                    $(thanaSelector).val(selectedThana);
+                }
+                $(thanaSelector).trigger('change.select2');
+            },
+        });
+    };
+
+    const loadAddressCities = function (stateSelector, countrySelector, citySelector, thanaSelector = null, selectedCity = null, selectedThana = null) {
+        const state = $(stateSelector).val();
+        resetAddressSelect(citySelector, 'Select your District');
+        if (thanaSelector) {
+            resetAddressSelect(thanaSelector, 'Select your Thana');
+        }
+
+        if (!state) {
+            return;
+        }
+
+        $.ajax({
+            url: route('cities-list'),
+            type: 'get',
+            dataType: 'json',
+            data: {
+                state: state,
+                country: $(countrySelector).val(),
+            },
+            success: function (data) {
+                $.each(data.data, function (i, v) {
+                    $(citySelector).append($('<option></option>').attr('value', i).text(v));
+                });
+                if (selectedCity) {
+                    $(citySelector).val(selectedCity);
+                }
+                $(citySelector).trigger('change.select2');
+                if (thanaSelector) {
+                    loadAddressThanas(citySelector, thanaSelector, selectedThana);
+                }
+            },
+        });
+    };
+
+    const loadAddressStates = function (countrySelector, stateSelector, citySelector, thanaSelector = null, selectedState = null, statePlaceholder = 'Select your Division') {
         const country = $(countrySelector).val();
         $(stateSelector).empty().append($('<option value=""></option>').text(statePlaceholder));
-        $(citySelector).empty().append($('<option value=""></option>').text('Select your Thana'));
+        resetAddressSelect(citySelector, 'Select your District');
+        if (thanaSelector) {
+            resetAddressSelect(thanaSelector, 'Select your Thana');
+        }
 
         if (!country) {
             $(stateSelector).trigger('change.select2');
-            $(citySelector).trigger('change.select2');
             return;
         }
 
@@ -132,10 +206,10 @@ function loadCandidateGeneralData() {
                 });
                 if (selectedState) {
                     $(stateSelector).val(selectedState);
-                }
-                $(stateSelector).trigger('change.select2');
-            },
-        });
+            }
+            $(stateSelector).trigger('change.select2');
+        },
+    });
     };
 
     const togglePresentAddressMode = function (resetLocation = false) {
@@ -151,7 +225,7 @@ function loadCandidateGeneralData() {
         if (type === 'inside' && bangladeshId) {
             $('#countryId').val(bangladeshId);
             if (resetLocation) {
-                loadAddressStates('#countryId', '#stateId', '#cityId');
+                loadAddressStates('#countryId', '#stateId', '#cityId', '#thanaId');
             }
             return;
         }
@@ -207,8 +281,24 @@ function loadCandidateGeneralData() {
 
     $('#permanentCountryId').on('change', function () {
         if ($('input[name="permanent_address_type"]:checked').val() !== 'outside') {
-            loadAddressStates('#permanentCountryId', '#permanentStateId', '#permanentCityId');
+            loadAddressStates('#permanentCountryId', '#permanentStateId', '#permanentCityId', '#permanentThanaId');
         }
+    });
+
+    $('#stateId').on('change', function () {
+        loadAddressCities('#stateId', '#countryId', '#cityId', '#thanaId');
+    });
+
+    $('#cityId').on('change', function () {
+        loadAddressThanas('#cityId', '#thanaId');
+    });
+
+    $('#permanentStateId').on('change', function () {
+        loadAddressCities('#permanentStateId', '#permanentCountryId', '#permanentCityId', '#permanentThanaId');
+    });
+
+    $('#permanentCityId').on('change', function () {
+        loadAddressThanas('#permanentCityId', '#permanentThanaId');
     });
 
     $('[data-career-edit-toggle]').on('click', function (event) {
@@ -474,7 +564,7 @@ function loadCandidateGeneralData() {
 
 
     if ($('#candidateProfileUpdate').length){
-        $('#salaryCurrencyId,#stateId,#industryId,#careerLevelId,#functionalAreaId,#presentCountryDisplay,#permanentCountryId,#permanentStateId').
+        $('#salaryCurrencyId,#stateId,#cityId,#thanaId,#industryId,#careerLevelId,#functionalAreaId,#presentCountryDisplay,#permanentCountryId,#permanentStateId,#permanentCityId,#permanentThanaId').
             select2({
                 width: '100%',
         });
@@ -588,6 +678,9 @@ function loadCandidateGeneralData() {
                 $('#cityId').empty();
                 $('#cityId').append(
                     $('<option value=""></option>').text(Lang.get('js.select_city')));
+                $('#thanaId').empty();
+                $('#thanaId').append(
+                    $('<option value=""></option>').text(Lang.get('js.select_thana') || 'Select Thana'));
                 $('#stateId').empty();
                 $('#stateId').append(
                     $('<option value=""></option>').text(Lang.get('js.select_state')));
@@ -622,6 +715,7 @@ function loadCandidateGeneralData() {
                     $('#cityId').append(
                         $('<option ></option>').attr('value', i).text(v));
                 });
+                loadAddressThanas('#cityId', '#thanaId');
                 // if (isEdit && cityId) {
                 //     $('#cityId').val(cityId).trigger('change');
                 // }

@@ -6,7 +6,7 @@
         && ! Request::is('admin/job-categories*', 'admin/job-types*', 'admin/job-tags*', 'admin/job-shifts*');
     $blogsActive = Request::is('admin/post-categories*', 'admin/posts*', 'admin/post-comments*');
     $subscriptionsActive = Request::is('admin/plans*', 'admin/transactions*');
-    $countriesActive = Request::is('admin/countries*', 'admin/states*', 'admin/cities*');
+    $countriesActive = Request::is('admin/countries*', 'admin/divisions*', 'admin/districts*', 'admin/thanas*', 'admin/states*', 'admin/cities*');
     $educationActive = Request::is('admin/degree-levels*', 'admin/education-degree-titles*', 'admin/education-major-groups*', 'admin/education-boards*', 'admin/education-results*', 'admin/profile-references/candidate/education_result*');
     $armyActive = Request::is('admin/army-ba-no-prefixes*', 'admin/army-ranks*', 'admin/army-employment-types*', 'admin/army-arms*', 'admin/profile-references/candidate/army_ba_no_prefix*', 'admin/profile-references/candidate/army_rank*', 'admin/profile-references/candidate/army_employment_type*', 'admin/profile-references/candidate/army_arms*');
     $profileReferenceMenuGroups = \App\Models\ProfileReferenceOption::menuGroups();
@@ -39,7 +39,7 @@
         \App\Models\ProfileReferenceOption::TYPE_JOB_EXPERIENCE_UNIT => 'job-experience-units',
         \App\Models\ProfileReferenceOption::TYPE_EMPLOYER_DISABILITY_FACILITY => 'employer-disability-facilities',
     ];
-    $referenceGeneralActive = Request::is('admin/profile-references/common*', 'admin/genders*', 'admin/language-proficiencies*', 'admin/online-profile-platforms*', 'admin/countries*', 'admin/states*', 'admin/cities*', 'admin/degree-levels*', 'admin/skills*', 'admin/industries*', 'admin/functional-areas*', 'admin/career-levels*', 'admin/salary-currencies*', 'admin/ownership-types*');
+    $referenceGeneralActive = Request::is('admin/profile-references/common*', 'admin/genders*', 'admin/language-proficiencies*', 'admin/online-profile-platforms*', 'admin/countries*', 'admin/divisions*', 'admin/districts*', 'admin/thanas*', 'admin/states*', 'admin/cities*', 'admin/degree-levels*', 'admin/skills*', 'admin/industries*', 'admin/functional-areas*', 'admin/career-levels*', 'admin/salary-currencies*', 'admin/ownership-types*');
     $referenceCandidateActive = Request::is('admin/profile-references/candidate*', 'admin/education-degree-titles*', 'admin/education-major-groups*', 'admin/education-boards*', 'admin/education-results*', 'admin/candidate-religions*', 'admin/blood-groups*', 'admin/disability-difficulties*', 'admin/skill-learning-sources*', 'admin/candidate-reference-relations*', 'admin/army-ba-no-prefixes*', 'admin/army-ranks*', 'admin/army-employment-types*', 'admin/army-arms*', 'admin/marital-status*', 'admin/languages*');
     $referenceEmployerActive = Request::is('admin/profile-references/employer*', 'admin/employer-reference-relations*', 'admin/job-gender-preferences*', 'admin/job-employment-statuses*', 'admin/job-workplaces*', 'admin/job-experience-units*', 'admin/employer-disability-facilities*', 'admin/job-categories*', 'admin/job-types*', 'admin/job-tags*', 'admin/job-shifts*', 'admin/salary-periods*', 'admin/company-sizes*');
     $referencesActive = $referenceGeneralActive || $referenceCandidateActive || $referenceEmployerActive;
@@ -239,16 +239,22 @@
                                 <span class="aside-menu-title">{{ __('messages.country.countries') }}</span>
                             </a>
                         </li>
-                        <li class="nav-item {{ Request::is('admin/states*') ? 'active' : '' }}">
+                        <li class="nav-item {{ Request::is('admin/divisions*', 'admin/states*') ? 'active' : '' }}">
                             <a class="nav-link d-flex align-items-center py-2" href="{{ route('states.index') }}">
                                 <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
                                 <span class="aside-menu-title">{{ __('messages.state.states') }}</span>
                             </a>
                         </li>
-                        <li class="nav-item {{ Request::is('admin/cities*') ? 'active' : '' }}">
+                        <li class="nav-item {{ Request::is('admin/districts*', 'admin/cities*') ? 'active' : '' }}">
                             <a class="nav-link d-flex align-items-center py-2" href="{{ route('cities.index') }}">
                                 <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
                                 <span class="aside-menu-title">{{ __('messages.city.cities') }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('admin/thanas*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-2" href="{{ route('thanas.index') }}">
+                                <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                                <span class="aside-menu-title">{{ __('messages.thana.thanas') }}</span>
                             </a>
                         </li>
                     </ul>

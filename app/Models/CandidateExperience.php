@@ -69,6 +69,7 @@ class CandidateExperience extends Model
         'country_id' => 'required|exists:countries,id',
         'state_id' => 'nullable|exists:states,id',
         'city_id' => 'nullable|exists:cities,id',
+        'thana_id' => 'nullable|exists:thanas,id',
         'start_date' => 'required|date',
         'end_date' => 'required_unless:currently_working,1|nullable|date|after_or_equal:start_date',
         'currently_working' => 'nullable|boolean',
@@ -92,6 +93,7 @@ class CandidateExperience extends Model
         'country_id',
         'state_id',
         'city_id',
+        'thana_id',
         'start_date',
         'end_date',
         'currently_working',
@@ -114,6 +116,7 @@ class CandidateExperience extends Model
         'country_id' => 'integer',
         'state_id' => 'integer',
         'city_id' => 'integer',
+        'thana_id' => 'integer',
         'start_date' => 'date',
         'end_date' => 'date',
         'currently_working' => 'boolean',
@@ -125,6 +128,11 @@ class CandidateExperience extends Model
     public function candidate(): BelongsTo
     {
         return $this->belongsTo(Candidate::class, 'candidate_id');
+    }
+
+    public function thana(): BelongsTo
+    {
+        return $this->belongsTo(Thana::class, 'thana_id');
     }
 
     public function expertises(): HasMany

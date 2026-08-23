@@ -228,7 +228,7 @@ function loadEmployeeCreateEditData() {
     }
 
     initializeJobSelect2(
-        "#jobTypeId,#jobCategoryId,#careerLevelsId,#jobShiftId,#countryId,#stateId,#cityId,#salaryPeriodsId,#requiredDegreeLevelId",
+        "#jobTypeId,#jobCategoryId,#careerLevelsId,#jobShiftId,#countryId,#stateId,#cityId,#thanaId,#salaryPeriodsId,#requiredDegreeLevelId",
         { width: "calc(100% - 44px)" }
     );
 

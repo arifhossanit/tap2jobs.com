@@ -39,7 +39,9 @@ class CreateCompanyRequest extends FormRequest
         $rules['email'] = 'required|email:filter|unique:users,email';
         $rules['password'] = 'required|same:password_confirmation|min:6';
         $rules['phone'] = 'nullable';
-        $rules['image'] = 'required|mimes:jpg,jpeg,png';
+        $rules['image'] = 'nullable|mimes:jpg,jpeg,png';
+        $rules['company_name_bn'] = 'nullable|string|max:180';
+        $rules['contact_person_name'] = 'nullable|string|max:180';
 
         return $rules;
     }

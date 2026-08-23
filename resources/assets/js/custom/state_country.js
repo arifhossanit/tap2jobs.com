@@ -3,6 +3,7 @@ listenChange('#countryId', function (){
     const selectedCountry = $(this).val();
     const selectedState = $('#stateId').val();
     const selectedCity = $('#cityId').val();
+    const selectedThana = $('#thanaId').val();
 
     $('#stateId').empty().append(
         $('<option value=""></option>').text(Lang.get('js.select_state'))
@@ -10,9 +11,10 @@ listenChange('#countryId', function (){
     $('#cityId').empty().append(
         $('<option value=""></option>').text(Lang.get('js.select_city'))
     );
+    resetThanas();
 
     if (!selectedCountry) {
-        $('#stateId, #cityId').trigger('change.select2');
+        $('#stateId, #cityId, #thanaId').trigger('change.select2');
         return;
     }
 
@@ -32,7 +34,7 @@ listenChange('#countryId', function (){
             $('#stateId').val(stateStillExists ? selectedState : '').trigger('change.select2');
 
             if (stateStillExists) {
-                loadCities(selectedState, selectedCity);
+                loadCities(selectedState, selectedCity, selectedThana);
             }
         },
     });
@@ -42,13 +44,28 @@ listenChange('#stateId', function (){
     loadCities($(this).val(), null);
 })
 
-function loadCities(stateId, selectedCity = null) {
+listenChange('#cityId', function () {
+    loadThanas($(this).val(), null);
+})
+
+function resetThanas() {
+    if (!$('#thanaId').length) {
+        return;
+    }
+
+    $('#thanaId').empty().append(
+        $('<option value=""></option>').text(Lang.get('js.select_thana') || 'Select Thana')
+    );
+}
+
+function loadCities(stateId, selectedCity = null, selectedThana = null) {
     $('#cityId').empty().append(
         $('<option value=""></option>').text(Lang.get('js.select_city'))
     );
+    resetThanas();
 
     if (!stateId) {
-        $('#cityId').trigger('change.select2');
+        $('#cityId, #thanaId').trigger('change.select2');
         return;
     }
 
@@ -69,6 +86,42 @@ function loadCities(stateId, selectedCity = null) {
                 $('#cityId option[value="' + selectedCity + '"]').length > 0;
 
             $('#cityId').val(cityStillExists ? selectedCity : '').trigger('change.select2');
+
+            if (cityStillExists) {
+                loadThanas(selectedCity, selectedThana);
+            }
+        },
+    });
+}
+
+function loadThanas(cityId, selectedThana = null) {
+    if (!$('#thanaId').length) {
+        return;
+    }
+
+    resetThanas();
+
+    if (!cityId) {
+        $('#thanaId').trigger('change.select2');
+        return;
+    }
+
+    $.ajax({
+        url: route('thanas-list'),
+        type: 'get',
+        dataType: 'json',
+        data: {
+            city: cityId,
+        },
+        success: function (data) {
+            $.each(data.data || {}, function (i, v) {
+                $('#thanaId').append($('<option></option>').attr('value', i).text(v));
+            });
+
+            const thanaStillExists = selectedThana &&
+                $('#thanaId option[value="' + selectedThana + '"]').length > 0;
+
+            $('#thanaId').val(thanaStillExists ? selectedThana : '').trigger('change.select2');
         },
     });
 }

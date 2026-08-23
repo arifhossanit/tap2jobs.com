@@ -17,6 +17,11 @@ class NotificationSettingModuleSeeder extends Seeder
                 'key' => 'JOB_ALERT',
                 'value' => true,
             ],
+            [
+                'key' => 'JOB_EXPIRY_ALERT',
+                'type' => 'admin',
+                'value' => true,
+            ],
         ];
         foreach ($input as $data) {
             $module = NotificationSetting::where('key', $data['key'])->first();

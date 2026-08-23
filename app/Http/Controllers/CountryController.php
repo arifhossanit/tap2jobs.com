@@ -96,11 +96,11 @@ class CountryController extends AppBaseController
 
         if ($request->expectsJson()) {
             return response()->json([
-                'message' => 'Countries imported successfully.',
+                'message' => 'Countries imported successfully. Imported: '.$import->importedCount().', skipped duplicates: '.$import->skippedCount().'.',
             ]);
         }
 
-        flash('Countries imported successfully.')->success();
+        flash('Countries imported successfully. Imported: '.$import->importedCount().', skipped duplicates: '.$import->skippedCount().'.')->success();
 
         return back();
     }

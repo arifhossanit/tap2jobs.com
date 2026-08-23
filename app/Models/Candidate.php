@@ -172,6 +172,7 @@ class Candidate extends Model implements HasMedia
         'permanent_state_id',
         'permanent_state_division',
         'permanent_city_id',
+        'permanent_thana_id',
         'permanent_post_office',
         'permanent_address',
         'immediate_available',
@@ -240,6 +241,7 @@ class Candidate extends Model implements HasMedia
         'permanent_state_id' => 'integer',
         'permanent_state_division' => 'string',
         'permanent_city_id' => 'integer',
+        'permanent_thana_id' => 'integer',
         'permanent_post_office' => 'string',
         'permanent_address' => 'string',
         'immediate_available' => 'boolean',
@@ -266,7 +268,7 @@ class Candidate extends Model implements HasMedia
         'marital_status_id' => 'required|integer|exists:marital_status,id',
     ];
 
-    protected $appends = ['country_name', 'state_name', 'city_name', 'full_location', 'candidate_url'];
+    protected $appends = ['country_name', 'state_name', 'city_name', 'thana_name', 'full_location', 'candidate_url'];
 
     protected $with = ['user'];
 
@@ -291,6 +293,13 @@ class Candidate extends Model implements HasMedia
         }
     }
 
+    public function getThanaNameAttribute()
+    {
+        if (! empty($this->user->thana)) {
+            return $this->user->thana->name;
+        }
+    }
+
     public function getFullLocationAttribute(): string
     {
         $location = '';
@@ -302,6 +311,9 @@ class Candidate extends Model implements HasMedia
         }
         if (! empty($this->user->city)) {
             $location = $location.','.$this->user->city->name;
+        }
+        if (! empty($this->user->thana)) {
+            $location = $location.','.$this->user->thana->name;
         }
 
         return (! empty($location)) ? $location : '' ;

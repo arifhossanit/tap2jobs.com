@@ -300,15 +300,38 @@
 
             let url = $(this).data('url') || '';
             let sampleFile = $(this).data('sample-file') || '#';
+            let parentName = $(this).data('parent-name') || '';
+            let parentLabel = $(this).data('parent-label') || '';
+            let parentPlaceholder = $(this).data('parent-placeholder') || '';
+            let parentOptions = $(this).data('parent-options') || {};
+            let parentRequiredValue = $(this).data('parent-required');
+            let parentRequired = parentRequiredValue === undefined || parentRequiredValue === true || parentRequiredValue === 'true';
+            let parentHelp = $(this).data('parent-help') || '';
+            let supportedNote = $(this).data('supported-note') || 'Supported file types: CSV, XLSX, XLS.';
             let token = $('meta[name="csrf-token"]').attr('content');
+            let parentField = '';
+
+            if (parentName && parentLabel) {
+                let options = `<option value="">${parentPlaceholder}</option>`;
+                Object.entries(parentOptions).forEach(function([value, text]) {
+                    options += `<option value="${value}">${text}</option>`;
+                });
+                parentField = `<div class="mb-3">
+                    <label class="form-label">${parentLabel}</label>
+                    <select name="${parentName}" class="form-select" ${parentRequired ? 'required' : ''}>${options}</select>
+                    ${parentHelp ? `<small class="text-muted d-block mt-2">${parentHelp}</small>` : ''}
+                </div>`;
+            }
+
             let content = `<form action="${url}" method="POST" enctype="multipart/form-data" data-turbo="false" id="bulkImportForm">
                 <input type="hidden" name="_token" value="${token}">
+                ${parentField}
                 <div class="input-group">
                     <input type="file" name="file" class="form-control" accept=".csv,.xlsx,.xls" required>
                     <button class="btn btn-success" type="submit">Import</button>
                 </div>
                 <a class="d-block mt-3" href="${sampleFile}">Download sample file</a>
-                <small class="text-muted d-block mt-2">Supported file types: CSV, XLSX, XLS.</small>
+                <small class="text-muted d-block mt-2">${supportedNote}</small>
             </form>`;
 
             $('#bulkImportContent').html(content);

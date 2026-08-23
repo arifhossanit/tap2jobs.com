@@ -5,8 +5,8 @@
 @section('content')
     <div class="container-fluid">
         <div class="d-flex flex-column ">
-            @include('flash::message')
-            <livewire:job-table lazy/>
+            @include('layouts.flash-toasts')
+            <livewire:job-table :deadline="request('deadline')" :expiry-alert="request('expiry_alert')" lazy/>
         </div>
     </div>
     @include('pending_jobs.reason_model')

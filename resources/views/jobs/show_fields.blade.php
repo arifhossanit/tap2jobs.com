@@ -6,6 +6,7 @@
         : __('messages.n/a');
     $jobTitle = html_entity_decode($job->job_title);
     $location = collect([
+        !empty($job->thana_id) ? $job->thana_name : null,
         !empty($job->city_id) ? $job->city_name : null,
         !empty($job->state_id) ? $job->state_name : null,
         !empty($job->country_id) ? $job->country_name : null,
@@ -310,6 +311,10 @@
                         <div>
                             <div class="text-gray-600 fs-8 fw-semibold text-uppercase mb-1">{{ __('messages.job.city') }}</div>
                             <div class="text-gray-900 fs-6 fw-semibold">{{ !empty($job->city_id) ? $job->city_name : __('messages.n/a') }}</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-600 fs-8 fw-semibold text-uppercase mb-1">{{ __('messages.thana.thana_name') }}</div>
+                            <div class="text-gray-900 fs-6 fw-semibold">{{ !empty($job->thana_id) ? $job->thana_name : __('messages.n/a') }}</div>
                         </div>
                         <div>
                             <div class="text-gray-600 fs-8 fw-semibold text-uppercase mb-1">{{ __('messages.common.created_on') }}</div>

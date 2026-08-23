@@ -106,12 +106,12 @@
     <a class="nav-link p-0 {{ Request::is('admin/countries*') ? 'active' : '' }}"
        href="{{ route('countries.index') }}">{{ __('messages.country.countries') }}</a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/states*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/states*') ? 'active' : '' }}"
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/divisions*', 'admin/states*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('admin/divisions*', 'admin/states*') ? 'active' : '' }}"
        href="{{ route('states.index') }}">{{ __('messages.state.states') }}</a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/cities*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/cities*') ? 'active' : '' }}"
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/districts*', 'admin/cities*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('admin/districts*', 'admin/cities*') ? 'active' : '' }}"
        href="{{ route('cities.index') }}">{{ __('messages.city.cities') }}</a>
 </li>
 

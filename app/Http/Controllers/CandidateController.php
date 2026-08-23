@@ -59,8 +59,9 @@ class CandidateController extends AppBaseController
         $data = $this->candidateRepository->prepareData();
         $countries = Country::pluck('name', 'id');
         $states = State::toBase()->pluck('name', 'id');
+        $userThanas = old('city_id') ? getThanas(old('city_id')) : [];
 
-        return view('candidates.create', compact('data', 'countries', 'states'));
+        return view('candidates.create', compact('data', 'countries', 'states', 'userThanas'));
     }
 
     /**
@@ -102,7 +103,7 @@ class CandidateController extends AppBaseController
         $data = $this->candidateRepository->prepareData();
         $data['candidateSkills'] = $user->candidateSkill()->pluck('skill_id')->toArray();
         $data['candidateLanguage'] = $user->candidateLanguage()->pluck('language_id')->toArray();
-        $userStates = $userCities = null;
+        $userStates = $userCities = $userThanas = null;
         $countries = Country::pluck('name', 'id');
         $states = State::toBase()->pluck('name', 'id');
         if (! empty($user->country_id)) {
@@ -111,8 +112,11 @@ class CandidateController extends AppBaseController
         if (! empty($user->state_id)) {
             $userCities = getCities($user->state_id);
         }
+        if (! empty($user->city_id)) {
+            $userThanas = getThanas($user->city_id);
+        }
 
-        return view('candidates.edit', compact('candidate', 'user', 'data', 'countries', 'states', 'userStates', 'userCities'));
+        return view('candidates.edit', compact('candidate', 'user', 'data', 'countries', 'states', 'userStates', 'userCities', 'userThanas'));
     }
 
     /**

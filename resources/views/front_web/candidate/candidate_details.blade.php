@@ -35,13 +35,12 @@
                                         <div class="desc d-flex align-items-center me-lg-4 me-2 pe-2">
                                             <i class="fa-solid fa-location-dot text-gray me-3 fs-18"></i>
                                             <p class="fs-14 text-gray mb-0">
-                                                    <span>{{$candidateDetails->user->country_name}}
-                                                        @if (!empty($candidateDetails->user->state_name))
-                                                            ,{{$candidateDetails->user->state_name }}
-                                                        @endif
-                                                        @if (!empty($candidateDetails->user->city_name))
-                                                            ,{{$candidateDetails->user->city_name}}
-                                                @endif
+                                                {{ collect([
+                                                    $candidateDetails->user->thana_name,
+                                                    $candidateDetails->user->city_name,
+                                                    $candidateDetails->user->state_name,
+                                                    $candidateDetails->user->country_name,
+                                                ])->filter()->implode(', ') }}
                                             </p>
                                         </div>
                                     @endif
@@ -167,12 +166,12 @@
                                                 <img src="{{ asset('img_template/location.svg') }}" class="w-100">
                                             </div>
                                             <p class="fs-14 text-gray mb-0">
-                                                @if (!empty($candidateDetails->user->state_name))
-                                                    ,{{ $candidateDetails->user->state_name }}
-                                                @endif
-                                                @if (!empty($candidateDetails->user->city_name))
-                                                    ,{{ $candidateDetails->user->city_name }}
-                                                @endif
+                                                {{ collect([
+                                                    $candidateDetails->user->thana_name,
+                                                    $candidateDetails->user->city_name,
+                                                    $candidateDetails->user->state_name,
+                                                    $candidateDetails->user->country_name,
+                                                ])->filter()->implode(', ') }}
                                             </p>
                                         </div>
                                     @endif

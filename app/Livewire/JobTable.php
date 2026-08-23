@@ -3,6 +3,8 @@
 namespace App\Livewire;
 
 use App\Models\Job;
+use App\Models\JobApplication;
+use App\Repositories\JobRepository;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
@@ -14,6 +16,7 @@ class JobTable extends LivewireTableComponent
      * @var string
      */
     protected $model = Job::class;
+    protected ?string $bulkDeleteModel = Job::class;
     protected string $tableName = 'jobs';
 
     /**
@@ -25,6 +28,8 @@ class JobTable extends LivewireTableComponent
     public $suspended = Job::SELECT_IS_SUSPENDED;
     public $freelance = Job::SELECT_IS_FREELANCER;
     public  $status = Job::SELECT_JOBS_ACTIVE;
+    public ?string $deadline = null;
+    public ?string $expiryAlert = null;
     protected $listeners = ['resetPage', 'refreshDatatable' => '$refresh', 'changeFeaturedFilter','changeSuspendedFilter','changeFreelanceFilter','changeStatusFilter'];
 
     public array $filterComponents = ['jobs.table-components.filter', [Job::IS_FEATURED, Job::IS_SUSPENDED, Job::IS_FREELANCER, Job::JOBS_ACTIVE]];
@@ -108,8 +113,34 @@ class JobTable extends LivewireTableComponent
     public function builder(): Builder
     {
         $query =  Job::with('company', 'jobCategory', 'jobType', 'jobShift', 'activeFeatured', 'featured', 'admin')->whereNot('status', job::SELECT_PANDING);
+        $deadline = $this->deadline ?: request()->query('deadline');
+        $legacyExpiryAlert = $this->expiryAlert ?: request()->query('expiry_alert');
+
+        if (! $deadline && in_array($legacyExpiryAlert, ['expire_today', 'expire_tomorrow', 'expire_in_7_days'], true)) {
+            $deadline = [
+                'expire_today' => 'today',
+                'expire_tomorrow' => 'tomorrow',
+                'expire_in_7_days' => '7_days',
+            ][$legacyExpiryAlert];
+        }
+
+        if (in_array($deadline, ['today', 'tomorrow', '7_days'], true)) {
+            $expiryDate = match ($deadline) {
+                'today' => Carbon::today()->toDateString(),
+                'tomorrow' => Carbon::tomorrow()->toDateString(),
+                '7_days' => Carbon::today()->addDays(7)->toDateString(),
+            };
+
+            return $query->whereDate('job_expiry_date', $expiryDate)
+                ->status(Job::STATUS_OPEN)
+                ->where('is_suspended', Job::NOT_SUSPENDED)
+                ->select('jobs.*');
+        }
+
         $query->when($this->featured != Job::SELECT_FEATURD, function($q) {
-         $q->Has('featured', $this->featured);
+            (int) $this->featured === Job::YES
+                ? $q->whereHas('featured')
+                : $q->doesntHave('featured');
         });
         $query->when($this->suspended != Job::SELECT_IS_SUSPENDED, function($q) {
          $q->where('is_suspended', $this->suspended);
@@ -125,6 +156,21 @@ class JobTable extends LivewireTableComponent
          }
 });
         return $query->select('jobs.*');
+    }
+
+    protected function isBulkDeleteBlocked($record): bool
+    {
+        return $record->appliedJobs()
+            ->whereIn('status', [
+                JobApplication::STATUS_APPLIED,
+                JobApplication::STATUS_DRAFT,
+            ])
+            ->exists();
+    }
+
+    protected function deleteBulkDeleteRecord($record): void
+    {
+        app(JobRepository::class)->delete($record->id);
     }
 
 //     public function filters(): array

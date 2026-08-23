@@ -79,6 +79,11 @@
             {{ !empty($candidate->user->city_id) ? $candidate->user->city_name : __('messages.n/a') }}</p>
     </div>
     <div class="col-sm-6 d-flex flex-column mb-md-10 mb-5">
+        {{ Form::label('thana', __('messages.thana.thana_name') . ':', ['class' => 'pb-2 fs-5 text-gray-600']) }}
+        <p class="fs-5 text-gray-800">
+            {{ !empty($candidate->user->thana_id) ? $candidate->user->thana_name : __('messages.n/a') }}</p>
+    </div>
+    <div class="col-sm-6 d-flex flex-column mb-md-10 mb-5">
         {{ Form::label('phone', __('messages.candidate.phone') . ':', ['class' => 'pb-2 fs-5 text-gray-600']) }}
         <p class="fs-5 text-gray-800">
             {{ !empty($candidate->user->phone) ? $candidate->user->phone : __('messages.n/a') }}

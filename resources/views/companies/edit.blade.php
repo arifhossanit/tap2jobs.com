@@ -19,6 +19,7 @@
 @endsection
 @section('content')
     <div class="container-fluid">
+        @include('layouts.flash-toasts')
         <div class="d-flex flex-column">
             <div class="row">
                 <div class="col-12">
@@ -41,10 +42,7 @@
         @include('companies.modals.states')
         @include('companies.modals.cities')
         @include('companies.modals.company_sizes')
-        {{ Form::hidden('country-id', $company->user->country_id, ['id' => 'countryId']) }}
-        {{ Form::hidden('state-id', $company->user->state_id, ['id' => 'stateId']) }}
-        {{ Form::hidden('city-id', $company->user->city_id, ['id' => 'cityId']) }}
-        {{Form::hidden('employerDetail', $company->details, ['id' => 'employerDetail'])}}
+        {{Form::hidden('employerDetail', old('details', $company->details), ['id' => 'employerDetail'])}}
         {{Form::hidden('employerPanel',false,['class'=>'employerPanel'])}}
         {{Form::hidden('isEdit', true, ['class' => 'isEdit'])}}
         {{Form::hidden('editCompaniesForm', true, ['id' => 'editCompaniesForm'])}}
@@ -52,7 +50,7 @@
 @endsection
 <script>
     var phoneNo = "{{ old('region_code').old('phone') }}";
-    let countryId = '{{$company->user->country_id}}';
-    let stateId = '{{$company->user->state_id}}';
-    let cityId = '{{$company->user->city_id}}';
+    let countryId = '{{ old('country_id', $company->user->country_id) }}';
+    let stateId = '{{ old('state_id', $company->user->state_id) }}';
+    let cityId = '{{ old('city_id', $company->user->city_id) }}';
 </script>

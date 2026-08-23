@@ -18,6 +18,7 @@ class CityTable extends LivewireTableComponent
     protected ?string $bulkDeleteModel = City::class;
 
     protected array $bulkDeleteBlockedChecks = [
+        ['App\Models\Thana', 'city_id'],
         ['App\Models\Job', 'city_id'],
         ['App\Models\User', 'city_id'],
         ['App\Models\Candidate', 'permanent_city_id'],

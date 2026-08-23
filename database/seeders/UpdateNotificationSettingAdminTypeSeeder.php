@@ -36,6 +36,7 @@ class UpdateNotificationSettingAdminTypeSeeder extends seeder
             'NEW_EMPLOYER_REGISTERED',
             'NEW_CANDIDATE_REGISTERED',
             'EMPLOYER_PURCHASE_PLAN',
+            'JOB_EXPIRY_ALERT',
         ])->update(['type' => 'admin']);
     }
 }

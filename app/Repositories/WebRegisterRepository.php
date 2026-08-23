@@ -46,7 +46,7 @@ class WebRegisterRepository
 
             $userInput = Arr::only($input, [
                 'first_name', 'last_name', 'username', 'email', 'phone', 'region_code',
-                'country_id', 'state_id', 'city_id',
+                'country_id', 'state_id', 'city_id', 'thana_id',
             ]);
             if ((int) $input['type'] === 2) {
                 $userInput['first_name'] = $input['company_name'];

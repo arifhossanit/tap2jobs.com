@@ -49,6 +49,8 @@ class RegisterController extends AppBaseController
         $countries = getCountries();
         $bangladeshId = Country::where('name', 'Bangladesh')->value('id');
         $states = $bangladeshId ? getStates($bangladeshId) : [];
+        $cities = old('state_id') ? getCities(old('state_id')) : [];
+        $thanas = old('city_id') ? getThanas(old('city_id')) : [];
         $industryTypes = IndustryType::orderBy('sort_order')->pluck('name', 'id');
         $industryRecords = Industry::whereNull('created_by')
             ->orderBy('name')
@@ -62,6 +64,8 @@ class RegisterController extends AppBaseController
             'countries',
             'bangladeshId',
             'states',
+            'cities',
+            'thanas',
             'industryTypes',
             'industryRecords',
             'companySizes'
@@ -93,6 +97,13 @@ class RegisterController extends AppBaseController
         $validated = $request->validate(['state_id' => ['required', 'integer', 'exists:states,id']]);
 
         return $this->sendResponse(getCities($validated['state_id']), 'Cities retrieved successfully.');
+    }
+
+    public function registrationThanas(Request $request): JsonResponse
+    {
+        $validated = $request->validate(['city_id' => ['required', 'integer', 'exists:cities,id']]);
+
+        return $this->sendResponse(getThanas($validated['city_id']), 'Thanas retrieved successfully.');
     }
 
     /**

@@ -71,10 +71,12 @@ class JobController extends AppBaseController
         $firstCountryId = array_key_first($data['countries']);
         $selectedCountryId = old('country_id', $data['default_country_id'] ?: $firstCountryId);
         $selectedStateId = old('state_id');
+        $selectedCityId = old('city_id');
 
         $data['selected_country_id'] = $selectedCountryId;
         $data['default_country_states'] = $selectedCountryId ? getStates($selectedCountryId) : [];
         $data['selected_state_cities'] = $selectedStateId ? getCities($selectedStateId) : [];
+        $data['selected_city_thanas'] = $selectedCityId ? getThanas($selectedCityId) : [];
 
         return view('employer.jobs.create', compact('data'));
     }
@@ -147,12 +149,14 @@ class JobController extends AppBaseController
         $firstCountryId = array_key_first($data['countries']);
         $selectedCountryId = old('country_id', $job->country_id ?: ($data['default_country_id'] ?: $firstCountryId));
         $selectedStateId = old('state_id', $job->state_id);
+        $selectedCityId = old('city_id', $job->city_id);
 
         $data['selected_country_id'] = $selectedCountryId;
         $states = $selectedCountryId ? getStates($selectedCountryId) : [];
         $cities = $selectedStateId ? getCities($selectedStateId) : [];
+        $thanas = $selectedCityId ? getThanas($selectedCityId) : [];
 
-        return view('employer.jobs.edit', compact('data', 'job', 'cities', 'states'));
+        return view('employer.jobs.edit', compact('data', 'job', 'cities', 'states', 'thanas'));
     }
 
     /**
@@ -232,6 +236,14 @@ class JobController extends AppBaseController
         return $this->sendResponse($cities, 'Retrieved successfully');
     }
 
+    public function getThanas(Request $request)
+    {
+        $city = $request->get('city');
+        $thanas = getThanas($city);
+
+        return $this->sendResponse($thanas, 'Retrieved successfully');
+    }
+
     /**
      * @param  Request  $request
      * @return Application|Factory|View
@@ -254,6 +266,15 @@ class JobController extends AppBaseController
     public function createJob(): View
     {
         $data = $this->jobRepository->prepareData();
+        $firstCountryId = array_key_first($data['countries']);
+        $selectedCountryId = old('country_id', $data['default_country_id'] ?: $firstCountryId);
+        $selectedStateId = old('state_id');
+        $selectedCityId = old('city_id');
+
+        $data['selected_country_id'] = $selectedCountryId;
+        $data['default_country_states'] = $selectedCountryId ? getStates($selectedCountryId) : [];
+        $data['selected_state_cities'] = $selectedStateId ? getCities($selectedStateId) : [];
+        $data['selected_city_thanas'] = $selectedCityId ? getThanas($selectedCityId) : [];
         $countries = $data['countries'];
         $states = State::toBase()->pluck('name', 'id');
 
@@ -268,10 +289,12 @@ class JobController extends AppBaseController
     public function storeJob(CreateJobRequest $request): RedirectResponse
     {
         $input = $request->validated();
-        $input['status'] = Job::STATUS_OPEN;
+        $input['status'] = $request->boolean('saveAsDraft') ? Job::STATUS_DRAFT : Job::STATUS_OPEN;
         $this->jobRepository->store($input);
 
-        Flash::success(__('messages.flash.job_save'));
+        $request->boolean('saveAsDraft')
+            ? Flash::success(__('messages.flash.job_draft'))
+            : Flash::success(__('messages.flash.job_save'));
 
         return redirect(route('admin.jobs.index'));
     }
@@ -290,6 +313,8 @@ class JobController extends AppBaseController
         }
         $data = $this->jobRepository->prepareData();
         $data['jobTags'] = $job->jobsTag()->pluck('tag_id')->toArray();
+        $data['jobSkills'] = $job->jobsSkill()->pluck('skill_id')->toArray();
+        $data['selected_country_id'] = old('country_id', $job->country_id);
         $states = $cities = null;
         if (isset($job->country_id)) {
             $states = getStates($job->country_id);
@@ -297,9 +322,13 @@ class JobController extends AppBaseController
         if (isset($job->state_id)) {
             $cities = getCities($job->state_id);
         }
+        $thanas = null;
+        if (isset($job->city_id)) {
+            $thanas = getThanas($job->city_id);
+        }
         $countries = $data['countries'];
 
-        return view('jobs.edit', compact('data', 'job', 'cities', 'states', 'countries'));
+        return view('jobs.edit', compact('data', 'job', 'cities', 'states', 'countries', 'thanas'));
     }
 
     /**
@@ -341,7 +370,10 @@ class JobController extends AppBaseController
      */
     public function delete(Job $job)
     {
-        $jobAppliedCount = $job->appliedJobs()->where('status', JobApplication::STATUS_APPLIED)->count();
+        $jobAppliedCount = $job->appliedJobs()->whereIn('status', [
+            JobApplication::STATUS_APPLIED,
+            JobApplication::STATUS_DRAFT,
+        ])->count();
         if ($jobAppliedCount > 0) {
             return $this->sendError(__('messages.flash.job_apply_by_candidate'));
         }
@@ -455,6 +487,10 @@ class JobController extends AppBaseController
         $isFeaturedAvailable = ($totalFeaturedJob >= $maxFeaturedJob) ? false : true;
         $employerUser = Job::with('company.user')->findOrFail($jobId);
 
+        if ($employerUser->activeFeatured()->exists()) {
+            return $this->sendError(__('messages.flash.job_already_featured'));
+        }
+
         if ($isFeaturedAvailable) {
             $featuredRecord = [
                 'owner_id' => $jobId,
@@ -511,6 +547,10 @@ class JobController extends AppBaseController
     {
         /** @var FeaturedRecord $unFeatured */
         $unFeatured = FeaturedRecord::where('owner_id', $jobId)->where('owner_type', Job::class)->first();
+        if (! $unFeatured) {
+            return $this->sendError(__('messages.flash.job_not_featured'));
+        }
+
         $unFeatured->delete();
 
         $employerUser = Job::findOrFail($jobId);

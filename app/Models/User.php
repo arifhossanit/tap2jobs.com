@@ -175,6 +175,7 @@ class User extends Authenticatable implements HasMedia
         'country_id',
         'state_id',
         'city_id',
+        'thana_id',
         'is_active',
         'is_verified',
         'phone',
@@ -191,9 +192,9 @@ class User extends Authenticatable implements HasMedia
         'region_code',
     ];
 
-    protected $appends = ['full_name', 'avatar', 'country_name', 'state_name', 'city_name'];
+    protected $appends = ['full_name', 'avatar', 'country_name', 'state_name', 'city_name', 'thana_name'];
 
-    protected $with = ['media', 'country', 'city', 'state'];
+    protected $with = ['media', 'country', 'city', 'state', 'thana'];
 
     public function country(): BelongsTo
     {
@@ -208,6 +209,11 @@ class User extends Authenticatable implements HasMedia
     public function city(): BelongsTo
     {
         return $this->belongsTo(City::class, 'city_id');
+    }
+
+    public function thana(): BelongsTo
+    {
+        return $this->belongsTo(Thana::class, 'thana_id');
     }
 
     public function getCountryNameAttribute()
@@ -228,6 +234,13 @@ class User extends Authenticatable implements HasMedia
     {
         if (! empty($this->city)) {
             return $this->city->name;
+        }
+    }
+
+    public function getThanaNameAttribute()
+    {
+        if (! empty($this->thana)) {
+            return $this->thana->name;
         }
     }
 
@@ -270,6 +283,7 @@ class User extends Authenticatable implements HasMedia
         'country_id' => 'integer',
         'state_id' => 'integer',
         'city_id' => 'integer',
+        'thana_id' => 'integer',
         'is_active' => 'boolean',
         'is_verified' => 'boolean',
         'phone' => 'string',

@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Candidate;
 use App\Models\CandidateExperience;
 use App\Models\CandidateEducation;
+use App\Models\Thana;
 use App\Repositories\CityRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -84,7 +85,7 @@ class CityController extends AppBaseController
     public function import(Request $request)
     {
         $request->validate([
-            'state_id' => 'required|exists:states,id',
+            'state_id' => 'nullable|exists:states,id',
             'file' => ['required', 'file', function ($attribute, $value, $fail) {
                 $ext = strtolower($value->getClientOriginalExtension());
                 if (!in_array($ext, ['csv', 'xls', 'xlsx'])) {
@@ -99,35 +100,36 @@ class CityController extends AppBaseController
         if ($import->failures()->isNotEmpty()) {
             if ($request->expectsJson()) {
                 return response()->json([
-                    'message' => 'Cities import completed with validation errors. Please fix the failed rows and try again.',
+                    'message' => 'Districts import completed with validation errors. Please fix the failed rows and try again.',
                 ], 422);
             }
 
-            flash('Cities import completed with validation errors. Please fix the failed rows and try again.')->error();
+            flash('Districts import completed with validation errors. Please fix the failed rows and try again.')->error();
 
             return back()->withFailures($import->failures());
         }
 
         if ($request->expectsJson()) {
             return response()->json([
-                'message' => 'Cities imported successfully.',
+                'message' => 'Districts imported successfully. Imported: '.$import->importedCount().', skipped duplicates: '.$import->skippedCount().'.',
             ]);
         }
 
-        flash('Cities imported successfully.')->success();
+        flash('Districts imported successfully. Imported: '.$import->importedCount().', skipped duplicates: '.$import->skippedCount().'.')->success();
 
         return back();
     }
 
     public function destroy(City $city): JsonResponse
     {
+        $activeThana = Thana::where('city_id', $city->id)->exists();
         $activeJob = Job::where('city_id', $city->id)->exists();
         $activeUser = User::where('city_id', $city->id)->exists();
         $activeCandidate = Candidate::where('permanent_city_id', $city->id)->exists();
         $activeExperience = CandidateExperience::where('city_id', $city->id)->exists();
         $activeEducation = CandidateEducation::where('city_id', $city->id)->exists();
 
-        if ($activeJob || $activeUser || $activeCandidate || $activeExperience || $activeEducation) {
+        if ($activeThana || $activeJob || $activeUser || $activeCandidate || $activeExperience || $activeEducation) {
             return $this->sendError(__('messages.flash.city_cant_delete'));
         }
 

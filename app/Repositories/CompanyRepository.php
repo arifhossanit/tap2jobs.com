@@ -107,7 +107,7 @@ class CompanyRepository extends BaseRepository
             $userInput = Arr::only($input,
                 [
                     'first_name', 'email', 'phone', 'password', 'owner_id', 'owner_type', 'country_id', 'state_id',
-                    'city_id', 'is_active', 'dob', 'gender',
+                    'city_id', 'thana_id', 'is_active', 'dob', 'gender',
                     'facebook_url', 'twitter_url', 'linkedin_url', 'google_plus_url', 'pinterest_url', 'is_verified',
                     'is_default', 'region_code',
                 ]);
@@ -189,8 +189,8 @@ class CompanyRepository extends BaseRepository
             $input['first_name'] = $input['name'];
             $userInput = Arr::only($input,
                 [
-                    'first_name', 'email', 'phone', 'country_id', 'state_id', 'city_id', 'is_active',
-                    'first_name', 'email', 'phone', 'country_id', 'state_id', 'city_id', 'is_active',
+                    'first_name', 'email', 'phone', 'country_id', 'state_id', 'city_id', 'thana_id', 'is_active',
+                    'first_name', 'email', 'phone', 'country_id', 'state_id', 'city_id', 'thana_id', 'is_active',
                     'facebook_url', 'twitter_url', 'linkedin_url', 'google_plus_url', 'pinterest_url', 'region_code',
                 ]);
             /** @var User $user */

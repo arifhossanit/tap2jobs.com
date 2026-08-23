@@ -47,6 +47,10 @@
     <span class="fs-5 text-gray-800">{{ !empty($company->user->city_id) ? $company->user->city_name:__('messages.n/a') }}</span>
 </div>
 <div class="col-sm-6 d-flex flex-column mb-md-10 mb-5">
+    {{ Form::label('thana', __('messages.thana.thana_name').(':'), ['class' => 'pb-2 fs-5 text-gray-600']) }}
+    <span class="fs-5 text-gray-800">{{ !empty($company->user->thana_id) ? $company->user->thana_name:__('messages.n/a') }}</span>
+</div>
+<div class="col-sm-6 d-flex flex-column mb-md-10 mb-5">
     {{ Form::label('no_of_offices', __('messages.company.no_of_offices').(':'), ['class' => 'pb-2 fs-5 text-gray-600']) }}
     <span class="fs-5 text-gray-800">{{ $company->no_of_offices!=null ?$company->no_of_offices:__('messages.n/a') }}</span>
 </div>

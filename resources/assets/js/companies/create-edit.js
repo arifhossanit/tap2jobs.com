@@ -3,6 +3,7 @@ function loadCreateEditCompanyData() {
     let countryId = $('#countryId').val();
     let stateId = $('#stateId').val();
     let cityId = $('#cityId').val();
+    let thanaId = $('#thanaId').val();
 
     let companyStateUrl = $('#companyStateUrl').val();
     let companyCityUrl = $('#companyCityUrl').val();
@@ -24,6 +25,9 @@ function loadCreateEditCompanyData() {
         width: (!employerPanel) ? 'calc(100% - 44px)' : '100%',
     });
     $('#cityId').select2({
+        width: (!employerPanel) ? 'calc(100% - 44px)' : '100%',
+    });
+    $('#thanaId').select2({
         width: (!employerPanel) ? 'calc(100% - 44px)' : '100%',
     });
     $('#establishedIn').select2({
@@ -152,6 +156,7 @@ function loadCreateEditCompanyData() {
                 $('#cityId').empty();
                 $('#cityId').append(
                     $('<option value=""></option>').text(Lang.get('js.select_city')));
+                resetCompanyThanas();
                 $('#stateId').empty();
                 $('#stateId').append(
                     $('<option value=""></option>').text(Lang.get('js.select_state')));
@@ -175,6 +180,7 @@ function loadCreateEditCompanyData() {
                 $('#cityId').empty();
                 $('#cityId').append(
                     $('<option value=""></option>').text(Lang.get('js.select_city')));
+                resetCompanyThanas();
                 $.each(data.data, function (i, v) {
                     $('#cityId').append(
                         $('<option ></option>').attr('value', i).text(v));
@@ -182,6 +188,48 @@ function loadCreateEditCompanyData() {
             },
         });
     });
+
+    $('#cityId').on('change', function () {
+        loadCompanyThanas($(this).val(), null);
+    });
+
+    function resetCompanyThanas() {
+        if (!$('#thanaId').length) {
+            return;
+        }
+
+        $('#thanaId').empty();
+        $('#thanaId').append($('<option value=""></option>').text(Lang.get('js.select_thana') || 'Select Thana'));
+    }
+
+    function loadCompanyThanas(cityId, selectedThana = null) {
+        if (!$('#thanaId').length) {
+            return;
+        }
+
+        resetCompanyThanas();
+
+        if (!cityId) {
+            $('#thanaId').trigger('change.select2');
+            return;
+        }
+
+        $.ajax({
+            url: route('thanas-list'),
+            type: 'get',
+            dataType: 'json',
+            data: {
+                city: cityId,
+            },
+            success: function (data) {
+                $.each(data.data || {}, function (i, v) {
+                    $('#thanaId').append($('<option></option>').attr('value', i).text(v));
+                });
+
+                $('#thanaId').val(selectedThana).trigger('change.select2');
+            },
+        });
+    }
 
     listenChange('#logo', function () {
         let validFile = isValidFile($(this), '#validationErrorsBox');

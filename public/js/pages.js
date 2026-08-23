@@ -1284,7 +1284,7 @@ function loadCandidateCreateEditData() {
   if (!$('#createCandidatesForm').length && !$('#editCandidatesForm').length) {
     return;
   }
-  $('#maritalStatusId, #countryId, #careerLevelId, #industryId, #functionalAreaId,#stateId,#cityId').select2({
+  $('#maritalStatusId, #countryId, #careerLevelId, #industryId, #functionalAreaId,#stateId,#cityId,#thanaId').select2({
     'width': 'calc(100% - 44px)'
   });
   $('#skillId').select2({
@@ -1530,9 +1530,11 @@ $('#countryId').on('change', function () {
     },
     success: function success(data) {
       $('#cityId').empty();
-      $('#cityId').append($('<option value=""></option>').text(Lang.get('js.select_state')));
+      $('#cityId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
+      $('#thanaId').empty();
+      $('#thanaId').append($('<option value=""></option>').text(Lang.get('js.select_thana') || 'Select Thana'));
       $('#stateId').empty();
-      $('#stateId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
+      $('#stateId').append($('<option value=""></option>').text(Lang.get('js.select_state')));
       $.each(data.data, function (i, v) {
         $('#stateId').append($('<option></option>').attr('value', i).text(v));
       });
@@ -1543,6 +1545,31 @@ $('#countryId').on('change', function () {
     }
   });
 });
+function loadCandidateThanas(cityId) {
+  if (!$('#thanaId').length) {
+    return;
+  }
+  $('#thanaId').empty();
+  $('#thanaId').append($('<option value=""></option>').text(Lang.get('js.select_thana') || 'Select Thana'));
+  if (!cityId) {
+    $('#thanaId').trigger('change.select2');
+    return;
+  }
+  $.ajax({
+    url: route('thanas-list'),
+    type: 'get',
+    dataType: 'json',
+    data: {
+      city: cityId
+    },
+    success: function success(data) {
+      $.each(data.data, function (i, v) {
+        $('#thanaId').append($('<option></option>').attr('value', i).text(v));
+      });
+      $('#thanaId').trigger('change.select2');
+    }
+  });
+}
 $('#stateId').on('change', function () {
   $.ajax({
     url: route('cities-list'),
@@ -1558,12 +1585,16 @@ $('#stateId').on('change', function () {
       $.each(data.data, function (i, v) {
         $('#cityId').append($('<option></option>').attr('value', i).text(v));
       });
+      loadCandidateThanas($('#cityId').val());
 
       // if (isEdit && cityId) {
       //     $('#cityId').val(cityId).trigger('change');
       // }
     }
   });
+});
+$('#cityId').on('change', function () {
+  loadCandidateThanas($(this).val());
 });
 listenClick('.createCandidateLanguageModal', function () {
   $('#createCandidateLanguageModal').appendTo('body').modal('show');
@@ -2932,15 +2963,87 @@ function loadCandidateGeneralData() {
     $('.candidate-address-summary').removeClass('d-none');
     $('[data-address-edit-toggle]').removeClass('d-none').closest('.candidate-profile-section__header').removeClass('candidate-profile-section__header--editing');
   });
+  var resetAddressSelect = function resetAddressSelect(selector, placeholder) {
+    if (!$(selector).length) {
+      return;
+    }
+    $(selector).empty().append($('<option value=""></option>').text(placeholder));
+    $(selector).trigger('change.select2');
+  };
+  var loadAddressThanas = function loadAddressThanas(citySelector, thanaSelector) {
+    var selectedThana = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+    if (!$(thanaSelector).length) {
+      return;
+    }
+    var city = $(citySelector).val();
+    resetAddressSelect(thanaSelector, 'Select your Thana');
+    if (!city) {
+      return;
+    }
+    $.ajax({
+      url: route('thanas-list'),
+      type: 'get',
+      dataType: 'json',
+      data: {
+        city: city
+      },
+      success: function success(data) {
+        $.each(data.data, function (i, v) {
+          $(thanaSelector).append($('<option></option>').attr('value', i).text(v));
+        });
+        if (selectedThana) {
+          $(thanaSelector).val(selectedThana);
+        }
+        $(thanaSelector).trigger('change.select2');
+      }
+    });
+  };
+  var loadAddressCities = function loadAddressCities(stateSelector, countrySelector, citySelector) {
+    var thanaSelector = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+    var selectedCity = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : null;
+    var selectedThana = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : null;
+    var state = $(stateSelector).val();
+    resetAddressSelect(citySelector, 'Select your District');
+    if (thanaSelector) {
+      resetAddressSelect(thanaSelector, 'Select your Thana');
+    }
+    if (!state) {
+      return;
+    }
+    $.ajax({
+      url: route('cities-list'),
+      type: 'get',
+      dataType: 'json',
+      data: {
+        state: state,
+        country: $(countrySelector).val()
+      },
+      success: function success(data) {
+        $.each(data.data, function (i, v) {
+          $(citySelector).append($('<option></option>').attr('value', i).text(v));
+        });
+        if (selectedCity) {
+          $(citySelector).val(selectedCity);
+        }
+        $(citySelector).trigger('change.select2');
+        if (thanaSelector) {
+          loadAddressThanas(citySelector, thanaSelector, selectedThana);
+        }
+      }
+    });
+  };
   var loadAddressStates = function loadAddressStates(countrySelector, stateSelector, citySelector) {
-    var selectedState = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
-    var statePlaceholder = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 'Select your District';
+    var thanaSelector = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+    var selectedState = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : null;
+    var statePlaceholder = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 'Select your Division';
     var country = $(countrySelector).val();
     $(stateSelector).empty().append($('<option value=""></option>').text(statePlaceholder));
-    $(citySelector).empty().append($('<option value=""></option>').text('Select your Thana'));
+    resetAddressSelect(citySelector, 'Select your District');
+    if (thanaSelector) {
+      resetAddressSelect(thanaSelector, 'Select your Thana');
+    }
     if (!country) {
       $(stateSelector).trigger('change.select2');
-      $(citySelector).trigger('change.select2');
       return;
     }
     $.ajax({
@@ -2973,7 +3076,7 @@ function loadCandidateGeneralData() {
     if (type === 'inside' && bangladeshId) {
       $('#countryId').val(bangladeshId);
       if (resetLocation) {
-        loadAddressStates('#countryId', '#stateId', '#cityId');
+        loadAddressStates('#countryId', '#stateId', '#cityId', '#thanaId');
       }
       return;
     }
@@ -3018,8 +3121,20 @@ function loadCandidateGeneralData() {
   });
   $('#permanentCountryId').on('change', function () {
     if ($('input[name="permanent_address_type"]:checked').val() !== 'outside') {
-      loadAddressStates('#permanentCountryId', '#permanentStateId', '#permanentCityId');
+      loadAddressStates('#permanentCountryId', '#permanentStateId', '#permanentCityId', '#permanentThanaId');
     }
+  });
+  $('#stateId').on('change', function () {
+    loadAddressCities('#stateId', '#countryId', '#cityId', '#thanaId');
+  });
+  $('#cityId').on('change', function () {
+    loadAddressThanas('#cityId', '#thanaId');
+  });
+  $('#permanentStateId').on('change', function () {
+    loadAddressCities('#permanentStateId', '#permanentCountryId', '#permanentCityId', '#permanentThanaId');
+  });
+  $('#permanentCityId').on('change', function () {
+    loadAddressThanas('#permanentCityId', '#permanentThanaId');
   });
   $('[data-career-edit-toggle]').on('click', function (event) {
     event.preventDefault();
@@ -3237,7 +3352,7 @@ function loadCandidateGeneralData() {
     });
   }
   if ($('#candidateProfileUpdate').length) {
-    $('#salaryCurrencyId,#stateId,#industryId,#careerLevelId,#functionalAreaId,#presentCountryDisplay,#permanentCountryId,#permanentStateId').select2({
+    $('#salaryCurrencyId,#stateId,#cityId,#thanaId,#industryId,#careerLevelId,#functionalAreaId,#presentCountryDisplay,#permanentCountryId,#permanentStateId,#permanentCityId,#permanentThanaId').select2({
       width: '100%'
     });
     $('#createCityStateID').select2({
@@ -3342,6 +3457,8 @@ function loadCandidateGeneralData() {
       success: function success(data) {
         $('#cityId').empty();
         $('#cityId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
+        $('#thanaId').empty();
+        $('#thanaId').append($('<option value=""></option>').text(Lang.get('js.select_thana') || 'Select Thana'));
         $('#stateId').empty();
         $('#stateId').append($('<option value=""></option>').text(Lang.get('js.select_state')));
         $.each(data.data, function (i, v) {
@@ -3371,6 +3488,7 @@ function loadCandidateGeneralData() {
         $.each(data.data, function (i, v) {
           $('#cityId').append($('<option ></option>').attr('value', i).text(v));
         });
+        loadAddressThanas('#cityId', '#thanaId');
         // if (isEdit && cityId) {
         //     $('#cityId').val(cityId).trigger('change');
         // }
@@ -5083,6 +5201,7 @@ function loadCVBuilderData() {
   var countryId = $('#countryId').val();
   var stateId = $('#stateId').val();
   var cityId = $('#cityId').val();
+  var thanaId = $('#thanaId').val();
   renderCandidateData();
   randerCVTemplate();
   $('#candidateCountryId,#candidateStateId,#cvBuilderYearId,#candidateCityId').select2({
@@ -5919,6 +6038,9 @@ function loadCreateEditCompanyData() {
   $('#cityId').select2({
     width: !employerPanel ? 'calc(100% - 44px)' : '100%'
   });
+  $('#thanaId').select2({
+    width: !employerPanel ? 'calc(100% - 44px)' : '100%'
+  });
   $('#establishedIn').select2({
     width: '100%'
   });
@@ -6017,6 +6139,7 @@ function loadCreateEditCompanyData() {
       success: function success(data) {
         $('#cityId').empty();
         $('#cityId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
+        resetCompanyThanas();
         $('#stateId').empty();
         $('#stateId').append($('<option value=""></option>').text(Lang.get('js.select_state')));
         $.each(data.data, function (i, v) {
@@ -6037,12 +6160,48 @@ function loadCreateEditCompanyData() {
       success: function success(data) {
         $('#cityId').empty();
         $('#cityId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
+        resetCompanyThanas();
         $.each(data.data, function (i, v) {
           $('#cityId').append($('<option ></option>').attr('value', i).text(v));
         });
       }
     });
   });
+  $('#cityId').on('change', function () {
+    loadCompanyThanas($(this).val(), null);
+  });
+  function resetCompanyThanas() {
+    if (!$('#thanaId').length) {
+      return;
+    }
+    $('#thanaId').empty();
+    $('#thanaId').append($('<option value=""></option>').text(Lang.get('js.select_thana') || 'Select Thana'));
+  }
+  function loadCompanyThanas(cityId) {
+    var selectedThana = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+    if (!$('#thanaId').length) {
+      return;
+    }
+    resetCompanyThanas();
+    if (!cityId) {
+      $('#thanaId').trigger('change.select2');
+      return;
+    }
+    $.ajax({
+      url: route('thanas-list'),
+      type: 'get',
+      dataType: 'json',
+      data: {
+        city: cityId
+      },
+      success: function success(data) {
+        $.each(data.data || {}, function (i, v) {
+          $('#thanaId').append($('<option></option>').attr('value', i).text(v));
+        });
+        $('#thanaId').val(selectedThana).trigger('change.select2');
+      }
+    });
+  }
   listenChange('#logo', function () {
     var validFile = isValidFile($(this), '#validationErrorsBox');
     if (validFile) {
@@ -7706,9 +7865,46 @@ listenWithOutTarget("keydown", function (e) {
     closeFrontUserDropdowns(true);
   }
 });
-listenClick("#readNotification", function (e) {
+var adminNotificationList = $("#adminNotificationList");
+function escapeNotificationText(value) {
+  return $("<div>").text(value || "").html();
+}
+function renderAdminNotifications(notificationData) {
+  if (!adminNotificationList.length || !notificationData) {
+    return;
+  }
+  var notifications = notificationData.notifications || [];
+  var notificationCount = notificationData.count || 0;
+  $("#counter").text(notificationCount).toggleClass("d-none", notificationCount === 0);
+  $("#readAllNotificationWrapper").toggleClass("d-none", notificationCount === 0);
+  if (notificationCount === 0) {
+    adminNotificationList.html('<div class="empty-state fs-6 text-gray-800 fw-bold text-center mt-5" data-height="400"><p>No notifications found</p></div>');
+    return;
+  }
+  var notificationItems = notifications.map(function (notification) {
+    return '<div class="d-flex position-relative mb-5 readNotification cursor-pointer" data-id="' + notification.id + '" data-url="' + escapeNotificationText(notification.url) + '">' + '<span class="me-5 text-primary fs-2 icon-label"><i class="' + escapeNotificationText(notification.icon) + '"></i></span>' + "<div>" + '<h5 class="text-gray-900 fs-6 mb-2">' + escapeNotificationText(notification.title) + "</h5>" + '<h6 class="text-gray-600 fs-small fw-light mb-0">' + escapeNotificationText(notification.created_at) + "</h6>" + "</div>" + "</div>";
+  }).join("");
+  adminNotificationList.html(notificationItems);
+}
+function refreshAdminNotifications() {
+  if (!adminNotificationList.length || typeof route !== "function") {
+    return;
+  }
+  $.ajax({
+    type: "GET",
+    url: route("notifications.latest"),
+    success: function success(response) {
+      renderAdminNotifications(response.data);
+    }
+  });
+}
+if (adminNotificationList.length) {
+  setInterval(refreshAdminNotifications, 30000);
+}
+listenClick(".readNotification", function (e) {
   e.preventDefault();
   var notificationId = $(this).data("id");
+  var notificationUrl = $(this).data("url");
   var notification = $(this);
   $.ajax({
     type: "POST",
@@ -7716,8 +7912,8 @@ listenClick("#readNotification", function (e) {
     data: {
       notificationId: notificationId
     },
-    success: function success() {
-      displaySuccessMessage(Lang.get("js.notification_read"));
+    success: function success(response) {
+      notificationUrl = notificationUrl || (response.data ? response.data.url : "");
       notification.remove();
       var notificationCounter = document.getElementsByClassName("readNotification").length;
       $("#counter").text(notificationCounter);
@@ -7725,8 +7921,13 @@ listenClick("#readNotification", function (e) {
         $(".empty-state").removeClass("d-none");
         $(".notification-count").addClass("d-none");
         $("#counter").text(notificationCounter);
-        $("#readAllNotification").parents("div").first().remove();
+        $("#readAllNotificationWrapper").addClass("d-none");
       }
+      if (notificationUrl) {
+        window.location.href = notificationUrl;
+        return;
+      }
+      displaySuccessMessage(Lang.get("js.notification_read"));
     },
     error: function error(_error) {
       manageAjaxErrors(_error);
@@ -7745,7 +7946,7 @@ listenClick("#readAllNotification", function (e) {
       $(".empty-state").removeClass("d-none");
       $(".notification-count").addClass("d-none");
       $("#counter").text(notificationCounter);
-      $("#readAllNotification").parents("div").first().remove();
+      $("#readAllNotificationWrapper").addClass("d-none");
     },
     error: function error(_error2) {
       manageAjaxErrors(_error2);
@@ -8165,10 +8366,12 @@ listenChange('#countryId', function () {
   var selectedCountry = $(this).val();
   var selectedState = $('#stateId').val();
   var selectedCity = $('#cityId').val();
+  var selectedThana = $('#thanaId').val();
   $('#stateId').empty().append($('<option value=""></option>').text(Lang.get('js.select_state')));
   $('#cityId').empty().append($('<option value=""></option>').text(Lang.get('js.select_city')));
+  resetThanas();
   if (!selectedCountry) {
-    $('#stateId, #cityId').trigger('change.select2');
+    $('#stateId, #cityId, #thanaId').trigger('change.select2');
     return;
   }
   $.ajax({
@@ -8185,7 +8388,7 @@ listenChange('#countryId', function () {
       var stateStillExists = selectedState && $('#stateId option[value="' + selectedState + '"]').length > 0;
       $('#stateId').val(stateStillExists ? selectedState : '').trigger('change.select2');
       if (stateStillExists) {
-        loadCities(selectedState, selectedCity);
+        loadCities(selectedState, selectedCity, selectedThana);
       }
     }
   });
@@ -8193,11 +8396,22 @@ listenChange('#countryId', function () {
 listenChange('#stateId', function () {
   loadCities($(this).val(), null);
 });
+listenChange('#cityId', function () {
+  loadThanas($(this).val(), null);
+});
+function resetThanas() {
+  if (!$('#thanaId').length) {
+    return;
+  }
+  $('#thanaId').empty().append($('<option value=""></option>').text(Lang.get('js.select_thana') || 'Select Thana'));
+}
 function loadCities(stateId) {
   var selectedCity = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+  var selectedThana = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
   $('#cityId').empty().append($('<option value=""></option>').text(Lang.get('js.select_city')));
+  resetThanas();
   if (!stateId) {
-    $('#cityId').trigger('change.select2');
+    $('#cityId, #thanaId').trigger('change.select2');
     return;
   }
   $.ajax({
@@ -8214,6 +8428,35 @@ function loadCities(stateId) {
       });
       var cityStillExists = selectedCity && $('#cityId option[value="' + selectedCity + '"]').length > 0;
       $('#cityId').val(cityStillExists ? selectedCity : '').trigger('change.select2');
+      if (cityStillExists) {
+        loadThanas(selectedCity, selectedThana);
+      }
+    }
+  });
+}
+function loadThanas(cityId) {
+  var selectedThana = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+  if (!$('#thanaId').length) {
+    return;
+  }
+  resetThanas();
+  if (!cityId) {
+    $('#thanaId').trigger('change.select2');
+    return;
+  }
+  $.ajax({
+    url: route('thanas-list'),
+    type: 'get',
+    dataType: 'json',
+    data: {
+      city: cityId
+    },
+    success: function success(data) {
+      $.each(data.data || {}, function (i, v) {
+        $('#thanaId').append($('<option></option>').attr('value', i).text(v));
+      });
+      var thanaStillExists = selectedThana && $('#thanaId option[value="' + selectedThana + '"]').length > 0;
+      $('#thanaId').val(thanaStillExists ? selectedThana : '').trigger('change.select2');
     }
   });
 }
@@ -12671,7 +12914,7 @@ function loadEmployeeCreateEditData() {
   if (countrySelect.length && !countrySelect.val()) {
     countrySelect.val(countrySelect.find("option").first().val());
   }
-  initializeJobSelect2("#jobTypeId,#jobCategoryId,#careerLevelsId,#jobShiftId,#countryId,#stateId,#cityId,#salaryPeriodsId,#requiredDegreeLevelId", {
+  initializeJobSelect2("#jobTypeId,#jobCategoryId,#careerLevelsId,#jobShiftId,#countryId,#stateId,#cityId,#thanaId,#salaryPeriodsId,#requiredDegreeLevelId", {
     width: "calc(100% - 44px)"
   });
   $("#functionalAreaId").select2({

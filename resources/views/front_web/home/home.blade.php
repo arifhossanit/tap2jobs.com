@@ -1056,12 +1056,15 @@
             <!-- <aside class="bd-sidebar"></aside> -->
             <aside class="bd-sidebar bd-quick-links">
                 <h2>@lang('web.home_page.quick_links')</h2>
-                <a href="{{ route('front.company.lists') }}">@lang('web.home_page.employer_list') ({{ $dataCounts['companies'] ?? 0 }})</a>
-                <a href="{{ route('front.search.jobs') }}">@lang('web.home_page.new_jobs') ({{ $quickLinkCounts['new_jobs'] }})</a>
-                <a href="{{ route('front.search.jobs') }}">@lang('web.home_page.deadline_tomorrow') ({{ $quickLinkCounts['deadline_tomorrow'] }})</a>
-                @foreach($quickJobTypes as $jobType)
-                    <a href="{{ route('front.search.jobs', ['job_type' => $jobType->id]) }}">{{ html_entity_decode($jobType->name) }} ({{ $jobType->jobs_count }})</a>
-                @endforeach
+                <a href="{{ route('front.company.lists') }}">Employer List ({{ $quickLinkCounts['employer_list'] ?? 0 }})</a>
+                <a href="{{ route('front.search.jobs', ['filter' => 'new']) }}">New Jobs ({{ $quickLinkCounts['new_jobs'] ?? 0 }})</a>
+                <a href="{{ route('front.search.jobs', ['filter' => 'deadline_tomorrow']) }}">Deadline Tomorrow ({{ $quickLinkCounts['deadline_tomorrow'] ?? 0 }})</a>
+                <a href="{{ route('front.search.jobs', ['job_type' => $quickJobTypeIds['internship'] ?? '']) }}">Internship Opportunity ({{ $quickLinkCounts['internship'] ?? 0 }})<mark>new</mark></a>
+                <a href="{{ route('front.search.jobs', ['job_type' => $quickJobTypeIds['contractual'] ?? '']) }}">Contractual Jobs ({{ $quickLinkCounts['contractual'] ?? 0 }})</a>
+                <a href="{{ route('front.search.jobs', ['job_type' => $quickJobTypeIds['part_time'] ?? '']) }}">Part time Jobs ({{ $quickLinkCounts['part_time'] ?? 0 }})</a>
+                <a href="{{ route('front.search.jobs', ['overseas' => 1]) }}">Overseas Jobs ({{ $quickLinkCounts['overseas'] ?? 0 }})</a>
+                <a href="{{ route('front.search.jobs', ['work_from_home' => 1]) }}">Work From Home ({{ $quickLinkCounts['work_from_home'] ?? 0 }})</a>
+                <a href="{{ route('front.search.jobs', ['is_fresher' => 1]) }}">Fresher Jobs ({{ $quickLinkCounts['fresher_jobs'] ?? 0 }})</a>
             </aside>
         </div>
     </section>

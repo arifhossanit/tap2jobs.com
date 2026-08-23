@@ -8693,9 +8693,46 @@ listenWithOutTarget("keydown", function (e) {
     closeFrontUserDropdowns(true);
   }
 });
-listenClick("#readNotification", function (e) {
+var adminNotificationList = $("#adminNotificationList");
+function escapeNotificationText(value) {
+  return $("<div>").text(value || "").html();
+}
+function renderAdminNotifications(notificationData) {
+  if (!adminNotificationList.length || !notificationData) {
+    return;
+  }
+  var notifications = notificationData.notifications || [];
+  var notificationCount = notificationData.count || 0;
+  $("#counter").text(notificationCount).toggleClass("d-none", notificationCount === 0);
+  $("#readAllNotificationWrapper").toggleClass("d-none", notificationCount === 0);
+  if (notificationCount === 0) {
+    adminNotificationList.html('<div class="empty-state fs-6 text-gray-800 fw-bold text-center mt-5" data-height="400"><p>No notifications found</p></div>');
+    return;
+  }
+  var notificationItems = notifications.map(function (notification) {
+    return '<div class="d-flex position-relative mb-5 readNotification cursor-pointer" data-id="' + notification.id + '" data-url="' + escapeNotificationText(notification.url) + '">' + '<span class="me-5 text-primary fs-2 icon-label"><i class="' + escapeNotificationText(notification.icon) + '"></i></span>' + "<div>" + '<h5 class="text-gray-900 fs-6 mb-2">' + escapeNotificationText(notification.title) + "</h5>" + '<h6 class="text-gray-600 fs-small fw-light mb-0">' + escapeNotificationText(notification.created_at) + "</h6>" + "</div>" + "</div>";
+  }).join("");
+  adminNotificationList.html(notificationItems);
+}
+function refreshAdminNotifications() {
+  if (!adminNotificationList.length || typeof route !== "function") {
+    return;
+  }
+  $.ajax({
+    type: "GET",
+    url: route("notifications.latest"),
+    success: function success(response) {
+      renderAdminNotifications(response.data);
+    }
+  });
+}
+if (adminNotificationList.length) {
+  setInterval(refreshAdminNotifications, 30000);
+}
+listenClick(".readNotification", function (e) {
   e.preventDefault();
   var notificationId = $(this).data("id");
+  var notificationUrl = $(this).data("url");
   var notification = $(this);
   $.ajax({
     type: "POST",
@@ -8703,8 +8740,8 @@ listenClick("#readNotification", function (e) {
     data: {
       notificationId: notificationId
     },
-    success: function success() {
-      displaySuccessMessage(Lang.get("js.notification_read"));
+    success: function success(response) {
+      notificationUrl = notificationUrl || (response.data ? response.data.url : "");
       notification.remove();
       var notificationCounter = document.getElementsByClassName("readNotification").length;
       $("#counter").text(notificationCounter);
@@ -8712,8 +8749,13 @@ listenClick("#readNotification", function (e) {
         $(".empty-state").removeClass("d-none");
         $(".notification-count").addClass("d-none");
         $("#counter").text(notificationCounter);
-        $("#readAllNotification").parents("div").first().remove();
+        $("#readAllNotificationWrapper").addClass("d-none");
       }
+      if (notificationUrl) {
+        window.location.href = notificationUrl;
+        return;
+      }
+      displaySuccessMessage(Lang.get("js.notification_read"));
     },
     error: function error(_error) {
       manageAjaxErrors(_error);
@@ -8732,7 +8774,7 @@ listenClick("#readAllNotification", function (e) {
       $(".empty-state").removeClass("d-none");
       $(".notification-count").addClass("d-none");
       $("#counter").text(notificationCounter);
-      $("#readAllNotification").parents("div").first().remove();
+      $("#readAllNotificationWrapper").addClass("d-none");
     },
     error: function error(_error2) {
       manageAjaxErrors(_error2);

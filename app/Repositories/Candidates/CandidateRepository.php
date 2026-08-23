@@ -224,7 +224,7 @@ class CandidateRepository extends BaseRepository
             $userInput = Arr::only($input,
                 [
                     'first_name', 'last_name', 'email', 'phone',
-                    'country_id', 'state_id', 'city_id', 'gender', 'dob', 'facebook_url', 'twitter_url', 'linkedin_url',
+                    'country_id', 'state_id', 'city_id', 'thana_id', 'gender', 'dob', 'facebook_url', 'twitter_url', 'linkedin_url',
                     'pinterest_url', 'google_plus_url', 'region_code',
                 ]);
 
@@ -327,7 +327,7 @@ class CandidateRepository extends BaseRepository
             /** @var User $user */
             $user = Auth::user();
 
-            foreach (['country_id', 'state_id', 'city_id', 'permanent_country_id', 'permanent_state_id', 'permanent_city_id'] as $locationField) {
+            foreach (['country_id', 'state_id', 'city_id', 'thana_id', 'permanent_country_id', 'permanent_state_id', 'permanent_city_id', 'permanent_thana_id'] as $locationField) {
                 if (array_key_exists($locationField, $input) && $input[$locationField] === '') {
                     $input[$locationField] = null;
                 }
@@ -337,6 +337,7 @@ class CandidateRepository extends BaseRepository
                 $input['state_id'] = null;
                 $input['present_post_office'] = null;
                 $input['city_id'] = null;
+                $input['thana_id'] = null;
             } else {
                 $input['country_id'] = Country::where('short_code', 'BD')->orWhere('name', 'Bangladesh')->value('id') ?? $input['country_id'];
                 $input['present_state_division'] = null;
@@ -350,11 +351,13 @@ class CandidateRepository extends BaseRepository
                 $input['permanent_state_id'] = null;
                 $input['permanent_state_division'] = null;
                 $input['permanent_city_id'] = null;
+                $input['permanent_thana_id'] = null;
                 $input['permanent_post_office'] = null;
                 $input['permanent_address'] = null;
             } elseif (($input['permanent_address_type'] ?? null) === 'outside') {
                 $input['permanent_state_id'] = null;
                 $input['permanent_city_id'] = null;
+                $input['permanent_thana_id'] = null;
                 $input['permanent_post_office'] = null;
             } else {
                 $input['permanent_country_id'] = Country::where('short_code', 'BD')->orWhere('name', 'Bangladesh')->value('id') ?? $input['permanent_country_id'];
@@ -365,6 +368,7 @@ class CandidateRepository extends BaseRepository
                 'country_id',
                 'state_id',
                 'city_id',
+                'thana_id',
             ]));
 
             $user->candidate->update(Arr::only($input, [
@@ -377,6 +381,7 @@ class CandidateRepository extends BaseRepository
                 'permanent_state_id',
                 'permanent_state_division',
                 'permanent_city_id',
+                'permanent_thana_id',
                 'permanent_post_office',
                 'permanent_address',
                 'address',
@@ -534,7 +539,7 @@ class CandidateRepository extends BaseRepository
             /** @var User $user */
             $user = Auth::user();
             $userInput = Arr::only($input, [
-                'first_name', 'last_name', 'country_id', 'state_id', 'city_id', 'phone', 'facebook_url',
+                'first_name', 'last_name', 'country_id', 'state_id', 'city_id', 'thana_id', 'phone', 'facebook_url',
                 'twitter_url',
                 'linkedin_url',
                 'google_plus_url',

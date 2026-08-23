@@ -14,6 +14,17 @@ class UpdateCountryRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $phoneCode = $this->input('phone_code');
+
+        if (filled($phoneCode)) {
+            $this->merge([
+                'phone_code' => ltrim(trim((string) $phoneCode), '+'),
+            ]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      */
@@ -21,7 +32,7 @@ class UpdateCountryRequest extends FormRequest
     {
         $rules['name'] = 'required|max:180|unique:countries,name,'.$this->route('country')->id;
         $rules['short_code'] = 'required|unique:countries,short_code,'.$this->route('country')->id;
-        $rules['phone_code'] = 'nullable|unique:countries,phone_code,'.$this->route('country')->id;
+        $rules['phone_code'] = 'nullable|numeric|unique:countries,phone_code,'.$this->route('country')->id;
 
         return $rules;
     }

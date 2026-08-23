@@ -110,6 +110,10 @@
         </div>
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+        {{ Form::label('thana', __('messages.thana.thana_name').':', ['class' => 'form-label ']) }}
+        {{ Form::select('thana_id', (isset($userThanas) && $userThanas!=null?$userThanas:[]), old('thana_id', $user->thana_id), ['id'=>'thanaId','class' => 'form-select','placeholder' => __('messages.company.select_thana')]) }}
+    </div>
+    <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('phone', __('messages.candidate.phone').':', ['class' => 'form-label']) }}
         {{ Form::tel('phone', null, ['class' => 'form-control', 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")','id'=>'phoneNumber','placeholder' => __('messages.inquiry.phone_no')]) }}
         {{ Form::hidden('region_code',null,['id'=>'prefix_code']) }}

@@ -268,6 +268,7 @@ class Job extends Model
         'job_category_id' => 'required',
         'state_id' => 'required',
         'city_id' => 'required',
+        'thana_id' => 'nullable',
         'salary_from' => 'required|min:0|max:999999999',
         'salary_to' => 'required|min:0|max:999999999',
         'job_expiry_date' => 'required',
@@ -307,6 +308,7 @@ class Job extends Model
         'country_id',
         'state_id',
         'city_id',
+        'thana_id',
         'status',
         'is_created_by_admin',
         'last_change',
@@ -344,6 +346,7 @@ class Job extends Model
         'country_id' => 'integer',
         'city_id' => 'integer',
         'state_id' => 'integer',
+        'thana_id' => 'integer',
         'description' => 'string',
         'job_expiry_date' => 'date',
         'no_preference' => 'integer',
@@ -355,9 +358,9 @@ class Job extends Model
         'last_change' => 'integer',
     ];
 
-    protected $appends = ['country_name', 'state_name', 'city_name'];
+    protected $appends = ['country_name', 'state_name', 'city_name', 'thana_name'];
 
-    protected $with = ['country', 'state', 'city', 'activeFeatured'];
+    protected $with = ['country', 'state', 'city', 'thana', 'activeFeatured'];
 
     public function getFormattedExperienceAttribute(): string
     {
@@ -412,6 +415,11 @@ class Job extends Model
         return $this->belongsTo(City::class, 'city_id');
     }
 
+    public function thana(): BelongsTo
+    {
+        return $this->belongsTo(Thana::class, 'thana_id');
+    }
+
     public function admin(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(User::class, 'id', 'last_change');
@@ -435,6 +443,13 @@ class Job extends Model
     {
         if (! empty($this->city)) {
             return $this->city->name;
+        }
+    }
+
+    public function getThanaNameAttribute()
+    {
+        if (! empty($this->thana)) {
+            return $this->thana->name;
         }
     }
 
@@ -508,6 +523,10 @@ class Job extends Model
         $location = '';
         if (! empty($this->city)) {
             $location = $this->city->name.', ';
+        }
+
+        if (! empty($this->thana)) {
+            $location = $this->thana->name.', '.$location;
         }
 
         if (! empty($this->state)) {

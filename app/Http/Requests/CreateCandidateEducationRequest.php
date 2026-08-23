@@ -65,6 +65,10 @@ class CreateCandidateEducationRequest extends FormRequest
             'nullable',
             Rule::exists('cities', 'id')->where(fn ($query) => $query->where('state_id', $this->input('state_id'))),
         ];
+        $rules['thana_id'] = [
+            'nullable',
+            Rule::exists('thanas', 'id')->where(fn ($query) => $query->where('city_id', $this->input('city_id'))),
+        ];
 
         $levelType = $this->educationLevelType();
         if (in_array($levelType, ['psc', 'jsc'], true)) {

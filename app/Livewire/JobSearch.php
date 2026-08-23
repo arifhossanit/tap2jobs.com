@@ -45,6 +45,12 @@ class JobSearch extends Component
 
     public $featuredJob = '';
 
+    public $filter = '';
+
+    public bool $overseas = false;
+
+    public bool $workFromHome = false;
+
     private $perPage = 10;
 
     public int $page = 0;
@@ -81,6 +87,19 @@ class JobSearch extends Component
         }
         if ($request->filled('jobExperienceTo')) {
             $this->jobExperienceTo = max(0, (int) $request->get('jobExperienceTo'));
+        }
+        if ($request->filled('filter')) {
+            $this->filter = $request->get('filter');
+        }
+        if ($request->get('overseas') == '1') {
+            $this->overseas = true;
+        }
+        if ($request->get('work_from_home') == '1') {
+            $this->workFromHome = true;
+        }
+        if ($request->get('is_fresher') == '1') {
+            $this->freshersOnly = true;
+            $this->jobExperienceTo = 0;
         }
 
         $this->featuredJob = $request->is_featured;
@@ -219,7 +238,38 @@ class JobSearch extends Component
         });
 
         $query->when($this->freshersOnly, function (Builder $q) {
-            $q->where('freshers_encouraged', true);
+            $q->where(function (Builder $sub) {
+                $sub->where('freshers_encouraged', true)
+                    ->orWhere('experience', 0);
+            });
+        });
+
+        $query->when($this->filter === 'new', function (Builder $q) {
+            $q->where('created_at', '>=', Carbon::now()->subDays(7));
+        });
+
+        $query->when($this->filter === 'deadline_tomorrow', function (Builder $q) {
+            $q->whereDate('job_expiry_date', '=', Carbon::tomorrow()->toDateString());
+        });
+
+        $query->when($this->overseas, function (Builder $q) {
+            $q->where(function (Builder $sub) {
+                $sub->whereNull('country_id')
+                    ->orWhereHas('country', function (Builder $cq) {
+                        $cq->where('short_code', '!=', 'BD');
+                    });
+            });
+        });
+
+        $query->when($this->workFromHome, function (Builder $q) {
+            $q->where(function (Builder $sub) {
+                $sub->where('is_freelance', 1)
+                    ->orWhere('job_title', 'like', '%Remote%')
+                    ->orWhere('job_title', 'like', '%Work from Home%')
+                    ->orWhereHas('jobType', function (Builder $jq) {
+                        $jq->where('name', 'like', '%Freelance%');
+                    });
+            });
         });
 
         $query->when(! empty($this->featuredJob), function (Builder $q) {

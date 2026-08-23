@@ -3,7 +3,7 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Import States / Districts</h3>
+                <h3 class="modal-title">Import Divisions</h3>
                 <button type="button" aria-label="Close" class="btn-close" data-bs-dismiss="modal">
                 </button>
             </div>
@@ -23,7 +23,7 @@
                     <span class="required"></span>
                     <input type="file" name="file" class="form-control" accept=".csv,.xlsx,.xls" required>
                 </div>
-                <a class="d-block mt-3" href="{{ asset('sample-imports/states-sample.csv') }}">Download sample file</a>
+                <a class="d-block mt-3" href="{{ asset('sample-imports/divisions-sample.csv') }}">Download sample file</a>
                 <small class="text-muted d-block mt-2">Supported file types: CSV, XLSX, XLS.</small>
             </div>
             <div class="modal-footer pt-0">

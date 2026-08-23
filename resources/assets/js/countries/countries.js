@@ -18,7 +18,7 @@ function countryData() {
                     $('#countryId').val(result.data.id);
                     $('#editName').val(result.data.name);
                     $('#editShortCode').val(result.data.short_code);
-                    $('#editPhoneCode').val(result.data.phone_code);
+                    $('#editPhoneCode').val(result.data.phone_code ? '+' + String(result.data.phone_code).replace(/^\+/, '') : '');
                     $('#editCountryModal').appendTo('body').modal('show');
                 }
             },

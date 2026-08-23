@@ -84,14 +84,30 @@ class FunctionalAreaController extends AppBaseController
         if ($import->failures()->isNotEmpty()) {
             $message = 'Functional areas import completed with validation errors. Please fix the failed rows and try again.';
 
-            return $request->expectsJson()
-                ? response()->json(['message' => $message], 422)
-                : back()->withFailures($import->failures());
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => $message,
+                    'errors' => collect($import->failures())->map(fn ($failure) => [
+                        'row' => $failure->row(),
+                        'attribute' => $failure->attribute(),
+                        'errors' => $failure->errors(),
+                        'values' => $failure->values(),
+                    ])->values(),
+                ], 422);
+            }
+
+            return back()->withFailures($import->failures());
         }
 
-        return $request->expectsJson()
-            ? response()->json(['message' => 'Functional areas imported successfully.'])
-            : back();
+        $message = 'Functional areas imported successfully. Imported: '.$import->importedCount().', skipped duplicates: '.$import->skippedCount().'.';
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message]);
+        }
+
+        flash($message)->success();
+
+        return back();
     }
 
     /**

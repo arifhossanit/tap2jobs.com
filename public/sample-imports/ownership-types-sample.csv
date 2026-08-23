@@ -1,3 +1,19 @@
 name,description
-Test Ownership Type 001,Sample ownership type for import testing
-Test Ownership Type 002,Another sample ownership type for import testing
+Private Limited,Privately owned limited company
+Public Limited,Publicly listed or public limited company
+Proprietorship,Single owner business
+Partnership,Partnership based business
+Government,Government owned organization
+NGO,Non-government organization
+Multinational,International or multinational company
+Joint Venture,Company owned by two or more partner organizations
+Foreign Company,Foreign owned company operating locally
+Branch Office,Local branch of a parent organization
+Liaison Office,Representative or liaison office
+Cooperative,Member owned cooperative organization
+Trust,Trust based organization
+Foundation,Foundation or charitable organization
+Society,Registered society or association
+Educational Institution,School college university or training institute
+Semi Government,Semi government or autonomous organization
+Startup,Early stage growth focused company

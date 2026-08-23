@@ -14,6 +14,7 @@
 @endsection
 @section('content')
     <div class="container-fluid">
+        @include('layouts.flash-toasts')
         <div class="d-flex flex-column">
             <div class="row">
                 <div class="col-12">

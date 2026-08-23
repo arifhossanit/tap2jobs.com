@@ -98,6 +98,7 @@
     $contactAddress = collect([
         $candidate->address,
         $candidate->present_post_office,
+        $candidate->thana_name,
         $candidate->city_name,
         $candidate->state_name,
         $candidate->country_name,

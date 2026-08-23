@@ -1,3 +1,17 @@
 currency_name,currency_code,currency_icon,is_default
-Test Currency 001,T01,T01,0
-Test Currency 002,T02,T02,0
+Bangladeshi Taka,BDT,৳,1
+US Dollar,USD,$,0
+Euro,EUR,€,0
+British Pound,GBP,£,0
+Indian Rupee,INR,₹,0
+Japanese Yen,JPY,¥,0
+Chinese Yuan,CNY,CN¥,0
+Singapore Dollar,SGD,S$,0
+Malaysian Ringgit,MYR,RM,0
+UAE Dirham,AED,د.إ,0
+Saudi Riyal,SAR,﷼,0
+Qatari Riyal,QAR,QR,0
+Kuwaiti Dinar,KWD,KD,0
+Omani Rial,OMR,OMR,0
+Canadian Dollar,CAD,C$,0
+Australian Dollar,AUD,A$,0

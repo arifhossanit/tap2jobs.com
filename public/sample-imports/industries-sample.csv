@@ -1,3 +1,47 @@
 name,description,industry_type_id,is_default
-Test Industry 001,Sample industry for import testing,,0
-Test Industry 002,Another sample industry for import testing,,0
+Information Technology,Software IT enabled services and digital products,,1
+Banking,Banking financial services and fintech,,1
+Garments and Textile,RMG textile spinning buying and merchandising,,1
+Pharmaceuticals,Medicine healthcare products and pharma manufacturing,,1
+Education,Schools colleges universities and training institutes,,1
+Telecommunication,Mobile internet and communication services,,1
+Retail and FMCG,Retail distribution consumer goods and supermarkets,,1
+Construction and Real Estate,Construction development architecture and real estate,,1
+Manufacturing,Factory production assembly and industrial operations,,1
+Healthcare and Hospital,Hospitals clinics diagnostics and healthcare services,,1
+NGO and Development,Non-profit social development and donor funded programs,,1
+Microfinance,Microcredit savings and field finance operations,,1
+Insurance,Life general and health insurance services,,1
+Logistics and Supply Chain,Transport courier warehousing and supply chain services,,1
+E-commerce,Online marketplace retail delivery and digital commerce,,1
+Food and Beverage,Food processing restaurants beverage and catering services,,1
+Hospitality and Tourism,Hotels travel tourism and guest services,,1
+Advertising and Media,Advertising agency media publishing and creative services,,1
+Agriculture and Agro,Businesses in agriculture agro products fisheries and livestock,,1
+Automobile,Vehicle sales servicing parts and automotive operations,,1
+Electronics and Electrical,Electronics electrical goods trading and technical services,,1
+Energy and Power,Power generation renewable energy and utility services,,1
+Oil Gas and Petroleum,Petroleum fuel LPG and related energy business,,1
+Chemical,Industrial chemicals paints and chemical products,,1
+Leather and Footwear,Leather goods footwear manufacturing and export,,1
+Architecture and Engineering,Design consultancy engineering and technical services,,1
+Security Services,Security manpower monitoring and safety services,,1
+Cleaning and Facility Management,Facility support cleaning maintenance and office services,,1
+Legal Services,Law firms legal consultancy and compliance services,,1
+Consulting,Business management HR and professional consulting services,,1
+Accounting and Audit,Audit tax accounting and financial advisory services,,1
+Call Center and BPO,Customer support outsourcing and back office services,,1
+Training and Coaching,Skill development training and coaching centers,,1
+Printing and Packaging,Printing packaging labeling and press services,,1
+Textile Spinning and Dyeing,Yarn fabric dyeing finishing and textile mills,,1
+Buying House,Garments buying sourcing liaison and merchandising services,,1
+Trading and Distribution,Wholesale trading import export and distribution business,,1
+Consumer Goods,FMCG household personal care and consumer products,,1
+Ceramics and Sanitary,Ceramic tiles sanitary ware and building materials,,1
+Furniture and Interior,Furniture manufacturing interior design and decor services,,1
+Shipping and Marine,Shipping freight forwarding port and marine services,,1
+Aviation and Airlines,Airlines aviation services cargo and ground handling,,1
+Research and Data,Survey research analytics and data services,,1
+Event Management,Corporate events activation and event production,,1
+Recruitment and HR Services,Recruiting staffing payroll and HR outsourcing services,,1
+Government and Public Sector,Government agencies public sector and statutory organizations,,1

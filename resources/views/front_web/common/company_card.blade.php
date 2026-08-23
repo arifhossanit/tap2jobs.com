@@ -149,7 +149,9 @@
                 @endif
                 @php
                     $companyLocation = collect([
+                        $company->user->thana_name ?? null,
                         $company->user->city_name ?? null,
+                        $company->user->state_name ?? null,
                         $company->user->country_name ?? null,
                     ])->filter()->implode(', ');
                     if ($companyLocation === '') {

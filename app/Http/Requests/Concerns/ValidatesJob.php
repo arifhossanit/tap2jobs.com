@@ -6,6 +6,7 @@ use App\Models\City;
 use App\Models\ProfileReferenceOption;
 use App\Models\Skill;
 use App\Models\State;
+use App\Models\Thana;
 use Illuminate\Validation\Rule;
 
 trait ValidatesJob
@@ -15,7 +16,7 @@ trait ValidatesJob
         $this->restoreLocationHierarchy();
 
         $employmentStatus = $this->input('employment_status');
-        $isEmployerJobForm = $this->routeIs('job.store', 'job.update');
+        $usesEmploymentStatusForm = $this->routeIs('job.store', 'job.update', 'admin.job.store', 'admin.job.update');
         $experienceUnit = $this->input('experience_unit');
         $experienceRequirement = trim((string) $this->input('experience_requirement'));
         $jobsSkill = collect($this->input('jobsSkill', []))
@@ -41,7 +42,7 @@ trait ValidatesJob
             'salary_from' => $salaryFrom,
             'salary_to' => $salaryTo,
             'hide_salary' => $hideSalary,
-            'is_freelance' => $isEmployerJobForm
+            'is_freelance' => $usesEmploymentStatusForm
                 ? $employmentStatus === 'freelance'
                 : $this->boolean('is_freelance'),
             'work_from_office' => $this->boolean('work_from_office'),
@@ -59,9 +60,18 @@ trait ValidatesJob
     {
         $location = [];
         $stateId = $this->input('state_id');
+        $cityId = $this->input('city_id');
 
-        if (! $stateId && $this->filled('city_id')) {
-            $stateId = City::whereKey($this->input('city_id'))->value('state_id');
+        if (! $cityId && $this->filled('thana_id')) {
+            $cityId = Thana::whereKey($this->input('thana_id'))->value('city_id');
+
+            if ($cityId) {
+                $location['city_id'] = $cityId;
+            }
+        }
+
+        if (! $stateId && $cityId) {
+            $stateId = City::whereKey($cityId)->value('state_id');
 
             if ($stateId) {
                 $location['state_id'] = $stateId;
@@ -83,7 +93,7 @@ trait ValidatesJob
 
     protected function jobRules(): array
     {
-        $isEmployerJobForm = $this->routeIs('job.store', 'job.update');
+        $usesEmploymentStatusForm = $this->routeIs('job.store', 'job.update', 'admin.job.store', 'admin.job.update');
         $hideSalary = $this->boolean('hide_salary');
 
         return [
@@ -127,6 +137,11 @@ trait ValidatesJob
                 'integer',
                 Rule::exists('cities', 'id')->where('state_id', $this->input('state_id')),
             ],
+            'thana_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('thanas', 'id')->where('city_id', $this->input('city_id')),
+            ],
             'salary_from' => $hideSalary
                 ? ['nullable', 'numeric', 'min:0', 'max:999999999']
                 : ['required', 'numeric', 'min:0', 'max:999999999'],
@@ -135,7 +150,7 @@ trait ValidatesJob
                 : ['required', 'numeric', 'min:0', 'max:999999999', 'gte:salary_from'],
             'job_expiry_date' => ['required', 'date', 'after_or_equal:today'],
             'employment_status' => [
-                $isEmployerJobForm ? 'required' : 'nullable',
+                $usesEmploymentStatusForm ? 'required' : 'nullable',
                 Rule::in($this->employmentStatusValues()),
             ],
             'work_from_office' => ['required', 'boolean'],

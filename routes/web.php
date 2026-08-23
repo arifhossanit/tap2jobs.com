@@ -13,6 +13,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\StateController;
+use App\Http\Controllers\ThanaController;
 use App\Http\Controllers\PaypalController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CountryController;
@@ -712,20 +713,31 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          Route::put('countries/{country}', [CountryController::class, 'update'])->name('countries.update');
          Route::delete('countries/{country}', [CountryController::class, 'destroy'])->name('countries.destroy');
 
-         // State routes
-         Route::get('states', [StateController::class, 'index'])->name('states.index');
-         Route::post('states', [StateController::class, 'store'])->name('states.store');
-         Route::post('states/import', [StateController::class, 'import'])->name('states.import');
-         Route::get('states/{state}/edit', [StateController::class, 'edit'])->name('states.edit');
-         Route::put('states/{state}', [StateController::class, 'update'])->name('states.update');
-         Route::delete('states/{state}', [StateController::class, 'destroy'])->name('states.destroy');
+         Route::redirect('states', 'divisions', 301);
+         Route::redirect('cities', 'districts', 301);
 
-         // City routes
-         Route::get('cities', [CityController::class, 'index'])->name('cities.index');
-         Route::post('cities/import', [CityController::class, 'import'])->name('cities.import');
-         Route::get('cities/{city}/edit', [CityController::class, 'edit'])->name('cities.edit');
-         Route::put('cities/{city}', [CityController::class, 'update'])->name('cities.update');
-         Route::delete('cities/{city}', [CityController::class, 'destroy'])->name('cities.destroy');
+         // Division routes
+         Route::get('divisions', [StateController::class, 'index'])->name('states.index');
+         Route::post('divisions', [StateController::class, 'store'])->name('states.store');
+         Route::post('divisions/import', [StateController::class, 'import'])->name('states.import');
+         Route::get('divisions/{state}/edit', [StateController::class, 'edit'])->name('states.edit');
+         Route::put('divisions/{state}', [StateController::class, 'update'])->name('states.update');
+         Route::delete('divisions/{state}', [StateController::class, 'destroy'])->name('states.destroy');
+
+         // District routes
+         Route::get('districts', [CityController::class, 'index'])->name('cities.index');
+         Route::post('districts/import', [CityController::class, 'import'])->name('cities.import');
+         Route::get('districts/{city}/edit', [CityController::class, 'edit'])->name('cities.edit');
+         Route::put('districts/{city}', [CityController::class, 'update'])->name('cities.update');
+         Route::delete('districts/{city}', [CityController::class, 'destroy'])->name('cities.destroy');
+
+         // Thana routes
+         Route::get('thanas', [ThanaController::class, 'index'])->name('thanas.index');
+         Route::post('thanas', [ThanaController::class, 'store'])->name('thanas.store');
+         Route::post('thanas/import', [ThanaController::class, 'import'])->name('thanas.import');
+         Route::get('thanas/{thana}/edit', [ThanaController::class, 'edit'])->name('thanas.edit');
+         Route::put('thanas/{thana}', [ThanaController::class, 'update'])->name('thanas.update');
+         Route::delete('thanas/{thana}', [ThanaController::class, 'destroy'])->name('thanas.destroy');
 
          Route::get('job-notifications', [JobNotificationController::class, 'index'])->name('job-notification.index');
          Route::post('job-notifications', [JobNotificationController::class, 'store'])->name('job-notification.store');
@@ -742,6 +754,7 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
 Route::middleware('auth', 'role:Admin|Employer|Candidate', 'xss', 'verified.user')->group(function () {
     Route::get('states-list', [JobController::class, 'getStates'])->name('states-list');
     Route::get('cities-list', [JobController::class, 'getCities'])->name('cities-list');
+    Route::get('thanas-list', [JobController::class, 'getThanas'])->name('thanas-list');
     Route::post('cities', [CityController::class, 'store'])->name('cities.store');
     Route::post('update-language', [UserController::class, 'updateLanguage'])->name('update-language');
 
@@ -750,6 +763,7 @@ Route::middleware('auth', 'role:Admin|Employer|Candidate', 'xss', 'verified.user
         '/notification/{notification}/read',
         [NotificationController::class, 'readNotification']
     )->name('read-notification');
+    Route::get('/notifications/latest', [NotificationController::class, 'latestNotifications'])->name('notifications.latest');
     Route::post('/read-all-notification', [NotificationController::class, 'readAllNotification'])->name('read-all-notification');
 
     // job stripe payment
@@ -889,6 +903,7 @@ Route::middleware('xss', 'setLanguage')->group(function () {
                   ->name('register.username-availability');
          Route::get('/register/states', [Web\RegisterController::class, 'registrationStates'])->name('register.states');
          Route::get('/register/cities', [Web\RegisterController::class, 'registrationCities'])->name('register.cities');
+         Route::get('/register/thanas', [Web\RegisterController::class, 'registrationThanas'])->name('register.thanas');
          Route::get('/privacy-policy-list', [Web\PrivacyPolicyController::class, 'showPrivacyPolicy'])->name('privacy.policy.list');
          Route::get('/terms-conditions-list', [Web\PrivacyPolicyController::class, 'showTermsConditions'])->name('terms.conditions.list');
          Route::get('/contact-us', function () {

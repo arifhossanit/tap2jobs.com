@@ -113,22 +113,22 @@ class StateController extends AppBaseController
         if ($import->failures()->isNotEmpty()) {
             if ($request->expectsJson()) {
                 return response()->json([
-                    'message' => 'States import completed with validation errors. Please fix the failed rows and try again.',
+                    'message' => 'Divisions import completed with validation errors. Please fix the failed rows and try again.',
                 ], 422);
             }
 
-            flash('States import completed with validation errors. Please fix the failed rows and try again.')->error();
+            flash('Divisions import completed with validation errors. Please fix the failed rows and try again.')->error();
 
             return back()->withFailures($import->failures());
         }
 
         if ($request->expectsJson()) {
             return response()->json([
-                'message' => 'States imported successfully.',
+                'message' => 'Divisions imported successfully. Imported: '.$import->importedCount().', skipped duplicates: '.$import->skippedCount().'.',
             ]);
         }
 
-        flash('States imported successfully.')->success();
+        flash('Divisions imported successfully. Imported: '.$import->importedCount().', skipped duplicates: '.$import->skippedCount().'.')->success();
 
         return back();
     }

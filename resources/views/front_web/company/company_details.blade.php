@@ -38,7 +38,12 @@
                                                 <img src="{{ asset('img_template/location.svg') }}" class="w-100" />
                                             </div>
                                             <p class="text-gray mb-0">
-                                                {{ $companyDetail->user->city_name . ', ' . $companyDetail->user->country_name }}
+                                                {{ collect([
+                                                    $companyDetail->user->thana_name,
+                                                    $companyDetail->user->city_name,
+                                                    $companyDetail->user->state_name,
+                                                    $companyDetail->user->country_name,
+                                                ])->filter()->implode(', ') }}
                                             </p>
                                         </div>
                                         @isset($companyDetail->user->phone)

@@ -335,18 +335,7 @@
                                             <p class="fs-14 text-secondary mb-0">@lang('messages.front_job_details.location'):</p>
                                         </div>
                                         <p class="fs-14 text-gray text-end mb-0">
-                                            @if (!empty($job->city_id))
-                                                {{ $job->city_name }} ,
-                                            @endif
-                                            @if (!empty($job->state_id))
-                                                {{ $job->state_name }},
-                                            @endif
-                                            @if (!empty($job->country_id))
-                                                {{ $job->country_name }}
-                                            @endif
-                                            @if (empty($job->country_id))
-                                                {{ __('messages.front_job_details.location_information_not_available') }}
-                                            @endif
+                                            {{ !empty($job->full_location) ? $job->full_location : __('messages.front_job_details.location_information_not_available') }}
                                         </p>
                                     </div>
                                     <div class="desc-box d-flex justify-content-between mb-4">

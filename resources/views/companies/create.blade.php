@@ -19,6 +19,7 @@
 @endsection
 @section('content')
     <div class="container-fluid">
+        @include('layouts.flash-toasts')
         <div class="d-flex flex-column">
             <div class="row">
                 <div class="col-12">
@@ -45,10 +46,34 @@
         {{Form::hidden('isEdit', false, ['id' => 'isEdit','class'=>'isEdit'])}}
         {{Form::hidden('createCompaniesForm', true, ['id' => 'createCompaniesForm'])}}
 
+        <script>
+            var phoneNo = "{{ old('region_code').old('phone') }}";
+
+            document.addEventListener('click', function (event) {
+                const button = event.target.closest('.company-password-toggle');
+
+                if (!button) {
+                    return;
+                }
+
+                const input = document.getElementById(button.getAttribute('data-password-toggle'));
+
+                if (!input) {
+                    return;
+                }
+
+                const isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+                button.setAttribute('title', isPassword ? 'Hide password' : 'Show password');
+                button.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+
+                const icon = button.querySelector('i');
+
+                if (icon) {
+                    icon.classList.toggle('fa-eye', !isPassword);
+                    icon.classList.toggle('fa-eye-slash', isPassword);
+                }
+            });
+        </script>
     </div>
 @endsection
-@push('scripts')
-    <script>
-        var phoneNo = "{{ old('region_code').old('phone') }}";
-    </script>
-@endpush

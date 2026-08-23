@@ -8,7 +8,7 @@
 @section('content')
     <div class="container-fluid">
         <div class="d-flex flex-column ">
-            @include('flash::message')
+            @include('layouts.flash-toasts')
             <livewire:reported-job-table lazy/>
         </div>
         @include('employer.jobs.show_reported_job_modal')

@@ -56,6 +56,7 @@ class UpdateCompanyRequest extends FormRequest
         $rules['region_code'] = ['required', 'string', 'regex:/^\d{1,4}$/'];
         $rules['image'] = 'nullable|mimes:jpeg,jpg,png';
         $rules['company_name_bn'] = 'nullable|string|max:180';
+        $rules['contact_person_name'] = 'nullable|string|max:180';
         $rules['ceo'] = 'required|string|max:180';
         $rules['company_summary'] = 'nullable|string|max:1000';
         $rules['company_summary_bn'] = 'nullable|string|max:1000';
@@ -72,6 +73,11 @@ class UpdateCompanyRequest extends FormRequest
             'required',
             'integer',
             Rule::exists('cities', 'id')->where('state_id', $this->input('state_id')),
+        ];
+        $rules['thana_id'] = [
+            'nullable',
+            'integer',
+            Rule::exists('thanas', 'id')->where('city_id', $this->input('city_id')),
         ];
         $rules['industry_id'] = ['required', 'integer', Rule::exists('industries', 'id')];
         $rules['ownership_type_id'] = ['required', 'integer', Rule::exists('ownership_types', 'id')];

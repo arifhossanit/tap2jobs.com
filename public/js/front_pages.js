@@ -1728,6 +1728,7 @@ function loadEmployerRegistrationForm() {
   var country = document.getElementById('registerCountryId');
   var state = document.getElementById('registerStateId');
   var city = document.getElementById('registerCityId');
+  var thana = document.getElementById('registerThanaId');
   var countryFlag = document.querySelector('.employer-register-bd-flag');
   var fillSelect = function fillSelect(select, items, placeholder, selectedValue) {
     select.innerHTML = '';
@@ -1740,10 +1741,33 @@ function loadEmployerRegistrationForm() {
     });
     select.disabled = false;
   };
-  var loadCities = function loadCities(stateId, selectedCity) {
+  var loadThanas = function loadThanas(cityId, selectedThana) {
+    if (!thana) {
+      return;
+    }
+    if (!cityId) {
+      fillSelect(thana, {}, 'Select Thana');
+      thana.disabled = true;
+      return;
+    }
+    thana.disabled = true;
+    fetch(route('register.thanas') + '?city_id=' + encodeURIComponent(cityId), {
+      headers: {
+        'Accept': 'application/json'
+      }
+    }).then(function (response) {
+      return response.json();
+    }).then(function (result) {
+      return fillSelect(thana, result.data, 'Select Thana', selectedThana);
+    })["catch"](function () {
+      return fillSelect(thana, {}, 'Select Thana');
+    });
+  };
+  var loadCities = function loadCities(stateId, selectedCity, selectedThana) {
     if (!stateId) {
-      fillSelect(city, {}, 'Select Thana');
+      fillSelect(city, {}, 'Select District');
       city.disabled = true;
+      loadThanas(null);
       return;
     }
     city.disabled = true;
@@ -1754,9 +1778,10 @@ function loadEmployerRegistrationForm() {
     }).then(function (response) {
       return response.json();
     }).then(function (result) {
-      return fillSelect(city, result.data, 'Select Thana', selectedCity);
+      fillSelect(city, result.data, 'Select District', selectedCity);
+      loadThanas(city.value, selectedThana);
     })["catch"](function () {
-      return fillSelect(city, {}, 'Select Thana');
+      return fillSelect(city, {}, 'Select District');
     });
   };
   if (country && state && city) {
@@ -1769,6 +1794,9 @@ function loadEmployerRegistrationForm() {
       updateCountryFlag();
       state.disabled = true;
       city.disabled = true;
+      if (thana) {
+        thana.disabled = true;
+      }
       fetch(route('register.states') + '?country_id=' + encodeURIComponent(this.value), {
         headers: {
           'Accept': 'application/json'
@@ -1776,19 +1804,23 @@ function loadEmployerRegistrationForm() {
       }).then(function (response) {
         return response.json();
       }).then(function (result) {
-        fillSelect(state, result.data, 'Select District');
-        fillSelect(city, {}, 'Select Thana');
+        fillSelect(state, result.data, 'Select Division');
+        fillSelect(city, {}, 'Select District');
         city.disabled = true;
+        loadThanas(null);
       })["catch"](function () {
-        return fillSelect(state, {}, 'Select District');
+        return fillSelect(state, {}, 'Select Division');
       });
     });
     state.addEventListener('change', function () {
       loadCities(this.value);
     });
+    city.addEventListener('change', function () {
+      loadThanas(this.value);
+    });
     updateCountryFlag();
     if (state.value) {
-      loadCities(state.value, city.dataset.oldCityId);
+      loadCities(state.value, city.dataset.oldCityId, thana ? thana.dataset.oldThanaId : null);
     }
   }
   var industryType = document.getElementById('registerIndustryType');

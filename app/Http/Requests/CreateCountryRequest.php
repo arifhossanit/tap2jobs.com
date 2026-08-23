@@ -15,6 +15,17 @@ class CreateCountryRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $phoneCode = $this->input('phone_code');
+
+        if (filled($phoneCode)) {
+            $this->merge([
+                'phone_code' => ltrim(trim((string) $phoneCode), '+'),
+            ]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      */

@@ -599,16 +599,89 @@ listenWithOutTarget("keydown", function(e) {
     }
 });
 
-listenClick("#readNotification", function(e) {
+const adminNotificationList = $("#adminNotificationList");
+
+function escapeNotificationText(value) {
+    return $("<div>").text(value || "").html();
+}
+
+function renderAdminNotifications(notificationData) {
+    if (!adminNotificationList.length || !notificationData) {
+        return;
+    }
+
+    let notifications = notificationData.notifications || [];
+    let notificationCount = notificationData.count || 0;
+
+    $("#counter")
+        .text(notificationCount)
+        .toggleClass("d-none", notificationCount === 0);
+    $("#readAllNotificationWrapper").toggleClass("d-none", notificationCount === 0);
+
+    if (notificationCount === 0) {
+        adminNotificationList.html(
+            '<div class="empty-state fs-6 text-gray-800 fw-bold text-center mt-5" data-height="400"><p>No notifications found</p></div>'
+        );
+
+        return;
+    }
+
+    let notificationItems = notifications
+        .map(function(notification) {
+            return (
+                '<div class="d-flex position-relative mb-5 readNotification cursor-pointer" data-id="' +
+                notification.id +
+                '" data-url="' +
+                escapeNotificationText(notification.url) +
+                '">' +
+                '<span class="me-5 text-primary fs-2 icon-label"><i class="' +
+                escapeNotificationText(notification.icon) +
+                '"></i></span>' +
+                "<div>" +
+                '<h5 class="text-gray-900 fs-6 mb-2">' +
+                escapeNotificationText(notification.title) +
+                "</h5>" +
+                '<h6 class="text-gray-600 fs-small fw-light mb-0">' +
+                escapeNotificationText(notification.created_at) +
+                "</h6>" +
+                "</div>" +
+                "</div>"
+            );
+        })
+        .join("");
+
+    adminNotificationList.html(notificationItems);
+}
+
+function refreshAdminNotifications() {
+    if (!adminNotificationList.length || typeof route !== "function") {
+        return;
+    }
+
+    $.ajax({
+        type: "GET",
+        url: route("notifications.latest"),
+        success: function(response) {
+            renderAdminNotifications(response.data);
+        }
+    });
+}
+
+if (adminNotificationList.length) {
+    setInterval(refreshAdminNotifications, 30000);
+}
+
+listenClick(".readNotification", function(e) {
     e.preventDefault();
     let notificationId = $(this).data("id");
+    let notificationUrl = $(this).data("url");
     let notification = $(this);
     $.ajax({
         type: "POST",
         url: route("read-notification", notificationId),
         data: { notificationId: notificationId },
-        success: function() {
-            displaySuccessMessage(Lang.get("js.notification_read"));
+        success: function(response) {
+            notificationUrl = notificationUrl || (response.data ? response.data.url : "");
             notification.remove();
             let notificationCounter = document.getElementsByClassName(
                 "readNotification"
@@ -618,11 +691,15 @@ listenClick("#readNotification", function(e) {
                 $(".empty-state").removeClass("d-none");
                 $(".notification-count").addClass("d-none");
                 $("#counter").text(notificationCounter);
-                $("#readAllNotification")
-                    .parents("div")
-                    .first()
-                    .remove();
+                $("#readAllNotificationWrapper").addClass("d-none");
             }
+
+            if (notificationUrl) {
+                window.location.href = notificationUrl;
+                return;
+            }
+
+            displaySuccessMessage(Lang.get("js.notification_read"));
         },
         error: function(error) {
             manageAjaxErrors(error);
@@ -644,10 +721,7 @@ listenClick("#readAllNotification", function(e) {
             $(".empty-state").removeClass("d-none");
             $(".notification-count").addClass("d-none");
             $("#counter").text(notificationCounter);
-            $("#readAllNotification")
-                .parents("div")
-                .first()
-                .remove();
+            $("#readAllNotificationWrapper").addClass("d-none");
         },
         error: function(error) {
             manageAjaxErrors(error);

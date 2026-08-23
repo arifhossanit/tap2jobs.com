@@ -2,11 +2,17 @@
     $profileReferenceScope = $scope ?? $component->scope ?? null;
     $profileReferenceType = $type ?? $component->type ?? null;
     $dedicatedRouteName = \App\Models\ProfileReferenceOption::dedicatedRouteName($profileReferenceScope, $profileReferenceType);
+    $sampleFiles = [
+        \App\Models\ProfileReferenceOption::TYPE_GENDER => 'gender-options-sample.csv',
+        \App\Models\ProfileReferenceOption::TYPE_LANGUAGE_PROFICIENCY => 'language-proficiency-options-sample.csv',
+        \App\Models\ProfileReferenceOption::TYPE_ONLINE_PROFILE_PLATFORM => 'online-profile-platform-options-sample.csv',
+    ];
+    $sampleFile = $sampleFiles[$profileReferenceType] ?? 'profile-reference-options-sample.csv';
 @endphp
 <div class="d-flex align-items-center gap-2 py-1">
     <button type="button" class="btn btn-success bulk-import"
             data-url="{{ $dedicatedRouteName ? route($dedicatedRouteName.'.import') : route('profileReferenceOptions.import', [$profileReferenceScope, $profileReferenceType]) }}"
-            data-sample-file="{{ asset('sample-imports/profile-reference-options-sample.csv') }}">
+            data-sample-file="{{ asset('sample-imports/'.$sampleFile) }}">
         Import
     </button>
     <a type="button" class="btn btn-primary addProfileReferenceOptionModal">

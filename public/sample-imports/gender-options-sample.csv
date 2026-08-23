@@ -1,0 +1,4 @@
+﻿label,value,sort_order,is_active
+Male,0,1,1
+Female,1,2,1
+Other,2,3,1
