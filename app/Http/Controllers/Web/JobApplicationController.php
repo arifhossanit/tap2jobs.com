@@ -33,6 +33,25 @@ class JobApplicationController extends AppBaseController
      */
     public function showApplyJobForm(string $jobId)
     {
+        if (auth()->check() && auth()->user()->hasRole('Candidate')) {
+            $user = auth()->user();
+            $candidate = $user->candidate ?: Candidate::find($user->owner_id);
+            if ($candidate) {
+                $completionService = app(\App\Services\CandidateProfileCompletionService::class);
+                $profileCompletion = $completionService->calculate($candidate);
+
+                if ($profileCompletion['percentage'] < 80) {
+                    $job = Job::whereJobId($jobId)->first();
+                    $redirectUrl = $job ? route('front.job.details', $job->job_id) : route('front.search.jobs');
+
+                    return redirect($redirectUrl)->with('profile_incomplete', [
+                        'percentage' => $profileCompletion['percentage'],
+                        'profile_url' => route('candidate.profile'),
+                    ]);
+                }
+            }
+        }
+
         $data = $this->jobApplicationRepository->showApplyJobForm($jobId);
 
         if (count($data['resumes']) <= 0) {
@@ -48,6 +67,27 @@ class JobApplicationController extends AppBaseController
     public function applyJob(ApplyJobRequest $request)
     {
         $input = $request->all();
+
+        if (auth()->check() && auth()->user()->hasRole('Candidate')) {
+            $user = auth()->user();
+            $candidate = $user->candidate ?: Candidate::find($user->owner_id);
+            if ($candidate) {
+                $completionService = app(\App\Services\CandidateProfileCompletionService::class);
+                $profileCompletion = $completionService->calculate($candidate);
+
+                if ($profileCompletion['percentage'] < 80) {
+                    return $this->sendError(
+                        __('messages.flash.profile_incomplete_warning', ['percentage' => $profileCompletion['percentage']]),
+                        422,
+                        [
+                            'profile_incomplete' => true,
+                            'percentage' => $profileCompletion['percentage'],
+                            'profile_url' => route('candidate.profile'),
+                        ]
+                    );
+                }
+            }
+        }
 
         $this->jobApplicationRepository->store($input);
 

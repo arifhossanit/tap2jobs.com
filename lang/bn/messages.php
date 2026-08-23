@@ -1982,6 +1982,7 @@ return [
         'verify_google_recaptcha' => 'আপনাকে অবশ্যই google recaptcha যাচাই করতে হবে।',
         'verify_email' => 'অনুগ্রহ করে আপনার ইমেইল ঠিকানা যাচাই করুন।',
         'account_not_active' => 'আপনার অ্যাকাউন্ট সক্রিয় নয়। অনুগ্রহ করে প্রশাসকের সাথে যোগাযোগ করুন।',
+        'profile_incomplete_warning' => 'আপনার প্রোফাইল :percentage% সম্পূর্ণ। চাকরিতে আবেদন করতে অন্তত ৮০% প্রোফাইল সম্পূর্ণ করুন।',
     ],
     'front_job_details' => [
         'job_details' => 'চাকরির বিস্তারিত',

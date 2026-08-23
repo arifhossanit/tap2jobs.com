@@ -104,11 +104,12 @@ class RegisterController extends AppBaseController
         $user = $this->webRegisterRepository->store($input);
         Auth::login($user);
 
-        $defaultHome = ((int) $input['type'] === 1)
-            ? RouteServiceProvider::CANDIDATE_HOME
-            : RouteServiceProvider::EMPLOYER_HOME;
-
-        $redirectUrl = resolveIntendedRedirectUrl($defaultHome, $user);
+        if ((int) $input['type'] === 1) {
+            session()->forget('url.intended');
+            $redirectUrl = route('candidate.profile');
+        } else {
+            $redirectUrl = resolveIntendedRedirectUrl(RouteServiceProvider::EMPLOYER_HOME, $user);
+        }
 
         $userType = ($input['type'] == 1) ? __('messages.notification_settings.candidate') : __('messages.company.employer');
         Flash::success(__('messages.flash.register_success_mail_active'));

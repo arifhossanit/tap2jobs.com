@@ -34,7 +34,15 @@ function loadApplyJobData() {
                 }
             },
             error: function (result) {
-                displayErrorMessage(result.responseJSON.message);
+                if (result.responseJSON && result.responseJSON.data && result.responseJSON.data.profile_incomplete) {
+                    if (typeof window.handleApplyClick === 'function') {
+                        window.handleApplyClick(null, null, result.responseJSON.data.percentage, result.responseJSON.data.profile_url);
+                    } else {
+                        displayErrorMessage(result.responseJSON.message);
+                    }
+                } else {
+                    displayErrorMessage(result.responseJSON.message);
+                }
                 processingBtn(formId, loadingBtnId, 'reset');
                 $(disabledBtnId).prop('disabled', false);
             },

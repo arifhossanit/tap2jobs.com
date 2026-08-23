@@ -21,6 +21,8 @@ class RouteServiceProvider extends ServiceProvider
 
     public const CANDIDATE_HOME = '/candidate/dashboard';
 
+    public const CANDIDATE_PROFILE = '/candidate/profile';
+
     /**
      * Define your route model bindings, pattern filters, etc.
      */

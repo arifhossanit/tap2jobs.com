@@ -1996,6 +1996,7 @@ return [
         'verify_google_recaptcha' => 'You must verify google recaptcha.',
         'verify_email' => 'Please verify your email address.',
         'account_not_active' => 'Your account is not active. Please contact the administrator.',
+        'profile_incomplete_warning' => 'Your profile is :percentage% complete. Please complete at least 80% of your profile to apply for jobs.',
     ],
     'front_job_details' => [
         'job_details' => 'Job Details',

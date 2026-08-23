@@ -75,6 +75,11 @@ class JobController extends AppBaseController
         $data['isActive'] = $data['isApplied'] = $data['isJobAddedToFavourite'] = $data['isJobReportedAsAbuse'] = false;
         if (Auth::check() && Auth::user()->hasRole('Candidate')) {
             $data = array_merge($data, $this->jobRepository->getJobDetails($job));
+            $user = Auth::user();
+            $candidate = $user->candidate ?: \App\Models\Candidate::find($user->owner_id);
+            if ($candidate) {
+                $data['profileCompletion'] = app(\App\Services\CandidateProfileCompletionService::class)->calculate($candidate);
+            }
         }
         $data['jobsCount'] = Job::whereStatus(Job::STATUS_OPEN)->whereCompanyId($job->company_id)->whereDate('job_expiry_date',
             '>=',

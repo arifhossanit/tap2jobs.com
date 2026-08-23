@@ -129,6 +129,31 @@
             border-radius: 16px !important;
             box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.4) !important;
         }
+
+        .profile-incomplete-swal-popup {
+            border-radius: 20px !important;
+            padding: 24px !important;
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
+        }
+        .profile-incomplete-confirm-btn {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+            color: #ffffff !important;
+            border: none !important;
+            border-radius: 10px !important;
+            padding: 10px 24px !important;
+            font-weight: 600 !important;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35) !important;
+            margin: 4px !important;
+        }
+        .profile-incomplete-cancel-btn {
+            background-color: #cbd5e1 !important;
+            color: #475569 !important;
+            border: none !important;
+            border-radius: 10px !important;
+            padding: 10px 24px !important;
+            font-weight: 600 !important;
+            margin: 4px !important;
+        }
     </style>
 
     @yield('page_css')
@@ -175,7 +200,118 @@
         Lang.setLocale(lancode);
     </script>
      <script src="{{ mix('assets/js/custom/custom.js') }}"></script>
+     <script>
+         window.showProfileIncompleteModal = function (percentage, profileUrl) {
+             percentage = parseInt(percentage) || 0;
+             var isBn = (typeof lancode !== 'undefined' && lancode === 'bn');
 
+             var titleText = isBn ? "প্রোফাইল অসম্পূর্ণ!" : "Profile Incomplete!";
+             var descText = isBn 
+                 ? "চাকরিতে আবেদন করতে আপনার প্রোফাইল অন্তত <b>৮০%</b> সম্পূর্ণ করতে হবে।" 
+                 : "Your profile must be at least <b>80%</b> complete to apply for jobs.";
+             var currentText = isBn 
+                 ? "আপনার বর্তমান প্রোফাইল: <b>" + percentage + "%</b> সম্পূর্ণ" 
+                 : "Currently your profile is <b>" + percentage + "%</b> complete.";
+             var confirmBtnText = isBn ? "প্রোফাইলে যান" : "Go to Profile";
+             var cancelBtnText = isBn ? "বাতিল" : "Cancel";
+
+             var radius = 40;
+             var circumference = 2 * Math.PI * radius; // ~251.327
+             var dashoffset = circumference - (circumference * Math.min(percentage, 100) / 100);
+
+             var htmlContent = `
+                 <div style="font-family: inherit; padding: 10px 0 5px 0; text-align: center;">
+                     <!-- Circular Progress Ring matching Image 2 -->
+                     <div style="position: relative; width: 110px; height: 110px; margin: 0 auto 20px auto; display: flex; align-items: center; justify-content: center;">
+                         <svg width="110" height="110" viewBox="0 0 100 100" style="transform: rotate(-90deg); filter: drop-shadow(0px 4px 12px rgba(217, 70, 239, 0.25));">
+                             <circle cx="50" cy="50" r="40" stroke="#fce7f3" stroke-width="9" fill="transparent" />
+                             <circle cx="50" cy="50" r="40" stroke="url(#progressGradientPink)" stroke-width="9" stroke-linecap="round" fill="transparent"
+                                 stroke-dasharray="${circumference}" stroke-dashoffset="${dashoffset}"
+                                 style="transition: stroke-dashoffset 0.8s ease-in-out;" />
+                             <defs>
+                                 <linearGradient id="progressGradientPink" x1="0%" y1="0%" x2="100%" y2="100%">
+                                     <stop offset="0%" stop-color="#ec4899" />
+                                     <stop offset="100%" stop-color="#be185d" />
+                                 </linearGradient>
+                             </defs>
+                         </svg>
+                         <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;">
+                             <span style="font-size: 24px; font-weight: 800; color: #0f172a; font-family: system-ui, -apple-system, sans-serif;">${percentage}%</span>
+                         </div>
+                     </div>
+
+                     <h3 style="font-size: 22px; font-weight: 700; color: #1e293b; margin: 0 0 12px 0;">${titleText}</h3>
+                     
+                     <p style="font-size: 15px; color: #475569; line-height: 1.5; margin: 0 0 8px 0;">${descText}</p>
+                    
+                 </div>
+             `;
+
+             if (typeof Swal !== 'undefined' && typeof Swal.fire === 'function') {
+                 Swal.fire({
+                     html: htmlContent,
+                     showCancelButton: true,
+                     confirmButtonText: confirmBtnText,
+                     cancelButtonText: cancelBtnText,
+                     confirmButtonColor: '#6366f1',
+                     cancelButtonColor: '#94a3b8',
+                     customClass: {
+                         popup: 'profile-incomplete-swal-popup',
+                         confirmButton: 'profile-incomplete-confirm-btn',
+                         cancelButton: 'profile-incomplete-cancel-btn'
+                     }
+                 }).then(function (result) {
+                     if (result.isConfirmed || result.value) {
+                         window.location.href = profileUrl;
+                     }
+                 });
+             } else if (typeof swal === 'function') {
+                 swal({
+                     title: "",
+                     text: htmlContent,
+                     html: true,
+                     showCancelButton: true,
+                     confirmButtonColor: '#6366f1',
+                     confirmButtonText: confirmBtnText,
+                     cancelButtonText: cancelBtnText,
+                     closeOnConfirm: true
+                 }, function (isConfirm) {
+                     if (isConfirm || isConfirm === true) {
+                         window.location.href = profileUrl;
+                     }
+                 });
+             } else {
+                 if (confirm(titleText + "\n\n" + descText.replace(/<\/?[^>]+(>|$)/g, "") + "\n\n" + confirmBtnText)) {
+                     window.location.href = profileUrl;
+                 }
+             }
+         };
+
+         window.handleApplyClick = function (e, applyUrl, percentage, profileUrl) {
+             if (percentage < 80) {
+                 if (e && e.preventDefault) {
+                     e.preventDefault();
+                 }
+                 window.showProfileIncompleteModal(percentage, profileUrl);
+                 return false;
+             }
+             window.location.href = applyUrl;
+             return true;
+         };
+     </script>
+
+    @if (session()->has('profile_incomplete'))
+        @php $profileData = session()->get('profile_incomplete'); @endphp
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var percentage = "{{ $profileData['percentage'] ?? 0 }}";
+                var profileUrl = "{{ $profileData['profile_url'] ?? route('candidate.profile') }}";
+                if (typeof window.showProfileIncompleteModal === 'function') {
+                    window.showProfileIncompleteModal(percentage, profileUrl);
+                }
+            });
+        </script>
+    @endif
     </body>
 
 </html>

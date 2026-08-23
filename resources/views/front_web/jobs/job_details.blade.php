@@ -117,8 +117,11 @@
                                     <div class="desc me-2 pe-2 mb-sm-0 mb-2">
                                         @if (!$isApplied && !$isJobApplicationRejected && !$isJobApplicationCompleted && !$isJobApplicationShortlisted)
                                             @if ($isActive && !$job->is_suspended && \Carbon\Carbon::today()->toDateString() < $job->job_expiry_date->toDateString())
+                                                @php
+                                                    $completionPct = isset($profileCompletion) ? ($profileCompletion['percentage'] ?? 100) : 100;
+                                                @endphp
                                                 <button class="btn btn-primary job-apply-btn"
-                                                    onclick="window.location='{{ route('show.apply-job-form', $job->job_id) }}'">
+                                                    onclick="return handleApplyClick(event, '{{ route('show.apply-job-form', $job->job_id) }}', {{ $completionPct }}, '{{ route('candidate.profile') }}')">
                                                     {{ $isJobDrafted ? __('messages.front_job_details.edit_draft') : __('messages.front_job_details.apply_for_job') }}
                                                 </button>
                                             @endif
