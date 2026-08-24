@@ -4822,7 +4822,7 @@ function loadCandidateCareerInformationData() {
   });
   listenClick('.delete-education', function (event) {
     var educationId = $(event.currentTarget).data('id');
-    deleteItem(route('candidate.update-education', educationId), Lang.get('js.education'), '.candidate-education-container', '.candidate-education', '#notfoundEducation');
+    deleteItem(route('education.destroy', educationId), Lang.get('js.education'), '.candidate-education-container', '.candidate-education', '#notfoundEducation');
   });
   window.deleteItem = function (url, header, parent, child, selector) {
     swal({
@@ -7869,6 +7869,9 @@ var adminNotificationList = $("#adminNotificationList");
 function escapeNotificationText(value) {
   return $("<div>").text(value || "").html();
 }
+function adminNotificationEmptyState() {
+  return '<div class="admin-notification-empty d-flex flex-column align-items-center justify-content-center text-center py-8" data-height="400">' + '<i class="fa-regular fa-bell-slash text-gray-500 fs-1 mb-3"></i>' + '<p class="fs-6 fw-semibold text-gray-700 mb-0">No notification found</p>' + "</div>";
+}
 function renderAdminNotifications(notificationData) {
   if (!adminNotificationList.length || !notificationData) {
     return;
@@ -7876,13 +7879,14 @@ function renderAdminNotifications(notificationData) {
   var notifications = notificationData.notifications || [];
   var notificationCount = notificationData.count || 0;
   $("#counter").text(notificationCount).toggleClass("d-none", notificationCount === 0);
-  $("#readAllNotificationWrapper").toggleClass("d-none", notificationCount === 0);
-  if (notificationCount === 0) {
-    adminNotificationList.html('<div class="empty-state fs-6 text-gray-800 fw-bold text-center mt-5" data-height="400"><p>No notifications found</p></div>');
+  if (notifications.length === 0) {
+    adminNotificationList.html(adminNotificationEmptyState());
     return;
   }
   var notificationItems = notifications.map(function (notification) {
-    return '<div class="d-flex position-relative mb-5 readNotification cursor-pointer" data-id="' + notification.id + '" data-url="' + escapeNotificationText(notification.url) + '">' + '<span class="me-5 text-primary fs-2 icon-label"><i class="' + escapeNotificationText(notification.icon) + '"></i></span>' + "<div>" + '<h5 class="text-gray-900 fs-6 mb-2">' + escapeNotificationText(notification.title) + "</h5>" + '<h6 class="text-gray-600 fs-small fw-light mb-0">' + escapeNotificationText(notification.created_at) + "</h6>" + "</div>" + "</div>";
+    var isRead = notification.is_read;
+    var itemStyle = isRead ? "background: transparent; opacity: 0.7;" : "background: rgba(101, 113, 255, 0.08);";
+    return '<div class="admin-notification-item ' + (isRead ? "admin-notification-read" : "admin-notification-unread") + ' d-flex position-relative mb-3 p-3 rounded readNotification cursor-pointer" style="' + itemStyle + '" data-id="' + notification.id + '" data-url="' + escapeNotificationText(notification.url) + '" data-read="' + (isRead ? "1" : "0") + '">' + '<span class="me-5 text-primary fs-2 icon-label"><i class="' + escapeNotificationText(notification.icon) + '"></i></span>' + "<div>" + '<h5 class="text-gray-900 fs-6 mb-2">' + escapeNotificationText(notification.title) + "</h5>" + '<h6 class="text-gray-600 fs-small fw-light mb-0">' + escapeNotificationText(notification.created_at) + "</h6>" + "</div>" + "</div>";
   }).join("");
   adminNotificationList.html(notificationItems);
 }
@@ -7906,6 +7910,7 @@ listenClick(".readNotification", function (e) {
   var notificationId = $(this).data("id");
   var notificationUrl = $(this).data("url");
   var notification = $(this);
+  var wasUnread = String(notification.data("read")) !== "1";
   $.ajax({
     type: "POST",
     url: route("read-notification", notificationId),
@@ -7914,42 +7919,28 @@ listenClick(".readNotification", function (e) {
     },
     success: function success(response) {
       notificationUrl = notificationUrl || (response.data ? response.data.url : "");
-      notification.remove();
-      var notificationCounter = document.getElementsByClassName("readNotification").length;
+      notification.removeClass("admin-notification-unread").css({
+        background: "transparent",
+        opacity: 0.7
+      });
+      notification.attr("data-read", "1").data("read", "1");
+      var notificationCounter = parseInt($("#counter").text(), 10) || 0;
+      notificationCounter = wasUnread ? Math.max(notificationCounter - 1, 0) : notificationCounter;
       $("#counter").text(notificationCounter);
       if (notificationCounter == 0) {
-        $(".empty-state").removeClass("d-none");
         $(".notification-count").addClass("d-none");
         $("#counter").text(notificationCounter);
-        $("#readAllNotificationWrapper").addClass("d-none");
       }
       if (notificationUrl) {
-        window.location.href = notificationUrl;
+        setTimeout(function () {
+          window.location.href = notificationUrl;
+        }, 140);
         return;
       }
       displaySuccessMessage(Lang.get("js.notification_read"));
     },
     error: function error(_error) {
       manageAjaxErrors(_error);
-    }
-  });
-});
-listenClick("#readAllNotification", function (e) {
-  e.preventDefault();
-  $.ajax({
-    type: "POST",
-    url: route("read-all-notification"),
-    success: function success() {
-      displaySuccessMessage(Lang.get("js.all_notification_read"));
-      $(".readNotification").remove();
-      var notificationCounter = document.getElementsByClassName("notification").length;
-      $(".empty-state").removeClass("d-none");
-      $(".notification-count").addClass("d-none");
-      $("#counter").text(notificationCounter);
-      $("#readAllNotificationWrapper").addClass("d-none");
-    },
-    error: function error(_error2) {
-      manageAjaxErrors(_error2);
     }
   });
 });

@@ -4,14 +4,14 @@
         @if ($paginator->onFirstPage())
             <li class="page-item disabled" aria-disabled="true" aria-label="@lang('pagination.previous')">
                 <span class="page-link" aria-hidden="true">
-                    <span>&lsaquo;</span>
+                    <span><i class="fa-solid fa-angle-left"></i></span>
                 </span>
             </li>
         @else
             <li class="page-item">
                 <button type="button" class="page-link" wire:click="previousPage" rel="prev"
                         aria-label="@lang('pagination.previous')">
-                    <span>&lsaquo;</span>
+                    <span><i class="fa-solid fa-angle-left"></i></span>
                 </button>
             </li>
         @endif
@@ -42,13 +42,13 @@
             <li class="page-item">
                 <button type="button" class="page-link" wire:click="nextPage({{$paginator->lastPage()}})" rel="next"
                         aria-label="@lang('pagination.next')">
-                    <span>&rsaquo;</span>
+                    <span><i class="fa-solid fa-angle-right"></i></span>
                 </button>
             </li>
         @else
             <li class="page-item disabled" aria-disabled="true" aria-label="@lang('pagination.next')">
                 <span class="page-link" aria-hidden="true">
-                    <span>&rsaquo;</span>
+                    <span><i class="fa-solid fa-angle-right"></i></span>
                 </span>
             </li>
         @endif

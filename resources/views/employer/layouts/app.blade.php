@@ -94,6 +94,12 @@
                 gap: 7px;
             }
 
+            body.employer-shell .employer-dashboard-header .horizontal-menu .nav-item .nav-link,
+            body.employer-shell .employer-language-toggle {
+                font-size: 16px !important;
+                line-height: 24px;
+            }
+
             body.employer-shell .employer-language-toggle::after {
                 display: none !important;
             }
@@ -102,6 +108,10 @@
                 color: #6c757e;
                 font-size: 15px;
                 line-height: 1;
+            }
+
+            body.employer-shell .employer-dashboard-header .dropdown-menu[aria-labelledby="employerNotificationDropdown"] h3 {
+                font-size: 18px;
             }
         </style>
 </head>

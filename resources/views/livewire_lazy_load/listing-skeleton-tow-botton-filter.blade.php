@@ -1,24 +1,15 @@
-<div class="listing-skeleton">
-    <div class="card">
-        <div class="card-content">
-            <div class="d-flex justify-content-between">
-                <div class="search-box pulsate rounded-1"> </div>
-                <div class="d-flex">
-                    <div class="add-button-box-filter pulsate rounded-1"> </div>
-                    <div class="add-button-box pulsate rounded-1"> </div>
-                    <div class="add-button-box pulsate rounded-1"> </div>
-                </div>
-            </div>
-        </div>
-        <div class="card-content my-5">
-            <div class="table pulsate rounded-1"> </div>
-            <div class="row">
-                @for ($i = 1; $i <= 32; $i++)
-                    <div class="col-3 mb-5">
-                        <div class="column-box pulsate rounded-1"> </div>
-                    </div>
-                @endfor
-            </div>
+@php($isDarkSkeleton = auth()->check() && getLoggedInUser()->theme_mode)
+<div class="listing-skeleton listing-skeleton-modern {{ $isDarkSkeleton ? 'admin-dark-listing-skeleton' : 'bg-white border-light' }} p-4 rounded-3 shadow-sm border">
+    @include('livewire_lazy_load.partials.listing-skeleton-style')
+
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mb-4 gap-3">
+        <div class="shimmer-element" style="width: 240px; height: 38px;"></div>
+        <div class="d-flex gap-2 align-items-center">
+            <div class="shimmer-element" style="width: 46px; height: 38px;"></div>
+            <div class="shimmer-element" style="width: 100px; height: 38px;"></div>
+            <div class="shimmer-element" style="width: 90px; height: 38px;"></div>
         </div>
     </div>
+
+    @include('livewire_lazy_load.partials.listing-skeleton-table', ['isDarkSkeleton' => $isDarkSkeleton])
 </div>

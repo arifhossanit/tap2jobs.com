@@ -27,15 +27,17 @@ class FavouriteCompanies extends Component
 
     public function nextPage($lastPage)
     {
-        if ($this->page < $lastPage) {
-            $this->page = $this->page + 1;
+        $currentPage = $this->getPage();
+        if ($currentPage < $lastPage) {
+            $this->setPage($currentPage + 1);
         }
     }
 
-    public function previousPage()
+    public function previousPage($pageName = 'page')
     {
-        if ($this->page > 1) {
-            $this->page = $this->page - 1;
+        $currentPage = $this->getPage();
+        if ($currentPage > 1) {
+            $this->setPage($currentPage - 1);
         }
     }
 

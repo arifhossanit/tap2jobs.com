@@ -28,15 +28,17 @@ class Followers extends Component
 
     public function nextPage($lastPage)
     {
-        if ($this->page < $lastPage) {
-            $this->page = $this->page + 1;
+        $currentPage = $this->getPage();
+        if ($currentPage < $lastPage) {
+            $this->setPage($currentPage + 1);
         }
     }
 
-    public function previousPage()
+    public function previousPage($pageName = 'page')
     {
-        if ($this->page > 1) {
-            $this->page = $this->page - 1;
+        $currentPage = $this->getPage();
+        if ($currentPage > 1) {
+            $this->setPage($currentPage - 1);
         }
     }
 
@@ -71,8 +73,8 @@ class Followers extends Component
         $all = $query->paginate($this->perPage);
         $currentPage = $all->currentPage();
         $lastPage = $all->lastPage();
-        if ($currentPage > $lastPage) {
-            $this->page = $lastPage;
+        if ($currentPage > $lastPage && $lastPage > 0) {
+            $this->setPage($lastPage);
             $all = $query->paginate($this->perPage);
         }
 

@@ -1,4 +1,5 @@
-@php($notifications = getNotification(\App\Models\Notification::ADMIN))@php($notificationCount = $notifications->count())
+@php($notifications = \App\Models\Notification::whereNotificationFor(\App\Models\Notification::ADMIN)->where('user_id', getLoggedInUserId())->orderByDesc('created_at')->take(10)->get())
+@php($notificationCount = $notifications->whereNull('read_at')->count())
 <header class='d-flex align-items-center justify-content-between flex-grow-1 header px-4 px-lg-7 px-xl-0'>
     <button type="button" class="btn px-0 aside-menu-container__aside-menubar d-block d-xl-none sidebar-btn">
         <i class="fa-solid fa-bars fs-1"></i>
@@ -29,7 +30,7 @@
 
         <li class="px-sm-3 px-2">
             <div class="dropdown custom-dropdown d-flex align-items-center py-4">
-                <button class="btn dropdown-toggle hide-arrow {{ checkLanguageSession() == 'ar' ? 'pe-2 ps-0' : 'ps-2 pe-0' }} py-0 position-relative" type="button" id="dropdownMenuButton1"
+                <button class="btn dropdown-toggle hide-arrow {{ checkLanguageSession() == 'ar' ? 'pe-2 ps-0' : 'ps-2 pe-0' }} py-0 position-relative" type="button" id="adminNotificationDropdown"
                         data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fa-solid fa-bell text-primary fs-2"></i>
                     <span class="position-absolute notification-count top-0 start-100 translate-middle badge badge-circle bg-danger {{ $notificationCount == 0 ? 'd-none' : '' }}" id="counter">
@@ -37,14 +38,14 @@
                         <span class="visually-hidden">unread messages</span>
                     </span>
                 </button>
-                <div class="dropdown-menu py-0 my-2" aria-labelledby="dropdownMenuButton1">
+                <div class="dropdown-menu dropdown-menu-end py-0 my-2" aria-labelledby="adminNotificationDropdown" style="min-width: 320px;">
                     <div class="{{ checkLanguageSession() == 'ar' ? 'text-end' : 'text-start' }} border-bottom py-4 px-7">
                         <h3 class="text-gray-900 mb-0">{{__('messages.notification.notifications')}}</h3>
                     </div>
-                    <div class="px-7 mt-5 inner-scroll height-270" id="adminNotificationList">
-                        @if($notificationCount > 0)
+                    <div class="" id="adminNotificationList" style="max-height: 390px; overflow-y: auto; overflow-x: hidden;">
+                        @if($notifications->isNotEmpty())
                             @foreach($notifications as $notification)
-                                <div class="d-flex position-relative mb-5 readNotification cursor-pointer" data-id="{{ $notification->id }}" data-url="{{ getNotificationUrl($notification) }}">
+                                <div class="admin-notification-item {{ $notification->read_at ? 'admin-notification-read' : 'admin-notification-unread' }} d-flex position-relative p-5 rounded readNotification cursor-pointer" data-id="{{ $notification->id }}" data-url="{{ getNotificationUrl($notification) }}" data-read="{{ $notification->read_at ? '1' : '0' }}" style="background: {{ $notification->read_at ? 'transparent' : 'rgba(101, 113, 255, 0.08)' }}; opacity: {{ $notification->read_at ? '0.7' : '1' }};">
                                     <span class="{{ checkLanguageSession() == 'ar' ? 'ms-5' : 'me-5' }} text-primary fs-2 icon-label">
                                         <i class="{{ getNotificationIcon($notification->type) }}"></i></span>
                                     <div>
@@ -55,16 +56,11 @@
                                 </div>
                             @endforeach
                         @else
-                            <div class="empty-state fs-6 text-gray-800 fw-bold text-center mt-5" data-height="400">
-                                <p>{{ __('messages.notification.empty_notifications') }}</p>
+                            <div class="admin-notification-empty d-flex flex-column align-items-center justify-content-center text-center py-8" data-height="400">
+                                <i class="fa-regular fa-bell-slash text-gray-500 fs-1 mb-3"></i>
+                                <p class="fs-6 fw-semibold text-gray-700 mb-0">No notification found</p>
                             </div>
                         @endif
-                        <div class="empty-state fs-6 text-gray-800 fw-bold text-center mt-5 d-none" data-height="400">
-                            <p>{{ __('messages.notification.empty_notifications') }}</p>
-                        </div>
-                    </div>
-                    <div class="text-center border-top p-4 {{ $notificationCount == 0 ? 'd-none' : '' }}" id="readAllNotificationWrapper">
-                        <h5 class="text-primary mb-0 fs-5 cursor-pointer" id="readAllNotification">{{ __('messages.notification.mark_all_as_read') }}</h5>
                     </div>
                 </div>
             </div>
@@ -72,7 +68,7 @@
         <li class="px-sm-3 px-2">
             <div class="dropdown d-flex align-items-center py-4">
                 
-                <button class="btn dropdown-toggle {{ checkLanguageSession() == 'ar' ? 'pe-2 ps-0' : 'ps-2 pe-0' }} hide-arrow" type="button" id="dropdownMenuButton1"
+                <button class="btn dropdown-toggle {{ checkLanguageSession() == 'ar' ? 'pe-2 ps-0' : 'ps-2 pe-0' }} hide-arrow" type="button" id="adminUserDropdown"
                         data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
                     {{-- {{ getLoggedInUser()->full_name }} --}}
                     <div class="image image-circle image-mini">
@@ -80,7 +76,7 @@
                             class="img-fluid" alt="profile image">
                     </div>
                 </button>
-                <div class="dropdown-menu py-7 pb-4 my-2" aria-labelledby="dropdownMenuButton1"
+                <div class="dropdown-menu py-7 pb-4 my-2" aria-labelledby="adminUserDropdown"
                      data-bs-auto-close="outside">
                     <div class="d-flex align-items-center border-bottom pb-4 px-4 text-start">
                         <div class="image image-circle image-tiny me-3 flex-shrink-0 mb-0">

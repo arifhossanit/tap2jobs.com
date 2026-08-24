@@ -338,6 +338,19 @@ class CompanyController extends AppBaseController
                         $user->first_name.' '.$user->last_name.' mark Company as Featured.',
                     ]) : false;
             }
+
+            $adminFeaturedSetting = NotificationSetting::where('key', 'MARK_COMPANY_FEATURED_ADMIN')
+                ->where('type', 'admin')
+                ->first();
+
+            if ($user->hasRole('Employer') && (int) ($adminFeaturedSetting?->value ?? 0) === 1) {
+                addNotification([
+                    Notification::MARK_COMPANY_FEATURED_ADMIN,
+                    \App\Models\User::role('Admin')->value('id') ?? 1,
+                    Notification::ADMIN,
+                    $company->company_name.' is featured',
+                ]);
+            }
             $transaction = [
                 'owner_id' => $companyId,
                 'owner_type' => Company::class,

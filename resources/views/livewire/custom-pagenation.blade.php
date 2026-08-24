@@ -4,7 +4,7 @@
         @if ($paginator->onFirstPage())
             <li class="page-item disabled" aria-disabled="true" aria-label="@lang('pagination.previous')">
                 <span class="page-link" aria-hidden="true">
-                    <span class="d-none d-md-block">&lsaquo;</span>
+                    <span class="d-none d-md-block"><i class="fa-solid fa-angle-left"></i></span>
                     <span class="d-block d-md-none">@lang('pagination.previous')</span>
                 </span>
             </li>
@@ -12,7 +12,7 @@
             <li class="page-item">
                 <button type="button" class="page-link" wire:click="previousPage" rel="prev"
                         aria-label="@lang('pagination.previous')">
-                    <span class="d-none d-md-block" wire:click="gotoPage(1)">&lsaquo;</span>
+                    <span class="d-none d-md-block" wire:click="gotoPage(1)"><i class="fa-solid fa-angle-left"></i></span>
                     <span class="d-block d-md-none">@lang('pagination.previous')</span>
                 </button>
             </li>
@@ -53,14 +53,14 @@
                 <button type="button" class="page-link" wire:click="nextPage({{$paginator->lastPage()}})" rel="next"
                         aria-label="@lang('pagination.next')">
                     <span class="d-block d-md-none">@lang('pagination.next')</span>
-                    <span class="d-none d-md-block" wire:click="gotoPage({{$paginator->lastPage()}})">&rsaquo;</span>
+                    <span class="d-none d-md-block" wire:click="gotoPage({{$paginator->lastPage()}})"><i class="fa-solid fa-angle-right"></i></span>
                 </button>
             </li>
         @else
             <li class="page-item disabled" aria-disabled="true" aria-label="@lang('pagination.next')">
                 <span class="page-link" aria-hidden="true">
                     <span class="d-block d-md-none">@lang('pagination.next')</span>
-                    <span class="d-none d-md-block">&rsaquo;</span>
+                    <span class="d-none d-md-block"><i class="fa-solid fa-angle-right"></i></span>
                 </span>
             </li>
         @endif

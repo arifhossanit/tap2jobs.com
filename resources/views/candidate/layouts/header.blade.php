@@ -1,10 +1,21 @@
-@php($notifications = getNotification(\App\Models\Notification::CANDIDATE))
-@php($notificationCount = $notifications->count())
+@php($notifications = \App\Models\Notification::whereNotificationFor(\App\Models\Notification::CANDIDATE)->where('user_id', getLoggedInUserId())->orderByDesc('created_at')->take(10)->get())
+@php($notificationCount = $notifications->whereNull('read_at')->count())
 @php($isCandidateUserDropdownActive = Request::is('candidate/profile*', 'candidate/favourite-companies*', 'candidate/change-password*'))
 <style>
     .candidate-user-dropdown-menu .dropdown-item.active,
     .candidate-user-dropdown-menu .dropdown-item.active .dropdown-icon {
         color: #ffffff !important;
+    }
+    .candidate-notification-badge {
+        top: 6px !important;
+        right: -7px !important;
+        left: auto !important;
+        transform: none !important;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 5px;
+        font-size: 11px;
+        line-height: 18px;
     }
 </style>
 <header class='candidate-dashboard-header container-fluid container-xxl d-flex align-items-stretch justify-content-between'>
@@ -71,25 +82,24 @@
                             data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="position-relative">
                             <i class="fa-solid fa-bell text-primary fs-2"></i>
-                            @if($notificationCount > 0)
-                                <span class="position-absolute notification-count top-0 start-100 translate-middle badge badge-circle bg-danger" id="counter">
-                                    {{ $notificationCount }}
-                                    <span class="visually-hidden">{{ __('messages.unread_messages') }}</span>
-                                </span>
-                            @endif
+                            <span class="position-absolute notification-count candidate-notification-badge badge badge-circle bg-danger {{ $notificationCount == 0 ? 'd-none' : '' }}" id="candidateNotificationCount">
+                                {{ $notificationCount }}
+                                <span class="visually-hidden">{{ __('messages.unread_messages') }}</span>
+                            </span>
                         </div>
                     </button>
-                    <div class="dropdown-menu py-0" aria-labelledby="candidateNotificationDropdown">
+                    <div class="dropdown-menu dropdown-menu-end py-0 my-2" aria-labelledby="candidateNotificationDropdown" style="min-width: 320px;">
                         <div class="{{ checkLanguageSession() == 'ar' ? 'text-end' : 'text-start' }} border-bottom py-4 px-7">
                             <h3 class="text-gray-900 mb-0">{{__('messages.notification.notifications')}}</h3>
                         </div>
-                        <div class="px-7 mt-5 inner-scroll height-270">
-                            @if($notificationCount > 0)
+                        <div class="px-7 py-5 candidate-notification-list" style="max-height: 390px; overflow-y: auto; overflow-x: hidden;">
+                            @if($notifications->isNotEmpty())
                                 @foreach($notifications as $notification)
-                                    <div class="d-flex position-relative mb-5 readNotification cursor-pointer"
-                                         data-id="{{ $notification->id }}" id="readNotification">
-                                                            <span class="{{ checkLanguageSession() == 'ar' ? 'ms-5' : 'me-5' }} text-primary fs-2 icon-label">
-                                                                <i class="{{ getNotificationIcon($notification->type) }}"></i></span>
+                                    <div class="candidate-notification-item {{ $notification->read_at ? 'candidate-notification-read' : 'candidate-notification-unread' }} d-flex position-relative mb-5 p-3 rounded candidateReadNotification cursor-pointer"
+                                         data-id="{{ $notification->id }}" data-url="{{ getNotificationUrl($notification) }}" data-read="{{ $notification->read_at ? '1' : '0' }}"
+                                         style="background: {{ $notification->read_at ? 'transparent' : 'rgba(101, 113, 255, 0.08)' }}; opacity: {{ $notification->read_at ? '0.7' : '1' }};">
+                                        <span class="{{ checkLanguageSession() == 'ar' ? 'ms-5' : 'me-5' }} text-primary fs-2 icon-label">
+                                            <i class="{{ getNotificationIcon($notification->type) }}"></i></span>
                                         <div>
                                             <h5 class="text-gray-900 fs-6 mb-2">{{$notification->title}}</h5>
                                             <h6 class="text-gray-600 fs-small fw-light mb-0">
@@ -98,21 +108,12 @@
                                     </div>
                                 @endforeach
                             @else
-                                <div class="empty-state fs-6 text-gray-800 fw-bold text-center mt-5" data-height="400">
-                                    <p>{{ __('messages.notification.empty_notifications') }}</p>
+                                <div class="candidate-notification-empty d-flex flex-column align-items-center justify-content-center text-center py-8" data-height="400">
+                                    <i class="fa-regular fa-bell-slash text-gray-500 fs-1 mb-3"></i>
+                                    <p class="fs-6 fw-semibold text-gray-700 mb-0">No notification found</p>
                                 </div>
                             @endif
-                            <div class="empty-state fs-6 text-gray-800 fw-bold text-center mt-5 d-none"
-                                 data-height="400">
-                                <p>{{ __('messages.notification.empty_notifications') }}</p>
-                            </div>
                         </div>
-                        @if($notificationCount > 0)
-                            <div class="text-center border-top p-4">
-                                <h5 class="text-primary mb-0 fs-5 cursor-pointer"
-                                    id="readAllNotification">{{ __('messages.notification.mark_all_as_read') }}</h5>
-                            </div>
-                        @endif
                     </div>
 
                 </div>

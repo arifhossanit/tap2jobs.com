@@ -175,11 +175,11 @@
 
 <!-- SECTION: SUBSCRIPTIONS & REFERENCES -->
 <li class="sidebar-section-header px-4 pt-4 pb-1 text-uppercase text-muted fw-bold fs-8 d-flex align-items-center" style="letter-spacing: 0.08em; font-size: 11px;">
-    <span>REFERENCES & DATA</span>
+    <span>REFERENCES</span>
     <span class="flex-grow-1 ms-3 border-bottom"></span>
 </li>
 
-<li class="nav-item aside-item-collapse {{ $subscriptionsActive ? 'active collapse-submenu' : '' }}">
+{{-- <li class="nav-item aside-item-collapse {{ $subscriptionsActive ? 'active collapse-submenu' : '' }}">
     <a class="nav-link d-flex align-items-center py-3" data-bs-toggle="collapse" href="#asideSubscriptionsMenu"
        role="button" aria-expanded="{{ $subscriptionsActive ? 'true' : 'false' }}" aria-controls="asideSubscriptionsMenu">
         <span class="aside-menu-icon {{ $iconPad }}"><i class="fab fa-bandcamp"></i></span>
@@ -207,7 +207,7 @@
         <span class="aside-menu-icon {{ $iconPad }}"><i class="fas fa-bell"></i></span>
         <span class="aside-menu-title">{{ __('messages.subscribers') }}</span>
     </a>
-</li>
+</li> --}}
 
 <li class="nav-item aside-item-collapse {{ $referencesActive ? 'active collapse-submenu' : '' }}">
     <a class="nav-link d-flex align-items-center py-3" data-bs-toggle="collapse" href="#asideReferencesMenu"
@@ -277,6 +277,7 @@
                     <a class="nav-link d-flex align-items-center py-2" href="{{ route('skills.index') }}">
                         <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
                         <span class="aside-menu-title">{{ __('messages.skills') }}</span>
+                        <i class="fa-solid fa-eye ms-auto text-primary fs-8" title="Available from job create quick add" data-bs-toggle="tooltip"></i>
                     </a>
                 </li>
                 <li class="nav-item {{ Request::is('admin/industries*') ? 'active' : '' }}">
@@ -289,6 +290,7 @@
                     <a class="nav-link d-flex align-items-center py-2" href="{{ route('functionalArea.index') }}">
                         <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
                         <span class="aside-menu-title">{{ __('messages.functional_areas') }}</span>
+                        <i class="fa-solid fa-eye ms-auto text-primary fs-8" title="Available from job create quick add" data-bs-toggle="tooltip"></i>
                     </a>
                 </li>
                 <li class="nav-item {{ Request::is('admin/career-levels*') ? 'active' : '' }}">
@@ -338,6 +340,7 @@
                             <a class="nav-link d-flex align-items-center py-2" href="{{ route('educationMajorGroups.index') }}">
                                 <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
                                 <span class="aside-menu-title">Major / Groups</span>
+                                <i class="fa-solid fa-eye ms-auto text-primary fs-8" title="Available from candidate education quick add" data-bs-toggle="tooltip"></i>
                             </a>
                         </li>
                         <li class="nav-item {{ Request::is('admin/education-boards*') ? 'active' : '' }}">

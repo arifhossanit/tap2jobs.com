@@ -151,6 +151,7 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
 
          // settings routes
          Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
+         Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
          Route::get('privacy-policy', [PrivacyPolicyController::class, 'index'])->name('privacy.policy.index');
          Route::post('privacy-policy', [PrivacyPolicyController::class, 'update'])->name('privacy.policy.update');
 

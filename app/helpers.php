@@ -685,6 +685,12 @@ if (! function_exists('getNotificationUrl')) {
         }
 
         if ($notification->notification_for == \App\Models\Notification::CANDIDATE) {
+            $jobApplicationId = data_get($notification->meta, 'job_application_id');
+
+            if ($jobApplicationId && \Illuminate\Support\Facades\Route::has('candidate.applied.job.show')) {
+                return route('candidate.applied.job.show', ['jobApplication' => $jobApplicationId]);
+            }
+
             return route('candidate.applied.job');
         } elseif ($notification->notification_for == \App\Models\Notification::EMPLOYER) {
             $jobId = data_get($notification->meta, 'job_id');
@@ -699,6 +705,26 @@ if (! function_exists('getNotificationUrl')) {
 
             if (! empty($url)) {
                 return $url;
+            }
+
+            switch ((int) $notification->type) {
+                case \App\Models\Notification::NEW_EMPLOYER_REGISTERED:
+                case \App\Models\Notification::MARK_COMPANY_FEATURED:
+                case \App\Models\Notification::MARK_COMPANY_FEATURED_ADMIN:
+                    return route('company.index');
+
+                case \App\Models\Notification::NEW_CANDIDATE_REGISTERED:
+                    return route('candidates.index');
+
+                case \App\Models\Notification::EMPLOYER_PURCHASE_PLAN:
+                    return route('admin.transactions.index');
+
+                case \App\Models\Notification::MARK_JOB_FEATURED:
+                case \App\Models\Notification::MARK_JOB_FEATURED_ADMIN:
+                    return route('admin.jobs.index');
+
+                case \App\Models\Notification::JOB_EXPIRY_ALERT_ADMIN:
+                    return route('admin.jobs.expiredJobs');
             }
 
             return url('/admin/dashboard');

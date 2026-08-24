@@ -10,7 +10,23 @@ class NotificationController extends AppBaseController
 {
     public function latestNotifications(): JsonResponse
     {
-        $notifications = getNotification(Notification::ADMIN)->map(function (Notification $notification) {
+        $notificationFor = Notification::ADMIN;
+
+        if (getLoggedInUser()->hasRole('Candidate')) {
+            $notificationFor = Notification::CANDIDATE;
+        } elseif (getLoggedInUser()->hasRole('Employer')) {
+            $notificationFor = Notification::EMPLOYER;
+        }
+
+        $notifications = Notification::whereNotificationFor($notificationFor)
+            ->where('user_id', getLoggedInUserId())
+            ->orderByDesc('created_at')
+            ->take(10)
+            ->get();
+
+        $unreadCount = $notifications->whereNull('read_at')->count();
+
+        $notificationItems = $notifications->map(function (Notification $notification) {
             return [
                 'id' => $notification->id,
                 'title' => $notification->title,
@@ -18,12 +34,13 @@ class NotificationController extends AppBaseController
                 'icon' => getNotificationIcon($notification->type),
                 'url' => getNotificationUrl($notification),
                 'created_at' => $notification->created_at->diffForHumans(null, true),
+                'is_read' => ! empty($notification->read_at),
             ];
         });
 
         return $this->sendResponse([
-            'count' => $notifications->count(),
-            'notifications' => $notifications,
+            'count' => $unreadCount,
+            'notifications' => $notificationItems,
         ], __('messages.notification.notifications'));
     }
 

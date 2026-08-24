@@ -8,7 +8,7 @@
 @section('content')
     <div class="container-fluid">
         <div class="d-flex flex-column">
-            @include('flash::message')
+            @include('layouts.flash-toasts')
             <div class="card">
                 <div class="card-body">
                     {{ Form::open(['route' => 'notification.settings.update']) }}

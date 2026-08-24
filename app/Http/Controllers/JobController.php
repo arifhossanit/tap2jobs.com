@@ -512,11 +512,15 @@ class JobController extends AppBaseController
                         $user->first_name.' '.$user->last_name.' mark '.$employerUser->job_title.' as Featured.',
                     ]) : false;
             }
-            if ($user->hasRole('Employer')) {
+            $adminFeaturedSetting = NotificationSetting::where('key', 'MARK_JOB_FEATURED_ADMIN')
+                ->where('type', 'admin')
+                ->first();
+
+            if ($user->hasRole('Employer') && (int) ($adminFeaturedSetting?->value ?? 0) === 1) {
                 addNotification([
                     Notification::MARK_JOB_FEATURED_ADMIN,
-                    1,
-                    3,
+                    \App\Models\User::role('Admin')->value('id') ?? 1,
+                    Notification::ADMIN,
                     $employerUser->job_title.' is featured',
                 ]);
             }

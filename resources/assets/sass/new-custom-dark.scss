@@ -364,6 +364,10 @@
 }
 
 /* Admin Sidebar Width & Toggle Adjustment */
+.aside-menu-container__aside-menu .aside-submenu .aside-menu-title {
+    font-weight: 500;
+}
+
 @media (min-width: 1200px) {
     .aside-menu-container {
         width: 290px !important;

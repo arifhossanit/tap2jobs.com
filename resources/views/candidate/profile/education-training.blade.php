@@ -1319,8 +1319,6 @@
                     .catch(function (error) {
                         if (typeof displayErrorMessage === 'function') {
                             displayErrorMessage(error.message);
-                        } else {
-                            alert(error.message);
                         }
                     });
                 };

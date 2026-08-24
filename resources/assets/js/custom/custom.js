@@ -605,6 +605,15 @@ function escapeNotificationText(value) {
     return $("<div>").text(value || "").html();
 }
 
+function adminNotificationEmptyState() {
+    return (
+        '<div class="admin-notification-empty d-flex flex-column align-items-center justify-content-center text-center py-8" data-height="400">' +
+        '<i class="fa-regular fa-bell-slash text-gray-500 fs-1 mb-3"></i>' +
+        '<p class="fs-6 fw-semibold text-gray-700 mb-0">No notification found</p>' +
+        "</div>"
+    );
+}
+
 function renderAdminNotifications(notificationData) {
     if (!adminNotificationList.length || !notificationData) {
         return;
@@ -616,23 +625,31 @@ function renderAdminNotifications(notificationData) {
     $("#counter")
         .text(notificationCount)
         .toggleClass("d-none", notificationCount === 0);
-    $("#readAllNotificationWrapper").toggleClass("d-none", notificationCount === 0);
 
-    if (notificationCount === 0) {
-        adminNotificationList.html(
-            '<div class="empty-state fs-6 text-gray-800 fw-bold text-center mt-5" data-height="400"><p>No notifications found</p></div>'
-        );
+    if (notifications.length === 0) {
+        adminNotificationList.html(adminNotificationEmptyState());
 
         return;
     }
 
     let notificationItems = notifications
         .map(function(notification) {
+            let isRead = notification.is_read;
+            let itemStyle = isRead
+                ? "background: transparent; opacity: 0.7;"
+                : "background: rgba(101, 113, 255, 0.08);";
+
             return (
-                '<div class="d-flex position-relative mb-5 readNotification cursor-pointer" data-id="' +
+                '<div class="admin-notification-item ' +
+                (isRead ? "admin-notification-read" : "admin-notification-unread") +
+                ' d-flex position-relative mb-3 p-3 rounded readNotification cursor-pointer" style="' +
+                itemStyle +
+                '" data-id="' +
                 notification.id +
                 '" data-url="' +
                 escapeNotificationText(notification.url) +
+                '" data-read="' +
+                (isRead ? "1" : "0") +
                 '">' +
                 '<span class="me-5 text-primary fs-2 icon-label"><i class="' +
                 escapeNotificationText(notification.icon) +
@@ -676,52 +693,38 @@ listenClick(".readNotification", function(e) {
     let notificationId = $(this).data("id");
     let notificationUrl = $(this).data("url");
     let notification = $(this);
+    let wasUnread = String(notification.data("read")) !== "1";
     $.ajax({
         type: "POST",
         url: route("read-notification", notificationId),
         data: { notificationId: notificationId },
         success: function(response) {
             notificationUrl = notificationUrl || (response.data ? response.data.url : "");
-            notification.remove();
-            let notificationCounter = document.getElementsByClassName(
-                "readNotification"
-            ).length;
+            notification
+                .removeClass("admin-notification-unread")
+                .css({
+                    background: "transparent",
+                    opacity: 0.7
+                });
+            notification.attr("data-read", "1").data("read", "1");
+            let notificationCounter = parseInt($("#counter").text(), 10) || 0;
+            notificationCounter = wasUnread
+                ? Math.max(notificationCounter - 1, 0)
+                : notificationCounter;
             $("#counter").text(notificationCounter);
             if (notificationCounter == 0) {
-                $(".empty-state").removeClass("d-none");
                 $(".notification-count").addClass("d-none");
                 $("#counter").text(notificationCounter);
-                $("#readAllNotificationWrapper").addClass("d-none");
             }
 
             if (notificationUrl) {
-                window.location.href = notificationUrl;
+                setTimeout(function() {
+                    window.location.href = notificationUrl;
+                }, 140);
                 return;
             }
 
             displaySuccessMessage(Lang.get("js.notification_read"));
-        },
-        error: function(error) {
-            manageAjaxErrors(error);
-        }
-    });
-});
-
-listenClick("#readAllNotification", function(e) {
-    e.preventDefault();
-    $.ajax({
-        type: "POST",
-        url: route("read-all-notification"),
-        success: function() {
-            displaySuccessMessage(Lang.get("js.all_notification_read"));
-            $(".readNotification").remove();
-            let notificationCounter = document.getElementsByClassName(
-                "notification"
-            ).length;
-            $(".empty-state").removeClass("d-none");
-            $(".notification-count").addClass("d-none");
-            $("#counter").text(notificationCounter);
-            $("#readAllNotificationWrapper").addClass("d-none");
         },
         error: function(error) {
             manageAjaxErrors(error);

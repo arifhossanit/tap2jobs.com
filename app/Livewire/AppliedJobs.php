@@ -38,17 +38,17 @@ class AppliedJobs extends Component
 
     public function nextPage($lastPage)
     {
-        if ($this->page < $lastPage) {
-            $this->page = $this->page + 1;
-            $this->setPage($this->page);
+        $currentPage = $this->getPage();
+        if ($currentPage < $lastPage) {
+            $this->setPage($currentPage + 1);
         }
     }
 
-    public function previousPage()
+    public function previousPage($pageName = 'page')
     {
-        if ($this->page > 1) {
-            $this->page = $this->page - 1;
-            $this->setPage($this->page);
+        $currentPage = $this->getPage();
+        if ($currentPage > 1) {
+            $this->setPage($currentPage - 1);
         }
     }
 
@@ -83,14 +83,6 @@ class AppliedJobs extends Component
 
         $appliedJob->delete();
         $this->dispatch('deleted');
-
-//        $appliedJob = JobApplication::with('applicationSchedule')->findOrFail($id);
-//        if ($appliedJob->applicationSchedule->count() > 0) {
-//            $this->dispatchBrowserEvent('notDeleted');
-//        } else {
-//            $appliedJob->delete($id);
-//            $this->dispatchBrowserEvent('deleted');
-//        }
     }
 
     public function updatingsearchByAppliedJob()
@@ -131,8 +123,8 @@ class AppliedJobs extends Component
         $all = $query->paginate($this->perPage);
         $currentPage = $all->currentPage();
         $lastPage = $all->lastPage();
-        if ($currentPage > $lastPage) {
-            $this->page = $lastPage;
+        if ($currentPage > $lastPage && $lastPage > 0) {
+            $this->setPage($lastPage);
             $all = $query->paginate($this->perPage);
         }
 

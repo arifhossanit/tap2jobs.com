@@ -2191,6 +2191,42 @@
   min-height: 38px;
 }
 
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0.25rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 0.7rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0.25rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
 .candidate-portfolio-empty + .candidate-portfolio-form,
 .candidate-portfolio-item + .candidate-portfolio-form {
   border-top: 1px solid #dfe3ea;
@@ -5539,6 +5575,10 @@
 }
 
 /* Admin Sidebar Width & Toggle Adjustment */
+.aside-menu-container__aside-menu .aside-submenu .aside-menu-title {
+  font-weight: 500;
+}
+
 @media (min-width: 1200px) {
   .aside-menu-container {
     width: 290px !important;
@@ -5637,4 +5677,8 @@
     right: 0 !important;
     left: auto !important;
   }
+}
+
+.page-item.active .page-link {
+  color: #fff !important;
 }

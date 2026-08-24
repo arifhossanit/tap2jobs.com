@@ -24,7 +24,7 @@
             <li class="px-xxl-3 px-2 d-flex align-items-stretch">
                 <div class="dropdown d-flex align-items-stretch">
                     <button type="button"
-                            class="btn dropdown-toggle px-0 text-gray-600 d-flex align-items-center"
+                            class="btn dropdown-toggle employer-language-toggle px-0 text-gray-600 d-flex align-items-center"
                             id="employerLanguageDropdown"
                             data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa-solid fa-globe {{ checkLanguageSession() == 'ar' ? 'ms-1' : 'me-1' }}"></i>
@@ -51,11 +51,11 @@
                     </ul>
                 </div>
             </li>
-            <li class="px-xxl-3 px-2 d-flex align-items-stretch">
+            {{-- <li class="px-xxl-3 px-2 d-flex align-items-stretch">
                 <a href="{{ route('theme.mode') }}" class="d-flex align-items-center" >
                     <i class="fas user-check-icon {{ getLoggedInUser()->theme_mode ? 'fa-sun' : 'fa-moon' }} fs-2"></i>
                 </a>
-            </li>
+            </li> --}}
             <li class="px-xxl-3 px-2 d-flex align-items-stretch">
                 <div class="dropdown custom-dropdown d-flex align-items-stretch">
                     <button class="btn dropdown-toggle hide-arrow p-0 d-flex align-items-center"
@@ -71,11 +71,11 @@
                             @endif
                         </div>
                     </button>
-                    <div class="dropdown-menu py-0" aria-labelledby="employerNotificationDropdown">
+                    <div class="dropdown-menu dropdown-menu-end py-0" aria-labelledby="employerNotificationDropdown" style="min-width: 320px;">
                         <div class="{{ checkLanguageSession() == 'ar' ? 'text-end' : 'text-start' }} border-bottom py-4 px-7">
                             <h3 class="text-gray-900 mb-0">{{__('messages.notification.notifications')}}</h3>
                         </div>
-                        <div class="px-7 mt-5 inner-scroll height-270">
+                        <div class="px-7 py-5 employer-notification-list" style="max-height: 390px; overflow-y: auto; overflow-x: hidden;">
                             @if($notificationCount > 0)
                                 @foreach($notifications as $notification)
                                     <div class="d-flex position-relative mb-5 readNotification cursor-pointer"
@@ -90,21 +90,17 @@
                                     </div>
                                 @endforeach
                                 @else
-                                    <div class="empty-state fs-6 text-gray-800 fw-bold text-center mt-5" data-height="400">
-                                        <p>{{ __('messages.notification.empty_notifications') }}</p>
+                                    <div class="empty-state d-flex flex-column align-items-center justify-content-center text-center py-8" data-height="400">
+                                        <i class="fa-regular fa-bell-slash text-gray-500 fs-1 mb-3"></i>
+                                        <p class="fs-6 fw-semibold text-gray-700 mb-0">No notification found</p>
                                     </div>
                                 @endif
-                                <div class="empty-state fs-6 text-gray-800 fw-bold text-center mt-5 d-none"
+                                <div class="empty-state d-flex flex-column align-items-center justify-content-center text-center py-8 d-none"
                                      data-height="400">
-                                    <p>{{ __('messages.notification.empty_notifications') }}</p>
+                                    <i class="fa-regular fa-bell-slash text-gray-500 fs-1 mb-3"></i>
+                                    <p class="fs-6 fw-semibold text-gray-700 mb-0">No notification found</p>
                                 </div>
                         </div>
-                        @if($notificationCount > 0)
-                            <div class="text-center border-top p-4">
-                                <h5 class="text-primary mb-0 fs-5 cursor-pointer"
-                                    id="readAllNotification">{{ __('messages.notification.mark_all_as_read') }}</h5>
-                            </div>
-                        @endif
                     </div>
 
                 </div>
@@ -120,13 +116,13 @@
                                  class="img-fluid" alt="{{ $employerHeaderName }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;">
                         </div>
                     </button>
-                    <div class="dropdown-menu border p-4 pb-4" aria-labelledby="employerUserDropdown"
-                         data-bs-auto-close="outside" style="min-width: 250px;">
+                    <div class="dropdown-menu border p-4 pb-4 employer-user-dropdown-menu" aria-labelledby="employerUserDropdown"
+                         data-bs-auto-close="outside" style="width: 250px; max-width: 250px;">
                         <div class="d-flex align-items-center border-bottom pb-4 mb-3 text-start">
                             <div class="image image-circle image-tiny me-3 flex-shrink-0 mb-0" style="width: 44px; height: 44px;">
                                 <img src="{{ $loggedInEmployer->avatar }}" class="img-fluid" alt="{{ $employerHeaderName }}" style="width: 44px; height: 44px; object-fit: cover; border-radius: 50%;">
                             </div>
-                            <div class="overflow-hidden ms-1">
+                            <div class="overflow-hidden ms-1 flex-grow-1" style="min-width: 0;">
                                 <h3 class="text-gray-900 fs-6 fw-bold mb-0 text-truncate">{{ $employerHeaderName }}</h3>
                                 <h4 class="mb-0 fw-400 fs-7 text-muted text-truncate">{{ $loggedInEmployer->email }}</h4>
                             </div>

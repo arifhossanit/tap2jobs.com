@@ -1,16 +1,5 @@
-<div class="listing-skeleton">
-    <div class="card">
-        <div class="card-content">
-        </div>
-        <div class="card-content my-5">
-            <div class="table pulsate rounded-1"> </div>
-            <div class="row">
-                @for ($i = 1; $i <= 32; $i++)
-                    <div class="col-3 mb-5">
-                        <div class="column-box pulsate rounded-1"> </div>
-                    </div>
-                @endfor
-            </div>
-        </div>
-    </div>
+@php($isDarkSkeleton = auth()->check() && getLoggedInUser()->theme_mode)
+<div class="listing-skeleton listing-skeleton-modern {{ $isDarkSkeleton ? 'admin-dark-listing-skeleton' : 'bg-white border-light' }} p-4 rounded-3 shadow-sm border">
+    @include('livewire_lazy_load.partials.listing-skeleton-style')
+    @include('livewire_lazy_load.partials.listing-skeleton-table', ['isDarkSkeleton' => $isDarkSkeleton])
 </div>

@@ -109,21 +109,37 @@
                                 <ul class="navbar-nav align-items-center py-2 py-lg-0 front-user-nav d-flex flex-row align-items-center gap-2">
                                     @auth
                                         @php
-                                            $notifications = getNotification(\App\Models\Notification::CANDIDATE);
+                                            $notificationFor = \App\Models\Notification::CANDIDATE;
                                             if(Auth::user()->hasRole('Employer')) {
-                                                $notifications = getNotification(\App\Models\Notification::EMPLOYER);
+                                                $notificationFor = \App\Models\Notification::EMPLOYER;
                                             }
-                                            $unreadCount = $notifications ? $notifications->count() : 0;
+                                            $notifications = \App\Models\Notification::whereNotificationFor($notificationFor)
+                                                ->where('user_id', getLoggedInUserId())
+                                                ->orderByDesc('created_at')
+                                                ->take(10)
+                                                ->get();
+                                            $unreadCount = $notifications->whereNull('read_at')->count();
                                         @endphp
+                                        <style>
+                                            .front-notification-badge {
+                                                top: 4px !important;
+                                                right: 0 !important;
+                                                left: auto !important;
+                                                transform: none !important;
+                                                min-width: 18px;
+                                                height: 18px;
+                                                padding: 0 5px;
+                                                font-size: 11px;
+                                                line-height: 18px;
+                                            }
+                                        </style>
                                         <li class="nav-item dropdown front-user-dropdown me-2">
                                             <button class="btn dropdown-toggle front-user-dropdown-toggle d-flex align-items-center position-relative p-2"
                                                     type="button" id="frontNotificationDropdown" aria-expanded="false" style="border:none; background:transparent;">
                                                 <i class="fa-solid fa-bell fs-4 text-primary"></i>
-                                                @if($unreadCount > 0)
-                                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger fs-8 p-1" style="min-width: 18px; height: 18px; line-height: 10px;" id="candidateNotificationCount">
-                                                        {{ $unreadCount }}
-                                                    </span>
-                                                @endif
+                                                <span class="position-absolute front-notification-badge badge rounded-circle bg-danger {{ $unreadCount == 0 ? 'd-none' : '' }}" id="candidateNotificationCount">
+                                                    {{ $unreadCount }}
+                                                </span>
                                             </button>
                                              <div class="dropdown-menu dropdown-menu-end front-user-dropdown-menu p-0 shadow-lg border-0 rounded-3"
                                                   style="width: 320px; max-height: 420px; overflow: hidden;"
@@ -132,14 +148,11 @@
                                                      <h6 class="fw-bold mb-0 text-dark fs-7 d-flex align-items-center gap-2">
                                                          <i class="fa-solid fa-bell text-primary"></i> {{ __('messages.notification.notifications') }}
                                                      </h6>
-                                                     @if($unreadCount > 0)
-                                                         <a href="javascript:void(0)" class="text-primary fs-8 text-decoration-none read-all-notification-btn">{{ __('messages.notification.mark_all_as_read') ?? 'Mark all as read' }}</a>
-                                                     @endif
                                                  </div>
                                                  <div class="notification-scroll-body" style="max-height: 320px; overflow-y: auto;">
                                                      @if($notifications && $notifications->isNotEmpty())
                                                          @foreach($notifications as $notification)
-                                                             <div class="dropdown-item border-bottom py-2 px-3 text-wrap d-flex align-items-start gap-2 read-notification-item" data-id="{{ $notification->id }}" data-url="{{ getNotificationUrl($notification) }}" style="cursor: pointer; transition: background 0.2s ease, opacity 0.2s ease;">
+                                                             <div class="dropdown-item border-bottom py-2 px-3 text-wrap d-flex align-items-start gap-2 read-notification-item" data-id="{{ $notification->id }}" data-url="{{ getNotificationUrl($notification) }}" data-read="{{ $notification->read_at ? '1' : '0' }}" style="cursor: pointer; transition: background 0.2s ease, opacity 0.2s ease; background: {{ $notification->read_at ? 'transparent' : 'rgba(101, 113, 255, 0.08)' }}; opacity: {{ $notification->read_at ? '0.7' : '1' }};">
                                                                  <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center mt-1" style="width: 28px; height: 28px; flex-shrink: 0;">
                                                                      <i class="{{ getNotificationIcon($notification->type) }}" style="font-size: 0.75rem;"></i>
                                                                  </div>
@@ -150,9 +163,9 @@
                                                              </div>
                                                          @endforeach
                                                      @else
-                                                         <div class="p-4 text-center text-muted">
-                                                             <i class="fa-regular fa-bell-slash fs-3 mb-2 d-block text-secondary"></i>
-                                                             <span class="fs-7">{{ __('messages.notification.empty_notifications') ?? 'No notifications found' }}</span>
+                                                         <div class="p-4 text-center text-muted d-flex flex-column align-items-center justify-content-center">
+                                                             <i class="fa-regular fa-bell-slash fs-3 mb-2 text-secondary"></i>
+                                                             <span class="fs-7">No notification found</span>
                                                          </div>
                                                      @endif
                                                  </div>

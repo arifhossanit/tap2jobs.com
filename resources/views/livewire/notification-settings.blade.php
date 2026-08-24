@@ -24,7 +24,7 @@
 <!-- Submit Field -->
     <div class="separator my-5"></div>
     <div class="d-flex justify-content-end">
-        {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary me-3','id' => 'jobsSaveBtn']) }}
+        {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary me-3','id' => 'notificationSettingsSaveBtn']) }}
         <a href="{{ route('notification.settings.index') }}"
            class="btn btn-secondary me-2">{{__('messages.common.cancel')}}</a>
     </div>

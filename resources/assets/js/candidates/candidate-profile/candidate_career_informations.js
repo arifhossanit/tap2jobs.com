@@ -1179,7 +1179,7 @@ function loadCandidateCareerInformationData() {
 
     listenClick('.delete-education', function (event) {
         let educationId = $(event.currentTarget).data('id');
-        deleteItem(route('candidate.update-education', educationId), Lang.get('js.education'),
+        deleteItem(route('education.destroy', educationId), Lang.get('js.education'),
             '.candidate-education-container', '.candidate-education',
             '#notfoundEducation');
     });

@@ -449,13 +449,105 @@
 
             document.addEventListener('DOMContentLoaded', closeCandidateHeaderDropdowns);
             document.addEventListener('DOMContentLoaded', restoreCandidateHeaderZIndex);
-            $(document).on('click', '.read-notification-item', function (e) {
+            function candidateNotificationEmptyState() {
+                return $('<div/>', {
+                    class: 'candidate-notification-empty d-flex flex-column align-items-center justify-content-center text-center py-8'
+                }).append(
+                    $('<i/>', { class: 'fa-regular fa-bell-slash text-gray-500 fs-1 mb-3' }),
+                    $('<p/>', { class: 'fs-6 fw-semibold text-gray-700 mb-0', text: 'No notification found' })
+                );
+            }
+
+            function buildCandidateNotificationItem(notification, isFrontHeader) {
+                let isRead = !!notification.is_read;
+                let item = $('<div/>', {
+                    class: isFrontHeader
+                        ? 'dropdown-item border-bottom py-2 px-3 text-wrap d-flex align-items-start gap-2 read-notification-item'
+                        : 'candidate-notification-item ' + (isRead ? 'candidate-notification-read' : 'candidate-notification-unread') + ' d-flex position-relative mb-5 p-3 rounded candidateReadNotification cursor-pointer',
+                    'data-id': notification.id,
+                    'data-url': notification.url || '',
+                    'data-read': isRead ? '1' : '0'
+                }).css({
+                    background: isRead ? 'transparent' : 'rgba(101, 113, 255, 0.08)',
+                    opacity: isRead ? '0.7' : '1'
+                });
+
+                item.append(
+                    isFrontHeader
+                        ? $('<div/>', { class: 'rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center mt-1' }).css({ width: '28px', height: '28px', flexShrink: 0 }).append($('<i/>', { class: notification.icon || 'fa fa-inbox' }).css('font-size', '0.75rem'))
+                        : $('<span/>', { class: 'me-5 text-primary fs-2 icon-label' }).append($('<i/>', { class: notification.icon || 'fa fa-inbox' })),
+                    $('<div/>').append(
+                        isFrontHeader
+                            ? $('<p/>', { class: 'mb-1 fw-semibold text-dark lh-sm', text: notification.title || '' }).css('font-size', '0.8125rem')
+                            : $('<h5/>', { class: 'text-gray-900 fs-6 mb-2', text: notification.title || '' }),
+                        isFrontHeader
+                            ? $('<span/>', { class: 'text-muted', text: notification.created_at || '' }).css('font-size', '0.725rem').prepend($('<i/>', { class: 'fa-regular fa-clock me-1' }))
+                            : $('<h6/>', { class: 'text-gray-600 fs-small fw-light mb-0', text: notification.created_at || '' })
+                    )
+                );
+
+                return item;
+            }
+
+            function renderCandidateNotifications(notificationData) {
+                let list = $('.candidate-notification-list');
+                let isFrontHeader = false;
+                if (!list.length) {
+                    list = $('.notification-scroll-body');
+                    isFrontHeader = true;
+                }
+                let counter = $('#candidateNotificationCount');
+                let count = parseInt(notificationData.count || 0);
+
+                counter.text(count).toggleClass('d-none', count === 0);
+                list.empty();
+
+                if (!notificationData.notifications || notificationData.notifications.length === 0) {
+                    list.append(candidateNotificationEmptyState());
+                    return;
+                }
+
+                notificationData.notifications.forEach(function (notification) {
+                    list.append(buildCandidateNotificationItem(notification, isFrontHeader));
+                });
+            }
+
+            function refreshCandidateNotifications() {
+                $.ajax({
+                    url: route('notifications.latest'),
+                    type: 'GET',
+                    success: function (result) {
+                        if (result.success) {
+                            renderCandidateNotifications(result.data);
+                        }
+                    }
+                });
+            }
+
+            if ($('#candidateNotificationDropdown').length) {
+                setInterval(refreshCandidateNotifications, 30000);
+            }
+
+            $(document).on('click', '.candidateReadNotification, .read-notification-item', function (e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
                 let id = $(this).attr('data-id');
                 let targetUrl = $(this).attr('data-url');
                 let element = $(this);
-                
-                // Visual effect: change style to indicate item is being processed & read
-                element.css({ 'opacity': '0.5', 'pointer-events': 'none', 'background-color': '#f8fafc' });
+                let wasUnread = element.attr('data-read') !== '1';
+
+                element
+                    .attr('data-read', '1')
+                    .removeClass('candidate-notification-unread')
+                    .addClass('candidate-notification-read')
+                    .css({ opacity: '0.7', backgroundColor: 'transparent' });
+
+                if (wasUnread) {
+                    let counter = $('#candidateNotificationCount');
+                    let count = parseInt(counter.text() || '0');
+                    count = count > 0 ? count - 1 : 0;
+                    counter.text(count).toggleClass('d-none', count === 0);
+                }
 
                 $.ajax({
                     url: route('read-notification', id),
@@ -464,41 +556,30 @@
                         '_token': $('meta[name="csrf-token"]').attr('content'),
                     },
                     success: function (result) {
-                        let count = parseInt($('#candidateNotificationCount').text());
-                        count = count > 0 ? count - 1 : 0;
-                        if (count === 0) {
-                            $('#candidateNotificationCount').remove();
-                            $('.read-all-notification-btn').remove();
-                        } else {
-                            $('#candidateNotificationCount').text(count);
-                        }
-                        if (targetUrl) {
-                            window.location.href = targetUrl;
-                        } else {
-                            element.fadeOut(300, function() { $(this).remove(); });
-                        }
-                    },
-                    error: function() {
-                        if (targetUrl) {
-                            window.location.href = targetUrl;
-                        }
-                    }
-                });
-            });
+                        let responseUrl = result.data && result.data.url ? result.data.url : '';
+                        let redirectUrl = targetUrl || responseUrl;
 
-            $(document).on('click', '.read-all-notification-btn', function (e) {
-                $.ajax({
-                    url: route('read-all-notification'),
-                    type: 'POST',
-                    data: {
-                        '_token': $('meta[name="csrf-token"]').attr('content'),
-                    },
-                    success: function (result) {
-                        if (result.success) {
-                            $('.notification-scroll-body').html('<div class="p-4 text-center text-muted"><i class="fa-regular fa-bell-slash fs-3 mb-2 d-block text-secondary"></i><span class="fs-7">No notifications found</span></div>');
-                            $('#candidateNotificationCount').remove();
-                            $('.read-all-notification-btn').remove();
+                        if (redirectUrl) {
+                            setTimeout(function () {
+                                window.location.href = redirectUrl;
+                            }, 140);
                         }
+                    },
+                    error: function () {
+                        if (wasUnread) {
+                            let counter = $('#candidateNotificationCount');
+                            let count = parseInt(counter.text() || '0') + 1;
+                            counter.text(count).toggleClass('d-none', count === 0);
+                        }
+
+                        element
+                            .attr('data-read', wasUnread ? '0' : '1')
+                            .toggleClass('candidate-notification-unread', wasUnread)
+                            .toggleClass('candidate-notification-read', !wasUnread)
+                            .css({
+                                opacity: wasUnread ? '1' : '0.7',
+                                backgroundColor: wasUnread ? 'rgba(101, 113, 255, 0.08)' : 'transparent'
+                            });
                     }
                 });
             });

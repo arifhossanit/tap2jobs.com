@@ -115,6 +115,10 @@ class JobApplicationController extends AppBaseController
                         $candidateUserId,
                         Notification::CANDIDATE,
                         'Your application is Rejected for '.$jobTitle,
+                        [
+                            'job_application_id' => $jobApplication->id,
+                            'job_id' => $jobApplication->job_id,
+                        ],
                     ]);
                 }
             } elseif ($status == JobApplication::COMPLETE) {
@@ -126,6 +130,10 @@ class JobApplicationController extends AppBaseController
                         $candidateUserId,
                         Notification::CANDIDATE,
                         'You are selected for '.$jobTitle,
+                        [
+                            'job_application_id' => $jobApplication->id,
+                            'job_id' => $jobApplication->job_id,
+                        ],
                     ]);
                 }
             } elseif ($status == JobApplication::SHORT_LIST) {
@@ -137,6 +145,10 @@ class JobApplicationController extends AppBaseController
                         $candidateUserId,
                         Notification::CANDIDATE,
                         'Your application is Shortlisted for '.$jobTitle,
+                        [
+                            'job_application_id' => $jobApplication->id,
+                            'job_id' => $jobApplication->job_id,
+                        ],
                     ]);
                 }
             }
@@ -203,6 +215,10 @@ class JobApplicationController extends AppBaseController
             $candidateUser->id,
             Notification::CANDIDATE,
             "Your application for \"{$jobTitle}\" advanced to stage: {$stageName}",
+            [
+                'job_application_id' => $jobApplication->id,
+                'job_id' => $jobApplication->job_id,
+            ],
         ]);
 
         // Dispatch Queueable Email to Candidate

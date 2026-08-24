@@ -10,8 +10,24 @@
 @section('content')
     <div class="container-fluid">
         <div class="d-flex flex-column">
-            @include('flash::message')
-            @include('layouts.errors')
+            @include('layouts.flash-toasts')
+            @if($errors->any())
+                <script>
+                    (function () {
+                        const showSettingsErrorToast = function () {
+                            if (typeof displayErrorMessage === 'function') {
+                                displayErrorMessage(@json($errors->first()));
+                            }
+                        };
+
+                        if (document.readyState === 'loading') {
+                            document.addEventListener('DOMContentLoaded', showSettingsErrorToast, { once: true });
+                        } else {
+                            showSettingsErrorToast();
+                        }
+                    })();
+                </script>
+            @endif
             <div class="alert alert-danger fs-4 text-white d-flex align-items-center d-none" id="validationErrorsBox">
                 <i class="fa-solid fa-face-frown me-5"></i>
             </div>
