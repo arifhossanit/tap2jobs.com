@@ -258,8 +258,6 @@
             </div>
         </div>
     </div>
-    {{ Illuminate\Support\Facades\Log::info(Config::get('app.locale')) }}
-    {{ Illuminate\Support\Facades\Log::info(getLoggedInUser()->language) }}
     @include('user_profile.edit_profile_modal')
     @include('user_profile.change_password_modal')
 

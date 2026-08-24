@@ -28,7 +28,6 @@ function loadJobDetailsData() {
                 'jobId': jobId,
             },
             success: function (result) {
-                console.log('sd')
                 if (result.success) {
                     $('#favorite').empty();
                     (result.data) ? $('#favorite').html('<i class="fa-solid fa-bookmark featured"></i>')

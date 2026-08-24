@@ -43,8 +43,12 @@ class SettingController extends AppBaseController
         // $envData['mail']['MAIL_PASSWORD'] = str_replace('"', '', $envData['mail']['MAIL_PASSWORD']);
         // $envData['mail']['MAIL_FROM_ADDRESS'] = str_replace('"', '', $envData['mail']['MAIL_FROM_ADDRESS']);
         $setting = Setting::pluck('value', 'key')->toArray();
-        $setting['phone'] = preparePhoneNumber($setting['phone'], $setting['region_code']);
+        $setting['phone'] = preparePhoneNumber($setting['phone'] ?? '', $setting['region_code'] ?? '');
         $sectionName = ($request->section === null) ? 'general' : $request->section;
+        $allowedSections = ['general', 'front_office_details', 'social_settings', 'about_us', 'env_setting'];
+        if (! in_array($sectionName, $allowedSections, true)) {
+            $sectionName = 'general';
+        }
         $envSetting = EnvSetting::pluck('value', 'key')->toArray();
         $languages = Language::toBase()->pluck('language','iso_code');
         $countries = getCountries();

@@ -102,14 +102,13 @@ listenClick('.job-application-status-reject', function (event) {
     let id = $(this).attr('data-id');
 
     $.ajax({
-        url: route('employer.PendingJobs.AddReason'),
+        url: route('admin.PendingJobs.AddReason'),
         method: 'get',
         data: {
             id: id,
         },
         success: function (result) {
             if (result.success) {
-                console.log(result.data);
                 $('.pending_job_title').text(result.data.job_title);
                 $('#showReason').text(result.data.reject_reason);
                 $('#reasonshowModal').appendTo('body').modal('show');

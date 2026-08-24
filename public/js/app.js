@@ -34511,6 +34511,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
+/***/ "./resources/assets/sass/candidate-dashboard.scss"
+/*!********************************************************!*\
+  !*** ./resources/assets/sass/candidate-dashboard.scss ***!
+  \********************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
 /***/ "./resources/assets/sass/custom-auth.scss"
 /*!************************************************!*\
   !*** ./resources/assets/sass/custom-auth.scss ***!
@@ -42667,6 +42680,7 @@ module.exports = axios;
 /******/ 			"/js/app": 0,
 /******/ 			"assets/css/web_contact": 0,
 /******/ 			"assets/css/custom-auth": 0,
+/******/ 			"css/candidate-dashboard": 0,
 /******/ 			"assets/css/custom-dark": 0,
 /******/ 			"assets/css/custom": 0
 /******/ 		};
@@ -42718,11 +42732,12 @@ module.exports = axios;
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	__webpack_require__.O(undefined, ["assets/css/web_contact","assets/css/custom-auth","assets/css/custom-dark","assets/css/custom"], () => (__webpack_require__("./resources/js/app.js")))
-/******/ 	__webpack_require__.O(undefined, ["assets/css/web_contact","assets/css/custom-auth","assets/css/custom-dark","assets/css/custom"], () => (__webpack_require__("./resources/assets/sass/new-custom.scss")))
-/******/ 	__webpack_require__.O(undefined, ["assets/css/web_contact","assets/css/custom-auth","assets/css/custom-dark","assets/css/custom"], () => (__webpack_require__("./resources/assets/sass/new-custom-dark.scss")))
-/******/ 	__webpack_require__.O(undefined, ["assets/css/web_contact","assets/css/custom-auth","assets/css/custom-dark","assets/css/custom"], () => (__webpack_require__("./resources/assets/sass/custom-auth.scss")))
-/******/ 	let __webpack_exports__ = __webpack_require__.O(undefined, ["assets/css/web_contact","assets/css/custom-auth","assets/css/custom-dark","assets/css/custom"], () => (__webpack_require__("./resources/assets/sass/web_contact.scss")))
+/******/ 	__webpack_require__.O(undefined, ["assets/css/web_contact","assets/css/custom-auth","css/candidate-dashboard","assets/css/custom-dark","assets/css/custom"], () => (__webpack_require__("./resources/js/app.js")))
+/******/ 	__webpack_require__.O(undefined, ["assets/css/web_contact","assets/css/custom-auth","css/candidate-dashboard","assets/css/custom-dark","assets/css/custom"], () => (__webpack_require__("./resources/assets/sass/new-custom.scss")))
+/******/ 	__webpack_require__.O(undefined, ["assets/css/web_contact","assets/css/custom-auth","css/candidate-dashboard","assets/css/custom-dark","assets/css/custom"], () => (__webpack_require__("./resources/assets/sass/new-custom-dark.scss")))
+/******/ 	__webpack_require__.O(undefined, ["assets/css/web_contact","assets/css/custom-auth","css/candidate-dashboard","assets/css/custom-dark","assets/css/custom"], () => (__webpack_require__("./resources/assets/sass/candidate-dashboard.scss")))
+/******/ 	__webpack_require__.O(undefined, ["assets/css/web_contact","assets/css/custom-auth","css/candidate-dashboard","assets/css/custom-dark","assets/css/custom"], () => (__webpack_require__("./resources/assets/sass/custom-auth.scss")))
+/******/ 	let __webpack_exports__ = __webpack_require__.O(undefined, ["assets/css/web_contact","assets/css/custom-auth","css/candidate-dashboard","assets/css/custom-dark","assets/css/custom"], () => (__webpack_require__("./resources/assets/sass/web_contact.scss")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()

@@ -188,8 +188,6 @@ function loadSettingsData() {
         aboutUsQuill.root.innerHTML = element.value;
     }
 
-    console.log($('#defaultCountryData'));
-
     if ($('#defaultCountryData').length) {
         let input = document.querySelector('#defaultCountryData')
         let intl = window.intlTelInput(input, {

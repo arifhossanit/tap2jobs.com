@@ -510,6 +510,7 @@ class JobController extends AppBaseController
                         $employerUser->company->user->id,
                         Notification::EMPLOYER,
                         $user->first_name.' '.$user->last_name.' mark '.$employerUser->job_title.' as Featured.',
+                        ['job_id' => $employerUser->id],
                     ]) : false;
             }
             $adminFeaturedSetting = NotificationSetting::where('key', 'MARK_JOB_FEATURED_ADMIN')
@@ -601,6 +602,7 @@ class JobController extends AppBaseController
                 $job->company->user->id,
                 Notification::EMPLOYER,
                 $user->first_name.' '.$user->last_name.' have reject your job : '.$job->job_title,
+                ['job_id' => $job->id],
             ]);
             return $this->sendSuccess(__('messages.pending_jobs.successfully_reject'));
         }else{
@@ -611,6 +613,7 @@ class JobController extends AppBaseController
                 $job->company->user->id,
                 Notification::EMPLOYER,
                 $user->first_name.' '.$user->last_name.' have approved your job : '.$job->job_title,
+                ['job_id' => $job->id],
             ]);
             return $this->sendSuccess(__('messages.pending_jobs.successfully_accepted'));
 

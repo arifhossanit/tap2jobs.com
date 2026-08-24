@@ -176,6 +176,134 @@
     })
 
 </script>
+<script>
+    (function () {
+        function employerNotificationEmptyState() {
+            return $('<div/>', {
+                class: 'employer-notification-empty d-flex flex-column align-items-center justify-content-center text-center py-8'
+            }).append(
+                $('<i/>', { class: 'fa-regular fa-bell-slash text-gray-500 fs-1 mb-3' }),
+                $('<p/>', { class: 'fs-6 fw-semibold text-gray-700 mb-0', text: 'No notification found' })
+            );
+        }
+
+        function buildEmployerNotificationItem(notification) {
+            var isRead = !!notification.is_read;
+
+            return $('<div/>', {
+                class: 'employer-notification-item ' + (isRead ? 'employer-notification-read' : 'employer-notification-unread') + ' d-flex position-relative mb-3 p-3 rounded employerReadNotification cursor-pointer',
+                'data-id': notification.id,
+                'data-url': notification.url || '',
+                'data-read': isRead ? '1' : '0'
+            }).css({
+                background: isRead ? 'transparent' : 'rgba(101, 113, 255, 0.08)',
+                opacity: isRead ? '0.7' : '1'
+            }).append(
+                $('<span/>', { class: '{{ checkLanguageSession() == 'ar' ? 'ms-5' : 'me-5' }} text-primary fs-2 icon-label' })
+                    .append($('<i/>', { class: notification.icon || 'fa fa-inbox' })),
+                $('<div/>').append(
+                    $('<h5/>', { class: 'text-gray-900 fs-6 mb-2', text: notification.title || '' }),
+                    $('<h6/>', { class: 'text-gray-600 fs-small fw-light mb-0', text: notification.created_at || '' })
+                )
+            );
+        }
+
+        function renderEmployerNotifications(notificationData) {
+            var list = $('.employer-notification-list');
+            var counter = $('#employerNotificationCount');
+            var count = parseInt(notificationData.count || 0);
+
+            counter.text(count).toggleClass('d-none', count === 0);
+            list.empty();
+
+            if (!notificationData.notifications || notificationData.notifications.length === 0) {
+                list.append(employerNotificationEmptyState());
+                return;
+            }
+
+            notificationData.notifications.forEach(function (notification) {
+                list.append(buildEmployerNotificationItem(notification));
+            });
+        }
+
+        function refreshEmployerNotifications() {
+            if (!$('#employerNotificationDropdown').length) {
+                return;
+            }
+
+            $.ajax({
+                url: route('notifications.latest'),
+                type: 'GET',
+                success: function (result) {
+                    if (result.success) {
+                        renderEmployerNotifications(result.data);
+                    }
+                }
+            });
+        }
+
+        if ($('#employerNotificationDropdown').length) {
+            setInterval(refreshEmployerNotifications, 30000);
+        }
+
+        $(document).on('click', '.employerReadNotification', function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            var item = $(this);
+            var id = item.attr('data-id');
+            var targetUrl = item.attr('data-url');
+            var wasUnread = item.attr('data-read') !== '1';
+
+            item
+                .attr('data-read', '1')
+                .removeClass('employer-notification-unread')
+                .addClass('employer-notification-read')
+                .css({ opacity: '0.7', backgroundColor: 'transparent' });
+
+            if (wasUnread) {
+                var counter = $('#employerNotificationCount');
+                var count = parseInt(counter.text() || '0');
+                count = count > 0 ? count - 1 : 0;
+                counter.text(count).toggleClass('d-none', count === 0);
+            }
+
+            $.ajax({
+                url: route('read-notification', id),
+                type: 'POST',
+                data: {
+                    '_token': $('meta[name="csrf-token"]').attr('content'),
+                },
+                success: function (result) {
+                    var responseUrl = result.data && result.data.url ? result.data.url : '';
+                    var redirectUrl = targetUrl || responseUrl;
+
+                    if (redirectUrl) {
+                        setTimeout(function () {
+                            window.location.href = redirectUrl;
+                        }, 140);
+                    }
+                },
+                error: function () {
+                    if (wasUnread) {
+                        var counter = $('#employerNotificationCount');
+                        var count = parseInt(counter.text() || '0') + 1;
+                        counter.text(count).toggleClass('d-none', count === 0);
+                    }
+
+                    item
+                        .attr('data-read', wasUnread ? '0' : '1')
+                        .toggleClass('employer-notification-unread', wasUnread)
+                        .toggleClass('employer-notification-read', !wasUnread)
+                        .css({
+                            opacity: wasUnread ? '1' : '0.7',
+                            backgroundColor: wasUnread ? 'rgba(101, 113, 255, 0.08)' : 'transparent'
+                        });
+                }
+            });
+        });
+    })();
+</script>
 @stack('scripts')
 </body>
 </html>

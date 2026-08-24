@@ -699,6 +699,18 @@ if (! function_exists('getNotificationUrl')) {
                 return route('job-applications', ['jobId' => $jobId]);
             }
 
+            switch ((int) $notification->type) {
+                case \App\Models\Notification::FOLLOW_COMPANY:
+                    return \Illuminate\Support\Facades\Route::has('followers.index')
+                        ? route('followers.index')
+                        : route('job.index');
+
+                case \App\Models\Notification::MARK_COMPANY_FEATURED_ADMIN:
+                    return \Illuminate\Support\Facades\Route::has('company.edit.form')
+                        ? route('company.edit.form', getLoggedInUser()->owner_id)
+                        : route('job.index');
+            }
+
             return route('job.index');
         } elseif ($notification->notification_for == \App\Models\Notification::ADMIN) {
             $url = data_get($notification->meta, 'url');

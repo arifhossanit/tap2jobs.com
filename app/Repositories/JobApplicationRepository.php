@@ -123,9 +123,11 @@ class JobApplicationRepository extends BaseRepository
                 $candidate = Candidate::findOrFail(Auth::user()->owner_id);
                 $candidate->unsetRelation('media');
 
-                $selectedResume = $candidate->getMedia(Candidate::RESUME_PATH)->first(
+                $resumes = $candidate->getMedia(Candidate::RESUME_PATH);
+                $selectedResume = $resumes->first(
                     fn (Media $media) => (bool) $media->getCustomProperty('is_default', false)
-                ) ?? app(ApplicationCvService::class)->ensure($candidate);
+                ) ?? $resumes->first()
+                  ?? app(ApplicationCvService::class)->ensure($candidate);
 
                 $job = Job::findOrFail($input['job_id']);
                 if ($job->status !== Job::STATUS_OPEN) {

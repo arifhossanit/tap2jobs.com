@@ -1,71 +1,91 @@
 <div class="content flex-column-fluid">
-    <div class="container-fluid container-xxl">
-        <div class="card mb-5 mb-xl-10">
-            <div class="card-body pt-9 pb-0">
-                <div class="card">
-                    <div class="skeleton-loader clearfix">
-                        <div class="skeleton-1"></div>
-                        <div class="skeleton-2"></div>
-                        <div class="skeleton-3"></div>
+    <div class="candidate-dashboard candidate-dashboard-skeleton" aria-hidden="true">
+        <section class="candidate-dashboard-hero">
+            <div class="candidate-dashboard-hero__profile">
+                <div class="candidate-dashboard-skeleton__avatar shimmer-element"></div>
+                <div class="candidate-dashboard-skeleton__identity">
+                    <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--xs shimmer-element"></span>
+                    <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--title shimmer-element"></span>
+                    <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--wide shimmer-element"></span>
+                    <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--medium shimmer-element"></span>
+                    <div class="candidate-dashboard-skeleton__actions">
+                        <span class="candidate-dashboard-skeleton__button shimmer-element"></span>
+                        <span class="candidate-dashboard-skeleton__button shimmer-element"></span>
                     </div>
+                </div>
+            </div>
 
-                    <div class="skeleton-loader clearfix">
-                        <div class="skeleton-1"></div>
-                        <div class="skeleton-2"></div>
-                        <div class="skeleton-3"></div>
-                    </div>
+            <div class="candidate-profile-completion">
+                <div class="candidate-dashboard-skeleton__ring shimmer-element"></div>
+                <div class="candidate-profile-completion__content">
+                    <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--small shimmer-element"></span>
+                    <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--medium shimmer-element"></span>
+                    <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--xs shimmer-element"></span>
+                </div>
+            </div>
+        </section>
 
-                    <div class="skeleton-loader clearfix">
-                        <div class="skeleton-1"></div>
-                        <div class="skeleton-2"></div>
-                        <div class="skeleton-3"></div>
+        <section class="candidate-dashboard-stats">
+            @for($i = 0; $i < 4; $i++)
+                <div class="candidate-stat-card">
+                    <span class="candidate-dashboard-skeleton__stat-icon shimmer-element"></span>
+                    <span class="candidate-stat-card__content">
+                        <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--number shimmer-element"></span>
+                        <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--small shimmer-element"></span>
+                    </span>
+                </div>
+            @endfor
+        </section>
+
+        <section class="candidate-dashboard-main">
+            <div class="candidate-dashboard-panel candidate-dashboard-panel--wide">
+                <div class="candidate-dashboard-panel__header">
+                    <div>
+                        <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--heading shimmer-element"></span>
+                        <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--wide shimmer-element"></span>
                     </div>
+                    <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--small shimmer-element"></span>
+                </div>
+
+                <div class="candidate-match-grid">
+                    @for($i = 0; $i < 4; $i++)
+                        <article class="candidate-match-card">
+                            <div class="candidate-match-card__top">
+                                <span class="candidate-dashboard-skeleton__logo shimmer-element"></span>
+                                <div class="candidate-match-heading">
+                                    <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--medium shimmer-element"></span>
+                                    <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--small shimmer-element"></span>
+                                </div>
+                            </div>
+                            <div class="candidate-match-card__body">
+                                <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--wide shimmer-element"></span>
+                                <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--medium shimmer-element"></span>
+                            </div>
+                            <div class="candidate-match-card__footer">
+                                <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--small shimmer-element"></span>
+                                <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--xs shimmer-element"></span>
+                            </div>
+                        </article>
+                    @endfor
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-xxl-4 col-xl-4 col-sm-6 widget">
-                <div
-                    class="skeleton shadow-md rounded-10  px-5 py-10 d-flex align-items-center justify-content-between my-sm-3 my-2">
-                    <div class="skeleton-left flex1">
-                        <div class="square"></div>
-                    </div>
-                    <div class="skeleton-right flex2">
-                        <div class="line h17 w40 m10"></div>
-                        <div class="line"></div>
-                        <div class="line h8 w50"></div>
-                        <div class="line  w75"></div>
+
+            <aside class="candidate-dashboard-panel candidate-dashboard-side-panel">
+                <div class="candidate-dashboard-panel__header candidate-dashboard-panel__header--compact">
+                    <div>
+                        <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--heading shimmer-element"></span>
+                        <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--medium shimmer-element"></span>
                     </div>
                 </div>
-            </div>
-            <div class="col-xxl-4 col-xl-4 col-sm-6 widget">
-                <div
-                    class="skeleton shadow-md rounded-10  px-5 py-10 d-flex align-items-center justify-content-between my-sm-3 my-2">
-                    <div class="skeleton-left flex1">
-                        <div class="square"></div>
-                    </div>
-                    <div class="skeleton-right flex2">
-                        <div class="line h17 w40 m10"></div>
-                        <div class="line"></div>
-                        <div class="line h8 w50"></div>
-                        <div class="line  w75"></div>
-                    </div>
+                <div class="candidate-overview-list">
+                    @for($i = 0; $i < 4; $i++)
+                        <div>
+                            <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--medium shimmer-element"></span>
+                            <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--xs shimmer-element"></span>
+                        </div>
+                    @endfor
                 </div>
-            </div>
-            <div class="col-xxl-4 col-xl-4 col-sm-6 widget">
-                <div
-                    class="skeleton shadow-md rounded-10  px-5 py-10 d-flex align-items-center justify-content-between my-sm-3 my-2">
-                    <div class="skeleton-left flex1">
-                        <div class="square"></div>
-                    </div>
-                    <div class="skeleton-right flex2">
-                        <div class="line h17 w40 m10"></div>
-                        <div class="line"></div>
-                        <div class="line h8 w50"></div>
-                        <div class="line  w75"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+            </aside>
+        </section>
     </div>
 </div>

@@ -345,6 +345,7 @@ class JobRepository extends BaseRepository
                     $jobUser->user->id,
                     Notification::EMPLOYER,
                     $loggedInUser->first_name.' '.$loggedInUser->last_name.' started following '.$job->job_title.'.',
+                    ['job_id' => $job->id],
                 ]) : false;
 
             return true;

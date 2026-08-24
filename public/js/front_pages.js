@@ -2567,7 +2567,7 @@ function loadApplyJobData() {
           displaySuccessMessage(result.message);
           setTimeout(function () {
             window.location = route('front.job.details', result.data);
-          }, 3000);
+          }, 600);
         }
       },
       error: function error(result) {
@@ -2617,7 +2617,6 @@ function loadJobDetailsData() {
         'jobId': jobId
       },
       success: function success(result) {
-        console.log('sd');
         if (result.success) {
           $('#favorite').empty();
           result.data ? $('#favorite').html('<i class="fa-solid fa-bookmark featured"></i>') : $('#favorite').html('<i class="fa-regular fa-bookmark"></i>');

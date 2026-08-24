@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Candidate;
+use App\Models\JobApplication;
 use App\Services\CandidateJobMatchService;
 use App\Services\CandidateProfileCompletionService;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,7 @@ class CandidateDashboard extends Component
     public $followings;
     public $matchingJobs;
     public $profileCompletion;
+    public $applicationStats;
 
     public function mount()
     {
@@ -25,6 +27,22 @@ class CandidateDashboard extends Component
             ? $this->candidate->getMedia(Candidate::RESUME_PATH)->count()
             : 0;
         $this->followings = $this->user->followings()->count();
+        $this->applicationStats = $this->candidate
+            ? [
+                'applied' => JobApplication::where('candidate_id', $this->candidate->id)
+                    ->where('status', JobApplication::STATUS_APPLIED)
+                    ->count(),
+                'ongoing' => JobApplication::where('candidate_id', $this->candidate->id)
+                    ->where('status', JobApplication::SHORT_LIST)
+                    ->count(),
+                'hired' => JobApplication::where('candidate_id', $this->candidate->id)
+                    ->where('status', JobApplication::COMPLETE)
+                    ->count(),
+                'drafts' => JobApplication::where('candidate_id', $this->candidate->id)
+                    ->where('status', JobApplication::STATUS_DRAFT)
+                    ->count(),
+            ]
+            : ['applied' => 0, 'ongoing' => 0, 'hired' => 0, 'drafts' => 0];
         $this->matchingJobs = $this->candidate
             ? app(CandidateJobMatchService::class)->topMatches($this->candidate)
             : collect();

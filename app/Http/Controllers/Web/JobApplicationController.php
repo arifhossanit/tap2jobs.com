@@ -92,7 +92,7 @@ class JobApplicationController extends AppBaseController
         $this->jobApplicationRepository->store($input);
 
         /** @var Job $job */
-        $job = Job::with(['company.user', 'appliedJobs'])->findOrFail($input['job_id']);
+        $job = Job::with('company.user')->findOrFail($input['job_id']);
         if ($input['application_type'] === 'draft') {
             return $this->sendResponse($job->job_id, __('messages.flash.job_application_draft'));
         }
@@ -121,15 +121,21 @@ class JobApplicationController extends AppBaseController
             ];
             $data['body'] = str_replace($keyVariable, $value, $templateBody->body);
 
-            try {
-                Mail::to($job->company->user->email)->send(new EmailToEmployer($data));
-            } catch (\Throwable $exception) {
-                Log::warning('Job application email could not be sent.', [
-                    'job_id' => $job->id,
-                    'candidate_user_id' => getLoggedInUserId(),
-                    'error' => $exception->getMessage(),
-                ]);
-            }
+            $recipientEmail = $job->company->user->email;
+            $jobId = $job->id;
+            $candidateUserId = getLoggedInUserId();
+
+            dispatch(function () use ($recipientEmail, $data, $jobId, $candidateUserId) {
+                try {
+                    Mail::to($recipientEmail)->queue(new EmailToEmployer($data));
+                } catch (\Throwable $exception) {
+                    Log::warning('Job application email could not be sent.', [
+                        'job_id' => $jobId,
+                        'candidate_user_id' => $candidateUserId,
+                        'error' => $exception->getMessage(),
+                    ]);
+                }
+            })->afterResponse();
         }
 
         return $this->sendResponse($job->job_id, __('messages.flash.job_applied'));

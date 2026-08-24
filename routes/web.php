@@ -714,8 +714,8 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          Route::put('countries/{country}', [CountryController::class, 'update'])->name('countries.update');
          Route::delete('countries/{country}', [CountryController::class, 'destroy'])->name('countries.destroy');
 
-         Route::redirect('states', 'divisions', 301);
-         Route::redirect('cities', 'districts', 301);
+         Route::redirect('states', '/admin/divisions', 301);
+         Route::redirect('cities', '/admin/districts', 301);
 
          // Division routes
          Route::get('divisions', [StateController::class, 'index'])->name('states.index');
@@ -727,6 +727,7 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
 
          // District routes
          Route::get('districts', [CityController::class, 'index'])->name('cities.index');
+         Route::post('districts', [CityController::class, 'store'])->name('admin.cities.store');
          Route::post('districts/import', [CityController::class, 'import'])->name('cities.import');
          Route::get('districts/{city}/edit', [CityController::class, 'edit'])->name('cities.edit');
          Route::put('districts/{city}', [CityController::class, 'update'])->name('cities.update');

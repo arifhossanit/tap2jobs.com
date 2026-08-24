@@ -82,7 +82,7 @@ listenSubmit('#addCityForm', function (e) {
     e.preventDefault();
     processingBtn('#addCityForm', '#cityBtnSave', 'loading');
     $.ajax({
-        url: route('cities.store'),
+        url: route('admin.cities.store'),
         type: 'POST',
         data: $(this).serialize(),
         success: function (result) {

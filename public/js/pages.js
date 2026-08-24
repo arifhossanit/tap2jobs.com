@@ -5668,7 +5668,7 @@ listenSubmit('#addCityForm', function (e) {
   e.preventDefault();
   processingBtn('#addCityForm', '#cityBtnSave', 'loading');
   $.ajax({
-    url: route('cities.store'),
+    url: route('admin.cities.store'),
     type: 'POST',
     data: $(this).serialize(),
     success: function success(result) {
@@ -13911,14 +13911,13 @@ listenClick('.job-application-status-reject', function (event) {
   event.preventDefault();
   var id = $(this).attr('data-id');
   $.ajax({
-    url: route('employer.PendingJobs.AddReason'),
+    url: route('admin.PendingJobs.AddReason'),
     method: 'get',
     data: {
       id: id
     },
     success: function success(result) {
       if (result.success) {
-        console.log(result.data);
         $('.pending_job_title').text(result.data.job_title);
         $('#showReason').text(result.data.reject_reason);
         $('#reasonshowModal').appendTo('body').modal('show');
@@ -15160,7 +15159,6 @@ listenClick('.addPlanModal', function () {
   $('#addSubscriptionModal').appendTo('body').modal('show');
 });
 listenSubmit('#addSubscriptionForm', function (e) {
-  console.log($(this).serialize());
   e.preventDefault();
   processingBtn('#addSubscriptionForm', '#subscriptionSaveBtn', 'loading');
   e.preventDefault();
@@ -16004,7 +16002,6 @@ function loadSettingsData() {
     element.innerHTML = $('#aboutUsData').val();
     aboutUsQuill.root.innerHTML = element.value;
   }
-  console.log($('#defaultCountryData'));
   if ($('#defaultCountryData').length) {
     var input = document.querySelector('#defaultCountryData');
     var intl = window.intlTelInput(input, {

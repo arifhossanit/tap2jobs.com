@@ -45,7 +45,6 @@ listenClick('.addPlanModal', function () {
 })
 
 listenSubmit('#addSubscriptionForm', function (e) {
-    console.log($(this).serialize());
     e.preventDefault();
     processingBtn('#addSubscriptionForm', '#subscriptionSaveBtn', 'loading');
     e.preventDefault();

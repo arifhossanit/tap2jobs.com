@@ -49,6 +49,8 @@ mix.sass('resources/assets/sass/new-custom.scss',
     'public/assets/css/custom.css')
 mix.sass('resources/assets/sass/new-custom-dark.scss',
     'public/assets/css/custom-dark.css')
+mix.sass('resources/assets/sass/candidate-dashboard.scss',
+    'public/css/candidate-dashboard.css')
 mix.sass('resources/assets/sass/custom-auth.scss',
     'public/assets/css/custom-auth.css').version()
 

@@ -1,6 +1,10 @@
 @php
-    $notifications = getNotification(\App\Models\Notification::EMPLOYER);
-    $notificationCount = $notifications->count();
+    $notifications = \App\Models\Notification::where('notification_for', \App\Models\Notification::EMPLOYER)
+        ->where('user_id', getLoggedInUserId())
+        ->latest()
+        ->take(10)
+        ->get();
+    $notificationCount = $notifications->whereNull('read_at')->count();
     $loggedInEmployer = getLoggedInUser();
     $employerHeaderName = $loggedInEmployer->company?->contact_person_name ?: $loggedInEmployer->full_name;
 @endphp
@@ -63,12 +67,10 @@
                             data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="position-relative">
                             <i class="fa-solid fa-bell text-primary fs-2"></i>
-                            @if($notificationCount > 0)
-                                <span class="position-absolute notification-count top-0 start-100 translate-middle badge badge-circle bg-danger" id="counter">
-                                    {{ $notificationCount }}
-                                    <span class="visually-hidden">{{ __('messages.unread_messages') }}</span>
-                                </span>
-                            @endif
+                            <span class="position-absolute notification-count top-0 start-100 translate-middle badge badge-circle bg-danger {{ $notificationCount == 0 ? 'd-none' : '' }}" id="employerNotificationCount">
+                                {{ $notificationCount }}
+                                <span class="visually-hidden">{{ __('messages.unread_messages') }}</span>
+                            </span>
                         </div>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end py-0" aria-labelledby="employerNotificationDropdown" style="min-width: 320px;">
@@ -76,12 +78,13 @@
                             <h3 class="text-gray-900 mb-0">{{__('messages.notification.notifications')}}</h3>
                         </div>
                         <div class="px-7 py-5 employer-notification-list" style="max-height: 390px; overflow-y: auto; overflow-x: hidden;">
-                            @if($notificationCount > 0)
+                            @if($notifications->isNotEmpty())
                                 @foreach($notifications as $notification)
-                                    <div class="d-flex position-relative mb-5 readNotification cursor-pointer"
-                                         data-id="{{ $notification->id }}" id="readNotification">
-                                                            <span class="{{ checkLanguageSession() == 'ar' ? 'ms-5' : 'me-5' }} text-primary fs-2 icon-label">
-                                                                <i class="{{ getNotificationIcon($notification->type) }}"></i></span>
+                                    <div class="employer-notification-item {{ $notification->read_at ? 'employer-notification-read' : 'employer-notification-unread' }} d-flex position-relative mb-3 p-3 rounded employerReadNotification cursor-pointer"
+                                         data-id="{{ $notification->id }}" data-url="{{ getNotificationUrl($notification) }}" data-read="{{ $notification->read_at ? '1' : '0' }}"
+                                         style="background: {{ $notification->read_at ? 'transparent' : 'rgba(101, 113, 255, 0.08)' }}; opacity: {{ $notification->read_at ? '0.7' : '1' }};">
+                                        <span class="{{ checkLanguageSession() == 'ar' ? 'ms-5' : 'me-5' }} text-primary fs-2 icon-label">
+                                            <i class="{{ getNotificationIcon($notification->type) }}"></i></span>
                                         <div>
                                             <h5 class="text-gray-900 fs-6 mb-2">{{$notification->title}}</h5>
                                             <h6 class="text-gray-600 fs-small fw-light mb-0">
@@ -89,17 +92,12 @@
                                         </div>
                                     </div>
                                 @endforeach
-                                @else
-                                    <div class="empty-state d-flex flex-column align-items-center justify-content-center text-center py-8" data-height="400">
-                                        <i class="fa-regular fa-bell-slash text-gray-500 fs-1 mb-3"></i>
-                                        <p class="fs-6 fw-semibold text-gray-700 mb-0">No notification found</p>
-                                    </div>
-                                @endif
-                                <div class="empty-state d-flex flex-column align-items-center justify-content-center text-center py-8 d-none"
-                                     data-height="400">
+                            @else
+                                <div class="employer-notification-empty d-flex flex-column align-items-center justify-content-center text-center py-8" data-height="400">
                                     <i class="fa-regular fa-bell-slash text-gray-500 fs-1 mb-3"></i>
                                     <p class="fs-6 fw-semibold text-gray-700 mb-0">No notification found</p>
                                 </div>
+                            @endif
                         </div>
                     </div>
 

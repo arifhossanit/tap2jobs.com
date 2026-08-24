@@ -3,7 +3,7 @@
     {{ __('messages.candidate.dashboard') }}
 @endsection
 @push('css')
-    <link rel="stylesheet" href="{{ asset('css/candidate-dashboard.css') }}">
+    <link rel="stylesheet" href="{{ mix('css/candidate-dashboard.css') }}">
 @endpush
 @section('content')
     @include('flash::message')

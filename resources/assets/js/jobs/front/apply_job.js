@@ -30,7 +30,7 @@ function loadApplyJobData() {
                     displaySuccessMessage(result.message);
                     setTimeout(function () {
                         window.location = route('front.job.details', result.data);
-                    }, 3000);
+                    }, 600);
                 }
             },
             error: function (result) {

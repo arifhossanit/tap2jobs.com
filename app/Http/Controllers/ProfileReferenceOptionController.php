@@ -187,7 +187,11 @@ class ProfileReferenceOptionController extends AppBaseController
             $deleted++;
         }
 
-        return $this->sendSuccess($deleted.' reference option(s) deleted successfully.');
+        $message = $deleted === 1
+            ? '1 reference option deleted successfully.'
+            : $deleted.' reference options deleted successfully.';
+
+        return $this->sendSuccess($message);
     }
 
     public function dedicatedIndex(): View|RedirectResponse

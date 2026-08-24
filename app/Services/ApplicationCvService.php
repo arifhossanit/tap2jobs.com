@@ -29,18 +29,22 @@ class ApplicationCvService
 
     public const APPLICATION_CV_PROPERTY = 'is_application_cv';
 
-    public function ensure(Candidate $candidate): Media
+    public function ensure(Candidate $candidate, bool $force = false): Media
     {
         $candidate->loadMissing('user');
-
-        $pdfContent = Pdf::loadView('candidate.profile.application_cv_pdf', $this->viewData($candidate))
-            ->setPaper('a4')
-            ->output();
 
         $resumes = $candidate->getMedia(Candidate::RESUME_PATH);
         $applicationCv = $resumes->first(
             fn (Media $media) => (bool) $media->getCustomProperty(self::APPLICATION_CV_PROPERTY, false)
         );
+
+        if (! $force && $applicationCv && Storage::disk($applicationCv->disk)->exists($applicationCv->getPathRelativeToRoot())) {
+            return $applicationCv;
+        }
+
+        $pdfContent = Pdf::loadView('candidate.profile.application_cv_pdf', $this->viewData($candidate))
+            ->setPaper('a4')
+            ->output();
 
         if ($applicationCv) {
             Storage::disk($applicationCv->disk)->put($applicationCv->getPathRelativeToRoot(), $pdfContent);
