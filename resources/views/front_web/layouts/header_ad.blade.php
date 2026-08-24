@@ -42,6 +42,9 @@
             =========== END OLD HEADER-AD IMAGE/VIDEO FUNCTION =========== --}}
 
             {{-- Professional promo strip --}}
+            <button type="button" class="site-top-banner__close" id="siteTopBannerClose" aria-label="Close banner">
+                <i class="fas fa-times"></i>
+            </button>
             <div class="site-top-banner__inner mx-auto">
                 <a href="{{ route('job.create') }}" class="site-top-banner__promo">
                     <span class="site-top-banner__promo-text">{{ __('web.post_job_ad_free') }}</span>
@@ -69,6 +72,9 @@
         clear: both !important;
         float: none !important;
     }
+    #siteTopBanner.site-top-banner.is-closed {
+        display: none !important;
+    }
     #siteTopBanner .site-top-banner__bar {
         display: block !important;
         width: 100%;
@@ -77,6 +83,33 @@
         padding: 0;
         box-sizing: border-box;
         background: #1967d2;
+    }
+    #siteTopBanner .site-top-banner__close {
+        align-items: center;
+        background: rgba(15, 23, 42, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        border-radius: 999px;
+        color: #ffffff;
+        cursor: pointer;
+        display: inline-flex;
+        font-size: 24px;
+        height: 42px;
+        justify-content: center;
+        line-height: 1;
+        padding: 0;
+        position: absolute;
+        right: 24px;
+        top: 50%;
+        transform: translateY(-50%);
+        transition: background-color 0.18s ease, transform 0.18s ease;
+        width: 42px;
+        z-index: 3;
+    }
+    #siteTopBanner .site-top-banner__close:hover,
+    #siteTopBanner .site-top-banner__close:focus {
+        background: rgba(15, 23, 42, 0.35);
+        color: #ffffff;
+        transform: translateY(-50%) scale(1.04);
     }
     #siteTopBanner .site-top-banner__inner {
         display: flex !important;
@@ -142,6 +175,12 @@
             font-size: 14px;
             padding: 6px 16px;
         }
+        #siteTopBanner .site-top-banner__close {
+            font-size: 20px;
+            height: 36px;
+            right: 12px;
+            width: 36px;
+        }
     }
     @media (max-width: 575.98px) {
         #siteTopBanner .site-top-banner__bar,
@@ -162,5 +201,26 @@
             padding: 5px 12px;
             margin-left: 0 !important;
         }
+        #siteTopBanner .site-top-banner__close {
+            font-size: 18px;
+            height: 32px;
+            right: 8px;
+            width: 32px;
+        }
     }
 </style>
+
+<script>
+    (function () {
+        var banner = document.getElementById('siteTopBanner');
+        var closeButton = document.getElementById('siteTopBannerClose');
+
+        if (!banner || !closeButton) {
+            return;
+        }
+
+        closeButton.addEventListener('click', function () {
+            banner.classList.add('is-closed');
+        });
+    })();
+</script>
