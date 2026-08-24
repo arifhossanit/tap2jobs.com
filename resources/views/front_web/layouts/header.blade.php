@@ -24,10 +24,10 @@
                             <a class="header-navbar-color text-gray nav-link {{ Request::is('search-jobs') || Request::is('job-details*') ? 'header-navbar-color-active' : '' }}"
                                 href="{{ route('front.search.jobs') }}">{{ __('web.jobs') }}</a>
                         </li>
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a class="header-navbar-color text-gray nav-link {{ Request::is('posts*') || Request::is('blogs*') ? 'header-navbar-color-active' : '' }}"
                                 href="{{ route('front.blogs') }}">{{ __('web.blogs') }}</a>
-                        </li>
+                        </li> --}}
                         <li class="nav-item">
                             <div class="dropdown language-dropdown"
                                  data-language-url="{{ route('front.change-language') }}">
