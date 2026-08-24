@@ -143,6 +143,12 @@ class JobCategoryController extends AppBaseController
             if ($request->expectsJson()) {
                 return response()->json([
                     'message' => 'Job Categories import completed with validation errors. Please fix the failed rows and try again.',
+                    'errors' => collect($import->failures())->map(fn ($failure) => [
+                        'row' => $failure->row(),
+                        'attribute' => $failure->attribute(),
+                        'errors' => $failure->errors(),
+                        'values' => $failure->values(),
+                    ])->values(),
                 ], 422);
             }
 
@@ -153,11 +159,11 @@ class JobCategoryController extends AppBaseController
 
         if ($request->expectsJson()) {
             return response()->json([
-                'message' => 'Job Categories imported successfully.',
+                'message' => 'Job Categories imported successfully. Imported: '.$import->importedCount().', skipped duplicates: '.$import->skippedCount().'.',
             ]);
         }
 
-        flash('Job Categories imported successfully.')->success();
+        flash('Job Categories imported successfully. Imported: '.$import->importedCount().', skipped duplicates: '.$import->skippedCount().'.')->success();
 
         return back();
     }

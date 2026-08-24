@@ -109,9 +109,9 @@
         justify-content: center;
         background: #facc15;
         color: #0f172a;
-        font-size: 25px;
+        font-size: 21px;
         font-weight: 700;
-        padding: 8px 22px;
+        padding: 8px 20px;
         border-radius: 4px;
         box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
         transition: all 0.2s ease-in-out;

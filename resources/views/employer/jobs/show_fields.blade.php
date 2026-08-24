@@ -134,9 +134,9 @@
                 \App\Models\ProfileReferenceOption::TYPE_JOB_EMPLOYMENT_STATUS,
                 [\App\Models\ProfileReferenceOption::SCOPE_EMPLOYER]
             );
-            $employmentStatusLabels = $employmentStatusLabels ?: collect(\App\Models\Job::EMPLOYMENT_STATUSES)
+            $employmentStatusLabels = collect(\App\Models\Job::JOB_NATURES + \App\Models\Job::EMPLOYMENT_STATUSES)
                 ->mapWithKeys(fn ($label, $value) => [$value => __($label)])
-                ->toArray();
+                ->toArray() + $employmentStatusLabels;
         @endphp
         {{ Form::label('employment_status', __('messages.job.employment_status').':', ['class' => 'form-label fs-6 fw-bolder text-gray-700 mb-3']) }}
 

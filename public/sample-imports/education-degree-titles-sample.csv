@@ -1,5 +1,141 @@
-name,sort_order,is_active
-B.Sc. in Computer Science & Engineering,1,1
-B.Sc. in Electrical & Electronic Engineering,2,1
-B.A. in English,3,1
-B.B.A. in Finance,4,1
+degree_level,name,sort_order,is_active
+SSC,Secondary School Certificate,1,1
+SSC,Dakhil,2,1
+SSC,SSC Vocational,3,1
+SSC,O Level,4,1
+HSC,Higher Secondary Certificate,1,1
+HSC,Alim,2,1
+HSC,HSC Vocational,3,1
+HSC,Business Management and Technology,4,1
+HSC,A Level,5,1
+Diploma,Diploma in Engineering,1,1
+Diploma,Diploma in Computer Engineering,2,1
+Diploma,Diploma in Civil Engineering,3,1
+Diploma,Diploma in Electrical Engineering,4,1
+Diploma,Diploma in Mechanical Engineering,5,1
+Diploma,Diploma in Electronics Engineering,6,1
+Diploma,Diploma in Telecommunication Engineering,7,1
+Diploma,Diploma in Power Engineering,8,1
+Diploma,Diploma in Automobile Engineering,9,1
+Diploma,Diploma in Architecture,10,1
+Diploma,Diploma in Textile Engineering,11,1
+Diploma,Diploma in Garments Design and Pattern Making,12,1
+Diploma,Diploma in Graphic Design,13,1
+Diploma,Diploma in Nursing,14,1
+Diploma,Diploma in Midwifery,15,1
+Diploma,Diploma in Medical Technology,16,1
+Diploma,Diploma in Pharmacy,17,1
+Diploma,Diploma in Agriculture,18,1
+Diploma,Diploma in Fisheries,19,1
+Diploma,Diploma in Livestock,20,1
+Diploma,Diploma in Marine Engineering,21,1
+Diploma,Diploma in Hotel Management,22,1
+Diploma,Diploma in Tourism and Hospitality Management,23,1
+Bachelor,Bachelor of Arts,1,1
+Bachelor,Bachelor of Social Science,2,1
+Bachelor,Bachelor of Science,3,1
+Bachelor,Bachelor of Commerce,4,1
+Bachelor,Bachelor of Business Administration,5,1
+Bachelor,Bachelor of Business Studies,6,1
+Bachelor,Bachelor of Economics,7,1
+Bachelor,B.A. in Bangla,8,1
+Bachelor,B.A. in English,9,1
+Bachelor,B.A. in History,10,1
+Bachelor,B.A. in Islamic Studies,11,1
+Bachelor,B.S.S. in Economics,12,1
+Bachelor,B.S.S. in Political Science,13,1
+Bachelor,B.S.S. in Sociology,14,1
+Bachelor,B.S.S. in Public Administration,15,1
+Bachelor,B.S.S. in Development Studies,16,1
+Bachelor,B.Sc. in Computer Science and Engineering,17,1
+Bachelor,B.Sc. in Computer Science,18,1
+Bachelor,B.Sc. in Software Engineering,19,1
+Bachelor,B.Sc. in Information Technology,20,1
+Bachelor,B.Sc. in Electrical and Electronic Engineering,21,1
+Bachelor,B.Sc. in Electrical and Computer Engineering,22,1
+Bachelor,B.Sc. in Electronics and Communication Engineering,23,1
+Bachelor,B.Sc. in Civil Engineering,24,1
+Bachelor,B.Sc. in Mechanical Engineering,25,1
+Bachelor,B.Sc. in Industrial and Production Engineering,26,1
+Bachelor,B.Sc. in Textile Engineering,27,1
+Bachelor,B.Sc. in Naval Architecture and Marine Engineering,28,1
+Bachelor,B.Sc. in Chemical Engineering,29,1
+Bachelor,B.Sc. in Materials and Metallurgical Engineering,30,1
+Bachelor,Bachelor of Architecture,31,1
+Bachelor,Bachelor of Pharmacy,32,1
+Bachelor,Bachelor of Medicine and Bachelor of Surgery (MBBS),33,1
+Bachelor,Bachelor of Dental Surgery (BDS),34,1
+Bachelor,Bachelor of Science in Nursing,35,1
+Bachelor,Bachelor of Physiotherapy,36,1
+Bachelor,Bachelor of Public Health,37,1
+Bachelor,Bachelor of Laws,38,1
+Bachelor,Bachelor of Education,39,1
+Bachelor,Bachelor of Physical Education,40,1
+Bachelor,Bachelor of Agriculture,41,1
+Bachelor,Doctor of Veterinary Medicine,42,1
+Bachelor,Bachelor of Fisheries,43,1
+Bachelor,B.Sc. in Food Engineering,44,1
+Bachelor,B.Sc. in Nutrition and Food Science,45,1
+Bachelor,B.Sc. in Environmental Science,46,1
+Bachelor,B.Sc. in Microbiology,47,1
+Bachelor,B.Sc. in Biochemistry and Molecular Biology,48,1
+Bachelor,B.Sc. in Mathematics,49,1
+Bachelor,B.Sc. in Physics,50,1
+Bachelor,B.Sc. in Chemistry,51,1
+Bachelor,B.Sc. in Statistics,52,1
+Bachelor,Bachelor of Social Work,53,1
+Bachelor,Bachelor of Fine Arts,54,1
+Bachelor,Bachelor of Music,55,1
+Bachelor,Bachelor of Library and Information Science,56,1
+Bachelor,Bachelor of Tourism and Hospitality Management,57,1
+Bachelor,Bachelor of Computer Applications,58,1
+Bachelor,Fazil,59,1
+Masters,Master of Arts,1,1
+Masters,Master of Social Science,2,1
+Masters,Master of Science,3,1
+Masters,Master of Commerce,4,1
+Masters,Master of Business Administration,5,1
+Masters,Executive MBA,6,1
+Masters,Master of Business Studies,7,1
+Masters,Master of Economics,8,1
+Masters,Master of Accounting,9,1
+Masters,Master of Finance,10,1
+Masters,Master of Marketing,11,1
+Masters,Master of Human Resource Management,12,1
+Masters,Master of Public Administration,13,1
+Masters,Master of International Relations,14,1
+Masters,Master of Journalism and Media Studies,15,1
+Masters,M.A. in Bangla,16,1
+Masters,M.A. in English,17,1
+Masters,M.Sc. in Computer Science and Engineering,18,1
+Masters,M.Sc. in Computer Science,19,1
+Masters,M.Sc. in Software Engineering,20,1
+Masters,M.Sc. in Electrical and Electronic Engineering,21,1
+Masters,M.Sc. in Civil Engineering,22,1
+Masters,M.Sc. in Mechanical Engineering,23,1
+Masters,M.Sc. in Textile Engineering,24,1
+Masters,Master of Architecture,25,1
+Masters,Master of Pharmacy,26,1
+Masters,Master of Public Health,27,1
+Masters,Master of Laws,28,1
+Masters,Master of Education,29,1
+Masters,Master of Development Studies,30,1
+Masters,Master of Social Work,31,1
+Masters,Master of Fine Arts,32,1
+Masters,Master of Library and Information Science,33,1
+Masters,Master of Information Technology,34,1
+Masters,Master of Computer Applications,35,1
+Masters,Master of Disaster Management,36,1
+Masters,Master of Environmental Science,37,1
+Masters,Master of Agriculture,38,1
+Masters,Master of Fisheries,39,1
+Masters,Master of Veterinary Science,40,1
+Masters,Master of Surgery,41,1
+Masters,Doctor of Medicine,42,1
+Masters,Fellow of College of Physicians and Surgeons,43,1
+Masters,Master of Dental Surgery,44,1
+Masters,Kamil,45,1
+PhD,Master of Philosophy,1,1
+PhD,Doctor of Philosophy,2,1
+PhD,Doctor of Business Administration,3,1
+PhD,Post Doctoral Fellowship,4,1

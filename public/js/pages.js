@@ -5201,7 +5201,6 @@ function loadCVBuilderData() {
   var countryId = $('#countryId').val();
   var stateId = $('#stateId').val();
   var cityId = $('#cityId').val();
-  var thanaId = $('#thanaId').val();
   renderCandidateData();
   randerCVTemplate();
   $('#candidateCountryId,#candidateStateId,#cvBuilderYearId,#candidateCityId').select2({
@@ -6019,6 +6018,7 @@ function loadCreateEditCompanyData() {
   var countryId = $('#countryId').val();
   var stateId = $('#stateId').val();
   var cityId = $('#cityId').val();
+  var thanaId = $('#thanaId').val();
   var companyStateUrl = $('#companyStateUrl').val();
   var companyCityUrl = $('#companyCityUrl').val();
   var employerPanel = $('.employerPanel').val();
@@ -7076,7 +7076,7 @@ function countryData() {
           $('#countryId').val(result.data.id);
           $('#editName').val(result.data.name);
           $('#editShortCode').val(result.data.short_code);
-          $('#editPhoneCode').val(result.data.phone_code);
+          $('#editPhoneCode').val(result.data.phone_code ? '+' + String(result.data.phone_code).replace(/^\+/, '') : '');
           $('#editCountryModal').appendTo('body').modal('show');
         }
       },
@@ -13005,7 +13005,7 @@ function loadEmployeeCreateEditData() {
     format: "YYYY-MM-DD",
     useCurrent: false,
     locale: getLoggedInUserLang,
-    minDate: new Date(new Date().valueOf() + 1000 * 3600 * 24)
+    minDate: "today"
   });
   window.autoNumeric = function (formId, validationBox) {
     $(formId)[0].reset();

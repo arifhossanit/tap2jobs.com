@@ -13,29 +13,55 @@ class JobCategoriesImport implements ToModel, WithHeadingRow, WithValidation, Sk
 {
     use SkipsFailures;
 
+    private int $importedCount = 0;
+
+    private int $skippedCount = 0;
+
+    private array $seenNames = [];
+
     public function rules(): array
     {
         return [
             '*.name' => 'nullable',
+            '*.description' => 'nullable|string',
+            '*.is_featured' => 'nullable',
         ];
     }
 
     public function model(array $row): ?JobCategory
     {
-        $name = trim((string) ($row['name'] ?? $row['category'] ?? ''));
+        $name = trim((string) ($row['name'] ?? $row['category'] ?? $row['job_category'] ?? $row['job_category_name'] ?? ''));
 
         if (empty($name)) {
+            $this->skippedCount++;
             return null;
         }
 
-        if (JobCategory::where('name', $name)->exists()) {
+        $normalizedName = strtolower($name);
+        if (isset($this->seenNames[$normalizedName]) || JobCategory::where('name', $name)->exists()) {
+            $this->skippedCount++;
             return null;
         }
+
+        $this->seenNames[$normalizedName] = true;
+        $this->importedCount++;
 
         return new JobCategory([
             'name' => $name,
             'description' => trim((string) ($row['description'] ?? '')),
-            'is_featured' => array_key_exists('is_featured', $row) && $row['is_featured'] !== null ? (bool) $row['is_featured'] : false,
+            'is_featured' => array_key_exists('is_featured', $row) && $row['is_featured'] !== null
+                ? filter_var($row['is_featured'], FILTER_VALIDATE_BOOLEAN)
+                : false,
         ]);
+    }
+
+    public function importedCount(): int
+    {
+        return $this->importedCount;
+    }
+
+    public function skippedCount(): int
+    {
+        return $this->skippedCount;
     }
 }

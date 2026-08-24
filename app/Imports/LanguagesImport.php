@@ -13,6 +13,14 @@ class LanguagesImport implements ToModel, WithHeadingRow, WithValidation, SkipsO
 {
     use SkipsFailures;
 
+    private int $importedCount = 0;
+
+    private int $skippedCount = 0;
+
+    private array $seenLanguages = [];
+
+    private array $seenIsoCodes = [];
+
     public function rules(): array
     {
         return [
@@ -23,20 +31,23 @@ class LanguagesImport implements ToModel, WithHeadingRow, WithValidation, SkipsO
 
     public function model(array $row): ?Language
     {
-        $name = trim((string) ($row['language'] ?? $row['name'] ?? ''));
+        $name = trim((string) ($row['language'] ?? $row['name'] ?? $row['language_name'] ?? ''));
 
         if (empty($name)) {
+            $this->skippedCount++;
             return null;
         }
 
-        if (Language::where('language', $name)->exists()) {
+        $normalizedName = strtolower($name);
+        if (isset($this->seenLanguages[$normalizedName]) || Language::where('language', $name)->exists()) {
+            $this->skippedCount++;
             return null;
         }
 
         $givenIso = trim((string) ($row['iso_code'] ?? ''));
 
         if (! empty($givenIso)) {
-            $isoCode = strtolower($givenIso);
+            $isoCode = $this->uniqueIsoCode(strtolower($givenIso), $name);
         } else {
             $cleanName = preg_replace('/[^a-zA-Z]/', '', $name);
             $isoCode = strtolower(substr($cleanName, 0, 2));
@@ -44,12 +55,7 @@ class LanguagesImport implements ToModel, WithHeadingRow, WithValidation, SkipsO
                 $isoCode = strtolower(substr(md5($name), 0, 2));
             }
 
-            $originalIso = $isoCode;
-            $counter = 1;
-            while (Language::where('iso_code', $isoCode)->exists()) {
-                $isoCode = $originalIso.$counter;
-                $counter++;
-            }
+            $isoCode = $this->uniqueIsoCode($isoCode, $name);
         }
 
         $path = base_path('lang/').$isoCode;
@@ -57,9 +63,40 @@ class LanguagesImport implements ToModel, WithHeadingRow, WithValidation, SkipsO
             \File::makeDirectory($path, 0755, true, true);
         }
 
+        $this->seenLanguages[$normalizedName] = true;
+        $this->seenIsoCodes[strtolower($isoCode)] = true;
+        $this->importedCount++;
+
         return new Language([
             'language' => $name,
             'iso_code' => $isoCode,
         ]);
+    }
+
+    private function uniqueIsoCode(string $isoCode, string $language): string
+    {
+        $isoCode = preg_replace('/[^a-z0-9_-]/', '', strtolower($isoCode)) ?: strtolower(substr(md5($language), 0, 2));
+        $originalIso = $isoCode;
+        $counter = 1;
+
+        while (
+            isset($this->seenIsoCodes[$isoCode]) ||
+            Language::where('iso_code', $isoCode)->where('language', '!=', $language)->exists()
+        ) {
+            $isoCode = $originalIso.$counter;
+            $counter++;
+        }
+
+        return $isoCode;
+    }
+
+    public function importedCount(): int
+    {
+        return $this->importedCount;
+    }
+
+    public function skippedCount(): int
+    {
+        return $this->skippedCount;
     }
 }

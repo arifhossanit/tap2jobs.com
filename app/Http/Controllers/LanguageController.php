@@ -145,6 +145,12 @@ class LanguageController extends AppBaseController
             if ($request->expectsJson()) {
                 return response()->json([
                     'message' => 'Languages import completed with validation errors. Please fix the failed rows and try again.',
+                    'errors' => collect($import->failures())->map(fn ($failure) => [
+                        'row' => $failure->row(),
+                        'attribute' => $failure->attribute(),
+                        'errors' => $failure->errors(),
+                        'values' => $failure->values(),
+                    ])->values(),
                 ], 422);
             }
 
@@ -155,11 +161,11 @@ class LanguageController extends AppBaseController
 
         if ($request->expectsJson()) {
             return response()->json([
-                'message' => 'Languages imported successfully.',
+                'message' => 'Languages imported successfully. Imported: '.$import->importedCount().', skipped duplicates: '.$import->skippedCount().'.',
             ]);
         }
 
-        flash('Languages imported successfully.')->success();
+        flash('Languages imported successfully. Imported: '.$import->importedCount().', skipped duplicates: '.$import->skippedCount().'.')->success();
 
         return back();
     }
@@ -172,6 +178,10 @@ class LanguageController extends AppBaseController
      */
     public function destroy(Language $language): JsonResponse
     {
+        if ($this->isProtectedLanguage($language)) {
+            return $this->sendError('Default languages cannot be deleted.');
+        }
+
         $languageIds = $language->candidate()->pluck('language_id')->toArray();
         if (in_array($language->id, $languageIds)) {
             return $this->sendError(__('messages.language.language_cant_delete'));
@@ -182,13 +192,16 @@ class LanguageController extends AppBaseController
 
         if (\File::exists($path)) {
             \File::deleteDirectory($path);
-            $language->delete();
-        } else {
-            return $this->sendError(__('messages.language.language_not_deleted'));
         }
 
         Artisan::call('lang:js');
 
         return $this->sendSuccess(__('messages.flash.language_delete'));
+    }
+
+    private function isProtectedLanguage(Language $language): bool
+    {
+        return in_array(strtolower((string) $language->iso_code), ['en', 'bn'], true)
+            || (bool) $language->is_default;
     }
 }

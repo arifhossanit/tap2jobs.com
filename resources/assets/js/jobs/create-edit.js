@@ -337,7 +337,7 @@ function loadEmployeeCreateEditData() {
         format: "YYYY-MM-DD",
         useCurrent: false,
         locale: getLoggedInUserLang,
-        minDate: new Date(new Date().valueOf() + 1000 * 3600 * 24)
+        minDate: "today"
     });
     window.autoNumeric = function(formId, validationBox) {
         $(formId)[0].reset();

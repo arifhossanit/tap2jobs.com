@@ -93,17 +93,17 @@ class LivewireTableComponent extends DataTableComponent
         $this->clearSelected();
 
         if ($failed > 0) {
-            $message = $deleted.' record(s) deleted.';
+            $message = $this->recordCountText($deleted).' deleted.';
 
             if ($skipped > 0) {
-                $message .= ' '.$skipped.' in-use record(s) skipped.';
+                $message .= ' '.$this->recordCountText($skipped, 'in-use record', 'in-use records').' skipped.';
             }
 
-            $message .= ' '.$failed.' record(s) could not be deleted.';
+            $message .= ' '.$this->recordCountText($failed).' could not be deleted.';
 
             $this->dispatchBulkActionFeedback('error', $message);
         } elseif ($deleted > 0 && $skipped > 0) {
-            $this->dispatchBulkActionFeedback('success', $deleted.' record(s) deleted. '.$skipped.' in-use record(s) skipped.');
+            $this->dispatchBulkActionFeedback('success', $this->recordCountText($deleted).' deleted. '.$this->recordCountText($skipped, 'in-use record', 'in-use records').' skipped.');
         } elseif ($deleted > 0) {
             $message = $deleted === 1
                 ? '1 selected record deleted successfully.'
@@ -124,6 +124,11 @@ class LivewireTableComponent extends DataTableComponent
     protected function dispatchBulkActionFeedback(string $type, string $message): void
     {
         $this->dispatch('bulk-action-feedback', type: $type, message: $message);
+    }
+
+    protected function recordCountText(int $count, string $singular = 'record', string $plural = 'records'): string
+    {
+        return $count.' '.($count === 1 ? $singular : $plural);
     }
 
     protected function isBulkDeleteBlocked($record): bool

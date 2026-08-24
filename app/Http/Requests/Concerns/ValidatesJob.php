@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Concerns;
 
 use App\Models\City;
+use App\Models\JobType;
 use App\Models\ProfileReferenceOption;
 use App\Models\Skill;
 use App\Models\State;
@@ -17,6 +18,7 @@ trait ValidatesJob
 
         $employmentStatus = $this->input('employment_status');
         $usesEmploymentStatusForm = $this->routeIs('job.store', 'job.update', 'admin.job.store', 'admin.job.update');
+        $workplace = $this->input('workplace');
         $experienceUnit = $this->input('experience_unit');
         $experienceRequirement = trim((string) $this->input('experience_requirement'));
         $jobsSkill = collect($this->input('jobsSkill', []))
@@ -43,11 +45,17 @@ trait ValidatesJob
             'salary_to' => $salaryTo,
             'hide_salary' => $hideSalary,
             'is_freelance' => $usesEmploymentStatusForm
-                ? $employmentStatus === 'freelance'
+                ? ($employmentStatus === 'freelance' || $this->isFreelanceJobType())
                 : $this->boolean('is_freelance'),
-            'work_from_office' => $this->boolean('work_from_office'),
-            'work_from_home' => $this->boolean('work_from_home'),
-            'hybrid' => $this->boolean('hybrid'),
+            'work_from_office' => $workplace
+                ? $workplace === 'work_from_office'
+                : $this->boolean('work_from_office'),
+            'work_from_home' => $workplace
+                ? $workplace === 'work_from_home'
+                : $this->boolean('work_from_home'),
+            'hybrid' => $workplace
+                ? $workplace === 'hybrid'
+                : $this->boolean('hybrid'),
             'experience_unit' => $experienceUnit,
             'experience_requirement' => $experienceRequirement,
             'freshers_encouraged' => $this->boolean('freshers_encouraged'),
@@ -143,16 +151,17 @@ trait ValidatesJob
                 Rule::exists('thanas', 'id')->where('city_id', $this->input('city_id')),
             ],
             'salary_from' => $hideSalary
-                ? ['nullable', 'numeric', 'min:0', 'max:999999999']
-                : ['required', 'numeric', 'min:0', 'max:999999999'],
+                ? ['nullable', 'numeric', 'min:0', 'max:9999999999']
+                : ['required', 'numeric', 'min:0', 'max:9999999999'],
             'salary_to' => $hideSalary
-                ? ['nullable', 'numeric', 'min:0', 'max:999999999', 'gte:salary_from']
-                : ['required', 'numeric', 'min:0', 'max:999999999', 'gte:salary_from'],
+                ? ['nullable', 'numeric', 'min:0', 'max:9999999999', 'gte:salary_from']
+                : ['required', 'numeric', 'min:0', 'max:9999999999', 'gte:salary_from'],
             'job_expiry_date' => ['required', 'date', 'after_or_equal:today'],
             'employment_status' => [
                 $usesEmploymentStatusForm ? 'required' : 'nullable',
                 Rule::in($this->employmentStatusValues()),
             ],
+            'workplace' => ['nullable', Rule::in(['work_from_office', 'work_from_home', 'hybrid'])],
             'work_from_office' => ['required', 'boolean'],
             'work_from_home' => ['required', 'boolean'],
             'hybrid' => ['required', 'boolean'],
@@ -200,6 +209,23 @@ trait ValidatesJob
             [ProfileReferenceOption::SCOPE_EMPLOYER]
         );
 
-        return $values ?: array_keys(\App\Models\Job::EMPLOYMENT_STATUSES);
+        return array_values(array_unique(array_merge(
+            $values,
+            array_keys(\App\Models\Job::JOB_NATURES),
+            array_keys(\App\Models\Job::EMPLOYMENT_STATUSES)
+        )));
+    }
+
+    private function isFreelanceJobType(): bool
+    {
+        $jobTypeId = $this->input('job_type_id');
+
+        if (! $jobTypeId || ! is_numeric($jobTypeId)) {
+            return false;
+        }
+
+        $jobTypeName = JobType::whereKey((int) $jobTypeId)->value('name');
+
+        return $jobTypeName && mb_strtolower(trim($jobTypeName)) === 'freelance';
     }
 }

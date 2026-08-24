@@ -99,7 +99,7 @@ class ProfileReferenceOptionTable extends LivewireTableComponent
         $this->clearSelected();
 
         if ($failed > 0) {
-            $this->dispatchBulkActionFeedback('error', $deleted.' record(s) deleted. '.$failed.' record(s) could not be deleted.');
+            $this->dispatchBulkActionFeedback('error', $this->recordCountText($deleted).' deleted. '.$this->recordCountText($failed).' could not be deleted.');
         } elseif ($deleted > 0) {
             $message = $deleted === 1
                 ? '1 selected record deleted successfully.'

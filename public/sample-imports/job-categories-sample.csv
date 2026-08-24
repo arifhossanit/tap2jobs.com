@@ -1,5 +1,89 @@
 name,description,is_featured
-Software & Web Development,Software engineering and web development jobs,1
-Data Science & Analytics,Data analysis, machine learning and AI jobs,1
-Sales & Marketing,Sales management and digital marketing jobs,0
-Accounting & Finance,Financial planning and accounting jobs,0
+Accounting/Finance,Bdjobs functional category,1
+Production/Operation,Bdjobs functional category,1
+Agro (Plant/Animal/Fisheries),Bdjobs functional category,1
+Bank/Non-Bank Fin. Institution,Bdjobs functional category,1
+Hospitality/Travel/Tourism,Bdjobs functional category,1
+NGO/Development,Bdjobs functional category,1
+Supply Chain/Procurement,Bdjobs functional category,1
+Commercial,Bdjobs functional category,0
+Research/Consultancy,Bdjobs functional category,0
+Education/Training,Bdjobs functional category,1
+IT/Telecommunication,Bdjobs functional category,1
+Receptionist/PS,Bdjobs functional category,0
+Engineer/Architect,Bdjobs functional category,1
+Marketing/Sales,Bdjobs functional category,1
+Data Entry/Operator/BPO,Bdjobs functional category,0
+Garments/Textile,Bdjobs functional category,1
+Customer Service/Call Centre,Bdjobs functional category,0
+Design/Creative,Bdjobs functional category,0
+HR/Org. Development,Bdjobs functional category,0
+Media/Advertisement/Event Mgt.,Bdjobs functional category,0
+Security/Support Service,Bdjobs functional category,0
+General Management/Admin,Bdjobs functional category,0
+Pharmaceutical,Bdjobs functional category,0
+Law/Legal,Bdjobs functional category,0
+Healthcare/Medical,Bdjobs functional category,1
+Company Secretary/Regulatory Affairs,Bdjobs functional category,0
+Others,Bdjobs functional category,0
+Agro Based Industry,Bdjobs industrial category,0
+Pharmaceuticals,Bdjobs industrial category,0
+Media/Advertising/Event Mgt. Industry,Bdjobs industrial category,0
+Architecture/Engineering/Construction,Bdjobs industrial category,0
+Hospital/Diagnostic Center,Bdjobs industrial category,0
+NGO/Development Industry,Bdjobs industrial category,0
+Automobile/Industrial Machine,Bdjobs industrial category,0
+Airline/Travel/Tourism,Bdjobs industrial category,0
+Real Estate/Development,Bdjobs industrial category,0
+Bank/Non-Bank Financial Institution,Bdjobs industrial category,0
+Manufacturing (Light Industry),Bdjobs industrial category,0
+Wholesale/Retail/Export-Import,Bdjobs industrial category,0
+Education,Bdjobs industrial category,0
+Manufacturing (Heavy Industry),Bdjobs industrial category,0
+Telecommunication,Bdjobs industrial category,0
+Electronics/Consumer Durables,Bdjobs industrial category,0
+Hotel/Restaurant,Bdjobs industrial category,0
+Food & Beverage Industry,Bdjobs industrial category,0
+Energy/Power/Fuel,Bdjobs industrial category,0
+Information Technology (IT),Bdjobs industrial category,0
+Security Service,Bdjobs industrial category,0
+Garments/Textile Industry,Bdjobs industrial category,0
+Logistics/Transportation,Bdjobs industrial category,0
+Fire Safety & Protection,Bdjobs industrial category,0
+Govt./Semi-Govt./Autonomous,Bdjobs industrial category,0
+Entertainment/Recreation,Bdjobs industrial category,0
+E-commerce/F-commerce,Bdjobs industrial category,0
+Other Industry,Bdjobs industrial category,0
+Beautician/Salon Worker,Bdjobs special skilled category,0
+Boiler Operator,Bdjobs special skilled category,0
+CAD Operator,Bdjobs special skilled category,0
+Caregiver/Nanny,Bdjobs special skilled category,0
+Carpenter,Bdjobs special skilled category,0
+Chef/Cook,Bdjobs special skilled category,0
+Cleaner,Bdjobs special skilled category,0
+Data Entry/Computer Operator,Bdjobs special skilled category,0
+Delivery Man,Bdjobs special skilled category,0
+Driver,Bdjobs special skilled category,0
+Electrician/Electronics Technician,Bdjobs special skilled category,0
+Fire Safety/Firefighter,Bdjobs special skilled category,0
+Gardener,Bdjobs special skilled category,0
+Garments Technician/Machine Operator,Bdjobs special skilled category,0
+Graphic Designer,Bdjobs special skilled category,0
+Gym/Fitness Trainer,Bdjobs special skilled category,0
+Housekeeper,Bdjobs special skilled category,0
+Imam/Khatib/Muezzin,Bdjobs special skilled category,0
+Interpreter/Translator,Bdjobs special skilled category,0
+Mason/Construction Worker,Bdjobs special skilled category,0
+Mechanic/Technician,Bdjobs special skilled category,0
+Nurse,Bdjobs special skilled category,0
+Pathologist/Lab Assistant,Bdjobs special skilled category,0
+Peon,Bdjobs special skilled category,0
+Physiotherapist,Bdjobs special skilled category,0
+Plumber/Pipe Fitting,Bdjobs special skilled category,0
+Sales Representative,Bdjobs special skilled category,0
+Security Guard,Bdjobs special skilled category,0
+Sewing Machine Operator,Bdjobs special skilled category,0
+Showroom Assistant/Salesman,Bdjobs special skilled category,0
+Waiter/Waitress,Bdjobs special skilled category,0
+Welder,Bdjobs special skilled category,0
+Other Special Skilled,Bdjobs special skilled category,0

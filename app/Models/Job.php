@@ -144,12 +144,26 @@ class Job extends Model
     public const EMPLOYMENT_STATUS_INTERNSHIP = 'internship';
     public const EMPLOYMENT_STATUS_FREELANCE = 'freelance';
 
+    public const JOB_NATURE_PERMANENT = 'permanent';
+    public const JOB_NATURE_TEMPORARY = 'temporary';
+    public const JOB_NATURE_PROJECT_BASED = 'project_based';
+    public const JOB_NATURE_PROBATIONARY = 'probationary';
+    public const JOB_NATURE_COMMISSION_BASED = 'commission_based';
+
     public const EMPLOYMENT_STATUSES = [
         self::EMPLOYMENT_STATUS_FULL_TIME => 'messages.job.full_time',
         self::EMPLOYMENT_STATUS_PART_TIME => 'messages.job.part_time',
         self::EMPLOYMENT_STATUS_CONTRACTUAL => 'messages.job.contractual',
         self::EMPLOYMENT_STATUS_INTERNSHIP => 'messages.job.internship',
         self::EMPLOYMENT_STATUS_FREELANCE => 'messages.job.freelance',
+    ];
+
+    public const JOB_NATURES = [
+        self::JOB_NATURE_PERMANENT => 'messages.job.permanent',
+        self::JOB_NATURE_TEMPORARY => 'messages.job.temporary',
+        self::JOB_NATURE_PROJECT_BASED => 'messages.job.project_based',
+        self::JOB_NATURE_PROBATIONARY => 'messages.job.probationary',
+        self::JOB_NATURE_COMMISSION_BASED => 'messages.job.commission_based',
     ];
 
     const NO_PREFERENCE = [
@@ -254,7 +268,7 @@ class Job extends Model
         'currency_id' => 'required',
         'salary_period_id' => 'required',
         'job_type_id' => 'required',
-        'employment_status' => 'nullable|in:full_time,part_time,contractual,internship,freelance',
+        'employment_status' => 'nullable|in:permanent,temporary,project_based,probationary,commission_based,full_time,part_time,contractual,internship,freelance',
         'work_from_office' => 'nullable|boolean',
         'work_from_home' => 'nullable|boolean',
         'hybrid' => 'nullable|boolean',
@@ -269,8 +283,8 @@ class Job extends Model
         'state_id' => 'required',
         'city_id' => 'required',
         'thana_id' => 'nullable',
-        'salary_from' => 'required|min:0|max:999999999',
-        'salary_to' => 'required|min:0|max:999999999',
+        'salary_from' => 'required|min:0|max:9999999999',
+        'salary_to' => 'required|min:0|max:9999999999',
         'job_expiry_date' => 'required',
     ];
 

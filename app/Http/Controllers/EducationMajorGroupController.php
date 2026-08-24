@@ -109,6 +109,12 @@ class EducationMajorGroupController extends AppBaseController
             if ($request->expectsJson()) {
                 return response()->json([
                     'message' => 'Major/Groups import completed with validation errors. Please fix the failed rows and try again.',
+                    'errors' => collect($import->failures())->map(fn ($failure) => [
+                        'row' => $failure->row(),
+                        'attribute' => $failure->attribute(),
+                        'errors' => $failure->errors(),
+                        'values' => $failure->values(),
+                    ])->values(),
                 ], 422);
             }
 
@@ -119,11 +125,11 @@ class EducationMajorGroupController extends AppBaseController
 
         if ($request->expectsJson()) {
             return response()->json([
-                'message' => 'Major/Groups imported successfully.',
+                'message' => 'Major/Groups imported successfully. Imported: '.$import->importedCount().', skipped duplicates: '.$import->skippedDuplicateCount().', skipped invalid/unmatched: '.$import->skippedInvalidCount().'.',
             ]);
         }
 
-        flash('Major/Groups imported successfully.')->success();
+        flash('Major/Groups imported successfully. Imported: '.$import->importedCount().', skipped duplicates: '.$import->skippedDuplicateCount().', skipped invalid/unmatched: '.$import->skippedInvalidCount().'.')->success();
 
         return back();
     }

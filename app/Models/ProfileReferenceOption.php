@@ -62,7 +62,7 @@ class ProfileReferenceOption extends Model
             self::TYPE_ARMY_EMPLOYMENT_TYPE => 'Employment Type',
             self::TYPE_ARMY_ARMS => 'Arms',
             self::TYPE_JOB_GENDER_PREFERENCE => 'Gender Preference',
-            self::TYPE_JOB_EMPLOYMENT_STATUS => 'Employment Type',
+            self::TYPE_JOB_EMPLOYMENT_STATUS => 'Job Nature',
             self::TYPE_JOB_WORKPLACE => 'Workplace',
             self::TYPE_JOB_EXPERIENCE_UNIT => 'Experience Unit',
             self::TYPE_EMPLOYER_DISABILITY_FACILITY => 'Disability Facilities',
@@ -260,11 +260,11 @@ class ProfileReferenceOption extends Model
             ],
             self::TYPE_JOB_EMPLOYMENT_STATUS => [
                 self::SCOPE_EMPLOYER => [
-                    'full_time' => 'Full Time',
-                    'part_time' => 'Part Time',
-                    'contractual' => 'Contractual',
-                    'internship' => 'Internship',
-                    'freelance' => 'Freelance',
+                    'permanent' => 'Permanent',
+                    'temporary' => 'Temporary',
+                    'project_based' => 'Project Based',
+                    'probationary' => 'Probationary',
+                    'commission_based' => 'Commission Based',
                 ],
             ],
             self::TYPE_JOB_WORKPLACE => [

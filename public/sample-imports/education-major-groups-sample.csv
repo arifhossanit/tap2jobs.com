@@ -1,5 +1,188 @@
-name,sort_order,is_active
-Computer Science & Engineering,1,1
-Electrical & Electronic Engineering,2,1
-Accounting & Information Systems,3,1
-General Science,4,1
+degree_level,name,sort_order,is_active
+Secondary,General,1,1
+Secondary,Science,2,1
+Secondary,Business Studies,3,1
+Secondary,Humanities,4,1
+Secondary,Vocational,5,1
+Higher Secondary,General,1,1
+Higher Secondary,Science,2,1
+Higher Secondary,Business Studies,3,1
+Higher Secondary,Humanities,4,1
+Higher Secondary,Vocational,5,1
+Diploma,Architecture,1,1
+Diploma,Automobile Engineering,2,1
+Diploma,Business Studies,3,1
+Diploma,Chemical Engineering,4,1
+Diploma,Civil Engineering,5,1
+Diploma,Computer Science,6,1
+Diploma,Computer Science & Engineering,7,1
+Diploma,Electrical Engineering,8,1
+Diploma,Electrical & Electronic Engineering,9,1
+Diploma,Electronics Engineering,10,1
+Diploma,Environmental Engineering,11,1
+Diploma,Food Engineering,12,1
+Diploma,Garments Design & Pattern Making,13,1
+Diploma,Graphic Design,14,1
+Diploma,Hospitality Management,15,1
+Diploma,Industrial Engineering,16,1
+Diploma,Marine Engineering,17,1
+Diploma,Mechanical Engineering,18,1
+Diploma,Medical Technology,19,1
+Diploma,Nursing,20,1
+Diploma,Power Engineering,21,1
+Diploma,Telecommunication Engineering,22,1
+Diploma,Textile Engineering,23,1
+Diploma,Tourism & Hospitality,24,1
+Bachelor,Accounting,1,1
+Bachelor,Agribusiness,2,1
+Bachelor,Agriculture,3,1
+Bachelor,Anthropology,4,1
+Bachelor,Applied Chemistry,5,1
+Bachelor,Applied Mathematics,6,1
+Bachelor,Architecture,7,1
+Bachelor,Bangla,8,1
+Bachelor,Banking & Insurance,9,1
+Bachelor,Biochemistry,10,1
+Bachelor,Biomedical Engineering,11,1
+Bachelor,Biotechnology,12,1
+Bachelor,Botany,13,1
+Bachelor,Business Administration,14,1
+Bachelor,Chemical Engineering,15,1
+Bachelor,Chemistry,16,1
+Bachelor,Civil Engineering,17,1
+Bachelor,Communication Disorders,18,1
+Bachelor,Computer Science,19,1
+Bachelor,Computer Science & Engineering,20,1
+Bachelor,Criminology,21,1
+Bachelor,Data Science,22,1
+Bachelor,Dental Surgery,23,1
+Bachelor,Development Studies,24,1
+Bachelor,Disaster Management,25,1
+Bachelor,Economics,26,1
+Bachelor,Education,27,1
+Bachelor,Electrical & Electronic Engineering,28,1
+Bachelor,English,29,1
+Bachelor,Environmental Science,30,1
+Bachelor,Fashion Design,31,1
+Bachelor,Finance,32,1
+Bachelor,Fisheries,33,1
+Bachelor,Food Engineering,34,1
+Bachelor,Food & Nutrition,35,1
+Bachelor,Forestry,36,1
+Bachelor,Genetic Engineering & Biotechnology,37,1
+Bachelor,Geography & Environment,38,1
+Bachelor,Graphic Design,39,1
+Bachelor,History,40,1
+Bachelor,Human Resource Management,41,1
+Bachelor,Industrial & Production Engineering,42,1
+Bachelor,Information Science & Library Management,43,1
+Bachelor,Information Technology,44,1
+Bachelor,International Business,45,1
+Bachelor,International Relations,46,1
+Bachelor,Islamic Studies,47,1
+Bachelor,Journalism & Mass Communication,48,1
+Bachelor,Law,49,1
+Bachelor,Management,50,1
+Bachelor,Management Information Systems,51,1
+Bachelor,Marketing,52,1
+Bachelor,Mathematics,53,1
+Bachelor,Mechanical Engineering,54,1
+Bachelor,Medicine,55,1
+Bachelor,Microbiology,56,1
+Bachelor,Naval Architecture & Marine Engineering,57,1
+Bachelor,Nursing,58,1
+Bachelor,Nutrition & Food Science,59,1
+Bachelor,Oceanography,60,1
+Bachelor,Pharmacy,61,1
+Bachelor,Physics,62,1
+Bachelor,Political Science,63,1
+Bachelor,Psychology,64,1
+Bachelor,Public Administration,65,1
+Bachelor,Public Health,66,1
+Bachelor,Social Welfare,67,1
+Bachelor,Sociology,68,1
+Bachelor,Software Engineering,69,1
+Bachelor,Statistics,70,1
+Bachelor,Textile Engineering,71,1
+Bachelor,Tourism & Hospitality Management,72,1
+Bachelor,Urban & Regional Planning,73,1
+Bachelor,Veterinary Science,74,1
+Bachelor,Zoology,75,1
+Masters,Accounting,1,1
+Masters,Agriculture,2,1
+Masters,Anthropology,3,1
+Masters,Architecture,4,1
+Masters,Bangla,5,1
+Masters,Biochemistry,6,1
+Masters,Biotechnology,7,1
+Masters,Business Administration,8,1
+Masters,Chemistry,9,1
+Masters,Civil Engineering,10,1
+Masters,Computer Science,11,1
+Masters,Computer Science & Engineering,12,1
+Masters,Data Science,13,1
+Masters,Development Studies,14,1
+Masters,Disaster Management,15,1
+Masters,Economics,16,1
+Masters,Education,17,1
+Masters,Electrical & Electronic Engineering,18,1
+Masters,English,19,1
+Masters,Environmental Science,20,1
+Masters,Finance,21,1
+Masters,Fisheries,22,1
+Masters,Food Engineering,23,1
+Masters,Geography & Environment,24,1
+Masters,Governance Studies,25,1
+Masters,Human Resource Management,26,1
+Masters,Information Technology,27,1
+Masters,International Business,28,1
+Masters,International Relations,29,1
+Masters,Journalism & Mass Communication,30,1
+Masters,Law,31,1
+Masters,Management,32,1
+Masters,Marketing,33,1
+Masters,Mathematics,34,1
+Masters,Mechanical Engineering,35,1
+Masters,Microbiology,36,1
+Masters,Pharmacy,37,1
+Masters,Physics,38,1
+Masters,Political Science,39,1
+Masters,Project Management,40,1
+Masters,Public Administration,41,1
+Masters,Public Health,42,1
+Masters,Social Welfare,43,1
+Masters,Sociology,44,1
+Masters,Software Engineering,45,1
+Masters,Statistics,46,1
+Masters,Supply Chain Management,47,1
+Masters,Textile Engineering,48,1
+Masters,Tourism & Hospitality Management,49,1
+Masters,Urban & Regional Planning,50,1
+PhD,Accounting,1,1
+PhD,Agriculture,2,1
+PhD,Biochemistry,3,1
+PhD,Biotechnology,4,1
+PhD,Business Administration,5,1
+PhD,Chemistry,6,1
+PhD,Civil Engineering,7,1
+PhD,Computer Science,8,1
+PhD,Computer Science & Engineering,9,1
+PhD,Development Studies,10,1
+PhD,Economics,11,1
+PhD,Education,12,1
+PhD,Electrical & Electronic Engineering,13,1
+PhD,English,14,1
+PhD,Environmental Science,15,1
+PhD,Law,16,1
+PhD,Management,17,1
+PhD,Mathematics,18,1
+PhD,Medical Science,19,1
+PhD,Microbiology,20,1
+PhD,Pharmacy,21,1
+PhD,Physics,22,1
+PhD,Political Science,23,1
+PhD,Public Administration,24,1
+PhD,Public Health,25,1
+PhD,Social Science,26,1
+PhD,Sociology,27,1
+PhD,Statistics,28,1

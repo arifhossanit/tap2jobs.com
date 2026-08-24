@@ -112,7 +112,7 @@ if (! function_exists('getCountryName')) {
             return;
         }
 
-        return Country::find($country)->name;
+        return Country::find($country)?->name;
     }
 }
 

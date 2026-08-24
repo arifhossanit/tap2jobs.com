@@ -13,6 +13,12 @@ class JobTypesImport implements ToModel, WithHeadingRow, WithValidation, SkipsOn
 {
     use SkipsFailures;
 
+    private int $importedCount = 0;
+
+    private int $skippedCount = 0;
+
+    private array $seenNames = [];
+
     public function rules(): array
     {
         return [
@@ -23,19 +29,35 @@ class JobTypesImport implements ToModel, WithHeadingRow, WithValidation, SkipsOn
 
     public function model(array $row): ?JobType
     {
-        $name = trim((string) ($row['name'] ?? $row['type'] ?? ''));
+        $name = trim((string) ($row['name'] ?? $row['type'] ?? $row['job_type'] ?? $row['job_type_name'] ?? ''));
 
         if (empty($name)) {
+            $this->skippedCount++;
             return null;
         }
 
-        if (JobType::where('name', $name)->exists()) {
+        $normalizedName = strtolower($name);
+        if (isset($this->seenNames[$normalizedName]) || JobType::where('name', $name)->exists()) {
+            $this->skippedCount++;
             return null;
         }
+
+        $this->seenNames[$normalizedName] = true;
+        $this->importedCount++;
 
         return new JobType([
             'name' => $name,
             'description' => trim((string) ($row['description'] ?? '')),
         ]);
+    }
+
+    public function importedCount(): int
+    {
+        return $this->importedCount;
+    }
+
+    public function skippedCount(): int
+    {
+        return $this->skippedCount;
     }
 }

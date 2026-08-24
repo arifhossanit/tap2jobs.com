@@ -79,7 +79,7 @@ class EducationDegreeTitleController extends AppBaseController
     public function import(Request $request)
     {
         $request->validate([
-            'required_degree_level_id' => 'required|exists:education_degree_levels,id',
+            'required_degree_level_id' => 'nullable|exists:education_degree_levels,id',
             'file' => ['required', 'file', function ($attribute, $value, $fail) {
                 $ext = strtolower($value->getClientOriginalExtension());
                 if (!in_array($ext, ['csv', 'xls', 'xlsx'])) {
@@ -95,6 +95,12 @@ class EducationDegreeTitleController extends AppBaseController
             if ($request->expectsJson()) {
                 return response()->json([
                     'message' => 'Degree Titles import completed with validation errors. Please fix the failed rows and try again.',
+                    'errors' => collect($import->failures())->map(fn ($failure) => [
+                        'row' => $failure->row(),
+                        'attribute' => $failure->attribute(),
+                        'errors' => $failure->errors(),
+                        'values' => $failure->values(),
+                    ])->values(),
                 ], 422);
             }
 
@@ -105,11 +111,11 @@ class EducationDegreeTitleController extends AppBaseController
 
         if ($request->expectsJson()) {
             return response()->json([
-                'message' => 'Degree Titles imported successfully.',
+                'message' => 'Degree Titles imported successfully. Imported: '.$import->importedCount().', skipped duplicates: '.$import->skippedDuplicateCount().', skipped invalid/unmatched: '.$import->skippedInvalidCount().'.',
             ]);
         }
 
-        flash('Degree Titles imported successfully.')->success();
+        flash('Degree Titles imported successfully. Imported: '.$import->importedCount().', skipped duplicates: '.$import->skippedDuplicateCount().', skipped invalid/unmatched: '.$import->skippedInvalidCount().'.')->success();
 
         return back();
     }

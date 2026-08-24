@@ -117,6 +117,10 @@ class JobRepository extends BaseRepository
         $data['jobTag'] = Tag::pluck('name', 'id');
         $data['requiredDegreeLevel'] = RequiredDegreeLevel::pluck('name', 'id');
         $data['employmentStatus'] = $this->employmentStatusOptions();
+        $data['workplaceOptions'] = ProfileReferenceOption::options(
+            ProfileReferenceOption::TYPE_JOB_WORKPLACE,
+            [ProfileReferenceOption::SCOPE_EMPLOYER]
+        );
         $data['countries'] = getJobCountries();
         $defaultCountryId = getSettingValue('default_country_id');
         $data['default_country_id'] = ! empty($defaultCountryId) ? (int) $defaultCountryId : null;
@@ -496,7 +500,14 @@ class JobRepository extends BaseRepository
             [ProfileReferenceOption::SCOPE_EMPLOYER]
         );
 
-        return $options ?: collect(Job::EMPLOYMENT_STATUSES)
+        $legacyValues = array_keys(Job::EMPLOYMENT_STATUSES);
+        if ($options === [] || count(array_intersect(array_keys($options), $legacyValues)) > 0) {
+            return collect(Job::JOB_NATURES)
+                ->mapWithKeys(fn ($label, $value) => [$value => __($label)])
+                ->toArray();
+        }
+
+        return $options ?: collect(Job::JOB_NATURES)
             ->mapWithKeys(fn ($label, $value) => [$value => __($label)])
             ->toArray();
     }
