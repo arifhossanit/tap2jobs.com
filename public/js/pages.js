@@ -880,10 +880,12 @@ function loadAppliedJobsData() {
   if (!$('#jobApplicationStatus').length) {
     return;
   }
+  filterJobId = $('#jobApplicationStatus').val();
   $('#jobApplicationStatus').select2();
   $('#jobApplicationStatus').on('change', function () {
+    filterJobId = $(this).val();
     Livewire.dispatch('changeFilter', {
-      value: $(this).val()
+      value: filterJobId
     });
     Livewire.dispatch('refresh');
     Livewire.dispatch('refreshDatatable');

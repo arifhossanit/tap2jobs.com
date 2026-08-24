@@ -44,6 +44,7 @@ use App\Models\RequiredDegreeLevel;
 use App\Models\User;
 use App\Repositories\Candidates\CandidateRepository;
 use App\Services\ApplicationCvService;
+use App\Services\CandidateProfileCompletionService;
 use App\Services\ResumePreviewService;
 use Auth;
 use Carbon\Carbon;
@@ -95,6 +96,9 @@ class CandidateController extends AppBaseController
 
         $user->phone = preparePhoneNumber($user->phone, $user->region_code);
         $data = $this->candidateRepository->prepareData();
+        $data['profileCompletion'] = $user->candidate
+            ? app(CandidateProfileCompletionService::class)->calculate($user->candidate)
+            : ['percentage' => 0, 'completed' => 0, 'total' => 10, 'color' => '#f04438'];
         $countries = getCountries();
         $states = $cities = null;
         if (! empty($user->country_id)) {

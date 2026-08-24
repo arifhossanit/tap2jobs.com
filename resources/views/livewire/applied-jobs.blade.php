@@ -7,7 +7,7 @@
     {{-- @if(count($appliedJobs) > 0 || $searchByAppliedJob != '' || $jobApplicationStatus != '') --}}
         <div class="row mb-3 justify-content-start" wire:ignore>
             <div class="col-md-3">
-                {{ Form::select('job-application-status', $jobApplicationStatusArr, null, ['class' => 'form-control','id'=>'jobApplicationStatus','placeholder' => __('messages.common.all'), 'wire:model' => "jobApplicationStatus"]) }}
+                {{ Form::select('job-application-status', $jobApplicationStatusArr, $value, ['class' => 'form-control','id'=>'jobApplicationStatus','placeholder' => __('messages.common.all'), 'wire:model' => "jobApplicationStatus"]) }}
             </div>
             <div class="col-md-3">
                 <input wire:model.debounce.100ms.live="searchByAppliedJob" type="search"

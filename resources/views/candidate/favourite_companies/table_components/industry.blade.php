@@ -1,9 +1,9 @@
 @if(!empty($row->company->industry->name))
-<div class="badge bg-light-info">
-    <div> {{ $row->company->industry->name}}</div>
+<div class="candidate-following-industry-badge">
+    {{ $row->company->industry->name}}
 </div>
 @else
-    <div class="badge bg-light-info">
-        <div>{{ __('messages.n/a') }}</div>
+    <div class="candidate-following-industry-badge candidate-following-industry-badge--empty">
+        {{ __('messages.n/a') }}
     </div>
 @endif

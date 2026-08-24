@@ -1,5 +1,8 @@
 @php
     $sectionName = $data['sectionName'] ?? 'personal-information';
+    $profileCompletion = $data['profileCompletion'] ?? ['percentage' => 0, 'completed' => 0, 'total' => 10, 'color' => '#f04438'];
+    $completionPercentage = max(0, min(100, (int) ($profileCompletion['percentage'] ?? 0)));
+    $completionColor = $profileCompletion['color'] ?? '#f04438';
 @endphp
 
 <div class="candidate-profile-menu">
@@ -35,6 +38,8 @@
             <span>{{ __('messages.candidate_profile.resume') }}</span>
         </a>
     </div>
+
+    
 
     <div class="candidate-profile-menu__sub">
         @if($sectionName == 'education-training')
@@ -131,6 +136,14 @@
                 {{ __('messages.candidate_profile.disability_information') }}
             </a>
         @endif
+    </div>
+    <div class="candidate-profile-progress">
+        <div class="candidate-profile-progress__track"
+             aria-label="Profile completed {{ $completionPercentage }}%"
+             style="--completion-left: {{ $completionPercentage }}%;">
+            <span style="width: {{ $completionPercentage }}%; background-color: {{ $completionColor }};"></span>
+            <strong>{{ $completionPercentage }}%</strong>
+        </div>
     </div>
 </div>
 

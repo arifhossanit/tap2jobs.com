@@ -1459,6 +1459,40 @@
   }
 }
 
+.candidate-profile-progress {
+  padding: 8px 20px;
+}
+
+.candidate-profile-progress__track {
+  background: #e5edf7;
+  border-radius: 999px;
+  height: 24px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+
+  span {
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+    display: block;
+    height: 100%;
+    transition: width 0.25s ease;
+  }
+
+  strong {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    left: #{"clamp(46px, var(--completion-left), calc(100% - 8px))"};
+    line-height: 1;
+    position: absolute;
+    text-shadow: 0 1px 2px rgba(15, 23, 42, 0.35);
+    top: 50%;
+    transform: translate(-100%, -50%);
+    z-index: 2;
+  }
+}
+
 .candidate-profile-menu__sub {
   align-items: center;
   background: #f3f4f6;
@@ -1511,7 +1545,7 @@
 
 .candidate-profile-section,
 .candidate-education-panel {
-  scroll-margin-top: 150px;
+  scroll-margin-top: 180px;
 }
 
 .candidate-dashboard-header,
@@ -1633,6 +1667,11 @@
     gap: 4px 10px;
     padding-left: 8px;
     padding-right: 8px;
+  }
+
+  .candidate-profile-progress {
+    padding-left: 14px;
+    padding-right: 14px;
   }
 }
 
@@ -5960,6 +5999,55 @@
   div:has(> select[wire\:model*="perPage"]),
   div:has(> .pagination) {
     display: none !important;
+  }
+}
+
+.candidate-favourite-companies-page {
+  .favourite-company-delete-btn {
+    align-items: center;
+    display: inline-flex;
+    height: 28px;
+    justify-content: center;
+    width: 28px;
+
+    i {
+      font-size: 18px;
+      line-height: 1;
+    }
+  }
+
+  .candidate-following-industry-badge {
+    background: #dbeafe;
+    border: 1px solid #93c5fd;
+    border-radius: 999px;
+    color: #1d4ed8;
+    display: inline-flex;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    max-width: 180px;
+    padding: 5px 10px;
+    white-space: normal;
+  }
+
+  .candidate-following-industry-badge--empty {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #64748b;
+  }
+
+  .text-gray-600.fs-4,
+  .text-gray-600 .fs-4,
+  .fs-4.fs-xl-6 {
+    font-size: 14px !important;
+    line-height: 1.4;
+  }
+
+  #perPage {
+    font-size: 14px;
+    min-height: 38px;
+    padding-bottom: 6px !important;
+    padding-top: 6px !important;
   }
 }
 

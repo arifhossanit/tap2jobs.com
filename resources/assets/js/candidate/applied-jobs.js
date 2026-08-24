@@ -11,10 +11,12 @@ function loadAppliedJobsData() {
     if (!$('#jobApplicationStatus').length) {
         return;
     }
+    filterJobId = $('#jobApplicationStatus').val();
     $('#jobApplicationStatus').select2();
 
     $('#jobApplicationStatus').on('change', function () {
-        Livewire.dispatch('changeFilter', { value: $(this).val() });
+        filterJobId = $(this).val();
+        Livewire.dispatch('changeFilter', { value: filterJobId });
         Livewire.dispatch('refresh');
         Livewire.dispatch('refreshDatatable');
     });

@@ -3,43 +3,65 @@
     $candidateLocation = __('messages.candidate_dashboard.location_information');
     $completionPercentage = $profileCompletion['percentage'] ?? 0;
     $completionColor = $profileCompletion['color'] ?? '#1967d2';
+    $dashboardNumber = function ($value) {
+        $value = (string) $value;
+
+        if (app()->getLocale() !== 'bn') {
+            return $value;
+        }
+
+        return strtr($value, [
+            '0' => '০',
+            '1' => '১',
+            '2' => '২',
+            '3' => '৩',
+            '4' => '৪',
+            '5' => '৫',
+            '6' => '৬',
+            '7' => '৭',
+            '8' => '৮',
+            '9' => '৯',
+        ]);
+    };
+    $dashboardCount = fn ($value) => $dashboardNumber(numberFormatShort($value));
+    $completionPercentageLabel = $dashboardNumber($completionPercentage).'%';
+    $candidatePhone = ! empty($user->phone)
+        ? $dashboardNumber($user->phone)
+        : __('messages.candidate_dashboard.no_not_available');
 
     if ($candidate) {
-        if (! empty($candidate->city_name)) {
-            $candidateLocation = collect([
-                $candidate->city_name,
-                $candidate->state_name,
-                $candidate->country_name,
-            ])->filter()->implode(', ');
-        } elseif (! empty($candidate->country_id)) {
-            $candidateLocation = $candidate->country_name ?: $candidateLocation;
-        }
+        $candidateLocation = collect([
+            $candidate->thana_name,
+            $candidate->city_name,
+            $candidate->state_name,
+            $candidate->country_name,
+        ])->filter()->implode(', ') ?: $candidateLocation;
     }
 
     $dashboardStats = [
         [
             'label' => __('messages.candidate_dashboard.profile_views'),
-            'value' => numberFormatShort($user->profile_views),
+            'value' => $dashboardCount($user->profile_views),
             'icon' => 'fa-regular fa-eye',
             'tone' => 'blue',
         ],
         [
             'label' => __('messages.applied_job.applied_jobs'),
-            'value' => numberFormatShort($applicationStats['applied'] ?? 0),
+            'value' => $dashboardCount($applicationStats['applied'] ?? 0),
             'icon' => 'fa-solid fa-paper-plane',
             'tone' => 'green',
-            'url' => route('candidate.applied.job'),
+            'url' => route('candidate.applied.job', ['status' => \App\Models\JobApplication::STATUS_APPLIED]),
         ],
         [
-            'label' => 'Ongoing',
-            'value' => numberFormatShort($applicationStats['ongoing'] ?? 0),
+            'label' => __('messages.candidate_dashboard.ongoing'),
+            'value' => $dashboardCount($applicationStats['ongoing'] ?? 0),
             'icon' => 'fa-solid fa-list-check',
             'tone' => 'purple',
-            'url' => route('candidate.applied.job'),
+            'url' => route('candidate.applied.job', ['status' => \App\Models\JobApplication::SHORT_LIST]),
         ],
         [
             'label' => __('messages.apply_job.resume'),
-            'value' => numberFormatShort($resumes),
+            'value' => $dashboardCount($resumes),
             'icon' => 'fa-regular fa-file-lines',
             'tone' => 'amber',
             'url' => route('candidate.profile', ['section' => 'resume']),
@@ -55,33 +77,32 @@
                     <img src="{{ $profileImage }}" alt="{{ html_entity_decode($user->full_name) }}">
                 </div>
                 <div class="candidate-dashboard-identity">
-                    <span class="candidate-dashboard-kicker">Candidate Dashboard</span>
                     <h1>{{ html_entity_decode($user->full_name) }}</h1>
                     <div class="candidate-dashboard-meta">
-                        <span><i class="fa-solid fa-phone"></i>{{ ! empty($user->phone) ? $user->phone : __('messages.candidate_dashboard.no_not_available') }}</span>
-                        <span><i class="fa-solid fa-location-dot"></i>{{ $candidateLocation }}</span>
+                        <span><i class="fa-solid fa-phone"></i>{{ $candidatePhone }}</span>
+                        
                         <span><i class="fa-solid fa-envelope"></i>{{ $user->email }}</span>
                     </div>
-                    <div class="candidate-dashboard-actions">
+                    {{-- <div class="candidate-dashboard-actions">
                         <a href="{{ route('candidate.profile') }}" class="btn btn-primary">
                             <i class="fa-regular fa-pen-to-square"></i>{{ __('messages.user.edit_profile') }}
                         </a>
                         <a href="{{ route('front.search.jobs') }}" target="_blank" class="btn btn-outline-primary">
                             <i class="fa-solid fa-magnifying-glass"></i>Browse Jobs
                         </a>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
 
             <div class="candidate-profile-completion">
                 <div class="candidate-profile-completion__ring"
                      style="--completion: {{ $completionPercentage }}%; --completion-color: {{ $completionColor }};">
-                    <span>{{ $completionPercentage }}%</span>
+                    <span>{{ $completionPercentageLabel }}</span>
                 </div>
                 <div class="candidate-profile-completion__content">
-                    <span>Profile Completed</span>
-                    <strong>{{ $profileCompletion['completed'] ?? 0 }} of {{ $profileCompletion['total'] ?? 10 }} sections done</strong>
-                    <a href="{{ route('candidate.profile') }}">Improve profile</a>
+                    <span>{{ __('messages.candidate_dashboard.profile_completed') }}</span>
+                    <strong>{{ __('messages.candidate_dashboard.sections_completed', ['completed' => $dashboardNumber($profileCompletion['completed'] ?? 0), 'total' => $dashboardNumber($profileCompletion['total'] ?? 10)]) }}</strong>
+                    <a href="{{ route('candidate.profile') }}">{{ __('messages.candidate_dashboard.edit_profile') }}</a>
                 </div>
             </div>
         </section>
@@ -112,10 +133,10 @@
             <div class="candidate-dashboard-panel candidate-dashboard-panel--wide">
                 <div class="candidate-dashboard-panel__header">
                     <div>
-                        <h2>Matching Jobs</h2>                        
+                        <h2>{{ __('messages.candidate_dashboard.matching_jobs') }}</h2>
                     </div>
                     <a href="{{ route('front.search.jobs') }}" target="_blank" class="candidate-dashboard-link">
-                        View More Jobs <i class="fa-solid fa-arrow-right"></i>
+                        {{ __('messages.candidate_dashboard.view_more_jobs') }} <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>
 
@@ -138,15 +159,15 @@
                                         <span>{{ $companyName }}</span>
                                     </div>
                                 </div>
-                                <div class="candidate-match-card__body">
+                                {{-- <div class="candidate-match-card__body">
                                     <div class="candidate-match-meta">
                                         <span><i class="fa-solid fa-location-dot"></i>{{ $job->full_location ?: __('messages.candidate_dashboard.location_information') }}</span>
                                         <span><i class="fa-solid fa-briefcase"></i>{{ $job->functionalArea->name ?? $job->jobCategory->name ?? __('messages.common.n/a') }}</span>
                                     </div>
-                                </div>
+                                </div> --}}
                                 <div class="candidate-match-card__footer">
-                                    <span><i class="fa-regular fa-calendar"></i>{{ optional($job->job_expiry_date)->format('M d, Y') }}</span>
-                                    <a href="{{ $jobUrl }}" target="_blank">View Details</a>
+                                    <span><i class="fa-regular fa-calendar"></i>{{ $job->job_expiry_date ? $dashboardNumber($job->job_expiry_date->translatedFormat('M d, Y')) : '' }}</span>
+                                    <a href="{{ $jobUrl }}" target="_blank">{{ __('messages.candidate_dashboard.view_details') }}</a>
                                 </div>
                             </article>
                         @endforeach
@@ -154,8 +175,8 @@
                 @else
                     <div class="candidate-match-empty">
                         <i class="fa-solid fa-briefcase"></i>
-                        <h3>No matching jobs found</h3>
-                        <p>Complete your skills, preferred area and location to get better recommendations.</p>
+                        <h3>{{ __('messages.candidate_dashboard.no_matching_jobs_found') }}</h3>
+                        <p>{{ __('messages.candidate_dashboard.complete_profile_for_recommendations') }}</p>
                         <a href="{{ route('candidate.profile') }}" class="btn btn-sm btn-primary">{{ __('messages.user.edit_profile') }}</a>
                     </div>
                 @endif
@@ -164,26 +185,25 @@
             <aside class="candidate-dashboard-panel candidate-dashboard-side-panel">
                 <div class="candidate-dashboard-panel__header candidate-dashboard-panel__header--compact">
                     <div>
-                        <h2>Quick Overview</h2>
-                        <p>Your application activity at a glance.</p>
+                        <h2>{{ __('messages.candidate_dashboard.quick_overview') }}</h2>
                     </div>
                 </div>
                 <div class="candidate-overview-list">
-                    <a href="{{ route('candidate.applied.job') }}">
-                        <span><i class="fa-solid fa-circle-check"></i>Applied</span>
-                        <strong>{{ numberFormatShort($applicationStats['applied'] ?? 0) }}</strong>
+                    <a href="{{ route('candidate.applied.job', ['status' => \App\Models\JobApplication::STATUS_APPLIED]) }}">
+                        <span><i class="fa-solid fa-circle-check"></i>{{ __('messages.candidate_dashboard.applied') }}</span>
+                        <strong>{{ $dashboardCount($applicationStats['applied'] ?? 0) }}</strong>
                     </a>
-                    <a href="{{ route('candidate.applied.job') }}">
-                        <span><i class="fa-solid fa-clock"></i>Drafts</span>
-                        <strong>{{ numberFormatShort($applicationStats['drafts'] ?? 0) }}</strong>
+                    <a href="{{ route('candidate.applied.job', ['status' => \App\Models\JobApplication::STATUS_DRAFT]) }}">
+                        <span><i class="fa-solid fa-clock"></i>{{ __('messages.candidate_dashboard.drafts') }}</span>
+                        <strong>{{ $dashboardCount($applicationStats['drafts'] ?? 0) }}</strong>
                     </a>
-                    <a href="{{ route('candidate.applied.job') }}">
-                        <span><i class="fa-solid fa-star"></i>Hired</span>
-                        <strong>{{ numberFormatShort($applicationStats['hired'] ?? 0) }}</strong>
+                    <a href="{{ route('candidate.applied.job', ['status' => \App\Models\JobApplication::COMPLETE]) }}">
+                        <span><i class="fa-solid fa-star"></i>{{ __('messages.candidate_dashboard.hired') }}</span>
+                        <strong>{{ $dashboardCount($applicationStats['hired'] ?? 0) }}</strong>
                     </a>
                     <a href="{{ route('favourite.companies') }}">
                         <span><i class="fa-solid fa-users"></i>{{ __('messages.candidate_dashboard.followings') }}</span>
-                        <strong>{{ numberFormatShort($followings) }}</strong>
+                        <strong>{{ $dashboardCount($followings) }}</strong>
                     </a>
                 </div>
             </aside>

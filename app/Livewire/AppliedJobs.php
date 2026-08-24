@@ -31,6 +31,16 @@ class AppliedJobs extends Component
      */
     private $perPage = 6;
 
+    public function mount(): void
+    {
+        $status = request()->query('status');
+
+        if ($status !== null && array_key_exists((int) $status, JobApplication::STATUS)) {
+            $this->value = (int) $status;
+            $this->jobApplicationStatus = (int) $status;
+        }
+    }
+
     public function paginationView(): string
     {
         return 'livewire.custom-pagenation-jobs';
@@ -54,7 +64,16 @@ class AppliedJobs extends Component
 
     public function changeFilter($value)
     {
-        $this->value = $value;
+        if ($value === '' || $value === null || ! array_key_exists((int) $value, JobApplication::STATUS)) {
+            $this->value = '';
+            $this->jobApplicationStatus = '';
+            $this->resetPage();
+
+            return;
+        }
+
+        $this->value = (int) $value;
+        $this->jobApplicationStatus = $this->value;
         $this->resetPage();
     }
 
@@ -105,7 +124,7 @@ class AppliedJobs extends Component
         $query = JobApplication::with(['candidate.user', 'job.currency', 'jobStage'])->where('candidate_id',
             getLoggedInUser()->owner_id)->orderByDesc('created_at');
 
-        if ($this->value != '') {
+        if ($this->value !== '' && $this->value !== null) {
             $query->where('status', $this->value);
         }
 
