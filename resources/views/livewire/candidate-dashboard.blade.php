@@ -3,6 +3,13 @@
     $candidateLocation = __('messages.candidate_dashboard.location_information');
     $completionPercentage = $profileCompletion['percentage'] ?? 0;
     $completionColor = $profileCompletion['color'] ?? '#1967d2';
+    $dashboardScoringBars = [
+        ['label' => 'Completed profile', 'percent' => $completionPercentage],
+        ['label' => 'Skill', 'percent' => max(0, $completionPercentage - 12)],
+        ['label' => 'Experience', 'percent' => max(0, $completionPercentage - 24)],
+        ['label' => 'Education', 'percent' => max(0, $completionPercentage - 36)],
+        ['label' => 'Location', 'percent' => max(0, $completionPercentage - 48)],
+    ];
     $dashboardNumber = function ($value) {
         $value = (string) $value;
 
@@ -135,7 +142,7 @@
                     <div>
                         <h2>{{ __('messages.candidate_dashboard.matching_jobs') }}</h2>
                     </div>
-                    <a href="{{ route('front.search.jobs') }}" target="_blank" class="candidate-dashboard-link">
+                    <a href="{{ route('front.search.jobs', ['matching' => 1]) }}" target="_blank" class="candidate-dashboard-link">
                         {{ __('messages.candidate_dashboard.view_more_jobs') }} <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>
@@ -204,31 +211,58 @@
                 @endif
             </div>
 
-            <aside class="candidate-dashboard-panel candidate-dashboard-side-panel">
-                <div class="candidate-dashboard-panel__header candidate-dashboard-panel__header--compact">
-                    <div>
-                        <h2>{{ __('messages.candidate_dashboard.quick_overview') }}</h2>
+            <div class="candidate-dashboard-side-stack">
+                <aside class="candidate-dashboard-panel candidate-dashboard-side-panel">
+                    <div class="candidate-dashboard-panel__header candidate-dashboard-panel__header--compact">
+                        <div>
+                            <h2>{{ __('messages.candidate_dashboard.quick_overview') }}</h2>
+                        </div>
                     </div>
-                </div>
-                <div class="candidate-overview-list">
-                    <a href="{{ route('candidate.applied.job', ['status' => \App\Models\JobApplication::STATUS_APPLIED]) }}">
-                        <span><i class="fa-solid fa-circle-check"></i>{{ __('messages.candidate_dashboard.applied') }}</span>
-                        <strong>{{ $dashboardCount($applicationStats['applied'] ?? 0) }}</strong>
-                    </a>
-                    <a href="{{ route('candidate.applied.job', ['status' => \App\Models\JobApplication::STATUS_DRAFT]) }}">
-                        <span><i class="fa-solid fa-clock"></i>{{ __('messages.candidate_dashboard.drafts') }}</span>
-                        <strong>{{ $dashboardCount($applicationStats['drafts'] ?? 0) }}</strong>
-                    </a>
-                    <a href="{{ route('candidate.applied.job', ['status' => \App\Models\JobApplication::COMPLETE]) }}">
-                        <span><i class="fa-solid fa-star"></i>{{ __('messages.candidate_dashboard.hired') }}</span>
-                        <strong>{{ $dashboardCount($applicationStats['hired'] ?? 0) }}</strong>
-                    </a>
-                    <a href="{{ route('favourite.companies') }}">
-                        <span><i class="fa-solid fa-users"></i>{{ __('messages.candidate_dashboard.followings') }}</span>
-                        <strong>{{ $dashboardCount($followings) }}</strong>
-                    </a>
-                </div>
-            </aside>
+                    <div class="candidate-overview-list">
+                        <a href="{{ route('candidate.applied.job', ['status' => \App\Models\JobApplication::STATUS_APPLIED]) }}">
+                            <span><i class="fa-solid fa-circle-check"></i>{{ __('messages.candidate_dashboard.applied') }}</span>
+                            <strong>{{ $dashboardCount($applicationStats['applied'] ?? 0) }}</strong>
+                        </a>
+                        <a href="{{ route('candidate.applied.job', ['status' => \App\Models\JobApplication::STATUS_DRAFT]) }}">
+                            <span><i class="fa-solid fa-clock"></i>{{ __('messages.candidate_dashboard.drafts') }}</span>
+                            <strong>{{ $dashboardCount($applicationStats['drafts'] ?? 0) }}</strong>
+                        </a>
+                        <a href="{{ route('candidate.applied.job', ['status' => \App\Models\JobApplication::COMPLETE]) }}">
+                            <span><i class="fa-solid fa-star"></i>{{ __('messages.candidate_dashboard.hired') }}</span>
+                            <strong>{{ $dashboardCount($applicationStats['hired'] ?? 0) }}</strong>
+                        </a>
+                        <a href="{{ route('favourite.companies') }}">
+                            <span><i class="fa-solid fa-users"></i>{{ __('messages.candidate_dashboard.followings') }}</span>
+                            <strong>{{ $dashboardCount($followings) }}</strong>
+                        </a>
+                    </div>
+                </aside>
+
+                <aside class="candidate-dashboard-panel candidate-dashboard-side-panel">
+                    <div class="candidate-profile-breakdown">
+                        <div class="candidate-dashboard-panel__header candidate-dashboard-panel__header--compact">
+                            <div>
+                                <h2>Job Matching Criteria</h2>
+                            </div>
+                        </div>
+                        <div class="candidate-profile-breakdown__list">
+                            @foreach($dashboardScoringBars as $scoringBar)
+                                @php
+                                    $barPercent = min(100, max(0, (int) $scoringBar['percent']));
+                                @endphp
+                                <div class="candidate-profile-breakdown__row">
+                                    <div class="candidate-profile-breakdown__top">
+                                        <span>{{ $scoringBar['label'] }}</span>
+                                    </div>
+                                    <div class="candidate-profile-breakdown__track">
+                                        <span style="width: {{ $barPercent }}%;"></span>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </aside>
+            </div>
         </section>
     </div>
 </div>

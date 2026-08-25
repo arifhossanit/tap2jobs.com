@@ -18,7 +18,7 @@
     display: flex;
     gap: 24px;
     justify-content: space-between;
-    padding: 28px;
+    padding: 22px;
 }
 
 .candidate-dashboard-hero__profile {
@@ -312,6 +312,52 @@ a.candidate-stat-card:hover {
     gap: 8px;
 }
 
+.candidate-profile-breakdown {
+    min-width: 0;
+}
+
+.candidate-profile-breakdown__list {
+    display: grid;
+    gap: 18px;
+}
+
+.candidate-profile-breakdown__row {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+}
+
+.candidate-profile-breakdown__top {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+    min-width: 0;
+}
+
+.candidate-profile-breakdown__top span {
+    color: #111827;
+    font-size: 15px;
+    font-weight: 800;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.candidate-profile-breakdown__track {
+    background: #e7eef7;
+    border-radius: 999px;
+    height: 14px;
+    overflow: hidden;
+}
+
+.candidate-profile-breakdown__track span {
+    background: #1967d2;
+    border-radius: inherit;
+    display: block;
+    height: 100%;
+}
+
 .candidate-match-grid {
     display: grid;
     gap: 16px;
@@ -468,6 +514,13 @@ a.candidate-stat-card:hover {
 
 .candidate-dashboard-side-panel {
     align-self: start;
+}
+
+.candidate-dashboard-side-stack {
+    align-self: start;
+    display: grid;
+    gap: 20px;
+    min-width: 0;
 }
 
 .candidate-overview-list {
@@ -668,6 +721,14 @@ body.dark-mode .candidate-match-empty,
 body.dark-mode .candidate-overview-list a {
     background: #172033;
     border-color: #2b3950;
+}
+
+body.dark-mode .candidate-profile-breakdown__top span {
+    color: #f9fafb;
+}
+
+body.dark-mode .candidate-profile-breakdown__track {
+    background: #2b3950;
 }
 
 body.dark-mode .candidate-profile-completion__ring::before,

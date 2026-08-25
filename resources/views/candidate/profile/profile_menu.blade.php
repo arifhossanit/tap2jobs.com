@@ -1,8 +1,9 @@
 @php
     $sectionName = $data['sectionName'] ?? 'personal-information';
-    $profileCompletion = $data['profileCompletion'] ?? ['percentage' => 0, 'completed' => 0, 'total' => 10, 'color' => '#f04438'];
+    $profileCompletion = $data['profileCompletion'] ?? ['percentage' => 0, 'completed' => 0, 'total' => 11, 'color' => '#f04438'];
     $completionPercentage = max(0, min(100, (int) ($profileCompletion['percentage'] ?? 0)));
     $completionColor = $profileCompletion['color'] ?? '#f04438';
+    $missingProfileItems = collect($profileCompletion['missing'] ?? [])->take(8);
 @endphp
 
 <div class="candidate-profile-menu">
@@ -143,6 +144,19 @@
              style="--completion-left: {{ $completionPercentage }}%;">
             <span style="width: {{ $completionPercentage }}%; background-color: {{ $completionColor }};"></span>
             <strong>{{ $completionPercentage }}%</strong>
+            @if($missingProfileItems->isNotEmpty())
+                <div class="candidate-profile-progress__remaining" tabindex="0"
+                     aria-label="Incomplete profile items">
+                    <div class="candidate-profile-progress__popover">
+                        <span>Complete these items</span>
+                        <ul>
+                            @foreach($missingProfileItems as $missingProfileItem)
+                                <li>{{ $missingProfileItem }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 </div>

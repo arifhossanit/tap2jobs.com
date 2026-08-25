@@ -251,7 +251,7 @@ return [
         'post_a_job' => 'Post a Job',
         'my_panel' => 'My Panel',
         'newsletter' => 'Newsletter',
-        'newsletter_text' => 'Stay Connected with our regular updates by subscribing our newsletter.',
+        'newsletter_text' => 'Stay Connected with us.',
         'copyright' => 'Copyright',
         'all_rights_reserved' => 'All Rights Reserved',
         'sign_in' => 'Sign in',

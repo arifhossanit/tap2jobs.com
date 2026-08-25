@@ -859,6 +859,8 @@ return [
         'my_cv_list' => 'আমার CV তালিকা',
         'profile_completed' => 'প্রোফাইল সম্পন্ন',
         'sections_completed' => ':totalটির মধ্যে :completedটি সেকশন সম্পন্ন',
+        'profile_scoring_breakdown' => 'প্রোফাইল স্কোরিং বিস্তারিত',
+        'profile_scoring_summary' => ':totalটি স্কোরিং এরিয়া থেকে :percentage% প্রোফাইল সম্পন্ন।',
         'edit_profile' => 'প্রোফাইল সম্পাদনা',
         'matching_jobs' => 'ম্যাচিং চাকরি',
         'view_more_jobs' => 'আরও চাকরি দেখুন',

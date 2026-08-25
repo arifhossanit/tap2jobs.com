@@ -98,7 +98,7 @@ class CandidateController extends AppBaseController
         $data = $this->candidateRepository->prepareData();
         $data['profileCompletion'] = $user->candidate
             ? app(CandidateProfileCompletionService::class)->calculate($user->candidate)
-            : ['percentage' => 0, 'completed' => 0, 'total' => 10, 'color' => '#f04438'];
+            : ['percentage' => 0, 'completed' => 0, 'total' => 11, 'color' => '#f04438'];
         $countries = getCountries();
         $states = $cities = null;
         if (! empty($user->country_id)) {
