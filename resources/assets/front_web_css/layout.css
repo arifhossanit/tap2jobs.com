@@ -73,14 +73,36 @@ header .navbar .navbar-collapse .navbar-nav .nav-item .nav-link.active {
 
 @media(max-width: 991px) {
     header .navbar-toggler {
-        box-shadow: none
+        align-items: center;
+        background: rgba(25, 103, 210, .08);
+        border-radius: 12px;
+        color: #1967d2;
+        display: inline-flex;
+        height: 44px;
+        justify-content: center;
+        transition: background-color .2s ease, box-shadow .2s ease, color .2s ease, transform .2s ease;
+        width: 44px
+    }
+
+    header .navbar-toggler:hover {
+        background: rgba(25, 103, 210, .14)
+    }
+
+    header .navbar-toggler[aria-expanded="true"] {
+        background: #1967d2;
+        box-shadow: 0 8px 20px rgba(25, 103, 210, .28);
+        color: #fff
+    }
+
+    header .navbar-toggler:active {
+        transform: scale(.96)
     }
 }
 
 header .navbar-toggler .navbar-toggler-icon {
     background-image: none !important;
-    height: 26px;
-    width: 26px;
+    height: 24px;
+    width: 24px;
     position: relative;
     margin: auto;
     cursor: pointer
@@ -89,47 +111,55 @@ header .navbar-toggler .navbar-toggler-icon {
 header .navbar-toggler .navbar-toggler-icon .icon-bar {
     position: absolute;
     height: 2px;
-    background-color: #272727;
-    width: 26px;
+    background-color: currentColor;
+    left: 1px;
+    width: 22px;
     display: block;
-    border-radius: 2px;
-    margin-top: 4px;
-    transition: .35s ease all
+    border-radius: 999px;
+    margin: 0;
+    transform-origin: center;
+    transition: top .25s ease, transform .25s ease, opacity .18s ease, width .25s ease
 }
 
 header .navbar-toggler .navbar-toggler-icon .top-bar {
-    top: 0px
+    top: 5px
 }
 
 header .navbar-toggler .navbar-toggler-icon .middle-bar {
-    top: 7px;
+    left: auto;
+    right: 1px;
+    top: 11px;
     opacity: 1;
-    width: 20px
+    width: 16px
 }
 
 header .navbar-toggler .navbar-toggler-icon .bottom-bar {
-    top: 14px
+    top: 17px
 }
 
-header .navbar-toggler .navbar-toggler-icon.open .top-bar {
-    top: 7px;
-    animation: rotatedown .3s forwards;
-    animation-delay: .3s
+header .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon .top-bar {
+    top: 11px;
+    transform: rotate(45deg)
 }
 
-header .navbar-toggler .navbar-toggler-icon.open .middle-bar {
+header .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon .middle-bar {
     opacity: 0;
-    width: 0%
+    transform: translateX(6px);
+    width: 0
 }
 
-header .navbar-toggler .navbar-toggler-icon.open .bottom-bar {
-    top: 7px;
-    animation: rotateup .3s forwards;
-    animation-delay: .3s
+header .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon .bottom-bar {
+    top: 11px;
+    transform: rotate(-45deg)
 }
 
 header .navbar-toggler:focus {
     box-shadow: none
+}
+
+header .navbar-toggler:focus-visible {
+    outline: 3px solid rgba(25, 103, 210, .3);
+    outline-offset: 3px
 }
 
 header .dropdown-toggle {

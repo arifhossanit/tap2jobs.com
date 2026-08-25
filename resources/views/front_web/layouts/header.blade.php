@@ -4,17 +4,16 @@
             <a class="navbar-brand" href="{{ url('/') }}">
                 <img src="{{ asset($settings['logo']) }}" alt="" class="d-inline-block img-fluid h-100" />
             </a>
-            <div class="d-flex align-items-center">
-                <button class="navbar-toggler border-0 p-0" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                    <div class="navbar-toggler-icon" id="toggler-icon">
-                        <span class="icon-bar top-bar"></span>
-                        <span class="icon-bar middle-bar"></span>
-                        <span class="icon-bar bottom-bar"></span>
-                    </div>
-                </button>
-                <div class="collapse navbar-collapse justify-content-lg-between justify-content-end" id="navbarNav">
+            <button class="navbar-toggler border-0 p-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon" aria-hidden="true">
+                    <span class="icon-bar top-bar"></span>
+                    <span class="icon-bar middle-bar"></span>
+                    <span class="icon-bar bottom-bar"></span>
+                </span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-lg-between justify-content-end" id="navbarNav">
                     <ul class="navbar-nav d-flex justify-content-end align-items-lg-center w-100">
                         <li class="nav-item">
                             <a class="header-navbar-color text-gray nav-link {{ Request::is('/') ? 'header-navbar-color-active' : '' }}"
@@ -268,7 +267,6 @@
                          @endif
                      </ul>
                  </div>
-             </div>
          </div>
      </nav>
 </header>
@@ -279,15 +277,25 @@
             padding: 10px 0;
         }
 
+        header.bg-gradient .navbar > .container {
+            position: relative;
+        }
+
         #navbarNav.navbar-collapse {
             background: #ffffff !important;
-            border-radius: 12px !important;
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18) !important;
-            padding: 20px !important;
-            margin-top: 12px !important;
+            border-radius: 16px !important;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18) !important;
+            padding: 16px !important;
+            margin: 0 !important;
             border: 1px solid #e2e8f0 !important;
             z-index: 99999 !important;
-            position: relative !important;
+            position: absolute !important;
+            top: calc(100% + 8px) !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100% !important;
+            max-height: calc(100vh - 92px);
+            overflow-y: auto;
         }
 
         #navbarNav .navbar-nav {
@@ -359,44 +367,3 @@
         }
     }
 </style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var navbarCollapse = document.getElementById('navbarNav');
-        var togglerIcon = document.getElementById('toggler-icon');
-        var togglerBtn = document.querySelector('.navbar-toggler');
-
-        if (navbarCollapse && togglerIcon) {
-            navbarCollapse.addEventListener('show.bs.collapse', function () {
-                togglerIcon.classList.add('open');
-            });
-            navbarCollapse.addEventListener('hide.bs.collapse', function () {
-                togglerIcon.classList.remove('open');
-            });
-        }
-
-        if (togglerBtn && navbarCollapse) {
-            togglerBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                var isExpanded = togglerBtn.getAttribute('aria-expanded') === 'true';
-                if (typeof bootstrap !== 'undefined' && bootstrap.Collapse) {
-                    var bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
-                    if (!bsCollapse) {
-                        bsCollapse = new bootstrap.Collapse(navbarCollapse, { toggle: false });
-                    }
-                    if (navbarCollapse.classList.contains('show')) {
-                        bsCollapse.hide();
-                    } else {
-                        bsCollapse.show();
-                    }
-                } else {
-                    navbarCollapse.classList.toggle('show');
-                    if (togglerIcon) {
-                        togglerIcon.classList.toggle('open');
-                    }
-                    togglerBtn.setAttribute('aria-expanded', !isExpanded);
-                }
-            });
-        }
-    });
-</script>
