@@ -6,17 +6,20 @@ use App\Models\Candidate;
 use App\Models\CandidateSkill;
 use App\Models\Job;
 use App\Models\JobApplication;
+use App\Models\Skill;
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 
 class CandidateJobMatchService
 {
-    public function topMatches(Candidate $candidate, int $limit = 6): Collection
+    public function topMatches(Candidate $candidate, int $limit = 8): Collection
     {
         $candidateSkillIds = $this->candidateSkillIds($candidate);
         $preferredSkillIds = $this->ids($candidate->preferred_special_skills ?? []);
         $allCandidateSkillIds = $candidateSkillIds->merge($preferredSkillIds)->unique()->values();
         $preferredFunctionalIds = $this->ids($candidate->preferred_functional_categories ?? []);
         $preferredLocationIds = $this->ids($candidate->preferred_job_locations_inside ?? []);
+        $candidateKeywords = $this->candidateKeywords($candidate, $allCandidateSkillIds);
         $appliedJobIds = JobApplication::query()
             ->where('candidate_id', $candidate->id)
             ->where('status', '!=', JobApplication::STATUS_DRAFT)
@@ -33,8 +36,8 @@ class CandidateJobMatchService
             ->get();
 
         $matches = $jobs
-            ->map(function (Job $job) use ($candidate, $allCandidateSkillIds, $preferredFunctionalIds, $preferredLocationIds) {
-                return $this->scoreJob($job, $candidate, $allCandidateSkillIds, $preferredFunctionalIds, $preferredLocationIds);
+            ->map(function (Job $job) use ($candidate, $allCandidateSkillIds, $preferredFunctionalIds, $preferredLocationIds, $candidateKeywords) {
+                return $this->scoreJob($job, $candidate, $allCandidateSkillIds, $preferredFunctionalIds, $preferredLocationIds, $candidateKeywords);
             })
             ->sortByDesc(fn (Job $job) => [$job->match_score, optional($job->created_at)->timestamp ?? 0])
             ->values();
@@ -59,7 +62,8 @@ class CandidateJobMatchService
         Candidate $candidate,
         Collection $candidateSkillIds,
         Collection $preferredFunctionalIds,
-        Collection $preferredLocationIds
+        Collection $preferredLocationIds,
+        Collection $candidateKeywords
     ): Job {
         $score = 0;
         $reasons = [];
@@ -67,36 +71,54 @@ class CandidateJobMatchService
         $jobSkillIds = $job->jobsSkill->pluck('id')->map(fn ($id) => (int) $id)->unique();
         $matchedSkills = $jobSkillIds->intersect($candidateSkillIds);
         if ($jobSkillIds->isNotEmpty() && $matchedSkills->isNotEmpty()) {
-            $skillScore = (int) round(($matchedSkills->count() / $jobSkillIds->count()) * 40);
-            $score += min(40, max(15, $skillScore));
+            $skillScore = min(28, (int) round(($matchedSkills->count() / max($jobSkillIds->count(), 1)) * 28));
+            $score += $skillScore;
             $reasons[] = $matchedSkills->count().' skill'.($matchedSkills->count() > 1 ? 's' : '').' matched';
         }
 
         if ($candidate->functional_area_id && $job->functional_area_id === $candidate->functional_area_id) {
-            $score += 20;
+            $score += 17;
             $reasons[] = 'Functional area matched';
         } elseif ($preferredFunctionalIds->contains((int) $job->functional_area_id)) {
-            $score += 16;
+            $score += 14;
             $reasons[] = 'Preferred functional category matched';
         }
 
+        $keywordScore = $this->keywordScore($job, $candidateKeywords);
+        if ($keywordScore > 0) {
+            $score += $keywordScore;
+            $reasons[] = 'Job title/profile keywords matched';
+        }
+
+        $experienceScore = $this->experienceScore($job, $candidate);
+        if ($experienceScore > 0) {
+            $score += $experienceScore;
+            $reasons[] = $experienceScore === 12 ? 'Experience matched' : 'Experience close match';
+        }
+
+        $locationScore = $this->locationScore($job, $candidate, $preferredLocationIds);
+        if ($locationScore > 0) {
+            $score += $locationScore;
+            $reasons[] = $locationScore >= 9 ? 'Location matched' : 'Nearby/preferred location matched';
+        }
+
         if ($candidate->career_level_id && $job->career_level_id === $candidate->career_level_id) {
-            $score += 12;
+            $score += 6;
             $reasons[] = 'Career level matched';
         }
 
-        if ($this->locationMatches($job, $candidate, $preferredLocationIds)) {
-            $score += 14;
-            $reasons[] = 'Location matched';
+        if ($this->salaryMatches($job, $candidate)) {
+            $score += 5;
+            $reasons[] = 'Salary expectation fits';
         }
 
-        if ($this->experienceMatches($job, $candidate)) {
-            $score += 10;
-            $reasons[] = 'Experience matched';
+        if ($this->industryMatches($job, $candidate)) {
+            $score += 5;
+            $reasons[] = 'Industry matched';
         }
 
         if ($candidate->job_nature && $this->employmentStatusMatches($job->employment_status, $candidate->job_nature)) {
-            $score += 4;
+            $score += 2;
             $reasons[] = 'Job nature matched';
         }
 
@@ -116,6 +138,23 @@ class CandidateJobMatchService
             ->values();
     }
 
+    private function candidateKeywords(Candidate $candidate, Collection $candidateSkillIds): Collection
+    {
+        $skillNames = $candidateSkillIds->isEmpty()
+            ? collect()
+            : Skill::query()->whereIn('id', $candidateSkillIds)->pluck('name');
+
+        return $this->keywords(collect([
+            $candidate->objective,
+            $candidate->career_summary,
+            $candidate->special_qualification,
+            $candidate->keywords,
+            optional($candidate->functionalArea)->name,
+            optional($candidate->careerLevel)->level_name,
+            $skillNames->implode(' '),
+        ])->filter()->implode(' '));
+    }
+
     private function ids(array $values): Collection
     {
         return collect($values)
@@ -125,27 +164,120 @@ class CandidateJobMatchService
             ->values();
     }
 
-    private function locationMatches(Job $job, Candidate $candidate, Collection $preferredLocationIds): bool
+    private function keywordScore(Job $job, Collection $candidateKeywords): int
+    {
+        if ($candidateKeywords->isEmpty()) {
+            return 0;
+        }
+
+        $jobTitleKeywords = $this->keywords($job->job_title);
+        $jobBodyKeywords = $this->keywords(collect([
+            $job->description,
+            $job->key_responsibilities ?? null,
+            optional($job->functionalArea)->name,
+            optional($job->jobCategory)->name,
+        ])->filter()->implode(' '));
+
+        $titleMatches = $jobTitleKeywords->intersect($candidateKeywords)->count();
+        $bodyMatches = $jobBodyKeywords->intersect($candidateKeywords)->count();
+
+        $titleScore = $jobTitleKeywords->isNotEmpty()
+            ? min(10, (int) round(($titleMatches / $jobTitleKeywords->count()) * 10))
+            : 0;
+        $bodyScore = min(5, $bodyMatches);
+
+        return min(15, $titleScore + $bodyScore);
+    }
+
+    private function keywords(?string $text): Collection
+    {
+        $stopWords = [
+            'and', 'for', 'the', 'with', 'from', 'this', 'that', 'your', 'you', 'job', 'jobs',
+            'work', 'will', 'are', 'our', 'candidate', 'experience', 'year', 'years', 'full',
+            'time', 'part', 'ltd', 'limited', 'company', 'bangladesh', 'bd',
+        ];
+
+        return Str::of(strip_tags((string) $text))
+            ->lower()
+            ->replaceMatches('/[^a-z0-9+#.]+/', ' ')
+            ->explode(' ')
+            ->map(fn ($word) => trim($word))
+            ->filter(fn ($word) => strlen($word) >= 3 && ! in_array($word, $stopWords, true))
+            ->unique()
+            ->values();
+    }
+
+    private function locationScore(Job $job, Candidate $candidate, Collection $preferredLocationIds): int
     {
         $user = $candidate->user;
 
-        return ($user?->city_id && $job->city_id === $user->city_id)
-            || ($user?->state_id && $job->state_id === $user->state_id)
-            || $preferredLocationIds->contains((int) $job->state_id)
-            || $preferredLocationIds->contains((int) $job->city_id);
+        if (($user?->thana_id && $job->thana_id === $user->thana_id)
+            || ($user?->city_id && $job->city_id === $user->city_id)) {
+            return 10;
+        }
+
+        if (($user?->state_id && $job->state_id === $user->state_id)
+            || $preferredLocationIds->contains((int) $job->city_id)) {
+            return 7;
+        }
+
+        if (($user?->country_id && $job->country_id === $user->country_id)
+            || $preferredLocationIds->contains((int) $job->state_id)) {
+            return 4;
+        }
+
+        return 0;
     }
 
-    private function experienceMatches(Job $job, Candidate $candidate): bool
+    private function experienceScore(Job $job, Candidate $candidate): int
     {
         if ($job->freshers_encouraged && (int) $candidate->experience === 0) {
-            return true;
+            return 12;
         }
 
         if ($candidate->experience === null || $job->experience === null) {
+            return 0;
+        }
+
+        $candidateExperience = (int) $candidate->experience;
+        $requiredExperience = (int) $job->experience;
+
+        if ($candidateExperience >= $requiredExperience) {
+            return 12;
+        }
+
+        return ($requiredExperience - $candidateExperience) <= 1 ? 6 : 0;
+    }
+
+    private function salaryMatches(Job $job, Candidate $candidate): bool
+    {
+        if (! filled($candidate->expected_salary) || ! filled($job->salary_from) || ! filled($job->salary_to)) {
             return false;
         }
 
-        return (int) $candidate->experience >= (int) $job->experience;
+        $expectedSalary = (float) $candidate->expected_salary;
+        $salaryFrom = (float) preg_replace('/[^\d.]/', '', (string) $job->salary_from);
+        $salaryTo = (float) preg_replace('/[^\d.]/', '', (string) $job->salary_to);
+
+        if ($salaryFrom <= 0 || $salaryTo <= 0) {
+            return false;
+        }
+
+        return $expectedSalary >= $salaryFrom && $expectedSalary <= $salaryTo;
+    }
+
+    private function industryMatches(Job $job, Candidate $candidate): bool
+    {
+        if (! filled($candidate->industry_id) || ! $job->company) {
+            return false;
+        }
+
+        $companyIndustryIds = collect($job->company->industry_ids ?? [])
+            ->push($job->company->industry_id)
+            ->filter()
+            ->map(fn ($id) => (int) $id);
+
+        return $companyIndustryIds->contains((int) $candidate->industry_id);
     }
 
     private function employmentStatusMatches(?string $jobStatus, ?string $candidateNature): bool

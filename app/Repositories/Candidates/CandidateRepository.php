@@ -148,10 +148,14 @@ class CandidateRepository extends BaseRepository
             DB::beginTransaction();
             $input['is_active'] = isset($input['is_active']) ? 1 : 0;
             $input['is_verified'] = isset($input['is_verified']) ? 1 : 0;
+            $input['email_verified_at'] = $input['is_verified'] ? Carbon::now() : null;
             $input['password'] = Hash::make($input['password']);
             $input['dob'] = (! empty($input['dob'])) ? $input['dob'] : null;
             $input['current_salary'] = removeCommaFromNumbers($input['current_salary']);
             $input['expected_salary'] = removeCommaFromNumbers($input['expected_salary']);
+            $input['available_at'] = isset($input['immediate_available']) && $input['immediate_available'] == 0
+                ? ($input['available_at'] ?? null)
+                : null;
             $input['unique_id'] = $this->getUniqueCandidateId();
             $candidateRole = Role::whereName('Candidate')->first();
             /** @var User $user */
@@ -178,13 +182,6 @@ class CandidateRepository extends BaseRepository
             if (isset($input['candidateLanguage']) && ! empty($input['candidateLanguage'])) {
                 $user->candidateLanguage()->sync($input['candidateLanguage']);
             }
-
-//            if ($user->is_verified) {
-//                $user->update(['email_verified_at' => Carbon::now()]);
-//            }else{
-//                $user->sendEmailVerificationNotification();
-//            }
-            $user->update(['email_verified_at' => Carbon::now()]);
 
             DB::commit();
 
@@ -1313,8 +1310,12 @@ class CandidateRepository extends BaseRepository
     {
         unset($input['password']);
 
+        /** @var User $user */
+        $user = $candidate->user;
+
         $input['is_active'] = isset($input['is_active']) ? 1 : 0;
         $input['is_verified'] = isset($input['is_verified']) ? 1 : 0;
+        $input['email_verified_at'] = $input['is_verified'] ? ($user->email_verified_at ?: Carbon::now()) : null;
         $input['dob'] = (! empty($input['dob'])) ? $input['dob'] : null;
         $input['state'] = (! empty($input['state'])) ? $input['state'] : null;
         $input['city'] = (! empty($input['city'])) ? $input['city'] : null;
@@ -1324,26 +1325,15 @@ class CandidateRepository extends BaseRepository
             ? ($input['available_at'] ?? null)
             : null;
 
-        /** @var User $user */
-        $user = $candidate->user;
-
         /* @var Candidate $candidate */
         $user->update($input);
         $candidate->update($input);
 
-        if (! $user->email_verified_at && $input['is_verified'] == 1) {
-            $user->update(['email_verified_at' => Carbon::now()]);
-        }
-
         //Update Candidate Skills
-        if (isset($input['candidateSkills']) && ! empty($input['candidateSkills'])) {
-            $user->candidateSkill()->sync($input['candidateSkills']);
-        }
+        $user->candidateSkill()->sync($input['candidateSkills'] ?? []);
 
         //update Candidate Languages
-        if (isset($input['candidateLanguage']) && ! empty($input['candidateLanguage'])) {
-            $user->candidateLanguage()->sync($input['candidateLanguage']);
-        }
+        $user->candidateLanguage()->sync($input['candidateLanguage'] ?? []);
 
         return true;
     }

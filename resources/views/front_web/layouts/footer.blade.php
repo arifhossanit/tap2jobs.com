@@ -11,7 +11,7 @@
                 <p class="d-block text-gray my-4">
                     {{ __('web.footer.newsletter_text') }}
                 </p>
-                <form id="newsLetterForm">
+                <!-- <form id="newsLetterForm">
                     <div class="email d-flex">
                         <input type="email" id="mc-email" name="email"
                             placeholder="{{ __('web.enter_your_mail') }}" class="text-gray" />
@@ -23,7 +23,7 @@
                             </button>
                         </div>
                     </div>
-                </form>
+                </form> -->
                 <div class="social-icon d-flex mt-4">
                     @if (!empty($settings['facebook_url']))
                         <a href="{{ $settings['facebook_url'] }}" target="_blank" class=" me-2">
@@ -170,7 +170,7 @@
                         {{ html_entity_decode($settings['application_name']) }}</a>.
                     {{ __('web.footer.all_rights_reserved') }}.
                     Developed by
-                    <a href="https://www.tap2dealit.com/" class="text-primary" target="_blank" rel="noopener">Tap2Jobs IT</a>.
+                    <a href="https://www.tap2dealit.com/" class="text-primary" target="_blank" rel="noopener">Tap2Deal IT</a>.
                 </p>
             </div>
         </div>

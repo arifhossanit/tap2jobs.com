@@ -28,6 +28,7 @@ return [
     'select_language' => 'Select Language',
     'select_state' => 'Select State',
     'select_city' => 'Select City',
+    'select_thana' => 'Select Thana',
     'favourite_company' => 'Favourite Company',
     'reported_candidate' => 'Reported Candidate',
     'already_reported' => 'Already Reported',

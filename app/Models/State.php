@@ -47,7 +47,7 @@ class State extends Model
     ];
 
     public static $rules = [
-        'name' => 'required|max:180|unique:states,name',
+        'name' => 'required|max:720|unique:states,name',
         'country_id' => 'required',
     ];
 

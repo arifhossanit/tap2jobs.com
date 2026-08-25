@@ -1463,6 +1463,9 @@ function loadPhoneNumberCountry() {
   var input = document.querySelector('#phoneNumber'),
     errorMsg = document.querySelector('#error-msg'),
     validMsg = document.querySelector('#valid-msg');
+  var normalizePhoneNumber = function normalizePhoneNumber() {
+    input.value = input.value.replace(/\D/g, '').slice(0, 11);
+  };
   var errorMap = [Lang.get('js.invalid_number'), Lang.get('js.invalid_country_code'), Lang.get('js.too_short'), Lang.get('js.too_long'), Lang.get('js.invalid_number')];
 
   // initialise plugin
@@ -1488,9 +1491,7 @@ function loadPhoneNumberCountry() {
   $('#prefix_code').val(getCode);
   // }
 
-  var getPhoneNumber = $('#phoneNumber').val();
-  var removeSpacePhoneNumber = getPhoneNumber.replace(/\s/g, '');
-  $('#phoneNumber').val(removeSpacePhoneNumber);
+  normalizePhoneNumber();
   var reset = function reset() {
     input.classList.remove('error');
     errorMsg.innerHTML = '';
@@ -1498,6 +1499,7 @@ function loadPhoneNumberCountry() {
     validMsg.classList.add('d-none');
   };
   input.addEventListener('blur', function () {
+    normalizePhoneNumber();
     reset();
     if (input.value.trim()) {
       if (intl.isValidNumber()) {
@@ -1512,8 +1514,15 @@ function loadPhoneNumberCountry() {
   });
 
   // on keyup / change flag: reset
-  input.addEventListener('change', reset);
-  input.addEventListener('keyup', reset);
+  input.addEventListener('change', function () {
+    normalizePhoneNumber();
+    reset();
+  });
+  input.addEventListener('keyup', function () {
+    normalizePhoneNumber();
+    reset();
+  });
+  input.addEventListener('input', normalizePhoneNumber);
   if (typeof phoneNo != 'undefined' && phoneNo !== '') {
     setTimeout(function () {
       $('#phoneNumber').trigger('change');
@@ -1533,6 +1542,7 @@ function loadPhoneNumberCountry() {
       intl.setNumber('+' + phoneNo);
       phoneNo = '';
     }
+    normalizePhoneNumber();
     var getCode = intl.selectedCountryData['dialCode'];
     $('#prefix_code').val(getCode);
   });
@@ -2039,7 +2049,7 @@ function loadEmployerRegistrationForm() {
     };
     phoneInput.addEventListener('countrychange', syncRegionCode);
     phoneInput.addEventListener('input', function () {
-      this.value = this.value.replace(/\D/g, '');
+      this.value = this.value.replace(/\D/g, '').slice(0, 11);
     });
     syncRegionCode();
   }

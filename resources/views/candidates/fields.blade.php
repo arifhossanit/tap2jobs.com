@@ -1,3 +1,11 @@
+@php
+    $genderOptions = $data['profileReferenceOptions']['gender'] ?? [
+        '0' => __('messages.common.male'),
+        '1' => __('messages.common.female'),
+        '2' => __('messages.candidate_profile.other'),
+    ];
+@endphp
+
 <div class="row">
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('first_name',__('messages.candidate.first_name').':', ['class' => 'form-label ']) }}
@@ -17,17 +25,7 @@
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('father_name',__('messages.candidate.father_name').':', ['class' => 'form-label fs-6']) }}
         {{ Form::text('father_name', null, ['class' => 'form-control ', 'placeholder' => __('messages.candidate.father_name')]) }}
-    </div>
-    <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
-        {{ Form::label('password',__('messages.candidate.password').':', ['class' => 'form-label ']) }}
-        <span class="required"></span>
-        {{ Form::password('password', ['class' => 'form-control ','required','min' => '6','max' => '10', 'placeholder' => __('messages.candidate.password')]) }}
-    </div>
-    <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
-        {{ Form::label('password_confirmation',__('messages.candidate.conform_password').':', ['class' => 'form-label ']) }}
-        <span class="required"></span>
-        {{ Form::password('password_confirmation', ['class' => 'form-control ','required','min' => '6','max' => '10', 'placeholder' => __('messages.candidate.conform_password')]) }}
-    </div>
+    </div>    
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('dob', __('messages.candidate.birth_date').':', ['class' => 'form-label  ']) }}
         <input type="text" name="dob" id="birthDate"
@@ -37,14 +35,7 @@
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('gender', __('messages.candidate.gender').':', ['class' => 'form-label ']) }}
         <span class="required"></span>
-        <br>
-        <span class="form-check is-valid form-check-sm {{ checkLanguageSession() == 'ar' ? 'float-end' : 'float-start' }}">
-                <label class="form-label ">{{ __('messages.common.male') }}</label>&nbsp;&nbsp;
-                {{ Form::radio('gender', '0', true, ['class' => 'form-check-input']) }} &nbsp;
-                <br>
-                <label class="form-label ">{{ __('messages.common.female') }}</label>
-                {{ Form::radio('gender', '1', false, ['class' => 'form-check-input']) }}
-            </span>
+        {{ Form::select('gender', $genderOptions, old('gender', '0'), ['class' => 'form-select', 'required', 'placeholder' => __('messages.candidate.gender')]) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('skill_id', __('messages.candidate.candidate_skill').':', ['class' => 'form-label']) }}
@@ -121,10 +112,14 @@
         {{ Form::label('thana', __('messages.thana.thana_name').':', ['class' => 'form-label ']) }}
         {{ Form::select('thana_id', $userThanas ?? [], old('thana_id'), ['id'=>'thanaId','class' => 'form-select ','placeholder' => __('messages.company.select_thana')]) }}
     </div>
+    <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+        {{ Form::label('address', __('messages.candidate.address').':', ['class' => 'form-label ']) }}
+        {{ Form::textarea('address', null, ['class' => 'form-control address-height', 'rows' => '5','placeholder' => __('messages.candidate.enter_address')]) }}
+    </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-55 mobile-itel-width">
         {{ Form::label('phone', __('messages.candidate.phone').':', ['class' => 'form-label ']) }}
         <br>
-        {{ Form::tel('phone', null, ['class' => 'form-control d', 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")','id'=>'phoneNumber','placeholder' => __('messages.inquiry.phone_no')])}}
+        {{ Form::tel('phone', null, ['class' => 'form-control d', 'maxlength' => '11', 'inputmode' => 'numeric', 'pattern' => '[0-9]{1,11}', 'oninput' => 'this.value = this.value.replace(/\D/g,"").slice(0, 11)','id'=>'phoneNumber','placeholder' => __('messages.inquiry.phone_no')])}}
         {{ Form::hidden('region_code',null,['id'=>'prefix_code']) }}
         <p id="valid-msg" class="text-success d-none fw-400 fs-small mt-2">{{__('messages.phone.valid_number')}}</p>
         <p id="error-msg" class="text-danger d-none fw-400 fs-small mt-2">{{__('messages.phone.invalid_number')}}</p>
@@ -255,16 +250,24 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+    <div class="col-xl-6 col-md-6 col-sm-12 mb-5 available-at">
         {{ Form::label('available_at', __('messages.candidate.available_at').':', ['class' => 'form-label']) }}
         <input type="text" name="available_at" id="availableAt"
                class="form-control {{(getLoggedInUser()->theme_mode) ? 'bg-light' : 'bg-white'}}" autocomplete="off"
                placeholder="{{__('messages.candidate.available_at')}}">
     </div>
+    <div class="col-12 border-top my-4"></div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
-        {{ Form::label('address', __('messages.candidate.address').':', ['class' => 'form-label ']) }}
-        {{ Form::textarea('address', null, ['class' => 'form-control address-height', 'rows' => '5','placeholder' => __('messages.candidate.address')]) }}
+        {{ Form::label('password',__('messages.candidate.password').':', ['class' => 'form-label ']) }}
+        <span class="required"></span>
+        {{ Form::password('password', ['class' => 'form-control ','required','min' => '6','max' => '10', 'placeholder' => __('messages.candidate.password')]) }}
     </div>
+    <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+        {{ Form::label('password_confirmation',__('messages.candidate.conform_password').':', ['class' => 'form-label ']) }}
+        <span class="required"></span>
+        {{ Form::password('password_confirmation', ['class' => 'form-control ','required','min' => '6','max' => '10', 'placeholder' => __('messages.candidate.conform_password')]) }}
+    </div>
+    <!-- <div class="col-12 border-bottom mb-4"></div> -->
     <div class="d-flex justify-content-end mt-5">
         {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary me-3']) }}
         <a href="{{ route('candidates.index') }}"

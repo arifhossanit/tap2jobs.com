@@ -178,6 +178,10 @@ class JobApplicationRepository extends BaseRepository
                 ->whereKey($jobApplication->resume_id)
                 ->first() ?? $candidateResumes->latest()->firstOrFail();
 
+            if ($documentMedia->getCustomProperty(ApplicationCvService::APPLICATION_CV_PROPERTY, false)) {
+                $documentMedia = app(ApplicationCvService::class)->ensure($jobApplication->candidate()->firstOrFail(), true);
+            }
+
             $file = Storage::disk($documentMedia->disk)->get($documentMedia->getPathRelativeToRoot());
 
             $headers = [

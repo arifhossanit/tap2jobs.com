@@ -64,7 +64,7 @@
             @lang('web.job_menu.no_results_found')
         </div>
     @endforelse
-    @if($jobs->count() > 0)
+    @if($jobs->hasPages())
         {{$jobs->links() }}
     @endif
 </div>

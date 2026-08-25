@@ -48,7 +48,7 @@ class CandidateDashboard extends Component
             : collect();
         $this->profileCompletion = $this->candidate
             ? app(CandidateProfileCompletionService::class)->calculate($this->candidate)
-            : ['percentage' => 0, 'completed' => 0, 'total' => 10, 'color' => '#f04438'];
+            : ['percentage' => 0, 'completed' => 0, 'total' => 11, 'color' => '#f04438'];
     }
 
     public function placeholder()

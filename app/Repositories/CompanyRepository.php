@@ -93,9 +93,11 @@ class CompanyRepository extends BaseRepository
     {
         try {
             DB::beginTransaction();
+            $input = $this->normalizeEmployerInput($input);
             $input['unique_id'] = getUniqueCompanyId();
-            $input['company_name'] = $input['name'];
-            $input['contact_person_designation'] = $input['ceo'] ?? null;
+            if (Auth::check() && ! Auth::user()->hasRole('Employer')) {
+                $input['last_change'] = Auth::id();
+            }
             $company = $this->create(Arr::only($input, (new Company())->getFillable()));
 
             // Create User
@@ -106,7 +108,7 @@ class CompanyRepository extends BaseRepository
             $input['is_verified'] = isset($input['is_verified']) ? 1 : 0;
             $userInput = Arr::only($input,
                 [
-                    'first_name', 'email', 'phone', 'password', 'owner_id', 'owner_type', 'country_id', 'state_id',
+                    'username', 'first_name', 'email', 'phone', 'password', 'owner_id', 'owner_type', 'country_id', 'state_id',
                     'city_id', 'thana_id', 'is_active', 'dob', 'gender',
                     'facebook_url', 'twitter_url', 'linkedin_url', 'google_plus_url', 'pinterest_url', 'is_verified',
                     'is_default', 'region_code',
@@ -164,33 +166,20 @@ class CompanyRepository extends BaseRepository
         try {
             DB::beginTransaction();
 
-            if (array_key_exists('has_disability_facilities', $input)) {
-                if (! (bool) $input['has_disability_facilities']) {
-                    $input['disability_inclusion_policy'] = null;
-                    $input['disability_inclusion_support'] = null;
-                    $input['disability_inclusion_training'] = null;
-                    $input['disability_facilities'] = [];
-                } else {
-                    if ((bool) ($input['disability_inclusion_policy'] ?? false)) {
-                        $input['disability_inclusion_support'] = null;
-                    }
-                    $input['disability_facilities'] = array_values(array_unique($input['disability_facilities'] ?? []));
-                }
-            }
-
-            $input['company_name'] = $input['name'];
-            $input['contact_person_designation'] = $input['ceo'] ?? null;
-            if (isset($input['employee_range'])) {
-                $input['company_size_id'] = CompanySize::where('size', $input['employee_range'])->value('id');
+            $input = $this->normalizeEmployerInput($input);
+            if (Auth::check() && ! Auth::user()->hasRole('Employer')) {
+                $input['last_change'] = Auth::id();
             }
 
             $company->update($input);
 
             $input['first_name'] = $input['name'];
+            if (!empty($input['password'])) {
+                $input['password'] = Hash::make($input['password']);
+            }
             $userInput = Arr::only($input,
                 [
-                    'first_name', 'email', 'phone', 'country_id', 'state_id', 'city_id', 'thana_id', 'is_active',
-                    'first_name', 'email', 'phone', 'country_id', 'state_id', 'city_id', 'thana_id', 'is_active',
+                    'username', 'password', 'first_name', 'email', 'phone', 'country_id', 'state_id', 'city_id', 'thana_id', 'is_active',
                     'facebook_url', 'twitter_url', 'linkedin_url', 'google_plus_url', 'pinterest_url', 'region_code',
                 ]);
             /** @var User $user */
@@ -217,6 +206,54 @@ class CompanyRepository extends BaseRepository
 
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
+    }
+
+    private function normalizeEmployerInput(array $input): array
+    {
+        $industryIds = collect($input['industry_ids'] ?? (filled($input['industry_id'] ?? null) ? [$input['industry_id']] : []))
+            ->filter(fn ($id) => filled($id))
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->values()
+            ->all();
+
+        if ($industryIds !== []) {
+            $input['industry_ids'] = $industryIds;
+            $input['industry_id'] = $industryIds[0];
+        }
+
+        if (filled($input['employee_range'] ?? null)) {
+            $input['company_size_id'] = CompanySize::where('size', $input['employee_range'])->value('id');
+        } elseif (filled($input['company_size_id'] ?? null)) {
+            $input['employee_range'] = CompanySize::whereKey($input['company_size_id'])->value('size');
+        }
+
+        $input['company_name'] = $input['name'] ?? $input['company_name'] ?? null;
+        $input['ceo'] = $input['ceo'] ?? $input['contact_person_designation'] ?? null;
+        $input['contact_person_designation'] = $input['contact_person_designation'] ?? $input['ceo'] ?? null;
+        $input['billing_address'] = $input['billing_address'] ?? $input['location'] ?? null;
+        $input['billing_phone'] = $input['billing_phone'] ?? $input['phone'] ?? null;
+        $input['billing_region_code'] = $input['billing_region_code'] ?? $input['region_code'] ?? null;
+        $input['billing_email'] = $input['billing_email'] ?? $input['email'] ?? null;
+
+        if (array_key_exists('has_disability_facilities', $input)) {
+            $input['has_disability_facilities'] = (bool) $input['has_disability_facilities'];
+
+            if (! $input['has_disability_facilities']) {
+                $input['disability_inclusion_policy'] = null;
+                $input['disability_inclusion_support'] = null;
+                $input['disability_inclusion_training'] = null;
+                $input['disability_facilities'] = [];
+            } else {
+                if ((bool) ($input['disability_inclusion_policy'] ?? false)) {
+                    $input['disability_inclusion_support'] = null;
+                }
+
+                $input['disability_facilities'] = array_values(array_unique($input['disability_facilities'] ?? []));
+            }
+        }
+
+        return $input;
     }
 
     /**

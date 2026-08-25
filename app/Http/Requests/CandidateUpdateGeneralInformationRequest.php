@@ -16,6 +16,13 @@ class CandidateUpdateGeneralInformationRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'phone' => filled($this->input('phone')) ? preg_replace('/\D+/', '', (string) $this->input('phone')) : null,
+        ]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      */
@@ -48,7 +55,7 @@ class CandidateUpdateGeneralInformationRequest extends FormRequest
             'candidateLanguageSpeakingLevels.*' => ['required_with:candidateLanguageUpdated', 'string', Rule::in($languageLevelValues)],
             'first_name' => 'required|max:150',
             'last_name' => 'required|max:150',
-            'phone' => 'nullable|min:10|max:10',
+            'phone' => ['nullable', 'string', 'regex:/^\d{1,11}$/'],
         ];
     }
 }

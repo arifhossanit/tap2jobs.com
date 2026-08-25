@@ -469,8 +469,8 @@
                                                     </label>
                                                     <input type="tel" name="phone" id="employerRegisterPhone"
                                                            class="form-control employer-contact-information-control"
-                                                           value="{{ old('phone') }}" minlength="4" maxlength="15"
-                                                           inputmode="numeric" pattern="[0-9]{4,15}"
+                                                           value="{{ old('phone') }}" maxlength="11"
+                                                           inputmode="numeric" pattern="[0-9]{1,11}"
                                                            placeholder="{{ __('messages.employer_register.enter_mobile_number') }}" required>
                                                     <input type="hidden" name="region_code" id="employerRegisterRegionCode"
                                                            value="{{ old('region_code', '880') }}">

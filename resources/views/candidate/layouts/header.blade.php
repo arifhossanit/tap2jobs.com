@@ -52,17 +52,6 @@
                                         class="dropdown-item rounded d-flex align-items-center px-3 py-2 candidate-header-language-option {{ checkLanguageSession() === $languageCode ? 'active' : '' }}"
                                         data-language="{{ $languageCode }}"
                                         {{ checkLanguageSession() === $languageCode ? 'aria-current=true' : '' }}>
-                                    @if (array_key_exists($languageCode, \App\Models\User::LANGUAGES_IMAGE))
-                                        @foreach (\App\Models\User::LANGUAGES_IMAGE as $imageKey => $imageValue)
-                                            @if ($imageKey == $languageCode)
-                                                <img class="{{ checkLanguageSession() == 'ar' ? 'ms-2' : 'me-2' }} country-flag"
-                                                     src="{{ asset($imageValue) }}" style="width: 20px;" />
-                                            @endif
-                                        @endforeach
-                                    @else
-                                        <i class="fa fa-flag {{ checkLanguageSession() == 'ar' ? 'ms-2' : 'me-2' }} fs-7 text-danger" aria-hidden="true"
-                                           style="width: 20px;"></i>
-                                    @endif
                                     <span>{{ $languageName }}</span>
                                 </button>
                             </li>

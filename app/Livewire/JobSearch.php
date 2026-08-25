@@ -3,9 +3,12 @@
 namespace App\Livewire;
 
 use App\Models\Job;
+use App\Models\Candidate;
+use App\Services\CandidateJobMatchService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -51,9 +54,11 @@ class JobSearch extends Component
 
     public bool $workFromHome = false;
 
-    private $perPage = 10;
+    public bool $matchingOnly = false;
 
-    public int $page = 0;
+    public array $matchingJobIds = [];
+
+    private $perPage = 10;
 
     protected $listeners = ['changeFilter', 'changeSalaryRange', 'changeExperienceRange', 'resetFilter'];
 
@@ -101,24 +106,12 @@ class JobSearch extends Component
             $this->freshersOnly = true;
             $this->jobExperienceTo = 0;
         }
+        if ($request->get('matching') == '1') {
+            $this->matchingOnly = true;
+            $this->matchingJobIds = $this->candidateMatchingJobIds();
+        }
 
         $this->featuredJob = $request->is_featured;
-    }
-
-    public function nextPage($lastPage)
-    {
-        if ($this->page < $lastPage) {
-            $this->page = $this->page + 1;
-            $this->setPage($this->page);
-        }
-    }
-
-    public function previousPage()
-    {
-        if ($this->page > 1) {
-            $this->page = $this->page - 1;
-            $this->setPage($this->page);
-        }
     }
 
     public function updatingSearchByLocation()
@@ -166,6 +159,29 @@ class JobSearch extends Component
         $this->reset();
     }
 
+    private function candidateMatchingJobIds(): array
+    {
+        $user = Auth::user();
+
+        if (! $user || ! $user->hasRole('Candidate')) {
+            return [];
+        }
+
+        $candidate = $user->candidate ?: Candidate::find($user->owner_id);
+
+        if (! $candidate) {
+            return [];
+        }
+
+        return app(CandidateJobMatchService::class)
+            ->topMatches($candidate, 180)
+            ->filter(fn (Job $job) => (int) ($job->match_score ?? 0) > 0)
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
+            ->values()
+            ->all();
+    }
+
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
@@ -185,6 +201,17 @@ class JobSearch extends Component
         $query = Job::with([
             'company', 'country', 'state', 'city', 'jobShift', 'company.user', 'jobsSkill', 'jobCategory',
         ]);
+
+        if ($this->matchingOnly) {
+            if (empty($this->matchingJobIds)) {
+                $query->whereRaw('1 = 0');
+            } else {
+                $matchingOrderPlaceholders = implode(',', array_fill(0, count($this->matchingJobIds), '?'));
+
+                $query->whereIn('id', $this->matchingJobIds)
+                    ->orderByRaw("FIELD(id, {$matchingOrderPlaceholders})", $this->matchingJobIds);
+            }
+        }
 
         $query->when(! empty($this->types), function (Builder $q) {
             $q->whereIn('job_type_id', $this->types);
@@ -325,14 +352,20 @@ class JobSearch extends Component
             });
         });
 
-        $query->whereStatus(Job::STATUS_OPEN)->where('status', '!=',Job::STATUS_DRAFT)->whereIsSuspended(Job::NOT_SUSPENDED)->whereDate('job_expiry_date', '>=', Carbon::tomorrow()->toDateString());
+        $minimumExpiryDate = $this->matchingOnly ? Carbon::now()->toDateString() : Carbon::tomorrow()->toDateString();
+
+        $query->whereStatus(Job::STATUS_OPEN)
+            ->where('status', '!=', Job::STATUS_DRAFT)
+            ->whereIsSuspended(Job::NOT_SUSPENDED)
+            ->whereDate('job_expiry_date', '>=', $minimumExpiryDate);
 
         $all = $query->paginate($this->perPage);
         $currentPage = $all->currentPage();
         $lastPage = $all->lastPage();
         if ($currentPage > $lastPage) {
-            $this->page = $lastPage;
-            $all = $query->paginate($this->perPage);
+            $lastPage = max(1, $lastPage);
+            $this->setPage($lastPage);
+            $all = $query->paginate($this->perPage, ['*'], 'page', $lastPage);
         }
 
         return $all;

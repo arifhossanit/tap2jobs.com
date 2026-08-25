@@ -184,7 +184,9 @@
 </head>
 
 <body {{ $lang == 'pt' || $lang == 'fr' || $lang == 'es' ? 'languages' : '' }}>
-    @include('front_web.layouts.header_ad')
+    @if (Request::is('/') || Request::is('home') || request()->routeIs('front.home'))
+        @include('front_web.layouts.header_ad')
+    @endif
     <span class="header-padding"></span>
     @include('front_web.layouts.header')
 

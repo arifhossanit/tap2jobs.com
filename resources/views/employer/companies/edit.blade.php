@@ -659,7 +659,7 @@
             const contactPhoneInput = document.getElementById('phoneNumber');
             const normalizePhoneDigits = function (input) {
                 if (input) {
-                    input.value = input.value.replace(/\D/g, '');
+                    input.value = input.value.replace(/\D/g, '').slice(0, 11);
                 }
             };
 

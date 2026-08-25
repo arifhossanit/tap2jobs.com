@@ -171,7 +171,7 @@ class CompanyController extends AppBaseController
         $company->user->update(['is_active' => ! $isActive]);
 
         if ($company) {
-            if (Auth::user()->hasRole('Admin')) {
+            if (Auth::check() && ! Auth::user()->hasRole('Employer')) {
                 $company->last_change = Auth::user()->id;
                 $company->save();
             }
@@ -361,7 +361,7 @@ class CompanyController extends AppBaseController
 
             $company = Company::findOrFail($companyId);
             if ($company) {
-                if (Auth::user()->hasRole('Admin')) {
+                if (Auth::check() && ! Auth::user()->hasRole('Employer')) {
                     $company->last_change = Auth::user()->id;
                     $company->save();
                 }
@@ -384,7 +384,7 @@ class CompanyController extends AppBaseController
 
         $company = Company::findOrFail($companyId);
         if ($company) {
-            if (Auth::user()->hasRole('Admin')) {
+            if (Auth::check() && ! Auth::user()->hasRole('Employer')) {
                 $company->last_change = Auth::user()->id;
                 $company->save();
             }
@@ -399,7 +399,7 @@ class CompanyController extends AppBaseController
     public function changeIsEmailVerified(Company $company)
     {
         $company->user->update(['email_verified_at' => Carbon::now()]);
-        if (Auth::user()->hasRole('Admin')) {
+        if (Auth::check() && ! Auth::user()->hasRole('Employer')) {
             $company->last_change = Auth::user()->id;
             $company->save();
         }
@@ -413,7 +413,7 @@ class CompanyController extends AppBaseController
     public function resendEmailVerification(Company $company)
     {
         $company->user->sendEmailVerificationNotification();
-        if (Auth::user()->hasRole('Admin')) {
+        if (Auth::check() && ! Auth::user()->hasRole('Employer')) {
             $company->last_change = Auth::user()->id;
             $company->save();
         }

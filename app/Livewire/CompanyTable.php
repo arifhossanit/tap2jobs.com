@@ -12,6 +12,7 @@ class CompanyTable extends LivewireTableComponent
 {
     protected $model = Company::class;
     protected string $tableName = 'employers';
+    protected ?string $bulkDeleteModel = Company::class;
     protected $listeners = ['resetPage', 'refreshDatatable' => '$refresh', 'changeFeaturedCompany', 'changeStatusFilter'];
 
     public $showButtonOnHeader = true;
@@ -168,5 +169,14 @@ class CompanyTable extends LivewireTableComponent
     public function resetPagination()
     {
         $this->resetPage('employersPage');
+    }
+
+    protected function deleteBulkDeleteRecord($record): void
+    {
+        if ($record->user && $record->user->hasRole('Employer')) {
+            $record->user->media()->delete();
+            $record->user->delete();
+        }
+        $record->delete();
     }
 }

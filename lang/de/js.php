@@ -27,6 +27,7 @@ return [
     'select_language' => 'Sprache auswählen',
     'select_state' => 'Bundesland auswählen',
     'select_city' => 'Stadt auswählen',
+    'select_thana' => 'Thana auswählen',
     'favourite_company' => 'Lieblingsunternehmen',
     'reported_candidate' => 'Gemeldeter Kandidat',
     'already_reported' => 'Bereits gemeldet',

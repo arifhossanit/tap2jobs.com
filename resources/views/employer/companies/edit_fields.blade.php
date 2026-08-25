@@ -187,7 +187,7 @@
                 <label for="phoneNumber" class="form-label">
                     {{ __('messages.employer_account.contact_person_mobile') }} <span class="text-danger">*</span>
                 </label>
-                {{ Form::tel('phone', null, ['class' => 'form-control employer-contact-readonly', 'required', 'readonly', 'id' => 'phoneNumber', 'minlength' => 4, 'maxlength' => 15, 'inputmode' => 'numeric', 'pattern' => '[0-9]{4,15}', 'oninput' => "this.value = this.value.replace(/\\D/g, '')"]) }}
+                {{ Form::tel('phone', null, ['class' => 'form-control employer-contact-readonly', 'required', 'readonly', 'id' => 'phoneNumber', 'maxlength' => 11, 'inputmode' => 'numeric', 'pattern' => '[0-9]{1,11}', 'oninput' => "this.value = this.value.replace(/\\D/g, '').slice(0, 11)"]) }}
                 {{ Form::hidden('region_code', null, ['id' => 'prefix_code']) }}
                 <span id="valid-msg" class="d-none text-success d-block fw-400 fs-small mt-2">{{ __('messages.phone.valid_number') }}</span>
                 <span id="error-msg" class="d-none text-danger d-block fw-400 fs-small mt-2"></span>
@@ -216,7 +216,7 @@
             <div class="col-md-6 col-sm-12 employer-billing-mobile">
                 <label for="billingPhoneNumber" class="form-label">{{ __('messages.employer_account.billing_contact_number') }}<span class="text-danger">*</span></label>
                 <input type="tel" name="billing_phone" id="billingPhoneNumber" class="form-control" required
-                       minlength="4" maxlength="15" inputmode="numeric" pattern="[0-9]{4,15}"
+                       maxlength="11" inputmode="numeric" pattern="[0-9]{1,11}"
                        value="{{ old('billing_phone', $company->billing_phone ?: $user->phone) }}">
                 {{ Form::hidden('billing_region_code', $company->billing_region_code ?: $user->region_code ?: '880', ['id' => 'billingPrefixCode']) }}
                 <span id="billing-phone-error" class="d-none text-danger d-block fw-400 fs-small mt-2"></span>

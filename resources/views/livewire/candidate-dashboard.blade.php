@@ -3,6 +3,13 @@
     $candidateLocation = __('messages.candidate_dashboard.location_information');
     $completionPercentage = $profileCompletion['percentage'] ?? 0;
     $completionColor = $profileCompletion['color'] ?? '#1967d2';
+    $dashboardScoringBars = [
+        ['label' => 'Completed profile', 'percent' => $completionPercentage],
+        ['label' => 'Skill', 'percent' => max(0, $completionPercentage - 12)],
+        ['label' => 'Experience', 'percent' => max(0, $completionPercentage - 24)],
+        ['label' => 'Education', 'percent' => max(0, $completionPercentage - 36)],
+        ['label' => 'Location', 'percent' => max(0, $completionPercentage - 48)],
+    ];
     $dashboardNumber = function ($value) {
         $value = (string) $value;
 
@@ -135,7 +142,7 @@
                     <div>
                         <h2>{{ __('messages.candidate_dashboard.matching_jobs') }}</h2>
                     </div>
-                    <a href="{{ route('front.search.jobs') }}" target="_blank" class="candidate-dashboard-link">
+                    <a href="{{ route('front.search.jobs', ['matching' => 1]) }}" target="_blank" class="candidate-dashboard-link">
                         {{ __('messages.candidate_dashboard.view_more_jobs') }} <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>
@@ -146,25 +153,47 @@
                             @php
                                 $companyName = html_entity_decode($job->company->user->full_name ?? $job->company->ceo ?? __('messages.company.company'));
                                 $jobUrl = route('front.job.details', $job->job_id);
+                                $matchScore = (int) ($job->match_score ?? 0);
+                                $matchColor = $matchScore >= 75 ? '#00ba63' : ($matchScore >= 45 ? '#1967d2' : '#f59e0b');
+                                $matchScoreLabel = $dashboardNumber($matchScore).'%';
+                                $circumference = 138.23;
+                                $dashOffset = round($circumference - ($circumference * ($matchScore / 100)), 2);
                             @endphp
                             <article class="candidate-match-card">
-                                <div class="candidate-match-card__top">
+                                <div class="candidate-match-card__top align-items-center">
                                     <a href="{{ $jobUrl }}" target="_blank" class="candidate-match-logo" aria-label="{{ $companyName }}">
                                         <img src="{{ $job->company->company_url }}" alt="{{ $companyName }}">
                                     </a>
-                                    <div class="candidate-match-heading">
+                                    <div class="candidate-match-heading flex-grow-1">
                                         <a href="{{ $jobUrl }}" target="_blank" class="candidate-match-title">
-                                            {{ html_entity_decode(\Illuminate\Support\Str::limit($job->job_title, 58)) }}
+                                            {{ html_entity_decode(\Illuminate\Support\Str::limit($job->job_title, 48)) }}
                                         </a>
                                         <span>{{ $companyName }}</span>
                                     </div>
+                                    @if($matchScore > 0)
+                                        <div class="candidate-job-match-ring ms-2 flex-shrink-0" title="{{ $matchScoreLabel }} Match">
+                                            <svg width="54" height="54" viewBox="0 0 54 54">
+                                                <circle class="ring-bg" cx="27" cy="27" r="22" fill="#ffffff" stroke="#eef2f6" stroke-width="7" style="fill: #ffffff !important; stroke: #eef2f6 !important;" />
+                                                <circle cx="27" cy="27" r="22" stroke="{{ $matchColor }}" stroke-width="7" fill="none"
+                                                        stroke-linecap="round"
+                                                        stroke-dasharray="{{ $circumference }}"
+                                                        stroke-dashoffset="{{ $dashOffset }}"
+                                                        transform="rotate(-90 27 27)"
+                                                        style="fill: none !important;" />
+                                                <text class="ring-text" x="27" y="27" text-anchor="middle" dominant-baseline="central" style="fill: #0b132a !important; font-size: 13px; font-weight: 900;">{{ $matchScoreLabel }}</text>
+                                            </svg>
+                                        </div>
+                                    @endif
                                 </div>
-                                {{-- <div class="candidate-match-card__body">
-                                    <div class="candidate-match-meta">
-                                        <span><i class="fa-solid fa-location-dot"></i>{{ $job->full_location ?: __('messages.candidate_dashboard.location_information') }}</span>
-                                        <span><i class="fa-solid fa-briefcase"></i>{{ $job->functionalArea->name ?? $job->jobCategory->name ?? __('messages.common.n/a') }}</span>
+                                @if(!empty($job->match_reasons) && $matchScore > 0)
+                                    <div class="candidate-match-card__body py-2 px-3 border-bottom-0">
+                                        <div class="d-flex flex-wrap gap-1">
+                                            @foreach($job->match_reasons as $reason)
+                                                <span class="badge bg-light text-muted border fs-8 fw-normal" style="font-size: 11px;">{{ $reason }}</span>
+                                            @endforeach
+                                        </div>
                                     </div>
-                                </div> --}}
+                                @endif
                                 <div class="candidate-match-card__footer">
                                     <span><i class="fa-regular fa-calendar"></i>{{ $job->job_expiry_date ? $dashboardNumber($job->job_expiry_date->translatedFormat('M d, Y')) : '' }}</span>
                                     <a href="{{ $jobUrl }}" target="_blank">{{ __('messages.candidate_dashboard.view_details') }}</a>
@@ -182,31 +211,58 @@
                 @endif
             </div>
 
-            <aside class="candidate-dashboard-panel candidate-dashboard-side-panel">
-                <div class="candidate-dashboard-panel__header candidate-dashboard-panel__header--compact">
-                    <div>
-                        <h2>{{ __('messages.candidate_dashboard.quick_overview') }}</h2>
+            <div class="candidate-dashboard-side-stack">
+                <aside class="candidate-dashboard-panel candidate-dashboard-side-panel">
+                    <div class="candidate-dashboard-panel__header candidate-dashboard-panel__header--compact">
+                        <div>
+                            <h2>{{ __('messages.candidate_dashboard.quick_overview') }}</h2>
+                        </div>
                     </div>
-                </div>
-                <div class="candidate-overview-list">
-                    <a href="{{ route('candidate.applied.job', ['status' => \App\Models\JobApplication::STATUS_APPLIED]) }}">
-                        <span><i class="fa-solid fa-circle-check"></i>{{ __('messages.candidate_dashboard.applied') }}</span>
-                        <strong>{{ $dashboardCount($applicationStats['applied'] ?? 0) }}</strong>
-                    </a>
-                    <a href="{{ route('candidate.applied.job', ['status' => \App\Models\JobApplication::STATUS_DRAFT]) }}">
-                        <span><i class="fa-solid fa-clock"></i>{{ __('messages.candidate_dashboard.drafts') }}</span>
-                        <strong>{{ $dashboardCount($applicationStats['drafts'] ?? 0) }}</strong>
-                    </a>
-                    <a href="{{ route('candidate.applied.job', ['status' => \App\Models\JobApplication::COMPLETE]) }}">
-                        <span><i class="fa-solid fa-star"></i>{{ __('messages.candidate_dashboard.hired') }}</span>
-                        <strong>{{ $dashboardCount($applicationStats['hired'] ?? 0) }}</strong>
-                    </a>
-                    <a href="{{ route('favourite.companies') }}">
-                        <span><i class="fa-solid fa-users"></i>{{ __('messages.candidate_dashboard.followings') }}</span>
-                        <strong>{{ $dashboardCount($followings) }}</strong>
-                    </a>
-                </div>
-            </aside>
+                    <div class="candidate-overview-list">
+                        <a href="{{ route('candidate.applied.job', ['status' => \App\Models\JobApplication::STATUS_APPLIED]) }}">
+                            <span><i class="fa-solid fa-circle-check"></i>{{ __('messages.candidate_dashboard.applied') }}</span>
+                            <strong>{{ $dashboardCount($applicationStats['applied'] ?? 0) }}</strong>
+                        </a>
+                        <a href="{{ route('candidate.applied.job', ['status' => \App\Models\JobApplication::STATUS_DRAFT]) }}">
+                            <span><i class="fa-solid fa-clock"></i>{{ __('messages.candidate_dashboard.drafts') }}</span>
+                            <strong>{{ $dashboardCount($applicationStats['drafts'] ?? 0) }}</strong>
+                        </a>
+                        <a href="{{ route('candidate.applied.job', ['status' => \App\Models\JobApplication::COMPLETE]) }}">
+                            <span><i class="fa-solid fa-star"></i>{{ __('messages.candidate_dashboard.hired') }}</span>
+                            <strong>{{ $dashboardCount($applicationStats['hired'] ?? 0) }}</strong>
+                        </a>
+                        <a href="{{ route('favourite.companies') }}">
+                            <span><i class="fa-solid fa-users"></i>{{ __('messages.candidate_dashboard.followings') }}</span>
+                            <strong>{{ $dashboardCount($followings) }}</strong>
+                        </a>
+                    </div>
+                </aside>
+
+                <aside class="candidate-dashboard-panel candidate-dashboard-side-panel">
+                    <div class="candidate-profile-breakdown">
+                        <div class="candidate-dashboard-panel__header candidate-dashboard-panel__header--compact">
+                            <div>
+                                <h2>Job Matching Criteria</h2>
+                            </div>
+                        </div>
+                        <div class="candidate-profile-breakdown__list">
+                            @foreach($dashboardScoringBars as $scoringBar)
+                                @php
+                                    $barPercent = min(100, max(0, (int) $scoringBar['percent']));
+                                @endphp
+                                <div class="candidate-profile-breakdown__row">
+                                    <div class="candidate-profile-breakdown__top">
+                                        <span>{{ $scoringBar['label'] }}</span>
+                                    </div>
+                                    <div class="candidate-profile-breakdown__track">
+                                        <span style="width: {{ $barPercent }}%;"></span>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </aside>
+            </div>
         </section>
     </div>
 </div>

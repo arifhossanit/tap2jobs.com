@@ -27,6 +27,7 @@ return [
     'select_language' => 'اختر اللغة',
     'select_state' => 'اختر الولاية',
     'select_city' => 'اختر المدينة',
+    'select_thana' => 'اختر ثانا',
     'favourite_company' => 'الشركة المفضلة',
     'reported_candidate' => 'المرشح المبلغ عنه',
     'already_reported' => 'تم الإبلاغ بالفعل',

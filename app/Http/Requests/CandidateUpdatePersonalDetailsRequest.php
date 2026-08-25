@@ -14,6 +14,16 @@ class CandidateUpdatePersonalDetailsRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'phone' => filled($this->input('phone')) ? preg_replace('/\D+/', '', (string) $this->input('phone')) : null,
+            'region_code' => filled($this->input('region_code')) ? preg_replace('/\D+/', '', (string) $this->input('region_code')) : null,
+            'secondary_mobile' => filled($this->input('secondary_mobile')) ? preg_replace('/\D+/', '', (string) $this->input('secondary_mobile')) : null,
+            'emergency_contact' => filled($this->input('emergency_contact')) ? preg_replace('/\D+/', '', (string) $this->input('emergency_contact')) : null,
+        ]);
+    }
+
     public function rules(): array
     {
         $id = Auth::id();
@@ -31,12 +41,12 @@ class CandidateUpdatePersonalDetailsRequest extends FormRequest
             'national_id_card' => 'nullable|max:150',
             'passport_number' => 'nullable|max:150',
             'passport_issue_date' => 'nullable|date|before_or_equal:today',
-            'phone' => 'nullable|max:30',
-            'region_code' => 'nullable|max:10',
-            'secondary_mobile' => 'nullable|max:30',
+            'phone' => ['nullable', 'string', 'regex:/^\d{1,11}$/'],
+            'region_code' => ['nullable', 'string', 'regex:/^\d{1,4}$/'],
+            'secondary_mobile' => ['nullable', 'string', 'regex:/^\d{1,11}$/'],
             'email' => 'required|email:filter|unique:users,email,'.$id,
             'alternate_email' => 'nullable|email:filter|max:150',
-            'emergency_contact' => 'nullable|max:30',
+            'emergency_contact' => ['nullable', 'string', 'regex:/^\d{1,11}$/'],
             'blood_group' => ['nullable', 'max:10', Rule::in(ProfileReferenceOption::values(ProfileReferenceOption::TYPE_BLOOD_GROUP))],
             'height' => 'nullable|numeric|min:0|max:999',
             'weight' => 'nullable|numeric|min:0|max:999',

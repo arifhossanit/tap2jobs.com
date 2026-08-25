@@ -16,6 +16,7 @@ protected $listeners = ['resetPage', 'refreshDatatable' => '$refresh', 'changeSt
 
     protected $model = Candidate::class;
     protected string $tableName = 'candidates';
+    protected ?string $bulkDeleteModel = Candidate::class;
 
     /**
      * @var bool
@@ -202,5 +203,13 @@ protected $listeners = ['resetPage', 'refreshDatatable' => '$refresh', 'changeSt
     public function resetPagination()
     {
         $this->resetPage('candidatesPage');
+    }
+
+    protected function deleteBulkDeleteRecord($record): void
+    {
+        if ($record->user && $record->user->hasRole('Candidate')) {
+            $record->user->delete();
+        }
+        $record->delete();
     }
 }

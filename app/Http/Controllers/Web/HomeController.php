@@ -50,11 +50,11 @@ class HomeController extends AppBaseController
         $data['dataCounts'] = $this->homeRepository->getDataCounts();
         $data['latestJobs'] = $this->homeRepository->getLatestJobs()->take(4);
         $data['stateJobCounts'] = State::query()
+            ->whereHas('country', function ($q) {
+                $q->where('short_code', 'BD');
+            })
             ->withCount(['jobs' => $openJobs])
-            ->having('jobs_count', '>', 0)
-            ->orderByDesc('jobs_count')
             ->orderBy('name')
-            ->take(8)
             ->get();
         $data['quickJobTypes'] = JobType::query()
             ->withCount(['jobs' => $openJobs])

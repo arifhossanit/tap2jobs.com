@@ -25,7 +25,7 @@ class Thana extends Model
 
     public static $rules = [
         'city_id' => 'required|exists:cities,id',
-        'name' => 'required|max:180',
+        'name' => 'required|max:720',
     ];
 
     public function city(): BelongsTo
