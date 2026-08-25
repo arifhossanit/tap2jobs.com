@@ -54,10 +54,10 @@
         ],
         [
             'label' => __('messages.applied_job.applied_jobs'),
-            'value' => $dashboardCount($applicationStats['applied'] ?? 0),
+            'value' => $dashboardCount($applicationStats['total'] ?? 0),
             'icon' => 'fa-solid fa-paper-plane',
             'tone' => 'green',
-            'url' => route('candidate.applied.job', ['status' => \App\Models\JobApplication::STATUS_APPLIED]),
+            'url' => route('candidate.applied.job'),
         ],
         [
             'label' => __('messages.candidate_dashboard.ongoing'),
@@ -219,9 +219,9 @@
                         </div>
                     </div>
                     <div class="candidate-overview-list">
-                        <a href="{{ route('candidate.applied.job', ['status' => \App\Models\JobApplication::STATUS_APPLIED]) }}">
-                            <span><i class="fa-solid fa-circle-check"></i>{{ __('messages.candidate_dashboard.applied') }}</span>
-                            <strong>{{ $dashboardCount($applicationStats['applied'] ?? 0) }}</strong>
+                        <a href="{{ route('candidate.applied.job') }}">
+                            <span><i class="fa-solid fa-circle-check"></i>{{ __('messages.applied_job.applied_jobs') }}</span>
+                            <strong>{{ $dashboardCount($applicationStats['total'] ?? 0) }}</strong>
                         </a>
                         <a href="{{ route('candidate.applied.job', ['status' => \App\Models\JobApplication::STATUS_DRAFT]) }}">
                             <span><i class="fa-solid fa-clock"></i>{{ __('messages.candidate_dashboard.drafts') }}</span>

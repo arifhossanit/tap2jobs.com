@@ -27,22 +27,24 @@ class CandidateDashboard extends Component
             ? $this->candidate->getMedia(Candidate::RESUME_PATH)->count()
             : 0;
         $this->followings = $this->user->followings()->count();
-        $this->applicationStats = $this->candidate
+        $candidateId = $this->candidate?->id ?? $this->user->owner_id;
+        $this->applicationStats = $candidateId
             ? [
-                'applied' => JobApplication::where('candidate_id', $this->candidate->id)
+                'total' => JobApplication::where('candidate_id', $candidateId)->count(),
+                'applied' => JobApplication::where('candidate_id', $candidateId)
                     ->where('status', JobApplication::STATUS_APPLIED)
                     ->count(),
-                'ongoing' => JobApplication::where('candidate_id', $this->candidate->id)
+                'ongoing' => JobApplication::where('candidate_id', $candidateId)
                     ->where('status', JobApplication::SHORT_LIST)
                     ->count(),
-                'hired' => JobApplication::where('candidate_id', $this->candidate->id)
+                'hired' => JobApplication::where('candidate_id', $candidateId)
                     ->where('status', JobApplication::COMPLETE)
                     ->count(),
-                'drafts' => JobApplication::where('candidate_id', $this->candidate->id)
+                'drafts' => JobApplication::where('candidate_id', $candidateId)
                     ->where('status', JobApplication::STATUS_DRAFT)
                     ->count(),
             ]
-            : ['applied' => 0, 'ongoing' => 0, 'hired' => 0, 'drafts' => 0];
+            : ['total' => 0, 'applied' => 0, 'ongoing' => 0, 'hired' => 0, 'drafts' => 0];
         $this->matchingJobs = $this->candidate
             ? app(CandidateJobMatchService::class)->topMatches($this->candidate)
             : collect();

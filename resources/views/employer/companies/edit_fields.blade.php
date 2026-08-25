@@ -165,7 +165,7 @@
                     {{ __('messages.employer_account.contact_person_name') }} <span class="text-danger">*</span>
                 </label>
                 <input type="text" name="contact_person_name" id="employerContactPerson"
-                       class="form-control" maxlength="180" required
+                       class="form-control employer-contact-readonly" maxlength="180" required readonly
                        value="{{ old('contact_person_name', $company->contact_person_name ?: $user->full_name) }}"
                        placeholder="{{ __('messages.employer_register.contact_person_name_placeholder') }}">
             </div>

@@ -17,6 +17,9 @@ class CandidateJobMatchService
         $candidateSkillIds = $this->candidateSkillIds($candidate);
         $preferredSkillIds = $this->ids($candidate->preferred_special_skills ?? []);
         $allCandidateSkillIds = $candidateSkillIds->merge($preferredSkillIds)->unique()->values();
+        $preferredSkillNames = $preferredSkillIds->isEmpty()
+            ? collect()
+            : Skill::query()->whereIn('id', $preferredSkillIds)->pluck('name', 'id');
         $preferredFunctionalIds = $this->ids($candidate->preferred_functional_categories ?? []);
         $preferredLocationIds = $this->ids($candidate->preferred_job_locations_inside ?? []);
         $candidateKeywords = $this->candidateKeywords($candidate, $allCandidateSkillIds);
@@ -36,8 +39,8 @@ class CandidateJobMatchService
             ->get();
 
         $matches = $jobs
-            ->map(function (Job $job) use ($candidate, $allCandidateSkillIds, $preferredFunctionalIds, $preferredLocationIds, $candidateKeywords) {
-                return $this->scoreJob($job, $candidate, $allCandidateSkillIds, $preferredFunctionalIds, $preferredLocationIds, $candidateKeywords);
+            ->map(function (Job $job) use ($candidate, $candidateSkillIds, $preferredSkillIds, $preferredSkillNames, $preferredFunctionalIds, $preferredLocationIds, $candidateKeywords) {
+                return $this->scoreJob($job, $candidate, $candidateSkillIds, $preferredSkillIds, $preferredSkillNames, $preferredFunctionalIds, $preferredLocationIds, $candidateKeywords);
             })
             ->sortByDesc(fn (Job $job) => [$job->match_score, optional($job->created_at)->timestamp ?? 0])
             ->values();
@@ -61,6 +64,8 @@ class CandidateJobMatchService
         Job $job,
         Candidate $candidate,
         Collection $candidateSkillIds,
+        Collection $preferredSkillIds,
+        Collection $preferredSkillNames,
         Collection $preferredFunctionalIds,
         Collection $preferredLocationIds,
         Collection $candidateKeywords
@@ -71,9 +76,16 @@ class CandidateJobMatchService
         $jobSkillIds = $job->jobsSkill->pluck('id')->map(fn ($id) => (int) $id)->unique();
         $matchedSkills = $jobSkillIds->intersect($candidateSkillIds);
         if ($jobSkillIds->isNotEmpty() && $matchedSkills->isNotEmpty()) {
-            $skillScore = min(28, (int) round(($matchedSkills->count() / max($jobSkillIds->count(), 1)) * 28));
+            $skillScore = min(24, (int) round(($matchedSkills->count() / max($jobSkillIds->count(), 1)) * 24));
             $score += $skillScore;
             $reasons[] = $matchedSkills->count().' skill'.($matchedSkills->count() > 1 ? 's' : '').' matched';
+        }
+
+        $matchedPreferredSkillCount = $this->preferredSkillMatchCount($job, $jobSkillIds, $preferredSkillIds, $preferredSkillNames);
+        if ($matchedPreferredSkillCount > 0) {
+            $preferredSkillScore = min(10, $matchedPreferredSkillCount * 4);
+            $score += $preferredSkillScore;
+            $reasons[] = $matchedPreferredSkillCount.' preferred special skill'.($matchedPreferredSkillCount > 1 ? 's' : '').' matched';
         }
 
         if ($candidate->functional_area_id && $job->functional_area_id === $candidate->functional_area_id) {
@@ -153,6 +165,41 @@ class CandidateJobMatchService
             optional($candidate->careerLevel)->level_name,
             $skillNames->implode(' '),
         ])->filter()->implode(' '));
+    }
+
+    private function preferredSkillMatchCount(
+        Job $job,
+        Collection $jobSkillIds,
+        Collection $preferredSkillIds,
+        Collection $preferredSkillNames
+    ): int {
+        if ($preferredSkillIds->isEmpty()) {
+            return 0;
+        }
+
+        $matchedSkillIds = $jobSkillIds->intersect($preferredSkillIds);
+        $jobKeywords = $this->keywords(collect([
+            $job->job_title,
+            $job->description,
+            $job->key_responsibilities ?? null,
+            optional($job->functionalArea)->name,
+            optional($job->jobCategory)->name,
+            $job->jobsSkill->pluck('name')->implode(' '),
+        ])->filter()->implode(' '));
+
+        $matchedByName = $preferredSkillNames
+            ->filter(function ($skillName) use ($jobKeywords) {
+                $skillKeywords = $this->keywords($skillName);
+
+                return $skillKeywords->isNotEmpty() && $skillKeywords->intersect($jobKeywords)->isNotEmpty();
+            })
+            ->keys()
+            ->map(fn ($id) => (int) $id);
+
+        return $matchedSkillIds
+            ->merge($matchedByName)
+            ->unique()
+            ->count();
     }
 
     private function ids(array $values): Collection

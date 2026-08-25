@@ -251,6 +251,45 @@
             });
         }
 
+        const employerAccountSectionHashes = {
+            companyDetailsPanel: 'company-details',
+            contactDetailsPanel: 'contact-details',
+            billingAddressPanel: 'billing-address'
+        };
+
+        function syncEmployerAccountScrollOffset() {
+            const header = document.querySelector('.header, .navbar, .app-header');
+            const headerHeight = header ? Math.ceil(header.getBoundingClientRect().height) : 0;
+            const offset = Math.max(headerHeight + 18, 82);
+
+            document.documentElement.style.setProperty('--employer-account-scroll-offset', offset + 'px');
+
+            return offset;
+        }
+
+        function getEmployerAccountScrollOffset() {
+            const offset = window.getComputedStyle(document.documentElement)
+                .getPropertyValue('--employer-account-scroll-offset');
+
+            return parseInt(offset, 10) || syncEmployerAccountScrollOffset();
+        }
+
+        function updateEmployerAccountHash(hash) {
+            if (!hash) {
+                return;
+            }
+
+            const nextUrl = window.location.pathname + window.location.search + '#' + hash;
+            window.history.replaceState(null, '', nextUrl);
+        }
+
+        function scrollToEmployerAccountPanel(panel) {
+            window.scrollTo({
+                top: panel.getBoundingClientRect().top + window.pageYOffset - getEmployerAccountScrollOffset(),
+                behavior: 'smooth'
+            });
+        }
+
         function setEmployerPasswordView(showPassword) {
             const profileForm = document.getElementById('editCompanyForm');
             const passwordPanel = document.getElementById('employerPasswordPanel');
@@ -633,6 +672,7 @@
 
             const editContactButton = document.getElementById('employerEditContactPersonButton');
             const editableContactFields = [
+                document.getElementById('employerContactPerson'),
                 document.getElementById('employerContactDesignation'),
                 document.getElementById('email'),
                 document.getElementById('phoneNumber')
