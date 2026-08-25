@@ -170,7 +170,7 @@
                         {{ html_entity_decode($settings['application_name']) }}</a>.
                     {{ __('web.footer.all_rights_reserved') }}.
                     Developed by
-                    <a href="https://www.tap2dealit.com/" class="text-primary" target="_blank" rel="noopener">Tap2Jobs IT</a>.
+                    <a href="https://www.tap2dealit.com/" class="text-primary" target="_blank" rel="noopener">Tap2Deal IT</a>.
                 </p>
             </div>
         </div>

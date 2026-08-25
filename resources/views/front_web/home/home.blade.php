@@ -521,23 +521,33 @@
         min-height: 44px;
     }
 
-    /* City Links */
+    /* Division Links & Counters */
     .bd-city-links {
         display: flex;
         justify-content: center;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 10px;
         margin-top: var(--bd-section-gap);
     }
 
     .bd-city-links a {
-        color: #fff;
-        font-size: 12px;
-        font-weight: bold;
+        color: #ffffff;
+        font-size: 13px;
         background: #1967d2;
-        padding: 6px 9px;
-        border-radius: 3px;
+        padding: 6px 14px;
+        border-radius: 6px;
         text-decoration: none;
+        transition: all 0.2s ease-in-out;
+        display: inline-flex;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(25, 103, 210, 0.15);
+    }
+
+    .bd-city-links a:hover {
+        background: #1152b1;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(25, 103, 210, 0.3);
     }
 
     /* Quick Links */
@@ -552,7 +562,6 @@
     .bd-quick-links h2 {
         font-size: 16px;
         line-height: 1.2 !important;
-        font-weight: bold;
         margin: 0;
     }
 
@@ -603,7 +612,6 @@
         padding: 14px 4px 10px;
         color: #265997;
         font-size: 16px;
-        font-weight: bold;
     }
 
     .bd-tabs {

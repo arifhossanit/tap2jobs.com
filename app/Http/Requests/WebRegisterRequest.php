@@ -72,7 +72,7 @@ class WebRegisterRequest extends FormRequest
                 'contact_person_name' => 'required|string|max:180',
                 'contact_person_designation' => 'required|string|max:180',
                 'email' => 'required|email:filter|max:170|unique:users,email',
-                'phone' => ['required', 'string', 'regex:/^\d{4,15}$/'],
+                'phone' => ['required', 'string', 'regex:/^\d{1,11}$/'],
                 'region_code' => ['required', 'string', 'regex:/^\d{1,4}$/'],
                 'password' => 'required|same:password_confirmation|min:6',
                 'has_disability_facilities' => 'nullable|boolean',
@@ -86,7 +86,7 @@ class WebRegisterRequest extends FormRequest
             $rules = array_merge($rules, [
                 'first_name' => 'required|string|max:180',
                 'email' => 'required|email:filter|max:170|unique:users,email',
-                'phone' => 'required|numeric|unique:users,phone',
+                'phone' => ['required', 'string', 'regex:/^\d{1,11}$/', 'unique:users,phone'],
                 'password' => 'required|same:password_confirmation|min:6',
             ]);
         }
@@ -101,6 +101,10 @@ class WebRegisterRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         if ((int) $this->input('type') !== 2) {
+            $this->merge([
+                'phone' => filled($this->input('phone')) ? preg_replace('/\D+/', '', (string) $this->input('phone')) : null,
+            ]);
+
             return;
         }
 

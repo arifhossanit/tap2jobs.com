@@ -207,14 +207,14 @@
                         <div class="col-xl-6 col-md-6 col-sm-12 mb-5 mobile-itel-width">
                             {{ Form::label('phone', __('messages.candidate_profile.primary_mobile'), ['class' => 'form-label']) }}
                             <span class="candidate-field-note">({{ __('messages.candidate_profile.phone_note') }})</span>
-                            {{ Form::tel('phone', isset($user->phone) ? $user->phone : null, ['class' => 'form-control', 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")', 'id' => 'phoneNumber']) }}
+                            {{ Form::tel('phone', isset($user->phone) ? $user->phone : null, ['class' => 'form-control', 'maxlength' => '11', 'inputmode' => 'numeric', 'pattern' => '[0-9]{1,11}', 'oninput' => 'this.value = this.value.replace(/\D/g,"").slice(0, 11)', 'id' => 'phoneNumber']) }}
                             {{ Form::hidden('region_code', null, ['id' => 'prefix_code']) }}
                             <span id="valid-msg" class="text-success d-block fw-400 fs-small mt-2 d-none">{{ __('messages.phone.valid_number') }}</span>
                             <span id="error-msg" class="text-danger d-block fw-400 fs-small mt-2 d-none"></span>                            
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
                             {{ Form::label('secondary_mobile', __('messages.candidate_profile.secondary_mobile'), ['class' => 'form-label']) }}
-                            {{ Form::text('secondary_mobile', $user->candidate->secondary_mobile ?? null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_phone_number'), 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")']) }}
+                            {{ Form::text('secondary_mobile', $user->candidate->secondary_mobile ?? null, ['class' => 'form-control', 'maxlength' => '11', 'inputmode' => 'numeric', 'pattern' => '[0-9]{1,11}', 'placeholder' => __('messages.candidate_profile.enter_phone_number'), 'oninput' => 'this.value = this.value.replace(/\D/g,"").slice(0, 11)']) }}
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-6 mb-5">
                             {{ Form::label('email', __('messages.candidate_profile.primary_email'), ['class' => 'form-label']) }}
@@ -227,7 +227,7 @@
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
                             {{ Form::label('emergency_contact', __('messages.candidate_profile.emergency_contact'), ['class' => 'form-label']) }}
-                            {{ Form::text('emergency_contact', $user->candidate->emergency_contact ?? null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_emergency_contact'), 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")']) }}
+                            {{ Form::text('emergency_contact', $user->candidate->emergency_contact ?? null, ['class' => 'form-control', 'maxlength' => '11', 'inputmode' => 'numeric', 'pattern' => '[0-9]{1,11}', 'placeholder' => __('messages.candidate_profile.enter_emergency_contact'), 'oninput' => 'this.value = this.value.replace(/\D/g,"").slice(0, 11)']) }}
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
                             {{ Form::label('blood_group', __('messages.candidate_profile.blood_group'), ['class' => 'form-label']) }}

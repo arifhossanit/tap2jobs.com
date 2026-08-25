@@ -18,7 +18,7 @@ class UpdateThanaRequest extends FormRequest
         $rules = Thana::$rules;
         $rules['name'] = [
             'required',
-            'max:180',
+            'max:720',
             Rule::unique('thanas', 'name')
                 ->where('city_id', $this->input('city_id'))
                 ->ignore($this->route('thana')->id),

@@ -10,6 +10,17 @@
      The strip is always visible above the navbar; no JS hide-on-load.
      ============================================================ --}}
 
+@php
+    $isCandidateOrEmployerPage = request()->is('candidate*') || 
+                                request()->is('candidates*') || 
+                                request()->is('employer*') || 
+                                request()->is('employers*') || 
+                                request()->is('company*') || 
+                                request()->is('companies*') || 
+                                (Auth::check() && (Auth::user()->hasRole('Candidate') || Auth::user()->hasRole('Employer')));
+@endphp
+
+@if (!$isCandidateOrEmployerPage)
 <div id="siteTopBanner" class="site-top-banner" role="region" aria-label="Announcement">
     <div class="site-top-banner__bar">
         <div class="position-relative w-100">
@@ -92,8 +103,8 @@
         color: #ffffff;
         cursor: pointer;
         display: inline-flex;
-        font-size: 24px;
-        height: 42px;
+        font-size: 20px;
+        height: 30px;
         justify-content: center;
         line-height: 1;
         padding: 0;
@@ -102,7 +113,7 @@
         top: 50%;
         transform: translateY(-50%);
         transition: background-color 0.18s ease, transform 0.18s ease;
-        width: 42px;
+        width: 30px;
         z-index: 3;
     }
     #siteTopBanner .site-top-banner__close:hover,
@@ -132,7 +143,6 @@
     }
     #siteTopBanner .site-top-banner__promo-text {
         font-size: 28px;
-        font-weight: 800;
         letter-spacing: 0.5px;
         text-shadow: 0 2px 4px rgba(0,0,0,0.35);
     }
@@ -143,7 +153,6 @@
         background: #facc15;
         color: #0f172a;
         font-size: 18px;
-        font-weight: 700;
         padding: 8px 20px;
         border-radius: 4px;
         box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
@@ -224,3 +233,4 @@
         });
     })();
 </script>
+@endif

@@ -31,7 +31,7 @@
                 <div class="form-group col-sm-6 mb-5 mobile-itel-width">
                     {{ Form::label('phone',__('messages.candidate.phone').(':'),['class' => 'form-label ']) }}
                     <div class="form-group col-sm-12 mb-5">
-                        {{ Form::tel('phone', null, ['class' => 'form-control form-control-solid','onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")','id'=>'phoneNumber']) }}
+                        {{ Form::tel('phone', null, ['class' => 'form-control form-control-solid', 'maxlength' => '11', 'inputmode' => 'numeric', 'pattern' => '[0-9]{1,11}', 'oninput' => 'this.value = this.value.replace(/\D/g,"").slice(0, 11)','id'=>'phoneNumber']) }}
                     </div>
                     {{ Form::hidden('region_code',null,['id'=>'profilePrefixCode']) }}
                     <p id="valid-msg" class="text-success d-none fw-400 fs-small mt-2">{{__('messages.phone.valid_number')}}</p>

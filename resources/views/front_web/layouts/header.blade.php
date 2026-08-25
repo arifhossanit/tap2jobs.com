@@ -44,17 +44,6 @@
                                             data-prefix-value="{{ $key }}">
                                             <a href="javascript:void(0)"
                                                 class="dropdown-item text-gray d-flex align-items-center {{ checkLanguageSession() == $key ? 'active' : '' }}">
-                                                @if (array_key_exists($key, \App\Models\User::LANGUAGES_IMAGE))
-                                                    @foreach (\App\Models\User::LANGUAGES_IMAGE as $imageKey => $imageValue)
-                                                        @if ($imageKey == $key)
-                                                            <img class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-2' : 'me-2' }} country-flag"
-                                                                src="{{ asset($imageValue) }}" />
-                                                        @endif
-                                                    @endforeach
-                                                @else
-                                                    <i class="fa fa-flag {{ getFrontSelectLanguage() == 'ar' ? 'ms-2' : 'me-2' }} fs-7 text-danger" aria-hidden="true"
-                                                        style="width: 20px;"></i>
-                                                @endif
                                                 {{ $value }}
                                             </a>
                                         </li>

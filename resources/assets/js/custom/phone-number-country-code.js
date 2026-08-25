@@ -9,6 +9,9 @@ function loadPhoneNumberCountry() {
     let input = document.querySelector('#phoneNumber'),
         errorMsg = document.querySelector('#error-msg'),
         validMsg = document.querySelector('#valid-msg');
+    let normalizePhoneNumber = function () {
+        input.value = input.value.replace(/\D/g, '').slice(0, 11);
+    };
     let errorMap = [
         Lang.get('js.invalid_number'),
         Lang.get('js.invalid_country_code'),
@@ -43,9 +46,7 @@ function loadPhoneNumberCountry() {
     $('#prefix_code').val(getCode);
     // }
 
-    let getPhoneNumber = $('#phoneNumber').val();
-    let removeSpacePhoneNumber = getPhoneNumber.replace(/\s/g, '');
-    $('#phoneNumber').val(removeSpacePhoneNumber);
+    normalizePhoneNumber();
 
 
     let reset = function () {
@@ -56,6 +57,7 @@ function loadPhoneNumberCountry() {
     };
 
     input.addEventListener('blur', function () {
+        normalizePhoneNumber();
         reset()
         if (input.value.trim()) {
             if (intl.isValidNumber()) {
@@ -70,8 +72,15 @@ function loadPhoneNumberCountry() {
     })
 
 // on keyup / change flag: reset
-    input.addEventListener('change', reset);
-    input.addEventListener('keyup', reset);
+    input.addEventListener('change', function () {
+        normalizePhoneNumber();
+        reset();
+    });
+    input.addEventListener('keyup', function () {
+        normalizePhoneNumber();
+        reset();
+    });
+    input.addEventListener('input', normalizePhoneNumber);
 
     if (typeof phoneNo != 'undefined' && phoneNo !== '') {
         setTimeout(function () {
@@ -93,6 +102,7 @@ function loadPhoneNumberCountry() {
             intl.setNumber('+' + phoneNo);
             phoneNo = '';
         }
+        normalizePhoneNumber();
         let getCode = intl.selectedCountryData['dialCode'];
         $('#prefix_code').val(getCode);
     });

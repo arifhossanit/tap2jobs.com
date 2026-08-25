@@ -560,7 +560,7 @@ function loadEmployerRegistrationForm () {
         };
         phoneInput.addEventListener('countrychange', syncRegionCode);
         phoneInput.addEventListener('input', function () {
-            this.value = this.value.replace(/\D/g, '');
+            this.value = this.value.replace(/\D/g, '').slice(0, 11);
         });
         syncRegionCode();
     }

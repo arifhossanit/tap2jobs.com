@@ -145,6 +145,34 @@
   z-index: 1;
 }
 
+.candidate-job-match-ring {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 54px;
+  height: 54px;
+  justify-content: center;
+  width: 54px;
+}
+
+.candidate-job-match-ring svg {
+  display: block;
+  filter: drop-shadow(0 3px 8px rgba(16, 24, 40, 0.06));
+  height: 100%;
+  width: 100%;
+}
+
+.candidate-job-match-ring .ring-bg {
+  fill: #ffffff !important;
+  stroke: #eef2f6 !important;
+}
+
+.candidate-job-match-ring .ring-text {
+  fill: #0b132a !important;
+  font-family: system-ui, -apple-system, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+}
+
 .candidate-profile-completion__content {
   display: grid;
   gap: 4px;

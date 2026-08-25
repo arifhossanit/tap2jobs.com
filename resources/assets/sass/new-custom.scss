@@ -1460,7 +1460,7 @@
 }
 
 .candidate-profile-progress {
-  padding: 8px 20px;
+  padding: 8px;
 }
 
 .candidate-profile-progress__track {
@@ -6261,5 +6261,19 @@ html[dir="rtl"] {
 
 .page-item.active .page-link {
   color: #fff !important;
+}
+
+.candidate-profile-progress__track strong {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  left: clamp(46px, var(--completion-left), calc(100% - 8px));
+  line-height: 1;
+  position: absolute;
+  text-shadow: 0 1px 2px rgba(15, 23, 42, 0.35);
+  top: 50%;
+  transform: translate(-100%, -50%);
+  z-index: 2;
+  padding-right: 8px;
 }
 

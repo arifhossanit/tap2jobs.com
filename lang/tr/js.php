@@ -27,6 +27,7 @@ return [
     'select_language' => 'Dil Seç',
     'select_state' => 'Bir Eyalet Seçin',
     'select_city' => 'Şehir Seç',
+    'select_thana' => 'Thana seç',
     'favourite_company' => 'Favori Şirket',
     'reported_candidate' => 'Bildirilen Aday',
     'already_reported' => 'Zaten Bildirildi',

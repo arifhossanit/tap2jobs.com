@@ -1,3 +1,11 @@
+@php
+    $genderOptions = $data['profileReferenceOptions']['gender'] ?? [
+        '0' => __('messages.common.male'),
+        '1' => __('messages.common.female'),
+        '2' => __('messages.candidate_profile.other'),
+    ];
+@endphp
+
 <div class="row">
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('first_name',__('messages.candidate.first_name').':', ['class' => 'form-label']) }}
@@ -29,14 +37,7 @@
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('gender', __('messages.candidate.gender').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        <br>
-        <span class="form-check is-valid form-check-sm {{ checkLanguageSession() == 'ar' ? 'float-end' : 'float-start' }}">
-                <label class="form-label ">{{ __('messages.common.male') }}</label>&nbsp;&nbsp;
-                {{ Form::radio('gender', '0', isset($candidate) ? $candidate->user->gender == 0 : true, ['class' => 'form-check-input']) }} &nbsp;
-                <br>
-                <label class="form-label ">{{ __('messages.common.female') }}</label>
-                {{ Form::radio('gender', '1', isset($candidate) ? $candidate->user->gender == 1 : true, ['class' => 'form-check-input']) }}
-            </span>
+        {{ Form::select('gender', $genderOptions, old('gender', isset($candidate) ? (string) $candidate->user->gender : '0'), ['class' => 'form-select', 'required', 'placeholder' => __('messages.candidate.gender')]) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('skill_id', __('messages.candidate.candidate_skill').':', ['class' => 'form-label']) }}
@@ -114,8 +115,12 @@
         {{ Form::select('thana_id', (isset($userThanas) && $userThanas!=null?$userThanas:[]), old('thana_id', $user->thana_id), ['id'=>'thanaId','class' => 'form-select','placeholder' => __('messages.company.select_thana')]) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+        {{ Form::label('address', __('messages.candidate.address').':', ['class' => 'form-label ']) }}
+        {{ Form::textarea('address', isset($candidate) ? $candidate->address : null, ['class' => 'form-control address-height','rows'=>'5', 'placeholder' => __('messages.candidate.enter_address')]) }}
+    </div>
+    <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('phone', __('messages.candidate.phone').':', ['class' => 'form-label']) }}
-        {{ Form::tel('phone', null, ['class' => 'form-control', 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")','id'=>'phoneNumber','placeholder' => __('messages.inquiry.phone_no')]) }}
+        {{ Form::tel('phone', null, ['class' => 'form-control', 'maxlength' => '11', 'inputmode' => 'numeric', 'pattern' => '[0-9]{1,11}', 'oninput' => 'this.value = this.value.replace(/\D/g,"").slice(0, 11)','id'=>'phoneNumber','placeholder' => __('messages.inquiry.phone_no')]) }}
         {{ Form::hidden('region_code',null,['id'=>'prefix_code']) }}
         <br>
         <p id="valid-msg" class="text-success d-none fw-400 fs-small mt-2">{{__('messages.phone.valid_number')}}</p>
@@ -240,7 +245,7 @@
                         <label class="form-check form-switch  form-switch-sm {{ checkLanguageSession() == 'ar' ? 'float-end' : 'float-start' }}">
                             <input type="checkbox" name="is_verified" class="form-check-input"
                                    value="1"
-                                   id="verified" {{(isset($candidate) && ($candidate->user->is_verified) && ($candidate->user->email_verified_at)) ? 'checked disabled' : ''}}>
+                                   id="verified" {{(isset($candidate) && ($candidate->user->is_verified) && ($candidate->user->email_verified_at)) ? 'checked' : ''}}>
                             <span class="custom-switch-indicator"></span>
                         </label>
                     </div>
@@ -248,18 +253,14 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+    <div class="col-xl-6 col-md-6 col-sm-12 mb-5 available-at">
         {{ Form::label('available_at', __('messages.candidate.available_at').':', ['class' => 'form-label ']) }}
         <input type="text" name="available_at" id="availableAt"
                class="form-control {{(getLoggedInUser()->theme_mode) ? 'bg-light' : 'bg-white'}}" autocomplete="off"
                placeholder="{{__('messages.candidate.available_at')}}"
                value="{{isset($user->candidate->available_at) ? $user->candidate->available_at : null}}">
-    </div>
-    <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
-        {{ Form::label('address', __('messages.candidate.address').':', ['class' => 'form-label ']) }}
-        {{ Form::textarea('address', isset($candidate) ? $candidate->address : null, ['class' => 'form-control address-height','rows'=>'5', 'placeholder' => __('messages.candidate.address')]) }}
-    </div>
-    <div class="d-flex justify-content-endmt-5">
+    </div>    
+    <div class="d-flex justify-content-end mt-5">
         {{ Form::submit(__('messages.common.save'), ['class' => 'btn btn-primary me-3']) }}
         <a href="{{ route('candidates.index') }}"
            class="btn btn-secondary me-2">{{__('messages.common.cancel')}}</a>

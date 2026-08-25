@@ -21,7 +21,7 @@ class UpdateStateRequest extends FormRequest
     public function rules(): array
     {
         $rules = State::$rules;
-        $rules['name'] = 'required|max:180|unique:states,name,'.$this->route('state')->id;
+        $rules['name'] = 'required|max:720|unique:states,name,'.$this->route('state')->id;
 
         return $rules;
     }

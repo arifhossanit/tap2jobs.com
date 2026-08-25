@@ -27,6 +27,7 @@ return [
     'select_language' => '选择语言',
     'select_state' => '选择州',
     'select_city' => '选择城市',
+    'select_thana' => '选择塔纳',
     'favourite_company' => '喜爱的公司',
     'reported_candidate' => '被举报的候选人',
     'already_reported' => '已被举报',

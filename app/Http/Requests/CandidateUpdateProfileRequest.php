@@ -24,9 +24,15 @@ class CandidateUpdateProfileRequest extends FormRequest
     {
         $currentSalary = removeCommaFromNumbers($this->request->get('current_salary'));
         $expectedSalary = removeCommaFromNumbers($this->request->get('expected_salary'));
+        $phone = filled($this->request->get('phone')) ? preg_replace('/\D+/', '', (string) $this->request->get('phone')) : null;
+        $secondaryMobile = filled($this->request->get('secondary_mobile')) ? preg_replace('/\D+/', '', (string) $this->request->get('secondary_mobile')) : null;
+        $emergencyContact = filled($this->request->get('emergency_contact')) ? preg_replace('/\D+/', '', (string) $this->request->get('emergency_contact')) : null;
 
         $this->request->set('current_salary', $currentSalary);
         $this->request->set('expected_salary', $expectedSalary);
+        $this->request->set('phone', $phone);
+        $this->request->set('secondary_mobile', $secondaryMobile);
+        $this->request->set('emergency_contact', $emergencyContact);
     }
 
     /**
@@ -47,15 +53,15 @@ class CandidateUpdateProfileRequest extends FormRequest
             'email' => 'required|email:filter|unique:users,email,'.$id,
             'dob' => 'nullable|date|before_or_equal:today',
             'gender' => ['required', Rule::in(ProfileReferenceOption::values(ProfileReferenceOption::TYPE_GENDER))],
-            'phone' => 'nullable',
-            'secondary_mobile' => 'nullable|max:30',
+            'phone' => ['nullable', 'string', 'regex:/^\d{1,11}$/'],
+            'secondary_mobile' => ['nullable', 'string', 'regex:/^\d{1,11}$/'],
             'marital_status_id' => 'required|integer|exists:marital_status,id',
             'nationality' => 'max:150',
             'national_id_card' => 'max:150',
             'passport_number' => 'nullable|max:150',
             'passport_issue_date' => 'nullable|date|before_or_equal:today',
             'alternate_email' => 'nullable|email:filter|max:150',
-            'emergency_contact' => 'nullable|max:30',
+            'emergency_contact' => ['nullable', 'string', 'regex:/^\d{1,11}$/'],
             'blood_group' => ['nullable', 'max:10', Rule::in(ProfileReferenceOption::values(ProfileReferenceOption::TYPE_BLOOD_GROUP))],
             'height' => 'nullable|numeric|min:0|max:999',
             'weight' => 'nullable|numeric|min:0|max:999',

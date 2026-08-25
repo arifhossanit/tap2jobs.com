@@ -27,6 +27,7 @@ return [
     'select_language' => 'Sélectionner la langue',
     'select_state' => 'Sélectionner l\'état',
     'select_city' => 'Sélectionner la ville',
+    'select_thana' => 'Sélectionner le thana',
     'favourite_company' => 'Entreprise préférée',
     'reported_candidate' => 'Candidat signalé',
     'already_reported' => 'Déjà signalé',

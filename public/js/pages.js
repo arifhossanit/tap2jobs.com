@@ -6219,6 +6219,19 @@ function loadCreateEditCompanyData() {
       return false;
     }
   });
+  function refreshAdminCompanyDisabilityFields() {
+    var hasFacilities = $('input[name="has_disability_facilities"]:checked').val() === '1';
+    $('#companyDisabilityDetails').toggleClass('d-none', !hasFacilities);
+    if (!hasFacilities) {
+      $('#companyDisabilityDetails').find('input:radio, input:checkbox').prop('checked', false);
+      $('#companyDisabilitySupportQuestion').addClass('d-none');
+      return;
+    }
+    var hasPolicy = $('input[name="disability_inclusion_policy"]:checked').val();
+    $('#companyDisabilitySupportQuestion').toggleClass('d-none', hasPolicy !== '0');
+  }
+  $(document).on('change', 'input[name="has_disability_facilities"], input[name="disability_inclusion_policy"]', refreshAdminCompanyDisabilityFields);
+  refreshAdminCompanyDisabilityFields();
 
   // industry
   listenClick('.createEmployerIndustryModal', function () {
@@ -6375,8 +6388,9 @@ listenSubmit('#createEmployerNewIndustryForm', function (e) {
           id: result.data.id,
           text: result.data.name
         };
+        var selectedIndustry = $('#addEmployerIndustryId').length ? $('#addEmployerIndustryId') : $('#industryId');
         var appendIndustryNewOption = new Option(data.text, data.id, false, true);
-        $('#addEmployerIndustryId').append(appendIndustryNewOption).trigger('change');
+        selectedIndustry.append(appendIndustryNewOption).trigger('change');
       }
     },
     error: function error(result) {
@@ -8272,6 +8286,9 @@ function loadPhoneNumberCountry() {
   var input = document.querySelector('#phoneNumber'),
     errorMsg = document.querySelector('#error-msg'),
     validMsg = document.querySelector('#valid-msg');
+  var normalizePhoneNumber = function normalizePhoneNumber() {
+    input.value = input.value.replace(/\D/g, '').slice(0, 11);
+  };
   var errorMap = [Lang.get('js.invalid_number'), Lang.get('js.invalid_country_code'), Lang.get('js.too_short'), Lang.get('js.too_long'), Lang.get('js.invalid_number')];
 
   // initialise plugin
@@ -8297,9 +8314,7 @@ function loadPhoneNumberCountry() {
   $('#prefix_code').val(getCode);
   // }
 
-  var getPhoneNumber = $('#phoneNumber').val();
-  var removeSpacePhoneNumber = getPhoneNumber.replace(/\s/g, '');
-  $('#phoneNumber').val(removeSpacePhoneNumber);
+  normalizePhoneNumber();
   var reset = function reset() {
     input.classList.remove('error');
     errorMsg.innerHTML = '';
@@ -8307,6 +8322,7 @@ function loadPhoneNumberCountry() {
     validMsg.classList.add('d-none');
   };
   input.addEventListener('blur', function () {
+    normalizePhoneNumber();
     reset();
     if (input.value.trim()) {
       if (intl.isValidNumber()) {
@@ -8321,8 +8337,15 @@ function loadPhoneNumberCountry() {
   });
 
   // on keyup / change flag: reset
-  input.addEventListener('change', reset);
-  input.addEventListener('keyup', reset);
+  input.addEventListener('change', function () {
+    normalizePhoneNumber();
+    reset();
+  });
+  input.addEventListener('keyup', function () {
+    normalizePhoneNumber();
+    reset();
+  });
+  input.addEventListener('input', normalizePhoneNumber);
   if (typeof phoneNo != 'undefined' && phoneNo !== '') {
     setTimeout(function () {
       $('#phoneNumber').trigger('change');
@@ -8342,6 +8365,7 @@ function loadPhoneNumberCountry() {
       intl.setNumber('+' + phoneNo);
       phoneNo = '';
     }
+    normalizePhoneNumber();
     var getCode = intl.selectedCountryData['dialCode'];
     $('#prefix_code').val(getCode);
   });

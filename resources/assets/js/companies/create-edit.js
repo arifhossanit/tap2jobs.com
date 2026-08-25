@@ -248,6 +248,23 @@ function loadCreateEditCompanyData() {
         }
     });
 
+    function refreshAdminCompanyDisabilityFields() {
+        let hasFacilities = $('input[name="has_disability_facilities"]:checked').val() === '1';
+        $('#companyDisabilityDetails').toggleClass('d-none', !hasFacilities);
+
+        if (!hasFacilities) {
+            $('#companyDisabilityDetails').find('input:radio, input:checkbox').prop('checked', false);
+            $('#companyDisabilitySupportQuestion').addClass('d-none');
+            return;
+        }
+
+        let hasPolicy = $('input[name="disability_inclusion_policy"]:checked').val();
+        $('#companyDisabilitySupportQuestion').toggleClass('d-none', hasPolicy !== '0');
+    }
+
+    $(document).on('change', 'input[name="has_disability_facilities"], input[name="disability_inclusion_policy"]', refreshAdminCompanyDisabilityFields);
+    refreshAdminCompanyDisabilityFields();
+
 
 
 
@@ -428,8 +445,9 @@ listenSubmit('#createEmployerNewIndustryForm', function (e) {
                     id: result.data.id,
                     text: result.data.name,
                 };
+                let selectedIndustry = $('#addEmployerIndustryId').length ? $('#addEmployerIndustryId') : $('#industryId');
                 let appendIndustryNewOption = new Option(data.text, data.id, false, true);
-                $('#addEmployerIndustryId').append(appendIndustryNewOption).trigger('change');
+                selectedIndustry.append(appendIndustryNewOption).trigger('change');
             }
         },
         error: function (result) {

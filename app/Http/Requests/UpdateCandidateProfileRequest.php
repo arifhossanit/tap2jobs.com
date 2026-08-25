@@ -16,6 +16,13 @@ class UpdateCandidateProfileRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'phone' => filled($this->input('phone')) ? preg_replace('/\D+/', '', (string) $this->input('phone')) : null,
+        ]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -28,7 +35,7 @@ class UpdateCandidateProfileRequest extends FormRequest
             'first_name' => 'required|max:150',
             'last_name' => 'required|max:150',
             'email' => 'required|email|unique:users,email,'.$id.'|regex:/^[\w\-\.\+]+\@[a-zA-Z0-9\.\-]+\.[a-zA-z0-9]{2,4}$/',
-            'phone' => 'nullable|min:10|max:10',
+            'phone' => ['nullable', 'string', 'regex:/^\d{1,11}$/'],
             'image' => 'nullable|mimes:jpeg,jpg,png|max:1024',
         ];
 

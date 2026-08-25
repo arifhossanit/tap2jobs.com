@@ -1,7 +1,13 @@
 @aware(['component', 'tableName'])
 @props(['rows'])
 
-@if ($component->bulkActionsAreEnabled() && $component->hasBulkActions())
+@php
+    $hideBanner = in_array($tableName, ['candidates', 'employers']) || 
+                  (Auth::check() && (Auth::user()->hasRole('Candidate') || Auth::user()->hasRole('Employer'))) || 
+                  request()->is('candidate*') || request()->is('employer*');
+@endphp
+
+@if ($component->bulkActionsAreEnabled() && $component->hasBulkActions() && !$hideBanner)
     @php
         $colspan = $component->getColspanCount();
         $selectAll = $component->selectAllIsEnabled();

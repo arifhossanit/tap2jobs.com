@@ -27,6 +27,7 @@ return [
     'select_language' => 'Выберите язык',
     'select_state' => 'Выберите штат',
     'select_city' => 'Выберите город',
+    'select_thana' => 'Выберите тхана',
     'favourite_company' => 'Избранная компания',
     'reported_candidate' => 'Сообщенный кандидат',
     'already_reported' => 'Уже сообщено',

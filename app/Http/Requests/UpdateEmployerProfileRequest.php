@@ -16,6 +16,13 @@ class UpdateEmployerProfileRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'phone' => filled($this->input('phone')) ? preg_replace('/\D+/', '', (string) $this->input('phone')) : null,
+        ]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -26,7 +33,7 @@ class UpdateEmployerProfileRequest extends FormRequest
         $id = Auth::user()->id;
         $rules = [
             'first_name' => 'required|max:180',
-            'phone' => 'nullable|min:10|max:10',
+            'phone' => ['nullable', 'string', 'regex:/^\d{1,11}$/'],
             'email' => 'required|email|unique:users,email,'.$id.'|regex:/^[\w\-\.\+]+\@[a-zA-Z0-9\.\-]+\.[a-zA-z0-9]{2,4}$/',
             'image' => 'nullable|mimes:jpeg,jpg,png',
         ];

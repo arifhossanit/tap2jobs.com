@@ -2087,6 +2087,7 @@ return [
         'year_of_establishment' => 'প্রতিষ্ঠার বছর',
         'number_of_employees' => 'কর্মচারীর সংখ্যা',
         'company_address' => 'কোম্পানির ঠিকানা',
+        'company_address_bn' => 'কোম্পানির ঠিকানা (বাংলায়)',
         'company_summary_placeholder' => 'কোম্পানির সংক্ষিপ্ত বিবরণ লিখুন',
         'company_summary_bn_placeholder' => 'বাংলায় কোম্পানির সংক্ষিপ্ত বিবরণ লিখুন',
         'all' => 'সব',

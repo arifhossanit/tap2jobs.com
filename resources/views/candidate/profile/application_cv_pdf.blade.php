@@ -105,12 +105,13 @@
     ])->filter()->unique()->implode(', ');
     $phoneNumbers = collect([$user->phone, $candidate->secondary_mobile])->filter()->unique()->implode(', ');
     $emails = collect([$user->email, $candidate->alternate_email])->filter()->unique()->implode(', ');
+    $formatSalary = fn ($amount) => filled($amount) ? 'BDT '.number_format((float) $amount, 0) : null;
     $careerRows = collect([
         'Preferred Job Category' => $preferredFunctionalAreas->merge($preferredSkills)->unique()->implode(', '),
         'Looking For' => $jobLevelLabels[$candidate->job_level] ?? null,
         'Available For' => $jobNatureLabels[$candidate->job_nature] ?? null,
-        'Present Salary' => $candidate->current_salary ? strtoupper($candidate->salary_currency ?: 'BDT').' '.number_format($candidate->current_salary, 0) : null,
-        'Expected Salary' => $candidate->expected_salary ? strtoupper($candidate->salary_currency ?: 'BDT').' '.number_format($candidate->expected_salary, 0) : null,
+        'Present Salary' => $formatSalary($candidate->current_salary),
+        'Expected Salary' => $formatSalary($candidate->expected_salary),
         'Preferred District' => $preferredLocations->implode(', '),
         'Preferred Country' => $preferredCountries->implode(', '),
         'Preferred Organization' => $preferredOrganizations->implode(', '),

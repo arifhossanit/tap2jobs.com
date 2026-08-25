@@ -201,7 +201,7 @@ class CandidateController extends AppBaseController
         }
 
         if ($sectionName == 'resume') {
-            $this->applicationCvService->ensure($user->candidate);
+            $this->applicationCvService->ensure($user->candidate, true);
         }
 
         if ($sectionName == 'education-training' || $sectionName == 'other-information' || $sectionName == 'employment') {
@@ -304,6 +304,7 @@ class CandidateController extends AppBaseController
     public function updateProfile(CandidateUpdateProfileRequest $request): RedirectResponse
     {
         $this->candidateRepository->updateProfile($request->validated());
+        $this->applicationCvService->ensure(Auth::user()->candidate->fresh(), true);
 
         Flash::success(__('messages.flash.candidate_profile'));
 
@@ -354,6 +355,7 @@ class CandidateController extends AppBaseController
     public function updateCareerApplication(CandidateUpdateCareerApplicationRequest $request)
     {
         $this->candidateRepository->updateCareerApplication($request->validated());
+        $this->applicationCvService->ensure(Auth::user()->candidate->fresh(), true);
 
         if ($request->ajax() || $request->wantsJson()) {
             return $this->sendSuccess(__('messages.flash.candidate_profile'));
@@ -996,7 +998,7 @@ class CandidateController extends AppBaseController
     {
         $candidate = Auth::user()->candidate;
         $candidate->update($request->validated());
-        $this->applicationCvService->ensure($candidate->fresh());
+        $this->applicationCvService->ensure($candidate->fresh(), true);
 
         if ($request->ajax() || $request->wantsJson()) {
             return $this->sendSuccess(__('messages.candidate_profile.cv_privacy_updated'));
@@ -1009,12 +1011,18 @@ class CandidateController extends AppBaseController
 
     public function downloadResume(int $media): Media
     {
+        $candidate = Auth::user()->candidate;
+
         /** @var Media $mediaItem */
         $mediaItem = Media::whereKey($media)
             ->where('model_type', \App\Models\Candidate::class)
-            ->where('model_id', Auth::user()->owner_id)
+            ->where('model_id', $candidate->id)
             ->where('collection_name', \App\Models\Candidate::RESUME_PATH)
             ->firstOrFail();
+
+        if ($mediaItem->getCustomProperty(ApplicationCvService::APPLICATION_CV_PROPERTY, false)) {
+            return $this->applicationCvService->ensure($candidate->fresh(), true);
+        }
 
         return $mediaItem;
     }
@@ -1029,6 +1037,10 @@ class CandidateController extends AppBaseController
             ->where('model_id', $candidate->id)
             ->where('collection_name', \App\Models\Candidate::RESUME_PATH)
             ->firstOrFail();
+
+        if ($mediaItem->getCustomProperty(ApplicationCvService::APPLICATION_CV_PROPERTY, false)) {
+            $mediaItem = $this->applicationCvService->ensure($candidate->fresh(), true);
+        }
 
         return $this->resumePreviewService->preview($mediaItem);
     }

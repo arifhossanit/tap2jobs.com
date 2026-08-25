@@ -22,7 +22,7 @@
     <div class="col-sm-6 mb-5">
         {{ Form::label('phone', __('messages.candidate.phone') . ':', ['class' => 'form-label']) }}
         <div class="col-sm-12 mb-5">
-            {{ Form::tel('phone', null, ['class' => 'form-control', 'onkeyup' => 'if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,"")', 'id' => 'phone', 'placeholder' => __('messages.candidate.phone')]) }}
+            {{ Form::tel('phone', null, ['class' => 'form-control', 'maxlength' => '11', 'inputmode' => 'numeric', 'pattern' => '[0-9]{1,11}', 'oninput' => 'this.value = this.value.replace(/\D/g,"").slice(0, 11)', 'id' => 'phone', 'placeholder' => __('messages.candidate.phone')]) }}
         </div>
     </div>
     <div class="col-sm-12 mb-5">

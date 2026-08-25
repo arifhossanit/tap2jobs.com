@@ -393,7 +393,6 @@
 <script src="{{ mix('js/pages.js') }}"></script>
 
 <body class="candidate-front-shell overflow-x-hidden {{ $lang == 'pt' || $lang == 'fr' || $lang == 'es' ? 'languages' : '' }}">
-    @include('front_web.layouts.header_ad')
     <span class="header-padding"></span>
     @include('front_web.layouts.header')
 
