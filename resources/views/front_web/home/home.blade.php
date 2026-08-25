@@ -771,10 +771,45 @@
         font-weight: bold;
     }
 
-    /* Responsive - Tablet */
+    /* ============================================================
+       RESPONSIVE BREAKPOINTS (Desktop >= 1200px remains 100% untouched)
+       ============================================================ */
+
+    /* Laptop & Medium Displays (992px to 1199px) */
+    @media (max-width: 1199px) {
+        .bd-hero__inner {
+            padding: 32px 40px 28px;
+        }
+
+        .bd-directory__layout {
+            grid-template-columns: minmax(0, 1fr) 230px;
+            gap: 16px;
+        }
+
+        .bd-quick-links {
+            width: 100%;
+            padding: 16px 14px;
+        }
+
+        .bd-category-grid {
+            column-gap: 16px;
+        }
+
+        .find-job-section .find-job .row > div {
+            padding-left: 12px !important;
+            padding-right: 12px !important;
+        }
+    }
+
+    /* Tablet Screens (768px to 991px) */
     @media (max-width: 991px) {
         .bd-promo {
             display: none;
+        }
+
+        .bd-home {
+            --bd-section-gap: 16px;
+            --bd-card-padding: 16px;
         }
 
         .bd-nav-links {
@@ -797,25 +832,81 @@
             padding: 0;
         }
 
-        .bd-hero__inner {
-            padding-right: 0;
+        .bd-hero {
+            min-height: auto;
         }
 
-        .bd-quick-links {
-            display: none;
+        .bd-hero__inner {
+            min-height: auto;
+            padding: 28px 20px 24px;
+        }
+
+        .bd-hero h1 {
+            font-size: 22px;
+            margin-bottom: 18px;
+        }
+
+        .bd-stats {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px 16px;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 20px;
+        }
+
+        .bd-stat {
+            justify-content: center;
+        }
+
+        .find-job-section .find-job {
+            padding: 12px;
+            top: 0 !important;
+        }
+
+        .find-job-section .find-job form > .row {
+            row-gap: 12px;
+        }
+
+        .find-job-section .find-job .br-2 {
+            border-right: none !important;
         }
 
         .bd-directory__layout {
             grid-template-columns: 1fr;
+            gap: 20px;
         }
 
-        .bd-sidebar {
-            display: none;
+        .bd-category-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            column-gap: 20px;
+        }
+
+        .bd-quick-links {
+            display: block !important;
+            width: 100%;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .bd-quick-links h2 {
+            margin-bottom: 12px;
+        }
+
+        .bd-quick-links-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px 16px;
         }
     }
 
-    /* Responsive - Mobile */
-    @media (max-width: 700px) {
+    /* Mobile Screens (< 768px & < 576px) */
+    @media (max-width: 767px) {
+        .bd-shell {
+            width: min(100% - 24px, 1140px);
+        }
+
         .bd-utility__links,
         .bd-nav-links,
         .bd-account > a:not(.bd-login):not(.bd-join),
@@ -835,44 +926,134 @@
             gap: 8px;
         }
 
+        .bd-hero {
+            background: #1e528e !important;
+        }
+
         .bd-hero__inner {
-            padding-top: 25px;
+            padding: 20px 14px 20px;
         }
 
+        .bd-hero h1 {
+            color: #ffffff !important;
+            font-size: 22px;
+            margin-bottom: 16px;
+            line-height: 1.3;
+            font-weight: 700;
+        }
+
+        /* 1. Live jobs, vacancies, companies, new jobs hidden on mobile */
         .bd-stats {
-            gap: 9px;
-            overflow: auto;
+            display: none !important;
         }
 
-        .bd-stat__icon {
-            width: 42px;
-            height: 42px;
+        /* 3. Mobile Searchbar & Button design matching reference image */
+        .find-job-section .find-job {
+            background: transparent !important;
+            padding: 0 !important;
+            box-shadow: none !important;
         }
 
-        .bd-stat span {
-            font-size: 11px;
+        .find-job-section .find-job form > .row > div {
+            width: 100% !important;
+            flex: 0 0 100% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin-bottom: 12px !important;
         }
 
-        .bd-stat b {
-            font-size: 16px;
+        .find-job-section .find-job form > .row > div:last-child {
+            margin-bottom: 0 !important;
         }
 
-        .bd-search {
-            flex-wrap: wrap;
+        .find-job-section .find-job .autocomplete-wrapper {
+            display: none !important;
         }
 
-        .bd-search input,
-        .bd-search select {
-            flex: 1 0 100%;
+        .find-job-section .find-job h3 {
+            display: none !important;
         }
 
-        .bd-search button {
-            width: 100%;
-            height: 36px;
+        .find-job-section .find-job .br-2 {
+            border: none !important;
+            padding: 0 !important;
         }
 
+        .mobile-input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #555555;
+            font-size: 15px;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .find-job-section .find-job input {
+            background: #ffffff !important;
+            border: 1px solid #ffffff !important;
+            border-radius: 6px !important;
+            height: 46px !important;
+            padding: 0 14px 0 38px !important;
+            font-size: 15px !important;
+            color: #333333 !important;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08) !important;
+        }
+
+        .find-job-section .find-job input::placeholder {
+            color: #888888 !important;
+        }
+
+        .find-job-section .find-jobs-btn {
+            background-color: #b8dcb9 !important;
+            border-color: #b8dcb9 !important;
+            color: #1a3c1c !important;
+            font-weight: 700 !important;
+            font-size: 16px !important;
+            border-radius: 6px !important;
+            height: 46px !important;
+            min-height: 46px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 0 !important;
+            width: 100% !important;
+            box-shadow: none !important;
+        }
+
+        .find-job-section .find-jobs-btn:hover {
+            background-color: #a6d4a8 !important;
+            color: #0f2711 !important;
+        }
+
+        /* Mobile Division Links matching reference image */
         .bd-city-links {
-            margin-top: 9px;
+            gap: 8px 14px !important;
+            margin-top: 18px !important;
+            justify-content: flex-start !important;
+            padding: 0 2px !important;
+        }
+
+        .bd-city-links a {
+            background: transparent !important;
+            color: #ffffff !important;
+            font-size: 13px !important;
+            font-weight: 600 !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) !important;
+        }
+
+        .bd-city-links a:hover {
+            text-decoration: underline !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .bd-directory {
+            padding: 16px 0 20px;
         }
 
         .bd-category-grid {
@@ -880,66 +1061,18 @@
         }
 
         .bd-category-card {
-            padding: 0 13px 12px;
+            padding: 0 12px 12px;
         }
 
         .bd-category-card__title {
+            font-size: 15px;
+            padding: 12px 0 10px;
             flex-wrap: wrap;
             gap: 8px;
         }
-    }
 
-    @media (max-width: 991px) {
-        .bd-home {
-            --bd-section-gap: 16px;
-            --bd-card-padding: 16px;
-        }
-
-        .bd-hero {
-            min-height: auto;
-        }
-
-        .bd-hero__inner {
-            min-height: auto;
-            padding: 28px 16px 24px;
-        }
-
-        .bd-hero h1 {
-            margin-bottom: 20px;
-        }
-
-        .find-job-section .find-job {
-            padding: 4px;
-        }
-    }
-
-    @media (max-width: 700px) {
-        .bd-shell {
-            width: min(100% - 24px, 1140px);
-        }
-
-        .bd-hero__inner {
-            padding: 24px 12px 20px;
-        }
-
-        .bd-stats {
-            gap: 12px;
-            margin-bottom: 16px;
-            padding-bottom: 2px;
-            width: 100%;
-        }
-
-        .bd-city-links {
-            gap: 6px;
-            margin-top: 14px;
-        }
-
-        .bd-directory {
-            padding: 16px 0 20px;
-        }
-
-        .bd-category-card__title {
-            padding: 12px 0 10px;
+        .bd-quick-links-grid {
+            grid-template-columns: 1fr;
         }
     }
 </style>
@@ -992,8 +1125,9 @@
                         <div class="find-job position-relative bg-white">
                             <form action="{{ route('front.search.jobs') }}" id='searchForm' method="get">
                                 <div class="row align-items-center justify-content-around m-0">
-                                    <div class="col-lg-5 br-2 ps-lg-4 px-20">
+                                    <div class="col-lg-5 br-2 ps-lg-4 px-20 position-relative">
                                         <h3 class="fs-16 text-secondary text-start mb-0">@lang('web.home_menu.keywords')</h3>
+                                        <i class="fa-solid fa-tag mobile-input-icon d-md-none"></i>
                                         <input type="text" class="fs-14 text-gray mb-0" name="keywords"
                                             id="search-keywords" placeholder="@lang('web.web_home.job_title_keywords_company')" autocomplete="off" />
                                         <div id="jobsSearchResults" class="position-absolute w100 job-search"
@@ -1002,15 +1136,17 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4 br-2 ps-lg-4 px-20 autocomplete-wrapper">
+                                    <div class="col-lg-4 br-2 ps-lg-4 px-20 autocomplete-wrapper position-relative">
                                         <h3 class="fs-16 text-secondary text-start mb-0">@lang('web.common.location')</h3>
+                                        <i class="fa-solid fa-location-dot mobile-input-icon d-md-none"></i>
                                         <input type="text" class="fs-14 text-gray mb-0 pb-4" name="location"
                                             id="search-location" placeholder="@lang('web.web_home.city_or_postcode')" />
                                     </div>
                                     <div class="col-lg-3 text-center p-lg-3 px-20">
-                                        <button class="btn btn-primary  find-jobs-btn d-block p-0 px-2 pt-3 pb-3"
+                                        <button class="btn btn-primary find-jobs-btn d-block p-0 px-2 pt-3 pb-3"
                                             style="width: 100%" type="submit">
-                                            @lang('web.web_home.find_jobs')
+                                            <span class="d-none d-md-inline">@lang('web.web_home.find_jobs')</span>
+                                            <span class="d-md-none">Search</span>
                                         </button>
                                     </div>
                                 </div>
@@ -1064,15 +1200,17 @@
             <!-- <aside class="bd-sidebar"></aside> -->
             <aside class="bd-sidebar bd-quick-links">
                 <h2>@lang('web.home_page.quick_links')</h2>
-                <a href="{{ route('front.company.lists') }}">Employer List ({{ $quickLinkCounts['employer_list'] ?? 0 }})</a>
-                <a href="{{ route('front.search.jobs', ['filter' => 'new']) }}">New Jobs ({{ $quickLinkCounts['new_jobs'] ?? 0 }})</a>
-                <a href="{{ route('front.search.jobs', ['filter' => 'deadline_tomorrow']) }}">Deadline Tomorrow ({{ $quickLinkCounts['deadline_tomorrow'] ?? 0 }})</a>
-                <a href="{{ route('front.search.jobs', ['job_type' => $quickJobTypeIds['internship'] ?? '']) }}">Internship Opportunity ({{ $quickLinkCounts['internship'] ?? 0 }})<mark>new</mark></a>
-                <a href="{{ route('front.search.jobs', ['job_type' => $quickJobTypeIds['contractual'] ?? '']) }}">Contractual Jobs ({{ $quickLinkCounts['contractual'] ?? 0 }})</a>
-                <a href="{{ route('front.search.jobs', ['job_type' => $quickJobTypeIds['part_time'] ?? '']) }}">Part time Jobs ({{ $quickLinkCounts['part_time'] ?? 0 }})</a>
-                <a href="{{ route('front.search.jobs', ['overseas' => 1]) }}">Overseas Jobs ({{ $quickLinkCounts['overseas'] ?? 0 }})</a>
-                <a href="{{ route('front.search.jobs', ['work_from_home' => 1]) }}">Work From Home ({{ $quickLinkCounts['work_from_home'] ?? 0 }})</a>
-                <a href="{{ route('front.search.jobs', ['is_fresher' => 1]) }}">Fresher Jobs ({{ $quickLinkCounts['fresher_jobs'] ?? 0 }})</a>
+                <div class="bd-quick-links-grid">
+                    <a href="{{ route('front.company.lists') }}">Employer List ({{ $quickLinkCounts['employer_list'] ?? 0 }})</a>
+                    <a href="{{ route('front.search.jobs', ['filter' => 'new']) }}">New Jobs ({{ $quickLinkCounts['new_jobs'] ?? 0 }})</a>
+                    <a href="{{ route('front.search.jobs', ['filter' => 'deadline_tomorrow']) }}">Deadline Tomorrow ({{ $quickLinkCounts['deadline_tomorrow'] ?? 0 }})</a>
+                    <a href="{{ route('front.search.jobs', ['job_type' => $quickJobTypeIds['internship'] ?? '']) }}">Internship Opportunity ({{ $quickLinkCounts['internship'] ?? 0 }})<mark>new</mark></a>
+                    <a href="{{ route('front.search.jobs', ['job_type' => $quickJobTypeIds['contractual'] ?? '']) }}">Contractual Jobs ({{ $quickLinkCounts['contractual'] ?? 0 }})</a>
+                    <a href="{{ route('front.search.jobs', ['job_type' => $quickJobTypeIds['part_time'] ?? '']) }}">Part time Jobs ({{ $quickLinkCounts['part_time'] ?? 0 }})</a>
+                    <a href="{{ route('front.search.jobs', ['overseas' => 1]) }}">Overseas Jobs ({{ $quickLinkCounts['overseas'] ?? 0 }})</a>
+                    <a href="{{ route('front.search.jobs', ['work_from_home' => 1]) }}">Work From Home ({{ $quickLinkCounts['work_from_home'] ?? 0 }})</a>
+                    <a href="{{ route('front.search.jobs', ['is_fresher' => 1]) }}">Fresher Jobs ({{ $quickLinkCounts['fresher_jobs'] ?? 0 }})</a>
+                </div>
             </aside>
         </div>
     </section>

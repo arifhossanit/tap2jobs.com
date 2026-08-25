@@ -185,10 +185,10 @@
             padding: 6px 16px;
         }
         #siteTopBanner .site-top-banner__close {
-            font-size: 20px;
-            height: 36px;
-            right: 12px;
-            width: 36px;
+            font-size: 13px;
+            height: 24px;
+            right: 10px;
+            width: 24px;
         }
     }
     @media (max-width: 575.98px) {
@@ -211,10 +211,10 @@
             margin-left: 0 !important;
         }
         #siteTopBanner .site-top-banner__close {
-            font-size: 18px;
-            height: 32px;
-            right: 8px;
-            width: 32px;
+            font-size: 11px;
+            height: 20px;
+            right: 6px;
+            width: 20px;
         }
     }
 </style>

@@ -272,3 +272,131 @@
          </div>
      </nav>
 </header>
+
+<style>
+    @media (max-width: 991px) {
+        header.bg-gradient .navbar {
+            padding: 10px 0;
+        }
+
+        #navbarNav.navbar-collapse {
+            background: #ffffff !important;
+            border-radius: 12px !important;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18) !important;
+            padding: 20px !important;
+            margin-top: 12px !important;
+            border: 1px solid #e2e8f0 !important;
+            z-index: 99999 !important;
+            position: relative !important;
+        }
+
+        #navbarNav .navbar-nav {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 12px !important;
+            width: 100% !important;
+        }
+
+        #navbarNav .nav-item {
+            width: 100% !important;
+        }
+
+        #navbarNav .nav-link {
+            font-size: 16px !important;
+            font-weight: 600 !important;
+            color: #1e293b !important;
+            padding: 10px 14px !important;
+            border-radius: 8px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            width: 100% !important;
+        }
+
+        #navbarNav .nav-link:hover,
+        #navbarNav .nav-link.header-navbar-color-active {
+            background: #f1f5f9 !important;
+            color: #1967d2 !important;
+        }
+
+        /* Language Dropdown on mobile */
+        #navbarNav .language-dropdown {
+            width: 100% !important;
+        }
+
+        #navbarNav .language-dropdown-btn {
+            width: 100% !important;
+            justify-content: flex-start !important;
+            padding: 10px 14px !important;
+        }
+
+        /* Auth user nav & notification on mobile */
+        #navbarNav .front-user-nav {
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            gap: 16px !important;
+            padding-top: 14px !important;
+            margin-top: 6px !important;
+            border-top: 1px solid #f1f5f9 !important;
+            width: 100% !important;
+        }
+
+        /* Login & Register buttons on mobile */
+        #navbarNav .login_btn,
+        #navbarNav .register_btn {
+            width: 100% !important;
+        }
+
+        #navbarNav .login_btn a,
+        #navbarNav .register_btn a {
+            width: 100% !important;
+            justify-content: center !important;
+            text-align: center !important;
+            min-height: 42px;
+            display: flex;
+            align-items: center;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var navbarCollapse = document.getElementById('navbarNav');
+        var togglerIcon = document.getElementById('toggler-icon');
+        var togglerBtn = document.querySelector('.navbar-toggler');
+
+        if (navbarCollapse && togglerIcon) {
+            navbarCollapse.addEventListener('show.bs.collapse', function () {
+                togglerIcon.classList.add('open');
+            });
+            navbarCollapse.addEventListener('hide.bs.collapse', function () {
+                togglerIcon.classList.remove('open');
+            });
+        }
+
+        if (togglerBtn && navbarCollapse) {
+            togglerBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var isExpanded = togglerBtn.getAttribute('aria-expanded') === 'true';
+                if (typeof bootstrap !== 'undefined' && bootstrap.Collapse) {
+                    var bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
+                    if (!bsCollapse) {
+                        bsCollapse = new bootstrap.Collapse(navbarCollapse, { toggle: false });
+                    }
+                    if (navbarCollapse.classList.contains('show')) {
+                        bsCollapse.hide();
+                    } else {
+                        bsCollapse.show();
+                    }
+                } else {
+                    navbarCollapse.classList.toggle('show');
+                    if (togglerIcon) {
+                        togglerIcon.classList.toggle('open');
+                    }
+                    togglerBtn.setAttribute('aria-expanded', !isExpanded);
+                }
+            });
+        }
+    });
+</script>
