@@ -52,7 +52,7 @@
                         </li>
 
                         @if (!Auth::check())
-                            <div class="d-flex align-items-center gap-xl-4 gap-3 mt-lg-0 mt-2 ms-xl-3 ms-lg-2">
+                            <li class="nav-item front-auth-actions d-flex align-items-center gap-xl-4 gap-3 mt-lg-0 mt-2 ms-xl-3 ms-lg-2">
                                 <ul class="navbar-nav d-flex flex-row align-items-center py-2 py-lg-0">
                                     <li class="nav-item login_btn">
                                         <a href="{{ route('front.candidate.login') }}"
@@ -91,9 +91,9 @@
                                         </ul>
                                     </li>
                                 </ul>
-                            </div>
+                            </li>
                         @else
-                            <div class="d-flex align-items-center gap-xl-4 gap-3 mt-lg-0 mt-2 ms-xl-3 ms-lg-2">
+                            <li class="nav-item front-auth-actions d-flex align-items-center gap-xl-4 gap-3 mt-lg-0 mt-2 ms-xl-3 ms-lg-2">
                                 <ul class="navbar-nav align-items-center py-2 py-lg-0 front-user-nav d-flex flex-row align-items-center gap-2">
                                     @auth
                                         @php
@@ -263,7 +263,7 @@
                                          </form>
                                      </li>
                                  </ul>
-                             </div>
+                             </li>
                          @endif
                      </ul>
                  </div>
@@ -352,7 +352,8 @@
 
         /* Login & Register buttons on mobile */
         #navbarNav .login_btn,
-        #navbarNav .register_btn {
+        #navbarNav .register_btn,
+        #navbarNav .front-auth-actions {
             width: 100% !important;
         }
 

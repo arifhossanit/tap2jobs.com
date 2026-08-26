@@ -77,3 +77,55 @@ $('#jobsSearchResults').on('click', 'li', function() {
     $('#search-keywords').val($(this).text().trim());
     $('#jobsSearchResults').fadeOut();
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    var toggler = document.querySelector('.navbar-toggler[data-bs-target="#navbarNav"]');
+    var menu = document.getElementById('navbarNav');
+
+    if (!toggler || !menu) {
+        return;
+    }
+
+    function forceCloseMenu() {
+        menu.classList.remove('show', 'collapsing');
+        menu.classList.add('collapse');
+        menu.style.height = '';
+        toggler.setAttribute('aria-expanded', 'false');
+        toggler.classList.add('collapsed');
+    }
+
+    toggler.addEventListener('click', function () {
+        var wasOpen = menu.classList.contains('show') || toggler.getAttribute('aria-expanded') === 'true';
+
+        if (typeof bootstrap !== 'undefined' && bootstrap.Collapse) {
+            window.setTimeout(function () {
+                if (wasOpen && (menu.classList.contains('show') || menu.classList.contains('collapsing'))) {
+                    forceCloseMenu();
+                }
+            }, 450);
+            return;
+        }
+
+        var isOpen = menu.classList.contains('show');
+        if (isOpen) {
+            forceCloseMenu();
+            return;
+        }
+
+        menu.classList.add('show', 'collapse');
+        menu.classList.remove('collapsing');
+        menu.style.height = '';
+        toggler.setAttribute('aria-expanded', 'true');
+        toggler.classList.remove('collapsed');
+    });
+
+    menu.addEventListener('hidden.bs.collapse', function () {
+        toggler.setAttribute('aria-expanded', 'false');
+        toggler.classList.add('collapsed');
+    });
+
+    menu.addEventListener('shown.bs.collapse', function () {
+        toggler.setAttribute('aria-expanded', 'true');
+        toggler.classList.remove('collapsed');
+    });
+});
