@@ -11,12 +11,12 @@
             </div>
         </div>
         <div class="col-sm-6 mt-5">
-            {{ Form::label('twitter_url', __('messages.setting.twitter_url') . ':', ['class' => 'form-label']) }}
+            {{ Form::label('twitter_url', 'Instagram URL:', ['class' => 'form-label']) }}
             <div class="input-group">
                 <div class="input-group-text border-0">
-                    <i class="fab fa-twitter twitter-fa-icon text-primary"></i>
+                    <i class="fab fa-instagram instagram-fa-icon text-danger"></i>
                 </div>
-                {{ Form::text('twitter_url', $setting['twitter_url'], ['class' => 'form-control', 'id' => 'twitterUrl', 'placeholder' => __('messages.setting.twitter_url')]) }}
+                {{ Form::text('twitter_url', $setting['twitter_url'], ['class' => 'form-control', 'id' => 'twitterUrl', 'placeholder' => 'Instagram URL']) }}
             </div>
         </div>
         <div class="col-sm-6 mt-5">

@@ -4,46 +4,36 @@
             <div class="job-card">
 
                 <div class="mb-4">
-                    <a href="{{ route('front.job.details', $job['job_id']) }}" class="card p-4 border-0 shadow-sm">
-                        <div class="d-sm-flex gap-4 align-items-center position-relative">
-                            <div class="mb-sm-0 mb-3 flex-shrink-0">
-                                <img src="{{ $job->company?->company_url ?? asset('assets/img/infyom-logo.png') }}" class="card-img" alt="..." style="width: 80px; height: 80px; object-fit: contain;">
+                    <a href="{{ route('front.job.details', $job['job_id']) }}" class="card p-3 p-sm-4 border-0 shadow-sm text-decoration-none">
+                        <div class="d-flex gap-3 gap-sm-4  position-relative">
+                            <div class="flex-shrink-0">
+                                <img src="{{ $job->company?->company_url ?? asset('assets/img/infyom-logo.png') }}" class="card-img job-card-company-logo" alt="...">
                             </div>
-                            <div class="flex-grow-1">
+                            <div class="flex-grow-1 min-w-0">
                                 <div class="card-body p-0">
                                     <h5 class="card-title text-secondary fs-18 mb-0">
                                         {{ html_entity_decode(Str::limit($job['job_title'], 50)) }}
                                     </h5>
-                                    <div class="">
-                                        <div class="card-desc d-flex flex-wrap mt-2 ">
-                                            <div class="desc d-flex {{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
-                                              <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
+                                    <div>
+                                        <div class="card-desc d-flex flex-wrap mt-2">
+                                            <div class="desc job-card-meta d-flex align-items-center {{ getFrontSelectLanguage() == 'ar' ? 'ms-3 ms-sm-4' : 'me-3 me-sm-4' }}">
+                                              <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-2' : 'me-2' }} job-card-meta-icon flex-shrink-0">
                                                 <img src="{{ asset('img_template/briefcase.svg') }}" class="w-100">
                                               </div>
-                                              <p class="fs-14 text-gray mb-2">{{ $job->jobCategory?->name ?? '' }}</p>
+                                              <p class="fs-14 text-gray mb-0">{{ $job->jobCategory?->name ?? '' }}</p>
                                             </div>
-                                            <div class="desc d-flex {{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
-                                              <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
-                                                <img src="{{ asset('img_template/location.svg') }}" class="w-100">
-                                              </div>
-                                              <p class="fs-14 text-gray mb-2">{{ !empty($job->full_location) ? $job->full_location : 'Location Info. not available.' }}</p>
-                                            </div>
-                                            <div class="desc d-flex {{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
-                                              <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
+                                            <div class="desc job-card-meta d-flex align-items-center {{ getFrontSelectLanguage() == 'ar' ? 'ms-3 ms-sm-4' : 'me-3 me-sm-4' }}">
+                                              <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-2' : 'me-2' }} job-card-meta-icon flex-shrink-0">
                                                 <img src=" {{ asset('img_template/clock.svg') }}" class="w-100">
                                               </div>
-                                              <p class="fs-14 text-gray mb-2">{{ $job->created_at->diffForHumans() }}</p>
+                                              <p class="fs-14 text-gray mb-0">{{ $job->created_at->diffForHumans() }}</p>
                                             </div>
                                           </div>
                                     </div>
-                                    <div class="desc d-flex">
+                                    <div class="desc d-flex align-items-center flex-wrap mt-3">
                                         <p class="text text-primary fs-14 mb-0 {{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }}">
                                             {{ !empty($job->jobsSkill[0]->name) ? $job->jobsSkill[0]->name : 'Skill' }}
                                         </p>
-
-                                        {{-- <p class="fs-14 text text-primary mb-0">
-                                            {{ $job->jobsSkill->count() }}+
-                                        </p> --}}
 
                                          @if(!empty($job->jobShift?->shift))
                                              <span class="text text-primary fs-14 mb-0">

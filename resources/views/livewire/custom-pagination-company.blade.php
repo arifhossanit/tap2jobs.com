@@ -22,8 +22,8 @@
             ->all();
     @endphp
 
-    <nav class="front-pagination-nav w-100" aria-label="Pagination">
-        <ul role="navigation" class="pagination front-pagination mb-0 justify-content-center flex-nowrap">
+    <nav class="front-pagination-nav w-100 mt-2" aria-label="Pagination">
+        <ul role="navigation" class="pagination front-pagination mb-0 justify-content-center flex-wrap flex-sm-nowrap gap-1 gap-sm-0">
             @if ($paginator->onFirstPage())
                 <li class="page-item disabled" aria-disabled="true" aria-label="@lang('pagination.previous')">
                     <span class="page-link previous" aria-hidden="true">
@@ -41,17 +41,21 @@
 
             @foreach ($pages as $index => $page)
                 @if ($showEllipsis && $index > 0 && $page > $pages[$index - 1] + 1)
-                    <li class="page-item disabled front-pagination__ellipsis" aria-disabled="true">
+                    <li class="page-item disabled front-pagination__ellipsis d-none d-sm-inline-block" aria-disabled="true">
                         <span class="page-link">...</span>
                     </li>
                 @endif
+
+                @php
+                    $isMobileVisible = ($page == 1 || $page == $lastPage || abs($page - $currentPage) <= 1);
+                @endphp
 
                 @if ($page == $currentPage)
                     <li class="page-item active" aria-current="page">
                         <span class="page-link active">{{ $page }}</span>
                     </li>
                 @else
-                    <li class="page-item">
+                    <li class="page-item {{ !$isMobileVisible ? 'd-none d-sm-inline-block' : '' }}">
                         <button type="button" wire:click="gotoPage({{ $page }})" class="page-link text-gray">
                             {{ $page }}
                         </button>

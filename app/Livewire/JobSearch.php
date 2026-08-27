@@ -64,7 +64,7 @@ class JobSearch extends Component
 
     public function paginationView()
     {
-        return 'livewire.custom-pagination-company';
+        return 'livewire.custom-pagination-jobs';
     }
 
     public function mount(Request $request)

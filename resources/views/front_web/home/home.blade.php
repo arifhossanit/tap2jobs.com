@@ -1032,29 +1032,33 @@
             color: #0f2711 !important;
         }
 
-        /* Mobile Division Links matching reference image */
-        .bd-city-links {
-            gap: 8px 14px !important;
-            margin-top: 18px !important;
+        /* Mobile Division Links (positioned before footer) */
+        .bd-city-links--mobile {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 8px 10px !important;
+            margin-top: 16px !important;
+            margin-bottom: 24px !important;
             justify-content: center !important;
-            padding: 0 2px !important;
+            padding: 0 15px !important;
         }
 
-        .bd-city-links a {
-            background: transparent !important;
+        .bd-city-links--mobile a {
+            background: #1967d2 !important;
             color: #ffffff !important;
-            font-size: 13px !important;
-            font-weight: 600 !important;
-            padding: 0 !important;
-            border-radius: 0 !important;
-            box-shadow: none !important;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) !important;
+            font-size: 12px !important;
+            font-weight: 500 !important;
+            padding: 5px 12px !important;
+            border-radius: 20px !important;
+            box-shadow: 0 2px 5px rgba(25, 103, 210, 0.15) !important;
+            text-shadow: none !important;
         }
 
-        .bd-city-links a:hover {
-            text-decoration: underline !important;
-            transform: none !important;
-            box-shadow: none !important;
+        .bd-city-links--mobile a:hover {
+            background: #1152b1 !important;
+            text-decoration: none !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 8px rgba(25, 103, 210, 0.25) !important;
         }
 
         .bd-directory {
@@ -1076,8 +1080,19 @@
             gap: 8px;
         }
 
+        /* Hide Quick Links on mobile */
+        .bd-quick-links {
+            display: none !important;
+        }
+
         .bd-quick-links-grid {
             grid-template-columns: 1fr;
+        }
+
+        /* Stay Connected title font size on mobile */
+        footer.front-shared-footer .stay-connected-container h4,
+        .stay-connected-container h4 {
+            font-size: 16px !important;
         }
     }
 </style>
@@ -1164,7 +1179,7 @@
                 </div>
             </section>
             <!--end find-job section-->
-            <div class="bd-city-links">
+            <div class="bd-city-links d-none d-lg-flex">
                 @foreach($stateJobCounts as $state)
                     <a href="{{ route('front.search.jobs', ['location' => $state->name]) }}">{{ $state->name }} ({{ $state->jobs_count }})</a>
                 @endforeach
@@ -1225,6 +1240,11 @@
             </aside>
         </div>
     </section>
+    <div class="bd-city-links bd-city-links--mobile d-lg-none">
+        @foreach($stateJobCounts as $state)
+            <a href="{{ route('front.search.jobs', ['location' => $state->name]) }}">{{ $state->name }} ({{ $state->jobs_count }})</a>
+        @endforeach
+    </div>
 </main>
 {{ Form::hidden('homeData', json_encode(getCountries()), ['id' => 'indexHomeData']) }}
 @endsection

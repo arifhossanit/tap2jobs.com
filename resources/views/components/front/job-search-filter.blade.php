@@ -13,7 +13,7 @@
     $selectedType = (string) data_get($input, 'job_type', '');
 @endphp
 
-<aside class="latest-job-left find-jobs-filter">
+<aside class="latest-job-left find-jobs-filter" id="findJobsFilter">
     <form class="find-jobs-filter__form" autocomplete="off">
         <div class="find-jobs-filter__header">
             <h2><i class="fa-solid fa-sliders" aria-hidden="true"></i>{{ __('messages.common.filters') }}</h2>
@@ -86,7 +86,8 @@
         @endif
 
         <div class="form-group find-jobs-filter__group find-jobs-filter__freshers">
-            <input class="form-check-input" type="checkbox" id="fresherJobs" value="1">
+            <input class="form-check-input" type="checkbox" id="fresherJobs" value="1"
+                   @checked((string) data_get($input, 'is_fresher', '') === '1')>
             <label class="form-check-label" for="fresherJobs">
                 <span>{{ __('messages.job.fresher_jobs') }}</span>
                 {{-- <small>{{ __('messages.job.fresher_jobs_hint') }}</small> --}}

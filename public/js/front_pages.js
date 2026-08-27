@@ -2705,68 +2705,95 @@ listenHiddenBsModal('#reportJobAbuseModal', function () {
 () {
 
 $(window).scrollTop(0);
-document.addEventListener('DOMContentLoaded', loadJobSearchData);
-function loadJobSearchData() {
-  var salaryRangeSlider = $('#salaryRange');
-  var jobExperienceSlider = $('#jobExperience');
-  if (!salaryRangeSlider.length && !jobExperienceSlider.length) {
+document.addEventListener("DOMContentLoaded", loadJobSearchData);
+document.addEventListener("DOMContentLoaded", initJobSearchMobileFilterToggle);
+function initJobSearchMobileFilterToggle() {
+  var toggle = document.querySelector(".find-jobs-filter-mobile-toggle");
+  var panel = document.querySelector("#findJobsFilter");
+  if (!toggle || !panel) {
     return;
   }
-  ['#searchCategories', '#searchSkill', '#searchGender', '#searchCareerLevel', '#searchFunctionalArea'].forEach(function (selector) {
-    if ($(selector).length) {
-      $(selector).select2({
-        width: '100%'
+  if (toggle.dataset.filterToggleInitialized === "true") {
+    return;
+  }
+  toggle.dataset.filterToggleInitialized = "true";
+  toggle.addEventListener("click", function (event) {
+    if (window.innerWidth >= 992) {
+      return;
+    }
+    event.preventDefault();
+    var isOpen = panel.classList.toggle("is-open");
+    toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  });
+}
+function initJobSearchSelects() {
+  ["#searchCategories", "#searchSkill", "#searchGender", "#searchCareerLevel", "#searchFunctionalArea"].forEach(function (selector) {
+    var field = $(selector);
+    if (field.length && !field.hasClass("select2-hidden-accessible")) {
+      field.select2({
+        width: "100%"
       });
     }
   });
-  var input = $('#input').val() ? JSON.parse($('#input').val()) : {};
-  var currentLanguage = typeof lancode !== 'undefined' ? lancode : document.documentElement.lang || 'en';
+}
+function loadJobSearchData() {
+  var salaryRangeSlider = $("#salaryRange");
+  var jobExperienceSlider = $("#jobExperience");
+  if (!salaryRangeSlider.length && !jobExperienceSlider.length) {
+    return;
+  }
+  initJobSearchSelects();
+  $(".find-jobs-filter__form").off("submit.jobSearch").on("submit.jobSearch", function (event) {
+    event.preventDefault();
+  });
+  var input = $("#input").val() ? JSON.parse($("#input").val()) : {};
+  var currentLanguage = typeof lancode !== "undefined" ? lancode : document.documentElement.lang || "en";
   var localizeNumber = function localizeNumber(value) {
     var number = String(value);
-    if (currentLanguage !== 'bn') {
+    if (currentLanguage !== "bn") {
       return number;
     }
-    var banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    var banglaDigits = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
     return number.replace(/\d/g, function (digit) {
       return banglaDigits[digit];
     });
   };
   var prettifyNumber = function prettifyNumber(value) {
-    return localizeNumber(String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+    return localizeNumber(String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
   };
   if (jobExperienceSlider.length) {
     var _input$jobExperience;
-    var maximumExperience = Math.max(1, Number(jobExperienceSlider.data('max')) || 30);
-    var hasExperienceRange = Object.prototype.hasOwnProperty.call(input, 'jobExperienceFrom') || Object.prototype.hasOwnProperty.call(input, 'jobExperienceTo');
+    var maximumExperience = Math.max(1, Number(jobExperienceSlider.data("max")) || 30);
+    var hasExperienceRange = Object.prototype.hasOwnProperty.call(input, "jobExperienceFrom") || Object.prototype.hasOwnProperty.call(input, "jobExperienceTo");
     var legacyExperience = (_input$jobExperience = input.jobExperience) !== null && _input$jobExperience !== void 0 ? _input$jobExperience : input.experience;
     var selectedExperienceFrom = hasExperienceRange ? Number(input.jobExperienceFrom || 0) : 0;
     var selectedExperienceTo = hasExperienceRange ? Number(input.jobExperienceTo || maximumExperience) : legacyExperience !== undefined ? Number(legacyExperience) : maximumExperience;
     selectedExperienceFrom = Math.min(Math.max(0, selectedExperienceFrom), maximumExperience);
     selectedExperienceTo = Math.min(Math.max(selectedExperienceFrom, selectedExperienceTo), maximumExperience);
     var dispatchExperienceFilter = function dispatchExperienceFilter(from, to) {
-      Livewire.dispatch('changeExperienceRange', {
+      Livewire.dispatch("changeExperienceRange", {
         from: from,
         to: to,
         maximum: maximumExperience
       });
     };
-    $('#jobExperience').ionRangeSlider({
+    $("#jobExperience").ionRangeSlider({
       type: 'double',
       min: 0,
       from: selectedExperienceFrom,
       to: selectedExperienceTo,
       step: 1,
       max: maximumExperience,
-      max_postfix: '+',
+      max_postfix: "+",
       prettify: localizeNumber,
       onFinish: function onFinish(data) {
         dispatchExperienceFilter(data.from, data.to);
       }
     });
-    jobExperienceSlider.addClass('irs-hidden-input');
+    jobExperienceSlider.addClass("irs-hidden-input");
   }
   if (salaryRangeSlider.length) {
-    var salaryMaximum = Number(salaryRangeSlider.data('max')) || 150000;
+    var salaryMaximum = Number(salaryRangeSlider.data("max")) || 150000;
     salaryRangeSlider.ionRangeSlider({
       type: 'double',
       min: 0,
@@ -2774,7 +2801,7 @@ function loadJobSearchData() {
       from: 0,
       to: salaryMaximum,
       step: 1000,
-      max_postfix: '+',
+      max_postfix: "+",
       prettify: prettifyNumber,
       onFinish: function onFinish(data) {
         Livewire.dispatch('changeSalaryRange', {
@@ -2784,98 +2811,100 @@ function loadJobSearchData() {
         });
       }
     });
-    salaryRangeSlider.addClass('irs-hidden-input');
+    salaryRangeSlider.addClass("irs-hidden-input");
   }
   if (input.location) {
-    $('#searchByLocation').val(input.location);
+    $("#searchByLocation").val(input.location);
   }
-  listenClick('.reset-filter', function (event) {
+  listenClick(".reset-filter", function (event) {
     event.preventDefault();
-    Livewire.dispatch('resetFilter');
-    var salaryInstance = salaryRangeSlider.data('ionRangeSlider');
-    var experienceInstance = jobExperienceSlider.data('ionRangeSlider');
+    Livewire.dispatch("resetFilter");
+    var salaryInstance = salaryRangeSlider.data("ionRangeSlider");
+    var experienceInstance = jobExperienceSlider.data("ionRangeSlider");
     if (salaryInstance) {
       salaryInstance.update({
         from: 0,
-        to: Number(salaryRangeSlider.data('max')) || 150000
+        to: Number(salaryRangeSlider.data("max")) || 150000
       });
     }
     if (experienceInstance) {
       experienceInstance.update({
         from: 0,
-        to: Number(jobExperienceSlider.data('max')) || 30
+        to: Number(jobExperienceSlider.data("max")) || 30
       });
     }
-    $('#searchByLocation').val("");
-    $('#searchFunctionalArea').val('').trigger("change");
-    $('#searchCareerLevel').val('').trigger("change");
-    $('#searchGender').val('').trigger("change");
-    $('#searchSkill').val('').trigger("change");
-    $("#searchCategories").val('').trigger("change");
-    $('.jobType').prop('checked', false);
-    $('#fresherJobs').prop('checked', false);
+    $("#searchByLocation").val("");
+    $("#searchFunctionalArea").val("").trigger("change");
+    $("#searchCareerLevel").val("").trigger("change");
+    $("#searchGender").val("").trigger("change");
+    $("#searchSkill").val("").trigger("change");
+    $("#searchCategories").val("").trigger("change");
+    $(".jobType").prop("checked", false);
+    $("#fresherJobs").prop("checked", false);
   });
 }
-listenChange('.jobType', function () {
+listenChange(".jobType", function () {
   var jobType = [];
-  $('.jobType:checked').each(function () {
+  $(".jobType:checked").each(function () {
     jobType.push($(this).val());
   });
-  Livewire.dispatch('changeFilter', {
-    param: 'types',
+  Livewire.dispatch("changeFilter", {
+    param: "types",
     value: jobType
   });
 });
 listenChange('#fresherJobs', function () {
-  Livewire.dispatch('changeFilter', {
-    param: 'freshersOnly',
-    value: $(this).is(':checked')
+  Livewire.dispatch("changeFilter", {
+    param: "freshersOnly",
+    value: $(this).is(":checked")
   });
 });
-document.addEventListener('livewire:load', function () {
-  window.livewire.hook('message.processed', function () {
-    $(window).scrollTop(0);
-    $(document).on('click', '#jobsSearchResults ul li', function () {
-      $('#searchByLocation').val($(this).text());
-      $('#jobsSearchResults').fadeOut();
+document.addEventListener("livewire:load", function () {
+  $(document).off("click.jobSearchResults", "#jobsSearchResults ul li").on("click.jobSearchResults", "#jobsSearchResults ul li", function () {
+    $("#searchByLocation").val($(this).text());
+    $("#jobsSearchResults").fadeOut();
+  });
+});
+listenChange("#searchCategories", function () {
+  Livewire.dispatch("changeFilter", {
+    param: "category",
+    value: $(this).val()
+  });
+});
+listenChange("#searchSkill", function () {
+  Livewire.dispatch("changeFilter", {
+    param: "skill",
+    value: $(this).val()
+  });
+});
+listenChange("#searchGender", function () {
+  Livewire.dispatch("changeFilter", {
+    param: "gender",
+    value: $(this).val()
+  });
+});
+listenChange("#searchCareerLevel", function () {
+  Livewire.dispatch("changeFilter", {
+    param: "careerLevel",
+    value: $(this).val()
+  });
+});
+listenChange("#searchFunctionalArea", function () {
+  Livewire.dispatch("changeFilter", {
+    param: "functionalArea",
+    value: $(this).val()
+  });
+});
+var jobSearchInputTimer;
+listenKeyup("#searchByLocation", function () {
+  var value = $(this).val();
+  clearTimeout(jobSearchInputTimer);
+  jobSearchInputTimer = setTimeout(function () {
+    Livewire.dispatch("changeFilter", {
+      param: "searchByLocation",
+      value: value
     });
-  });
-});
-listenChange('#searchCategories', function () {
-  Livewire.dispatch('changeFilter', {
-    param: 'category',
-    value: $(this).val()
-  });
-});
-listenChange('#searchSkill', function () {
-  Livewire.dispatch('changeFilter', {
-    param: 'skill',
-    value: $(this).val()
-  });
-});
-listenChange('#searchGender', function () {
-  Livewire.dispatch('changeFilter', {
-    param: 'gender',
-    value: $(this).val()
-  });
-});
-listenChange('#searchCareerLevel', function () {
-  Livewire.dispatch('changeFilter', {
-    param: 'careerLevel',
-    value: $(this).val()
-  });
-});
-listenChange('#searchFunctionalArea', function () {
-  Livewire.dispatch('changeFilter', {
-    param: 'functionalArea',
-    value: $(this).val()
-  });
-});
-listenKeyup('#searchByLocation', function () {
-  Livewire.dispatch('changeFilter', {
-    param: 'searchByLocation',
-    value: $(this).val()
-  });
+  }, 300);
 });
 
 /***/ },

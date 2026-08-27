@@ -47,7 +47,12 @@
                 @endphp
 
                 <div class="row g-4 align-items-start">
-                    <div class="{{ $rightAds->isNotEmpty() ? 'col-lg-3 col-md-4' : 'col-lg-4' }} find-jobs-filter-column">
+                    <div class="{{ $rightAds->isNotEmpty() ? 'col-lg-3 col-12' : 'col-lg-4 col-12' }} find-jobs-filter-column">
+                        <button class="find-jobs-filter-mobile-toggle d-lg-none" type="button"
+                                aria-expanded="false" aria-controls="findJobsFilter">
+                            <span><i class="fa-solid fa-sliders" aria-hidden="true"></i>{{ __('messages.common.filters') }}</span>
+                            <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                        </button>
                         <x-front.job-search-filter
                             :job-categories="$jobCategories"
                             :job-skills="$jobSkills"
@@ -59,7 +64,7 @@
                             :input="$input"
                         />
                     </div>
-                    <div class="{{ $rightAds->isNotEmpty() ? 'col-lg-7 col-md-8' : 'col-lg-8' }} px-lg-3">
+                    <div class="{{ $rightAds->isNotEmpty() ? 'col-lg-7 col-12' : 'col-lg-8 col-12' }} px-lg-3">
                         <div class="job-card">
                             @livewire('job-search')
                         </div>

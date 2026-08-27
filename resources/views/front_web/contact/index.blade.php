@@ -37,7 +37,7 @@
         <!-- end hero section -->
 
         <!--start contact-us-section-->
-        <section class="contact-us-section py-60 mb-5">
+        <section class="contact-us-section py-60">
             <div class="container">
                 <div class="contact-us bg-light br-10">
                     <div class="row">
