@@ -790,21 +790,56 @@ body.dark-mode .candidate-dashboard-skeleton .candidate-overview-list div {
     }
 
     .candidate-dashboard-hero__profile {
-        align-items: flex-start;
-        flex-direction: column;
+        align-items: start;
+        flex-direction: row;
+        text-align: left;
+        gap: 16px;
     }
 
     .candidate-dashboard-avatar {
-        height: 104px;
-        width: 104px;
+        height: 72px;
+        width: 72px;
+        margin: 0;
     }
 
     .candidate-dashboard-identity h1 {
-        font-size: 23px;
+        font-size: 20px;
+        margin-bottom: 8px;
+    }
+
+    .candidate-dashboard-meta {
+        justify-content: flex-start;
+        gap: 6px 12px;
     }
 
     .candidate-dashboard-stats {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .candidate-stat-card {
+        padding: 12px 10px;
+        min-height: 72px;
+        gap: 10px;
+    }
+
+    .candidate-stat-card__icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 6px;
+    }
+
+    .candidate-stat-card__icon i {
+        font-size: 16px;
+    }
+
+    .candidate-stat-card__content strong {
+        font-size: 18px;
+    }
+
+    .candidate-stat-card__content small {
+        font-size: 12px;
+        line-height: 1.2;
     }
 
     .candidate-profile-completion,
@@ -816,5 +851,24 @@ body.dark-mode .candidate-dashboard-skeleton .candidate-overview-list div {
     .candidate-dashboard-panel__header {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .candidate-dashboard-panel__header--matching {
+        align-items: center;
+        flex-direction: row;
+        gap: 10px;
+    }
+
+    .candidate-dashboard-panel__header--matching h2 {
+        font-size: 18px;
+        line-height: 1.25;
+    }
+
+    .candidate-dashboard-panel__header--matching .candidate-dashboard-link {
+        font-size: 13px;
+        justify-content: flex-end;
+        margin-left: auto;
+        white-space: nowrap;
+        width: auto;
     }
 }

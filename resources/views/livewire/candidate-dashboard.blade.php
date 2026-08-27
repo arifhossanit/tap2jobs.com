@@ -117,7 +117,7 @@
         <section class="candidate-dashboard-stats">
             @foreach($dashboardStats as $stat)
                 @if(isset($stat['url']))
-                    <a href="{{ $stat['url'] }}" class="candidate-stat-card candidate-stat-card--{{ $stat['tone'] }}">
+                    <a href="{{ $stat['url'] }}" class="candidate-stat-card candidate-stat-card--{{ $stat['tone'] }}" title="{{ $stat['label'] }}">
                         <span class="candidate-stat-card__icon"><i class="{{ $stat['icon'] }}"></i></span>
                         <span class="candidate-stat-card__content">
                             <strong>{{ $stat['value'] }}</strong>
@@ -125,7 +125,7 @@
                         </span>
                     </a>
                 @else
-                    <div class="candidate-stat-card candidate-stat-card--{{ $stat['tone'] }}">
+                    <div class="candidate-stat-card candidate-stat-card--{{ $stat['tone'] }}" title="{{ $stat['label'] }}">
                         <span class="candidate-stat-card__icon"><i class="{{ $stat['icon'] }}"></i></span>
                         <span class="candidate-stat-card__content">
                             <strong>{{ $stat['value'] }}</strong>
@@ -138,7 +138,7 @@
 
         <section class="candidate-dashboard-main">
             <div class="candidate-dashboard-panel candidate-dashboard-panel--wide">
-                <div class="candidate-dashboard-panel__header">
+                <div class="candidate-dashboard-panel__header candidate-dashboard-panel__header--matching">
                     <div>
                         <h2>{{ __('messages.candidate_dashboard.matching_jobs') }}</h2>
                     </div>

@@ -12,7 +12,6 @@
     justify-content: flex-end;
 }
 
-
 .livewire-table .data-sorting {
     background-color: #f5f8fa;
     border-color: #f5f8fa;
@@ -38,12 +37,10 @@
     font-weight: 500;
 }
 
-
 .livewire-table .pagination-record {
     color: #5e6278 !important;
     font-weight: 500;
 }
-
 
 .livewire-table .livewire-search-box .search-box-icon {
     position: absolute;
@@ -53,12 +50,10 @@
     margin-left: 1.5rem !important;
 }
 
-
 .livewire-table .livewire-search-box button.btn {
     z-index: 10;
     left: -50px;
 }
-
 
 .livewire-table .livewire-search-box button.btn svg {
     stroke: #355690;
@@ -66,16 +61,13 @@
     height: 1em !important;
 }
 
-
 .livewire-table .livewire-search-box button.btn:hover {
     background: unset;
 }
 
-
 .livewire-table .livewire-search-box .input-group {
     width: auto;
 }
-
 
 .livewire-table .livewire-search-box .search-box {
     background-color: #f5f8fa;
@@ -87,13 +79,11 @@
     border-radius: 6.175px !important;
 }
 
-
 .livewire-table .livewire-search-box .search-box:focus {
     background-color: #eef3f7;
     border-color: #eef3f7;
     color: #5e6278;
 }
-
 
 .livewire-table table.table thead tr {
     border-bottom-width: 1px;
@@ -101,13 +91,11 @@
     border-bottom-color: #eff2f5;
 }
 
-
 .livewire-table table.table thead tr th {
     color: #b5b5c3 !important;
     font-weight: 600;
     text-transform: uppercase;
 }
-
 
 .livewire-table table.table tbody tr {
     border-bottom-width: 1px;
@@ -115,11 +103,9 @@
     border-bottom-color: #eff2f5;
 }
 
-
 .livewire-table table.table tbody tr:nth-of-type(odd) {
     --bs-table-accent-bg: white !important;
 }
-
 
 .livewire-table table.table tbody tr td {
     padding: 16.25px 9.75px;
@@ -129,13 +115,12 @@
     vertical-align: middle;
 }
 
-
 .livewire-table table.table tbody tr td:first-child {
     padding-left: 0 !important;
 }
 
 .text-md-dark {
-    color: #5e6278!important;
+    color: #5e6278 !important;
     font-weight: 500;
 }
 
