@@ -1410,10 +1410,10 @@
   font-size: 15px;
 }
 .candidate-profile-menu__main-link:hover, .candidate-profile-menu__main-link.active {
-  color: #1967d2;
+  color: #209776;
 }
 .candidate-profile-menu__main-link:hover i, .candidate-profile-menu__main-link.active i {
-  color: #1967d2;
+  color: #209776;
 }
 .candidate-profile-menu__main-link.active {
   background: #f1f3f5;
@@ -1652,7 +1652,7 @@
 .candidate-dashboard-header .horizontal-menu .nav-item.active .nav-link,
 .employer-dashboard-header .horizontal-menu .nav-item .nav-link:hover,
 .employer-dashboard-header .horizontal-menu .nav-item.active .nav-link {
-  color: #1967d2;
+  color: #209776;
 }
 .candidate-dashboard-header .horizontal-menu .nav-item .nav-link::after,
 .employer-dashboard-header .horizontal-menu .nav-item .nav-link::after {
@@ -1672,7 +1672,7 @@
 .candidate-dashboard-header .horizontal-menu .nav-item.active .nav-link::after,
 .employer-dashboard-header .horizontal-menu .nav-item .nav-link:hover::after,
 .employer-dashboard-header .horizontal-menu .nav-item.active .nav-link::after {
-  background-color: #1967d2;
+  background-color: #209776;
 }
 .candidate-dashboard-header > .d-flex > .nav > li > a,
 .candidate-dashboard-header > .d-flex > .nav > li > .dropdown > .btn,
@@ -1915,7 +1915,7 @@
 
 .candidate-image-upload-modal__dropzone--dragging {
   background: rgba(101, 113, 255, 0.05);
-  border-color: #1967d2;
+  border-color: #209776;
 }
 
 .candidate-image-upload-modal__icon {
@@ -2442,7 +2442,7 @@
   padding: 0;
 }
 .candidate-portfolio-actions button:first-child {
-  color: #1967d2;
+  color: #209776;
 }
 .candidate-portfolio-actions button i {
   font-size: 14px;
@@ -2476,7 +2476,7 @@
   background: #fff;
   border: 1px solid rgba(101, 113, 255, 0.35);
   border-radius: 6px;
-  color: #1967d2;
+  color: #209776;
   display: inline-flex;
   font-size: 14px;
   font-weight: 600;
@@ -2485,7 +2485,7 @@
   padding: 14px 20px;
 }
 .candidate-portfolio-add-outline:hover, .candidate-portfolio-add-outline:focus {
-  color: #1967d2;
+  color: #209776;
 }
 
 .candidate-publication-list {
@@ -2592,7 +2592,7 @@
 .flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-months .flatpickr-prev-month:hover,
 .flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-months .flatpickr-next-month:hover {
   background: #f1f5f9;
-  color: #1967d2;
+  color: #209776;
 }
 .flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-months .flatpickr-prev-month svg,
 .flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-months .flatpickr-next-month svg {
@@ -2631,10 +2631,10 @@
 .flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-year-select:hover {
   background: #f1f5f9;
   border-color: #cbd5e1;
-  color: #1967d2;
+  color: #209776;
 }
 .flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-year-select {
-  color: #1967d2;
+  color: #209776;
 }
 .flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-picker-menu {
   background: #ffffff;
@@ -2682,10 +2682,10 @@
 }
 .flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-picker-option:hover {
   background: #f1f5f9;
-  color: #1967d2;
+  color: #209776;
 }
 .flatpickr-calendar.candidate-accomplishment-calendar .candidate-accomplishment-picker-option[aria-selected=true] {
-  background: #1967d2;
+  background: #209776;
   color: #ffffff;
   font-weight: 600;
 }
@@ -2730,18 +2730,18 @@
 }
 .flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-day:hover {
   background: #f1f5f9 !important;
-  color: #1967d2 !important;
+  color: #209776 !important;
   border-color: transparent !important;
 }
 .flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-day.today {
-  border: 1.5px solid #1967d2 !important;
-  color: #1967d2 !important;
+  border: 1.5px solid #209776 !important;
+  color: #209776 !important;
   background: transparent !important;
   font-weight: 600;
 }
 .flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-day.selected, .flatpickr-calendar.candidate-accomplishment-calendar .flatpickr-day.selected:hover {
-  background: #1967d2 !important;
-  border-color: #1967d2 !important;
+  background: #209776 !important;
+  border-color: #209776 !important;
   color: #ffffff !important;
   font-weight: 600;
   box-shadow: 0 4px 10px rgba(25, 103, 210, 0.3);
@@ -2838,7 +2838,7 @@
   padding: 0;
 }
 .candidate-publication-actions button:first-child {
-  color: #1967d2;
+  color: #209776;
 }
 .candidate-publication-actions button i {
   font-size: 14px;
@@ -2872,7 +2872,7 @@
   background: #fff;
   border: 1px solid rgba(101, 113, 255, 0.35);
   border-radius: 6px;
-  color: #1967d2;
+  color: #209776;
   display: inline-flex;
   font-size: 14px;
   font-weight: 600;
@@ -2881,7 +2881,7 @@
   padding: 14px 20px;
 }
 .candidate-publication-add-outline:hover, .candidate-publication-add-outline:focus {
-  color: #1967d2;
+  color: #209776;
 }
 
 .candidate-project-list {
@@ -2913,7 +2913,7 @@
 }
 
 .candidate-project-editor {
-  border: 1px solid #1967d2;
+  border: 1px solid #209776;
   border-radius: 8px;
   overflow: hidden;
 }
@@ -3000,7 +3000,7 @@
   padding: 0;
 }
 .candidate-project-actions button:first-child {
-  color: #1967d2;
+  color: #209776;
 }
 .candidate-project-actions button i {
   font-size: 14px;
@@ -3047,7 +3047,7 @@
   background: #fff;
   border: 1px solid rgba(101, 113, 255, 0.35);
   border-radius: 6px;
-  color: #1967d2;
+  color: #209776;
   display: inline-flex;
   font-size: 14px;
   font-weight: 600;
@@ -3056,7 +3056,7 @@
   padding: 14px 20px;
 }
 .candidate-project-add-outline:hover, .candidate-project-add-outline:focus {
-  color: #1967d2;
+  color: #209776;
 }
 
 .candidate-other-list {
@@ -3191,7 +3191,7 @@
   padding: 0;
 }
 .candidate-other-actions button:first-child {
-  color: #1967d2;
+  color: #209776;
 }
 .candidate-other-actions button i {
   font-size: 14px;
@@ -3231,7 +3231,7 @@
   background: #fff;
   border: 1px solid rgba(101, 113, 255, 0.35);
   border-radius: 6px;
-  color: #1967d2;
+  color: #209776;
   display: inline-flex;
   font-size: 14px;
   font-weight: 600;
@@ -3240,7 +3240,7 @@
   padding: 14px 20px;
 }
 .candidate-other-add-outline:hover, .candidate-other-add-outline:focus {
-  color: #1967d2;
+  color: #209776;
 }
 
 .candidate-reference-list {
@@ -3328,7 +3328,7 @@
   padding: 0;
 }
 .candidate-reference-actions button:first-child {
-  color: #1967d2;
+  color: #209776;
 }
 .candidate-reference-actions button i {
   font-size: 14px;
@@ -3412,7 +3412,7 @@
   width: 22px;
 }
 .candidate-skill-item__actions button:hover, .candidate-skill-item__actions button:focus {
-  color: #1967d2;
+  color: #209776;
 }
 
 .candidate-skill-empty {
@@ -3478,8 +3478,8 @@
   width: 16px;
 }
 .candidate-skill-source input:checked {
-  background: #1967d2;
-  border-color: #1967d2;
+  background: #209776;
+  border-color: #209776;
 }
 .candidate-skill-source input:checked:after {
   color: #fff;
@@ -3519,8 +3519,8 @@
 }
 
 .candidate-skill-save {
-  background: #1967d2 !important;
-  border: 1px solid #1967d2 !important;
+  background: #209776 !important;
+  border: 1px solid #209776 !important;
   color: #ffffff !important;
   min-width: 139px;
 }
@@ -3609,7 +3609,7 @@
   align-items: center;
   background: transparent;
   border: 0;
-  color: #1967d2;
+  color: #209776;
   display: inline-flex;
   font-size: 14px;
   font-weight: 600;
@@ -3767,7 +3767,7 @@
   padding: 0;
 }
 .candidate-language-current .candidate-preferred-chip button:hover, .candidate-language-current .candidate-preferred-chip button:focus {
-  color: #1967d2;
+  color: #209776;
 }
 
 .candidate-link-list {
@@ -3837,7 +3837,7 @@
   padding: 0;
 }
 .candidate-link-actions button:first-child {
-  color: #1967d2;
+  color: #209776;
 }
 .candidate-link-actions button i {
   font-size: 14px;
@@ -4629,14 +4629,14 @@
   margin: 12px 0 0;
 }
 .candidate-employment-working-check .form-check-input {
-  border-color: #1967d2;
+  border-color: #209776;
   height: 16px;
   margin: 0;
   width: 16px;
 }
 .candidate-employment-working-check .form-check-input:checked {
-  background-color: #1967d2;
-  border-color: #1967d2;
+  background-color: #209776;
+  border-color: #209776;
 }
 
 .candidate-employment-field-help {
@@ -4706,9 +4706,9 @@
 .candidate-employment-add-new {
   align-items: center;
   background: #fff;
-  border: 1px solid #1967d2;
+  border: 1px solid #209776;
   border-radius: 6px;
-  color: #1967d2;
+  color: #209776;
   display: inline-flex;
   font-size: 14px;
   font-weight: 600;
@@ -4758,7 +4758,7 @@
   background: #fff;
   border: 1px solid #f0a9d7;
   border-radius: 6px;
-  color: #1967d2;
+  color: #209776;
   display: inline-flex;
   font-size: 14px;
   font-weight: 600;
@@ -5583,10 +5583,10 @@
   line-height: 1;
 }
 .candidate-resume-action-btn--preview {
-  color: #1967d2;
+  color: #209776;
 }
 .candidate-resume-action-btn--preview:hover, .candidate-resume-action-btn--preview:focus {
-  background-color: #1967d2;
+  background-color: #209776;
   color: #fff;
 }
 .candidate-resume-action-btn--delete {

@@ -51,7 +51,7 @@
 }
 
 .candidate-dashboard-kicker {
-  color: #1967d2;
+  color: #209776;
   display: block;
   font-size: 13px;
   font-weight: 700;
@@ -86,7 +86,7 @@
 }
 
 .candidate-dashboard-meta i {
-  color: #1967d2;
+  color: #209776;
   flex: 0 0 auto;
   width: 15px;
 }
@@ -166,7 +166,7 @@
 .candidate-profile-completion__content a,
 .candidate-dashboard-link,
 .candidate-match-card__footer a {
-  color: #1967d2;
+  color: #209776;
   font-weight: 700;
   text-decoration: none;
 }
@@ -251,7 +251,7 @@ a.candidate-stat-card:hover {
 
 .candidate-stat-card--blue .candidate-stat-card__icon {
   background: #e8f1ff;
-  color: #1967d2;
+  color: #209776;
 }
 
 .candidate-stat-card--green .candidate-stat-card__icon {
@@ -352,7 +352,7 @@ a.candidate-stat-card:hover {
 }
 
 .candidate-profile-breakdown__track span {
-  background: #1967d2;
+  background: #209776;
   border-radius: inherit;
   display: block;
   height: 100%;
@@ -461,7 +461,7 @@ a.candidate-stat-card:hover {
 }
 
 .candidate-match-meta i {
-  color: #1967d2;
+  color: #209776;
   flex: 0 0 auto;
   margin-top: 2px;
   width: 14px;
@@ -497,7 +497,7 @@ a.candidate-stat-card:hover {
 }
 
 .candidate-match-empty i {
-  color: #1967d2;
+  color: #209776;
   font-size: 30px;
   margin-bottom: 12px;
 }
@@ -557,7 +557,7 @@ a.candidate-stat-card:hover {
 }
 
 .candidate-overview-list i {
-  color: #1967d2;
+  color: #209776;
   width: 16px;
 }
 

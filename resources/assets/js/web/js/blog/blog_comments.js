@@ -29,7 +29,7 @@ listenClick('.delete-comment-btn', function (event) {
         showCancelButton: true,
         confirmButtonText: Lang.get('js.ok'),
         cancelButtonText: Lang.get('js.cancel'),
-        confirmButtonColor: '#1967d2',
+        confirmButtonColor: '#209776',
         cancelButtonColor: '#d33',
     }, function (isConfirmed) {
         if (isConfirmed) {
@@ -56,7 +56,7 @@ listenClick('.delete-comment-btn', function (event) {
                             Lang.get('js.has_been_deleted'),
                         confirmButtonText: Lang.get('js.ok'),
                         type: 'success',
-                        confirmButtonColor: '#1967D2',
+                        confirmButtonColor: '#209776',
                         timer: 2000,
                     });
                     // location.reload();

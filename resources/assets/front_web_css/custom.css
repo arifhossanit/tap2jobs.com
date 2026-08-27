@@ -59,7 +59,7 @@ body {
 }
 
 .bg-primary {
-    background-color: #1967d2 !important
+    background-color: #209776!important
 }
 
 .text-gray {
@@ -67,7 +67,7 @@ body {
 }
 
 .text-primary {
-    color: #1967d2 !important
+    color: #209776!important
 }
 
 .text-secondary {
@@ -82,15 +82,15 @@ body {
 
 
 .btn-secondary-login {
-    color: #1967d2;
+    color: #209776;
     background-color: #fff;
-    border: 1px solid #1967d2 !important
+    border: 1px solid #209776!important
 }
 
 .btn-secondary-login:hover,
 .btn-secondary-login:active,
 .btn-secondary-login:focus {
-    background-color: #1967d2;
+    background-color: #209776;
     color: #fff
 }
 
@@ -905,15 +905,15 @@ body:has(.employer-register-industry-modal.show) .modal-backdrop {
 }
 
 .btn-light {
-    color: #1967d2;
+    color: #209776;
     background-color: rgba(0, 0, 0, 0);
-    border: 1px solid #1967d2 !important
+    border: 1px solid #209776!important
 }
 
 .btn-light:hover,
 .btn-light:active,
 .btn-light:focus {
-    background-color: #1967d2;
+    background-color: #209776;
     color: #fff
 }
 
@@ -1336,7 +1336,7 @@ h4 {
     width: 80px;
     height: 5px;
     border-radius: 10px;
-    background: #1967d2
+    background: #209776
 }
 
 @media(max-width: 575px) {
@@ -1492,8 +1492,8 @@ h4 {
 
 .pagination .page-item .page-link.active, .pagination .page-item .page-link:focus, .pagination .page-item .page-link:hover {
     color: #FFFFFF !important;
-    background-color: #1967d2;
-    border: 1px solid #1967d2;
+    background-color: #209776;
+    border: 1px solid #209776;
 }
 
 .pagination .page-item .page-link.previous, .pagination .page-item .page-link.next {
@@ -1610,7 +1610,7 @@ header .navbar .navbar-nav .nav-item .language-menu .country-flag {
     transform: scale(1, 1) !important;
 }
 .job-desc-right .desc-box ul li:hover, .hero-section .hero-content .hero-desc p:hover, .hero-section .hero-content .hero-desc a:hover{
-    color: #1967d2 !important;
+    color: #209776!important;
     transform-origin: left top !important;
     transform: scale(1, 1) !important;
 }
@@ -1696,20 +1696,20 @@ header .navbar .navbar-collapse .navbar-nav .nav-item .nav-link {
 
 .btn-primary {
     color: #fff !important;
-    background-color: #1967d2;
-    border: 1px solid #1967d2 !important;
+    background-color: #209776;
+    border: 1px solid #209776!important;
 }
 
 .btn-primary:hover {
-    color: #1967d2 !important;
+    color: #209776!important;
     background-color: #ffffff !important;
-    border-color: #1967d2;
+    border-color: #209776;
 }
 
 .btn-primary:disabled {
     color: #ffffff;
-    background-color: #1967d2;
-    border-color: #1967d2;
+    background-color: #209776;
+    border-color: #209776;
 }
 
 .bg-image {
@@ -1759,7 +1759,7 @@ header .navbar .navbar-collapse .navbar-nav .nav-item .nav-link {
 
 .user-logo span,
 .company-details-social-media a {
-    color: #1967d2 !important;
+    color: #209776!important;
 }
 
 /* Public header user menu mirrors the dashboard header profile dropdown. */
@@ -1829,7 +1829,7 @@ header .navbar .navbar-collapse .navbar-nav .nav-item .nav-link {
 
 .front-user-menu-list .dropdown-item:hover,
 .front-user-menu-list .dropdown-item:focus {
-    color: #1967d2;
+    color: #209776;
     background-color: #f1f7ff;
 }
 
@@ -1844,7 +1844,7 @@ header .navbar .navbar-collapse .navbar-nav .nav-item .nav-link {
 
 .front-user-menu-list .dropdown-item:hover .front-user-menu-icon,
 .front-user-menu-list .dropdown-item:focus .front-user-menu-icon {
-    color: #1967d2;
+    color: #209776;
 }
 
 html[dir='rtl'] .front-user-menu-icon {
@@ -1886,7 +1886,7 @@ html[dir='rtl'] .front-user-menu-icon {
 }
 
 .latest-job-section .latest-job-left .form-group .form-check-input:checked {
-    background-color: #1967d2;
+    background-color: #209776;
     border: transparent;
 }
 
@@ -1909,7 +1909,7 @@ html[dir='rtl'] .front-user-menu-icon {
 }
 
 .irs--flat .irs-single {
-    color: #1967d2;
+    color: #209776;
     font-size: 14px;
     text-shadow: none;
     padding: 1px 10px;
@@ -1944,12 +1944,12 @@ html[dir='rtl'] .front-user-menu-icon {
 .irs--flat .irs-bar {
     top: 40px;
     height: 4px;
-    background-color: #1967d2;
+    background-color: #209776;
 }
 
 .irs--flat .irs-handle.state_hover>i:first-child,
 .irs--flat .irs-handle:hover>i:first-child {
-    background-color: #1967d2 !important;
+    background-color: #209776!important;
 }
 
 .irs--flat .irs-handle>i:first-child {
@@ -1960,11 +1960,11 @@ html[dir='rtl'] .front-user-menu-icon {
     width: 16px;
     height: 16px;
     border-radius: 50px;
-    background-color: #1967d2;
+    background-color: #209776;
 }
 
 .irs--flat:hover .irs-handle>i:first-child {
-    background-color: #1967d2;
+    background-color: #209776;
 }
 .irs--flat .irs-min, .irs--flat .irs-max {
     top: 0;
@@ -1984,7 +1984,7 @@ html[dir='rtl'] .front-user-menu-icon {
 }
 .blog-detail-section .comments .comment-card {
     border: none;
-    border-left: 4px solid #1967d2;
+    border-left: 4px solid #209776;
   }
 
 .mani-blog .blog-card .card-img-top {
@@ -2053,13 +2053,13 @@ footer .social-icon a>* {
 footer .social-icon a:hover,
 footer .social-icon a:focus {
     color: #fff !important;
-    background-color: #1967d2 !important;
+    background-color: #209776!important;
 }
 
 .btn-light-primary,
 .btn-outline-primary:hover {
     color: #4267b2 !important;
-    border: 1px solid #1967d2 !important;
+    border: 1px solid #209776!important;
     background-color: #fff;
     font-weight: 400 !important;
 }
@@ -2067,8 +2067,8 @@ footer .social-icon a:focus {
 .btn-light-primary:hover,
 .btn-outline-primary {
     color: #fff !important;
-    background-color: #1967d2;
-    border: 1px solid #1967d2;
+    background-color: #209776;
+    border: 1px solid #209776;
     font-weight: 400 !important;
 }
 
@@ -2158,7 +2158,7 @@ footer .social-icon a:focus {
 }
 
 .select2-container--default .select2-search--dropdown .select2-search__field:focus {
-    border-color: #1967d2 !important;
+    border-color: #209776!important;
 }
 
 .select2-container--default .select2-results__option[aria-selected=true],
@@ -2186,14 +2186,14 @@ footer .social-icon a:focus {
 }
 
 .form-check-input:checked {
-    background-color: #1967d2;
-    border-color: #1967d2;
+    background-color: #209776;
+    border-color: #209776;
 }
 
 .btn-light:hover,
 .btn-light:active,
 .btn-light:focus {
-    background-color: #1967d2;
+    background-color: #209776;
     color: #fff !important;
 }
 
@@ -2269,7 +2269,7 @@ footer .text-decoration-none {
 }
 
 .submenu li:hover a {
-    color: #1967d2 !important;
+    color: #209776!important;
 }
 
 .submenu li{
@@ -2640,7 +2640,7 @@ footer .text-decoration-none {
 }
 
 .apply-job-selected-cv__edit:hover {
-    color: #1967d2;
+    color: #209776;
 }
 
 .apply-job-selected-cv__preview {
@@ -2718,7 +2718,7 @@ footer .text-decoration-none {
     .apply-job-form-card__actions .btn { width: 100%; }
 }
 .btn-outline-primary:disabled, .btn-outline-primary.disabled {
-    color: #1967d2 !important;
+    color: #209776!important;
     background-color: transparent !important;
 }
 
@@ -2790,7 +2790,7 @@ footer .text-decoration-none {
 }
 .job-details-section .job-desc-right p:hover, .about-company-section .about-company-right p:hover
 {
-    color: #1967d2 !important;
+    color: #209776!important;
 }
 .skill-experience li{
     line-height: 20px;
@@ -2825,7 +2825,7 @@ input, select
     margin-bottom: 0;
 }
 .about-control-prev .icon, .about-control-next .icon{
-    border-color: #1967d2 !important;
+    border-color: #209776!important;
 }
 /* .change-type {
     top: 15% !important;
@@ -2863,7 +2863,7 @@ input, select
     cursor: pointer;
 }
 .job-search-dropdown li:hover{
-    color: #1967d2;
+    color: #209776;
 }
 .autocomplete-wrapper{
     position: relative;
@@ -2890,7 +2890,7 @@ input, select
 
 .ui-menu-item-wrapper.ui-state-active {
     background: linear-gradient(to right, #e4f2fb, #eaf0fc) !important;
-    color: #1967d2;
+    color: #209776;
     border: 1px solid transparent;
     font-family: "Circular Std", sans-serif !important;
     font-weight: 500 !important;
@@ -2971,19 +2971,19 @@ input, select
 }
 .btn-check:checked, .btn-primary, .btn-check:active, .btn-primary, .btn-primary:active, .btn-primary.active, .show > .btn-primary.dropdown-toggle{
     color: #ffffff !important;
-    background-color: #1967d2 !important;
-    border-color: #1967d2 !important;
+    background-color: #209776!important;
+    border-color: #209776!important;
 }
 
 .page-link {
-    color: #1967d2  !important;
+    color: #209776 !important;
 }
 
 .page-item.active .page-link {
     z-index: 3;
     color: #fff;
-    background-color: #1967d2;
-    border-color: #1967d2;
+    background-color: #209776;
+    border-color: #209776;
 }
 
 .register-side-ad__image {

@@ -427,13 +427,13 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        color: #205b9d;
+        color: #209776;
     }
 
     .bd-stat__icon {
         display: grid;
         place-items: center;
-        border: 3px solid #245d9b;
+        border: 3px solid #209776;
         border-radius: 50%;
         width: 53px;
         height: 53px;
@@ -533,7 +533,7 @@
     .bd-city-links a {
         color: #ffffff;
         font-size: 13px;
-        background: #1967d2;
+        background: #209776;
         padding: 6px 14px;
         border-radius: 6px;
         text-decoration: none;
@@ -554,7 +554,7 @@
     .bd-quick-links {
         height: 100%;
         width: 263px;
-        background: #1967d2;
+        background: #209776;
         color: #fff;
         padding: 16px 18px;
     }
@@ -615,7 +615,7 @@
     }
 
     .bd-tabs {
-        border: 1px solid #1967d2;
+        border: 1px solid #209776;
         border-radius: 50px;
         overflow: hidden;
         font-size: 12px;
@@ -1044,7 +1044,7 @@
         }
 
         .bd-city-links--mobile a {
-            background: #1967d2 !important;
+            background: #209776!important;
             color: #ffffff !important;
             font-size: 12px !important;
             font-weight: 500 !important;

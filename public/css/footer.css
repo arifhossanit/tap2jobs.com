@@ -75,11 +75,11 @@ footer .text-secondary {
 }
 
 footer .text-primary {
-    color: #1967d2 !important;
+    color: #209776!important;
 }
 
 footer .bg-primary {
-    background-color: #1967d2 !important;
+    background-color: #209776!important;
 }
 
 footer .text-decoration-none {
@@ -132,7 +132,7 @@ footer .social-icon i {
 footer .social-icon i:hover,
 footer .social-icon i:focus {
     color: #fff;
-    background-color: #1967d2;
+    background-color: #209776;
 }
 
 footer .social-icon a {
@@ -151,7 +151,7 @@ footer .social-icon a > * {
 footer .social-icon a:hover,
 footer .social-icon a:focus {
     color: #fff !important;
-    background-color: #1967d2 !important;
+    background-color: #209776!important;
 }
 
 .footer-info div:nth-child(2) p {
@@ -364,11 +364,11 @@ footer.front-shared-footer .support-phone-numbers a:hover {
 
 .bd-mobile-footer-item:hover,
 .bd-mobile-footer-item:focus {
-    color: #1967d2 !important;
+    color: #209776!important;
 }
 
 .bd-mobile-footer-item.active {
-    color: #1967d2 !important;
+    color: #209776!important;
 }
 
 .bd-mobile-footer-icon {
@@ -385,7 +385,7 @@ footer.front-shared-footer .support-phone-numbers a:hover {
     height: 25px !important;
     border-radius: 50% !important;
     object-fit: cover !important;
-    border: 1.5px solid #1967d2 !important;
+    border: 1.5px solid #209776!important;
 }
 
 @media (max-width: 991px) {

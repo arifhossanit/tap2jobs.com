@@ -3079,7 +3079,7 @@ listenClick('.delete-comment-btn', function (event) {
     showCancelButton: true,
     closeOnConfirm: false,
     showLoaderOnConfirm: true
-  }, "showCancelButton", true), "confirmButtonText", Lang.get('js.ok')), "cancelButtonText", Lang.get('js.cancel')), "confirmButtonColor", '#1967d2'), "cancelButtonColor", '#d33'), function (isConfirmed) {
+  }, "showCancelButton", true), "confirmButtonText", Lang.get('js.ok')), "cancelButtonText", Lang.get('js.cancel')), "confirmButtonColor", '#209776'), "cancelButtonColor", '#d33'), function (isConfirmed) {
     if (isConfirmed) {
       $.ajaxSetup({
         headers: {
@@ -3103,7 +3103,7 @@ listenClick('.delete-comment-btn', function (event) {
             text: Lang.get('js.comment') + ' ' + Lang.get('js.has_been_deleted'),
             confirmButtonText: Lang.get('js.ok'),
             type: 'success',
-            confirmButtonColor: '#1967D2',
+            confirmButtonColor: '#209776',
             timer: 2000
           });
           // location.reload();

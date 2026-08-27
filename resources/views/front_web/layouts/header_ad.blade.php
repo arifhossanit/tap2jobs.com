@@ -93,7 +93,7 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        background: #1967d2;
+        background: #209776;
     }
     #siteTopBanner .site-top-banner__close {
         align-items: center;

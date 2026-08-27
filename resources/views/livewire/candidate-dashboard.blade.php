@@ -2,7 +2,7 @@
     $profileImage = $user->avatar ?: asset('assets/img/default-user.png');
     $candidateLocation = __('messages.candidate_dashboard.location_information');
     $completionPercentage = $profileCompletion['percentage'] ?? 0;
-    $completionColor = $profileCompletion['color'] ?? '#1967d2';
+    $completionColor = $profileCompletion['color'] ?? '#209776';
     $dashboardScoringBars = [
         ['label' => 'Completed profile', 'percent' => $completionPercentage],
         ['label' => 'Skill', 'percent' => max(0, $completionPercentage - 12)],
@@ -154,7 +154,7 @@
                                 $companyName = html_entity_decode($job->company->user->full_name ?? $job->company->ceo ?? __('messages.company.company'));
                                 $jobUrl = route('front.job.details', $job->job_id);
                                 $matchScore = (int) ($job->match_score ?? 0);
-                                $matchColor = $matchScore >= 75 ? '#00ba63' : ($matchScore >= 45 ? '#1967d2' : '#f59e0b');
+                                $matchColor = $matchScore >= 75 ? '#00ba63' : ($matchScore >= 45 ? '#209776' : '#f59e0b');
                                 $matchScoreLabel = $dashboardNumber($matchScore).'%';
                                 $circumference = 138.23;
                                 $dashOffset = round($circumference - ($circumference * ($matchScore / 100)), 2);

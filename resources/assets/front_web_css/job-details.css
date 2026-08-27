@@ -127,13 +127,13 @@
     padding: 0;
     border: 1px solid rgba(25, 103, 210, .2);
     border-radius: 50%;
-    color: #1967d2;
+    color: #209776;
     background: #fff;
 }
 
 .job-details-page .job-header-action:hover:not(:disabled) {
     color: #fff;
-    background: #1967d2;
+    background: #209776;
 }
 
 .job-details-page .job-header-action:hover:not(:disabled) i {
@@ -184,8 +184,8 @@
 
 .job-details-page .job-apply-btn {
     color: #fff;
-    background-color: #1967d2;
-    border-color: #1967d2;
+    background-color: #209776;
+    border-color: #209776;
     transition: background-color .2s ease, border-color .2s ease, transform .2s ease;
 }
 

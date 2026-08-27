@@ -62,7 +62,7 @@ header .navbar .navbar-collapse .navbar-nav .nav-item .nav-link {
 }
 
 header .navbar .navbar-collapse .navbar-nav .nav-item .nav-link.active {
-    color: #1967d2 !important
+    color: #209776!important
 }
 
 @media(max-width: 991px) {
@@ -70,7 +70,7 @@ header .navbar .navbar-collapse .navbar-nav .nav-item .nav-link.active {
         align-items: center;
         background: rgba(25, 103, 210, .08);
         border-radius: 4px;
-        color: #1967d2;
+        color: #209776;
         display: inline-flex;
         height: 44px;
         justify-content: center;
@@ -83,7 +83,7 @@ header .navbar .navbar-collapse .navbar-nav .nav-item .nav-link.active {
     }
 
     header .navbar-toggler[aria-expanded="true"] {
-        background: #1967d2;
+        background: #209776;
         box-shadow: 0 8px 20px rgba(25, 103, 210, .28);
         color: #fff
     }
@@ -186,7 +186,7 @@ header .dropdown-menu .custom-input-control {
 }
 
 header .dropdown-menu .search-submit {
-    background-color: #1967d2;
+    background-color: #209776;
     border: none;
     border-radius: 3px;
     color: #fff;
@@ -221,7 +221,7 @@ header .language-dropdown-menu .dropdown-item {
 header .language-dropdown-menu .dropdown-item:active,
 header .language-dropdown-menu .dropdown-item:hover {
     background-color: rgba(0, 0, 0, 0) !important;
-    color: #1967d2 !important
+    color: #209776!important
 }
 
 header .language-dropdown-menu .dropdown-item .country-flag {
@@ -314,7 +314,7 @@ footer .social-icon i {
 footer .social-icon i:hover,
 footer .social-icon i:focus {
     color: #fff;
-    background-color: #1967d2
+    background-color: #209776
 }
 
 @media(max-width: 767px) {
@@ -430,7 +430,7 @@ header .front-user-menu-list .dropdown-item {
 
 header .front-user-menu-list .dropdown-item:hover,
 header .front-user-menu-list .dropdown-item:focus {
-    color: #1967d2;
+    color: #209776;
     background-color: #f1f7ff;
 }
 
@@ -446,7 +446,7 @@ header .front-user-menu-icon {
 
 header .front-user-menu-list .dropdown-item:hover .front-user-menu-icon,
 header .front-user-menu-list .dropdown-item:focus .front-user-menu-icon {
-    color: #1967d2;
+    color: #209776;
 }
 
 html[dir='rtl'] header .front-user-dropdown .front-user-dropdown-menu {
@@ -713,7 +713,7 @@ html[dir='rtl'] header .front-user-menu-icon {
     }
 
     header #navbarNav .front-account-dropdown .front-user-dropdown-toggle[aria-expanded="true"] .front-account-chevron {
-        color: #1967d2;
+        color: #209776;
         transform: rotate(180deg);
     }
 
