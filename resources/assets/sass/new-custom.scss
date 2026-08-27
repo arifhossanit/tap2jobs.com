@@ -6444,3 +6444,47 @@ html[dir="rtl"] {
     z-index: 2;
     padding-right: 8px;
 }
+
+@media (max-width: 991.98px) {
+    /* Mobile Header Logo Alignment */
+    body.candidate-front-shell > header.bg-gradient .navbar > .container,
+    header.bg-gradient .navbar > .container {
+        align-items: flex-start !important;
+    }
+    .navbar-brand img {
+        height: 35px !important;
+        max-width: 120px !important;
+        object-fit: contain;
+    }
+}
+
+@media (max-width: 767.98px) {
+    /* Candidate Details Hero Section */
+    .hero-section .d-flex.align-items-md-center {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-start !important;
+    }
+    .hero-section .hero-img {
+        width: 80px;
+        height: 80px;
+        flex-shrink: 0;
+    }
+    .hero-section .hero-content h4 {
+        font-size: 1.1rem;
+    }
+    .hero-section .hero-desc.d-md-flex {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .hero-section .hero-desc .desc {
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+    }
+
+    /* Responsive Pagination */
+    .pagination {
+        flex-wrap: wrap !important;
+    }
+}

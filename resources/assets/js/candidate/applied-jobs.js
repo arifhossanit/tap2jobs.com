@@ -8,13 +8,15 @@ let filterJobId = null;
 let selectedAppliedJobId = null;
 
 function loadAppliedJobsData() {
-    if (!$('#jobApplicationStatus').length) {
+    let statusField = $('#jobApplicationStatus');
+    if (!statusField.length || statusField.data('appliedJobsInitialized')) {
         return;
     }
-    filterJobId = $('#jobApplicationStatus').val();
-    $('#jobApplicationStatus').select2();
+    statusField.data('appliedJobsInitialized', true);
+    filterJobId = statusField.val();
+    statusField.select2({ width: '100%' });
 
-    $('#jobApplicationStatus').on('change', function () {
+    statusField.off('change.appliedJobs').on('change.appliedJobs', function () {
         filterJobId = $(this).val();
         Livewire.dispatch('changeFilter', { value: filterJobId });
         Livewire.dispatch('refresh');

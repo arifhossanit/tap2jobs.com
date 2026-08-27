@@ -26,14 +26,14 @@ class FavouriteCompanyTable extends LivewireTableComponent
         });
 
         $this->setTdAttributes(function (Column $column, $row, $columnIndex, $rowIndex) {
+            $attributes = ['data-label' => $column->getTitle()];
+
             if ($columnIndex == '4') {
-                return [
-                    'class' => 'text-center',
-                    'width' => '14%',
-                ];
+                $attributes['class'] = 'text-center';
+                $attributes['width'] = '14%';
             }
 
-            return [];
+            return $attributes;
         });
 
 //        $this->setTableAttributes([

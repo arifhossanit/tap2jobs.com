@@ -23,11 +23,11 @@
                                 <path d="M14.05 6a5 5 0 0 1 4 4"/>
                             </svg>
                         </div>
-                        {{-- <div class="support-phone-numbers">
+                        <div class="support-phone-numbers">
                             <a href="tel:16479" class="d-block text-danger fw-bold fs-16 text-decoration-none mb-1">16479</a>
                             <a href="tel:09638666444" class="d-block text-danger fw-bold fs-16 text-decoration-none mb-1">09638666444</a>
                             <a href="tel:01897627858" class="d-block text-danger fw-bold fs-16 text-decoration-none">01897627858</a>
-                        </div> --}}
+                        </div>
                     </div>
                 </div>
             </div>

@@ -394,9 +394,9 @@ footer.front-shared-footer .support-phone-numbers a:hover {
     }
 }
 
-body:has(input:focus:not([type="checkbox"]):not([type="radio"])),
-body:has(textarea:focus),
-body:has(select:focus),
+body:has(input:focus:not([type="checkbox"]):not([type="radio"])) .bd-mobile-fixed-footer,
+body:has(textarea:focus) .bd-mobile-fixed-footer,
+body:has(select:focus) .bd-mobile-fixed-footer,
 body.keyboard-open .bd-mobile-fixed-footer,
 .bd-mobile-fixed-footer.keyboard-hidden {
     display: none !important;

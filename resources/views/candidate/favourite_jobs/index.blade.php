@@ -3,8 +3,8 @@
     {{ __('messages.favourite_jobs') }}
 @endsection
 @section('content')
-    <div class="d-flex flex-column ">
-        <livewire:favourite-job-table lazy/>
+    <div class="d-flex flex-column candidate-favourite-jobs-page">
+        <livewire:favorite-jobs/>
     </div>
 @endsection
 @push('scripts')
