@@ -1632,7 +1632,8 @@ header .navbar .navbar-nav .nav-item .submenu {
     transition: .3s ease-in-out
 }
 
-header .navbar .navbar-nav .nav-item:hover .submenu {
+header .navbar .navbar-nav .login_btn:hover > .submenu,
+header .navbar .navbar-nav .register_btn:hover > .submenu {
     opacity: 1;
     visibility: visible;
 }

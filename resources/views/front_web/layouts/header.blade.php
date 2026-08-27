@@ -1,36 +1,90 @@
+@php
+    $notifications = null;
+    $unreadCount = 0;
+    if (Auth::check()) {
+        $notifications = getNotification(\App\Models\Notification::CANDIDATE);
+        if(Auth::user()->hasRole('Employer')) {
+            $notifications = getNotification(\App\Models\Notification::EMPLOYER);
+        }
+        $unreadCount = $notifications ? $notifications->count() : 0;
+    }
+@endphp
 <header class="bg-gradient">
     <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="{{ url('/') }}">
                 <img src="{{ asset($settings['logo']) }}" alt="" class="d-inline-block img-fluid h-100" />
             </a>
-            <button class="navbar-toggler border-0 p-0" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon" aria-hidden="true">
-                    <span class="icon-bar top-bar"></span>
-                    <span class="icon-bar middle-bar"></span>
-                    <span class="icon-bar bottom-bar"></span>
-                </span>
-            </button>
+            <div class="front-mobile-actions d-flex d-lg-none align-items-center">
+                @auth
+                    <div class="dropdown front-user-dropdown d-lg-none">
+                        <button class="btn dropdown-toggle front-user-dropdown-toggle front-mobile-notification-toggle d-flex align-items-center justify-content-center position-relative"
+                                type="button" id="mobileNotificationDropdown" aria-expanded="false" style="border:none; background:transparent;">
+                            <i class="fa-solid fa-bell fs-4 text-primary"></i>
+                            @if($unreadCount > 0)
+                                <span class="front-mobile-notification-badge position-absolute badge rounded-circle bg-danger fs-8 p-1" id="mobileCandidateNotificationCount">
+                                    {{ $unreadCount }}
+                                </span>
+                            @endif
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end front-user-dropdown-menu front-mobile-notification-menu p-0 shadow-lg border-0 rounded-3"
+                             style="max-height: 420px; overflow: hidden;"
+                             aria-labelledby="mobileNotificationDropdown">
+                            <div class="d-flex align-items-center justify-content-between px-3 py-2 bg-light border-bottom">
+                                <h6 class="fw-bold mb-0 text-dark fs-7 d-flex align-items-center gap-2">
+                                    <i class="fa-solid fa-bell text-primary"></i> {{ __('messages.notification.notifications') }}
+                                </h6>
+
+                            </div>
+                            <div class="notification-scroll-body" style="max-height: 320px; overflow-y: auto;">
+                                @if($notifications && $notifications->isNotEmpty())
+                                    @foreach($notifications as $notification)
+                                        <div class="dropdown-item border-bottom py-2 px-3 text-wrap d-flex align-items-start gap-2 read-notification-item" data-id="{{ $notification->id }}" data-url="{{ getNotificationUrl($notification) }}" style="cursor: pointer; transition: background 0.2s ease, opacity 0.2s ease;">
+                                            <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center mt-1" style="width: 28px; height: 28px; flex-shrink: 0;">
+                                                <i class="{{ getNotificationIcon($notification->type) }}" style="font-size: 0.75rem;"></i>
+                                            </div>
+                                            <div class="w-100">
+                                                <p class="mb-1 fw-semibold text-dark lh-sm" style="font-size: 0.8125rem;">{{ $notification->title }}</p>
+                                                <span class="text-muted" style="font-size: 0.725rem;"><i class="fa-regular fa-clock me-1"></i>{{ $notification->created_at->diffForHumans() }}</span>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div class="p-4 text-center text-muted">
+                                        <i class="fa-regular fa-bell-slash fs-3 mb-2 d-block text-secondary"></i>
+                                        <span class="fs-7">{{ __('messages.notification.empty_notifications') ?? 'No notifications found' }}</span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endauth
+                <button class="navbar-toggler border-0 p-0" type="button"
+                        id="mobileNavbarToggler"
+                        aria-controls="navbarNav"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <div class="navbar-toggler-icon" id="toggler-icon">
+                        <span class="icon-bar top-bar"></span>
+                        <span class="icon-bar middle-bar"></span>
+                        <span class="icon-bar bottom-bar"></span>
+                    </div>
+                </button>
+            </div>
             <div class="collapse navbar-collapse justify-content-lg-between justify-content-end" id="navbarNav">
                     <ul class="navbar-nav d-flex justify-content-end align-items-lg-center w-100">
-                        <li class="nav-item">
-                            <a class="header-navbar-color text-gray nav-link {{ Request::is('/') ? 'header-navbar-color-active' : '' }}"
+                        <li class="nav-item mb-2 mb-lg-0">
+                            <a class="header-navbar-color text-gray nav-link px-2 px-lg-0 {{ Request::is('/') ? 'header-navbar-color-active' : '' }}"
                                 aria-current="page" href="{{ route('front.home') }}">{{ __('web.home') }}</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="header-navbar-color text-gray nav-link {{ Request::is('search-jobs') || Request::is('job-details*') ? 'header-navbar-color-active' : '' }}"
+                        <li class="nav-item mb-2 mb-lg-0">
+                            <a class="header-navbar-color text-gray nav-link px-2 px-lg-0 {{ Request::is('search-jobs') || Request::is('job-details*') ? 'header-navbar-color-active' : '' }}"
                                 href="{{ route('front.search.jobs') }}">{{ __('web.jobs') }}</a>
                         </li>
-                        {{-- <li class="nav-item">
-                            <a class="header-navbar-color text-gray nav-link {{ Request::is('posts*') || Request::is('blogs*') ? 'header-navbar-color-active' : '' }}"
-                                href="{{ route('front.blogs') }}">{{ __('web.blogs') }}</a>
-                        </li> --}}
-                        <li class="nav-item">
+                        <li class="nav-item mb-2 mb-lg-0">
                             <div class="dropdown language-dropdown"
                                  data-language-url="{{ route('front.change-language') }}">
-                                <a href="#" class="nav-link text-gray dropdown-toggle language-dropdown-btn"
+                                <a href="#" class="nav-link text-gray dropdown-toggle language-dropdown-btn px-2 px-lg-0"
                                    id="frontLanguageToggle" role="button" aria-expanded="false"
                                    aria-controls="frontLanguageMenu">
                                     <i class="fa-solid fa-globe {{ getFrontSelectLanguage() == 'ar' ? 'ms-1' : 'me-1' }}"></i>
@@ -43,6 +97,17 @@
                                             data-prefix-value="{{ $key }}">
                                             <a href="javascript:void(0)"
                                                 class="dropdown-item text-gray d-flex align-items-center {{ checkLanguageSession() == $key ? 'active' : '' }}">
+                                                @if (array_key_exists($key, \App\Models\User::LANGUAGES_IMAGE))
+                                                    @foreach (\App\Models\User::LANGUAGES_IMAGE as $imageKey => $imageValue)
+                                                        @if ($imageKey == $key)
+                                                            <img class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-2' : 'me-2' }} country-flag"
+                                                                src="{{ asset($imageValue) }}" />
+                                                        @endif
+                                                    @endforeach
+                                                @else
+                                                    <i class="fa fa-flag {{ getFrontSelectLanguage() == 'ar' ? 'ms-2' : 'me-2' }} fs-7 text-danger" aria-hidden="true"
+                                                        style="width: 20px;"></i>
+                                                @endif
                                                 {{ $value }}
                                             </a>
                                         </li>
@@ -96,38 +161,15 @@
                             <li class="nav-item front-auth-actions d-flex align-items-center gap-xl-4 gap-3 mt-lg-0 mt-2 ms-xl-3 ms-lg-2">
                                 <ul class="navbar-nav align-items-center py-2 py-lg-0 front-user-nav d-flex flex-row align-items-center gap-2">
                                     @auth
-                                        @php
-                                            $notificationFor = \App\Models\Notification::CANDIDATE;
-                                            if(Auth::user()->hasRole('Employer')) {
-                                                $notificationFor = \App\Models\Notification::EMPLOYER;
-                                            }
-                                            $notifications = \App\Models\Notification::whereNotificationFor($notificationFor)
-                                                ->where('user_id', getLoggedInUserId())
-                                                ->orderByDesc('created_at')
-                                                ->take(10)
-                                                ->get();
-                                            $unreadCount = $notifications->whereNull('read_at')->count();
-                                        @endphp
-                                        <style>
-                                            .front-notification-badge {
-                                                top: 4px !important;
-                                                right: 0 !important;
-                                                left: auto !important;
-                                                transform: none !important;
-                                                min-width: 18px;
-                                                height: 18px;
-                                                padding: 0 5px;
-                                                font-size: 11px;
-                                                line-height: 18px;
-                                            }
-                                        </style>
-                                        <li class="nav-item dropdown front-user-dropdown me-2">
+                                        <li class="nav-item dropdown front-user-dropdown me-2 d-none d-lg-block">
                                             <button class="btn dropdown-toggle front-user-dropdown-toggle d-flex align-items-center position-relative p-2"
                                                     type="button" id="frontNotificationDropdown" aria-expanded="false" style="border:none; background:transparent;">
                                                 <i class="fa-solid fa-bell fs-4 text-primary"></i>
-                                                <span class="position-absolute front-notification-badge badge rounded-circle bg-danger {{ $unreadCount == 0 ? 'd-none' : '' }}" id="candidateNotificationCount">
-                                                    {{ $unreadCount }}
-                                                </span>
+                                                @if($unreadCount > 0)
+                                                    <span class="position-absolute front-notification-badge badge rounded-circle bg-danger" id="candidateNotificationCount">
+                                                        {{ $unreadCount }}
+                                                    </span>
+                                                @endif
                                             </button>
                                              <div class="dropdown-menu dropdown-menu-end front-user-dropdown-menu p-0 shadow-lg border-0 rounded-3"
                                                   style="width: 320px; max-height: 420px; overflow: hidden;"
@@ -136,11 +178,12 @@
                                                      <h6 class="fw-bold mb-0 text-dark fs-7 d-flex align-items-center gap-2">
                                                          <i class="fa-solid fa-bell text-primary"></i> {{ __('messages.notification.notifications') }}
                                                      </h6>
+
                                                  </div>
                                                  <div class="notification-scroll-body" style="max-height: 320px; overflow-y: auto;">
                                                      @if($notifications && $notifications->isNotEmpty())
                                                          @foreach($notifications as $notification)
-                                                             <div class="dropdown-item border-bottom py-2 px-3 text-wrap d-flex align-items-start gap-2 read-notification-item" data-id="{{ $notification->id }}" data-url="{{ getNotificationUrl($notification) }}" data-read="{{ $notification->read_at ? '1' : '0' }}" style="cursor: pointer; transition: background 0.2s ease, opacity 0.2s ease; background: {{ $notification->read_at ? 'transparent' : 'rgba(101, 113, 255, 0.08)' }}; opacity: {{ $notification->read_at ? '0.7' : '1' }};">
+                                                             <div class="dropdown-item border-bottom py-2 px-3 text-wrap d-flex align-items-start gap-2 read-notification-item" data-id="{{ $notification->id }}" data-url="{{ getNotificationUrl($notification) }}" style="cursor: pointer; transition: background 0.2s ease, opacity 0.2s ease;">
                                                                  <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center mt-1" style="width: 28px; height: 28px; flex-shrink: 0;">
                                                                      <i class="{{ getNotificationIcon($notification->type) }}" style="font-size: 0.75rem;"></i>
                                                                  </div>
@@ -151,28 +194,32 @@
                                                              </div>
                                                          @endforeach
                                                      @else
-                                                         <div class="p-4 text-center text-muted d-flex flex-column align-items-center justify-content-center">
-                                                             <i class="fa-regular fa-bell-slash fs-3 mb-2 text-secondary"></i>
-                                                             <span class="fs-7">No notification found</span>
+                                                         <div class="p-4 text-center text-muted">
+                                                             <i class="fa-regular fa-bell-slash fs-3 mb-2 d-block text-secondary"></i>
+                                                             <span class="fs-7">{{ __('messages.notification.empty_notifications') ?? 'No notifications found' }}</span>
                                                          </div>
                                                      @endif
                                                  </div>
                                              </div>
                                          </li>
                                      @endauth
-                                     <li class="nav-item dropdown front-user-dropdown">
+                                     <li class="nav-item dropdown front-user-dropdown front-account-dropdown d-flex align-items-center position-relative">
                                          <button class="btn dropdown-toggle front-user-dropdown-toggle d-flex align-items-center p-0 border-0"
                                              type="button" id="frontUserDropdown" aria-expanded="false"
                                              aria-controls="frontUserDropdownMenu" style="background:transparent;">
                                              <img src="{{ getLoggedInUser()->avatar }}" class="front-user-avatar"
-                                                 alt="{{ getLoggedInUser()->full_name }}" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
+                                                 alt="{{ getLoggedInUser()->full_name }}" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;" onerror="this.src='{{ asset('assets/img/default-user.png') }}'">
+                                             <span class="front-account-name ms-2 fw-semibold text-dark d-lg-none fs-6 text-truncate">{{ getLoggedInUser()->full_name }}</span>
+                                             <span class="front-account-chevron d-lg-none ms-auto" aria-hidden="true">
+                                                 <i class="fa-solid fa-chevron-down"></i>
+                                             </span>
                                          </button>
                                          <div class="dropdown-menu dropdown-menu-end front-user-dropdown-menu p-3 shadow-lg border-0 rounded-3"
                                              id="frontUserDropdownMenu"
                                              aria-labelledby="frontUserDropdown" style="min-width: 250px;">
                                              <div class="front-user-summary d-flex align-items-center border-bottom pb-3 mb-2 text-start">
                                                  <img src="{{ getLoggedInUser()->avatar }}" class="front-user-summary-avatar me-3 flex-shrink-0"
-                                                     alt="{{ getLoggedInUser()->full_name }}" style="width: 44px; height: 44px; margin: 0; border-radius: 50%; object-fit: cover;">
+                                                     alt="{{ getLoggedInUser()->full_name }}" style="width: 44px; height: 44px; margin: 0; border-radius: 50%; object-fit: cover;" onerror="this.src='{{ asset('assets/img/default-user.png') }}'">
                                                  <div class="front-user-info overflow-hidden ms-1">
                                                      <h3 class="front-user-name fs-6 fw-bold mb-0 text-truncate text-dark">{{ getLoggedInUser()->full_name }}</h3>
                                                      <p class="front-user-email fs-7 text-muted mb-0 text-truncate">{{ getLoggedInUser()->email }}</p>
@@ -266,105 +313,7 @@
                              </li>
                          @endif
                      </ul>
-                 </div>
+             </div>
          </div>
      </nav>
 </header>
-
-<style>
-    @media (max-width: 991px) {
-        header.bg-gradient .navbar {
-            padding: 10px 0;
-        }
-
-        header.bg-gradient .navbar > .container {
-            position: relative;
-        }
-
-        #navbarNav.navbar-collapse {
-            background: #ffffff !important;
-            border-radius: 16px !important;
-            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18) !important;
-            padding: 16px !important;
-            margin: 0 !important;
-            border: 1px solid #e2e8f0 !important;
-            z-index: 99999 !important;
-            position: absolute !important;
-            top: calc(100% + 8px) !important;
-            left: 0 !important;
-            right: 0 !important;
-            width: 100% !important;
-            max-height: calc(100vh - 92px);
-            overflow-y: auto;
-        }
-
-        #navbarNav .navbar-nav {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            gap: 12px !important;
-            width: 100% !important;
-        }
-
-        #navbarNav .nav-item {
-            width: 100% !important;
-        }
-
-        #navbarNav .nav-link {
-            font-size: 16px !important;
-            font-weight: 600 !important;
-            color: #1e293b !important;
-            padding: 10px 14px !important;
-            border-radius: 8px !important;
-            display: flex !important;
-            align-items: center !important;
-            gap: 10px !important;
-            width: 100% !important;
-        }
-
-        #navbarNav .nav-link:hover,
-        #navbarNav .nav-link.header-navbar-color-active {
-            background: #f1f5f9 !important;
-            color: #1967d2 !important;
-        }
-
-        /* Language Dropdown on mobile */
-        #navbarNav .language-dropdown {
-            width: 100% !important;
-        }
-
-        #navbarNav .language-dropdown-btn {
-            width: 100% !important;
-            justify-content: flex-start !important;
-            padding: 10px 14px !important;
-        }
-
-        /* Auth user nav & notification on mobile */
-        #navbarNav .front-user-nav {
-            flex-direction: row !important;
-            align-items: center !important;
-            justify-content: flex-start !important;
-            gap: 16px !important;
-            padding-top: 14px !important;
-            margin-top: 6px !important;
-            border-top: 1px solid #f1f5f9 !important;
-            width: 100% !important;
-        }
-
-        /* Login & Register buttons on mobile */
-        #navbarNav .login_btn,
-        #navbarNav .register_btn,
-        #navbarNav .front-auth-actions {
-            width: 100% !important;
-        }
-
-        #navbarNav .login_btn a,
-        #navbarNav .register_btn a {
-            width: 100% !important;
-            justify-content: center !important;
-            text-align: center !important;
-            min-height: 42px;
-            display: flex;
-            align-items: center;
-        }
-    }
-</style>

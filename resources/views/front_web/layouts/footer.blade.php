@@ -51,9 +51,13 @@
             </div>
 
             <!-- About Us Column -->
-            <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-4 mb-3">
-                <h3 class="mb-3 text-secondary fs-18">{{ __('web.footer.about_us') }}</h3>
-                <ul class="p-0">
+            <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-4 mb-3 front-footer-accordion">
+                <button type="button" class="front-footer-accordion__toggle" aria-expanded="false">
+                    <span>{{ __('web.footer.about_us') }}</span>
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <h3 class="mb-3 text-secondary fs-18 front-footer-accordion__desktop-title">{{ __('web.footer.about_us') }}</h3>
+                <ul class="p-0 front-footer-accordion__body">
                     <li>
                         <a href="{{ route('front.about.us') }}"
                             class="text-decoration-none mb-3 d-block {{ Request::is('about-us') ? 'footer-navbar-color-active text-dark' : 'text-gray' }} fs-14">{{ __('web.about_us') }}</a>
@@ -78,9 +82,13 @@
             </div>
 
             <!-- Job Seekers (Candidate) Column -->
-            <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-4 mb-3">
-                <h3 class="mb-3 text-secondary fs-18">{{ __('web.footer.job_seekers') }}</h3>
-                <ul class="p-0">
+            <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-4 mb-3 front-footer-accordion">
+                <button type="button" class="front-footer-accordion__toggle" aria-expanded="false">
+                    <span>{{ __('web.footer.job_seekers') }}</span>
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <h3 class="mb-3 text-secondary fs-18 front-footer-accordion__desktop-title">{{ __('web.footer.job_seekers') }}</h3>
+                <ul class="p-0 front-footer-accordion__body">
                     <li>
                         <a href="{{ route('front.search.jobs') }}"
                             class="text-decoration-none {{ Request::is('search-jobs') || Request::is('job-details*') ? 'footer-navbar-color-active text-dark' : 'text-gray' }} mb-3 d-block fs-14">{{ __('web.find_jobs') }}</a>
@@ -105,9 +113,13 @@
             </div>
 
             <!-- Recruiter (Employer) Column -->
-            <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-4 mb-3">
-                <h3 class="mb-3 text-secondary fs-18">{{ __('web.footer.recruiter') }}</h3>
-                <ul class="p-0">
+            <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-4 mb-3 front-footer-accordion">
+                <button type="button" class="front-footer-accordion__toggle" aria-expanded="false">
+                    <span>{{ __('web.footer.recruiter') }}</span>
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <h3 class="mb-3 text-secondary fs-18 front-footer-accordion__desktop-title">{{ __('web.footer.recruiter') }}</h3>
+                <ul class="p-0 front-footer-accordion__body">
                     <li>
                         <a href="{{ route('employer.register') }}"
                             class="text-decoration-none {{ Request::is('employer-register') ? 'footer-navbar-color-active text-dark' : 'text-gray' }} mb-3 d-block fs-14">{{ __('web.register_menu.create_account') }}</a>
@@ -132,9 +144,13 @@
             </div>
 
             <!-- Contact Info Column -->
-            <div class="col-xxl-3 col-xl-3 col-lg-4 col-md-6 mb-3">
-                <h3 class="mb-3 text-secondary fs-18">{{ __('web.contact_us') }}</h3>
-                <div class="footer-info">
+            <div class="col-xxl-3 col-xl-3 col-lg-4 col-md-6 mb-3 front-footer-accordion">
+                <button type="button" class="front-footer-accordion__toggle" aria-expanded="false">
+                    <span>{{ __('web.contact_us') }}</span>
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <h3 class="mb-3 text-secondary fs-18 front-footer-accordion__desktop-title">{{ __('web.contact_us') }}</h3>
+                <div class="footer-info front-footer-accordion__body">
                     <div class="d-flex footer-info__block mb-3">
                         <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} align-content-center">
                             <img src="{{ asset('img_template/contact.svg') }}" class="w-100" />

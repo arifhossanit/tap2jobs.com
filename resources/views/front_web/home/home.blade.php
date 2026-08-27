@@ -678,6 +678,12 @@
         font-weight: bold;
     }
 
+    @media (max-width: 991.98px) {
+        .bd-category-grid a.bd-category-link--mobile-extra {
+            display: none;
+        }
+    }
+
     .bd-directory-panel[hidden] {
         display: none !important;
     }
@@ -886,7 +892,7 @@
         .bd-quick-links {
             display: block !important;
             width: 100%;
-            border-radius: 8px;
+            border-radius: 4px;
             padding: 20px;
         }
 
@@ -959,7 +965,6 @@
             flex: 0 0 100% !important;
             max-width: 100% !important;
             padding: 0 !important;
-            margin-bottom: 12px !important;
         }
 
         .find-job-section .find-job form > .row > div:last-child {
@@ -1031,7 +1036,7 @@
         .bd-city-links {
             gap: 8px 14px !important;
             margin-top: 18px !important;
-            justify-content: flex-start !important;
+            justify-content: center !important;
             padding: 0 2px !important;
         }
 
@@ -1080,7 +1085,10 @@
 
 @section('content')
 @php
-    $categoryColumns = $jobCategories->take(45)->values()->chunk((int) ceil(max($jobCategories->take(45)->count(), 1) / 3));
+    $visibleCategoryLimit = 60;
+    $mobileCategoryLimit = 8;
+    $visibleCategories = $jobCategories->take($visibleCategoryLimit)->values();
+    $categoryColumns = $visibleCategories->chunk((int) ceil(max($visibleCategories->count(), 1) / 3));
     $typeColumns = $jobTypes->take(45)->values()->chunk((int) ceil(max($jobTypes->take(45)->count(), 1) / 3));
 @endphp
 <main class="bd-home">
@@ -1174,10 +1182,13 @@
                 </div>
                 <div class="bd-directory-panel" data-bd-panel="category">
                     <div class="bd-category-grid">
+                        @php $categoryIndex = 0; @endphp
                         @foreach($categoryColumns as $column)
                         <div>
                             @foreach($column as $category)
-                            <a href="{{ route('front.search.jobs', ['categories' => $category->id]) }}">{{ html_entity_decode($category->name) }} ({{ $category->jobs_count }})</a>
+                            @php $categoryIndex++; @endphp
+                            <a class="{{ $categoryIndex > $mobileCategoryLimit ? 'bd-category-link--mobile-extra' : '' }}"
+                               href="{{ route('front.search.jobs', ['categories' => $category->id]) }}">{{ html_entity_decode($category->name) }} ({{ $category->jobs_count }})</a>
                             @endforeach
                         </div>
                         @endforeach

@@ -18,31 +18,25 @@ header .navbar .navbar-brand {
 @media(max-width: 991px) {
     header .navbar .navbar-collapse {
         position: absolute;
-        width: 100%;
+        width: calc(100vw - 24px);
         top: 100%;
-        padding: 20px;
+        padding: 10px;
         z-index: 999999;
         background-color: #fff;
-        left: 0px;
-        right: 0px;
-        margin: auto;
-        max-width: 700px;
-        border-radius: 10px;
+        left: auto;
+        right: 12px;
+        margin: 0;
+        max-width: 360px;
         box-shadow: 0px 0px 20px rgba(173, 181, 189, .2)
     }
 }
 
 @media(max-width: 767px)and (min-width: 576px) {
     header .navbar .navbar-collapse {
-        max-width: 516px
+        max-width: 360px
     }
 }
 
-@media(max-width: 575px) {
-    header .navbar .navbar-collapse {
-        width: calc(100% - 24px)
-    }
-}
 
 header .navbar .navbar-collapse .navbar-nav .nav-item {
     margin: 5px 18px
@@ -75,7 +69,7 @@ header .navbar .navbar-collapse .navbar-nav .nav-item .nav-link.active {
     header .navbar-toggler {
         align-items: center;
         background: rgba(25, 103, 210, .08);
-        border-radius: 12px;
+        border-radius: 4px;
         color: #1967d2;
         display: inline-flex;
         height: 44px;
@@ -373,6 +367,20 @@ header .front-user-avatar {
     height: 40px;
 }
 
+header .front-notification-badge {
+    align-items: center;
+    display: inline-flex;
+    font-size: 11px;
+    height: 18px;
+    justify-content: center;
+    line-height: 1;
+    min-width: 18px;
+    padding: 0 5px;
+    right: 2px;
+    top: 2px;
+    transform: none;
+}
+
 header .front-user-summary-avatar {
     width: 64px;
     height: 64px;
@@ -452,17 +460,279 @@ html[dir='rtl'] header .front-user-menu-icon {
 }
 
 @media (max-width: 991.98px) {
-    header .front-user-nav,
-    header .front-user-dropdown,
-    header .front-user-dropdown .front-user-dropdown-toggle {
-        width: 100%;
+    header .navbar {
+        padding: 8px 0;
+    }
+
+    header .navbar > .container {
+        align-items: center;
+        gap: 8px;
+        justify-content: space-between;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    header .navbar .navbar-brand {
+        height: 36px;
+        max-width: 118px;
+        overflow: hidden;
+    }
+
+    header .navbar .navbar-brand img {
+        max-height: 36px;
+        object-fit: contain;
+        object-position: left center;
+        width: auto;
+    }
+
+    header .front-mobile-actions {
+        flex: 0 0 auto;
+        gap: 8px;
+        margin-left: auto;
+        min-width: max-content;
+        padding-right: 2px;
+    }
+
+    header .front-mobile-actions > .front-user-dropdown {
+        flex: 0 0 34px !important;
+        max-width: 34px !important;
+        width: 34px !important;
+    }
+
+    header .front-mobile-notification-toggle {
+        display: inline-flex !important;
+        height: 34px;
+        max-width: 34px !important;
+        padding: 0 !important;
+        width: 34px;
+    }
+
+    header .front-mobile-notification-toggle i,
+    header .front-mobile-notification-toggle svg {
+        font-size: 17px !important;
+    }
+
+    header .front-mobile-notification-badge {
+        align-items: center;
+        display: inline-flex;
+        font-size: 10px !important;
+        height: 16px;
+        justify-content: center;
+        line-height: 1;
+        min-width: 16px;
+        padding: 0 4px !important;
+        right: -1px;
+        top: 0;
+        transform: none;
+    }
+
+    header .front-mobile-notification-menu {
+        left: auto !important;
+        margin-top: 2px !important;
+        max-width: min(320px, calc(100vw - 24px)) !important;
+        position: absolute !important;
+        right: -44px !important;
+        top: 100% !important;
+        transform: none !important;
+        width: min(320px, calc(100vw - 24px)) !important;
+        z-index: 1060;
+    }
+
+    header .navbar-toggler {
+        flex: 0 0 36px;
+        height: 36px;
+        margin-right: 0;
+        width: 36px;
+    }
+
+    header .navbar-toggler .navbar-toggler-icon {
+        height: 20px;
+        width: 20px;
+    }
+
+    header .navbar-toggler .navbar-toggler-icon .icon-bar {
+        left: 2px;
+        width: 16px;
+    }
+
+    header .navbar-toggler .navbar-toggler-icon .top-bar {
+        top: 4px;
+    }
+
+    header .navbar-toggler .navbar-toggler-icon .middle-bar {
+        right: 2px;
+        top: 9px;
+        width: 12px;
+    }
+
+    header .navbar-toggler .navbar-toggler-icon .bottom-bar {
+        top: 14px;
+    }
+
+    header .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon .top-bar,
+    header .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon .bottom-bar {
+        top: 9px;
+    }
+
+    header #navbarNav .navbar-nav {
+        align-items: center !important;
+        text-align: center;
+    }
+
+    header #navbarNav > .navbar-nav > .nav-item,
+    header #navbarNav .language-dropdown,
+    header #navbarNav .front-auth-actions {
+        display: flex !important;
+        justify-content: center !important;
+        width: 100% !important;
+    }
+
+    header #navbarNav .nav-link {
+        justify-content: center !important;
+        text-align: center !important;
+    }
+
+    header #navbarNav .front-auth-actions {
+        border-top: 1px solid #e5e7eb !important;
+        margin-left: 0 !important;
+        padding-top: 18px !important;
+    }
+
+    header #navbarNav .front-auth-actions > .navbar-nav {
+        flex-direction: row !important;
+        justify-content: center !important;
+        gap: 18px !important;
+        width: auto !important;
+    }
+
+    header #navbarNav .login_btn,
+    header #navbarNav .register_btn {
+        margin: 0 !important;
+        position: relative;
+        width: auto !important;
+    }
+
+    header #navbarNav .login_btn > a,
+    header #navbarNav .register_btn > a {
+        align-items: center !important;
+        display: inline-flex !important;
+        justify-content: center !important;
+        min-width: 96px;
+        min-height: 44px;
+        padding: 10px 24px !important;
+        text-align: center !important;
+    }
+
+    header #navbarNav .login_btn > .submenu,
+    header #navbarNav .register_btn > .submenu {
+        display: none !important;
+        left: 50%;
+        min-width: 220px;
+        opacity: 1;
+        position: absolute;
+        top: calc(100% + 10px);
+        transform: translateX(-50%);
+        visibility: visible;
+        width: max-content;
+        max-width: calc(100vw - 64px);
+        margin: 0;
+        padding: 10px 12px;
+        border: 1px solid #dbeafe;
+        border-radius: 12px;
+        background: #ffffff;
+        box-shadow: 0 10px 26px rgba(15, 23, 42, .08);
+        opacity: 1;
+        visibility: visible;
+        z-index: 100010;
+        text-align: left;
+    }
+
+    header #navbarNav .login_btn:hover > .submenu,
+    header #navbarNav .register_btn:hover > .submenu {
+        display: none !important;
+    }
+
+    header #navbarNav .login_btn.is-open > .submenu,
+    header #navbarNav .register_btn.is-open > .submenu {
+        display: block !important;
+    }
+
+    header #navbarNav .submenu .nav-item {
+        margin: 0 !important;
+        width: 100% !important;
+    }
+
+    header #navbarNav .submenu .nav-link {
+        justify-content: flex-start !important;
+        padding: 9px 10px !important;
+        text-align: left !important;
+    }
+
+    header #navbarNav .front-user-nav {
+        flex-direction: column !important;
+        width: 100% !important;
+    }
+
+    header #navbarNav .front-account-dropdown,
+    header #navbarNav .front-account-dropdown .front-user-dropdown-toggle {
+        width: 100% !important;
         max-width: none;
     }
 
-    header .front-user-dropdown .front-user-dropdown-menu {
+    header #navbarNav .front-account-dropdown {
+        align-items: stretch !important;
+        flex-direction: column;
+        margin: 0 !important;
+    }
+
+    header #navbarNav .front-account-dropdown .front-user-dropdown-toggle {
+        justify-content: flex-start !important;
+        min-height: 56px;
+        padding: 10px 14px !important;
+        border: 1px solid #e5e7eb !important;
+        border-radius: 12px !important;
+        background: #f8fafc !important;
+        text-align: left !important;
+    }
+
+    header #navbarNav .front-account-dropdown .front-user-dropdown-toggle::after {
+        display: none;
+    }
+
+    header #navbarNav .front-account-name {
+        max-width: min(230px, calc(100vw - 150px));
+    }
+
+    header #navbarNav .front-account-chevron {
+        align-items: center;
+        color: #64748b;
+        display: inline-flex;
+        font-size: 12px;
+        justify-content: center;
+        transition: transform .2s ease, color .2s ease;
+    }
+
+    header #navbarNav .front-account-dropdown .front-user-dropdown-toggle[aria-expanded="true"] .front-account-chevron {
+        color: #1967d2;
+        transform: rotate(180deg);
+    }
+
+    header #navbarNav .front-account-dropdown .front-user-dropdown-menu {
         position: static;
         width: 100%;
         min-width: 0;
+        max-width: none !important;
         margin-top: 8px;
+        border: 1px solid #e5e7eb !important;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, .10);
+    }
+
+    header #navbarNav .front-account-dropdown .front-user-summary {
+        display: none !important;
+    }
+
+    header #navbarNav .front-account-dropdown .dropdown-item {
+        justify-content: flex-start !important;
+        text-align: left !important;
     }
 }

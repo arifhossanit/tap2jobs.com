@@ -8936,49 +8936,136 @@ $('#jobsSearchResults').on('click', 'li', function () {
   $('#search-keywords').val($(this).text().trim());
   $('#jobsSearchResults').fadeOut();
 });
-document.addEventListener('DOMContentLoaded', function () {
-  var toggler = document.querySelector('.navbar-toggler[data-bs-target="#navbarNav"]');
+function initMobileNavbar() {
+  var toggler = document.getElementById('mobileNavbarToggler') || document.querySelector('.navbar-toggler');
   var menu = document.getElementById('navbarNav');
-  if (!toggler || !menu) {
-    return;
+  if (!toggler || !menu) return;
+  var submenuParents = menu.querySelectorAll('.login_btn, .register_btn');
+  function isMobileNav() {
+    return window.innerWidth < 992;
   }
-  function forceCloseMenu() {
+  function closeSubmenus(exceptParent) {
+    submenuParents.forEach(function (parent) {
+      if (parent === exceptParent) return;
+      parent.classList.remove('is-open');
+      var trigger = parent.querySelector(':scope > a');
+      if (trigger) {
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+  function closeNavbarMenu() {
     menu.classList.remove('show', 'collapsing');
     menu.classList.add('collapse');
     menu.style.height = '';
     toggler.setAttribute('aria-expanded', 'false');
     toggler.classList.add('collapsed');
+    closeSubmenus();
   }
-  toggler.addEventListener('click', function () {
-    var wasOpen = menu.classList.contains('show') || toggler.getAttribute('aria-expanded') === 'true';
-    if (typeof bootstrap !== 'undefined' && bootstrap.Collapse) {
-      window.setTimeout(function () {
-        if (wasOpen && (menu.classList.contains('show') || menu.classList.contains('collapsing'))) {
-          forceCloseMenu();
-        }
-      }, 450);
-      return;
-    }
-    var isOpen = menu.classList.contains('show');
-    if (isOpen) {
-      forceCloseMenu();
-      return;
-    }
-    menu.classList.add('show', 'collapse');
+  function openNavbarMenu() {
+    menu.classList.add('collapse', 'show');
     menu.classList.remove('collapsing');
     menu.style.height = '';
     toggler.setAttribute('aria-expanded', 'true');
     toggler.classList.remove('collapsed');
+  }
+  var newToggler = toggler.cloneNode(true);
+  toggler.parentNode.replaceChild(newToggler, toggler);
+  toggler = newToggler;
+  toggler.addEventListener('click', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var isOpen = menu.classList.contains('show');
+    if (isOpen) {
+      closeNavbarMenu();
+    } else {
+      openNavbarMenu();
+    }
   });
-  menu.addEventListener('hidden.bs.collapse', function () {
-    toggler.setAttribute('aria-expanded', 'false');
-    toggler.classList.add('collapsed');
+  submenuParents.forEach(function (parent) {
+    var trigger = parent.querySelector(':scope > a');
+    if (!trigger) return;
+    trigger.setAttribute('aria-haspopup', 'true');
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.addEventListener('click', function (e) {
+      if (!isMobileNav()) return;
+      e.preventDefault();
+      e.stopPropagation();
+      var willOpen = !parent.classList.contains('is-open');
+      closeSubmenus();
+      parent.classList.toggle('is-open', willOpen);
+      trigger.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    });
   });
-  menu.addEventListener('shown.bs.collapse', function () {
-    toggler.setAttribute('aria-expanded', 'true');
-    toggler.classList.remove('collapsed');
+  menu.addEventListener('click', function (e) {
+    var trigger = e.target.closest('.login_btn > a, .register_btn > a');
+    if (!trigger || !isMobileNav()) return;
+    var parent = trigger.closest('.login_btn, .register_btn');
+    if (!parent) return;
+    e.preventDefault();
+    e.stopPropagation();
+    var willOpen = !parent.classList.contains('is-open');
+    closeSubmenus();
+    parent.classList.toggle('is-open', willOpen);
+    trigger.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+  }, true);
+  document.addEventListener('click', function (e) {
+    if (menu.classList.contains('show') && !menu.contains(e.target) && !toggler.contains(e.target)) {
+      closeNavbarMenu();
+      return;
+    }
+    if (isMobileNav() && menu.classList.contains('show') && !e.target.closest('.login_btn, .register_btn')) {
+      closeSubmenus();
+    }
   });
-});
+  var navLinks = menu.querySelectorAll('.nav-link:not(.dropdown-toggle)');
+  navLinks.forEach(function (link) {
+    link.addEventListener('click', function () {
+      if (isMobileNav() && link.closest('.login_btn, .register_btn')) {
+        return;
+      }
+      if (isMobileNav() && menu.classList.contains('show')) {
+        closeNavbarMenu();
+      }
+    });
+  });
+  window.addEventListener('resize', function () {
+    if (!isMobileNav()) {
+      closeSubmenus();
+    }
+  });
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initMobileNavbar);
+} else {
+  initMobileNavbar();
+}
+function initFrontFooterAccordion() {
+  var footer = document.querySelector('.front-shared-footer');
+  if (!footer) return;
+  var accordions = footer.querySelectorAll('.front-footer-accordion');
+  accordions.forEach(function (accordion) {
+    var toggle = accordion.querySelector('.front-footer-accordion__toggle');
+    if (!toggle) return;
+    toggle.addEventListener('click', function () {
+      var willOpen = !accordion.classList.contains('is-open');
+      accordions.forEach(function (item) {
+        var itemToggle = item.querySelector('.front-footer-accordion__toggle');
+        item.classList.remove('is-open');
+        if (itemToggle) {
+          itemToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+      accordion.classList.toggle('is-open', willOpen);
+      toggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    });
+  });
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initFrontFooterAccordion);
+} else {
+  initFrontFooterAccordion();
+}
 })();
 
 /******/ })()
