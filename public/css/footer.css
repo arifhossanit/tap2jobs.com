@@ -186,6 +186,19 @@ footer.front-shared-footer .front-footer-accordion__toggle {
     display: none;
 }
 
+footer.front-shared-footer .stay-connected-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 100%;
+    margin-left: auto;
+    text-align: right;
+}
+
+footer.front-shared-footer .stay-connected-container .social-icon {
+    justify-content: flex-end;
+}
+
 [dir="rtl"] footer.front-shared-footer .email input {
     border-radius: 0 10px 10px 0;
 }
@@ -286,6 +299,15 @@ footer.front-shared-footer .front-footer-accordion__toggle {
     footer.front-shared-footer .stay-connected-container h4,
     .stay-connected-container h4 {
         font-size: 16px !important;
+    }
+
+    footer.front-shared-footer .stay-connected-container {
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    footer.front-shared-footer .stay-connected-container .social-icon {
+        justify-content: flex-start;
     }
 }
 

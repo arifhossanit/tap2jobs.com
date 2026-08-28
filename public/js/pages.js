@@ -3690,13 +3690,18 @@ listenClick('.preview-resume', function (event) {
   var frame = $('#candidateResumePreviewFrame');
   var loading = modal.find('.candidate-resume-preview-loading');
   var unavailable = modal.find('.candidate-resume-preview-unavailable');
+  var previewUrl = button.data('url');
+  if (String(button.data('previewable')) === '1' && window.matchMedia('(max-width: 767.98px)').matches) {
+    window.location.href = previewUrl;
+    return;
+  }
   modal.appendTo('body');
   modal.find('#candidateResumePreviewTitle').text(button.data('title'));
   frame.addClass('d-none').attr('src', '');
   unavailable.addClass('d-none');
   if (String(button.data('previewable')) === '1') {
     loading.removeClass('d-none');
-    frame.removeClass('d-none').attr('src', button.data('url'));
+    frame.removeClass('d-none').attr('src', previewUrl);
     window.setTimeout(function () {
       loading.addClass('d-none');
     }, 1200);

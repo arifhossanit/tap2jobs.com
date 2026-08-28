@@ -36,10 +36,13 @@ class FavouriteCompanyTable extends LivewireTableComponent
             return $attributes;
         });
 
-//        $this->setTableAttributes([
-//            'default' => false,
-//            'class' => 'table table-default',
-//        ]);
+        $this->setTableAttributes([
+            'class' => 'table table-striped candidate-favourite-companies-table',
+        ]);
+
+        $this->setTableWrapperAttributes([
+            'class' => 'table-responsive candidate-favourite-companies-table-wrap',
+        ]);
 
         $this->setQueryStringStatus(false);
     }

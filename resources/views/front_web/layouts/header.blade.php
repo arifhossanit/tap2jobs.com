@@ -356,6 +356,16 @@
         });
     }
 
+    function closeAuthDropdowns(exceptDropdown) {
+        header.querySelectorAll('#navbarNav .login_btn.is-open, #navbarNav .register_btn.is-open').forEach(function (dropdown) {
+            if (dropdown !== exceptDropdown) {
+                dropdown.classList.remove('is-open');
+                const button = dropdown.querySelector(':scope > a');
+                if (button) button.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
+
     function closeMobileNavbar() {
         if (window.innerWidth >= 992) return;
 
@@ -469,6 +479,7 @@
         if (togglerIcon) togglerIcon.classList.remove('open');
         closeLanguageDropdowns(false);
         closeUserDropdowns(false);
+        closeAuthDropdowns();
     });
 
     toggler.addEventListener('click', function (event) {
@@ -486,6 +497,7 @@
             const willOpen = !dropdown.classList.contains('is-open');
             closeLanguageDropdowns(false);
             closeUserDropdowns(false);
+            closeAuthDropdowns();
             dropdown.classList.toggle('is-open', willOpen);
             languageButton.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
             return;
@@ -500,10 +512,29 @@
             const willOpen = !dropdown.classList.contains('is-open');
             closeUserDropdowns(false);
             closeLanguageDropdowns(false);
+            closeAuthDropdowns();
             dropdown.classList.toggle('is-open', willOpen);
             if (menu) menu.classList.toggle('show', willOpen);
             userButton.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
             return;
+        }
+
+        const authButton = event.target.closest('#navbarNav .login_btn > a, #navbarNav .register_btn > a');
+        if (authButton && window.innerWidth < 992) {
+            const dropdown = authButton.closest('.login_btn, .register_btn');
+            const submenu = dropdown ? dropdown.querySelector('.submenu') : null;
+
+            if (submenu) {
+                event.preventDefault();
+                event.stopPropagation();
+                const willOpen = !dropdown.classList.contains('is-open');
+                closeLanguageDropdowns(false);
+                closeUserDropdowns(false);
+                closeAuthDropdowns(dropdown);
+                dropdown.classList.toggle('is-open', willOpen);
+                authButton.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+                return;
+            }
         }
 
         const languageOption = event.target.closest('.languageSelection');
@@ -591,12 +622,14 @@
     document.addEventListener('click', function (event) {
         if (!event.target.closest('.language-dropdown')) closeLanguageDropdowns(false);
         if (!event.target.closest('.front-user-dropdown')) closeUserDropdowns(false);
+        if (!event.target.closest('.login_btn, .register_btn')) closeAuthDropdowns();
     });
 
     document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape') {
             closeLanguageDropdowns(true);
             closeUserDropdowns(true);
+            closeAuthDropdowns();
             closeMobileNavbar();
         }
     });

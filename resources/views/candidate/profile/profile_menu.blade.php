@@ -40,8 +40,6 @@
         </a>
     </div>
 
-    
-
     <div class="candidate-profile-menu__sub">
         @if($sectionName == 'education-training')
             <a class="candidate-profile-menu__sub-link active" href="#candidateEducationDetails"
@@ -186,4 +184,80 @@
             });
         }, 380);
     };
+
+    (function () {
+        function isCandidateProfileMobile() {
+            return window.matchMedia('(max-width: 767.98px)').matches;
+        }
+
+        function closeCandidateProfileSubDropdown(menu) {
+            if (!menu) {
+                return;
+            }
+
+            menu.classList.remove('is-sub-open');
+        }
+
+        function initCandidateProfileMobileMenu() {
+            const menu = document.querySelector('.candidate-profile-menu');
+
+            if (!menu || menu.dataset.mobileProfileMenuReady === 'true') {
+                return;
+            }
+
+            menu.dataset.mobileProfileMenuReady = 'true';
+
+            const topTabs = menu.querySelector('.candidate-profile-menu__top');
+            const activeTab = topTabs ? topTabs.querySelector('.candidate-profile-menu__main-link.active') : null;
+
+            if (topTabs && activeTab && isCandidateProfileMobile()) {
+                topTabs.scrollLeft = Math.max(0, activeTab.offsetLeft - 12);
+            }
+
+            menu.addEventListener('click', function (event) {
+                const mainLink = event.target.closest('.candidate-profile-menu__main-link');
+
+                if (mainLink && mainLink.classList.contains('active') && isCandidateProfileMobile()) {
+                    event.preventDefault();
+                    menu.classList.toggle('is-sub-open');
+                    return;
+                }
+
+                if (mainLink && isCandidateProfileMobile()) {
+                    closeCandidateProfileSubDropdown(menu);
+                    return;
+                }
+
+                const subLink = event.target.closest('.candidate-profile-menu__sub-link');
+
+                if (subLink && isCandidateProfileMobile()) {
+                    closeCandidateProfileSubDropdown(menu);
+                }
+            });
+
+            document.addEventListener('click', function (event) {
+                if (isCandidateProfileMobile() && !menu.contains(event.target)) {
+                    closeCandidateProfileSubDropdown(menu);
+                }
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    closeCandidateProfileSubDropdown(menu);
+                }
+            });
+
+            window.addEventListener('resize', function () {
+                if (!isCandidateProfileMobile()) {
+                    closeCandidateProfileSubDropdown(menu);
+                }
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initCandidateProfileMobileMenu, { once: true });
+        } else {
+            initCandidateProfileMobileMenu();
+        }
+    })();
 </script>

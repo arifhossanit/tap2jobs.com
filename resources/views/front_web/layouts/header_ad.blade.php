@@ -195,7 +195,7 @@
         #siteTopBanner .site-top-banner__bar,
         #siteTopBanner .site-top-banner__inner {
             min-height: 52px;
-            padding: 10px 12px;
+            padding: 10px 0;
         }
         #siteTopBanner .site-top-banner__promo {
             flex-wrap: wrap;

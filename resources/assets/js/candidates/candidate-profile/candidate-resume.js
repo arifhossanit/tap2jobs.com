@@ -11,6 +11,12 @@
      const frame = $('#candidateResumePreviewFrame');
      const loading = modal.find('.candidate-resume-preview-loading');
      const unavailable = modal.find('.candidate-resume-preview-unavailable');
+     const previewUrl = button.data('url');
+
+     if (String(button.data('previewable')) === '1' && window.matchMedia('(max-width: 767.98px)').matches) {
+         window.location.href = previewUrl;
+         return;
+     }
 
      modal.appendTo('body');
      modal.find('#candidateResumePreviewTitle').text(button.data('title'));
@@ -19,7 +25,7 @@
 
      if (String(button.data('previewable')) === '1') {
          loading.removeClass('d-none');
-         frame.removeClass('d-none').attr('src', button.data('url'));
+         frame.removeClass('d-none').attr('src', previewUrl);
          window.setTimeout(function () {
              loading.addClass('d-none');
          }, 1200);

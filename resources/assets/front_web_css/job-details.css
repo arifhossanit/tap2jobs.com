@@ -216,4 +216,66 @@ body:has(.job-action-modal.show) .modal-backdrop {
     .job-details-page .job-header-actions {
         margin-left: 0 !important;
     }
+
+    .job-details-page .hero-section .container > .d-flex.gap-3,
+    .job-details-page .hero-section .container > .d-flex.gap-3 > .row,
+    .job-details-page .hero-section .container > .d-flex.gap-3 .hero-desc {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .job-details-page .hero-section .container > .d-flex.gap-3 .desc {
+        margin-right: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .job-details-page .job-apply-btn,
+    .job-details-page .job-already-applied-btn {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .job-details-page .job-details-related-jobs {
+        margin-top: 18px;
+    }
+
+    .job-details-page .job-details-related-jobs > h5 {
+        margin-top: 24px !important;
+        margin-bottom: 14px !important;
+        padding-bottom: 0 !important;
+    }
+
+    .job-details-page .job-details-related-jobs > [class*="col-"] {
+        margin-bottom: 14px !important;
+    }
+
+    .job-details-page .job-details-related-jobs .card {
+        padding: 14px 16px !important;
+    }
+
+    .job-details-page .job-details-related-jobs .card-title.fs-20 {
+        font-size: 16px !important;
+        line-height: 21px;
+        margin-bottom: 8px !important;
+    }
+
+    .job-details-page .job-details-related-jobs .new-logo-image {
+        max-width: 32px !important;
+        max-height: 32px !important;
+    }
+
+    .job-details-page .job-details-related-jobs .card-desc {
+        margin-top: 12px !important;
+    }
+
+    .job-details-page .job-details-related-jobs .card-desc .w-20 {
+        width: 16px;
+        min-width: 16px;
+    }
+
+    .job-details-page .job-details-related-jobs .fs-14 {
+        font-size: 13px !important;
+        line-height: 18px;
+    }
 }

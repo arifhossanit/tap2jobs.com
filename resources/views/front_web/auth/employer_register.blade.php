@@ -141,9 +141,14 @@
                                                     <div class="employer-user-information-input">
                                                         <i class="fa-solid fa-key"></i>
                                                         <input type="password" name="password" id="employerPassword"
-                                                               class="form-control" minlength="6" maxlength="20"
+                                                               class="form-control employer-register-password-input" minlength="6" maxlength="20"
                                                                placeholder="{{ __('messages.employer_register.password_placeholder') }}" required
                                                                onkeypress="return avoidSpace(event)">
+                                                        <button type="button" class="employer-register-password-toggle"
+                                                                data-password-toggle="employerPassword"
+                                                                aria-label="Show password">
+                                                            <i class="fas fa-eye-slash"></i>
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -156,9 +161,14 @@
                                                     <div class="employer-user-information-input">
                                                         <i class="fa-solid fa-key"></i>
                                                         <input type="password" name="password_confirmation"
-                                                               id="employerConfirmPassword" class="form-control"
+                                                               id="employerConfirmPassword" class="form-control employer-register-password-input"
                                                                minlength="6" maxlength="20" placeholder="{{ __('messages.employer_register.confirm_password_placeholder') }}"
                                                                required onkeypress="return avoidSpace(event)">
+                                                        <button type="button" class="employer-register-password-toggle"
+                                                                data-password-toggle="employerConfirmPassword"
+                                                                aria-label="Show password">
+                                                            <i class="fas fa-eye-slash"></i>
+                                                        </button>
                                                     </div>
                                                     <div class="employer-live-validation-message" id="employerConfirmPasswordFeedback"
                                                          aria-live="polite"></div>
@@ -726,4 +736,23 @@
     </div>
 
     {{ Form::hidden('isGoogleReCaptchaEnabled', (bool) $isGoogleReCaptchaEnabled, ['id' => 'isGoogleReCaptchaEnabled']) }}
+@endsection
+
+@section('page_scripts')
+    <script>
+        document.addEventListener('click', function (event) {
+            const toggle = event.target.closest('.employer-register-password-toggle');
+            if (!toggle) return;
+
+            const input = document.getElementById(toggle.dataset.passwordToggle);
+            const icon = toggle.querySelector('i');
+            if (!input || !icon) return;
+
+            const showPassword = input.type === 'password';
+            input.type = showPassword ? 'text' : 'password';
+            icon.classList.toggle('fa-eye', showPassword);
+            icon.classList.toggle('fa-eye-slash', !showPassword);
+            toggle.setAttribute('aria-label', showPassword ? 'Hide password' : 'Show password');
+        });
+    </script>
 @endsection

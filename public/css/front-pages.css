@@ -9982,6 +9982,39 @@ body {
     padding: 12px 16px 12px 42px;
 }
 
+.employer-user-information-input .employer-register-password-input {
+    padding-right: 48px;
+}
+
+.employer-register-password-toggle {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    color: #667085;
+    cursor: pointer;
+    display: inline-flex;
+    height: 24px;
+    justify-content: center;
+    padding: 0;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    z-index: 3;
+}
+
+.employer-register-password-toggle i,
+.employer-register-password-toggle svg {
+    font-size: 15px;
+    line-height: 1;
+}
+
+.employer-register-password-toggle:hover,
+.employer-register-password-toggle:focus {
+    color: #087bb8;
+}
+
 .employer-user-information-input .form-control::placeholder {
     color: #98a2b3;
     opacity: 1;
@@ -10699,6 +10732,11 @@ body:has(.employer-register-industry-modal.show) .modal-backdrop {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    .employer-company-employee-options label {
+        height: auto;
+        min-height: 41px;
+    }
+
     .employer-company-industry-options {
         grid-template-columns: 1fr;
     }
@@ -10712,8 +10750,49 @@ body:has(.employer-register-industry-modal.show) .modal-backdrop {
         padding: 22px 18px;
     }
 
+    .employer-register-industry-modal__heading {
+        min-width: 0;
+        gap: 12px;
+    }
+
+    .employer-register-industry-modal__icon {
+        flex-basis: 42px;
+        height: 42px;
+        width: 42px;
+    }
+
+    .employer-register-industry-modal__title {
+        font-size: 18px;
+        overflow-wrap: anywhere;
+    }
+
+    .employer-register-industry-modal__subtitle {
+        font-size: 14px;
+    }
+
+    .employer-register-industry-modal__close {
+        flex: 0 0 auto;
+        margin-left: 10px;
+    }
+
+    #gRecaptchaContainerCompanyRegistration {
+        transform: scale(.88);
+        transform-origin: top center;
+        min-height: 72px;
+    }
+
     .employer-register-content {
         padding: 30px 0 40px;
+    }
+}
+
+@media (max-width: 360px) {
+    .employer-company-employee-options {
+        grid-template-columns: 1fr;
+    }
+
+    #gRecaptchaContainerCompanyRegistration {
+        transform: scale(.82);
     }
 }
 
@@ -12654,6 +12733,48 @@ input, select
     top: 15% !important;
     left: 83%;
 } */
+.login-page #password,
+.register-page #candidatePassword,
+.register-page #candidateConfirmPassword {
+    padding-right: 52px !important;
+}
+
+.login-page .position-relative > .form-group,
+.register-page .position-relative > .form-group {
+    position: relative;
+}
+
+.login-page .input-password-hide,
+.register-page .input-password-hide {
+    bottom: 19px !important;
+    height: 24px;
+    justify-content: center;
+    left: auto !important;
+    margin: 0 !important;
+    right: 18px !important;
+    top: auto !important;
+    width: 24px;
+    z-index: 3;
+}
+
+.login-page .input-password-hide i,
+.register-page .input-password-hide i {
+    font-size: 16px;
+    line-height: 1;
+}
+
+html[dir='rtl'] .login-page #password,
+html[dir='rtl'] .register-page #candidatePassword,
+html[dir='rtl'] .register-page #candidateConfirmPassword {
+    padding-left: 52px !important;
+    padding-right: 16px !important;
+}
+
+html[dir='rtl'] .login-page .input-password-hide,
+html[dir='rtl'] .register-page .input-password-hide {
+    left: 18px !important;
+    right: auto !important;
+}
 .page-link {
     cursor: pointer;
 }
@@ -13867,6 +13988,68 @@ body:has(.job-action-modal.show) .modal-backdrop {
     .job-details-page .job-header-actions {
         margin-left: 0 !important;
     }
+
+    .job-details-page .hero-section .container > .d-flex.gap-3,
+    .job-details-page .hero-section .container > .d-flex.gap-3 > .row,
+    .job-details-page .hero-section .container > .d-flex.gap-3 .hero-desc {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .job-details-page .hero-section .container > .d-flex.gap-3 .desc {
+        margin-right: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .job-details-page .job-apply-btn,
+    .job-details-page .job-already-applied-btn {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .job-details-page .job-details-related-jobs {
+        margin-top: 18px;
+    }
+
+    .job-details-page .job-details-related-jobs > h5 {
+        margin-top: 24px !important;
+        margin-bottom: 14px !important;
+        padding-bottom: 0 !important;
+    }
+
+    .job-details-page .job-details-related-jobs > [class*="col-"] {
+        margin-bottom: 14px !important;
+    }
+
+    .job-details-page .job-details-related-jobs .card {
+        padding: 14px 16px !important;
+    }
+
+    .job-details-page .job-details-related-jobs .card-title.fs-20 {
+        font-size: 16px !important;
+        line-height: 21px;
+        margin-bottom: 8px !important;
+    }
+
+    .job-details-page .job-details-related-jobs .new-logo-image {
+        max-width: 32px !important;
+        max-height: 32px !important;
+    }
+
+    .job-details-page .job-details-related-jobs .card-desc {
+        margin-top: 12px !important;
+    }
+
+    .job-details-page .job-details-related-jobs .card-desc .w-20 {
+        width: 16px;
+        min-width: 16px;
+    }
+
+    .job-details-page .job-details-related-jobs .fs-14 {
+        font-size: 13px !important;
+        line-height: 18px;
+    }
 }
 
 header .navbar {
@@ -14796,6 +14979,19 @@ footer.front-shared-footer .front-footer-accordion__toggle {
     display: none;
 }
 
+footer.front-shared-footer .stay-connected-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 100%;
+    margin-left: auto;
+    text-align: right;
+}
+
+footer.front-shared-footer .stay-connected-container .social-icon {
+    justify-content: flex-end;
+}
+
 [dir="rtl"] footer.front-shared-footer .email input {
     border-radius: 0 10px 10px 0;
 }
@@ -14896,6 +15092,15 @@ footer.front-shared-footer .front-footer-accordion__toggle {
     footer.front-shared-footer .stay-connected-container h4,
     .stay-connected-container h4 {
         font-size: 16px !important;
+    }
+
+    footer.front-shared-footer .stay-connected-container {
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    footer.front-shared-footer .stay-connected-container .social-icon {
+        justify-content: flex-start;
     }
 }
 

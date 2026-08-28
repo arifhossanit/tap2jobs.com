@@ -2,9 +2,7 @@
 @section('title')
     {{ __('messages.front_job_details.job_details') }}
 @endsection
-{{-- @section('page_css') --}}
-{{--    <link href="{{asset('front_web/scss/job-details.css')}}" rel="stylesheet" type="text/css"> --}}
-{{-- @endsection --}}
+
 @section('content')
     @include('layouts.flash-toasts')
     <div class="job-details-page">
@@ -155,7 +153,7 @@
                                         </button>
                                     </div> --}}
                                     <div class="desc d-flex pe-2">
-                                        <button class="btn btn-primary  mb-3"
+                                        <button class="btn btn-primary job-apply-btn mb-3"
                                             onclick="window.location='{{ route('show.apply-job-form', $job->job_id) }}'">
                                             {{ __('messages.front_job_details.apply_for_job') }}
                                         </button>
@@ -641,23 +639,13 @@
                                                 <div
                                                     class="card-desc d-flex flex-column justify-content-between h-100 mt-4">
                                                     <div class="desc">
-                                                        <div class="d-flex mb-1">
-                                                            <div class="me-3 w-20">
+                                                        <div class="d-flex align-items-center mb-1">
+                                                            <div class="me-2 w-20 flex-shrink-0 d-flex align-items-center">
                                                                 <img src="{{ asset('img_template/briefcase.svg') }}"
-                                                                    class="w-100" />
+                                                                    class="w-100 d-block" />
                                                             </div>
                                                             <p class="fs-14 text-gray mb-0">
-                                                                {{ !empty($job->jobCategory->name) ? $job->jobCategory->name : '' }}
-                                                            </p>
-                                                        </div>
-                                                        <div class="d-flex mb-2">
-                                                            <div class="me-3 w-20">
-                                                                <img src=" {{ asset('img_template/location.svg') }} "
-                                                                    class="w-100" />
-                                                            </div>
-
-                                                            <p class="fs-14 text-gray mb-0">
-                                                                {{ !empty($job->full_location) ? $job->full_location : 'Location Info. not available.' }}
+                                                                {{ !empty($relatedJob->jobCategory->name) ? $relatedJob->jobCategory->name : '' }}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -691,13 +679,3 @@
     {{ Form::hidden('removeFromFavorite', __('messages.front_job_details.remove_from_favorite'), ['id' => 'removeFromFavorite']) }}
     {{ Form::hidden('addToFavorites', __('messages.front_job_details.add_to_favorite'), ['id' => 'addToFavorites']) }}
 @endsection
-{{-- @section('page_scripts') --}}
-{{--    <script> --}}
-{{-- let addJobFavouriteUrl = "{{ route('save.favourite.job') }}"; --}}
-{{-- let reportAbuseUrl = "{{ route('report.job.abuse') }}"; --}}
-{{-- let emailJobToFriend = "{{ route('email.job') }}"; --}}
-{{--        let isJobAddedToFavourite = "{{ $isJobAddedToFavourite }}"; --}}
-{{-- let removeFromFavorite = "{{ __('messages.front_job_details.remove_from_favorite') }}"; --}}
-{{-- let addToFavorites = "{{ __('messages.front_job_details.add_to_favorite') }}"; --}}
-{{--    </script> --}}
-{{-- @endsection --}}

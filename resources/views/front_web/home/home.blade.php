@@ -933,7 +933,7 @@
         }
 
         .bd-hero {
-            background: #1e528e !important;
+            background: #209776 !important;
         }
 
         .bd-hero__inner {

@@ -24,9 +24,7 @@
                             </svg>
                         </div>
                         <div class="support-phone-numbers">
-                            <a href="tel:16479" class="d-block text-danger fw-bold fs-16 text-decoration-none mb-1">16479</a>
-                            <a href="tel:09638666444" class="d-block text-danger fw-bold fs-16 text-decoration-none mb-1">09638666444</a>
-                            <a href="tel:01897627858" class="d-block text-danger fw-bold fs-16 text-decoration-none">01897627858</a>
+                            <a href="tel:01336427721" class="d-block text-danger fw-bold fs-18 text-decoration-none mb-1">01336427721</a>                                                
                         </div>
                     </div>
                 </div>
@@ -191,7 +189,7 @@
                         {{ html_entity_decode($settings['application_name']) }}</a>.
                     {{ __('web.footer.all_rights_reserved') }}.
                     Developed by
-                    <a href="https://www.tap2dealit.com/" class="text-primary" target="_blank" rel="noopener">Tap2Deal IT</a>.
+                    <a href="https://www.tap2dealit.com/" class="text-primary" target="_blank" rel="noopener">TAP2DEAL IT</a>.
                 </p>
             </div>
         </div>
@@ -238,6 +236,33 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        var sharedFooter = document.querySelector('.front-shared-footer');
+        if (sharedFooter && sharedFooter.dataset.accordionReady !== 'true') {
+            sharedFooter.dataset.accordionReady = 'true';
+
+            var accordions = sharedFooter.querySelectorAll('.front-footer-accordion');
+
+            accordions.forEach(function (accordion) {
+                var toggle = accordion.querySelector('.front-footer-accordion__toggle');
+                if (!toggle) return;
+
+                toggle.addEventListener('click', function () {
+                    var willOpen = !accordion.classList.contains('is-open');
+
+                    accordions.forEach(function (item) {
+                        var itemToggle = item.querySelector('.front-footer-accordion__toggle');
+                        item.classList.remove('is-open');
+                        if (itemToggle) {
+                            itemToggle.setAttribute('aria-expanded', 'false');
+                        }
+                    });
+
+                    accordion.classList.toggle('is-open', willOpen);
+                    toggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+                });
+            });
+        }
+
         var footer = document.querySelector('.bd-mobile-fixed-footer');
         if (!footer) return;
 
