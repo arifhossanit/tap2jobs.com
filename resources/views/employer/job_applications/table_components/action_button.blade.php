@@ -33,12 +33,12 @@
 
 
 <div class="dropdown">
-    <a class="btn btn-primary btn-sm dropdown-toggle" id="actionDropDown" data-bs-toggle="dropdown"
-       aria-expanded="false">
+    <a class="btn btn-primary btn-sm dropdown-toggle text-nowrap" href="javascript:void(0)" role="button" id="actionDropDown_{{ $row->id }}"
+       data-bs-toggle="dropdown" aria-expanded="false">
         {{__('messages.common.action')}}
     </a>
-    <ul class="fs-6 py-4 dropdown-menu customDropdown"
-        aria-labelledby="dropdownMenuButton1">
+    <ul class="fs-6 py-2 dropdown-menu dropdown-menu-end customDropdown shadow"
+        aria-labelledby="actionDropDown_{{ $row->id }}">
         <li>
             <input type="hidden" name="data-job-id" value="{{$this->jobId}}" id="dataJobId">
             @if(!$isCompleted && !$isRejected)

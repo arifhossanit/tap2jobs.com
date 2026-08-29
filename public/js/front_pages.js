@@ -1465,6 +1465,15 @@ function loadPhoneNumberCountry() {
     validMsg = document.querySelector('#valid-msg');
   var normalizePhoneNumber = function normalizePhoneNumber() {
     input.value = input.value.replace(/\D/g, '').slice(0, 11);
+    return input.value;
+  };
+  var preserveLocalPhoneNumber = function preserveLocalPhoneNumber(callback) {
+    var localPhoneNumber = normalizePhoneNumber();
+    callback();
+    if (localPhoneNumber !== '') {
+      input.value = localPhoneNumber;
+    }
+    normalizePhoneNumber();
   };
   var errorMap = [Lang.get('js.invalid_number'), Lang.get('js.invalid_country_code'), Lang.get('js.too_short'), Lang.get('js.too_long'), Lang.get('js.invalid_number')];
 
@@ -1534,12 +1543,16 @@ function loadPhoneNumberCountry() {
       $('.iti__selected-flag>.iti__flag').addClass(flagClassLocal);
       $('.iti__selected-dial-code').text(dialCodeValLocal);
       var phoneEleVal = $('#phoneNumber').val();
-      intl.setNumber(dialCodeValLocal + phoneEleVal);
+      preserveLocalPhoneNumber(function () {
+        intl.setNumber(dialCodeValLocal + phoneEleVal);
+      });
     }
   }
   $('#phoneNumber').on('blur keyup change countrychange', function () {
     if (typeof phoneNo != 'undefined' && phoneNo !== '') {
-      intl.setNumber('+' + phoneNo);
+      preserveLocalPhoneNumber(function () {
+        intl.setNumber('+' + phoneNo);
+      });
       phoneNo = '';
     }
     normalizePhoneNumber();

@@ -42,17 +42,19 @@
                         {{ __('messages.employer_menu.transactions') }}
                     </a>
                 </li>
+                @if (config('app.subscriptions_enabled'))
                 <li>
                     <a class="dropdown-item {{ Request::is('employer/manage-subscription*') ? 'active' : '' }} {{ checkLanguageSession() == 'ar' ? 'text-end' : 'text-start' }}"
                        href="{{ route('manage-subscription.index') }}">
                         {{ __('messages.employer_menu.manage_subscriptions') }}
                     </a>
                 </li>
+                @endif
             </ul>
         </li> -->
 
         {{-- start side bar menu for bar--}}
-        <li class="nav-item d-xl-none {{ Request::is('employer/transaction*') ? 'active' : ''}}">
+        <!-- <li class="nav-item d-xl-none {{ Request::is('employer/transaction*') ? 'active' : ''}}">
             <a class="nav-link header-navbar-color text-gray py-3" aria-current="page"
                href="{{ route('transactions.index') }}">
                 {{ __('messages.employer_menu.transactions') }}
@@ -65,7 +67,7 @@
                     {{ __('messages.employer_menu.manage_subscriptions') }}
                 </a>
             </li>
-        @endif
+        @endif -->
         {{-- end side bar menu for bar--}}
     </ul>
 </div>

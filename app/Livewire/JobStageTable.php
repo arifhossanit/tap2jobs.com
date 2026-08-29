@@ -20,23 +20,45 @@ class JobStageTable extends LivewireTableComponent
 
         $this->setDefaultSort('created_at', 'desc');
 
+        $this->setTableWrapperAttributes([
+            'default' => false,
+            'class' => 'table-responsive job-stages-table-responsive',
+        ]);
+
         $this->setThAttributes(
             function (Column $column) {
+                if ($column->isField('name') || $column->isField('id')) {
+                    return ['class' => 'text-center text-nowrap'];
+                }
+                if ($column->isField('description')) {
+                    return [
+                        'class' => 'text-center',
+                        'style' => 'min-width: 250px;',
+                    ];
+                }
                 return [
                     'class' => 'text-center',
                 ];
             });
 
         $this->setTdAttributes(function (Column $column, $row, $columnIndex, $rowIndex) {
+            if ($columnIndex == '0') {
+                return ['class' => 'align-middle text-nowrap'];
+            }
+            if ($columnIndex == '1') {
+                return [
+                    'class' => 'align-middle',
+                    'style' => 'min-width: 250px;',
+                ];
+            }
             if ($columnIndex == '2') {
                 return [
-                    'class' => 'text-center',
+                    'class' => 'text-center align-middle text-nowrap',
                     'width' => '15%',
-
                 ];
             }
 
-            return [];
+            return ['class' => 'align-middle'];
         });
 
         $this->setTableAttributes(

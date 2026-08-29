@@ -589,14 +589,14 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 .employer-account-logo-row strong {
     color: #071638;
     display: block;
-    font-size: 16px;
+    font-size: 18px;
     margin-bottom: 12px;
 }
 
 .employer-account-logo-row div > span {
     color: #667085;
     display: block;
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .employer-account-section-title {
@@ -1245,6 +1245,70 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 
 .employer-account-form .ql-editor {
     min-height: 105px;
+}
+
+@media (max-width: 991.98px) {
+    #toast-container.toast-top-right,
+    #toast-container.toast-bottom-right,
+    #toast-container.toast-top-left,
+    #toast-container.toast-bottom-left {
+        left: 12px;
+        right: 12px;
+        width: auto;
+    }
+
+    #toast-container > div,
+    #toast-container .toast {
+        box-sizing: border-box;
+        margin-left: 0;
+        margin-right: 0;
+        max-width: calc(100vw - 24px);
+        min-width: 0 !important;
+        width: 100% !important;
+    }
+
+    .employer-account-page > .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .employer-account-page > .row > .col-12 {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .employer-account-page .custom-message {
+        border-radius: 8px;
+        box-sizing: border-box;
+        margin: 0 18px;
+        max-width: calc(100% - 50px);
+        overflow: visible;
+        padding: 12px 14px;
+        width: calc(100% - 50px);
+
+        > .d-flex {
+            align-items: flex-start !important;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        > .d-flex > i,
+        > .d-flex > .svg-inline--fa {
+            flex: 0 0 18px;
+            height: 18px;
+            margin: 2px 0 0 !important;
+            max-width: 18px;
+            width: 18px;
+        }
+
+        span {
+            display: block;
+            font-size: 13px;
+            line-height: 1.35;
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+    }
 }
 
 #companyDetailsPanel .ql-toolbar {
@@ -6756,3 +6820,247 @@ html[dir="rtl"] {
         flex-wrap: wrap !important;
     }
 }
+
+/* Responsive Livewire Table Toolbar for Mobile & Tablet */
+@media (max-width: 991.98px) {
+    .livewire-table-toolbar {
+        flex-wrap: nowrap !important;
+    }
+    .livewire-search-field-container {
+        width: 100%;
+        width: 290px !important;
+        min-width: 290px !important;
+        transition:
+            width 0.3s ease,
+            min-width 0.3s ease,
+            left 0.3s ease,
+            right 0.3s ease !important;
+    }
+
+    .wrapper {
+        padding-left: 290px !important;
+        transition:
+            padding-left 0.3s ease,
+            padding-right 0.3s ease !important;
+    }
+
+    /* Collapsed Sidebar on Desktop */
+    .aside-menu-container.collapsed-menu {
+        width: 80px !important;
+        min-width: 80px !important;
+    }
+
+    body.collapsed-menu .wrapper,
+    .collapsed-menu .wrapper {
+        padding-left: 80px !important;
+    }
+
+    /* Hide text elements, submenus, search, logo, and section headers in collapsed mode on Desktop */
+    .aside-menu-container.collapsed-menu .sidebar-section-header,
+    .aside-menu-container.collapsed-menu .aside-menu-title,
+    .aside-menu-container.collapsed-menu .aside-menu-collapse-icon,
+    .aside-menu-container.collapsed-menu .aside-submenu,
+    .aside-menu-container.collapsed-menu .search-control,
+    .aside-menu-container.collapsed-menu .no-record,
+    .aside-menu-container.collapsed-menu .sidebar-logo {
+        display: none !important;
+        opacity: 0 !important;
+    }
+
+    /* Adjust padding & centering for icons in collapsed sidebar */
+    .aside-menu-container.collapsed-menu
+        .aside-menu-container__aside-menu
+        .nav-item
+        .nav-link {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        justify-content: center !important;
+        text-align: center !important;
+        width: 80px !important;
+    }
+
+    .aside-menu-container.collapsed-menu .aside-menu-icon {
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 1.25rem !important;
+        text-align: center !important;
+    }
+
+    .aside-menu-container.collapsed-menu .aside-menu-container__aside-logo {
+        padding: 0.75rem 0 !important;
+        justify-content: center !important;
+    }
+}
+
+@media (max-width: 1199px) {
+    .aside-menu-container {
+        position: fixed !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        left: -290px !important;
+        max-width: 290px !important;
+        width: 290px !important;
+        min-width: 290px !important;
+        z-index: 1050 !important;
+        transition:
+            left 0.3s ease,
+            right 0.3s ease !important;
+    }
+
+    .aside-menu-container.collapsed-menu {
+        left: 0 !important;
+        width: 290px !important;
+        min-width: 290px !important;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .wrapper,
+    body.collapsed-menu .wrapper,
+    .collapsed-menu .wrapper {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+}
+
+html[dir="rtl"] {
+    @media (min-width: 1200px) {
+        .wrapper {
+            padding-right: 290px !important;
+            padding-left: 0 !important;
+        }
+
+        body.collapsed-menu .wrapper,
+        .collapsed-menu .wrapper {
+            padding-right: 80px !important;
+            padding-left: 0 !important;
+        }
+
+        .aside-menu-container.collapsed-menu {
+            right: 0 !important;
+            left: auto !important;
+        }
+    }
+
+    @media (max-width: 1199px) {
+        .aside-menu-container {
+            right: -290px !important;
+            left: auto !important;
+        }
+
+        .aside-menu-container.collapsed-menu {
+            right: 0 !important;
+            left: auto !important;
+        }
+    }
+}
+
+.page-item.active .page-link {
+    color: #fff !important;
+}
+
+.candidate-profile-progress__track strong {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    left: clamp(46px, var(--completion-left), calc(100% - 8px));
+    line-height: 1;
+    position: absolute;
+    text-shadow: 0 1px 2px rgba(15, 23, 42, 0.35);
+    top: 50%;
+    transform: translate(-100%, -50%);
+    z-index: 2;
+    padding-right: 8px;
+}
+
+@media (max-width: 991.98px) {
+    /* Mobile Header Logo Alignment */
+    body.candidate-front-shell > header.bg-gradient .navbar > .container,
+    header.bg-gradient .navbar > .container {
+        align-items: flex-start !important;
+    }
+    .navbar-brand img {
+        height: 35px !important;
+        max-width: 120px !important;
+        object-fit: contain;
+    }
+}
+
+@media (max-width: 767.98px) {
+    /* Candidate Details Hero Section */
+    .hero-section .d-flex.align-items-md-center {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-start !important;
+    }
+    .hero-section .hero-img {
+        width: 80px;
+        height: 80px;
+        flex-shrink: 0;
+    }
+    .hero-section .hero-content h4 {
+        font-size: 1.1rem;
+    }
+    .hero-section .hero-desc.d-md-flex {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .hero-section .hero-desc .desc {
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+    }
+
+    /* Responsive Pagination */
+    .pagination {
+        flex-wrap: wrap !important;
+    }
+}
+
+/* Responsive Livewire Table Toolbar for Mobile & Tablet */
+@media (max-width: 991.98px) {
+    .livewire-table-toolbar {
+        flex-wrap: nowrap !important;
+    }
+    .livewire-search-field-container {
+        width: 100%;
+        min-width: 0;
+    }
+    .livewire-search-field-container .width-320 {
+        width: 100% !important;
+    }
+    .livewire-tools-container {
+        flex-shrink: 0;
+    }
+    .job-applications-table-responsive {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+.job-applications-table-responsive {
+    overflow: visible;
+
+    .dropdown-menu {
+        z-index: 1060;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .job-applications-table-responsive,
+    .job-stages-table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+.job-stages-table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+
+
+
+
+
+

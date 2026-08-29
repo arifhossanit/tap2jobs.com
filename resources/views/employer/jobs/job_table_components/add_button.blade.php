@@ -1,3 +1,3 @@
-<a type="button" class="btn btn-primary pt-3" href="{{ route('job.create') }}">
+<a type="button" class="btn btn-primary pt-3 text-nowrap" href="{{ route('job.create') }}">
     {{ __('messages.common.add') }}
 </a>

@@ -1,7 +1,7 @@
 @aware(['component', 'tableName'])
-<div class="mb-3 mb-sm-0">
-    <form class="d-flex position-relative">
-        <div class="position-relative d-flex width-320">
+<div class="mb-0 w-100">
+    <form class="d-flex position-relative w-100">
+        <div class="position-relative d-flex width-320 w-100">
           <span
                   class="position-absolute d-flex align-items-center top-0 bottom-0 left-0 text-gray-600 {{ auth()->user()->language == 'ar' ? 'me-3' : 'ms-3' }}">
             <i class="fa-solid fa-magnifying-glass"></i>

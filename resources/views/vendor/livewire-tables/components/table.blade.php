@@ -41,11 +41,13 @@
         </table>
     </div>
 @elseif ($component->isBootstrap())
-    <div class="{{ $component->searchIsEnabled() && $component->searchVisibilityIsEnabled() ? 'd-lg-flex justify-content-between' : 'd-lg-flex justify-content-end' }} align-items-center mb-sm-7 mb-4">
+    <div class="{{ $component->searchIsEnabled() && $component->searchVisibilityIsEnabled() ? 'd-flex justify-content-between' : 'd-flex justify-content-end' }} align-items-center mb-sm-7 mb-4 flex-nowrap gap-2 livewire-table-toolbar">
         @if ($component->searchIsEnabled() && $component->searchVisibilityIsEnabled())
-            <x-livewire-tables::tools.toolbar.items.search-field />
+            <div class="livewire-search-field-container flex-grow-1 flex-lg-grow-0 mb-0">
+                <x-livewire-tables::tools.toolbar.items.search-field />
+            </div>
         @endif
-        <div class="d-sm-flex d-block justify-content-end align-items-center pt-0 mt-0">
+        <div class="livewire-tools-container d-flex align-items-center justify-content-end flex-nowrap ms-auto pt-0 mt-0 gap-2">
             @if ($component->showFilterOnHeader == true)
                 @include($component->filterComponents[0], [
                     'filterHeads' => [

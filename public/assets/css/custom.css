@@ -568,14 +568,14 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 .employer-account-logo-row strong {
   color: #071638;
   display: block;
-  font-size: 16px;
+  font-size: 18px;
   margin-bottom: 12px;
 }
 
 .employer-account-logo-row div > span {
   color: #667085;
   display: block;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .employer-account-section-title {
@@ -1229,6 +1229,62 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
   min-height: 105px;
 }
 
+@media (max-width: 991.98px) {
+  #toast-container.toast-top-right,
+  #toast-container.toast-bottom-right,
+  #toast-container.toast-top-left,
+  #toast-container.toast-bottom-left {
+    left: 12px;
+    right: 12px;
+    width: auto;
+  }
+  #toast-container > div,
+  #toast-container .toast {
+    box-sizing: border-box;
+    margin-left: 0;
+    margin-right: 0;
+    max-width: calc(100vw - 24px);
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+  .employer-account-page > .row {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .employer-account-page > .row > .col-12 {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .employer-account-page .custom-message {
+    border-radius: 8px;
+    box-sizing: border-box;
+    margin: 0 18px;
+    max-width: calc(100% - 50px);
+    overflow: visible;
+    padding: 12px 14px;
+    width: calc(100% - 50px);
+  }
+  .employer-account-page .custom-message > .d-flex {
+    align-items: flex-start !important;
+    gap: 10px;
+    min-width: 0;
+  }
+  .employer-account-page .custom-message > .d-flex > i,
+  .employer-account-page .custom-message > .d-flex > .svg-inline--fa {
+    flex: 0 0 18px;
+    height: 18px;
+    margin: 2px 0 0 !important;
+    max-width: 18px;
+    width: 18px;
+  }
+  .employer-account-page .custom-message span {
+    display: block;
+    font-size: 13px;
+    line-height: 1.35;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+}
 #companyDetailsPanel .ql-toolbar {
   display: none;
 }
@@ -6147,3 +6203,52 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
     flex-wrap: wrap !important;
   }
 }
+
+/* Responsive Livewire Table Toolbar for Mobile & Tablet */
+@media (max-width: 991.98px) {
+  .livewire-table-toolbar {
+    flex-wrap: nowrap !important;
+  }
+  .livewire-search-field-container {
+    width: 100%;
+    min-width: 0;
+  }
+  .livewire-search-field-container .width-320 {
+    width: 100% !important;
+  }
+  .livewire-tools-container {
+    flex-shrink: 0;
+  }
+  .job-applications-table-responsive {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+.job-applications-table-responsive {
+  overflow: visible;
+}
+.job-applications-table-responsive .dropdown-menu {
+  z-index: 1060;
+}
+@media (max-width: 767.98px) {
+  .job-applications-table-responsive,
+  .job-stages-table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+.job-stages-table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+
+
+
+
+
+
+
+

@@ -28,14 +28,25 @@ class JobApplicationTable extends LivewireTableComponent
                 'class' => 'table table-striped',
             ]);
 
+        $this->setTableWrapperAttributes([
+            'default' => false,
+            'class' => 'table-responsive job-applications-table-responsive',
+        ]);
+
+        $this->setThAttributes(function (Column $column) {
+            return [
+                'class' => 'text-center text-nowrap',
+            ];
+        });
+
         $this->setTdAttributes(function (Column $column, $row, $columnIndex, $rowIndex) {
-            if (in_array($column->getField(), ['0', '1', '2', '3', '4', '5'])) {
+            if (in_array($column->getField(), ['0', '1', '2', '3', '4', '5', '6'])) {
                 return [
-                    'class' => 'text-center',
+                    'class' => 'text-center align-middle text-nowrap',
                 ];
             }
 
-            return [];
+            return ['class' => 'align-middle text-nowrap'];
         });
 
         $this->setQueryStringStatus(false);

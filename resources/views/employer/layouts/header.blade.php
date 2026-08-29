@@ -71,10 +71,10 @@
                         <div class="{{ checkLanguageSession() == 'ar' ? 'text-end' : 'text-start' }} border-bottom py-4 px-7">
                             <h3 class="text-gray-900 mb-0">{{__('messages.notification.notifications')}}</h3>
                         </div>
-                        <div class="px-7 py-5 employer-notification-list" style="max-height: 390px; overflow-y: auto; overflow-x: hidden;">
+                        <div class="employer-notification-list" style="max-height: 390px; overflow-y: auto; overflow-x: hidden;">
                             @if($notifications->isNotEmpty())
                                 @foreach($notifications as $notification)
-                                    <div class="employer-notification-item {{ $notification->read_at ? 'employer-notification-read' : 'employer-notification-unread' }} d-flex position-relative mb-3 p-3 rounded employerReadNotification cursor-pointer"
+                                    <div class="employer-notification-item {{ $notification->read_at ? 'employer-notification-read' : 'employer-notification-unread' }} d-flex position-relative border-bottom p-3 rounded employerReadNotification cursor-pointer"
                                          data-id="{{ $notification->id }}" data-url="{{ getNotificationUrl($notification) }}" data-read="{{ $notification->read_at ? '1' : '0' }}"
                                          style="background: {{ $notification->read_at ? 'transparent' : 'rgba(101, 113, 255, 0.08)' }}; opacity: {{ $notification->read_at ? '0.7' : '1' }};">
                                         <span class="{{ checkLanguageSession() == 'ar' ? 'ms-5' : 'me-5' }} text-primary fs-2 icon-label">

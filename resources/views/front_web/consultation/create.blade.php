@@ -59,7 +59,7 @@
                         </div>
                         <div class="col-lg-8">
                             <form method="POST" action="{{ route('consultation.store') }}" id="consultationLeadForm"
-                                  class="py-40 px-lg-4 px-30">
+                                  class="p-4 p-md-5">
                                 @csrf
                                 @if (session('success'))
                                     <div class="alert alert-success">{{ session('success') }}</div>
@@ -183,8 +183,8 @@
                                                       placeholder="Write your requirement">{{ old('message') }}</textarea>
                                         </div>
                                     </div>
-                                    <div class="col-12">
-                                        <button type="submit" class="btn btn-primary px-5">Submit Request</button>
+                                    <div class="col-12 text-center text-md-start">
+                                        <button type="submit" class="btn btn-primary px-5 w-100 w-md-auto">Submit Request</button>
                                     </div>
                                 </div>
                             </form>

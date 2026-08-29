@@ -19445,7 +19445,6 @@ html ::-webkit-scrollbar-resizer:vertical {
 
 .dropdown-menu {
     box-shadow: 0 5px 20px rgba(173, 181, 189, .2);
-    min-width: 270px;
     transform: translateY(80px);
     transition: all .4s ease-in-out
 }
