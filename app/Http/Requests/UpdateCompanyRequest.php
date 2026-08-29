@@ -105,6 +105,7 @@ class UpdateCompanyRequest extends FormRequest
         if ($this->routeIs('company.update.form')) {
             unset($rules['ownership_type_id'], $rules['company_size_id'], $rules['no_of_offices']);
 
+            $rules['contact_person_name'] = 'required|string|max:180';
             $rules['billing_address'] = 'required|string|max:255';
             $rules['employee_range'] = 'required|exists:company_sizes,size';
             $industryExistsRule = Rule::exists('industries', 'id');

@@ -252,9 +252,9 @@
         }
 
         const employerAccountSectionHashes = {
-            companyDetailsPanel: 'company-details',
-            contactDetailsPanel: 'contact-details',
-            billingAddressPanel: 'billing-address'
+            companyDetailsPanel: '#company-details',
+            contactDetailsPanel: '#contact-details',
+            billingAddressPanel: '#billing-address'
         };
 
         function syncEmployerAccountScrollOffset() {
@@ -279,7 +279,7 @@
                 return;
             }
 
-            const nextUrl = window.location.pathname + window.location.search + '#' + hash;
+            const nextUrl = window.location.pathname + window.location.search + hash;
             window.history.replaceState(null, '', nextUrl);
         }
 

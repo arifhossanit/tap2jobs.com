@@ -42,6 +42,12 @@
                                         class="dropdown-item rounded d-flex align-items-center gap-3 px-3 py-2 employer-header-language-option {{ checkLanguageSession() === $languageCode ? 'active' : '' }}"
                                         data-language="{{ $languageCode }}"
                                         {{ checkLanguageSession() === $languageCode ? 'aria-current=true' : '' }}>
+                                    @if (isset(\App\Models\User::LANGUAGES_IMAGE[$languageCode]))
+                                        <img src="{{ asset(\App\Models\User::LANGUAGES_IMAGE[$languageCode]) }}"
+                                             width="20" height="14" alt="" class="flex-shrink-0">
+                                    @else
+                                        <i class="fa-solid fa-flag text-primary" style="width: 20px"></i>
+                                    @endif
                                     <span>{{ $languageName }}</span>
                                 </button>
                             </li>

@@ -243,6 +243,9 @@ class CompanyController extends AppBaseController
     public function updateCompany(Company $company, UpdateCompanyRequest $request): JsonResponse|RedirectResponse
     {
         $input = $request->validated();
+        if ($request->hasFile('image')) {
+            $input['image'] = $request->file('image');
+        }
 
         $company = $this->companyRepository->update($input, $company);
         $message = __('messages.flash.employer_update');

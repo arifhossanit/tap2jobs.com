@@ -411,6 +411,14 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
     padding-left: 7px;
 }
 
+.employer-account-nav .employer-account-nav-action.active {
+  background: #eef6ff;
+  border-left: 4px solid #1681bd;
+  color: #0879b9;
+  min-height: 42px;
+  padding-left: 7px;
+}
+
 .employer-account-nav-action > i,
 .employer-account-user-icon {
     flex: 0 0 19px;
@@ -550,6 +558,94 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 .employer-account-password-submit:focus {
     background: #076e9f;
     color: #fff;
+}
+
+.employer-account-password-panel {
+  min-height: 520px;
+}
+
+.employer-account-password-head {
+  margin-bottom: 28px;
+}
+
+.employer-account-password-form {
+  max-width: 920px;
+  width: 50%;
+}
+
+.employer-account-password-field {
+  margin-bottom: 42px;
+}
+
+.employer-account-password-field label {
+  color: #35435a;
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.employer-account-password-input {
+  position: relative;
+}
+
+.employer-account-password-input .form-control {
+  border: 1px solid #cad5e1;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(15, 32, 54, 0.12);
+  color: #27364d;
+  font-size: 14px;
+  height: 38px;
+  padding: 8px 44px 8px 16px;
+}
+
+.employer-account-password-input .form-control::placeholder {
+  color: #97a3b5;
+}
+
+.employer-account-password-input .form-control:focus {
+  border-color: #1681bd;
+  box-shadow: 0 0 0 2px rgba(22, 129, 189, 0.12);
+}
+
+.employer-account-password-visibility {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: #77869b;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  position: absolute;
+  right: 8px;
+  top: 0;
+  width: 34px;
+  z-index: 2;
+}
+
+@media (max-width: 767px) {
+  .employer-account-password-form {
+    width: 100%;
+  }
+}
+
+.employer-account-password-submit {
+  background: #087fb8;
+  border: 0;
+  border-radius: 7px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  min-height: 44px;
+  padding: 10px 16px;
+}
+
+.employer-account-password-submit:hover,
+.employer-account-password-submit:focus {
+  background: #076e9f;
+  color: #fff;
 }
 
 .employer-account-logo-row {

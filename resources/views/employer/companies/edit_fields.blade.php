@@ -188,6 +188,7 @@
                     {{ __('messages.employer_account.contact_person_mobile') }} <span class="text-danger">*</span>
                 </label>
                 {{ Form::tel('phone', null, ['class' => 'form-control employer-contact-readonly', 'required', 'readonly', 'id' => 'phoneNumber', 'maxlength' => 11, 'inputmode' => 'numeric', 'pattern' => '[0-9]{1,11}', 'oninput' => "this.value = this.value.replace(/\\D/g, '').slice(0, 11)"]) }}
+                {{ Form::tel('phone', null, ['class' => 'form-control employer-contact-readonly', 'required', 'readonly', 'id' => 'phoneNumber', 'maxlength' => 11, 'inputmode' => 'numeric', 'pattern' => '[0-9]{1,11}', 'oninput' => "this.value = this.value.replace(/\\D/g, '').slice(0, 11)"]) }}
                 {{ Form::hidden('region_code', null, ['id' => 'prefix_code']) }}
                 <span id="valid-msg" class="d-none text-success d-block fw-400 fs-small mt-2">{{ __('messages.phone.valid_number') }}</span>
                 <span id="error-msg" class="d-none text-danger d-block fw-400 fs-small mt-2"></span>

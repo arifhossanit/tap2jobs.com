@@ -98,6 +98,8 @@ class CompanyRepository extends BaseRepository
             if (Auth::check() && ! Auth::user()->hasRole('Employer')) {
                 $input['last_change'] = Auth::id();
             }
+            $input['company_name'] = $input['name'];
+            $input['contact_person_designation'] = $input['ceo'] ?? null;
             $company = $this->create(Arr::only($input, (new Company())->getFillable()));
 
             // Create User
@@ -170,6 +172,9 @@ class CompanyRepository extends BaseRepository
             if (Auth::check() && ! Auth::user()->hasRole('Employer')) {
                 $input['last_change'] = Auth::id();
             }
+
+            $input['company_name'] = $input['name'];
+            $input['contact_person_designation'] = $input['ceo'] ?? null;
 
             $company->update($input);
 
