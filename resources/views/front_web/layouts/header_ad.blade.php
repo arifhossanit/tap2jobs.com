@@ -22,18 +22,17 @@
                 </button>
                 <div class="site-top-banner__inner container mx-auto">
                     @if ($headerAd->ad_media_type === 'video')
-                        <video class="site-top-banner__image" autoplay muted loop playsinline preload="metadata">
-                            <source src="{{ $headerAd->ad_media_url }}" type="{{ optional($headerAd->getFirstMedia(\App\Models\Ad::PATH))->mime_type }}">
-                        </video>
-                    @elseif (!empty($headerAd->link_url))
-                        <a href="{{ $headerAd->link_url }}" target="_blank" rel="noopener noreferrer"
+                        <a href="{{ $headerAd->click_url }}" class="site-top-banner__image-link">
+                            <video class="site-top-banner__image" autoplay muted loop playsinline preload="metadata">
+                                <source src="{{ $headerAd->ad_media_url }}" type="{{ optional($headerAd->getFirstMedia(\App\Models\Ad::PATH))->mime_type }}">
+                            </video>
+                        </a>
+                    @else
+                        <a href="{{ $headerAd->click_url }}"
                            class="site-top-banner__image-link">
                             <img src="{{ $headerAd->ad_media_url }}" alt="{{ $headerAd->title ?? 'Header Ad' }}"
                                  class="site-top-banner__image">
                         </a>
-                    @else
-                        <img src="{{ $headerAd->ad_media_url }}" alt="{{ $headerAd->title ?? 'Header Ad' }}"
-                             class="site-top-banner__image">
                     @endif
                 </div>
             @else

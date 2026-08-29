@@ -88,7 +88,10 @@ class JobController extends AppBaseController
         // check job status is active or not
         $data['isActive'] = ($job->status == Job::STATUS_OPEN) ? true : false;
 
-        $relatedJobs = Job::with('jobCategory', 'jobShift', 'jobsSkill', 'company')->whereJobCategoryId($job->job_category_id)
+        $relatedJobs = Job::with('jobCategory', 'jobShift', 'jobsSkill', 'company')
+            ->whereStatus(Job::STATUS_OPEN)
+            ->whereIsSuspended(Job::NOT_SUSPENDED)
+            ->whereJobCategoryId($job->job_category_id)
             ->whereDate('job_expiry_date', '>=', Carbon::now()->toDateString());
         $data['getRelatedJobs'] = $relatedJobs->whereNotIn('id', [$job->id])->orderByDesc('created_at')->take(6)->get();
         $url = [

@@ -127,7 +127,7 @@
             <div class="form-check form-switch">
                 {{ Form::label('job_approved', __('messages.pending_jobs.job_approved'), ['class' => 'form-label']) }}
                 <input class="form-check-input" name="job_approved" type="checkbox"
-                    {{ isset($setting['job_approved']) ? 'checked' : '' }} value="1">
+                    {{ !empty($setting['job_approved']) ? 'checked' : '' }} value="1">
             </div>
         </div>
     </div>

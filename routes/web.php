@@ -36,6 +36,7 @@ use App\Http\Controllers\CareerLevelController;
 use App\Http\Controllers\CmsServicesController;
 use App\Http\Controllers\CompanyCategoryController;
 use App\Http\Controllers\CompanySizeController;
+use App\Http\Controllers\ConsultationLeadController;
 use App\Http\Controllers\ImageSliderController;
 use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\NoticeboardController;
@@ -117,6 +118,8 @@ Route::any('subscription-update', [SubscriptionController::class, 'updateSubscri
 
 Route::middleware('setLanguage')->group(function () {
     Route::post('news-letter', [Web\WebController::class, 'newsLetter'])->name('news-letter.create');
+    Route::get('consultation', [ConsultationLeadController::class, 'create'])->name('consultation.create');
+    Route::post('consultation', [ConsultationLeadController::class, 'store'])->name('consultation.store');
 });
 
 Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')->group(function () {
@@ -319,6 +322,8 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
                   'job-workplaces' => [\App\Models\ProfileReferenceOption::TYPE_JOB_WORKPLACE, 'jobWorkplaces'],
                   'job-experience-units' => [\App\Models\ProfileReferenceOption::TYPE_JOB_EXPERIENCE_UNIT, 'jobExperienceUnits'],
                   'employer-disability-facilities' => [\App\Models\ProfileReferenceOption::TYPE_EMPLOYER_DISABILITY_FACILITY, 'employerDisabilityFacilities'],
+                  'consultation-types' => [\App\Models\ProfileReferenceOption::TYPE_CONSULTATION_TYPE, 'consultationTypes'],
+                  'consultation-contact-methods' => [\App\Models\ProfileReferenceOption::TYPE_CONSULTATION_CONTACT_METHOD, 'consultationContactMethods'],
          ] as $employerReferencePath => [$employerReferenceType, $employerReferenceRoute]) {
              Route::get($employerReferencePath, [ProfileReferenceOptionController::class, 'dedicatedIndex'])
                       ->name($employerReferenceRoute.'.index');
@@ -573,6 +578,12 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          Route::post('ads/{ad}/update', [AdController::class, 'update'])->name('ads.update');
          Route::delete('ads/{ad}', [AdController::class, 'destroy'])->name('ads.destroy');
          Route::post('ads/{ad}/change-is-active', [AdController::class, 'changeIsActive'])->name('ads.change-is-active');
+
+         // Consultation Leads Routes
+         Route::get('consultation-leads', [ConsultationLeadController::class, 'index'])->name('consultation-leads.index');
+         Route::get('consultation-leads/{consultationLead}', [ConsultationLeadController::class, 'show'])->name('consultation-leads.show');
+         Route::put('consultation-leads/{consultationLead}', [ConsultationLeadController::class, 'update'])->name('consultation-leads.update');
+         Route::delete('consultation-leads/{consultationLead}', [ConsultationLeadController::class, 'destroy'])->name('consultation-leads.destroy');
 
          // Noticeboard Routes
          Route::get('noticeboards', [NoticeboardController::class, 'index'])->name('noticeboards.index');

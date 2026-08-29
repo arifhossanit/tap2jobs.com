@@ -8,9 +8,14 @@ use Illuminate\Database\Schema\Blueprint;
 
 return new class extends Migration
 {
+    private array $excludedTypes = [
+        ProfileReferenceOption::TYPE_CONSULTATION_TYPE,
+        ProfileReferenceOption::TYPE_CONSULTATION_CONTACT_METHOD,
+    ];
+
     public function up(): void
     {
-        foreach (ProfileReferenceOption::tableMap() as $table) {
+        foreach (array_diff_key(ProfileReferenceOption::tableMap(), array_flip($this->excludedTypes)) as $table) {
             if (Schema::hasTable($table)) {
                 continue;
             }
@@ -31,7 +36,7 @@ return new class extends Migration
 
         $migrated = false;
         if (Schema::hasTable('profile_reference_options')) {
-            foreach (ProfileReferenceOption::tableMap() as $type => $table) {
+            foreach (array_diff_key(ProfileReferenceOption::tableMap(), array_flip($this->excludedTypes)) as $type => $table) {
                 $rows = DB::table('profile_reference_options')->where('type', $type)->get();
                 foreach ($rows as $row) {
                     DB::table($table)->updateOrInsert(
@@ -52,7 +57,7 @@ return new class extends Migration
         }
 
         if (! $migrated) {
-            foreach (ProfileReferenceOption::defaults() as $type => $scopeOptions) {
+            foreach (array_diff_key(ProfileReferenceOption::defaults(), array_flip($this->excludedTypes)) as $type => $scopeOptions) {
                 $table = ProfileReferenceOption::tableFor($type);
                 foreach ($scopeOptions as $scope => $options) {
                     $sortOrder = 1;
@@ -79,7 +84,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        foreach (ProfileReferenceOption::tableMap() as $table) {
+        foreach (array_diff_key(ProfileReferenceOption::tableMap(), array_flip($this->excludedTypes)) as $table) {
             Schema::dropIfExists($table);
         }
     }

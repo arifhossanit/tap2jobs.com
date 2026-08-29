@@ -236,9 +236,9 @@ class JobRepository extends BaseRepository
                 $job->status = Job::STATUS_OPEN;
             }
             if (auth()->user()->hasRole('Employer')) {
-                $is_approved = Setting::where('key','job_approved')->first();
+                $jobApprovalRequired = (int) (Setting::where('key', 'job_approved')->value('value') ?? 1) === 1;
                 if ($old_status == Job::STATUS_DRAFT || $job->status == Job::SELECT_PANDING) {
-                    $job->status = ($is_approved && $is_approved->value == 1 ? Job::SELECT_PANDING : Job::STATUS_OPEN);
+                    $job->status = $jobApprovalRequired ? Job::SELECT_PANDING : Job::STATUS_OPEN;
                 }else{
                     $job->status = Job::STATUS_OPEN;
                 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Image\Manipulations;
 use Spatie\MediaLibrary\HasMedia;
@@ -215,6 +216,20 @@ class Ad extends Model implements HasMedia
         $media = $this->getFirstAvailableAdMedia();
 
         return ! empty($media) && $this->isVideoMedia($media);
+    }
+
+    public function consultationLeads(): HasMany
+    {
+        return $this->hasMany(ConsultationLead::class);
+    }
+
+    public function getClickUrlAttribute(): string
+    {
+        return route('consultation.create', [
+            'ad_id' => $this->id,
+            'utm_source' => 'ad',
+            'utm_medium' => $this->position,
+        ]);
     }
 
     public function registerMediaConversions(Media $media = null): void

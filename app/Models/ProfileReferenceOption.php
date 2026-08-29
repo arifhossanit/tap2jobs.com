@@ -31,6 +31,8 @@ class ProfileReferenceOption extends Model
     public const TYPE_JOB_WORKPLACE = 'job_workplace';
     public const TYPE_JOB_EXPERIENCE_UNIT = 'job_experience_unit';
     public const TYPE_EMPLOYER_DISABILITY_FACILITY = 'employer_disability_facility';
+    public const TYPE_CONSULTATION_TYPE = 'consultation_type';
+    public const TYPE_CONSULTATION_CONTACT_METHOD = 'consultation_contact_method';
 
     public $fillable = [
         'scope',
@@ -66,6 +68,8 @@ class ProfileReferenceOption extends Model
             self::TYPE_JOB_WORKPLACE => 'Workplace',
             self::TYPE_JOB_EXPERIENCE_UNIT => 'Experience Unit',
             self::TYPE_EMPLOYER_DISABILITY_FACILITY => 'Disability Facilities',
+            self::TYPE_CONSULTATION_TYPE => 'Consultation Types',
+            self::TYPE_CONSULTATION_CONTACT_METHOD => 'Contact Methods',
         ];
     }
 
@@ -99,6 +103,8 @@ class ProfileReferenceOption extends Model
             self::TYPE_JOB_WORKPLACE => 'reference_job_workplaces',
             self::TYPE_JOB_EXPERIENCE_UNIT => 'reference_job_experience_units',
             self::TYPE_EMPLOYER_DISABILITY_FACILITY => 'reference_employer_disability_facilities',
+            self::TYPE_CONSULTATION_TYPE => 'reference_consultation_types',
+            self::TYPE_CONSULTATION_CONTACT_METHOD => 'reference_consultation_contact_methods',
         ];
     }
 
@@ -134,6 +140,8 @@ class ProfileReferenceOption extends Model
                 self::TYPE_JOB_WORKPLACE,
                 self::TYPE_JOB_EXPERIENCE_UNIT,
                 self::TYPE_EMPLOYER_DISABILITY_FACILITY,
+                self::TYPE_CONSULTATION_TYPE,
+                self::TYPE_CONSULTATION_CONTACT_METHOD,
             ],
         ];
     }
@@ -177,6 +185,8 @@ class ProfileReferenceOption extends Model
             self::TYPE_JOB_WORKPLACE => 'jobWorkplaces',
             self::TYPE_JOB_EXPERIENCE_UNIT => 'jobExperienceUnits',
             self::TYPE_EMPLOYER_DISABILITY_FACILITY => 'employerDisabilityFacilities',
+            self::TYPE_CONSULTATION_TYPE => 'consultationTypes',
+            self::TYPE_CONSULTATION_CONTACT_METHOD => 'consultationContactMethods',
         ];
     }
 
@@ -293,6 +303,22 @@ class ProfileReferenceOption extends Model
                     'reasonable_accommodation' => 'Reasonable accommodation',
                     'warning_indicators' => 'Warning indicators',
                     'workstation_adaptations' => 'Workstation adaptations',
+                ],
+            ],
+            self::TYPE_CONSULTATION_TYPE => [
+                self::SCOPE_EMPLOYER => [
+                    'job_posting' => 'Job Posting',
+                    'employer_branding' => 'Employer Branding',
+                    'recruitment_support' => 'Recruitment Support',
+                    'advertising' => 'Advertising',
+                    'other' => 'Other',
+                ],
+            ],
+            self::TYPE_CONSULTATION_CONTACT_METHOD => [
+                self::SCOPE_EMPLOYER => [
+                    'phone' => 'Phone',
+                    'email' => 'Email',
+                    'whatsapp' => 'WhatsApp',
                 ],
             ],
         ];

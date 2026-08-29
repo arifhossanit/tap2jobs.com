@@ -11,7 +11,9 @@
         !empty($job->state_id) ? $job->state_name : null,
         !empty($job->country_id) ? $job->country_name : null,
     ])->filter()->implode(', ');
-    $salaryRange = numberFormatShort($job->salary_from).' - '.numberFormatShort($job->salary_to);
+    $salaryRange = $job->hide_salary
+        ? 'Negotiable'
+        : numberFormatShort($job->salary_from).' - '.numberFormatShort($job->salary_to);
     $skills = $job->jobsSkill->pluck('name');
     $tags = $job->jobsTag->pluck('name');
     $displayValue = fn ($value) => filled($value) ? html_entity_decode((string) $value) : __('messages.n/a');

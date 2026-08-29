@@ -127,6 +127,18 @@
     <a class="nav-link p-0 {{ Request::is('admin/profile-references/employer*', 'admin/company-categories*', 'admin/employer-reference-relations*', 'admin/job-gender-preferences*', 'admin/job-employment-statuses*', 'admin/job-workplaces*', 'admin/job-experience-units*', 'admin/employer-disability-facilities*') ? 'active' : '' }}"
        href="{{ route('employerReferenceRelations.index') }}">Employer</a>
 </li>
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/consultation-leads*', 'admin/consultation-types*', 'admin/consultation-contact-methods*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('admin/consultation-leads*') ? 'active' : '' }}"
+       href="{{ route('consultation-leads.index') }}">Consultation Leads</a>
+</li>
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/consultation-leads*', 'admin/consultation-types*', 'admin/consultation-contact-methods*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('admin/consultation-types*') ? 'active' : '' }}"
+       href="{{ route('consultationTypes.index') }}">Consultation Types</a>
+</li>
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/consultation-leads*', 'admin/consultation-types*', 'admin/consultation-contact-methods*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('admin/consultation-contact-methods*') ? 'active' : '' }}"
+       href="{{ route('consultationContactMethods.index') }}">Contact Methods</a>
+</li>
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/marital-status*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/marital-status*') ? 'active' : '' }}"
        href="{{ route('maritalStatus.index') }}">{{ __('messages.marital_statuses') }}</a>
@@ -221,7 +233,6 @@
     <a class="nav-link p-0 {{ Request::is('admin/ads*') ? 'active' : '' }}"
        href="{{ route('ads.index') }}">{{ __('messages.ads') }}</a>
 </li>
-
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/cms-services*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/cms-services*') ? 'active' : '' }}"
        href="{{ route('cms.services.index') }}">{{ __('messages.cms_services') }}</a>

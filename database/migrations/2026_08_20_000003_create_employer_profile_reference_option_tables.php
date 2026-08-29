@@ -10,7 +10,12 @@ return new class extends Migration
 {
     public function up(): void
     {
-        foreach (ProfileReferenceOption::tableMap() as $type => $table) {
+        $types = array_diff_key(ProfileReferenceOption::tableMap(), array_flip([
+            ProfileReferenceOption::TYPE_CONSULTATION_TYPE,
+            ProfileReferenceOption::TYPE_CONSULTATION_CONTACT_METHOD,
+        ]));
+
+        foreach ($types as $type => $table) {
             if (! Schema::hasTable($table)) {
                 Schema::create($table, function (Blueprint $table) {
                     $table->id();

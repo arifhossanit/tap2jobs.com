@@ -593,7 +593,7 @@
                                     @lang('messages.front_job_details.related_jobs')
                                 </h5>
                                 @foreach ($getRelatedJobs as $relatedJob)
-                                    @if ($relatedJob->status != \App\Models\Job::STATUS_DRAFT)
+                                    @if ($relatedJob->status == \App\Models\Job::STATUS_OPEN && $relatedJob->is_suspended == \App\Models\Job::NOT_SUSPENDED)
                                         <div class="col-lg-4 col-md-6 px-xl-3 mb-40">
                                             <div class="card py-30">
                                                 @if (Str::length($relatedJob['job_title']) < 35)

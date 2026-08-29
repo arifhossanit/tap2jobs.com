@@ -92,12 +92,10 @@ class JobController extends AppBaseController
     {
         $input = $request->validated();
         $saveAsDraft = $request->boolean('saveAsDraft');
-        $is_approved = Setting::where('key','job_approved')->first();
-        if ($is_approved !== null) {
-            $input['status'] = $saveAsDraft ? Job::STATUS_DRAFT : ($is_approved->value == 1 ? Job::SELECT_PANDING : Job::STATUS_OPEN);
-        } else {
-            $input['status'] = $saveAsDraft ? Job::STATUS_DRAFT : Job::STATUS_OPEN;
-        }
+        $jobApprovalRequired = (int) (Setting::where('key', 'job_approved')->value('value') ?? 1) === 1;
+        $input['status'] = $saveAsDraft
+            ? Job::STATUS_DRAFT
+            : ($jobApprovalRequired ? Job::SELECT_PANDING : Job::STATUS_OPEN);
 
         if ($input['status'] == Job::STATUS_OPEN) {
             if (! $this->checkJobLimit()) {
