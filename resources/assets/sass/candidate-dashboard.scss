@@ -871,4 +871,67 @@ body.dark-mode .candidate-dashboard-skeleton .candidate-overview-list div {
         white-space: nowrap;
         width: auto;
     }
+
+    /* Candidate Dashboard Skeleton Loader Mobile Styles */
+    .candidate-dashboard-skeleton__avatar {
+        height: 72px;
+        width: 72px;
+        flex: 0 0 72px;
+        margin: 0;
+    }
+
+    .candidate-dashboard-skeleton__identity {
+        min-width: 0;
+        flex: 1 1 auto;
+        gap: 8px;
+    }
+
+    .candidate-dashboard-skeleton__line--title {
+        height: 20px;
+        max-width: 140px;
+    }
+
+    .candidate-dashboard-skeleton__line--wide {
+        max-width: 100%;
+    }
+
+    .candidate-dashboard-skeleton__line--medium {
+        max-width: 120px;
+    }
+
+    .candidate-dashboard-skeleton__actions {
+        width: 100%;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .candidate-dashboard-skeleton__button {
+        width: 100%;
+        height: 36px;
+    }
+
+    .candidate-dashboard-skeleton__ring {
+        height: 60px;
+        width: 60px;
+        flex: 0 0 60px;
+    }
+
+    .candidate-dashboard-skeleton__stat-icon {
+        height: 38px;
+        width: 38px;
+        flex: 0 0 38px;
+        border-radius: 6px;
+    }
+
+    .candidate-dashboard-skeleton__line--number {
+        height: 18px;
+        width: 36px;
+    }
+
+    .candidate-dashboard-skeleton__logo {
+        height: 44px;
+        width: 44px;
+        flex: 0 0 44px;
+        border-radius: 6px;
+    }
 }

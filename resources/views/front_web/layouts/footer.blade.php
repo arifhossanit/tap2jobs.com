@@ -235,33 +235,40 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    function initSharedFooterAccordionInline() {
         var sharedFooter = document.querySelector('.front-shared-footer');
-        if (sharedFooter && sharedFooter.dataset.accordionReady !== 'true') {
-            sharedFooter.dataset.accordionReady = 'true';
+        if (!sharedFooter || sharedFooter.dataset.accordionReady === 'true') return;
+        sharedFooter.dataset.accordionReady = 'true';
 
-            var accordions = sharedFooter.querySelectorAll('.front-footer-accordion');
+        var accordions = sharedFooter.querySelectorAll('.front-footer-accordion');
 
-            accordions.forEach(function (accordion) {
-                var toggle = accordion.querySelector('.front-footer-accordion__toggle');
-                if (!toggle) return;
+        accordions.forEach(function (accordion) {
+            var toggle = accordion.querySelector('.front-footer-accordion__toggle');
+            if (!toggle) return;
 
-                toggle.addEventListener('click', function () {
-                    var willOpen = !accordion.classList.contains('is-open');
+            toggle.addEventListener('click', function (e) {
+                if (e) e.preventDefault();
+                var willOpen = !accordion.classList.contains('is-open');
 
-                    accordions.forEach(function (item) {
-                        var itemToggle = item.querySelector('.front-footer-accordion__toggle');
-                        item.classList.remove('is-open');
-                        if (itemToggle) {
-                            itemToggle.setAttribute('aria-expanded', 'false');
-                        }
-                    });
-
-                    accordion.classList.toggle('is-open', willOpen);
-                    toggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+                accordions.forEach(function (item) {
+                    var itemToggle = item.querySelector('.front-footer-accordion__toggle');
+                    item.classList.remove('is-open');
+                    if (itemToggle) {
+                        itemToggle.setAttribute('aria-expanded', 'false');
+                    }
                 });
+
+                accordion.classList.toggle('is-open', willOpen);
+                toggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
             });
-        }
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSharedFooterAccordionInline);
+    } else {
+        initSharedFooterAccordionInline();
+    }
 
         var footer = document.querySelector('.bd-mobile-fixed-footer');
         if (!footer) return;

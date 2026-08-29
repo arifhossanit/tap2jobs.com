@@ -77,7 +77,8 @@ $('#jobsSearchResults').on('click', 'li', function() {
 
 function initFrontFooterAccordion() {
     var footer = document.querySelector('.front-shared-footer');
-    if (!footer) return;
+    if (!footer || footer.dataset.accordionReady === 'true') return;
+    footer.dataset.accordionReady = 'true';
 
     var accordions = footer.querySelectorAll('.front-footer-accordion');
 
@@ -85,7 +86,8 @@ function initFrontFooterAccordion() {
         var toggle = accordion.querySelector('.front-footer-accordion__toggle');
         if (!toggle) return;
 
-        toggle.addEventListener('click', function() {
+        toggle.addEventListener('click', function(e) {
+            if (e) e.preventDefault();
             var willOpen = !accordion.classList.contains('is-open');
 
             accordions.forEach(function(item) {

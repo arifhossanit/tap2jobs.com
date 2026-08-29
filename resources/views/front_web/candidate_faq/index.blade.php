@@ -418,7 +418,7 @@
 
 @section('page_scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        function initCandidateFaqPage() {
             const searchInput = document.getElementById('candidateFaqSearch');
             const searchButton = document.getElementById('candidateFaqSearchBtn');
             const faqItems = document.querySelectorAll('.faq-search-item');
@@ -485,6 +485,7 @@
             });
 
             function filterFaqs() {
+                if (!searchInput) return;
                 const query = searchInput.value.trim().toLowerCase();
 
                 faqItems.forEach(function (item) {
@@ -498,17 +499,27 @@
                 });
             }
 
-            searchButton.addEventListener('click', filterFaqs);
-            searchInput.addEventListener('keyup', function (event) {
-                filterFaqs();
+            if (searchButton) {
+                searchButton.addEventListener('click', filterFaqs);
+            }
+            if (searchInput) {
+                searchInput.addEventListener('keyup', function (event) {
+                    filterFaqs();
 
-                if (event.key === 'Enter') {
-                    const firstVisibleSection = document.querySelector('.faq-section:not(.d-none)');
-                    if (firstVisibleSection) {
-                        firstVisibleSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    if (event.key === 'Enter') {
+                        const firstVisibleSection = document.querySelector('.faq-section:not(.d-none)');
+                        if (firstVisibleSection) {
+                            firstVisibleSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
                     }
-                }
-            });
-        });
+                });
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initCandidateFaqPage);
+        } else {
+            initCandidateFaqPage();
+        }
     </script>
 @endsection

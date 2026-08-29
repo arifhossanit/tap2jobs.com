@@ -70,22 +70,39 @@
                 </div>
             </div>
 
-            <aside class="candidate-dashboard-panel candidate-dashboard-side-panel">
-                <div class="candidate-dashboard-panel__header candidate-dashboard-panel__header--compact">
-                    <div>
-                        <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--heading shimmer-element"></span>
-                        <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--medium shimmer-element"></span>
-                    </div>
-                </div>
-                <div class="candidate-overview-list">
-                    @for($i = 0; $i < 4; $i++)
+            <div class="candidate-dashboard-side-stack">
+                <aside class="candidate-dashboard-panel candidate-dashboard-side-panel">
+                    <div class="candidate-dashboard-panel__header candidate-dashboard-panel__header--compact">
                         <div>
-                            <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--medium shimmer-element"></span>
-                            <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--xs shimmer-element"></span>
+                            <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--heading shimmer-element"></span>
                         </div>
-                    @endfor
-                </div>
-            </aside>
+                    </div>
+                    <div class="candidate-overview-list">
+                        @for($i = 0; $i < 4; $i++)
+                            <div>
+                                <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--medium shimmer-element"></span>
+                                <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--xs shimmer-element"></span>
+                            </div>
+                        @endfor
+                    </div>
+                </aside>
+
+                <aside class="candidate-dashboard-panel candidate-dashboard-side-panel">
+                    <div class="candidate-dashboard-panel__header candidate-dashboard-panel__header--compact">
+                        <div>
+                            <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--heading shimmer-element"></span>
+                        </div>
+                    </div>
+                    <div class="candidate-profile-breakdown__list" style="display: grid; gap: 12px;">
+                        @for($i = 0; $i < 5; $i++)
+                            <div style="display: grid; gap: 6px;">
+                                <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--small shimmer-element"></span>
+                                <span class="candidate-dashboard-skeleton__line candidate-dashboard-skeleton__line--wide shimmer-element" style="height: 8px;"></span>
+                            </div>
+                        @endfor
+                    </div>
+                </aside>
+            </div>
         </section>
     </div>
 </div>
