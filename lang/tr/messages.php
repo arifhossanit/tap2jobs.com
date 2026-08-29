@@ -1404,6 +1404,7 @@ return [
         'job_create_limit' => 'Hesabınızın iş yaratma limiti aşıldı, Abonelik planınızı güncelleyin.',
         'job_draft' => 'İş Taslağı başarıyla kaydedildi.',
         'job_save' => 'İş başarıyla kaydedildi.',
+        'job_save_pending_approval' => 'İş başarıyla gönderildi. Yönetici ekibimiz 24 saat içinde inceleyip onaylayacaktır.',
         'job_not_found' => 'İş Bulunamadı.',
         'close_job' => 'Kapatılan iş düzenlenemez.',
         'job_update' => 'İş başarıyla güncellendi.',

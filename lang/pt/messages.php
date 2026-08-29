@@ -1301,6 +1301,7 @@ return [
         'job_create_limit' => 'Limite de criação de vagas excedido de sua conta, atualize seu plano de assinatura.',
         'job_draft' => 'Rascunho de trabalho salvo com sucesso.',
         'job_save' => 'Trabalho salvo com sucesso.',
+        'job_save_pending_approval' => 'Vaga enviada com sucesso. Nossa equipe administrativa revisará e aprovará em até 24 horas.',
         'job_not_found' => 'Trabalho não encontrado.',
         'close_job' => 'O trabalho fechado não pode ser editado.',
         'job_update' => 'Trabalho atualizado com sucesso.',

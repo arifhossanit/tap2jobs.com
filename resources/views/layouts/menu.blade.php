@@ -48,9 +48,11 @@
     $referenceEmployerActive = Request::is('admin/profile-references/employer*', 'admin/employer-reference-relations*', 'admin/job-gender-preferences*', 'admin/job-employment-statuses*', 'admin/job-workplaces*', 'admin/job-experience-units*', 'admin/employer-disability-facilities*', 'admin/job-categories*', 'admin/job-types*', 'admin/job-tags*', 'admin/job-shifts*', 'admin/salary-periods*', 'admin/company-sizes*', 'admin/company-categories*');
     $referencesActive = $referenceGeneralActive || $referenceCandidateActive || $referenceEmployerActive;
     $consultationActive = Request::is('admin/consultation-leads*', 'admin/consultation-types*', 'admin/consultation-contact-methods*');
-    $cmsActive = Request::is('admin/noticeboards*', 'admin/faqs*', 'admin/inquires*', 'admin/notification-settings*', 'admin/privacy-policy*', 'admin/front-settings*', 'admin/email-template*', 'admin/settings*');
+    $cmsActive = Request::is('admin/noticeboards*', 'admin/faqs*', 'admin/inquires*', 'admin/privacy-policy*', 'admin/front-settings*');
     $cmsSlidersActive = Request::is('admin/testimonials*', 'admin/branding-sliders*', 'admin/header-sliders*', 'admin/image-sliders*', 'admin/ads*');
     $frontCmsActive = Request::is('admin/cms-services*', 'admin/cms-about-us*');
+    $systemSettingsActive = Request::is('admin/notification-settings*', 'admin/email-template*', 'admin/settings*')
+        && ! Request::is('admin/front-settings*');
 @endphp
 
 <!-- SECTION: MAIN -->
@@ -592,12 +594,6 @@
                 <span class="aside-menu-title">{{ __('messages.inquires') }}</span>
             </a>
         </li>
-        <li class="nav-item {{ Request::is('admin/notification-settings*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('notification.settings.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.setting.notification_settings') }}</span>
-            </a>
-        </li>
         <li class="nav-item {{ Request::is('admin/privacy-policy*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('privacy.policy.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
@@ -608,18 +604,6 @@
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('front.settings.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.setting.front_settings') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/email-template*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('email.template.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.email_templates') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/settings*') && !Request::is('admin/notification-settings*', 'admin/front-settings*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('settings.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.settings') }}</span>
             </a>
         </li>
     </ul>
@@ -684,6 +668,41 @@
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('cms.about-us.service') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.about_us_services') }}</span>
+            </a>
+        </li>
+    </ul>
+</li>
+
+<!-- SECTION: SYSTEM SETTINGS -->
+<li class="sidebar-section-header px-4 pt-4 pb-1 text-uppercase text-muted fw-bold fs-8 d-flex align-items-center" style="letter-spacing: 0.08em; font-size: 11px;">
+    <span>SYSTEM SETTINGS</span>
+    <span class="flex-grow-1 ms-3 border-bottom"></span>
+</li>
+
+<li class="nav-item aside-item-collapse {{ $systemSettingsActive ? 'active collapse-submenu' : '' }}">
+    <a class="nav-link d-flex align-items-center py-3" data-bs-toggle="collapse" href="#asideSystemSettingsMenu"
+       role="button" aria-expanded="{{ $systemSettingsActive ? 'true' : 'false' }}" aria-controls="asideSystemSettingsMenu">
+        <span class="aside-menu-icon {{ $iconPad }}"><i class="fas fa-cog"></i></span>
+        <span class="aside-menu-title">{{ __('messages.settings') }}</span>
+        <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
+    </a>
+    <ul class="aside-submenu nav flex-column collapse {{ $systemSettingsActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideSystemSettingsMenu">
+        <li class="nav-item {{ Request::is('admin/settings*') && !Request::is('admin/notification-settings*', 'admin/front-settings*') ? 'active' : '' }}">
+            <a class="nav-link d-flex align-items-center py-2" href="{{ route('settings.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
+                <span class="aside-menu-title">{{ __('messages.settings') }}</span>
+            </a>
+        </li>
+        <li class="nav-item {{ Request::is('admin/notification-settings*') ? 'active' : '' }}">
+            <a class="nav-link d-flex align-items-center py-2" href="{{ route('notification.settings.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
+                <span class="aside-menu-title">{{ __('messages.setting.notification_settings') }}</span>
+            </a>
+        </li>
+        <li class="nav-item {{ Request::is('admin/email-template*') ? 'active' : '' }}">
+            <a class="nav-link d-flex align-items-center py-2" href="{{ route('email.template.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
+                <span class="aside-menu-title">{{ __('messages.email_templates') }}</span>
             </a>
         </li>
     </ul>

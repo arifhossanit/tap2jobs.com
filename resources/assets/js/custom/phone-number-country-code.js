@@ -11,6 +11,15 @@ function loadPhoneNumberCountry() {
         validMsg = document.querySelector('#valid-msg');
     let normalizePhoneNumber = function () {
         input.value = input.value.replace(/\D/g, '').slice(0, 11);
+        return input.value;
+    };
+    let preserveLocalPhoneNumber = function (callback) {
+        let localPhoneNumber = normalizePhoneNumber();
+        callback();
+        if (localPhoneNumber !== '') {
+            input.value = localPhoneNumber;
+        }
+        normalizePhoneNumber();
     };
     let errorMap = [
         Lang.get('js.invalid_number'),
@@ -93,13 +102,17 @@ function loadPhoneNumberCountry() {
             $('.iti__selected-flag>.iti__flag').addClass(flagClassLocal)
             $('.iti__selected-dial-code').text(dialCodeValLocal)
             let phoneEleVal = $('#phoneNumber').val()
-            intl.setNumber(dialCodeValLocal + phoneEleVal)
+            preserveLocalPhoneNumber(function () {
+                intl.setNumber(dialCodeValLocal + phoneEleVal)
+            })
         }
     }
 
     $('#phoneNumber').on('blur keyup change countrychange', function () {
         if (typeof phoneNo != 'undefined' && phoneNo !== '') {
-            intl.setNumber('+' + phoneNo);
+            preserveLocalPhoneNumber(function () {
+                intl.setNumber('+' + phoneNo);
+            });
             phoneNo = '';
         }
         normalizePhoneNumber();

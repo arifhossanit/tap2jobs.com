@@ -15,6 +15,12 @@
         #consultationLeadForm textarea.form-control {
             min-height: 120px;
         }
+
+        .contact-img img {
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
     </style>
 @endsection
 
@@ -45,15 +51,15 @@
         <section class="contact-us-section py-60">
             <div class="container">
                 <div class="contact-us bg-light br-10">
-                    <div class="row">
-                        <div class="col-lg-3 d-lg-block d-none text-end">
-                            <div class="contact-img mt-5">
-                                <img src="{{ asset('img_template/contact-page.png') }}">
+                    <div class="row align-items-center">
+                        <div class="col-lg-4 d-lg-flex d-none align-items-center justify-content-center p-4">
+                            <div class="contact-img text-center">
+                                <img src="{{ asset('img_template/consult-1.png') }}" class="img-fluid" alt="Consultation">
                             </div>
                         </div>
-                        <div class="col-lg-9">
+                        <div class="col-lg-8">
                             <form method="POST" action="{{ route('consultation.store') }}" id="consultationLeadForm"
-                                  class="py-40 px-lg-5 px-40">
+                                  class="py-40 px-lg-4 px-30">
                                 @csrf
                                 @if (session('success'))
                                     <div class="alert alert-success">{{ session('success') }}</div>
@@ -177,7 +183,7 @@
                                                       placeholder="Write your requirement">{{ old('message') }}</textarea>
                                         </div>
                                     </div>
-                                    <div class="col-12 text-center">
+                                    <div class="col-12">
                                         <button type="submit" class="btn btn-primary px-5">Submit Request</button>
                                     </div>
                                 </div>

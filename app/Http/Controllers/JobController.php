@@ -104,7 +104,9 @@ class JobController extends AppBaseController
         }
         $job = $this->jobRepository->store($input);
 
-        $saveAsDraft ? Flash::success(__('messages.flash.job_draft')) : Flash::success(__('messages.flash.job_save'));
+        $saveAsDraft
+            ? Flash::success(__('messages.flash.job_draft'))
+            : Flash::success(__($jobApprovalRequired ? 'messages.flash.job_save_pending_approval' : 'messages.flash.job_save'));
 
         return redirect(route('job.index'));
     }

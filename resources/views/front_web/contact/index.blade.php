@@ -43,7 +43,7 @@
                     <div class="row">
                         <div class="col-lg-3 d-lg-block d-none text-end">
                             <div class="contact-img mt-5">
-                                <img src="{{ asset('img_template/contact-page.png') }}">
+                                <img src="{{ asset('img_template/contact-page.png') }}" class="img-fluid" alt="Contact">
                             </div>
                         </div>
                         <div class="col-lg-9">

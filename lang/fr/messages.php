@@ -1402,6 +1402,7 @@ return [
         'job_create_limit' => "Limite de création d'emploi dépassée de votre compte, mettez à jour votre plan d'abonnement.",
         'job_draft' => 'Le brouillon de travail a été enregistré avec succès.',
         'job_save' => 'Travail enregistré avec succès.',
+        'job_save_pending_approval' => 'Offre envoyée avec succès. Notre équipe admin la vérifiera et l’approuvera sous 24 heures.',
         'job_not_found' => 'Emploi introuvable.',
         'close_job' => 'Le travail fermé ne peut pas être modifié.',
         'job_update' => 'Travail mis à jour avec succès.',

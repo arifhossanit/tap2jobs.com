@@ -3717,8 +3717,8 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
   min-width: 139px;
 }
 .candidate-skill-save:hover, .candidate-skill-save:focus {
-  background: #1557b0 !important;
-  border-color: #1557b0 !important;
+  background: #0d9b73 !important;
+  border-color: #0d9b73 !important;
   color: #ffffff !important;
 }
 
@@ -4542,8 +4542,10 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
+  background: #ffffff;
   border: 1px solid #cbd5e1;
   border-radius: 50%;
+  flex: 0 0 auto;
   height: 14px;
   margin: 0;
   position: relative;
@@ -4553,23 +4555,24 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
   background: var(--bs-primary);
   border-radius: 50%;
   content: "";
-  height: 7px;
+  height: 12px;
   left: 50%;
   opacity: 0;
   position: absolute;
   top: 49%;
   transform: translate(-50%, -50%);
-  width: 7px;
+  width: 12px;
 }
 .candidate-address-choice input:checked {
-  border-color: var(--bs-primary);
+  border-color: #ffffff;
 }
 .candidate-address-choice input:checked::after {
   opacity: 1;
 }
 .candidate-address-choice:has(input:checked) {
+  background: var(--bs-primary);
   border-color: var(--bs-primary);
-  color: var(--bs-primary);
+  color: #ffffff;
 }
 
 .candidate-address-grid {
@@ -4667,7 +4670,10 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
     flex-direction: column;
   }
   .candidate-address-choice {
-    width: 100%;
+    flex: 1 1 calc(50% - 6px);
+    min-width: 0;
+    padding-left: 12px;
+    padding-right: 12px;
   }
 }
 .candidate-address-edit-action {
@@ -5742,8 +5748,7 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
   .candidate-education-panel__body {
     padding: 18px 16px;
   }
-  .candidate-education-panel__header,
-  .candidate-education-item__head {
+  .candidate-education-panel__header {
     align-items: flex-start;
     gap: 14px;
   }
@@ -5752,7 +5757,19 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
     padding: 18px 16px;
   }
   .candidate-education-item__head {
-    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    justify-content: space-between;
+  }
+  .candidate-education-item__head h2 {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .candidate-education-item__actions {
+    flex: 0 0 auto;
+    justify-content: flex-end;
+    margin-left: auto;
+    white-space: nowrap;
   }
   .candidate-education-detail-grid {
     gap: 16px;

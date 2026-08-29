@@ -46,7 +46,7 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        $code = $exception->getCode();
+        $code = (int) $exception->getCode();
         $message = $exception->getMessage();
         if ($code < 100 || $code >= 600) {
             $code = \Illuminate\Http\Response::HTTP_INTERNAL_SERVER_ERROR;

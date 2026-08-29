@@ -16,9 +16,16 @@ class CandidateUpdatePersonalDetailsRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        $regionCode = filled($this->input('region_code')) ? preg_replace('/\D+/', '', (string) $this->input('region_code')) : null;
+        $phone = filled($this->input('phone')) ? preg_replace('/\D+/', '', (string) $this->input('phone')) : null;
+
+        if ($regionCode === '880' && $phone !== null && strlen($phone) === 10 && str_starts_with($phone, '1')) {
+            $phone = '0'.$phone;
+        }
+
         $this->merge([
-            'phone' => filled($this->input('phone')) ? preg_replace('/\D+/', '', (string) $this->input('phone')) : null,
-            'region_code' => filled($this->input('region_code')) ? preg_replace('/\D+/', '', (string) $this->input('region_code')) : null,
+            'phone' => $phone,
+            'region_code' => $regionCode,
             'secondary_mobile' => filled($this->input('secondary_mobile')) ? preg_replace('/\D+/', '', (string) $this->input('secondary_mobile')) : null,
             'emergency_contact' => filled($this->input('emergency_contact')) ? preg_replace('/\D+/', '', (string) $this->input('emergency_contact')) : null,
         ]);

@@ -1407,6 +1407,7 @@ return [
         'job_create_limit' => 'Se excedió el límite de creación de empleo de su cuenta, actualice su plan de suscripción.',
         'job_draft' => 'Borrador de trabajo guardado con éxito.',
         'job_save' => 'Trabajo guardado con éxito.',
+        'job_save_pending_approval' => 'Trabajo enviado correctamente. Nuestro equipo de administración lo revisará y aprobará dentro de 24 horas.',
         'job_not_found' => 'Trabajo no encontrado.',
         'close_job' => 'El trabajo cerrado no se puede editar.',
         'job_update' => 'Trabajo actualizado con éxito.',

@@ -24,7 +24,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Mail\Message;
+use Illuminate\Support\Facades\Schema;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
@@ -102,8 +104,10 @@ class WebHomeRepository
         return $categories;
     }
 
-    public function getAllJobCategories(): \Illuminate\Support\Collection
+    public function getAllJobCategories(?string $search = null, int $perPage = 12): LengthAwarePaginator
     {
+        $hasBanglaName = Schema::hasColumn('job_categories', 'name_bn');
+
         return JobCategory::with('media','jobs')->withCount([
             'jobs' => function (Builder $q) {
                 $q->whereStatus(Job::STATUS_OPEN)
@@ -111,7 +115,19 @@ class WebHomeRepository
                     ->whereIsSuspended(Job::NOT_SUSPENDED)
                     ->whereDate('job_expiry_date', '>=', Carbon::now()->toDateString());
             },
-        ])->get();
+        ])
+            ->when($search, function (Builder $query) use ($search, $hasBanglaName) {
+                $query->where(function (Builder $query) use ($search, $hasBanglaName) {
+                    $query->where('name', 'like', '%'.$search.'%');
+
+                    if ($hasBanglaName) {
+                        $query->orWhere('name_bn', 'like', '%'.$search.'%');
+                    }
+                });
+            })
+            ->orderBy('name')
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     public function getAllJobTypes(): \Illuminate\Support\Collection

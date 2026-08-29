@@ -4,6 +4,7 @@ namespace App\Http\Controllers\web;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\WebHomeRepository;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class CategoriesController extends Controller
@@ -16,10 +17,15 @@ class CategoriesController extends Controller
         $this->homeRepository = $homeRepository;
     }
 
-    public function index(): View
+    public function index(Request $request): View
     {
-        $jobCategories = $this->homeRepository->getAllJobCategories();
+        $search = trim((string) $request->get('search'));
+        $jobCategories = $this->homeRepository->getAllJobCategories($search !== '' ? $search : null);
 
-        return view('front_web.categories.index', compact('jobCategories'));
+        if ($request->ajax()) {
+            return view('front_web.categories.partials.category_list', compact('jobCategories', 'search'));
+        }
+
+        return view('front_web.categories.index', compact('jobCategories', 'search'));
     }
 }
