@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class CompanySize
@@ -41,6 +42,7 @@ class CompanySize extends Model
 
     public $fillable = [
         'size',
+        'company_category_id',
         'is_default',
     ];
 
@@ -52,8 +54,14 @@ class CompanySize extends Model
     protected $casts = [
         'id' => 'integer',
         'size' => 'string',
+        'company_category_id' => 'integer',
         'is_default' => 'boolean',
     ];
+
+    public function companyCategory(): BelongsTo
+    {
+        return $this->belongsTo(CompanyCategory::class, 'company_category_id');
+    }
 
     /**
      * Parse size string into numeric bounds [min, max].

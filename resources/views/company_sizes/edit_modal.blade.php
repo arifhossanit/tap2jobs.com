@@ -20,6 +20,10 @@
                     <span class="required"></span>
                     {{ Form::textarea('size', null, ['id'=>'editCompanySize','class' => 'form-control','required','rows' => 3, 'placeholder'=>__('messages.company_size.size')]) }}
                 </div>
+                <div class="mb-5">
+                    {{ Form::label('company_category_id', 'Company Category:', ['class' => 'form-label']) }}
+                    {{ Form::select('company_category_id', $companyCategories ?? [], null, ['id' => 'editCompanyCategoryId', 'class' => 'form-select', 'placeholder' => 'Select Company Category', 'data-control' => 'select2']) }}
+                </div>
             </div>
             <div class="modal-footer pt-0">
                 {{ Form::button(__('messages.common.save'), ['type' => 'submit','class' => 'btn btn-primary m-0','id' => 'companySizeEditSaveBtn','data-loading-text' => "<span class='spinner-border spinner-border-sm'></span> ".__('messages.common.process')]) }}

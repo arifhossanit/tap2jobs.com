@@ -36,12 +36,16 @@ function loadAdData() {
     resetModalForm("#addAdNewForm", "#validationErrorsBox");
     clearAdPreview("#previewImage", $("#adChooseMediaText").val());
     resetAdUploadProgress("ad");
+    syncAdTargetPages("#position", ".ad-page-option", ".page-checkbox", ".page-all-checkbox");
   });
   listenHiddenBsModal("#editAdsModal", function () {
     resetModalForm("#editAdForm", "#editValidationErrorsBox");
     clearAdPreview("#editPreviewImage", $("#adNoMediaSelectedText").val());
     resetAdUploadProgress("editAd");
+    syncAdTargetPages("#editPosition", ".edit-ad-page-option", ".edit-page-checkbox", ".edit-page-all-checkbox");
   });
+  syncAdTargetPages("#position", ".ad-page-option", ".page-checkbox", ".page-all-checkbox");
+  syncAdTargetPages("#editPosition", ".edit-ad-page-option", ".edit-page-checkbox", ".edit-page-all-checkbox");
 }
 listenClick(".ad-delete-btn", function (event) {
   var deleteAdId = $(event.currentTarget).attr("data-id");
@@ -78,8 +82,9 @@ function adRenderData(editAdId) {
           targetPages = ["all"];
         }
         $(".edit-page-checkbox").prop("checked", false);
+        syncAdTargetPages("#editPosition", ".edit-ad-page-option", ".edit-page-checkbox", ".edit-page-all-checkbox");
         if (targetPages.includes("all")) {
-          $(".edit-page-checkbox").prop("checked", true);
+          $(".edit-page-checkbox:enabled").prop("checked", true);
         } else {
           targetPages.forEach(function (pageVal) {
             $('.edit-page-checkbox[value="' + pageVal + '"]').prop("checked", true);
@@ -168,6 +173,7 @@ listenSubmit("#editAdForm", function (event) {
 });
 listenClick(".addAdModal", function () {
   $("#addAdsModal").appendTo("body").modal("show");
+  syncAdTargetPages("#position", ".ad-page-option", ".page-checkbox", ".page-all-checkbox");
 });
 listenChange(".isActiveAd", function () {
   var isActiveAdId = $(this).attr("data-id");
@@ -257,7 +263,7 @@ function setAdVideoPreview(selector, mediaUrl) {
 }
 listenChange(".page-all-checkbox", function () {
   if ($(this).is(":checked")) {
-    $(".page-checkbox").prop("checked", true);
+    $(".page-checkbox:enabled").prop("checked", true);
   } else {
     $(".page-checkbox").prop("checked", false);
   }
@@ -265,13 +271,13 @@ listenChange(".page-all-checkbox", function () {
 listenChange(".page-checkbox:not(.page-all-checkbox)", function () {
   if (!$(this).is(":checked")) {
     $(".page-all-checkbox").prop("checked", false);
-  } else if ($(".page-checkbox:not(.page-all-checkbox):checked").length === $(".page-checkbox:not(.page-all-checkbox)").length) {
+  } else if ($(".page-checkbox:not(.page-all-checkbox):enabled:checked").length === $(".page-checkbox:not(.page-all-checkbox):enabled").length) {
     $(".page-all-checkbox").prop("checked", true);
   }
 });
 listenChange(".edit-page-all-checkbox", function () {
   if ($(this).is(":checked")) {
-    $(".edit-page-checkbox").prop("checked", true);
+    $(".edit-page-checkbox:enabled").prop("checked", true);
   } else {
     $(".edit-page-checkbox").prop("checked", false);
   }
@@ -279,10 +285,37 @@ listenChange(".edit-page-all-checkbox", function () {
 listenChange(".edit-page-checkbox:not(.edit-page-all-checkbox)", function () {
   if (!$(this).is(":checked")) {
     $(".edit-page-all-checkbox").prop("checked", false);
-  } else if ($(".edit-page-checkbox:not(.edit-page-all-checkbox):checked").length === $(".edit-page-checkbox:not(.edit-page-all-checkbox)").length) {
+  } else if ($(".edit-page-checkbox:not(.edit-page-all-checkbox):enabled:checked").length === $(".edit-page-checkbox:not(.edit-page-all-checkbox):enabled").length) {
     $(".edit-page-all-checkbox").prop("checked", true);
   }
 });
+listenChange("#position", function () {
+  syncAdTargetPages("#position", ".ad-page-option", ".page-checkbox", ".page-all-checkbox");
+});
+listenChange("#editPosition", function () {
+  syncAdTargetPages("#editPosition", ".edit-ad-page-option", ".edit-page-checkbox", ".edit-page-all-checkbox");
+});
+function syncAdTargetPages(positionSelector, optionSelector, checkboxSelector, allCheckboxSelector) {
+  var position = $(positionSelector).val();
+  var allowedPages = (window.adPositionTargetPages || {})[position] || [];
+  var hasPosition = Boolean(position) && allowedPages.length > 0;
+  $(optionSelector).each(function () {
+    var option = $(this);
+    var checkbox = option.find(checkboxSelector);
+    var isAllowed = hasPosition && allowedPages.includes(String(option.data("page")));
+    option.toggleClass("d-none", !isAllowed);
+    checkbox.prop("disabled", !isAllowed);
+    if (!isAllowed) {
+      checkbox.prop("checked", false);
+    }
+  });
+  if (hasPosition && !$(checkboxSelector + ":enabled:checked").length) {
+    $(allCheckboxSelector).prop("checked", true);
+  }
+  if ($(allCheckboxSelector).is(":checked")) {
+    $(checkboxSelector + ":enabled").prop("checked", true);
+  }
+}
 
 /***/ },
 
@@ -7015,6 +7048,7 @@ function loadCompanySizeData() {
         if (result.success) {
           $('#companySizeId').val(result.data.id);
           $('#editCompanySize').val(result.data.size);
+          $('#editCompanyCategoryId').val(result.data.company_category_id).trigger('change');
           $('#editCompanySizeModal').appendTo('body').modal('show');
         }
       },

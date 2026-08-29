@@ -69,7 +69,7 @@
                         <div class="d-flex flex-wrap gap-4 mt-2">
                             @foreach ($pages as $pageValue => $pageLabel)
                                 @php($pageId = 'editPage'.\Illuminate\Support\Str::studly($pageValue))
-                                <div class="form-check form-check-custom form-check-solid">
+                                <div class="form-check form-check-custom form-check-solid edit-ad-page-option" data-page="{{ $pageValue }}">
                                     <input class="form-check-input edit-page-checkbox {{ $pageValue === \App\Models\Ad::PAGE_ALL ? 'edit-page-all-checkbox' : '' }}"
                                            type="checkbox" name="page[]" value="{{ $pageValue }}" id="{{ $pageId }}">
                                     <label class="form-check-label {{ $pageValue === \App\Models\Ad::PAGE_ALL ? 'fw-bold' : '' }} text-gray-700"

@@ -1554,8 +1554,8 @@ return [
         ],
         'positions' => [
             'header' => 'হেডার ব্যানার',
-            'register_left' => 'লগইন/রেজিস্টার বাম',
-            'register_right' => 'লগইন/রেজিস্টার ডান',
+            'register_left' => 'বাম পাশে',
+            'register_right' => 'ডান পাশে',
         ],
     ],
     'pricing_table' => [

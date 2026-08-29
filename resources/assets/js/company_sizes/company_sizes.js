@@ -45,6 +45,9 @@ function loadCompanySizeData() {
                 if (result.success) {
                     $('#companySizeId').val(result.data.id);
                     $('#editCompanySize').val(result.data.size);
+                    $('#editCompanyCategoryId').
+                        val(result.data.company_category_id).
+                        trigger('change');
                     $('#editCompanySizeModal').appendTo('body').modal('show');
                 }
             },

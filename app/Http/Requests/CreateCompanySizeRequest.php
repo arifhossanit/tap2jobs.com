@@ -2,9 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Models\CompanySize;
-use App\Rules\ValidCompanySizeRange;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CreateCompanySizeRequest extends FormRequest
 {
@@ -23,6 +22,7 @@ class CreateCompanySizeRequest extends FormRequest
     {
         return [
             'size' => 'required|string',
+            'company_category_id' => ['nullable', 'integer', Rule::exists('company_categories', 'id')],
         ];
     }
 }

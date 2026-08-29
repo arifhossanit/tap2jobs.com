@@ -18,4 +18,7 @@
     {{ Form::hidden('ad_saving_media_text', __('messages.ad.saving_media'), ['id' => 'adSavingMediaText']) }}
     {{ Form::hidden('view', __('messages.common.view'), ['id' => 'view']) }}
     {{ Form::hidden('ad-extension-message', __('messages.ad.media_extension_message'), ['id' => 'adExtensionMessage']) }}
+    <script>
+        window.adPositionTargetPages = @json($positionTargetPages);
+    </script>
 @endsection

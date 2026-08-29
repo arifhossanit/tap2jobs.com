@@ -54,7 +54,7 @@ class CompanySizeTable extends LivewireTableComponent
         });
 
         $this->setTdAttributes(function (Column $column, $row, $columnIndex, $rowIndex) {
-            if ($columnIndex == '2') {
+            if ($columnIndex == '3') {
                 return [
                     'class' => 'text-center',
                     'width' => '15%',
@@ -69,7 +69,9 @@ class CompanySizeTable extends LivewireTableComponent
 
     public function builder(): Builder
     {
-        return CompanySize::query()->orderByRaw('CAST(size AS UNSIGNED) ASC');
+        return CompanySize::query()
+            ->with('companyCategory')
+            ->orderByRaw('CAST(size AS UNSIGNED) ASC');
     }
 
     public function placeholder()
@@ -85,6 +87,9 @@ class CompanySizeTable extends LivewireTableComponent
                 ->sortable(function (Builder $query, string $direction) {
                     return $query->orderByRaw("CAST(size AS UNSIGNED) {$direction}");
                 }),
+            Column::make('Company Category', 'companyCategory.name')
+                ->sortable()
+                ->searchable(),
             Column::make(__('messages.common.created_date'), 'created_at')
                 ->sortable()
                 ->view('company_sizes.table-components.created_at'),

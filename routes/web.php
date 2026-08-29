@@ -34,6 +34,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\CareerLevelController;
 use App\Http\Controllers\CmsServicesController;
+use App\Http\Controllers\CompanyCategoryController;
 use App\Http\Controllers\CompanySizeController;
 use App\Http\Controllers\ImageSliderController;
 use App\Http\Controllers\JobCategoryController;
@@ -305,6 +306,12 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          }
 
          // Employer Profile Reference Options
+         Route::get('company-categories', [CompanyCategoryController::class, 'index'])->name('companyCategories.index');
+         Route::post('company-categories', [CompanyCategoryController::class, 'store'])->name('companyCategories.store');
+         Route::get('company-categories/{companyCategory}/edit', [CompanyCategoryController::class, 'edit'])->name('companyCategories.edit');
+         Route::put('company-categories/{companyCategory}', [CompanyCategoryController::class, 'update'])->name('companyCategories.update');
+         Route::delete('company-categories/{companyCategory}', [CompanyCategoryController::class, 'destroy'])->name('companyCategories.destroy');
+
          foreach ([
                   'employer-reference-relations' => [\App\Models\ProfileReferenceOption::TYPE_REFERENCE_RELATION, 'employerReferenceRelations'],
                   'job-gender-preferences' => [\App\Models\ProfileReferenceOption::TYPE_JOB_GENDER_PREFERENCE, 'jobGenderPreferences'],

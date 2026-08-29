@@ -37,6 +37,32 @@ abstract class AdRequest extends FormRequest
         ];
     }
 
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            $position = (string) $this->input('position');
+            $pages = (array) $this->input('page', []);
+            $validPages = Ad::validTargetPagesForPosition($position);
+
+            if (empty($position) || empty($pages) || empty($validPages)) {
+                return;
+            }
+
+            $invalidPages = array_diff($pages, $validPages);
+
+            if (! empty($invalidPages)) {
+                $labels = collect($invalidPages)
+                    ->map(fn ($page) => __('messages.ad.pages.'.$page))
+                    ->implode(', ');
+
+                $validator->errors()->add(
+                    'page',
+                    'The selected target page is not available for this position: '.$labels.'.'
+                );
+            }
+        });
+    }
+
     public function messages(): array
     {
         return [

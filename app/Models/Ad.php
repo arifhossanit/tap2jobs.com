@@ -74,6 +74,31 @@ class Ad extends Model implements HasMedia
         self::POSITION_REGISTER_RIGHT => 'register_right',
     ];
 
+    public const POSITION_TARGET_PAGES = [
+        self::POSITION_HEADER => [
+            self::PAGE_ALL,
+        ],
+        self::POSITION_REGISTER_LEFT => [
+            self::PAGE_ALL,
+            self::PAGE_CANDIDATE_REGISTER,
+            self::PAGE_EMPLOYER_REGISTER,
+            self::PAGE_CANDIDATE_LOGIN,
+            self::PAGE_EMPLOYER_LOGIN,
+            self::PAGE_BLOG,
+            self::PAGE_BLOG_DETAILS,
+            self::PAGE_JOBS,
+        ],
+        self::POSITION_REGISTER_RIGHT => [
+            self::PAGE_ALL,
+            self::PAGE_CANDIDATE_REGISTER,
+            self::PAGE_EMPLOYER_REGISTER,
+            self::PAGE_CANDIDATE_LOGIN,
+            self::PAGE_EMPLOYER_LOGIN,
+            self::PAGE_BLOG_DETAILS,
+            self::PAGE_JOBS,
+        ],
+    ];
+
     public const ALL = 2;
 
     public const ACTIVE = 1;
@@ -278,5 +303,10 @@ class Ad extends Model implements HasMedia
         }, $pages);
 
         return implode(', ', $labels);
+    }
+
+    public static function validTargetPagesForPosition(string $position): array
+    {
+        return self::POSITION_TARGET_PAGES[$position] ?? [];
     }
 }

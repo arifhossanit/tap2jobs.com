@@ -28,7 +28,9 @@ class AdController extends AppBaseController
             return [$value => __('messages.ad.pages.'.$value)];
         })->toArray();
 
-        return view('ads.index', compact('positions', 'pages'));
+        $positionTargetPages = Ad::POSITION_TARGET_PAGES;
+
+        return view('ads.index', compact('positions', 'pages', 'positionTargetPages'));
     }
 
     public function store(CreateAdRequest $request): JsonResponse

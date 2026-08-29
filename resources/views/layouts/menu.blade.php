@@ -41,7 +41,7 @@
     ];
     $referenceGeneralActive = Request::is('admin/profile-references/common*', 'admin/genders*', 'admin/language-proficiencies*', 'admin/online-profile-platforms*', 'admin/countries*', 'admin/divisions*', 'admin/districts*', 'admin/thanas*', 'admin/states*', 'admin/cities*', 'admin/degree-levels*', 'admin/skills*', 'admin/industries*', 'admin/functional-areas*', 'admin/career-levels*', 'admin/salary-currencies*', 'admin/ownership-types*');
     $referenceCandidateActive = Request::is('admin/profile-references/candidate*', 'admin/education-degree-titles*', 'admin/education-major-groups*', 'admin/education-boards*', 'admin/education-results*', 'admin/candidate-religions*', 'admin/blood-groups*', 'admin/disability-difficulties*', 'admin/skill-learning-sources*', 'admin/candidate-reference-relations*', 'admin/army-ba-no-prefixes*', 'admin/army-ranks*', 'admin/army-employment-types*', 'admin/army-arms*', 'admin/marital-status*', 'admin/languages*');
-    $referenceEmployerActive = Request::is('admin/profile-references/employer*', 'admin/employer-reference-relations*', 'admin/job-gender-preferences*', 'admin/job-employment-statuses*', 'admin/job-workplaces*', 'admin/job-experience-units*', 'admin/employer-disability-facilities*', 'admin/job-categories*', 'admin/job-types*', 'admin/job-tags*', 'admin/job-shifts*', 'admin/salary-periods*', 'admin/company-sizes*');
+    $referenceEmployerActive = Request::is('admin/profile-references/employer*', 'admin/employer-reference-relations*', 'admin/job-gender-preferences*', 'admin/job-employment-statuses*', 'admin/job-workplaces*', 'admin/job-experience-units*', 'admin/employer-disability-facilities*', 'admin/job-categories*', 'admin/job-types*', 'admin/job-tags*', 'admin/job-shifts*', 'admin/salary-periods*', 'admin/company-sizes*', 'admin/company-categories*');
     $referencesActive = $referenceGeneralActive || $referenceCandidateActive || $referenceEmployerActive;
     $cmsActive = Request::is('admin/noticeboards*', 'admin/faqs*', 'admin/inquires*', 'admin/notification-settings*', 'admin/privacy-policy*', 'admin/front-settings*', 'admin/email-template*', 'admin/settings*');
     $cmsSlidersActive = Request::is('admin/testimonials*', 'admin/branding-sliders*', 'admin/header-sliders*', 'admin/image-sliders*', 'admin/ads*');
@@ -467,6 +467,12 @@
                     <a class="nav-link d-flex align-items-center py-2" href="{{ route('companySize.index') }}">
                         <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
                         <span class="aside-menu-title">{{ __('messages.company_sizes') }}</span>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::is('admin/company-categories*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('companyCategories.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">Company Categories</span>
                     </a>
                 </li>
                 @foreach($profileReferenceMenuGroups[\App\Models\ProfileReferenceOption::SCOPE_EMPLOYER] ?? [] as $profileReferenceType)

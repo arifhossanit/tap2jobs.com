@@ -57,7 +57,7 @@
 
         <!-- start candidate login section -->
         <section class="py-60">
-            <div class="container">
+            <div class="container-fluid">
                 @php
                     $registerLeftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT, \App\Models\Ad::PAGE_CANDIDATE_REGISTER);
                     $registerRightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT, \App\Models\Ad::PAGE_CANDIDATE_REGISTER);
@@ -65,12 +65,12 @@
                 @endphp
                 <div class="row align-items-start justify-content-center">
                     @if ($hasRegisterSideAds)
-                        <div class="col-xl-2 col-lg-2 d-none d-lg-block mb-4 text-start">
+                        <div class="col-xl-3 col-lg-3 d-none d-lg-block mb-4 text-start">
                             @include('front_web.common.register_side_ad', ['ads' => $registerLeftAds])
                         </div>
-                        <div class="col-xl-8 col-lg-8">
+                        <div class="col-xl-6 col-lg-6">
                     @else
-                        <div class="col-xl-8 col-lg-8 mx-auto">
+                        <div class="col-xl-6 col-lg-6 mx-auto">
                     @endif
                         @include('flash::message')
                         <form method="POST" id="addCandidateNewForm" class="py-40 px-40 bg-gray shadow rounded border">
@@ -230,7 +230,7 @@
                         </form>
                     </div>
                     @if ($hasRegisterSideAds)
-                        <div class="col-xl-2 col-lg-2 d-none d-lg-block mb-4 text-end">
+                        <div class="col-xl-3 col-lg-3 d-none d-lg-block mb-4 text-end">
                             @include('front_web.common.register_side_ad', ['ads' => $registerRightAds])
                         </div>
                         <div class="col-12 d-lg-none mt-4">

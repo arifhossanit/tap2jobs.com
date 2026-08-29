@@ -1562,8 +1562,8 @@ return [
         ],
         'positions' => [
             'header' => 'Header Banner',
-            'register_left' => 'Login/Register Left',
-            'register_right' => 'Login/Register Right',
+            'register_left' => 'Left Side',
+            'register_right' => 'Right Side',
         ],
     ],
     'pricing_table' => [

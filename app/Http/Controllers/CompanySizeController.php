@@ -6,6 +6,7 @@ use App\Http\Requests\CreateCompanySizeRequest;
 use App\Http\Requests\UpdateCompanySizeRequest;
 use App\Imports\CompanySizesImport;
 use App\Models\Company;
+use App\Models\CompanyCategory;
 use App\Models\CompanySize;
 use App\Repositories\CompanySizeRepository;
 use Exception;
@@ -35,7 +36,13 @@ class CompanySizeController extends AppBaseController
      */
     public function index(): View
     {
-        return view('company_sizes.index');
+        $companyCategories = CompanyCategory::query()
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->pluck('name', 'id');
+
+        return view('company_sizes.index', compact('companyCategories'));
     }
 
     /**
@@ -58,6 +65,7 @@ class CompanySizeController extends AppBaseController
             if (! $exists) {
                 $input = $request->all();
                 $input['size'] = $size;
+                $input['company_category_id'] = $request->input('company_category_id');
                 $lastCompanySize = $this->companySizeRepository->create($input);
                 $createdCount++;
             }

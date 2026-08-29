@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Models\CompanySize;
 use App\Rules\ValidCompanySizeRange;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateCompanySizeRequest extends FormRequest
 {
@@ -30,6 +31,7 @@ class UpdateCompanySizeRequest extends FormRequest
             'regex:/^[0-9+\s\-]+$/',
             new ValidCompanySizeRange((int) $companySizeId),
         ];
+        $rules['company_category_id'] = ['nullable', 'integer', Rule::exists('company_categories', 'id')];
 
         return $rules;
     }

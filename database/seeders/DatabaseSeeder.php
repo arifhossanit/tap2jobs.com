@@ -57,6 +57,7 @@ class DatabaseSeeder extends Seeder
 //        $this->call(CurrencySeeder::class);
 //        $this->call(FooterLogoSeeder::class);
 //        $this->call(CmsServicesSeeder::class);
+        $this->call(CompanyCategorySeeder::class);
         $this->call(FAQSeeder::class);
         $this->call(BangladeshJobMarketSeeder::class);
         // $this->call(ExportedUsersCompaniesSeeder::class);

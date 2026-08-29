@@ -18,6 +18,7 @@ class OldDatabaseSeeder extends Seeder
         $this->call(DefaultRoleSeeder::class);
         $this->call(SettingsTableSeeder::class);
         $this->call(DefaultCompanySizeSeeder::class);
+        $this->call(CompanyCategorySeeder::class);
         $this->call(MaritalStatusTableSeeder::class);
         $this->call(CreateDefaultIndustriesSeeder::class);
         $this->call(CreateDefaultOwnerShipTypeSeeder::class);

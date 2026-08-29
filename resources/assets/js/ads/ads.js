@@ -11,13 +11,18 @@ function loadAdData() {
         resetModalForm("#addAdNewForm", "#validationErrorsBox");
         clearAdPreview("#previewImage", $("#adChooseMediaText").val());
         resetAdUploadProgress("ad");
+        syncAdTargetPages("#position", ".ad-page-option", ".page-checkbox", ".page-all-checkbox");
     });
 
     listenHiddenBsModal("#editAdsModal", function () {
         resetModalForm("#editAdForm", "#editValidationErrorsBox");
         clearAdPreview("#editPreviewImage", $("#adNoMediaSelectedText").val());
         resetAdUploadProgress("editAd");
+        syncAdTargetPages("#editPosition", ".edit-ad-page-option", ".edit-page-checkbox", ".edit-page-all-checkbox");
     });
+
+    syncAdTargetPages("#position", ".ad-page-option", ".page-checkbox", ".page-all-checkbox");
+    syncAdTargetPages("#editPosition", ".edit-ad-page-option", ".edit-page-checkbox", ".edit-page-all-checkbox");
 }
 
 listenClick(".ad-delete-btn", function (event) {
@@ -60,8 +65,9 @@ function adRenderData(editAdId) {
                 }
 
                 $(".edit-page-checkbox").prop("checked", false);
+                syncAdTargetPages("#editPosition", ".edit-ad-page-option", ".edit-page-checkbox", ".edit-page-all-checkbox");
                 if (targetPages.includes("all")) {
-                    $(".edit-page-checkbox").prop("checked", true);
+                    $(".edit-page-checkbox:enabled").prop("checked", true);
                 } else {
                     targetPages.forEach(function (pageVal) {
                         $('.edit-page-checkbox[value="' + pageVal + '"]').prop(
@@ -172,6 +178,7 @@ listenSubmit("#editAdForm", function (event) {
 
 listenClick(".addAdModal", function () {
     $("#addAdsModal").appendTo("body").modal("show");
+    syncAdTargetPages("#position", ".ad-page-option", ".page-checkbox", ".page-all-checkbox");
 });
 
 listenChange(".isActiveAd", function () {
@@ -298,7 +305,7 @@ function setAdVideoPreview(selector, mediaUrl) {
 
 listenChange(".page-all-checkbox", function () {
     if ($(this).is(":checked")) {
-        $(".page-checkbox").prop("checked", true);
+        $(".page-checkbox:enabled").prop("checked", true);
     } else {
         $(".page-checkbox").prop("checked", false);
     }
@@ -308,8 +315,8 @@ listenChange(".page-checkbox:not(.page-all-checkbox)", function () {
     if (!$(this).is(":checked")) {
         $(".page-all-checkbox").prop("checked", false);
     } else if (
-        $(".page-checkbox:not(.page-all-checkbox):checked").length ===
-        $(".page-checkbox:not(.page-all-checkbox)").length
+        $(".page-checkbox:not(.page-all-checkbox):enabled:checked").length ===
+        $(".page-checkbox:not(.page-all-checkbox):enabled").length
     ) {
         $(".page-all-checkbox").prop("checked", true);
     }
@@ -317,7 +324,7 @@ listenChange(".page-checkbox:not(.page-all-checkbox)", function () {
 
 listenChange(".edit-page-all-checkbox", function () {
     if ($(this).is(":checked")) {
-        $(".edit-page-checkbox").prop("checked", true);
+        $(".edit-page-checkbox:enabled").prop("checked", true);
     } else {
         $(".edit-page-checkbox").prop("checked", false);
     }
@@ -327,9 +334,44 @@ listenChange(".edit-page-checkbox:not(.edit-page-all-checkbox)", function () {
     if (!$(this).is(":checked")) {
         $(".edit-page-all-checkbox").prop("checked", false);
     } else if (
-        $(".edit-page-checkbox:not(.edit-page-all-checkbox):checked").length ===
-        $(".edit-page-checkbox:not(.edit-page-all-checkbox)").length
+        $(".edit-page-checkbox:not(.edit-page-all-checkbox):enabled:checked").length ===
+        $(".edit-page-checkbox:not(.edit-page-all-checkbox):enabled").length
     ) {
         $(".edit-page-all-checkbox").prop("checked", true);
     }
 });
+
+listenChange("#position", function () {
+    syncAdTargetPages("#position", ".ad-page-option", ".page-checkbox", ".page-all-checkbox");
+});
+
+listenChange("#editPosition", function () {
+    syncAdTargetPages("#editPosition", ".edit-ad-page-option", ".edit-page-checkbox", ".edit-page-all-checkbox");
+});
+
+function syncAdTargetPages(positionSelector, optionSelector, checkboxSelector, allCheckboxSelector) {
+    const position = $(positionSelector).val();
+    const allowedPages = (window.adPositionTargetPages || {})[position] || [];
+    const hasPosition = Boolean(position) && allowedPages.length > 0;
+
+    $(optionSelector).each(function () {
+        const option = $(this);
+        const checkbox = option.find(checkboxSelector);
+        const isAllowed = hasPosition && allowedPages.includes(String(option.data("page")));
+
+        option.toggleClass("d-none", !isAllowed);
+        checkbox.prop("disabled", !isAllowed);
+
+        if (!isAllowed) {
+            checkbox.prop("checked", false);
+        }
+    });
+
+    if (hasPosition && !$(checkboxSelector + ":enabled:checked").length) {
+        $(allCheckboxSelector).prop("checked", true);
+    }
+
+    if ($(allCheckboxSelector).is(":checked")) {
+        $(checkboxSelector + ":enabled").prop("checked", true);
+    }
+}

@@ -123,8 +123,8 @@
     <a class="nav-link p-0 {{ Request::is('admin/profile-references/candidate*', 'admin/candidate-religions*', 'admin/blood-groups*', 'admin/disability-difficulties*', 'admin/skill-learning-sources*', 'admin/candidate-reference-relations*', 'admin/education-results*', 'admin/army-ba-no-prefixes*', 'admin/army-ranks*', 'admin/army-employment-types*', 'admin/army-arms*') ? 'active' : '' }}"
        href="{{ route('candidateReligions.index') }}">Candidate</a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/profile-references/employer*', 'admin/employer-reference-relations*', 'admin/job-gender-preferences*', 'admin/job-employment-statuses*', 'admin/job-workplaces*', 'admin/job-experience-units*', 'admin/employer-disability-facilities*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/profile-references/employer*', 'admin/employer-reference-relations*', 'admin/job-gender-preferences*', 'admin/job-employment-statuses*', 'admin/job-workplaces*', 'admin/job-experience-units*', 'admin/employer-disability-facilities*') ? 'active' : '' }}"
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/profile-references/employer*', 'admin/company-categories*', 'admin/employer-reference-relations*', 'admin/job-gender-preferences*', 'admin/job-employment-statuses*', 'admin/job-workplaces*', 'admin/job-experience-units*', 'admin/employer-disability-facilities*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('admin/profile-references/employer*', 'admin/company-categories*', 'admin/employer-reference-relations*', 'admin/job-gender-preferences*', 'admin/job-employment-statuses*', 'admin/job-workplaces*', 'admin/job-experience-units*', 'admin/employer-disability-facilities*') ? 'active' : '' }}"
        href="{{ route('employerReferenceRelations.index') }}">Employer</a>
 </li>
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/marital-status*') ? 'd-none' : '' }}">

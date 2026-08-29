@@ -1,32 +1,19 @@
 {{-- ============================================================
      HEADER PROMO STRIP  (site-top-banner__bar)
      ------------------------------------------------------------
-     The previous image / video based header-ad banner function is
-     temporarily COMMENTED OUT below (kept for later re-use).
-     Currently the strip renders a multi-colour GRADIENT bar with
-     the promo text:  "Post your Job Ad for Free"  (আপনার চাকরির বিজ্ঞাপন পোস্ট করুন একদম ফ্রি-তে!!!)
+     Renders an active Header Banner ad for the "All Pages" target.
+     If no media-ready header ad exists, falls back to the promo strip
+     with the text: "Post your Job Ad for Free".
      IMPORTANT: Do NOT use id/class/aria containing "ad" / "ads" / "advert".
      Browser ad blockers hide those selectors even when HTML is present.
      The strip is always visible above the navbar; no JS hide-on-load.
      ============================================================ --}}
 
-@php
-    $isCandidateOrEmployerPage = request()->is('candidate*') || 
-                                request()->is('candidates*') || 
-                                request()->is('employer*') || 
-                                request()->is('employers*') || 
-                                request()->is('company*') || 
-                                request()->is('companies*') || 
-                                (Auth::check() && (Auth::user()->hasRole('Candidate') || Auth::user()->hasRole('Employer')));
-@endphp
-
-@if (!$isCandidateOrEmployerPage)
 <div id="siteTopBanner" class="site-top-banner" role="region" aria-label="Announcement">
     <div class="site-top-banner__bar">
         <div class="position-relative w-100">
-            {{-- =========== OLD HEADER-AD IMAGE/VIDEO FUNCTION (commented out for now) ===========
             @php
-                $headerAd = getActiveAdByPosition(\App\Models\Ad::POSITION_HEADER);
+                $headerAd = getActiveAdByPosition(\App\Models\Ad::POSITION_HEADER, \App\Models\Ad::PAGE_ALL);
             @endphp
             @if ($headerAd && !empty($headerAd->ad_media_url))
                 <button type="button" class="site-top-banner__close" id="siteTopBannerClose" aria-label="Close"
@@ -49,19 +36,17 @@
                              class="site-top-banner__image">
                     @endif
                 </div>
+            @else
+                <button type="button" class="site-top-banner__close" id="siteTopBannerClose" aria-label="Close banner">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="site-top-banner__inner mx-auto">
+                    <a href="{{ route('job.create') }}" class="site-top-banner__promo">
+                        <span class="site-top-banner__promo-text">{{ __('web.post_job_ad_free') }}</span>
+                        <span class="site-top-banner__yellow-btn ms-3">Post a Job</span>
+                    </a>
+                </div>
             @endif
-            =========== END OLD HEADER-AD IMAGE/VIDEO FUNCTION =========== --}}
-
-            {{-- Professional promo strip --}}
-            <button type="button" class="site-top-banner__close" id="siteTopBannerClose" aria-label="Close banner">
-                <i class="fas fa-times"></i>
-            </button>
-            <div class="site-top-banner__inner mx-auto">
-                <a href="{{ route('job.create') }}" class="site-top-banner__promo">
-                    <span class="site-top-banner__promo-text">{{ __('web.post_job_ad_free') }}</span>
-                    <span class="site-top-banner__yellow-btn ms-3">Post a Job</span>
-                </a>
-            </div>
         </div>
     </div>
 </div>
@@ -169,6 +154,17 @@
     #siteTopBanner .site-top-banner__promo:hover {
         filter: brightness(1.05);
     }
+    #siteTopBanner .site-top-banner__image-link {
+        display: block;
+        width: 100%;
+    }
+    #siteTopBanner .site-top-banner__image {
+        display: block;
+        height: auto;
+        max-height: 78px;
+        object-fit: contain;
+        width: 100%;
+    }
     /* Keep navbar and its dropdowns above any content ads */
     body > header.bg-gradient {
         position: relative !important;
@@ -233,4 +229,3 @@
         });
     })();
 </script>
-@endif

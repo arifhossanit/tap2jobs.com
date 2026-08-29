@@ -68,7 +68,7 @@
                         <div class="d-flex flex-wrap gap-4 mt-2">
                             @foreach ($pages as $pageValue => $pageLabel)
                                 @php($pageId = 'addPage'.\Illuminate\Support\Str::studly($pageValue))
-                                <div class="form-check form-check-custom form-check-solid">
+                                <div class="form-check form-check-custom form-check-solid ad-page-option" data-page="{{ $pageValue }}">
                                     <input class="form-check-input page-checkbox {{ $pageValue === \App\Models\Ad::PAGE_ALL ? 'page-all-checkbox' : '' }}"
                                            type="checkbox" name="page[]" value="{{ $pageValue }}"
                                            id="{{ $pageId }}" {{ $pageValue === \App\Models\Ad::PAGE_ALL ? 'checked' : '' }}>

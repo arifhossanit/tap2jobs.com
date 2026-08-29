@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\CompanySize;
+use App\Models\CompanyCategory;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -17,6 +18,7 @@ class CompanySizesImport implements ToModel, WithHeadingRow, WithValidation, Ski
     {
         return [
             '*.size' => 'required|string|max:170',
+            '*.company_category' => 'nullable|string|max:170',
         ];
     }
 
@@ -32,8 +34,16 @@ class CompanySizesImport implements ToModel, WithHeadingRow, WithValidation, Ski
             return null;
         }
 
+        $categoryName = trim((string) ($row['company_category'] ?? $row['category'] ?? ''));
+        $categoryId = null;
+
+        if (! empty($categoryName)) {
+            $categoryId = CompanyCategory::where('name', $categoryName)->value('id');
+        }
+
         return new CompanySize([
             'size' => $size,
+            'company_category_id' => $categoryId,
         ]);
     }
 }

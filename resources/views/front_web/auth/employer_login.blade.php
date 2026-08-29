@@ -31,7 +31,7 @@
 
         <!-- start employer login section -->
         <section class="py-100">
-            <div class="container">
+            <div class="container-fluid">
                 @php
                     $registerLeftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT, \App\Models\Ad::PAGE_EMPLOYER_LOGIN);
                     $registerRightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT, \App\Models\Ad::PAGE_EMPLOYER_LOGIN);
@@ -42,9 +42,9 @@
                         <div class="col-xl-3 col-lg-3 d-none d-lg-block mb-4 text-start">
                             @include('front_web.common.register_side_ad', ['ads' => $registerLeftAds])
                         </div>
-                        <div class="col-xl-6 col-lg-6">
+                        <div class="col-xl-4 col-lg-4">
                     @else
-                        <div class="col-xl-6 col-lg-8 mx-auto">
+                        <div class="col-xl-4 col-lg-4 mx-auto">
                     @endif
                         @include('flash::message')
                         <form method="POST" action="{{ route('front.login') }}" id="employeeForm"
