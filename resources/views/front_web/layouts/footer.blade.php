@@ -270,6 +270,7 @@
         initSharedFooterAccordionInline();
     }
 
+    document.addEventListener('DOMContentLoaded', function () {
         var footer = document.querySelector('.bd-mobile-fixed-footer');
         if (!footer) return;
 
