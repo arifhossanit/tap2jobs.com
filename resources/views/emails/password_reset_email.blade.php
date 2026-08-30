@@ -91,7 +91,7 @@
                     <tr>
                         <td>
                             <p style="margin-bottom: 0;text-align: center; font-size: 13px;font-family: Circular Std, sans-serif !important;">
-                                <strong>&copy;2021 <a href="{{ config('app.url') }}"
+                                <strong>&copy;{{ date('Y') }} <a href="{{ config('app.url') }}"
                                                       class="company-name">{{ getAppName() }}</a>.</strong>
                                 {{__('messages.all_rights_reserved')}}.
                             </p>

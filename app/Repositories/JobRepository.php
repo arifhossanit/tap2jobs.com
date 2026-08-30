@@ -84,7 +84,7 @@ class JobRepository extends BaseRepository
                 ->whereIsSuspended(Job::NOT_SUSPENDED)
                 ->whereDate('job_expiry_date', '>=', Carbon::tomorrow()->toDateString());
         }])->toBase()->get();
-        $data['jobCategories'] = JobCategory::toBase()->pluck('name', 'id');
+        $data['jobCategories'] = JobCategory::where('status', JobCategory::STATUS_ACTIVE)->toBase()->pluck('name', 'id');
         $data['jobSkills'] = Skill::toBase()->pluck('name', 'id');
         $data['genders'] = Job::NO_PREFERENCE;
         $data['careerLevels'] = CareerLevel::toBase()->pluck('level_name', 'id');
@@ -106,7 +106,7 @@ class JobRepository extends BaseRepository
     {
         $countries = new Countries();
         $data['jobType'] = JobType::pluck('name', 'id');
-        $data['jobCategory'] = JobCategory::pluck('name', 'id');
+        $data['jobCategory'] = JobCategory::where('status', JobCategory::STATUS_ACTIVE)->pluck('name', 'id');
         $data['careerLevels'] = CareerLevel::pluck('level_name', 'id');
         $data['jobShift'] = JobShift::pluck('shift', 'id');
         $data['currencies'] = SalaryCurrency::pluck('currency_name', 'id');
@@ -392,7 +392,7 @@ class JobRepository extends BaseRepository
             $value = [$emailJob->friend_name, $emailJob->job_url, config('app.name')];
             $body = str_replace($keyVariable, $value, $templateBody);
             $data['body'] = $body;
-           Mail::to($input['friend_email'])->send(new EmailJobToFriend($data));
+            Mail::to($input['friend_email'])->queue(new EmailJobToFriend($data));
 
             DB::commit();
 

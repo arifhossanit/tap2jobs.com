@@ -40,7 +40,7 @@
                 <table width="100%">
                     <tr>
                         <td>
-                            <img style="text-align: center;" src='{{ getLogoUrl() }}'
+                            <img style="text-align: center;" src="{{ ! empty($data['logo_path']) && isset($message) ? $message->embed($data['logo_path']) : getLogoUrl() }}"
                                  alt="company logo"
                                  class="img-fluid main-logo">
                         </td>
@@ -65,7 +65,7 @@
                     <tr>
                         <td>
                             <p style="margin-bottom: 0;text-align: center; font-size: 13px;">
-                                <strong>&copy;2021 <a href="{{ config('app.url') }}"
+                                <strong>&copy;{{ date('Y') }} <a href="{{ config('app.url') }}"
                                                       class="company-name">{{ getAppName() }}</a>.</strong>
                                 {{__('messages.all_rights_reserved')}}.
                             </p>

@@ -2,16 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ConsultationLeadsExport;
 use App\Http\Requests\StoreConsultationLeadRequest;
 use App\Http\Requests\UpdateConsultationLeadRequest;
 use App\Models\Ad;
 use App\Models\CompanySize;
 use App\Models\ConsultationLead;
 use App\Models\ProfileReferenceOption;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ConsultationLeadController extends AppBaseController
 {
@@ -60,29 +67,45 @@ class ConsultationLeadController extends AppBaseController
             ->with('success', 'Thanks. Your consultation request has been submitted successfully.');
     }
 
-    public function index(Request $request): View
+    public function index(): View
     {
-        $query = ConsultationLead::query()
-            ->with(['ad', 'companySize.companyCategory', 'companyCategory'])
-            ->latest();
+        return view('consultation_leads.index');
+    }
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->get('status'));
+    public function export(Request $request, string $format): BinaryFileResponse|StreamedResponse|Response
+    {
+        $leads = $this->consultationLeadQuery($request)->get();
+        $leadSource = getSettingValue('application_name');
+        $fileName = 'consultation-leads-'.time();
+
+        if ($format === 'excel') {
+            return Excel::download(new ConsultationLeadsExport($leads, $leadSource), $fileName.'.xlsx');
         }
 
-        if ($request->filled('company_category_id')) {
-            $query->where('company_category_id', $request->integer('company_category_id'));
+        if ($format === 'pdf') {
+            return Pdf::loadView('exports.consultation_leads_pdf', compact('leads', 'leadSource'))
+                ->setPaper('a4', 'landscape')
+                ->download($fileName.'.pdf');
         }
 
-        $consultationLeads = $query->paginate(20)->withQueryString();
-        $statuses = ConsultationLead::STATUSES;
-        $companyCategories = \App\Models\CompanyCategory::query()
-            ->orderBy('sort_order')
-            ->orderBy('name')
-            ->pluck('name', 'id')
-            ->toArray();
+        return response()->streamDownload(function () use ($leads, $leadSource) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, $this->consultationLeadExportHeadings());
 
-        return view('consultation_leads.index', compact('consultationLeads', 'statuses', 'companyCategories'));
+            foreach ($leads as $lead) {
+                fputcsv($handle, $this->consultationLeadExportRow($lead, $leadSource));
+            }
+
+            fclose($handle);
+        }, $fileName.'.csv', ['Content-Type' => 'text/csv']);
+    }
+
+    public function print(Request $request): View
+    {
+        $leads = $this->consultationLeadQuery($request)->get();
+        $leadSource = getSettingValue('application_name');
+
+        return view('exports.consultation_leads_print', compact('leads', 'leadSource'));
     }
 
     public function show(ConsultationLead $consultationLead): JsonResponse
@@ -104,5 +127,52 @@ class ConsultationLeadController extends AppBaseController
         $consultationLead->delete();
 
         return $this->sendSuccess('Consultation lead deleted successfully.');
+    }
+
+    private function consultationLeadQuery(Request $request): Builder
+    {
+        $query = ConsultationLead::query()
+            ->with(['ad', 'companySize.companyCategory', 'companyCategory'])
+            ->latest();
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->get('status'));
+        }
+
+        if ($request->filled('company_category_id')) {
+            $query->where('company_category_id', $request->integer('company_category_id'));
+        }
+
+        return $query;
+    }
+
+    private function consultationLeadExportHeadings(): array
+    {
+        return [
+            'Name',
+            'Contact',
+            'Company',
+            'Size',
+            'Category',
+            'Type',
+            'Lead Source',
+            'Status',
+            'Submitted',
+        ];
+    }
+
+    private function consultationLeadExportRow(ConsultationLead $lead, ?string $leadSource): array
+    {
+        return [
+            $lead->name,
+            trim($lead->phone."\n".$lead->email),
+            $lead->company_name,
+            $lead->companySize?->size,
+            $lead->companyCategory?->name ?: $lead->companySize?->companyCategory?->name,
+            $lead->consultation_type_label,
+            $leadSource,
+            $lead->status_label,
+            $lead->created_at?->format('d M Y h:i A'),
+        ];
     }
 }

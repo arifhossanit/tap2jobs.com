@@ -90,6 +90,7 @@ class WebHomeRepository
     public function getCategories()
     {
         $categories = JobCategory::whereIsFeatured(1)
+            ->where('status', JobCategory::STATUS_ACTIVE)
             ->withCount([
                 'jobs' => function (Builder $q) {
                     $q->where('status', '!=', Job::STATUS_DRAFT);
@@ -116,6 +117,7 @@ class WebHomeRepository
                     ->whereDate('job_expiry_date', '>=', Carbon::now()->toDateString());
             },
         ])
+            ->where('status', JobCategory::STATUS_ACTIVE)
             ->when($search, function (Builder $query) use ($search, $hasBanglaName) {
                 $query->where(function (Builder $query) use ($search, $hasBanglaName) {
                     $query->where('name', 'like', '%'.$search.'%');

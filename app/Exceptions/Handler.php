@@ -46,6 +46,18 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
+        if ($exception instanceof \Spatie\Permission\Exceptions\UnauthorizedException || ($exception instanceof \Symfony\Component\HttpKernel\Exception\HttpException && $exception->getStatusCode() === 403)) {
+            if (auth()->check() && !auth()->user()->hasRole('Employer')) {
+                if ($request->expectsJson() || $request->isXmlHttpRequest()) {
+                    return Response::json([
+                        'success' => false,
+                        'message' => 'You are not eligible to post a job for this service.',
+                    ], 403);
+                }
+                return redirect()->route('front.home')->with('not_eligible_error', 'You are not eligible to post a job for this service.');
+            }
+        }
+
         $code = (int) $exception->getCode();
         $message = $exception->getMessage();
         if ($code < 100 || $code >= 600) {

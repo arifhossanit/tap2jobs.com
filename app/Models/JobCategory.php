@@ -16,6 +16,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property string $name
  * @property string $description
  * @property bool|null $is_featured
+ * @property bool|null $status
  * @property int $id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -48,11 +49,14 @@ class JobCategory extends Model implements HasMedia
         'name',
         'description',
         'is_featured',
+        'status',
         'is_default',
     ];
     const ALL = 2;
     const IS_FEATURED = 1;
     const NOT_FEATURED = 0;
+    const STATUS_ACTIVE = 1;
+    const STATUS_INACTIVE = 0;
     const FEATURED = [
         self::ALL => 'all',
         self::IS_FEATURED => 'featured',
@@ -95,6 +99,7 @@ class JobCategory extends Model implements HasMedia
         'name' => 'string',
         'description' => 'string',
         'is_featured' => 'boolean',
+        'status' => 'boolean',
         'is_default' => 'boolean',
     ];
 

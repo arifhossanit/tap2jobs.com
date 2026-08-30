@@ -33,7 +33,7 @@
                     <button type="button" class="btn btn-primary"
                             data-bs-dismiss="modal">{{ __('messages.common.close') }}</button>
                     <button type="submit" class="btn btn-primary "
-                            data-bs-loading-text="<span class='spinner-border spinner-border-sm'></span> {{__('messages.common.process')}}"
+                            data-loading-text="<span class='spinner-border spinner-border-sm me-2'></span> Sending"
                             id="btnSendToFriend">{{ __('web.job_details.send_to_friend') }}</button>
                 </div>
             </form>

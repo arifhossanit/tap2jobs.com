@@ -25,6 +25,7 @@ class JobCategoriesImport implements ToModel, WithHeadingRow, WithValidation, Sk
             '*.name' => 'nullable',
             '*.description' => 'nullable|string',
             '*.is_featured' => 'nullable',
+            '*.status' => 'nullable|boolean',
         ];
     }
 
@@ -52,6 +53,9 @@ class JobCategoriesImport implements ToModel, WithHeadingRow, WithValidation, Sk
             'is_featured' => array_key_exists('is_featured', $row) && $row['is_featured'] !== null
                 ? filter_var($row['is_featured'], FILTER_VALIDATE_BOOLEAN)
                 : false,
+            'status' => array_key_exists('status', $row) && $row['status'] !== null
+                ? filter_var($row['status'], FILTER_VALIDATE_BOOLEAN)
+                : JobCategory::STATUS_ACTIVE,
         ]);
     }
 

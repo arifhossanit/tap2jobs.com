@@ -11820,6 +11820,21 @@ listenChange('.isFeaturedJobCategory', function (event) {
     }
   });
 });
+listenChange('.jobCategoryStatus', function (event) {
+  var jobCategoryId = $(event.currentTarget).attr('data-id');
+  $.ajax({
+    url: route('job-categories.change-status-value', jobCategoryId),
+    method: 'post',
+    cache: false,
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        Livewire.dispatch('refresh');
+        Livewire.dispatch('refreshDatatable');
+      }
+    }
+  });
+});
 listenSubmit('#addJobCategoryForm', function (e) {
   e.preventDefault();
   var add_job_category_editor_content = addJobCategoryDescriptionQuill.root.innerHTML;

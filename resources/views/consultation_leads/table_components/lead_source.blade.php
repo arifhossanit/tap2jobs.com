@@ -1,0 +1,1 @@
+{{ getSettingValue('application_name') ?: '-' }}

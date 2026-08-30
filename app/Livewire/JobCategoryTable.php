@@ -33,9 +33,9 @@ class JobCategoryTable extends LivewireTableComponent
         $this->setDefaultSort('created_at', 'desc');
 
         $this->setThAttributes(function (Column $column) {
-            if ($column->isField('is_featured')) {
+            if ($column->isField('is_featured') || $column->isField('status')) {
                 return [
-                    'class' => 'd-flex justify-content-center',
+                    'class' => 'text-center',
                 ];
             }
 
@@ -72,6 +72,9 @@ class JobCategoryTable extends LivewireTableComponent
             Column::make(__('messages.job_category.is_featured'), 'is_featured')
                 ->sortable()
                 ->view('job_categories.table_components.is_featured'),
+            Column::make(__('messages.common.status'), 'status')
+                ->sortable()
+                ->view('job_categories.table_components.status'),
             Column::make(__('messages.common.created_on'), 'created_at')
                 ->sortable()
                 ->view('job_categories.table_components.created_at'),
@@ -99,7 +102,7 @@ class JobCategoryTable extends LivewireTableComponent
         $jobCategoryMethod = JobCategory::FEATURED;
 
         return [
-            SelectFilter::make(__('messages.common.status'))
+            SelectFilter::make(__('messages.job_category.is_featured'))
                 ->options($jobCategoryMethod)
                 ->filter(function (Builder $builder, string $value) {
                     $builder->where('job_categories.is_featured', '=', $value);

@@ -178,4 +178,15 @@ class JobCategoryController extends AppBaseController
 
         return $this->sendSuccess(__('messages.flash.status_change'));
     }
+
+    public function changeStatusValue(JobCategory $jobCategory)
+    {
+        $status = (int) $jobCategory->status === JobCategory::STATUS_ACTIVE
+            ? JobCategory::STATUS_INACTIVE
+            : JobCategory::STATUS_ACTIVE;
+
+        $jobCategory->update(['status' => $status]);
+
+        return $this->sendSuccess(__('messages.flash.status_change'));
+    }
 }

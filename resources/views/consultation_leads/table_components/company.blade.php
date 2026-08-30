@@ -1,0 +1,1 @@
+{{ $row->company_name ?: '-' }}

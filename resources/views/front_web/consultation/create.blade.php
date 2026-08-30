@@ -108,20 +108,7 @@
                                                    value="{{ old('company_name') }}" placeholder="Company Name" autocomplete="off">
                                         </div>
                                     </div>
-                                    <div class="col-md-6 mb-4">
-                                        <div class="form-group">
-                                            <label class="fs-16 text-secondary mb-2">Designation:</label>
-                                            <input type="text" name="designation" class="form-control fs-14 text-gray br-10"
-                                                   value="{{ old('designation') }}" placeholder="Designation" autocomplete="off">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 mb-4">
-                                        <div class="form-group">
-                                            <label class="fs-16 text-secondary mb-2">Company Website:</label>
-                                            <input type="text" name="company_website" class="form-control fs-14 text-gray br-10"
-                                                   value="{{ old('company_website') }}" placeholder="Company Website" autocomplete="off">
-                                        </div>
-                                    </div>
+                                   
                                     <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label class="fs-16 text-secondary mb-2">Consultation Type:

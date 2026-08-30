@@ -1,0 +1,1 @@
+{{ $row->status_label }}

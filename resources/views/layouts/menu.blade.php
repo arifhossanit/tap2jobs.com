@@ -515,7 +515,7 @@
         <li class="nav-item {{ Request::is('admin/consultation-leads*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('consultation-leads.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">Consultation Leads</span>
+                <span class="aside-menu-title">Leads</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/consultation-types*') ? 'active' : '' }}">

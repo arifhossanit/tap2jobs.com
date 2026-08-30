@@ -118,6 +118,16 @@ class RegisterController extends AppBaseController
         if ((int) $input['type'] === 1) {
             session()->forget('url.intended');
             $redirectUrl = route('candidate.profile');
+            $candidate = $user->candidate;
+            $percentage = 0;
+            if ($candidate) {
+                $completion = app(\App\Services\CandidateProfileCompletionService::class)->calculate($candidate);
+                $percentage = $completion['percentage'] ?? 0;
+            }
+            session()->flash('profile_incomplete', [
+                'percentage' => $percentage,
+                'profile_url' => route('candidate.profile')
+            ]);
         } else {
             $redirectUrl = resolveIntendedRedirectUrl(RouteServiceProvider::EMPLOYER_HOME, $user);
         }

@@ -409,6 +409,7 @@
     @include('candidate_profile.edit_profile_modal')
     @include('candidate_profile.change_password_modal')
     @include('jobs.modals.cities')
+    @include('front_web.layouts.modals')
     <script data-turbo-eval="false">
         var hostUrl = 'assets/';
         let getLoggedInUserLang = '{{ getCurrentLanguageCode() }}';

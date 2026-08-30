@@ -22,8 +22,6 @@ class StoreConsultationLeadRequest extends FormRequest
             'email' => ['required', 'email', 'max:255'],
             'phone' => ['required', 'string', 'max:40'],
             'company_name' => ['nullable', 'string', 'max:255'],
-            'designation' => ['nullable', 'string', 'max:255'],
-            'company_website' => ['nullable', 'string', 'max:255'],
             'consultation_type' => [
                 'required',
                 'string',

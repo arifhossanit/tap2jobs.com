@@ -219,12 +219,23 @@
         var banner = document.getElementById('siteTopBanner');
         var closeButton = document.getElementById('siteTopBannerClose');
 
-        if (!banner || !closeButton) {
-            return;
+        if (banner && closeButton) {
+            closeButton.addEventListener('click', function () {
+                banner.classList.add('is-closed');
+            });
         }
 
-        closeButton.addEventListener('click', function () {
-            banner.classList.add('is-closed');
+        @if (Auth::check() && !Auth::user()->hasRole('Employer'))
+        document.addEventListener('click', function (e) {
+            var promoBtn = e.target.closest('#siteTopBanner .site-top-banner__promo, #siteTopBanner .site-top-banner__image-link, a[href*="jobs/create"]');
+            if (promoBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (typeof window.showNotEligibleModal === 'function') {
+                    window.showNotEligibleModal();
+                }
+            }
         });
+        @endif
     })();
 </script>

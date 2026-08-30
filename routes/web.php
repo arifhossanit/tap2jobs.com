@@ -144,6 +144,7 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          Route::post('job-categories/{jobCategory}', [JobCategoryController::class, 'update'])->name('job-categories.update');
          Route::delete('job-categories/{jobCategory}', [JobCategoryController::class, 'destroy'])->name('job-categories.destroy');
          Route::post('job-categories/{jobCategory}/change-status', [JobCategoryController::class, 'changeStatus'])->name('change-status');
+         Route::post('job-categories/{jobCategory}/change-status-value', [JobCategoryController::class, 'changeStatusValue'])->name('job-categories.change-status-value');
 
          // Company Size
          Route::get('company-sizes', [CompanySizeController::class, 'index'])->name('companySize.index');
@@ -581,6 +582,10 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
 
          // Consultation Leads Routes
          Route::get('consultation-leads', [ConsultationLeadController::class, 'index'])->name('consultation-leads.index');
+         Route::get('consultation-leads/export/{format}', [ConsultationLeadController::class, 'export'])
+                  ->where('format', 'csv|excel|pdf')
+                  ->name('consultation-leads.export');
+         Route::get('consultation-leads/print', [ConsultationLeadController::class, 'print'])->name('consultation-leads.print');
          Route::get('consultation-leads/{consultationLead}', [ConsultationLeadController::class, 'show'])->name('consultation-leads.show');
          Route::put('consultation-leads/{consultationLead}', [ConsultationLeadController::class, 'update'])->name('consultation-leads.update');
          Route::delete('consultation-leads/{consultationLead}', [ConsultationLeadController::class, 'destroy'])->name('consultation-leads.destroy');

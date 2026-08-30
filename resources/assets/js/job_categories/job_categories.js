@@ -175,6 +175,22 @@ listenChange('.isFeaturedJobCategory', function (event) {
     });
 })
 
+listenChange('.jobCategoryStatus', function (event) {
+    let jobCategoryId = $(event.currentTarget).attr('data-id');
+    $.ajax({
+        url: route('job-categories.change-status-value', jobCategoryId),
+        method: 'post',
+        cache: false,
+        success: function (result) {
+            if (result.success) {
+                displaySuccessMessage(result.message);
+                Livewire.dispatch('refresh');
+                Livewire.dispatch('refreshDatatable');
+            }
+        },
+    });
+})
+
 listenSubmit('#addJobCategoryForm', function (e) {
     e.preventDefault();
     let add_job_category_editor_content = addJobCategoryDescriptionQuill.root.innerHTML;

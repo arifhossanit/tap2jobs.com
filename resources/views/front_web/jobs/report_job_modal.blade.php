@@ -32,3 +32,23 @@
         </div>
     </div>
 </div>
+
+<style>
+    .job-action-modal.modal {
+        z-index: 100005 !important;
+    }
+
+    body:has(.job-action-modal.show) .modal-backdrop {
+        z-index: 100000 !important;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.job-action-modal').forEach(function (modal) {
+            if (modal.parentElement !== document.body) {
+                document.body.appendChild(modal);
+            }
+        });
+    });
+</script>

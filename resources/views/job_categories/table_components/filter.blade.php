@@ -12,7 +12,7 @@
                  </div>
                  <div class="p-5">
                        <div class="mb-5">
-                                <label for="filterBtn" class="form-label">{{ __('messages.common.status') }}:</label>
+                                <label for="filterBtn" class="form-label">{{ __('messages.job_category.is_featured') }}:</label>
                                 {{ Form::select('status',getTranslatedData(collect($filterHeads[0])->sortBy('key')->toArray()),null,['class' => 'form-select io-select2 abc', 'data-control' => 'select2', 'id' => 'jobCategoryFilter']) }}
                        </div>
                      <div class="d-flex justify-content-end">

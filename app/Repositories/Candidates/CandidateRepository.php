@@ -91,7 +91,7 @@ class CandidateRepository extends BaseRepository
         $data['countries'] = getCountries();
         $data['maritalStatus'] = MaritalStatus::toBase()->pluck('marital_status', 'id');
         $data['careerLevel'] = CareerLevel::toBase()->pluck('level_name', 'id');
-        $data['jobCategory'] = JobCategory::toBase()->orderBy('name', 'ASC')->pluck('name', 'id');
+        $data['jobCategory'] = JobCategory::where('status', JobCategory::STATUS_ACTIVE)->toBase()->orderBy('name', 'ASC')->pluck('name', 'id');
         $data['industry'] = Industry::toBase()->pluck('name', 'id');
         $data['functionalArea'] = FunctionalArea::toBase()->pluck('name', 'id');
         $data['skills'] = Skill::toBase()->orderBy('name', 'ASC')->pluck('name', 'id');

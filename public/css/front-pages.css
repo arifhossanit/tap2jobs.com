@@ -13987,11 +13987,11 @@ html[dir="rtl"]
 
 /* Keep the share/report dialogs and their backdrop above the top announcement banner. */
 .job-action-modal.modal {
-    z-index: 1200 !important;
+    z-index: 100005 !important;
 }
 
 body:has(.job-action-modal.show) .modal-backdrop {
-    z-index: 1190 !important;
+    z-index: 100000 !important;
 }
 
 @media (max-width: 575px) {
