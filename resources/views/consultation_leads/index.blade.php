@@ -7,9 +7,6 @@
 @section('content')
     <div class="container-fluid">
         @include('flash::message')
-        <div class="mb-5">
-            <h3 class="fw-bold m-0">Leads</h3>
-        </div>
         <div class="d-flex flex-column">
             <livewire:consultation-lead-table lazy/>
         </div>
@@ -20,7 +17,51 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             function text(value) {
-                return value || '-';
+                return value || 'N/A';
+            }
+
+            function confirmLeadAction(options) {
+                function sendRequest() {
+                    $.ajax({
+                        url: options.url,
+                        type: options.type || 'POST',
+                        dataType: 'json',
+                        success: function (response) {
+                            if (response.success) {
+                                displaySuccessMessage(response.message);
+                                Livewire.dispatch('refreshDatatable');
+                            }
+                        },
+                        error: function (result) {
+                            displayErrorMessage(result.responseJSON.message);
+                        },
+                    });
+                }
+
+                if (typeof swal === 'undefined') {
+                    if (confirm(options.title + "\n" + options.text)) {
+                        sendRequest();
+                    }
+
+                    return;
+                }
+
+                swal({
+                    title: options.title,
+                    text: options.text,
+                    icon: 'warning',
+                    buttons: {
+                        confirm: options.confirmButtonText,
+                        cancel: 'Cancel',
+                    },
+                    reverseButtons: true,
+                    confirmButtonColor: options.confirmButtonColor || '#198754',
+                    cancelButtonColor: '#ADB5BD',
+                }).then(function (confirmed) {
+                    if (confirmed) {
+                        sendRequest();
+                    }
+                });
             }
 
             listenChange('#consultationLeadStatusFilter', function () {
@@ -36,7 +77,10 @@
                 Livewire.dispatch('resetConsultationLeadFilters');
             });
 
-            listenClick('.consultation-lead-view-btn', function (event) {
+            $(document).off('click.consultationLeadView').on('click.consultationLeadView', '.consultation-lead-view-btn', function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+
                 $.ajax({
                     url: route('consultation-leads.show', event.currentTarget.dataset.id),
                     type: 'GET',
@@ -61,7 +105,7 @@
                         $('#consultationLeadMessage').text(text(lead.message));
                         $('#consultationLeadAd').text(text(lead.ad ? lead.ad.title : null));
                         $('#consultationLeadSource').text(text(lead.source_page));
-                        $('#consultationLeadUtm').text([lead.utm_source, lead.utm_medium, lead.utm_campaign].filter(Boolean).join(' / ') || '-');
+                        $('#consultationLeadUtm').text([lead.utm_source, lead.utm_medium, lead.utm_campaign].filter(Boolean).join(' / ') || 'N/A');
                         $('#consultationLeadStatus').val(lead.status);
                         $('#consultationLeadNotes').val(lead.admin_notes || '');
                         $('#showConsultationLeadModal').appendTo('body').modal('show');
@@ -95,8 +139,17 @@
                 });
             });
 
-            listenClick('.consultation-lead-delete-btn', function (event) {
-                deleteItem(route('consultation-leads.destroy', event.currentTarget.dataset.id), 'Consultation Lead', null, 'location.reload()');
+            $(document).off('click.consultationLeadArchive').on('click.consultationLeadArchive', '.consultation-lead-delete-btn', function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                confirmLeadAction({
+                    url: route('consultation-leads.destroy', event.currentTarget.dataset.id),
+                    type: 'DELETE',
+                    title: 'Archive Lead?',
+                    text: 'This lead will move to Archived Leads.',
+                    confirmButtonText: 'Yes, Archive',
+                });
             });
         });
     </script>

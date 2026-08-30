@@ -1,1 +1,1 @@
-{{ $row->company_name ?: '-' }}
+{{ $row->company_name ?: 'N/A' }}

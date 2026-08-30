@@ -140,6 +140,30 @@ class CandidateRepository extends BaseRepository
     }
 
     /**
+     * Return the existing candidate record for the given user, or create a
+     * fresh blank one when the relation is missing (e.g. orphaned/legacy rows)
+     * so profile reads and saves never crash on a null candidate.
+     */
+    private function ensureCandidateRecord(User $user): Candidate
+    {
+        if ($user->candidate === null) {
+            $candidate = Candidate::create([
+                'user_id' => $user->id,
+                'unique_id' => $this->getUniqueCandidateId(),
+            ]);
+
+            $user->update([
+                'owner_id' => $candidate->id,
+                'owner_type' => Candidate::class,
+            ]);
+
+            return $candidate;
+        }
+
+        return $user->candidate;
+    }
+
+    /**
      * @throws Throwable
      */
     public function store(array $input): bool
@@ -236,7 +260,7 @@ class CandidateRepository extends BaseRepository
             $input['available_at'] = isset($input['immediate_available']) && $input['immediate_available'] == 0
                 ? ($input['available_at'] ?? null)
                 : null;
-            $user->candidate->update($input);
+            $this->ensureCandidateRecord($user)->update($input);
 
             //Update Candidate Skills
             if (isset($input['candidateSkills']) && ! empty($input['candidateSkills'])) {
@@ -287,7 +311,7 @@ class CandidateRepository extends BaseRepository
                     ->toMediaCollection(User::PROFILE, config('app.media_disc'));
             }
 
-            $user->candidate->update(Arr::only($input, [
+            $this->ensureCandidateRecord($user)->update(Arr::only($input, [
                 'father_name',
                 'mother_name',
                 'religion',
@@ -368,7 +392,7 @@ class CandidateRepository extends BaseRepository
                 'thana_id',
             ]));
 
-            $user->candidate->update(Arr::only($input, [
+            $this->ensureCandidateRecord($user)->update(Arr::only($input, [
                 'present_address_type',
                 'present_post_office',
                 'present_state_division',
@@ -404,7 +428,7 @@ class CandidateRepository extends BaseRepository
             /** @var User $user */
             $user = Auth::user();
 
-            $user->candidate->update(Arr::only($input, [
+            $this->ensureCandidateRecord($user)->update(Arr::only($input, [
                 'objective',
                 'current_salary',
                 'expected_salary',
@@ -444,7 +468,7 @@ class CandidateRepository extends BaseRepository
                 $input[$preferredField] = array_values($input[$preferredField] ?? []);
             }
 
-            $user->candidate->update(Arr::only($input, $preferredFields));
+            $this->ensureCandidateRecord($user)->update(Arr::only($input, $preferredFields));
 
             DB::commit();
 
@@ -466,7 +490,7 @@ class CandidateRepository extends BaseRepository
             /** @var User $user */
             $user = Auth::user();
 
-            $user->candidate->update(Arr::only($input, [
+            $this->ensureCandidateRecord($user)->update(Arr::only($input, [
                 'career_summary',
                 'special_qualification',
                 'keywords',
@@ -505,7 +529,7 @@ class CandidateRepository extends BaseRepository
                 $input['disability_id_show_on_profile'] = (bool) ($input['disability_id_show_on_profile'] ?? true);
             }
 
-            $user->candidate->update(Arr::only($input, [
+            $this->ensureCandidateRecord($user)->update(Arr::only($input, [
                 'has_disability_id',
                 'disability_id_number',
                 'disability_id_show_on_profile',
@@ -1274,7 +1298,7 @@ class CandidateRepository extends BaseRepository
         try {
             $user = Auth::user();
             /** @var Candidate $candidate */
-            $candidate = Candidate::findOrFail($user->candidate->id);
+            $candidate = $this->ensureCandidateRecord($user);
 
             $applicationCvService = app(ApplicationCvService::class);
             $applicationCvService->ensure($candidate);

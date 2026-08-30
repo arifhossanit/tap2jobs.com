@@ -6,7 +6,7 @@
     </a>
     <div class="d-flex flex-column">
         <a href="{{route('company.show', $row->id)}}" class="mb-1 text-decoration-none fs-6">
-            {{$row->user->full_name}}
+            {{ $row->contact_person_name ?: $row->user->full_name }}
         </a>
         <span class="fs-6">{{$row->user->email}}</span>
     </div>

@@ -60,7 +60,7 @@ class EmailTemplateSeeder extends Seeder
             ],
             [
                 'template_name' => 'Email Job To Friend',
-                'subject' => 'Email for Job Details',
+                'subject' => 'New Job Details',
                 'body' => ' <strong style="text-align: left;" class="text-blue-color">
                                 Hi {{friend_name}},
                             </strong>

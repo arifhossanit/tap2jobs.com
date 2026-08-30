@@ -46,14 +46,50 @@ class UserVerifyNotification extends VerifyEmail implements ShouldQueue
         $user = $this->user;
         /** @var EmailTemplate $templateBody */
         $templateBody = EmailTemplate::whereTemplateName('Verify Email')->first();
+        if (! $templateBody) {
+            return (new MailMessage)
+                ->subject('Verify Email Address')
+                ->line('Please click the button below to verify your email address.')
+                ->action('Verify Email Address', $url);
+        }
+
         $keyVariable = ['{{user_name}}', '{{verify_url}}', '{{from_name}}'];
         $value = [$user->full_name, $url, config('app.name')];
         $body = str_replace($keyVariable, $value, $templateBody->body);
         $data['body'] = $body;
+        $data['logo_path'] = $this->resolveLogoPath();
 
         return (new MailMessage)
             ->subject($templateBody->subject)
             ->view('emails.verify_email', $data);
+    }
+
+    private function resolveLogoPath(): ?string
+    {
+        $logoUrl = getLogoUrl();
+        $logoPath = parse_url($logoUrl, PHP_URL_PATH);
+
+        if (! empty($logoPath)) {
+            $publicLogoPath = public_path(ltrim($logoPath, '/'));
+
+            if (file_exists($publicLogoPath)) {
+                return $publicLogoPath;
+            }
+        }
+
+        $settingLogo = getSettingValue('logo');
+
+        if (! empty($settingLogo) && filter_var($settingLogo, FILTER_VALIDATE_URL) === false) {
+            $publicLogoPath = public_path(ltrim($settingLogo, '/'));
+
+            if (file_exists($publicLogoPath)) {
+                return $publicLogoPath;
+            }
+        }
+
+        $fallbackLogoPath = public_path('assets/img/infyom-logo.png');
+
+        return file_exists($fallbackLogoPath) ? $fallbackLogoPath : null;
     }
 
     /**

@@ -13,12 +13,18 @@
                  <div class="p-5">
                        <div class="mb-5">
                                 <label for="filterBtn" class="form-label">{{ __('messages.filter_name.featured_company') }}:</label>
-                                {{ Form::select('featured',getTranslatedData(collect($filterHeads[0])->sortBy('key')->toArray()),null,['class' => 'form-select io-select2 abc', 'data-control' => 'select2', 'id' => 'featuredCompany']) }}
+                                {{ Form::select('featured',getTranslatedData(collect($filterHeads[0])->sortBy('key')->toArray()),$component->featured,['class' => 'form-select io-select2 abc', 'data-control' => 'select2', 'id' => 'featuredCompany']) }}
                        </div>
                      <div class="mb-5">
                                 <label for="filterBtn" class="form-label">{{__('messages.common.status')}}:</label>
-                                {{ Form::select('employee_status', getTranslatedData(collect($filterHeads[1])->sortBy('key')->toArray()),null,['class' => 'form-select io-select2', 'data-control'=>"select2", 'id' => 'companyStatus']) }}
+                                {{ Form::select('employee_status', getTranslatedData(collect($filterHeads[1])->sortBy('key')->toArray()),$component->status,['class' => 'form-select io-select2', 'data-control'=>"select2", 'id' => 'companyStatus']) }}
                             </div>
+                     @if (\Illuminate\Support\Facades\Schema::hasColumn('companies', 'created_by'))
+                         <div class="mb-5">
+                                    <label for="filterBtn" class="form-label">Created By:</label>
+                                    {{ Form::select('created_by', ['' => 'All'] + \App\Models\Company::CREATED_BY_LABELS, $component->createdBy, ['class' => 'form-select io-select2', 'data-control' => 'select2', 'id' => 'companyCreatedBy']) }}
+                                </div>
+                     @endif
                      <div class="d-flex justify-content-end">
                          <button type="reset" class="btn btn-secondary"
                              id="company-ResetFilter">{{ __('messages.common.reset') }}</button>

@@ -37,6 +37,12 @@
        data-bs-toggle="tooltip">
         <i class="fa-solid fa-print"></i>
     </a>
+    <a href="{{ route('consultation-leads.archived') }}"
+       class="btn btn-secondary"
+       title="Archived Leads"
+       data-bs-toggle="tooltip">
+        <i class="fa-solid fa-box-archive"></i>
+    </a>
 </div>
 
 <style>

@@ -404,6 +404,7 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          Route::delete('employers/{company}', [CompanyController::class, 'destroy'])->name('company.destroy');
          Route::post('employers/{company}/change-is-active', [CompanyController::class, 'changeIsActive'])->name('change.company.status');
          Route::post('employers/{company}/verify-email', [CompanyController::class, 'changeIsEmailVerified'])->name('company.verified.email');
+         Route::post('employers/{company}/unverify-email', [CompanyController::class, 'changeIsEmailUnverified'])->name('company.unverified.email');
          Route::post('employers/{company}/resend-email-verification', [CompanyController::class, 'resendEmailVerification'])->name('company.resendEmailVerification');
          Route::post(
                   'employers/{company}/mark-as-featured',
@@ -582,10 +583,13 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
 
          // Consultation Leads Routes
          Route::get('consultation-leads', [ConsultationLeadController::class, 'index'])->name('consultation-leads.index');
+         Route::get('consultation-leads/archived', [ConsultationLeadController::class, 'archived'])->name('consultation-leads.archived');
          Route::get('consultation-leads/export/{format}', [ConsultationLeadController::class, 'export'])
                   ->where('format', 'csv|excel|pdf')
                   ->name('consultation-leads.export');
          Route::get('consultation-leads/print', [ConsultationLeadController::class, 'print'])->name('consultation-leads.print');
+         Route::post('consultation-leads/{id}/restore', [ConsultationLeadController::class, 'restore'])->name('consultation-leads.restore');
+         Route::delete('consultation-leads/{id}/force-delete', [ConsultationLeadController::class, 'forceDestroy'])->name('consultation-leads.force-destroy');
          Route::get('consultation-leads/{consultationLead}', [ConsultationLeadController::class, 'show'])->name('consultation-leads.show');
          Route::put('consultation-leads/{consultationLead}', [ConsultationLeadController::class, 'update'])->name('consultation-leads.update');
          Route::delete('consultation-leads/{consultationLead}', [ConsultationLeadController::class, 'destroy'])->name('consultation-leads.destroy');

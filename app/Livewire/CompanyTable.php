@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Company;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Schema;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use Rappasoft\LaravelLivewireTables\Views\Filters\SelectFilter;
 
@@ -13,15 +14,16 @@ class CompanyTable extends LivewireTableComponent
     protected $model = Company::class;
     protected string $tableName = 'employers';
     protected ?string $bulkDeleteModel = Company::class;
-    protected $listeners = ['resetPage', 'refreshDatatable' => '$refresh', 'changeFeaturedCompany', 'changeStatusFilter'];
+    protected $listeners = ['resetPage', 'refreshDatatable' => '$refresh', 'changeFeaturedCompany', 'changeStatusFilter', 'changeCreatedByFilter'];
 
     public $showButtonOnHeader = true;
     public $showFilterOnHeader = true;
     public $featured = Company::ALL;
     public $status = Company::ALL;
+    public string $createdBy = '';
 
     public $buttonComponent = 'companies.table_components.add_button';
-    public array $filterComponents = ['companies.table_components.filter',Company::IS_FEATURED,Company::STATUS];
+    public array $filterComponents = ['companies.table_components.filter', Company::IS_FEATURED, Company::STATUS];
 
     public function configure(): void
     {
@@ -69,9 +71,14 @@ class CompanyTable extends LivewireTableComponent
     public function columns(): array
     {
         return [
-            Column::make(__('messages.company.employer_name'), 'user.first_name')
+            Column::make('Company Name', 'company_name')
+                ->sortable()
+                ->searchable()
+                ->view('companies.table_components.company_title'),
+
+            Column::make(__('messages.company.employer_name'), 'contact_person_name')
                 ->sortable(function (Builder $query, $direction) {
-                    return $query->orderBy(User::select('first_name')->whereColumn('companies.user_id', 'users.id'), $direction);
+                    return $query->orderBy('contact_person_name', $direction);
                 })
                 ->searchable()
                 ->view('companies.table_components.company_name'),
@@ -92,6 +99,10 @@ class CompanyTable extends LivewireTableComponent
                     return $query->orderBy(User::select('is_active')->whereColumn('companies.user_id', 'users.id'), $direction);
                 })
                 ->view('companies.table_components.status'),
+            Column::make('Created By', 'created_by')
+                ->sortable()
+                ->hideIf(! Schema::hasColumn('companies', 'created_by'))
+                ->view('companies.table_components.created_by'),
             Column::make(__('messages.common.last_change_by'), 'last_change')
                 ->sortable()
                 ->view('companies.table_components.last_change'),
@@ -105,14 +116,21 @@ class CompanyTable extends LivewireTableComponent
     {
          $query =  Company::with('user', 'activeFeatured', 'featured', 'admin');
          $query->when($this->featured != Company::ALL, function($q) {
-                  $q->Has('featured', $this->featured);
+                  if ($this->featured) {
+                           $q->whereHas('featured');
+                  } else {
+                           $q->doesntHave('featured');
+                  }
          });
          $query->when($this->status != Company::ALL, function($q) {
                   if($this->status) {
-                           $q->where('user.is_active', 1);
+                           $q->whereHas('user', fn (Builder $query) => $query->where('is_active', 1));
                   }else {
-                           $q->where('user.is_active', 0);
+                           $q->whereHas('user', fn (Builder $query) => $query->where('is_active', 0));
                   }
+         });
+         $query->when($this->createdBy !== '' && Schema::hasColumn('companies', 'created_by'), function($q) {
+                  $q->where('companies.created_by', $this->createdBy);
          });
          return $query->select('companies.*');
     }
@@ -163,6 +181,12 @@ class CompanyTable extends LivewireTableComponent
     public function changeStatusFilter($status)
     {
          $this->status = $status;
+         $this->setBuilder($this->builder());
+         $this->resetPagination();
+    }
+    public function changeCreatedByFilter($createdBy = '')
+    {
+         $this->createdBy = (string) $createdBy;
          $this->setBuilder($this->builder());
          $this->resetPagination();
     }

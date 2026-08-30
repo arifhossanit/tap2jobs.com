@@ -72,8 +72,8 @@
                     <table width="100%">
                         <tr>
                             <td>
-                                <img style="text-align: center;" src='{{ getLogoUrl() }}' alt="company logo"
-                                    class="img-fluid main-logo">
+                                <img style="text-align: center;" src="{{ ! empty($logo_path) && isset($message) ? $message->embed($logo_path) : getLogoUrl() }}"
+                                    alt="company logo" class="img-fluid main-logo">
                             </td>
                         </tr>
                     </table>

@@ -13,6 +13,7 @@ use App\Models\NotificationSetting;
 use App\Models\ReportedToCompany;
 use App\Models\State;
 use App\Models\Transaction;
+use App\Notifications\UserVerifyNotification;
 use App\Repositories\CompanyRepository;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
@@ -413,9 +414,23 @@ class CompanyController extends AppBaseController
     /**
      * @return mixed
      */
+    public function changeIsEmailUnverified(Company $company)
+    {
+        $company->user->update(['email_verified_at' => null]);
+        if (Auth::check() && ! Auth::user()->hasRole('Employer')) {
+            $company->last_change = Auth::user()->id;
+            $company->save();
+        }
+
+        return $this->sendSuccess('Employer email marked as unverified successfully.');
+    }
+
+    /**
+     * @return mixed
+     */
     public function resendEmailVerification(Company $company)
     {
-        $company->user->sendEmailVerificationNotification();
+        $company->user->notify(new UserVerifyNotification($company->user));
         if (Auth::check() && ! Auth::user()->hasRole('Employer')) {
             $company->last_change = Auth::user()->id;
             $company->save();

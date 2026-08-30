@@ -19,7 +19,7 @@
                                     <input class="form-check-input custom-switch-input m-0 flex-shrink-0" type="checkbox" role="switch"
                                         id="includeSensitivePersonalDataInCv"
                                         name="include_sensitive_personal_data_in_cv" value="1"
-                                        @checked((bool) $user->candidate->include_sensitive_personal_data_in_cv)>
+                                        @checked((bool) ($user->candidate?->include_sensitive_personal_data_in_cv))>
                                     <label class="form-check-label fw-bold text-dark fs-6 cursor-pointer mb-0" for="includeSensitivePersonalDataInCv">
                                         {{ __('messages.candidate_profile.include_sensitive_personal_data_in_cv') }}
                                     </label>

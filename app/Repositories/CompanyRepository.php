@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Company;
 use App\Models\CompanySize;
+use App\Models\ConsultationLead;
 use App\Models\FavouriteCompany;
 use App\Models\Industry;
 use App\Models\IndustryType;
@@ -23,6 +24,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 use PragmaRX\Countries\Package\Countries;
 use Spatie\Permission\Models\Role;
@@ -100,6 +102,9 @@ class CompanyRepository extends BaseRepository
             }
             $input['company_name'] = $input['name'];
             $input['contact_person_designation'] = $input['ceo'] ?? null;
+            if (Schema::hasColumn('companies', 'created_by')) {
+                $input['created_by'] = Company::CREATED_BY_ADMIN;
+            }
             $company = $this->create(Arr::only($input, (new Company())->getFillable()));
 
             // Create User
@@ -121,6 +126,7 @@ class CompanyRepository extends BaseRepository
             $companyRole = Role::whereName('Employer')->first();
             $user->assignRole($companyRole);
             $company->update(['user_id' => $user->id]);
+            $this->createEmployerLead($company, $user);
 
             if ((isset($input['image']))) {
                 $user->addMedia($input['image'])
@@ -259,6 +265,37 @@ class CompanyRepository extends BaseRepository
         }
 
         return $input;
+    }
+
+    private function createEmployerLead(Company $company, User $user): void
+    {
+        if (! Schema::hasTable('consultation_leads') || ! Schema::hasColumn('consultation_leads', 'lead_from')) {
+            return;
+        }
+
+        $companySize = $company->company_size_id
+            ? CompanySize::query()->find($company->company_size_id)
+            : null;
+
+        ConsultationLead::query()->updateOrCreate(
+            [
+                'lead_from' => ConsultationLead::LEAD_FROM_EMPLOYER,
+                'employer_id' => $company->id,
+            ],
+            [
+                'name' => $user->full_name ?: $user->first_name ?: $company->company_name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'company_name' => $company->company_name,
+                'designation' => $company->contact_person_designation,
+                'company_website' => $company->website,
+                'company_size_id' => $company->company_size_id,
+                'company_category_id' => $companySize?->company_category_id,
+                'consultation_type' => '',
+                'source_page' => getSettingValue('application_name') ?: config('app.name'),
+                'status' => ConsultationLead::STATUS_NEW,
+            ]
+        );
     }
 
     /**

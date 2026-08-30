@@ -12,10 +12,12 @@ function loadCompanyData() {
     }
     $('#featuredCompany').select2();
     $('#companyStatus').select2();
+    $('#companyCreatedBy').select2();
 
     listenClick('#resetFilter', function () {
-        $('#featuredCompany').val('').trigger('change');
-        $('#companyStatus').val('').trigger('change');
+        $('#featuredCompany').val(2).trigger('change');
+        $('#companyStatus').val(2).trigger('change');
+        $('#companyCreatedBy').val('').trigger('change');
     });
 
 
@@ -62,58 +64,90 @@ function loadCompanyData() {
 
 }
 
-listenChange('.is-employer-email-verified', function (event) {
-    if ($(this).is(':checked')) {
-        let isEmailVerifiedId = $(event.currentTarget).data('id');
-        changeEmailVerifiedRender(isEmailVerifiedId);
-        $(this).attr('disabled', true);
-    } else {
-        return false;
-    }
+$(document).off('click.employerEmailStatusToggle').on('click.employerEmailStatusToggle', '.employer-email-status-toggle', function (event) {
+    event.preventDefault();
+    let companyId = $(event.currentTarget).data('id');
+    let action = $(event.currentTarget).data('action');
+    let button = $(this);
+    let isVerify = action === 'verify';
+
+    swal({
+        title: isVerify ? 'Mark as verified?' : 'Mark as unverified?',
+        text: isVerify
+            ? 'This employer email will be marked as verified.'
+            : 'This employer email will be marked as unverified.',
+        icon: 'warning',
+        buttons: {
+            cancel: Lang.get('js.no_cancel'),
+            confirm: Lang.get('js.yes'),
+        },
+        dangerMode: ! isVerify,
+    }).then(function (willUpdate) {
+        if (willUpdate) {
+            button.addClass('disabled');
+
+            $.ajax({
+                url: route(isVerify ? 'company.verified.email' : 'company.unverified.email', companyId),
+                method: 'post',
+                cache: false,
+                success: function (result) {
+                    if (result.success) {
+                        swal.close();
+                        displaySuccessMessage(result.message);
+                        Livewire.dispatch('refreshDatatable');
+                    }
+                },
+                error: function (result) {
+                    swal.close();
+                    displayErrorMessage(result.responseJSON.message);
+                    button.removeClass('disabled');
+                },
+            });
+        }
+    });
 });
 
-function changeEmailVerifiedRender(isEmailVerifiedId) {
-    $.ajax({
-        url: route('company.verified.email', isEmailVerifiedId),
-        method: 'post',
-        cache: false,
-        success: function (result) {
-            if (result.success) {
-                displaySuccessMessage(result.message);
-                Livewire.dispatch('refreshDatatable');
-                return true;
-            }
-        },
-        error: function (result) {
-            displayErrorMessage(result.responseJSON.message);
-        },
-    });
-}
-
-listenChange('.isEmployerActive', function () {
+$(document).off('change.employerActive').on('change.employerActive', '.isEmployerActive', function () {
     let companyIsActiveId = $(this).attr('data-id');
     changeIsActiveRender(companyIsActiveId);
 });
-listenClick('.send-email-company-verification', function (event) {
+$(document).off('click.sendEmployerVerificationMail').on('click.sendEmployerVerificationMail', '.send-email-company-verification', function (event) {
+    event.preventDefault();
     let sendEmailVerificationId = $(event.currentTarget).attr('data-id');
     let isDisabled = $(this);
-    isDisabled.addClass('disabled');
 
-    $.ajax({
-        url: route('company.resendEmailVerification',
-            sendEmailVerificationId),
-        type: 'post',
-        success: function (result) {
-            if (result.success) {
-                displaySuccessMessage(result.message);
-                isDisabled.removeClass('disabled');
-                Livewire.dispatch('refreshDatatable');
-                return true;
-            }
+    swal({
+        title: 'Send verification email?',
+        text: 'A verification email will be queued for this employer.',
+        icon: 'warning',
+        buttons: {
+            cancel: Lang.get('js.no_cancel'),
+            confirm: Lang.get('js.yes'),
         },
-        error: function (result) {
-            displayErrorMessage(result.responseJSON.message);
-        },
+    }).then(function (willSend) {
+        if (willSend) {
+            isDisabled.addClass('disabled');
+
+            $.ajax({
+                url: route('company.resendEmailVerification',
+                    sendEmailVerificationId),
+                type: 'post',
+                success: function (result) {
+                    if (result.success) {
+                        swal.close();
+                        displaySuccessMessage(result.message);
+                        isDisabled.removeClass('disabled');
+                        Livewire.dispatch('refreshDatatable');
+                        return true;
+                    }
+                },
+                error: function (result) {
+                    swal.close();
+                    displayErrorMessage(result.responseJSON.message);
+                    isDisabled.removeClass('disabled');
+                },
+            });
+        }
     });
 });
 
@@ -190,16 +224,21 @@ function makeUnFeaturedRender(adminUnFeaturedId) {
         },
     });
 };
-listenChange("#featuredCompany", function() {
+$(document).off('change.companyFeaturedFilter').on('change.companyFeaturedFilter', '#featuredCompany', function() {
          Livewire.dispatch("changeFeaturedCompany", { featured: $(this).val() });
      });
-listenChange("#companyStatus", function() {
+$(document).off('change.companyStatusFilter').on('change.companyStatusFilter', '#companyStatus', function() {
          Livewire.dispatch("changeStatusFilter", { status: $(this).val() });
+     });
+$(document).off('change.companyCreatedByFilter').on('change.companyCreatedByFilter', '#companyCreatedBy', function() {
+         const createdBy = $(this).val() || '';
+         Livewire.dispatch("changeCreatedByFilter", { createdBy: createdBy });
      });
 function hideDropdownManually(button, menu) {
          button.dropdown('toggle');
      }
 listenClick("#company-ResetFilter", function() {
          $("#featuredCompany,#companyStatus").val(2).change();
+         $("#companyCreatedBy").val('').change();
          hideDropdownManually($('#companiesFilterBtn'), $('.dropdown-menu'));
      });

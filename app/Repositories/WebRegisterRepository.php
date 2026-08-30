@@ -6,6 +6,7 @@ use App;
 use App\Models\Candidate;
 use App\Models\Company;
 use App\Models\CompanySize;
+use App\Models\ConsultationLead;
 use App\Models\Industry;
 use App\Models\Notification;
 use App\Models\NotificationSetting;
@@ -17,6 +18,7 @@ use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Spatie\Permission\Models\Role;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Throwable;
@@ -89,7 +91,7 @@ class WebRegisterRepository
                 }
                 $industryIds = array_values(array_unique($industryIds));
 
-                $employer = Company::create([
+                $companyInput = [
                     'user_id' => $user->id,
                     'unique_id' => getUniqueCompanyId(),
                     'company_name' => $input['company_name'],
@@ -128,8 +130,15 @@ class WebRegisterRepository
                     'disability_facilities' => ($input['has_disability_facilities'] ?? false)
                         ? array_values(array_unique($input['disability_facilities'] ?? []))
                         : [],
-                ]);
+                ];
+
+                if (Schema::hasColumn('companies', 'created_by')) {
+                    $companyInput['created_by'] = Company::CREATED_BY_EMPLOYER;
+                }
+
+                $employer = Company::create($companyInput);
                 $user->update(['owner_id' => $employer->id, 'owner_type' => Company::class]);
+                $this->createEmployerLead($employer, $user, $companySizeId);
                 (int) NotificationSetting::where('key', 'NEW_EMPLOYER_REGISTERED')->value('value') === 1 ?
                     addNotification([
                         Notification::NEW_EMPLOYER_REGISTERED,
@@ -155,5 +164,34 @@ class WebRegisterRepository
 
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
+    }
+
+    private function createEmployerLead(Company $company, User $user, ?int $companySizeId): void
+    {
+        if (! Schema::hasTable('consultation_leads') || ! Schema::hasColumn('consultation_leads', 'lead_from')) {
+            return;
+        }
+
+        $companySize = $companySizeId ? CompanySize::query()->find($companySizeId) : null;
+
+        ConsultationLead::query()->updateOrCreate(
+            [
+                'lead_from' => ConsultationLead::LEAD_FROM_EMPLOYER,
+                'employer_id' => $company->id,
+            ],
+            [
+                'name' => $company->contact_person_name ?: $user->full_name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'company_name' => $company->company_name,
+                'designation' => $company->contact_person_designation,
+                'company_website' => $company->website,
+                'company_size_id' => $company->company_size_id,
+                'company_category_id' => $companySize?->company_category_id,
+                'consultation_type' => '',
+                'source_page' => getSettingValue('application_name') ?: config('app.name'),
+                'status' => ConsultationLead::STATUS_NEW,
+            ]
+        );
     }
 }

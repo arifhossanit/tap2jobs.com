@@ -97,6 +97,16 @@ class Company extends Model implements HasMedia
     public const DEACTIVE = 0;
     public const ALL = 2;
 
+    public const CREATED_BY_ADMIN = 'admin';
+    public const CREATED_BY_EMPLOYER = 'employer';
+    public const CREATED_BY_ADMIN_DEMO = 'admin_demo';
+
+    public const CREATED_BY_LABELS = [
+        self::CREATED_BY_ADMIN => 'Admin',
+        self::CREATED_BY_EMPLOYER => 'Employer',
+        self::CREATED_BY_ADMIN_DEMO => 'Admin (Demo)',
+    ];
+
     const BTN_BTN_COLOR = [
         'btn btn-green btn-small-effect',
         'btn btn-purple btn-small btn-effect',
@@ -154,6 +164,7 @@ class Company extends Model implements HasMedia
         'user_id',
         'unique_id',
         'last_change',
+        'created_by',
     ];
 
     /**
@@ -197,6 +208,7 @@ class Company extends Model implements HasMedia
         'user_id' => 'integer',
         'unique_id' => 'string',
         'last_change' => 'integer',
+        'created_by' => 'string',
     ];
 
     /**
@@ -218,7 +230,7 @@ class Company extends Model implements HasMedia
     /**
      * @var array
      */
-    protected $appends = ['company_url'];
+    protected $appends = ['company_url', 'created_by_label'];
 
     protected $with = ['user'];
 
@@ -259,6 +271,11 @@ class Company extends Model implements HasMedia
         }
 
         return asset('assets/img/employer-image.png');
+    }
+
+    public function getCreatedByLabelAttribute(): string
+    {
+        return self::CREATED_BY_LABELS[$this->created_by] ?? 'Admin';
     }
 
     public function industry(): BelongsTo

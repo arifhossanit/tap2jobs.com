@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ConsultationLead extends Model
 {
+    use SoftDeletes;
+
     public const STATUS_NEW = 'new';
     public const STATUS_CONTACTED = 'contacted';
     public const STATUS_QUALIFIED = 'qualified';
@@ -19,6 +22,14 @@ class ConsultationLead extends Model
         self::STATUS_QUALIFIED => 'Qualified',
         self::STATUS_CONVERTED => 'Converted',
         self::STATUS_REJECTED => 'Rejected',
+    ];
+
+    public const LEAD_FROM_CONSULTATION_FORM = 'consultation_form';
+    public const LEAD_FROM_EMPLOYER = 'employer';
+
+    public const LEAD_FROM_LABELS = [
+        self::LEAD_FROM_CONSULTATION_FORM => 'Consultation Form',
+        self::LEAD_FROM_EMPLOYER => 'Employer',
     ];
 
     public $table = 'consultation_leads';
@@ -44,6 +55,8 @@ class ConsultationLead extends Model
         'utm_campaign',
         'status',
         'admin_notes',
+        'lead_from',
+        'employer_id',
     ];
 
     protected $casts = [
@@ -51,9 +64,11 @@ class ConsultationLead extends Model
         'ad_id' => 'integer',
         'company_size_id' => 'integer',
         'company_category_id' => 'integer',
+        'employer_id' => 'integer',
+        'deleted_at' => 'datetime',
     ];
 
-    protected $appends = ['status_label', 'consultation_type_label', 'preferred_contact_method_label'];
+    protected $appends = ['status_label', 'consultation_type_label', 'preferred_contact_method_label', 'lead_from_label'];
 
     public function ad(): BelongsTo
     {
@@ -68,6 +83,11 @@ class ConsultationLead extends Model
     public function companyCategory(): BelongsTo
     {
         return $this->belongsTo(CompanyCategory::class);
+    }
+
+    public function employer(): BelongsTo
+    {
+        return $this->belongsTo(Company::class, 'employer_id');
     }
 
     public function getStatusLabelAttribute(): string
@@ -93,5 +113,10 @@ class ConsultationLead extends Model
             ProfileReferenceOption::TYPE_CONSULTATION_CONTACT_METHOD,
             [ProfileReferenceOption::SCOPE_EMPLOYER]
         )[$this->preferred_contact_method] ?? ucfirst(str_replace('_', ' ', (string) $this->preferred_contact_method));
+    }
+
+    public function getLeadFromLabelAttribute(): string
+    {
+        return self::LEAD_FROM_LABELS[$this->lead_from] ?? 'Consultation Form';
     }
 }

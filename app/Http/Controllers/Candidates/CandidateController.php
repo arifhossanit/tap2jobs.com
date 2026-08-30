@@ -200,7 +200,7 @@ class CandidateController extends AppBaseController
             }
         }
 
-        if ($sectionName == 'resume') {
+        if ($sectionName == 'resume' && $user->candidate !== null) {
             $this->applicationCvService->ensure($user->candidate, true);
         }
 

@@ -72,6 +72,11 @@ class ConsultationLeadController extends AppBaseController
         return view('consultation_leads.index');
     }
 
+    public function archived(): View
+    {
+        return view('consultation_leads.archived');
+    }
+
     public function export(Request $request, string $format): BinaryFileResponse|StreamedResponse|Response
     {
         $leads = $this->consultationLeadQuery($request)->get();
@@ -110,7 +115,7 @@ class ConsultationLeadController extends AppBaseController
 
     public function show(ConsultationLead $consultationLead): JsonResponse
     {
-        $consultationLead->load(['ad', 'companySize.companyCategory', 'companyCategory']);
+        $consultationLead->load(['ad', 'companySize.companyCategory', 'companyCategory', 'employer']);
 
         return $this->sendResponse($consultationLead, 'Consultation lead retrieved successfully.');
     }
@@ -126,13 +131,29 @@ class ConsultationLeadController extends AppBaseController
     {
         $consultationLead->delete();
 
-        return $this->sendSuccess('Consultation lead deleted successfully.');
+        return $this->sendSuccess('Consultation lead archived successfully.');
+    }
+
+    public function forceDestroy(int $id): JsonResponse
+    {
+        $consultationLead = ConsultationLead::query()->onlyTrashed()->findOrFail($id);
+        $consultationLead->forceDelete();
+
+        return $this->sendSuccess('Consultation lead permanently deleted successfully.');
+    }
+
+    public function restore(int $id): JsonResponse
+    {
+        $consultationLead = ConsultationLead::query()->onlyTrashed()->findOrFail($id);
+        $consultationLead->restore();
+
+        return $this->sendSuccess('Consultation lead restored successfully.');
     }
 
     private function consultationLeadQuery(Request $request): Builder
     {
         $query = ConsultationLead::query()
-            ->with(['ad', 'companySize.companyCategory', 'companyCategory'])
+            ->with(['ad', 'companySize.companyCategory', 'companyCategory', 'employer'])
             ->latest();
 
         if ($request->filled('status')) {
@@ -152,27 +173,27 @@ class ConsultationLeadController extends AppBaseController
             'Name',
             'Contact',
             'Company',
-            'Size',
             'Category',
             'Type',
+            'Lead Type',
             'Lead Source',
             'Status',
             'Submitted',
         ];
     }
 
-    private function consultationLeadExportRow(ConsultationLead $lead, ?string $leadSource): array
+    private function consultationLeadExportRow($lead, ?string $leadSource): array
     {
         return [
-            $lead->name,
-            trim($lead->phone."\n".$lead->email),
-            $lead->company_name,
-            $lead->companySize?->size,
-            $lead->companyCategory?->name ?: $lead->companySize?->companyCategory?->name,
-            $lead->consultation_type_label,
-            $leadSource,
-            $lead->status_label,
-            $lead->created_at?->format('d M Y h:i A'),
+            $lead->name ?: 'N/A',
+            trim($lead->phone."\n".$lead->email) ?: 'N/A',
+            $lead->company_name ?: 'N/A',
+            $lead->company_category_name ?: $lead->companyCategory?->name ?: $lead->companySize?->companyCategory?->name ?: 'N/A',
+            $lead->consultation_type ? $lead->consultation_type_label : 'N/A',
+            $lead->lead_from_label,
+            $lead->source_page ?: $leadSource ?: 'N/A',
+            $lead->status_label ?: 'N/A',
+            $lead->created_at?->format('d M Y h:i A') ?: 'N/A',
         ];
     }
 }

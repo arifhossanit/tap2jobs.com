@@ -1,1 +1,1 @@
-{{ $row->status_label }}
+{{ $row->status_label ?: 'N/A' }}

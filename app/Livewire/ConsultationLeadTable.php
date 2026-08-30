@@ -5,12 +5,15 @@ namespace App\Livewire;
 use App\Models\ConsultationLead;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
+use Throwable;
 
 class ConsultationLeadTable extends LivewireTableComponent
 {
     protected $model = ConsultationLead::class;
 
     protected string $tableName = 'consultation-leads';
+
+    protected ?string $bulkDeleteModel = ConsultationLead::class;
 
     protected $listeners = [
         'resetPage',
@@ -23,6 +26,8 @@ class ConsultationLeadTable extends LivewireTableComponent
     public string $status = '';
 
     public string $companyCategoryId = '';
+
+    public bool $archived = false;
 
     public $showButtonOnHeader = true;
 
@@ -87,15 +92,15 @@ class ConsultationLeadTable extends LivewireTableComponent
                 ->sortable()
                 ->searchable()
                 ->view('consultation_leads.table_components.company'),
-            Column::make('Size', 'company_size_id')
-                ->sortable()
-                ->view('consultation_leads.table_components.size'),
             Column::make('Category', 'company_category_id')
                 ->sortable()
                 ->view('consultation_leads.table_components.category'),
             Column::make('Type', 'consultation_type')
                 ->sortable()
                 ->view('consultation_leads.table_components.type'),
+            Column::make('Lead Type', 'lead_from')
+                ->sortable()
+                ->view('consultation_leads.table_components.lead_from'),
             Column::make('Lead Source', 'source_page')
                 ->view('consultation_leads.table_components.lead_source'),
             Column::make('Status', 'status')
@@ -105,14 +110,17 @@ class ConsultationLeadTable extends LivewireTableComponent
                 ->sortable()
                 ->view('consultation_leads.table_components.submitted'),
             Column::make(__('messages.common.action'), 'id')
-                ->view('consultation_leads.table_components.action_button'),
+                ->view($this->archived
+                    ? 'consultation_leads.table_components.archived_action_button'
+                    : 'consultation_leads.table_components.action_button'),
         ];
     }
 
     public function builder(): Builder
     {
         return ConsultationLead::query()
-            ->with(['ad', 'companySize.companyCategory', 'companyCategory'])
+            ->with(['ad', 'companySize.companyCategory', 'companyCategory', 'employer'])
+            ->when($this->archived, fn (Builder $query) => $query->onlyTrashed())
             ->when($this->status !== '', function (Builder $query) {
                 $query->where('status', $this->status);
             })
@@ -120,6 +128,105 @@ class ConsultationLeadTable extends LivewireTableComponent
                 $query->where('company_category_id', $this->companyCategoryId);
             })
             ->select('consultation_leads.*');
+    }
+
+    public function bulkActions(): array
+    {
+        $this->bulkActionConfirms['bulkDelete'] = $this->archived
+            ? 'Are you sure you want to permanently delete the selected leads?'
+            : 'Are you sure you want to archive the selected leads?';
+
+        return [
+            'bulkDelete' => $this->archived ? 'Delete Permanently' : 'Archive Selected',
+        ];
+    }
+
+    public function bulkDelete(): void
+    {
+        if (! $this->archived) {
+            $selectedIds = array_values(array_unique($this->getSelected()));
+
+            if (empty($selectedIds)) {
+                $this->dispatchBulkActionFeedback('error', 'Please select at least one record.');
+
+                return;
+            }
+
+            $archived = 0;
+            $failed = 0;
+
+            foreach ($selectedIds as $id) {
+                try {
+                    $record = ConsultationLead::query()->find($id);
+
+                    if (! $record) {
+                        $failed++;
+                        continue;
+                    }
+
+                    $record->delete();
+                    $archived++;
+                } catch (Throwable $exception) {
+                    report($exception);
+                    $failed++;
+                }
+            }
+
+            $this->clearSelected();
+
+            if ($failed > 0) {
+                $this->dispatchBulkActionFeedback('error', $this->recordCountText($archived).' archived. '.$this->recordCountText($failed).' could not be archived.');
+
+                return;
+            }
+
+            $this->dispatchBulkActionFeedback('success', $this->recordCountText($archived).' archived successfully.');
+
+            return;
+        }
+
+        $selectedIds = array_values(array_unique($this->getSelected()));
+
+        if (empty($selectedIds)) {
+            $this->dispatchBulkActionFeedback('error', 'Please select at least one record.');
+
+            return;
+        }
+
+        $deleted = 0;
+        $failed = 0;
+
+        foreach ($selectedIds as $id) {
+            try {
+                $record = ConsultationLead::query()->onlyTrashed()->find($id);
+
+                if (! $record) {
+                    $failed++;
+                    continue;
+                }
+
+                $record->forceDelete();
+                $deleted++;
+            } catch (Throwable $exception) {
+                report($exception);
+                $failed++;
+            }
+        }
+
+        $this->clearSelected();
+
+        if ($failed > 0) {
+            $this->dispatchBulkActionFeedback('error', $this->recordCountText($deleted).' permanently deleted. '.$this->recordCountText($failed).' could not be deleted.');
+
+            return;
+        }
+
+        $this->dispatchBulkActionFeedback('success', $this->recordCountText($deleted).' permanently deleted successfully.');
+    }
+
+    protected function deleteBulkDeleteRecord($record): void
+    {
+        $record->delete();
     }
 
     public function changeConsultationLeadStatusFilter(string $status = ''): void

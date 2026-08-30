@@ -1,17 +1,28 @@
-<div class="d-flex justify-content-center">
-    @if( ! $row->user->email_verified_at)
-        <label class="form-check form-switch form-check-custom form-check-solid form-switch-sm justify-content-center">
-            <input type="checkbox" name="Is isActive"
-                   class="form-check-input is-employer-email-verified" data-id="{{ $row->id }}">
-            <span class="custom-switch-indicator"></span>
-        </label>
+<div class="d-flex align-items-center justify-content-center gap-2">
+    @if($row->user->email_verified_at)
+        <button type="button"
+                title="Mark Unverified"
+                class="badge bg-light-success border-0 employer-email-status-toggle"
+                data-id="{{ $row->id }}"
+                data-action="unverify"
+                data-bs-toggle="tooltip">
+            <i class="fa-solid fa-circle-check me-1"></i> Verified
+        </button>
     @else
-        <div>
-            <a title="{{ __('messages.common.resend_verification_mail') }}"
-               class="btn btn-icon text-primary edit-btn send-email-company-verification"
-               data-id="{{ $row->id }}">
-                <i title="{{ __('messages.common.resend_verification_mail') }}" class="fa fa-sync"></i>
-            </a>
-        </div>
+        <button type="button"
+                title="Mark Verified"
+                class="badge bg-light-warning border-0 employer-email-status-toggle"
+                data-id="{{ $row->id }}"
+                data-action="verify"
+                data-bs-toggle="tooltip">
+            <i class="fa-solid fa-triangle-exclamation me-1"></i> Unverified
+        </button>
+        <button type="button"
+                title="{{ __('messages.common.resend_verification_mail') }}"
+                class="btn btn-icon text-primary send-email-company-verification"
+                data-id="{{ $row->id }}"
+                data-bs-toggle="tooltip">
+            <i class="fa-solid fa-paper-plane"></i>
+        </button>
     @endif
 </div>
