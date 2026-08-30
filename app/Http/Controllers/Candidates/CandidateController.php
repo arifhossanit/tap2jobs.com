@@ -308,7 +308,25 @@ class CandidateController extends AppBaseController
 
         Flash::success(__('messages.flash.candidate_profile'));
 
+
         return redirect(route('candidate.profile'));
+    }
+
+    /**
+     * @throws \Throwable
+     */    private function flashProfileCompletion(?\App\Models\Candidate $candidate): void
+    {
+        if (! $candidate) {
+            return;
+        }
+
+        $completion = app(\App\Services\CandidateProfileCompletionService::class)->calculate($candidate);
+        $percentage = $completion['percentage'] ?? 0;
+
+        session()->flash('profile_incomplete', [
+            'percentage' => $percentage,
+            'profile_url' => route('candidate.profile'),
+        ]);
     }
 
     /**
@@ -323,6 +341,7 @@ class CandidateController extends AppBaseController
         }
 
         $this->candidateRepository->updatePersonalDetails($input);
+        $this->flashProfileCompletion(Auth::user()->candidate?->fresh());
 
         if ($request->ajax() || $request->wantsJson()) {
             return $this->sendSuccess(__('messages.flash.candidate_profile'));
@@ -339,6 +358,7 @@ class CandidateController extends AppBaseController
     public function updateAddressDetails(CandidateUpdateAddressDetailsRequest $request)
     {
         $this->candidateRepository->updateAddressDetails($request->validated());
+        $this->flashProfileCompletion(Auth::user()->candidate?->fresh());
 
         if ($request->ajax() || $request->wantsJson()) {
             return $this->sendSuccess(__('messages.flash.candidate_profile'));
@@ -356,67 +376,6 @@ class CandidateController extends AppBaseController
     {
         $this->candidateRepository->updateCareerApplication($request->validated());
         $this->applicationCvService->ensure(Auth::user()->candidate->fresh(), true);
-
-        if ($request->ajax() || $request->wantsJson()) {
-            return $this->sendSuccess(__('messages.flash.candidate_profile'));
-        }
-
-        Flash::success(__('messages.flash.candidate_profile'));
-
-        return redirect(route('candidate.profile', ['section' => 'personal-information']));
-    }
-
-    /**
-     * @throws \Throwable
-     */
-    public function updatePreferredArea(CandidateUpdatePreferredAreaRequest $request)
-    {
-        $this->candidateRepository->updatePreferredArea($request->validated());
-
-        if ($request->ajax() || $request->wantsJson()) {
-            return $this->sendSuccess(__('messages.flash.candidate_profile'));
-        }
-
-        Flash::success(__('messages.flash.candidate_profile'));
-
-        return redirect(route('candidate.profile', ['section' => 'personal-information']));
-    }
-
-    /**
-     * @throws \Throwable
-     */
-    public function updateRelevantInformation(CandidateUpdateRelevantInformationRequest $request)
-    {
-        $this->candidateRepository->updateRelevantInformation($request->validated());
-
-        if ($request->ajax() || $request->wantsJson()) {
-            return $this->sendSuccess(__('messages.flash.candidate_profile'));
-        }
-
-        Flash::success(__('messages.flash.candidate_profile'));
-
-        return redirect(route('candidate.profile', ['section' => 'personal-information']));
-    }
-
-    /**
-     * @throws \Throwable
-     */
-    public function updateDisabilityInformation(CandidateUpdateDisabilityInformationRequest $request)
-    {
-        $this->candidateRepository->updateDisabilityInformation($request->validated());
-
-        if ($request->ajax() || $request->wantsJson()) {
-            return $this->sendSuccess(__('messages.flash.candidate_profile'));
-        }
-
-        Flash::success(__('messages.flash.candidate_profile'));
-
-        return redirect(route('candidate.profile', ['section' => 'personal-information']));
-    }
-
-    public function storeExtraCurricular(CandidateUpdateExtraCurricularRequest $request): JsonResponse
-    {
-        $extraCurricular = $this->candidateRepository->createExtraCurricular($request->validated());
 
         return $this->sendResponse($this->extraCurricularResponse($extraCurricular), __('messages.flash.candidate_profile'));
     }

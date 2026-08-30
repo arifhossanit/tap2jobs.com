@@ -117,7 +117,7 @@
                                         </h2>
 
                                         <div class="row g-4">
-                                            <div class="col-md-4">
+                                            {{-- <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="employerUsername" class="employer-user-information-label">
                                                         {{ __('messages.employer_register.username') }} <span class="text-danger">*</span>
@@ -130,6 +130,17 @@
                                                     </div>
                                                     <div class="employer-live-validation-message" id="employerUsernameFeedback"
                                                          aria-live="polite"></div>
+                                                </div>
+                                            </div> --}}
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="employerEmail" class="employer-contact-information-label">
+                                                        {{ __('messages.employer_register.contact_person_email') }} <span class="text-danger">*</span>
+                                                    </label>
+                                                    <input type="email" name="email" id="employerEmail"
+                                                           class="form-control employer-contact-information-control"
+                                                           value="{{ old('email') }}" maxlength="170"
+                                                           placeholder="{{ __('messages.employer_register.contact_person_email_placeholder') }}" required>
                                                 </div>
                                             </div>
 
@@ -435,7 +446,7 @@
                                         </h2>
 
                                         <div class="row g-4">
-                                            <div class="col-md-6">
+                                            <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="registerContactName" class="employer-contact-information-label">
                                                         {{ __('messages.employer_register.contact_person_name') }} <span class="text-danger">*</span>
@@ -458,19 +469,7 @@
                                                            value="{{ old('contact_person_designation') }}" maxlength="180"
                                                            placeholder="{{ __('messages.employer_register.contact_person_designation_placeholder') }}" required>
                                                 </div>
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="employerEmail" class="employer-contact-information-label">
-                                                        {{ __('messages.employer_register.contact_person_email') }} <span class="text-danger">*</span>
-                                                    </label>
-                                                    <input type="email" name="email" id="employerEmail"
-                                                           class="form-control employer-contact-information-control"
-                                                           value="{{ old('email') }}" maxlength="170"
-                                                           placeholder="{{ __('messages.employer_register.contact_person_email_placeholder') }}" required>
-                                                </div>
-                                            </div>
+                                            </div>                                            
 
                                             <div class="col-md-6">
                                                 <div class="form-group employer-register-phone-field employer-contact-phone-field">

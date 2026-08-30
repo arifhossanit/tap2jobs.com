@@ -1100,7 +1100,7 @@
 
 @section('content')
 @php
-    $visibleCategoryLimit = 60;
+    $visibleCategoryLimit = 500;
     $mobileCategoryLimit = 8;
     $visibleCategories = $jobCategories->take($visibleCategoryLimit)->values();
     $categoryColumns = $visibleCategories->chunk((int) ceil(max($visibleCategories->count(), 1) / 3));

@@ -27,7 +27,7 @@ class WebRegisterRequest extends FormRequest
 
         if ((int) $this->input('type') === 2) {
             $rules = array_merge($rules, [
-                'username' => ['required', 'string', 'max:100', 'regex:/^[\p{L}\p{M}\p{N}._-]+$/u', 'unique:users,username'],
+                'username' => ['nullable', 'string', 'max:100', 'regex:/^[\p{L}\p{M}\p{N}._-]+$/u', 'unique:users,username'],
                 'company_name' => 'required|string|max:180',
                 'company_name_bn' => 'nullable|string|max:180',
                 'established_in' => 'required|integer|min:1800|max:'.date('Y'),

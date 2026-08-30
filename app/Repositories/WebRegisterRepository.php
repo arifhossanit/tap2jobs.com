@@ -52,6 +52,17 @@ class WebRegisterRepository
             ]);
             if ((int) $input['type'] === 2) {
                 $userInput['first_name'] = $input['company_name'];
+                if (empty($userInput['username']) && ! empty($input['company_name'])) {
+                    $baseUsername = \Illuminate\Support\Str::slug(\Illuminate\Support\Str::ascii($input['company_name']));
+                    $baseUsername = \Illuminate\Support\Str::limit($baseUsername ?: 'employer', 60, '');
+                    $usernameCandidate = $baseUsername;
+                    $suffix = 1;
+                    while (User::where('username', $usernameCandidate)->exists()) {
+                        $usernameCandidate = $baseUsername.'_'.$suffix;
+                        $suffix++;
+                    }
+                    $userInput['username'] = $usernameCandidate;
+                }
             }
             $userInput['password'] = Hash::make($input['password']);
             $userInput['email_verified_at'] = now();
@@ -59,6 +70,7 @@ class WebRegisterRepository
             $user = User::create($userInput);
             $userRole = Role::where('name', ($input['type'] == 1) ? 'Candidate' : 'Employer')->first();
             $user->assignRole($userRole);
+
             $adminId = User::role('Admin')->first()->id;
             if ($input['type'] == 1) {
                 /** @var CandidateRepository $candidateRepo */

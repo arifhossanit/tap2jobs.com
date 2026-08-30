@@ -1,5 +1,13 @@
 <script>
-    window.showProfileIncompleteModal = function (percentage, profileUrl) {
+    window.showProfileIncompleteModal = function (percentage, profileUrl, retryCount) {
+        retryCount = retryCount || 0;
+        if ((typeof Swal === 'undefined' || typeof Swal.fire !== 'function') && typeof swal !== 'function' && retryCount < 5) {
+            setTimeout(function() {
+                window.showProfileIncompleteModal(percentage, profileUrl, retryCount + 1);
+            }, 150);
+            return;
+        }
+
         percentage = parseInt(percentage) || 0;
         var isBn = (typeof lancode !== 'undefined' && lancode === 'bn');
         var isComplete = percentage >= 80;
@@ -186,13 +194,21 @@
 @if (session()->has('profile_incomplete'))
     @php $profileData = session()->get('profile_incomplete'); @endphp
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var percentage = "{{ $profileData['percentage'] ?? 0 }}";
-            var profileUrl = "{{ $profileData['profile_url'] ?? route('candidate.profile') }}";
-            if (typeof window.showProfileIncompleteModal === 'function') {
-                window.showProfileIncompleteModal(percentage, profileUrl);
+        (function () {
+            function triggerIncompleteModal() {
+                var percentage = "{{ $profileData['percentage'] ?? 0 }}";
+                var profileUrl = "{{ $profileData['profile_url'] ?? route('candidate.profile') }}";
+                if (typeof window.showProfileIncompleteModal === 'function') {
+                    window.showProfileIncompleteModal(percentage, profileUrl);
+                }
             }
-        });
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', triggerIncompleteModal);
+            } else {
+                triggerIncompleteModal();
+            }
+        })();
     </script>
 @endif
 

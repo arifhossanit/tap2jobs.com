@@ -35,7 +35,7 @@
     </style>
 </head>
 <body>
-<h1>Consultation Leads</h1>
+<h1>Leads</h1>
 @include('exports.consultation_leads', ['leads' => $leads, 'leadSource' => $leadSource])
 </body>
 </html>

@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Consultation Lead</h3>
+                <h3 class="modal-title">Lead</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.common.close') }}"></button>
             </div>
             <form id="consultationLeadUpdateForm">

@@ -120,7 +120,7 @@ class HomeController extends AppBaseController
         ];
 
         $data['categories'] = $this->homeRepository->getCategories();
-        $data['jobCategories'] = $this->homeRepository->getAllJobCategories();
+        $data['jobCategories'] = $this->homeRepository->getAllJobCategories(null, 500);
         $data['jobTypes'] = $this->homeRepository->getAllJobTypes();
         $data['featuredCompanies'] = $this->homeRepository->getFeaturedCompanies();
         $data['allCompanies'] = $this->homeRepository->getAllCompanies();
