@@ -107,8 +107,7 @@
                     <span>{{ $completionPercentageLabel }}</span>
                 </div>
                 <div class="candidate-profile-completion__content">
-                    <span>{{ __('messages.candidate_dashboard.profile_completed') }}</span>
-                    <strong>{{ __('messages.candidate_dashboard.sections_completed', ['completed' => $dashboardNumber($profileCompletion['completed'] ?? 0), 'total' => $dashboardNumber($profileCompletion['total'] ?? 10)]) }}</strong>
+                    <span>{{ __('messages.candidate_dashboard.profile_completed') }}</span>                    
                     <a href="{{ route('candidate.profile') }}">{{ __('messages.candidate_dashboard.edit_profile') }}</a>
                 </div>
             </div>

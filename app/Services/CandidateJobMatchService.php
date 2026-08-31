@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Candidate;
+use App\Models\CandidateExperience;
 use App\Models\CandidateSkill;
 use App\Models\Job;
 use App\Models\JobApplication;
@@ -23,6 +24,11 @@ class CandidateJobMatchService
         $preferredFunctionalIds = $this->ids($candidate->preferred_functional_categories ?? []);
         $preferredLocationIds = $this->ids($candidate->preferred_job_locations_inside ?? []);
         $candidateKeywords = $this->candidateKeywords($candidate, $allCandidateSkillIds);
+
+        if (! $this->hasMatchingSignals($candidate, $allCandidateSkillIds, $preferredFunctionalIds, $preferredLocationIds, $candidateKeywords)) {
+            return collect();
+        }
+
         $appliedJobIds = JobApplication::query()
             ->where('candidate_id', $candidate->id)
             ->where('status', '!=', JobApplication::STATUS_DRAFT)
@@ -45,19 +51,7 @@ class CandidateJobMatchService
             ->sortByDesc(fn (Job $job) => [$job->match_score, optional($job->created_at)->timestamp ?? 0])
             ->values();
 
-        $strongMatches = $matches->filter(fn (Job $job) => $job->match_score > 0)->take($limit)->values();
-
-        if ($strongMatches->isNotEmpty()) {
-            return $strongMatches;
-        }
-
-        return $matches
-            ->take($limit)
-            ->each(function (Job $job) {
-                $job->match_score = 0;
-                $job->match_reasons = ['Update your profile to improve matches'];
-            })
-            ->values();
+        return $matches->filter(fn (Job $job) => $job->match_score > 0)->take($limit)->values();
     }
 
     private function scoreJob(
@@ -165,6 +159,31 @@ class CandidateJobMatchService
             optional($candidate->careerLevel)->level_name,
             $skillNames->implode(' '),
         ])->filter()->implode(' '));
+    }
+
+    private function hasMatchingSignals(
+        Candidate $candidate,
+        Collection $candidateSkillIds,
+        Collection $preferredFunctionalIds,
+        Collection $preferredLocationIds,
+        Collection $candidateKeywords
+    ): bool {
+        $user = $candidate->user;
+
+        return $candidateSkillIds->isNotEmpty()
+            || $preferredFunctionalIds->isNotEmpty()
+            || $preferredLocationIds->isNotEmpty()
+            || $candidateKeywords->isNotEmpty()
+            || $this->candidateExperienceYears($candidate) !== null
+            || filled($candidate->functional_area_id)
+            || filled($candidate->career_level_id)
+            || filled($candidate->expected_salary)
+            || filled($candidate->industry_id)
+            || filled($candidate->job_nature)
+            || filled($user?->country_id)
+            || filled($user?->state_id)
+            || filled($user?->city_id)
+            || filled($user?->thana_id);
     }
 
     private function preferredSkillMatchCount(
@@ -278,15 +297,16 @@ class CandidateJobMatchService
 
     private function experienceScore(Job $job, Candidate $candidate): int
     {
-        if ($job->freshers_encouraged && (int) $candidate->experience === 0) {
-            return 12;
-        }
+        $candidateExperience = $this->candidateExperienceYears($candidate);
 
-        if ($candidate->experience === null || $job->experience === null) {
+        if ($candidateExperience === null || $job->experience === null) {
             return 0;
         }
 
-        $candidateExperience = (int) $candidate->experience;
+        if ($job->freshers_encouraged && $candidateExperience === 0) {
+            return 12;
+        }
+
         $requiredExperience = (int) $job->experience;
 
         if ($candidateExperience >= $requiredExperience) {
@@ -294,6 +314,32 @@ class CandidateJobMatchService
         }
 
         return ($requiredExperience - $candidateExperience) <= 1 ? 6 : 0;
+    }
+
+    private function candidateExperienceYears(Candidate $candidate): ?int
+    {
+        if ($candidate->experience !== null) {
+            return (int) $candidate->experience;
+        }
+
+        $experienceMonths = CandidateExperience::query()
+            ->where('candidate_id', $candidate->id)
+            ->get(['start_date', 'end_date', 'currently_working'])
+            ->sum(function (CandidateExperience $experience): int {
+                if (! $experience->start_date) {
+                    return 0;
+                }
+
+                $endDate = $experience->currently_working ? now() : ($experience->end_date ?: now());
+
+                return max(1, $experience->start_date->diffInMonths($endDate));
+            });
+
+        if ($experienceMonths <= 0) {
+            return null;
+        }
+
+        return (int) floor($experienceMonths / 12);
     }
 
     private function salaryMatches(Job $job, Candidate $candidate): bool
