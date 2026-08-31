@@ -301,7 +301,7 @@ return [
     'web_jobs' => [
         'find_jobs' => 'চাকরি খুঁজুন',
         'search_by_keywords' => 'কীওয়ার্ড দ্বারা অনুসন্ধান',
-        'job_description' => 'চাকরির বিবরণ',
+        'job_description' => 'প্রয়োজনীয় বিষয়সমূহ',
         'key_responsibilities' => 'মূল দায়িত্ব',
         'job_detail' => 'চাকরির বিস্তারিত',
         'facebook' => 'Facebook',

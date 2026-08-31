@@ -2058,7 +2058,7 @@ return [
         'job_is' => 'চাকরিটি',
         'click_here' => 'এখানে ক্লিক করুন',
         'to_upload_resume' => 'জীবনবৃত্তান্ত আপলোড করতে',
-        'job_description' => 'চাকরির বিবরণ',
+        'job_description' => 'প্রয়োজনীয় বিষয়সমূহ',
         'key_responsibilities' => 'মূল দায়িত্বসমূহ',
         'skill_experience' => 'দক্ষতা ও অভিজ্ঞতা',
         'share_this_job' => 'চাকরিটি শেয়ার করুন',

@@ -2066,7 +2066,7 @@ return [
         'job_is' => 'Job is',
         'click_here' => 'Click Here',
         'to_upload_resume' => 'to upload resume',
-        'job_description' => 'Job Description',
+        'job_description' => 'Requirements',
         'key_responsibilities' => 'Key Responsibilities',
         'skill_experience' => 'Skill and Experience',
         'share_this_job' => 'Share This Job',

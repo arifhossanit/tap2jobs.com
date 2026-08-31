@@ -301,7 +301,7 @@ return [
     'web_jobs' => [
         'find_jobs' => 'Find Jobs',
         'search_by_keywords' => 'Search by Keywords',
-        'job_description' => 'Job Description',
+        'job_description' => 'Requirements',
         'key_responsibilities' => 'Key Responsibilities',
         'job_detail' => 'Job Detail',
         'facebook' => 'Facebook',
