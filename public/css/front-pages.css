@@ -13343,7 +13343,7 @@ html[dir='rtl'] .register-page .input-password-hide {
     overflow-x: hidden;
     overflow-y: auto;
     border: 1px solid #dce6f0;
-    border-radius: 5px;
+    border-radius: 12px;
     background: #fff;
     box-shadow: 0 8px 28px rgba(31, 55, 83, 0.07);
     scrollbar-color: #b9c7d7 transparent;
@@ -13872,7 +13872,7 @@ html[dir="rtl"]
 }
 
 .job-details-section ul li {
-    list-style: disc
+    list-style: disc;
 }
 
 .job-editor-content p,
@@ -13882,44 +13882,57 @@ html[dir="rtl"]
     margin-bottom: 1rem;
 }
 
-.job-editor-content ol,
-.job-editor-content ul {
-    padding-left: 1.5em;
-}
-
+.job-editor-content ul, 
 .job-editor-content ol {
-    counter-reset: job-editor-list;
+    padding-left: 1.5em !important;
 }
 
-.job-editor-content li[data-list] {
+.job-editor-content ul li, 
+.job-editor-content ol li {
+    list-style-type: none !important;
+    list-style: none !important;
     position: relative;
-    padding-left: 1.5em;
-    list-style: none;
 }
 
-.job-editor-content li[data-list] > .ql-ui {
-    position: absolute;
+.job-editor-content li > .ql-ui::before {
+    display: none !important;
 }
 
-.job-editor-content li[data-list] > .ql-ui::before {
+.job-editor-content ul li:not([data-list="ordered"])::before,
+.job-editor-content li[data-list="bullet"]::before {
+    content: "\2022" !important;
     display: inline-block;
     width: 1.2em;
     margin-left: -1.5em;
-    margin-right: .3em;
-    text-align: right;
-    white-space: nowrap;
+    margin-right: 0.3em;
+    text-align: center;
 }
 
-.job-editor-content li[data-list="bullet"] > .ql-ui::before {
-    content: "\2022";
+.job-editor-content ol:not([data-list]) {
+    counter-reset: job-editor-list;
+
+    > li:not([data-list])::before {
+        counter-increment: job-editor-list;
+        content: counter(job-editor-list) ". " !important;
+        display: inline-block;
+        width: 1.2em;
+        margin-left: -1.5em;
+        margin-right: 0.3em;
+        text-align: right;
+    }
 }
 
 .job-editor-content li[data-list="ordered"] {
     counter-increment: job-editor-list;
-}
 
-.job-editor-content li[data-list="ordered"] > .ql-ui::before {
-    content: counter(job-editor-list) ". ";
+    &::before {
+        content: counter(job-editor-list) ". " !important;
+        display: inline-block;
+        width: 1.2em;
+        margin-left: -1.5em;
+        margin-right: 0.3em;
+        text-align: right;
+    }
 }
 
 .job-editor-content strong {
@@ -13934,37 +13947,24 @@ html[dir="rtl"]
     text-decoration: line-through;
 }
 
-.job-details-section .share-this-job .icon-box .social-icon {
-    border-radius: 50px;
-    width: 50px;
-    height: 50px
-}
-
-@media(max-width: 575px) {
-    .job-details-section .share-this-job .icon-box .social-icon {
-        width: 36px;
-        height: 36px
-    }
-}
-
 .job-details-section .share-this-job .icon-box .facebook .social-icon {
-    background-color: #3a5ba0
+    background-color: #3a5ba0;
 }
 
 .job-details-section .share-this-job .icon-box .linkedin .social-icon {
-    background-color: #1da1f2
+    background-color: #1da1f2;
 }
 
 .job-details-section .share-this-job .icon-box .twitter .social-icon {
-    background-color: #0077b5
+    background-color: #0077b5;
 }
 
 .job-details-section .share-this-job .icon-box .google .social-icon {
-    background-color: #db4a39
+    background-color: #db4a39;
 }
 
 .job-details-section .share-this-job .icon-box .pinterest .social-icon {
-    background-color: #e60023
+    background-color: #e60023;
 }
 
 .job-details-section .share-this-job .icon-box .social-icon .icon i {

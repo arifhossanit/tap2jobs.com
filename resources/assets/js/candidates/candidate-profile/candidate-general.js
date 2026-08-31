@@ -182,7 +182,7 @@ function loadCandidateGeneralData() {
         });
     };
 
-    const loadAddressStates = function (countrySelector, stateSelector, citySelector, thanaSelector = null, selectedState = null, statePlaceholder = 'Select your Division') {
+    const loadAddressStates = function (countrySelector, stateSelector, citySelector, thanaSelector = null, selectedState = null, selectedCity = null, selectedThana = null, statePlaceholder = 'Select your Division') {
         const country = $(countrySelector).val();
         $(stateSelector).empty().append($('<option value=""></option>').text(statePlaceholder));
         resetAddressSelect(citySelector, 'Select your District');
@@ -206,11 +206,24 @@ function loadCandidateGeneralData() {
                 });
                 if (selectedState) {
                     $(stateSelector).val(selectedState);
-            }
-            $(stateSelector).trigger('change.select2');
-        },
-    });
+                    $(stateSelector).trigger('change.select2');
+                    if (citySelector && (selectedCity || selectedThana)) {
+                        loadAddressCities(stateSelector, countrySelector, citySelector, thanaSelector, selectedCity, selectedThana);
+                    }
+                } else {
+                    $(stateSelector).trigger('change.select2');
+                }
+            },
+        });
     };
+
+    let lastPresentStateId = $('#stateId').val() || null;
+    let lastPresentCityId = $('#cityId').val() || null;
+    let lastPresentThanaId = $('#thanaId').val() || null;
+
+    let lastPermanentStateId = $('#permanentStateId').val() || null;
+    let lastPermanentCityId = $('#permanentCityId').val() || null;
+    let lastPermanentThanaId = $('#permanentThanaId').val() || null;
 
     const togglePresentAddressMode = function (resetLocation = false) {
         const type = $('input[name="present_address_type"]:checked').val();
@@ -225,7 +238,25 @@ function loadCandidateGeneralData() {
         if (type === 'inside' && bangladeshId) {
             $('#countryId').val(bangladeshId);
             if (resetLocation) {
-                loadAddressStates('#countryId', '#stateId', '#cityId', '#thanaId');
+                const hasStateOptions = $('#stateId option').length > 1;
+                const hasCityOptions = $('#cityId option').length > 1;
+                const hasThanaOptions = $('#thanaId option').length > 1;
+
+                if (hasStateOptions && lastPresentStateId) {
+                    $('#stateId').val(lastPresentStateId).trigger('change.select2');
+                    if (hasCityOptions && lastPresentCityId) {
+                        $('#cityId').val(lastPresentCityId).trigger('change.select2');
+                        if (hasThanaOptions && lastPresentThanaId) {
+                            $('#thanaId').val(lastPresentThanaId).trigger('change.select2');
+                        } else if (lastPresentThanaId) {
+                            loadAddressThanas('#cityId', '#thanaId', lastPresentThanaId);
+                        }
+                    } else if (lastPresentCityId) {
+                        loadAddressCities('#stateId', '#countryId', '#cityId', '#thanaId', lastPresentCityId, lastPresentThanaId);
+                    }
+                } else {
+                    loadAddressStates('#countryId', '#stateId', '#cityId', '#thanaId', lastPresentStateId, lastPresentCityId, lastPresentThanaId);
+                }
             }
             return;
         }
@@ -261,7 +292,6 @@ function loadCandidateGeneralData() {
         togglePresentAddressMode(true);
     });
 
-
     $('#permanentSameAsPresent').on('change', function () {
         if ($(this).is(':checked')) {
             permanentAddressTypeChosen = false;
@@ -278,24 +308,72 @@ function loadCandidateGeneralData() {
 
     $('#permanentCountryId').on('change', function () {
         if ($('input[name="permanent_address_type"]:checked').val() !== 'outside') {
-            loadAddressStates('#permanentCountryId', '#permanentStateId', '#permanentCityId', '#permanentThanaId');
+            const hasStateOptions = $('#permanentStateId option').length > 1;
+            const hasCityOptions = $('#permanentCityId option').length > 1;
+            const hasThanaOptions = $('#permanentThanaId option').length > 1;
+
+            if (hasStateOptions && lastPermanentStateId) {
+                $('#permanentStateId').val(lastPermanentStateId).trigger('change.select2');
+                if (hasCityOptions && lastPermanentCityId) {
+                    $('#permanentCityId').val(lastPermanentCityId).trigger('change.select2');
+                    if (hasThanaOptions && lastPermanentThanaId) {
+                        $('#permanentThanaId').val(lastPermanentThanaId).trigger('change.select2');
+                    } else if (lastPermanentThanaId) {
+                        loadAddressThanas('#permanentCityId', '#permanentThanaId', lastPermanentThanaId);
+                    }
+                } else if (lastPermanentCityId) {
+                    loadAddressCities('#permanentStateId', '#permanentCountryId', '#permanentCityId', '#permanentThanaId', lastPermanentCityId, lastPermanentThanaId);
+                }
+            } else {
+                loadAddressStates('#permanentCountryId', '#permanentStateId', '#permanentCityId', '#permanentThanaId', lastPermanentStateId, lastPermanentCityId, lastPermanentThanaId);
+            }
         }
     });
 
     $('#stateId').on('change', function () {
+        const val = $(this).val();
+        if (val) {
+            lastPresentStateId = val;
+        }
         loadAddressCities('#stateId', '#countryId', '#cityId', '#thanaId');
     });
 
     $('#cityId').on('change', function () {
+        const val = $(this).val();
+        if (val) {
+            lastPresentCityId = val;
+        }
         loadAddressThanas('#cityId', '#thanaId');
     });
 
+    $('#thanaId').on('change', function () {
+        const val = $(this).val();
+        if (val) {
+            lastPresentThanaId = val;
+        }
+    });
+
     $('#permanentStateId').on('change', function () {
+        const val = $(this).val();
+        if (val) {
+            lastPermanentStateId = val;
+        }
         loadAddressCities('#permanentStateId', '#permanentCountryId', '#permanentCityId', '#permanentThanaId');
     });
 
     $('#permanentCityId').on('change', function () {
+        const val = $(this).val();
+        if (val) {
+            lastPermanentCityId = val;
+        }
         loadAddressThanas('#permanentCityId', '#permanentThanaId');
+    });
+
+    $('#permanentThanaId').on('change', function () {
+        const val = $(this).val();
+        if (val) {
+            lastPermanentThanaId = val;
+        }
     });
 
     $('[data-career-edit-toggle]').on('click', function (event) {

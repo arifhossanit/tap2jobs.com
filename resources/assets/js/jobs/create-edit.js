@@ -87,8 +87,8 @@ function loadEmployeeCreateEditData() {
                 theme: "snow"
             });
 
-            details.root.innerHTML = $("#job_desc").val() || "";
-            response.root.innerHTML = $("#key_responsibilities").val() || "";
+            setQuillHtml(details, "#job_desc");
+            setQuillHtml(response, "#key_responsibilities");
             rememberJobEditorHeight("#details", "tap2jobs:admin-job-editor:description-height");
             rememberJobEditorHeight("#response", "tap2jobs:admin-job-editor:responsibilities-height");
         }
@@ -1240,12 +1240,78 @@ function prepareJobFormForSubmission(formSelector) {
     return true;
 }
 
-function setQuillHtml(editor, selector) {
-    if (!editor || !$(selector).length) {
+function getQuillHtml(editor) {
+    if (!editor || !editor.root) {
+        return "";
+    }
+
+    if (editor.getText().trim().length === 0) {
+        return "";
+    }
+
+    let html = editor.root.innerHTML || "";
+
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = html;
+
+    tempDiv.querySelectorAll("ol").forEach(function (ol) {
+        const hasBullet = ol.querySelector('li[data-list="bullet"]');
+        if (hasBullet) {
+            const ul = document.createElement("ul");
+            Array.from(ol.attributes).forEach(function (attr) {
+                ul.setAttribute(attr.name, attr.value);
+            });
+            ul.innerHTML = ol.innerHTML;
+            ol.parentNode.replaceChild(ul, ol);
+        }
+    });
+
+    return tempDiv.innerHTML;
+}
+
+function setQuillHtml(editor, selectorOrHtml) {
+    if (!editor) {
         return;
     }
 
-    editor.clipboard.dangerouslyPasteHTML(0, $(selector).val() || "");
+    let rawHtml = "";
+    if (typeof selectorOrHtml === "string") {
+        if ($(selectorOrHtml).length) {
+            rawHtml = $(selectorOrHtml).val() || "";
+        } else {
+            rawHtml = selectorOrHtml;
+        }
+    }
+
+    if (!rawHtml || !rawHtml.trim()) {
+        if (editor.setContents) {
+            editor.setContents([]);
+        }
+        return;
+    }
+
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = rawHtml;
+
+    tempDiv.querySelectorAll("ol").forEach(function (ol) {
+        const hasBullet = ol.querySelector('li[data-list="bullet"]');
+        if (hasBullet) {
+            const ul = document.createElement("ul");
+            Array.from(ol.attributes).forEach(function (attr) {
+                ul.setAttribute(attr.name, attr.value);
+            });
+            ul.innerHTML = ol.innerHTML;
+            ol.parentNode.replaceChild(ul, ol);
+        }
+    });
+
+    const cleanHtml = tempDiv.innerHTML;
+
+    if (editor.clipboard && typeof editor.clipboard.dangerouslyPasteHTML === "function") {
+        editor.clipboard.dangerouslyPasteHTML(0, cleanHtml);
+    } else if (editor.root) {
+        editor.root.innerHTML = cleanHtml;
+    }
 }
 
 function rememberJobEditorHeight(selector, storageKey) {
@@ -1324,7 +1390,7 @@ function rememberJobEditorHeight(selector, storageKey) {
 listenClick("#jobsSaveBtn, #saveDraft", function(e) {
     e.preventDefault();
     $("#saveAsDraft").val($(this).val() === "draft" ? "1" : "0");
-    let editor_content1 = details.root.innerHTML;
+    let editor_content1 = getQuillHtml(details);
     if (details.getText().trim().length === 0) {
         displayErrorMessage(
             Lang.get("js.description_required")
@@ -1338,7 +1404,7 @@ listenClick("#jobsSaveBtn, #saveDraft", function(e) {
     //     $('#saveJob,#draftJob').attr('disabled', false);
     //     return false;
     // }
-    let keyResponsibilitiesContent = response.root.innerHTML;
+    let keyResponsibilitiesContent = getQuillHtml(response);
     if (response.getText().trim().length === 0) {
         displayErrorMessage(
             Lang.get("js.key_responsibilities_required")
@@ -1363,7 +1429,7 @@ listenClick("#jobsSaveBtn, #saveDraft", function(e) {
 
 listenClick("#editJobsSaveBtn, #saveDraft", function(e) {
     e.preventDefault();
-    let editor_content2 = editJobDescription.root.innerHTML;
+    let editor_content2 = getQuillHtml(editJobDescription);
     if (editJobDescription.getText().trim().length === 0) {
         displayErrorMessage(
             Lang.get("js.description_required")
@@ -1371,7 +1437,7 @@ listenClick("#editJobsSaveBtn, #saveDraft", function(e) {
         return false;
     }
     $("#editJobDescription").val(editor_content2);
-    let editor_content3 = editResponse.root.innerHTML;
+    let editor_content3 = getQuillHtml(editResponse);
     if (editResponse.getText().trim().length === 0) {
         displayErrorMessage(
             Lang.get("js.key_responsibilities_required")

@@ -3074,7 +3074,9 @@ function loadCandidateGeneralData() {
   var loadAddressStates = function loadAddressStates(countrySelector, stateSelector, citySelector) {
     var thanaSelector = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
     var selectedState = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : null;
-    var statePlaceholder = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 'Select your Division';
+    var selectedCity = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : null;
+    var selectedThana = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : null;
+    var statePlaceholder = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : 'Select your Division';
     var country = $(countrySelector).val();
     $(stateSelector).empty().append($('<option value=""></option>').text(statePlaceholder));
     resetAddressSelect(citySelector, 'Select your District');
@@ -3098,11 +3100,22 @@ function loadCandidateGeneralData() {
         });
         if (selectedState) {
           $(stateSelector).val(selectedState);
+          $(stateSelector).trigger('change.select2');
+          if (citySelector && (selectedCity || selectedThana)) {
+            loadAddressCities(stateSelector, countrySelector, citySelector, thanaSelector, selectedCity, selectedThana);
+          }
+        } else {
+          $(stateSelector).trigger('change.select2');
         }
-        $(stateSelector).trigger('change.select2');
       }
     });
   };
+  var lastPresentStateId = $('#stateId').val() || null;
+  var lastPresentCityId = $('#cityId').val() || null;
+  var lastPresentThanaId = $('#thanaId').val() || null;
+  var lastPermanentStateId = $('#permanentStateId').val() || null;
+  var lastPermanentCityId = $('#permanentCityId').val() || null;
+  var lastPermanentThanaId = $('#permanentThanaId').val() || null;
   var togglePresentAddressMode = function togglePresentAddressMode() {
     var resetLocation = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
     var type = $('input[name="present_address_type"]:checked').val();
@@ -3115,7 +3128,24 @@ function loadCandidateGeneralData() {
     if (type === 'inside' && bangladeshId) {
       $('#countryId').val(bangladeshId);
       if (resetLocation) {
-        loadAddressStates('#countryId', '#stateId', '#cityId', '#thanaId');
+        var hasStateOptions = $('#stateId option').length > 1;
+        var hasCityOptions = $('#cityId option').length > 1;
+        var hasThanaOptions = $('#thanaId option').length > 1;
+        if (hasStateOptions && lastPresentStateId) {
+          $('#stateId').val(lastPresentStateId).trigger('change.select2');
+          if (hasCityOptions && lastPresentCityId) {
+            $('#cityId').val(lastPresentCityId).trigger('change.select2');
+            if (hasThanaOptions && lastPresentThanaId) {
+              $('#thanaId').val(lastPresentThanaId).trigger('change.select2');
+            } else if (lastPresentThanaId) {
+              loadAddressThanas('#cityId', '#thanaId', lastPresentThanaId);
+            }
+          } else if (lastPresentCityId) {
+            loadAddressCities('#stateId', '#countryId', '#cityId', '#thanaId', lastPresentCityId, lastPresentThanaId);
+          }
+        } else {
+          loadAddressStates('#countryId', '#stateId', '#cityId', '#thanaId', lastPresentStateId, lastPresentCityId, lastPresentThanaId);
+        }
       }
       return;
     }
@@ -3157,20 +3187,65 @@ function loadCandidateGeneralData() {
   });
   $('#permanentCountryId').on('change', function () {
     if ($('input[name="permanent_address_type"]:checked').val() !== 'outside') {
-      loadAddressStates('#permanentCountryId', '#permanentStateId', '#permanentCityId', '#permanentThanaId');
+      var hasStateOptions = $('#permanentStateId option').length > 1;
+      var hasCityOptions = $('#permanentCityId option').length > 1;
+      var hasThanaOptions = $('#permanentThanaId option').length > 1;
+      if (hasStateOptions && lastPermanentStateId) {
+        $('#permanentStateId').val(lastPermanentStateId).trigger('change.select2');
+        if (hasCityOptions && lastPermanentCityId) {
+          $('#permanentCityId').val(lastPermanentCityId).trigger('change.select2');
+          if (hasThanaOptions && lastPermanentThanaId) {
+            $('#permanentThanaId').val(lastPermanentThanaId).trigger('change.select2');
+          } else if (lastPermanentThanaId) {
+            loadAddressThanas('#permanentCityId', '#permanentThanaId', lastPermanentThanaId);
+          }
+        } else if (lastPermanentCityId) {
+          loadAddressCities('#permanentStateId', '#permanentCountryId', '#permanentCityId', '#permanentThanaId', lastPermanentCityId, lastPermanentThanaId);
+        }
+      } else {
+        loadAddressStates('#permanentCountryId', '#permanentStateId', '#permanentCityId', '#permanentThanaId', lastPermanentStateId, lastPermanentCityId, lastPermanentThanaId);
+      }
     }
   });
   $('#stateId').on('change', function () {
+    var val = $(this).val();
+    if (val) {
+      lastPresentStateId = val;
+    }
     loadAddressCities('#stateId', '#countryId', '#cityId', '#thanaId');
   });
   $('#cityId').on('change', function () {
+    var val = $(this).val();
+    if (val) {
+      lastPresentCityId = val;
+    }
     loadAddressThanas('#cityId', '#thanaId');
   });
+  $('#thanaId').on('change', function () {
+    var val = $(this).val();
+    if (val) {
+      lastPresentThanaId = val;
+    }
+  });
   $('#permanentStateId').on('change', function () {
+    var val = $(this).val();
+    if (val) {
+      lastPermanentStateId = val;
+    }
     loadAddressCities('#permanentStateId', '#permanentCountryId', '#permanentCityId', '#permanentThanaId');
   });
   $('#permanentCityId').on('change', function () {
+    var val = $(this).val();
+    if (val) {
+      lastPermanentCityId = val;
+    }
     loadAddressThanas('#permanentCityId', '#permanentThanaId');
+  });
+  $('#permanentThanaId').on('change', function () {
+    var val = $(this).val();
+    if (val) {
+      lastPermanentThanaId = val;
+    }
   });
   $('[data-career-edit-toggle]').on('click', function (event) {
     event.preventDefault();
@@ -12856,8 +12931,8 @@ function loadEmployeeCreateEditData() {
         placeholder: Lang.get("js.enter_key_responsibilities"),
         theme: "snow"
       });
-      details.root.innerHTML = $("#job_desc").val() || "";
-      response.root.innerHTML = $("#key_responsibilities").val() || "";
+      setQuillHtml(details, "#job_desc");
+      setQuillHtml(response, "#key_responsibilities");
       rememberJobEditorHeight("#details", "tap2jobs:admin-job-editor:description-height");
       rememberJobEditorHeight("#response", "tap2jobs:admin-job-editor:responsibilities-height");
     }
@@ -13807,11 +13882,66 @@ function prepareJobFormForSubmission(formSelector) {
   }
   return true;
 }
-function setQuillHtml(editor, selector) {
-  if (!editor || !$(selector).length) {
+function getQuillHtml(editor) {
+  if (!editor || !editor.root) {
+    return "";
+  }
+  if (editor.getText().trim().length === 0) {
+    return "";
+  }
+  var html = editor.root.innerHTML || "";
+  var tempDiv = document.createElement("div");
+  tempDiv.innerHTML = html;
+  tempDiv.querySelectorAll("ol").forEach(function (ol) {
+    var hasBullet = ol.querySelector('li[data-list="bullet"]');
+    if (hasBullet) {
+      var ul = document.createElement("ul");
+      Array.from(ol.attributes).forEach(function (attr) {
+        ul.setAttribute(attr.name, attr.value);
+      });
+      ul.innerHTML = ol.innerHTML;
+      ol.parentNode.replaceChild(ul, ol);
+    }
+  });
+  return tempDiv.innerHTML;
+}
+function setQuillHtml(editor, selectorOrHtml) {
+  if (!editor) {
     return;
   }
-  editor.clipboard.dangerouslyPasteHTML(0, $(selector).val() || "");
+  var rawHtml = "";
+  if (typeof selectorOrHtml === "string") {
+    if ($(selectorOrHtml).length) {
+      rawHtml = $(selectorOrHtml).val() || "";
+    } else {
+      rawHtml = selectorOrHtml;
+    }
+  }
+  if (!rawHtml || !rawHtml.trim()) {
+    if (editor.setContents) {
+      editor.setContents([]);
+    }
+    return;
+  }
+  var tempDiv = document.createElement("div");
+  tempDiv.innerHTML = rawHtml;
+  tempDiv.querySelectorAll("ol").forEach(function (ol) {
+    var hasBullet = ol.querySelector('li[data-list="bullet"]');
+    if (hasBullet) {
+      var ul = document.createElement("ul");
+      Array.from(ol.attributes).forEach(function (attr) {
+        ul.setAttribute(attr.name, attr.value);
+      });
+      ul.innerHTML = ol.innerHTML;
+      ol.parentNode.replaceChild(ul, ol);
+    }
+  });
+  var cleanHtml = tempDiv.innerHTML;
+  if (editor.clipboard && typeof editor.clipboard.dangerouslyPasteHTML === "function") {
+    editor.clipboard.dangerouslyPasteHTML(0, cleanHtml);
+  } else if (editor.root) {
+    editor.root.innerHTML = cleanHtml;
+  }
 }
 function rememberJobEditorHeight(selector, storageKey) {
   var editor = document.querySelector(selector);
@@ -13863,7 +13993,7 @@ function rememberJobEditorHeight(selector, storageKey) {
 listenClick("#jobsSaveBtn, #saveDraft", function (e) {
   e.preventDefault();
   $("#saveAsDraft").val($(this).val() === "draft" ? "1" : "0");
-  var editor_content1 = details.root.innerHTML;
+  var editor_content1 = getQuillHtml(details);
   if (details.getText().trim().length === 0) {
     displayErrorMessage(Lang.get("js.description_required"));
     return false;
@@ -13875,7 +14005,7 @@ listenClick("#jobsSaveBtn, #saveDraft", function (e) {
   //     $('#saveJob,#draftJob').attr('disabled', false);
   //     return false;
   // }
-  var keyResponsibilitiesContent = response.root.innerHTML;
+  var keyResponsibilitiesContent = getQuillHtml(response);
   if (response.getText().trim().length === 0) {
     displayErrorMessage(Lang.get("js.key_responsibilities_required"));
     return false;
@@ -13894,13 +14024,13 @@ listenClick("#jobsSaveBtn, #saveDraft", function (e) {
 });
 listenClick("#editJobsSaveBtn, #saveDraft", function (e) {
   e.preventDefault();
-  var editor_content2 = editJobDescription.root.innerHTML;
+  var editor_content2 = getQuillHtml(editJobDescription);
   if (editJobDescription.getText().trim().length === 0) {
     displayErrorMessage(Lang.get("js.description_required"));
     return false;
   }
   $("#editJobDescription").val(editor_content2);
-  var editor_content3 = editResponse.root.innerHTML;
+  var editor_content3 = getQuillHtml(editResponse);
   if (editResponse.getText().trim().length === 0) {
     displayErrorMessage(Lang.get("js.key_responsibilities_required"));
     return false;

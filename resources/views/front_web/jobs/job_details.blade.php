@@ -535,7 +535,7 @@
                                         : '+'.$companyRegionCode.' '.$companyPhone)
                                     : null;
                             @endphp
-                            <div class="company-overview br-10 px-40 bg-light">
+                            {{-- <div class="company-overview br-10 px-40 bg-light">
                                 <h5 class="fs-18 text-secondary mb-4">@lang('messages.front_job_details.company_overview')</h5>
                                 @if ($company)
                                     <div class="company-profile d-flex align-items-center mb-4">
@@ -585,7 +585,7 @@
                                 @else
                                     <p class="fs-14 text-gray mb-0">{{ __('messages.common.n/a') }}</p>
                                 @endif
-                            </div>
+                            </div> --}}
                         </div>
                         @if (count($getRelatedJobs) > 0)
                             <div class="row job-details-related-jobs our-latest-jobs">

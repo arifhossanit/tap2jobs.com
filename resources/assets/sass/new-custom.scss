@@ -293,6 +293,126 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
     min-height: 100% !important;
     overflow-y: auto !important;
     padding-bottom: 24px;
+
+    ul, ol {
+        padding-left: 1.5em !important;
+        margin-top: 0;
+        margin-bottom: 1rem;
+    }
+
+    ul li, ol li {
+        list-style-type: none !important;
+        list-style: none !important;
+        position: relative;
+    }
+
+    li > .ql-ui::before {
+        display: none !important;
+    }
+
+    ul li:not([data-list="ordered"])::before,
+    li[data-list="bullet"]::before {
+        content: "\2022" !important;
+        display: inline-block;
+        width: 1.2em;
+        margin-left: -1.5em;
+        margin-right: 0.3em;
+        text-align: center;
+    }
+
+    ol:not([data-list]) {
+        counter-reset: job-editor-ol;
+
+        > li:not([data-list])::before {
+            counter-increment: job-editor-ol;
+            content: counter(job-editor-ol) ". " !important;
+            display: inline-block;
+            width: 1.2em;
+            margin-left: -1.5em;
+            margin-right: 0.3em;
+            text-align: right;
+        }
+    }
+
+    li[data-list="ordered"] {
+        counter-increment: list-0;
+
+        &::before {
+            content: counter(list-0, decimal) ". " !important;
+            display: inline-block;
+            width: 1.2em;
+            margin-left: -1.5em;
+            margin-right: 0.3em;
+            text-align: right;
+        }
+    }
+}
+
+.job-editor-content {
+    ul, ol {
+        padding-left: 1.5em !important;
+        margin-top: 0;
+        margin-bottom: 1rem;
+    }
+
+    ul li, ol li {
+        list-style-type: none !important;
+        list-style: none !important;
+        position: relative;
+    }
+
+    li > .ql-ui::before {
+        display: none !important;
+    }
+
+    ul li:not([data-list="ordered"])::before,
+    li[data-list="bullet"]::before {
+        content: "\2022" !important;
+        display: inline-block;
+        width: 1.2em;
+        margin-left: -1.5em;
+        margin-right: 0.3em;
+        text-align: center;
+    }
+
+    ol:not([data-list]) {
+        counter-reset: job-editor-list;
+
+        > li:not([data-list])::before {
+            counter-increment: job-editor-list;
+            content: counter(job-editor-list) ". " !important;
+            display: inline-block;
+            width: 1.2em;
+            margin-left: -1.5em;
+            margin-right: 0.3em;
+            text-align: right;
+        }
+    }
+
+    li[data-list="ordered"] {
+        counter-increment: job-editor-list;
+
+        &::before {
+            content: counter(job-editor-list) ". " !important;
+            display: inline-block;
+            width: 1.2em;
+            margin-left: -1.5em;
+            margin-right: 0.3em;
+            text-align: right;
+        }
+    }
+
+    strong {
+        font-weight: 700;
+    }
+
+    u {
+        text-decoration: underline;
+    }
+
+    s {
+        text-decoration: line-through;
+    }
 }
 
 .slot-bg-danger {
