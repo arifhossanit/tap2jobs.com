@@ -62,9 +62,15 @@ class CreateCandidateExperienceRequest extends FormRequest
             'nullable',
             Rule::exists('cities', 'id')->where(fn ($query) => $query->where('state_id', $this->input('state_id'))),
         ];
+        $rules['city_village_id'] = [
+            'nullable',
+            Rule::exists('city_villages', 'id')->where(fn ($query) => $query->where('city_id', $this->input('city_id'))),
+        ];
         $rules['thana_id'] = [
             'nullable',
-            Rule::exists('thanas', 'id')->where(fn ($query) => $query->where('city_id', $this->input('city_id'))),
+            Rule::exists('thanas', 'id')->where(fn ($query) => $this->filled('city_village_id')
+                ? $query->where('city_village_id', $this->input('city_village_id'))
+                : $query->where('city_id', $this->input('city_id'))),
         ];
         $rules['start_date'] = 'required|date|before_or_equal:today';
         $rules['end_date'] = 'required_unless:currently_working,1|nullable|date|after_or_equal:start_date|before_or_equal:today';

@@ -2167,10 +2167,12 @@ listenSubmit('#addCandidateNewForm', function (e) {
     data: $(this).serialize(),
     success: function success(result) {
       if (result.success) {
-        displaySuccessMessage(result.message);
+        if (!result.data || !result.data.candidateRegistration) {
+          displaySuccessMessage(result.message);
+        }
         setTimeout(function () {
           window.location.href = result.data.redirectUrl;
-        }, 1500);
+        }, result.data && result.data.candidateRegistration ? 300 : 1500);
       }
     },
     error: function error(result) {

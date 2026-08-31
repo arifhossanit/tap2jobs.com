@@ -230,7 +230,7 @@ function loadCandidateGeneralData() {
             return;
         }
 
-        $('#countryId').val($('#presentCountryDisplay').val());
+        $('#countryId').val('');
     };
 
     let permanentAddressTypeChosen = $('.candidate-address-form').data('has-permanent-details') == 1;
@@ -261,9 +261,6 @@ function loadCandidateGeneralData() {
         togglePresentAddressMode(true);
     });
 
-    $('#presentCountryDisplay').on('change', function () {
-        $('#countryId').val($(this).val());
-    });
 
     $('#permanentSameAsPresent').on('change', function () {
         if ($(this).is(':checked')) {
@@ -564,7 +561,7 @@ function loadCandidateGeneralData() {
 
 
     if ($('#candidateProfileUpdate').length){
-        $('#salaryCurrencyId,#stateId,#cityId,#thanaId,#industryId,#careerLevelId,#functionalAreaId,#presentCountryDisplay,#permanentCountryId,#permanentStateId,#permanentCityId,#permanentThanaId').
+        $('#salaryCurrencyId,#stateId,#cityId,#thanaId,#industryId,#careerLevelId,#functionalAreaId,#permanentCountryId,#permanentStateId,#permanentCityId,#permanentThanaId').
             select2({
                 width: '100%',
         });
@@ -882,6 +879,12 @@ $(document).on('submit', '#candidateProfileUpdate', function (e) {
                 Accept: 'application/json',
             },
             success: function (result) {
+                if (result.data && result.data.profile_incomplete && window.sessionStorage) {
+                    window.sessionStorage.setItem('pendingProfileIncompleteModal', JSON.stringify({
+                        percentage: result.data.percentage || 0,
+                        profile_url: result.data.profile_url || ''
+                    }));
+                }
                 displaySuccessMessage(result.message);
                 setTimeout(function () {
                     window.location.href = route('candidate.profile', {section: 'personal-information'});

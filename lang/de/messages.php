@@ -554,6 +554,7 @@ return [
         'select_position' => 'Position auswählen',
         'enter_experience_year' => 'Geben Sie Erfahrung im Jahr ein',
         'select_company' => 'Unternehmen auswählen',
+        'select_job_skill' => 'Wählen Sie Job-Skill',
         'select_job_category' => 'Jobkategorie auswählen',
         'select_job_type' => 'Jobtyp auswählen',
         'select_gender' => 'Wähle Geschlecht',

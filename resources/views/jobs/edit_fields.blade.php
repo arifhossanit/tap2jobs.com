@@ -31,19 +31,32 @@
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('skill_id', __('messages.job.job_skill').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{ Form::select('jobsSkill[]', $data['jobSkill'], old('jobsSkill', $data['jobSkills']), ['class' => 'form-select', 'data-control' => 'select2', 'id' => 'SkillId', 'multiple' => true, 'required']) }}
+        <div class="input-group flex-nowrap">
+            {{ Form::select('jobsSkill[]', $data['jobSkill'], old('jobsSkill', $data['jobSkills']), ['class' => 'form-select', 'id' => 'SkillId', 'multiple' => true, 'data-control' => 'select2', 'data-placeholder' => __('messages.company.select_job_skill'), 'placeholder' => __('messages.company.select_job_skill'), 'required']) }}
+            <div class="input-group-text border-0">
+                <a href="javascript:void(0)" class="text-gray-500 createSkillModal" title="{{ __('messages.common.add') }}" data-bs-toggle="tooltip">
+                    <i class="fa fa-plus"></i>
+                </a>
+            </div>
+        </div>
     </div>
     @include('employer.jobs.employment_workplace_fields')
     <div class="col-xl-12 col-md-12 col-sm-12 mb-5">
         {{ Form::label('description', __('messages.job.description').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        <div id="editDetails" aria-required="true"></div>
+        <div class="job-rich-editor-shell">
+            <div id="editDetails" class="job-rich-editor" aria-required="true"></div>
+            <div class="job-rich-editor-resize-handle" role="separator" aria-orientation="horizontal" title="Resize editor"></div>
+        </div>
         {{ Form::hidden('description', old('description', $job->description), ['id' => 'editJobDescription', 'required']) }}
     </div>
     <div class="col-xl-12 col-md-6 col-sm-12 mb-5">
         {{ Form::label('key_responsibilities', __('messages.job.key_responsibilities').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        <div id="editResponse" aria-required="true"></div>
+        <div class="job-rich-editor-shell">
+            <div id="editResponse" class="job-rich-editor" aria-required="true"></div>
+            <div class="job-rich-editor-resize-handle" role="separator" aria-orientation="horizontal" title="Resize editor"></div>
+        </div>
         {{ Form::hidden('key_responsibilities', old('key_responsibilities', $job->key_responsibilities), ['id' => 'edit_responsibilities', 'required']) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
@@ -110,6 +123,14 @@
     <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
         {{ Form::label('thana', __('messages.thana.thana_name').':', ['class' => 'form-label']) }}
         {{ Form::select('thana_id', $thanas ?? [], old('thana_id', $job->thana_id), ['id' => 'thanaId', 'class' => 'form-select', 'placeholder' => __('messages.company.select_thana'), 'data-control' => 'select2']) }}
+    </div>
+    <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
+        {{ Form::label('city_village_name', __('messages.city_village.city_villages').':', ['class' => 'form-label']) }}
+        {{ Form::text('city_village_name', old('city_village_name', $job->city_village_name), ['class' => 'form-control', 'placeholder' => 'Enter Area / City / Village']) }}
+    </div>
+    <div class="col-xl-9 col-md-6 col-sm-12 mb-5">
+        {{ Form::label('address', __('messages.candidate.address').':', ['class' => 'form-label']) }}
+        {{ Form::textarea('address', old('address', $job->address), ['id' => 'jobAddress', 'class' => 'form-control', 'rows' => 3, 'placeholder' => __('messages.candidate.address')]) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('career_level_id', __('messages.job.career_level').':', ['class' => 'form-label']) }}

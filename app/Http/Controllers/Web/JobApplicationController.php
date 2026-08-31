@@ -40,7 +40,7 @@ class JobApplicationController extends AppBaseController
                 $completionService = app(\App\Services\CandidateProfileCompletionService::class);
                 $profileCompletion = $completionService->calculate($candidate);
 
-                if ($profileCompletion['percentage'] < 80) {
+                if ($profileCompletion['percentage'] < \App\Services\CandidateProfileCompletionService::MINIMUM_APPLICATION_PERCENTAGE) {
                     $job = Job::whereJobId($jobId)->first();
                     $redirectUrl = $job ? route('front.job.details', $job->job_id) : route('front.search.jobs');
 
@@ -75,7 +75,7 @@ class JobApplicationController extends AppBaseController
                 $completionService = app(\App\Services\CandidateProfileCompletionService::class);
                 $profileCompletion = $completionService->calculate($candidate);
 
-                if ($profileCompletion['percentage'] < 80) {
+                if ($profileCompletion['percentage'] < \App\Services\CandidateProfileCompletionService::MINIMUM_APPLICATION_PERCENTAGE) {
                     return $this->sendError(
                         __('messages.flash.profile_incomplete_warning', ['percentage' => $profileCompletion['percentage']]),
                         422,

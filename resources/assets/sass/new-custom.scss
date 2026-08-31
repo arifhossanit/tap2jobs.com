@@ -239,6 +239,62 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
     height: 100px !important;
 }
 
+.job-rich-editor-shell {
+    height: 260px;
+    min-height: 200px;
+    max-height: 600px;
+    overflow: hidden;
+    position: relative;
+}
+
+.job-rich-editor-shell::after {
+    content: "";
+    position: absolute;
+    right: 7px;
+    bottom: 7px;
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
+    background:
+        linear-gradient(135deg, transparent 50%, rgba(94, 98, 120, 0.45) 50%) right bottom / 6px 6px no-repeat,
+        linear-gradient(135deg, transparent 50%, rgba(94, 98, 120, 0.3) 50%) right bottom / 11px 11px no-repeat;
+}
+
+.job-rich-editor-resize-handle {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 18px;
+    cursor: ns-resize;
+    z-index: 3;
+}
+
+.job-editor-resizing {
+    cursor: ns-resize !important;
+    user-select: none;
+}
+
+.job-rich-editor-shell .ql-toolbar.ql-snow {
+    border-radius: 6px 6px 0 0;
+}
+
+.job-rich-editor-shell .job-rich-editor.ql-container.ql-snow {
+    height: calc(100% - 42px) !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+    resize: none;
+    border-radius: 0 0 6px 6px;
+}
+
+.job-rich-editor .ql-editor {
+    height: 100% !important;
+    min-height: 100% !important;
+    overflow-y: auto !important;
+    padding-bottom: 24px;
+}
+
 .slot-bg-danger {
     background: #e9000042;
 }
@@ -1901,7 +1957,7 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
     }
 
     .candidate-profile-menu__main-link.active {
-        background: #fff4fa;
+        background: #ddf9ec;
         border-color: #f5d4e6;
     }
 
@@ -1958,7 +2014,7 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 
     .candidate-profile-menu__sub-link:hover,
     .candidate-profile-menu__sub-link.active {
-        background: #fff4fa;
+        background: #ddf9ec;
         color: #209776;
         font-weight: 600;
     }
@@ -6276,7 +6332,49 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
     .candidate-profile-accordion
         .candidate-profile-section
         .row.candidate-personal-form {
-        grid-template-columns: 1fr;
+        display: grid !important;
+        gap: 16px;
+        grid-template-columns: minmax(0, 1fr) !important;
+
+        > [class*="col-"] {
+            max-width: 100% !important;
+            min-width: 0;
+            width: 100% !important;
+        }
+
+        .form-label {
+            display: inline-block;
+            line-height: 1.35;
+            margin-bottom: 8px;
+            max-width: 100%;
+            white-space: normal;
+        }
+
+        .form-control,
+        .form-select,
+        .iti {
+            max-width: 100%;
+            min-width: 0;
+            width: 100% !important;
+        }
+    }
+
+    .candidate-nationality-label {
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 6px 10px;
+        justify-content: flex-start;
+    }
+
+    .candidate-nationality-check {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+
+    .candidate-field-note {
+        display: block;
+        line-height: 1.35;
+        margin-bottom: 6px;
     }
 
     .candidate-objective-head {

@@ -16,7 +16,8 @@ class CandidateUpdateAddressDetailsRequest extends FormRequest
     {
         return [
             'present_address_type' => 'required|in:inside,outside',
-            'country_id' => 'required|exists:countries,id',
+            'country_id' => 'required_if:present_address_type,inside|nullable|exists:countries,id',
+            'present_country_name' => 'required_if:present_address_type,outside|nullable|max:255',
             'state_id' => [
                 'required_if:present_address_type,inside',
                 'nullable',
@@ -26,9 +27,15 @@ class CandidateUpdateAddressDetailsRequest extends FormRequest
                 'nullable',
                 Rule::exists('cities', 'id')->where(fn ($query) => $query->where('state_id', $this->input('state_id'))),
             ],
+            'city_village_id' => [
+                'nullable',
+                Rule::exists('city_villages', 'id')->where(fn ($query) => $query->where('city_id', $this->input('city_id'))),
+            ],
             'thana_id' => [
                 'nullable',
-                Rule::exists('thanas', 'id')->where(fn ($query) => $query->where('city_id', $this->input('city_id'))),
+                Rule::exists('thanas', 'id')->where(fn ($query) => $this->filled('city_village_id')
+                    ? $query->where('city_village_id', $this->input('city_village_id'))
+                    : $query->where('city_id', $this->input('city_id'))),
             ],
             'present_state_division' => 'nullable|max:255',
             'present_post_office' => 'required_if:present_address_type,inside|nullable|max:255',
@@ -46,9 +53,15 @@ class CandidateUpdateAddressDetailsRequest extends FormRequest
                 'nullable',
                 Rule::exists('cities', 'id')->where(fn ($query) => $query->where('state_id', $this->input('permanent_state_id'))),
             ],
+            'permanent_city_village_id' => [
+                'nullable',
+                Rule::exists('city_villages', 'id')->where(fn ($query) => $query->where('city_id', $this->input('permanent_city_id'))),
+            ],
             'permanent_thana_id' => [
                 'nullable',
-                Rule::exists('thanas', 'id')->where(fn ($query) => $query->where('city_id', $this->input('permanent_city_id'))),
+                Rule::exists('thanas', 'id')->where(fn ($query) => $this->filled('permanent_city_village_id')
+                    ? $query->where('city_village_id', $this->input('permanent_city_village_id'))
+                    : $query->where('city_id', $this->input('permanent_city_id'))),
             ],
             'permanent_post_office' => 'nullable|max:255',
             'permanent_address' => 'nullable|max:2000',

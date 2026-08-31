@@ -43,10 +43,17 @@ class WebRegisterRequest extends FormRequest
                     'integer',
                     Rule::exists('cities', 'id')->where(fn ($query) => $query->where('state_id', $this->input('state_id'))),
                 ],
+                'city_village_id' => [
+                    'nullable',
+                    'integer',
+                    Rule::exists('city_villages', 'id')->where(fn ($query) => $query->where('city_id', $this->input('city_id'))),
+                ],
                 'thana_id' => [
                     'nullable',
                     'integer',
-                    Rule::exists('thanas', 'id')->where(fn ($query) => $query->where('city_id', $this->input('city_id'))),
+                    Rule::exists('thanas', 'id')->where(fn ($query) => $this->filled('city_village_id')
+                        ? $query->where('city_village_id', $this->input('city_village_id'))
+                        : $query->where('city_id', $this->input('city_id'))),
                 ],
                 'company_address' => 'required|string|max:255',
                 'company_address_bn' => 'nullable|string|max:1000',

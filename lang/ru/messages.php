@@ -533,6 +533,7 @@ return [
         'select_position' => 'Выберите позицию',
         'enter_experience_year' => 'Введите опыт в году',
         'select_company' => 'Выберите компанию',
+        'select_job_skill' => 'Выберите профессию',
         'select_job_category' => 'Выберите категорию работы',
         'select_job_type' => 'Выберите тип работы',
         'select_gender' => 'Выберите пол',

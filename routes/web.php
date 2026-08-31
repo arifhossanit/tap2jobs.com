@@ -8,6 +8,7 @@ use App\Http\Controllers\FAQController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\CityVillageController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
@@ -760,6 +761,13 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          Route::put('districts/{city}', [CityController::class, 'update'])->name('cities.update');
          Route::delete('districts/{city}', [CityController::class, 'destroy'])->name('cities.destroy');
 
+         // City/Village routes
+         Route::get('city-villages', [CityVillageController::class, 'index'])->name('city-villages.index');
+         Route::post('city-villages', [CityVillageController::class, 'store'])->name('city-villages.store');
+         Route::get('city-villages/{cityVillage}/edit', [CityVillageController::class, 'edit'])->name('city-villages.edit');
+         Route::put('city-villages/{cityVillage}', [CityVillageController::class, 'update'])->name('city-villages.update');
+         Route::delete('city-villages/{cityVillage}', [CityVillageController::class, 'destroy'])->name('city-villages.destroy');
+
          // Thana routes
          Route::get('thanas', [ThanaController::class, 'index'])->name('thanas.index');
          Route::post('thanas', [ThanaController::class, 'store'])->name('thanas.store');
@@ -783,6 +791,7 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
 Route::middleware('auth', 'role:Admin|Employer|Candidate', 'xss', 'verified.user')->group(function () {
     Route::get('states-list', [JobController::class, 'getStates'])->name('states-list');
     Route::get('cities-list', [JobController::class, 'getCities'])->name('cities-list');
+    Route::get('city-villages-list', [JobController::class, 'getCityVillages'])->name('city-villages-list');
     Route::get('thanas-list', [JobController::class, 'getThanas'])->name('thanas-list');
     Route::post('cities', [CityController::class, 'store'])->name('cities.store');
     Route::post('update-language', [UserController::class, 'updateLanguage'])->name('update-language');

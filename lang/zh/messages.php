@@ -531,6 +531,7 @@ return [
         'select_position' => '選擇職位',
         'enter_experience_year' => '輸入當年的經驗',
         'select_company' => '選擇公司',
+        'select_job_skill' => '選擇工作技能',
         'select_job_category' => '選擇工作類別',
         'select_job_type' => '選擇工作類型',
         'select_gender' => '選擇性別',

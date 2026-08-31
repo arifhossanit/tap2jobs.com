@@ -14,7 +14,7 @@
                 <div class="mb-5">
                     {{ Form::label('city_id', __('messages.thana.city_name').':', ['class' => 'form-label']) }}
                     <span class="required"></span>
-                    {{ Form::select('city_id', isset($cities) ? $cities : [], null, ['id' => 'cityID', 'required', 'class' => 'form-select', 'placeholder' => __('messages.company.select_city')]) }}
+                    {{ Form::select('city_id', $cities ?? [], null, ['id' => 'cityID', 'required', 'class' => 'form-select', 'placeholder' => __('messages.company.select_city')]) }}
                 </div>
                 <div class="mb-5">
                     {{ Form::label('name', __('messages.common.name').':', ['class' => 'form-label']) }}

@@ -118,25 +118,23 @@ class RegisterController extends AppBaseController
         if ((int) $input['type'] === 1) {
             session()->forget('url.intended');
             $redirectUrl = route('candidate.profile');
-            $candidate = $user->candidate;
-            $percentage = 0;
-            if ($candidate) {
-                $completion = app(\App\Services\CandidateProfileCompletionService::class)->calculate($candidate);
-                $percentage = $completion['percentage'] ?? 0;
-            }
-            session()->flash('profile_incomplete', [
-                'percentage' => $percentage,
-                'profile_url' => route('candidate.profile')
-            ]);
+            session()->flash('candidate_registration_success', true);
+            $suppressFlashMessage = true;
         } else {
             $redirectUrl = resolveIntendedRedirectUrl(RouteServiceProvider::EMPLOYER_HOME, $user);
+            $suppressFlashMessage = false;
         }
 
         $userType = ($input['type'] == 1) ? __('messages.notification_settings.candidate') : __('messages.company.employer');
-        Flash::success(__('messages.flash.register_success_mail_active'));
+        if (! $suppressFlashMessage) {
+            Flash::success(__('messages.flash.register_success_mail_active'));
+        }
 
         return $this->sendResponse(
-            ['redirectUrl' => $redirectUrl],
+            [
+                'redirectUrl' => $redirectUrl,
+                'candidateRegistration' => $suppressFlashMessage,
+            ],
             "{$userType} ".__('messages.flash.registration_done')
         );
     }

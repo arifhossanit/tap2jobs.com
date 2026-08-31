@@ -1,16 +1,83 @@
 <script>
-    window.showProfileIncompleteModal = function (percentage, profileUrl, retryCount) {
-        retryCount = retryCount || 0;
-        if ((typeof Swal === 'undefined' || typeof Swal.fire !== 'function') && typeof swal !== 'function' && retryCount < 5) {
-            setTimeout(function() {
-                window.showProfileIncompleteModal(percentage, profileUrl, retryCount + 1);
-            }, 150);
+    window.closeTap2JobsModal = function () {
+        var activeModal = document.querySelector('.tap2jobs-system-modal');
+        if (!activeModal) {
             return;
         }
+        if (window.tap2JobsModalEscapeHandler) {
+            document.removeEventListener('keydown', window.tap2JobsModalEscapeHandler);
+        }
 
+        activeModal.classList.remove('is-visible');
+        setTimeout(function () {
+            if (activeModal && activeModal.parentNode) {
+                activeModal.parentNode.removeChild(activeModal);
+            }
+        }, 160);
+    };
+
+    window.showTap2JobsModal = function (htmlContent, options) {
+        options = options || {};
+        window.closeTap2JobsModal();
+        if (window.tap2JobsModalEscapeHandler) {
+            document.removeEventListener('keydown', window.tap2JobsModalEscapeHandler);
+        }
+
+        var modal = document.createElement('div');
+        modal.className = 'tap2jobs-system-modal';
+        modal.innerHTML = `
+            <div class="tap2jobs-system-modal__backdrop"></div>
+            <div class="tap2jobs-system-modal__dialog" role="dialog" aria-modal="true">
+                <div class="tap2jobs-system-modal__content"></div>
+                <div class="tap2jobs-system-modal__actions"></div>
+            </div>
+        `;
+
+        modal.querySelector('.tap2jobs-system-modal__content').innerHTML = htmlContent;
+        var actions = modal.querySelector('.tap2jobs-system-modal__actions');
+
+        if (options.confirmText !== false) {
+            var confirmButton = document.createElement('button');
+            confirmButton.type = 'button';
+            confirmButton.className = 'tap2jobs-system-modal__button';
+            if (options.buttonClass) {
+                confirmButton.className += ' ' + options.buttonClass;
+            }
+            confirmButton.textContent = options.confirmText || 'OK';
+            confirmButton.addEventListener('click', function () {
+                window.closeTap2JobsModal();
+                if (typeof options.onConfirm === 'function') {
+                    options.onConfirm();
+                }
+            });
+            actions.appendChild(confirmButton);
+        } else {
+            actions.remove();
+        }
+
+        if (options.allowBackdropClose !== false) {
+            modal.querySelector('.tap2jobs-system-modal__backdrop').addEventListener('click', window.closeTap2JobsModal);
+        }
+
+        window.tap2JobsModalEscapeHandler = function (event) {
+            if (event.key === 'Escape') {
+                window.closeTap2JobsModal();
+                document.removeEventListener('keydown', window.tap2JobsModalEscapeHandler);
+            }
+        };
+        document.addEventListener('keydown', window.tap2JobsModalEscapeHandler);
+
+        document.body.appendChild(modal);
+        setTimeout(function () {
+            modal.classList.add('is-visible');
+        }, 10);
+    };
+
+    window.showProfileIncompleteModal = function (percentage, profileUrl, retryCount) {
         percentage = parseInt(percentage) || 0;
         var isBn = (typeof lancode !== 'undefined' && lancode === 'bn');
-        var isComplete = percentage >= 80;
+        var minimumApplicationPercentage = 50;
+        var isComplete = percentage >= minimumApplicationPercentage;
 
         var titleText = isComplete 
             ? (isBn ? "প্রোফাইল সম্পূর্ণ!" : "Profile Complete!")
@@ -21,14 +88,12 @@
                 ? "আপনার প্রোফাইল <b>" + percentage + "%</b> সম্পূর্ণ হয়েছে। এখন আপনি চাকরিতে আবেদন করতে পারবেন।" 
                 : "Your profile is <b>" + percentage + "%</b> complete. Now you can apply for job.")
             : (isBn 
-                ? "চাকরিতে আবেদন করতে আপনার প্রোফাইল অন্তত <b>৮০%</b> সম্পূর্ণ করতে হবে।" 
-                : "Your profile must be at least <b>80%</b> complete to apply for jobs.");
+                ? "চাকরিতে আবেদন করতে আপনার প্রোফাইল অন্তত <b>৫০%</b> সম্পূর্ণ করতে হবে।"
+                : "Your profile must be at least <b>50%</b> complete to apply for jobs.");
 
         var confirmBtnText = isComplete
             ? (isBn ? "চাকরি খুঁজুন" : "Browse Jobs")
-            : (isBn ? "প্রোফাইলে যান" : "Go to Profile");
-
-        var cancelBtnText = isBn ? "বাতিল" : "Cancel";
+            : "OK";
 
         var radius = 40;
         var circumference = 2 * Math.PI * radius;
@@ -39,7 +104,6 @@
         var strokeColor2 = isComplete ? "#059669" : "#be185d";
         var bgCircleColor = isComplete ? "#d1fae5" : "#fce7f3";
         var shadowColor = isComplete ? "rgba(16, 185, 129, 0.25)" : "rgba(217, 70, 239, 0.25)";
-        var confirmBtnColor = isComplete ? "#209776" : "#6366f1";
 
         var htmlContent = `
             <div style="font-family: inherit; padding: 10px 0 5px 0; text-align: center;">
@@ -67,60 +131,19 @@
 
         var jobsUrl = "{{ route('front.search.jobs') }}";
 
-        if (typeof Swal !== 'undefined' && typeof Swal.fire === 'function') {
-            Swal.fire({
-                html: htmlContent,
-                showCancelButton: !isComplete,
-                confirmButtonText: confirmBtnText,
-                cancelButtonText: cancelBtnText,
-                confirmButtonColor: confirmBtnColor,
-                cancelButtonColor: '#94a3b8',
-                customClass: {
-                    popup: 'profile-incomplete-swal-popup',
-                    confirmButton: 'profile-incomplete-confirm-btn',
-                    cancelButton: 'profile-incomplete-cancel-btn'
-                }
-            }).then(function (result) {
-                if (result.isConfirmed || result.value) {
-                    if (isComplete) {
-                        window.location.href = jobsUrl;
-                    } else if (profileUrl) {
-                        window.location.href = profileUrl;
-                    }
-                }
-            });
-        } else if (typeof swal === 'function') {
-            swal({
-                title: "",
-                text: htmlContent,
-                html: true,
-                showCancelButton: !isComplete,
-                confirmButtonColor: confirmBtnColor,
-                confirmButtonText: confirmBtnText,
-                cancelButtonText: cancelBtnText,
-                closeOnConfirm: true
-            }, function (isConfirm) {
-                if (isConfirm || isConfirm === true) {
-                    if (isComplete) {
-                        window.location.href = jobsUrl;
-                    } else if (profileUrl) {
-                        window.location.href = profileUrl;
-                    }
-                }
-            });
-        } else {
-            if (confirm(titleText + "\n\n" + descText.replace(/<\/?[^>]+(>|$)/g, "") + "\n\n" + confirmBtnText)) {
+        window.showTap2JobsModal(htmlContent, {
+            confirmText: confirmBtnText,
+            buttonClass: isComplete ? 'tap2jobs-system-modal__button--success' : '',
+            onConfirm: function () {
                 if (isComplete) {
                     window.location.href = jobsUrl;
-                } else if (profileUrl) {
-                    window.location.href = profileUrl;
                 }
             }
-        }
+        });
     };
 
     window.handleApplyClick = function (e, applyUrl, percentage, profileUrl) {
-        if (percentage < 80) {
+        if (percentage < 50) {
             if (e && e.preventDefault) {
                 e.preventDefault();
             }
@@ -129,6 +152,25 @@
         }
         window.location.href = applyUrl;
         return true;
+    };
+
+    window.showCandidateRegistrationSuccessModal = function (retryCount) {
+        var titleText = "অভিনন্দন! Registration সফল হয়েছে।";
+        var descText = "আপনার Profile- যত বেশি তথ্য পূরণ করবেন, আপনার জন্য তত বেশি ও নির্ভুল Job Matching পাওয়ার সম্ভাবনা বাড়বে। আপনার Profile সম্পূর্ণ করুন এবং আরও বেশি চাকরির সুযোগ পান।";
+
+        var htmlContent = `
+            <div style="font-family: inherit; padding: 14px 0 8px 0; text-align: center;">
+                <div style="width: 74px; height: 74px; margin: 0 auto 18px auto; border-radius: 50%; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; font-size: 32px;">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h3 style="font-size: 22px; font-weight: 700; color: #1e293b; margin: 0 0 14px 0;">${titleText}</h3>
+                <p style="font-size: 15px; color: #475569; line-height: 1.7; margin: 0;">${descText}</p>
+            </div>
+        `;
+
+        window.showTap2JobsModal(htmlContent, {
+            confirmText: false
+        });
     };
 
     window.showNotEligibleModal = function () {
@@ -148,6 +190,8 @@
                 <p style="font-family: inherit; font-size: 14.5px; color: #64748b; line-height: 1.6; margin: 0;">${descText}</p>
             </div>
         `;
+        var modalContent = document.createElement('div');
+        modalContent.innerHTML = htmlContent;
 
         if (typeof Swal !== 'undefined' && typeof Swal.fire === 'function') {
             Swal.fire({
@@ -163,11 +207,11 @@
         } else if (typeof swal === 'function') {
             swal({
                 title: "",
-                text: htmlContent,
-                html: true,
-                confirmButtonColor: '#209776',
-                confirmButtonText: confirmBtnText,
-                closeOnConfirm: true
+                content: modalContent,
+                buttons: {
+                    confirm: confirmBtnText
+                },
+                icon: false
             });
         } else {
             alert(titleText + "\n\n" + descText.replace(/<\/?[^>]+(>|$)/g, ""));
@@ -176,6 +220,91 @@
 </script>
 
 <style>
+    .tap2jobs-system-modal {
+        align-items: center;
+        display: flex;
+        inset: 0;
+        justify-content: center;
+        opacity: 0;
+        padding: 20px;
+        pointer-events: none;
+        position: fixed;
+        transition: opacity 160ms ease;
+        z-index: 200000;
+    }
+    .tap2jobs-system-modal.is-visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    .tap2jobs-system-modal__backdrop {
+        background: rgba(15, 23, 42, 0.45);
+        inset: 0;
+        position: absolute;
+    }
+    .tap2jobs-system-modal__dialog {
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.24);
+        max-width: 430px;
+        padding: 28px 28px 24px;
+        position: relative;
+        transform: translateY(10px) scale(0.98);
+        transition: transform 160ms ease;
+        width: min(100%, 430px);
+    }
+    .tap2jobs-system-modal.is-visible .tap2jobs-system-modal__dialog {
+        transform: translateY(0) scale(1);
+    }
+    .tap2jobs-system-modal__content h3,
+    .tap2jobs-system-modal__content p {
+        font-family: inherit;
+    }
+    .tap2jobs-system-modal__actions {
+        display: flex;
+        justify-content: center;
+        margin-top: 22px;
+    }
+    .tap2jobs-system-modal__button {
+        background: #7cccf0;
+        border: 0;
+        border-radius: 4px;
+        color: #ffffff;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 1;
+        min-width: 88px;
+        padding: 15px 30px;
+        transition: background-color 160ms ease, transform 160ms ease;
+    }
+    .tap2jobs-system-modal__button:hover,
+    .tap2jobs-system-modal__button:focus {
+        background: #5bbce8;
+        color: #ffffff;
+        outline: none;
+        transform: translateY(-1px);
+    }
+    .tap2jobs-system-modal__button--success {
+        background: #209776;
+    }
+    .tap2jobs-system-modal__button--success:hover,
+    .tap2jobs-system-modal__button--success:focus {
+        background: #187f63;
+    }
+    @media (max-width: 575.98px) {
+        .tap2jobs-system-modal {
+            padding: 14px;
+        }
+        .tap2jobs-system-modal__dialog {
+            padding: 24px 20px 22px;
+        }
+        .tap2jobs-system-modal__button {
+            min-width: 82px;
+            padding: 14px 24px;
+        }
+    }
+
     .not-eligible-swal-popup {
         font-family: inherit !important;
         border-radius: 16px !important;
@@ -199,6 +328,7 @@
                 var percentage = "{{ $profileData['percentage'] ?? 0 }}";
                 var profileUrl = "{{ $profileData['profile_url'] ?? route('candidate.profile') }}";
                 if (typeof window.showProfileIncompleteModal === 'function') {
+                    window.profileIncompleteModalTriggered = true;
                     window.showProfileIncompleteModal(percentage, profileUrl);
                 }
             }
@@ -207,6 +337,58 @@
                 document.addEventListener('DOMContentLoaded', triggerIncompleteModal);
             } else {
                 triggerIncompleteModal();
+            }
+        })();
+    </script>
+@endif
+
+<script>
+    (function () {
+        function triggerStoredProfileIncompleteModal() {
+            if (!window.sessionStorage || typeof window.showProfileIncompleteModal !== 'function') {
+                return;
+            }
+
+            var storedProfileIncomplete = window.sessionStorage.getItem('pendingProfileIncompleteModal');
+            if (!storedProfileIncomplete) {
+                return;
+            }
+
+            window.sessionStorage.removeItem('pendingProfileIncompleteModal');
+
+            if (window.profileIncompleteModalTriggered) {
+                return;
+            }
+
+            try {
+                var profileData = JSON.parse(storedProfileIncomplete);
+                window.showProfileIncompleteModal(profileData.percentage || 0, profileData.profile_url || "{{ route('candidate.profile') }}");
+            } catch (error) {
+                window.showProfileIncompleteModal(0, "{{ route('candidate.profile') }}");
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', triggerStoredProfileIncompleteModal);
+        } else {
+            triggerStoredProfileIncompleteModal();
+        }
+    })();
+</script>
+
+@if (session()->has('candidate_registration_success'))
+    <script>
+        (function () {
+            function triggerCandidateRegistrationSuccessModal() {
+                if (typeof window.showCandidateRegistrationSuccessModal === 'function') {
+                    window.showCandidateRegistrationSuccessModal();
+                }
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', triggerCandidateRegistrationSuccessModal);
+            } else {
+                triggerCandidateRegistrationSuccessModal();
             }
         })();
     </script>

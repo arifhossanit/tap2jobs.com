@@ -175,6 +175,7 @@ class User extends Authenticatable implements HasMedia
         'country_id',
         'state_id',
         'city_id',
+        'city_village_id',
         'thana_id',
         'is_active',
         'is_verified',
@@ -192,9 +193,9 @@ class User extends Authenticatable implements HasMedia
         'region_code',
     ];
 
-    protected $appends = ['full_name', 'avatar', 'country_name', 'state_name', 'city_name', 'thana_name'];
+    protected $appends = ['full_name', 'avatar', 'country_name', 'state_name', 'city_name', 'city_village_name', 'thana_name'];
 
-    protected $with = ['media', 'country', 'city', 'state', 'thana'];
+    protected $with = ['media', 'country', 'city', 'cityVillage', 'state', 'thana'];
 
     public function country(): BelongsTo
     {
@@ -209,6 +210,11 @@ class User extends Authenticatable implements HasMedia
     public function city(): BelongsTo
     {
         return $this->belongsTo(City::class, 'city_id');
+    }
+
+    public function cityVillage(): BelongsTo
+    {
+        return $this->belongsTo(CityVillage::class, 'city_village_id');
     }
 
     public function thana(): BelongsTo
@@ -234,6 +240,13 @@ class User extends Authenticatable implements HasMedia
     {
         if (! empty($this->city)) {
             return $this->city->name;
+        }
+    }
+
+    public function getCityVillageNameAttribute()
+    {
+        if (! empty($this->cityVillage)) {
+            return $this->cityVillage->name;
         }
     }
 
@@ -283,6 +296,7 @@ class User extends Authenticatable implements HasMedia
         'country_id' => 'integer',
         'state_id' => 'integer',
         'city_id' => 'integer',
+        'city_village_id' => 'integer',
         'thana_id' => 'integer',
         'is_active' => 'boolean',
         'is_verified' => 'boolean',

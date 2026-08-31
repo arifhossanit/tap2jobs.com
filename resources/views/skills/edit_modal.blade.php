@@ -22,7 +22,6 @@
                 </div>
                 <div class="mb-5">
                     {{ Form::label('description', __('messages.skill.description').':',['class' => 'form-label']) }}
-                    <span class="required"></span>
                     <div id="editSkillDescriptionQuillData"></div>
                     {{ Form::hidden('description', null, ['id' => 'edit_skill_desc']) }}
                 </div>

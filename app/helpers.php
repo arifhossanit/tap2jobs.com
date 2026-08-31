@@ -1168,10 +1168,25 @@ if (! function_exists('getCities')) {
     }
 }
 
-if (! function_exists('getThanas')) {
-    function getThanas($cityId)
+if (! function_exists('getCityVillages')) {
+    function getCityVillages($cityId)
     {
-        return \App\Models\Thana::where('city_id', $cityId)->orderBy('name')->pluck('name', 'id')->toArray();
+        return \App\Models\CityVillage::where('city_id', $cityId)->orderBy('name')->pluck('name', 'id')->toArray();
+    }
+}
+
+if (! function_exists('getThanas')) {
+    function getThanas($cityId = null)
+    {
+        if (empty($cityId)) {
+            return [];
+        }
+
+        return \App\Models\Thana::query()
+            ->where('city_id', $cityId)
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->toArray();
     }
 }
 if (! function_exists('getFrontSelectLanguage')) {

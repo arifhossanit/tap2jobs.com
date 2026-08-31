@@ -17,7 +17,7 @@
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('skill_id', __('messages.job.job_skill').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{Form::select('jobsSkill[]',$data['jobSkill'], old('jobsSkill', $data['jobSkills']), ['class' => 'form-select','data-control'=>'select2','id'=>'SkillId','multiple'=>true,'required'])}}
+        {{ Form::select('jobsSkill[]', $data['jobSkill'], old('jobsSkill', $data['jobSkills']), ['class' => 'form-select', 'id' => 'SkillId', 'multiple' => true, 'data-control' => 'select2', 'data-placeholder' => __('messages.company.select_job_skill'), 'placeholder' => __('messages.company.select_job_skill'), 'required']) }}
     </div>
     @include('employer.jobs.employment_workplace_fields')
     <div class="col-xl-12 col-md-12 col-sm-12 mb-5">
@@ -93,6 +93,15 @@
     <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
         {{ Form::label('thana', __('messages.thana.thana_name').':', ['class' => 'form-label']) }}
         {{ Form::select('thana_id', $thanas ?? [], old('thana_id', $job->thana_id), ['id'=>'thanaId','class' => 'form-select','placeholder' => __('messages.company.select_thana'),'data-control'=>'select2']) }}
+    </div>
+    <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
+        {{ Form::label('city_village_name', __('messages.city_village.city_villages').':', ['class' => 'form-label']) }}
+        {{ Form::text('city_village_name', old('city_village_name', $job->city_village_name), ['class' => 'form-control', 'placeholder' => 'Enter Area / City / Village']) }}
+    </div>
+    <div class="col-xl-9 col-md-6
+     col-sm-12 mb-5">
+        {{ Form::label('address', __('messages.candidate.address').':', ['class' => 'form-label']) }}
+        {{ Form::textarea('address', old('address', $job->address), ['id' => 'jobAddress', 'class' => 'form-control', 'rows' => 3, 'placeholder' => __('messages.candidate.address')]) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('career_level_id', __('messages.job.career_level').':', ['class' => 'form-label']) }}

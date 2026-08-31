@@ -68,4 +68,9 @@ class City extends Model
     {
         return $this->hasMany(Thana::class, 'city_id');
     }
+
+    public function cityVillages(): HasMany
+    {
+        return $this->hasMany(CityVillage::class, 'city_id');
+    }
 }

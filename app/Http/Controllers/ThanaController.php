@@ -9,6 +9,7 @@ use App\Models\Candidate;
 use App\Models\CandidateEducation;
 use App\Models\CandidateExperience;
 use App\Models\City;
+use App\Models\CityVillage;
 use App\Models\Job;
 use App\Models\Thana;
 use App\Models\User;
@@ -44,7 +45,10 @@ class ThanaController extends AppBaseController
                 continue;
             }
 
-            $exists = Thana::where('city_id', $cityId)->where('name', $name)->exists();
+            $exists = Thana::query()
+                ->where('name', $name)
+                ->where('city_id', $cityId)
+                ->exists();
 
             if (! $exists) {
                 $lastCreatedThana = Thana::create([
@@ -56,7 +60,10 @@ class ThanaController extends AppBaseController
         }
 
         if ($createdCount === 0 && ! empty($names)) {
-            $lastCreatedThana = Thana::where('city_id', $cityId)->where('name', $names[0])->first();
+            $lastCreatedThana = Thana::query()
+                ->where('name', $names[0])
+                ->where('city_id', $cityId)
+                ->first();
         }
 
         return $this->sendResponse($lastCreatedThana, __('messages.flash.thana_save'));
@@ -69,7 +76,10 @@ class ThanaController extends AppBaseController
 
     public function update(UpdateThanaRequest $request, Thana $thana): JsonResponse
     {
-        $thana->update($request->only('city_id', 'name'));
+        $thana->update([
+            'city_id' => $request->input('city_id'),
+            'name' => $request->input('name'),
+        ]);
 
         return $this->sendSuccess(__('messages.flash.thana_update'));
     }

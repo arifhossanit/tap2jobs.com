@@ -130,30 +130,6 @@
             box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.4) !important;
         }
 
-        .profile-incomplete-swal-popup {
-            border-radius: 20px !important;
-            padding: 24px !important;
-            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
-        }
-        .profile-incomplete-confirm-btn {
-            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
-            color: #ffffff !important;
-            border: none !important;
-            border-radius: 10px !important;
-            padding: 10px 24px !important;
-            font-weight: 600 !important;
-            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35) !important;
-            margin: 4px !important;
-        }
-        .profile-incomplete-cancel-btn {
-            background-color: #cbd5e1 !important;
-            color: #475569 !important;
-            border: none !important;
-            border-radius: 10px !important;
-            padding: 10px 24px !important;
-            font-weight: 600 !important;
-            margin: 4px !important;
-        }
     </style>
 
     @yield('page_css')

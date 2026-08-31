@@ -312,21 +312,45 @@ class CandidateController extends AppBaseController
         return redirect(route('candidate.profile'));
     }
 
-    /**
-     * @throws \Throwable
-     */    private function flashProfileCompletion(?\App\Models\Candidate $candidate): void
+    private function candidateProfilePercentage(?\App\Models\Candidate $candidate): int
+    {
+        if (! $candidate) {
+            return 0;
+        }
+
+        $completion = app(CandidateProfileCompletionService::class)->calculate($candidate);
+
+        return (int) ($completion['percentage'] ?? 0);
+    }
+
+    private function flashProfileCompletion(?\App\Models\Candidate $candidate, ?int $beforePercentage = null): void
     {
         if (! $candidate) {
             return;
         }
 
-        $completion = app(\App\Services\CandidateProfileCompletionService::class)->calculate($candidate);
-        $percentage = $completion['percentage'] ?? 0;
+        $percentage = $this->candidateProfilePercentage($candidate);
+
+        if ($percentage >= CandidateProfileCompletionService::MINIMUM_APPLICATION_PERCENTAGE
+            && ($beforePercentage === null || $beforePercentage >= CandidateProfileCompletionService::MINIMUM_APPLICATION_PERCENTAGE)) {
+            return;
+        }
 
         session()->flash('profile_incomplete', [
             'percentage' => $percentage,
             'profile_url' => route('candidate.profile'),
         ]);
+    }
+
+    private function profileCompletionResponse(?\App\Models\Candidate $candidate): array
+    {
+        $percentage = $this->candidateProfilePercentage($candidate);
+
+        return [
+            'profile_incomplete' => $percentage < CandidateProfileCompletionService::MINIMUM_APPLICATION_PERCENTAGE,
+            'percentage' => $percentage,
+            'profile_url' => route('candidate.profile'),
+        ];
     }
 
     /**
@@ -335,16 +359,20 @@ class CandidateController extends AppBaseController
     public function updatePersonalDetails(CandidateUpdatePersonalDetailsRequest $request)
     {
         $input = $request->validated();
+        $beforePercentage = $this->candidateProfilePercentage(Auth::user()->candidate);
 
         if ($request->hasFile('image')) {
             $input['image'] = $request->file('image');
         }
 
         $this->candidateRepository->updatePersonalDetails($input);
-        $this->flashProfileCompletion(Auth::user()->candidate?->fresh());
+        $this->flashProfileCompletion(Auth::user()->candidate?->fresh(), $beforePercentage);
 
         if ($request->ajax() || $request->wantsJson()) {
-            return $this->sendSuccess(__('messages.flash.candidate_profile'));
+            return $this->sendResponse(
+                $this->profileCompletionResponse(Auth::user()->candidate?->fresh()),
+                __('messages.flash.candidate_profile')
+            );
         }
 
         Flash::success(__('messages.flash.candidate_profile'));
@@ -357,11 +385,15 @@ class CandidateController extends AppBaseController
      */
     public function updateAddressDetails(CandidateUpdateAddressDetailsRequest $request)
     {
+        $beforePercentage = $this->candidateProfilePercentage(Auth::user()->candidate);
         $this->candidateRepository->updateAddressDetails($request->validated());
-        $this->flashProfileCompletion(Auth::user()->candidate?->fresh());
+        $this->flashProfileCompletion(Auth::user()->candidate?->fresh(), $beforePercentage);
 
         if ($request->ajax() || $request->wantsJson()) {
-            return $this->sendSuccess(__('messages.flash.candidate_profile'));
+            return $this->sendResponse(
+                $this->profileCompletionResponse(Auth::user()->candidate?->fresh()),
+                __('messages.flash.candidate_profile')
+            );
         }
 
         Flash::success(__('messages.flash.candidate_profile'));
@@ -374,10 +406,87 @@ class CandidateController extends AppBaseController
      */
     public function updateCareerApplication(CandidateUpdateCareerApplicationRequest $request)
     {
+        $beforePercentage = $this->candidateProfilePercentage(Auth::user()->candidate);
         $this->candidateRepository->updateCareerApplication($request->validated());
         $this->applicationCvService->ensure(Auth::user()->candidate->fresh(), true);
+        $this->flashProfileCompletion(Auth::user()->candidate?->fresh(), $beforePercentage);
 
-        return $this->sendResponse($this->extraCurricularResponse($extraCurricular), __('messages.flash.candidate_profile'));
+        if ($request->ajax() || $request->wantsJson()) {
+            return $this->sendResponse(
+                $this->profileCompletionResponse(Auth::user()->candidate?->fresh()),
+                __('messages.flash.candidate_profile')
+            );
+        }
+
+        Flash::success(__('messages.flash.candidate_profile'));
+
+        return redirect(route('candidate.profile', ['section' => 'personal-information']));
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function updatePreferredArea(CandidateUpdatePreferredAreaRequest $request)
+    {
+        $beforePercentage = $this->candidateProfilePercentage(Auth::user()->candidate);
+        $this->candidateRepository->updatePreferredArea($request->validated());
+        $this->applicationCvService->ensure(Auth::user()->candidate->fresh(), true);
+        $this->flashProfileCompletion(Auth::user()->candidate?->fresh(), $beforePercentage);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return $this->sendResponse(
+                $this->profileCompletionResponse(Auth::user()->candidate?->fresh()),
+                __('messages.flash.candidate_profile')
+            );
+        }
+
+        Flash::success(__('messages.flash.candidate_profile'));
+
+        return redirect(route('candidate.profile', ['section' => 'personal-information']));
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function updateRelevantInformation(CandidateUpdateRelevantInformationRequest $request)
+    {
+        $beforePercentage = $this->candidateProfilePercentage(Auth::user()->candidate);
+        $this->candidateRepository->updateRelevantInformation($request->validated());
+        $this->applicationCvService->ensure(Auth::user()->candidate->fresh(), true);
+        $this->flashProfileCompletion(Auth::user()->candidate?->fresh(), $beforePercentage);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return $this->sendResponse(
+                $this->profileCompletionResponse(Auth::user()->candidate?->fresh()),
+                __('messages.flash.candidate_profile')
+            );
+        }
+
+        Flash::success(__('messages.flash.candidate_profile'));
+
+        return redirect(route('candidate.profile', ['section' => 'personal-information']));
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function updateDisabilityInformation(CandidateUpdateDisabilityInformationRequest $request)
+    {
+        $beforePercentage = $this->candidateProfilePercentage(Auth::user()->candidate);
+        $this->candidateRepository->updateDisabilityInformation($request->validated());
+        $this->applicationCvService->ensure(Auth::user()->candidate->fresh(), true);
+        $this->flashProfileCompletion(Auth::user()->candidate?->fresh(), $beforePercentage);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return $this->sendResponse(
+                $this->profileCompletionResponse(Auth::user()->candidate?->fresh()),
+                __('messages.flash.candidate_profile')
+            );
+        }
+
+        Flash::success(__('messages.flash.candidate_profile'));
+
+        return redirect(route('candidate.profile', ['section' => 'personal-information']));
     }
 
     public function updateExtraCurricular(
@@ -820,7 +929,9 @@ class CandidateController extends AppBaseController
      */
     public function updateGeneralInformation(CandidateUpdateGeneralInformationRequest $request): JsonResponse
     {
+        $beforePercentage = $this->candidateProfilePercentage(Auth::user()->candidate);
         $user = $this->candidateRepository->updateGeneralInformation($request->validated());
+        $this->flashProfileCompletion($user->candidate?->fresh(), $beforePercentage);
         $user['candidateSkill'] = $user->candidateSkill()->pluck('name')->toArray();
         $user['candidateLanguageItems'] = $this->candidateLanguageItems($user)
             ->map(function ($language) {
@@ -884,7 +995,9 @@ class CandidateController extends AppBaseController
      */
     public function updateOnlineProfile(CandidateUpdateOnlineProfileRequest $request): JsonResponse
     {
+        $beforePercentage = $this->candidateProfilePercentage(Auth::user()->candidate);
         $user = $this->candidateRepository->updateGeneralInformation($request->validated());
+        $this->flashProfileCompletion($user->candidate?->fresh(), $beforePercentage);
         $user['onlineProfileLayout'] = view('candidate.profile.career_informations.show_online_profile',
             compact('user'))->render();
         $user['editonlineProfileLayout'] = view('candidate.profile.career_informations.edit_online_profile',

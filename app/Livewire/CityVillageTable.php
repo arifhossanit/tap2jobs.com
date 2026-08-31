@@ -2,38 +2,39 @@
 
 namespace App\Livewire;
 
+use App\Models\City;
 use App\Models\CityVillage;
-use App\Models\Thana;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 
-class ThanaTable extends LivewireTableComponent
+class CityVillageTable extends LivewireTableComponent
 {
-    protected $model = Thana::class;
+    protected $model = CityVillage::class;
 
-    protected ?string $bulkDeleteModel = Thana::class;
+    protected ?string $bulkDeleteModel = CityVillage::class;
 
     protected array $bulkDeleteBlockedChecks = [
-        ['App\Models\Job', 'thana_id'],
-        ['App\Models\User', 'thana_id'],
-        ['App\Models\Candidate', 'permanent_thana_id'],
-        ['App\Models\CandidateExperience', 'thana_id'],
-        ['App\Models\CandidateEducation', 'thana_id'],
+        ['App\Models\Thana', 'city_village_id'],
+        ['App\Models\Job', 'city_village_id'],
+        ['App\Models\User', 'city_village_id'],
+        ['App\Models\Candidate', 'permanent_city_village_id'],
+        ['App\Models\CandidateExperience', 'city_village_id'],
+        ['App\Models\CandidateEducation', 'city_village_id'],
     ];
 
-    protected string $tableName = 'thanas';
+    protected string $tableName = 'city_villages';
 
     public $showButtonOnHeader = true;
 
     public $showFilterOnHeader = true;
 
-    public $city = Thana::CITY;
+    public $city = CityVillage::CITY;
 
-    public $buttonComponent = 'thanas.table-components.add_button';
+    public $buttonComponent = 'city_villages.table-components.add_button';
 
-    protected $listeners = ['resetPage', 'refreshDatatable' => '$refresh', 'changeCityFilter'];
+    protected $listeners = ['resetPage', 'refreshDatatable' => '$refresh', 'changeCityVillageDistrictFilter'];
 
-    public array $filterComponents = ['thanas.table-components.filter', Thana::CITY];
+    public array $filterComponents = ['city_villages.table-components.filter', CityVillage::CITY];
 
     public function configure(): void
     {
@@ -61,32 +62,30 @@ class ThanaTable extends LivewireTableComponent
     public function columns(): array
     {
         return [
-            Column::make(__('messages.thana.thana_name'), 'name')
+            Column::make(__('messages.city_village.city_village_name'), 'name')
                 ->sortable()
                 ->searchable(),
-            Column::make(__('messages.thana.city_name'), 'city.name')
+            Column::make(__('messages.city.city_name'), 'city.name')
                 ->sortable(function (Builder $query, $direction) {
-                    return $query->orderBy(\App\Models\City::select('name')->whereColumn('thanas.city_id', 'cities.id'), $direction)
-                        ->orderBy('thanas.name', 'asc');
+                    return $query->orderBy(City::select('name')->whereColumn('city_villages.city_id', 'cities.id'), $direction)
+                        ->orderBy('city_villages.name', 'asc');
                 })
                 ->searchable(),
             Column::make(__('messages.common.action'), 'id')
-                ->view('thanas.table-components.action_button'),
+                ->view('city_villages.table-components.action_button'),
         ];
     }
 
     public function builder(): Builder
     {
-        $query = Thana::with(['city']);
+        $query = CityVillage::with('city');
 
-        $query->when(! empty($this->city), function ($q) {
-            $q->where('city_id', $this->city);
-        });
+        $query->when(! empty($this->city), fn ($q) => $q->where('city_id', $this->city));
 
-        return $query->select('thanas.*');
+        return $query->select('city_villages.*');
     }
 
-    public function changeCityFilter($city): void
+    public function changeCityVillageDistrictFilter($city): void
     {
         $this->city = $city;
         $this->setBuilder($this->builder());
@@ -95,6 +94,6 @@ class ThanaTable extends LivewireTableComponent
 
     public function resetPagination(): void
     {
-        $this->resetPage('thanasPage');
+        $this->resetPage('cityVillagesPage');
     }
 }

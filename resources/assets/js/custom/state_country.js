@@ -1,4 +1,3 @@
-
 listenChange('#countryId', function (){
     const selectedCountry = $(this).val();
     const selectedState = $('#stateId').val();

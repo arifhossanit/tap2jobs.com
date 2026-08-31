@@ -83,10 +83,21 @@ class CreateCompanyRequest extends FormRequest
             'integer',
             Rule::exists('cities', 'id')->where('state_id', $this->input('state_id')),
         ];
+        $rules['city_village_id'] = [
+            'nullable',
+            'integer',
+            Rule::exists('city_villages', 'id')->where('city_id', $this->input('city_id')),
+        ];
         $rules['thana_id'] = [
             'nullable',
             'integer',
-            Rule::exists('thanas', 'id')->where('city_id', $this->input('city_id')),
+            Rule::exists('thanas', 'id')->where(function ($query) {
+                if ($this->filled('city_village_id')) {
+                    return $query->where('city_village_id', $this->input('city_village_id'));
+                }
+
+                return $query->where('city_id', $this->input('city_id'));
+            }),
         ];
         $rules['industry_ids'] = 'required|array|min:1';
         $rules['industry_ids.*'] = ['integer', Rule::exists('industries', 'id')];

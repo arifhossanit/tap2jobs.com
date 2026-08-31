@@ -106,7 +106,7 @@
                                 {{ (Str::limit(__('messages.user.change_password'),20,'...')) }}
                             </a>
                         </li>
-                        <li>
+                        {{-- <li>
                             <a class="dropdown-item text-gray-900 changeAdminLanguageModal {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}" id="changeLanguage"
                                href="javascript:void(0)"
                                data-id="{{ getLoggedInUserId() }}">
@@ -115,7 +115,7 @@
                                </span>
                                 {{ (Str::limit(__('messages.user_language.change_language'),20,'...')) }}
                             </a>
-                        </li>
+                        </li> --}}
                         <li>
                             <a class="dropdown-item text-gray-900 d-flex {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}" href="javascript:void(0)">
                                 <span class="dropdown-icon {{ checkLanguageSession() == 'ar' ? 'ms-4' : 'me-4' }} text-gray-600">

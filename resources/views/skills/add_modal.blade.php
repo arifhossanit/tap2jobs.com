@@ -17,11 +17,11 @@
                 <div class="mb-5">
                     {{ Form::label('name', __('messages.skill.name').(':'), ['class' => 'form-label']) }}
                     <span class="required"></span>
-                    {{ Form::text('name', null, ['class' => 'form-control','required','placeholder'=>__('messages.skill.name')]) }}
+                    {{ Form::textarea('name', null, ['class' => 'form-control','required','rows' => 3,'maxlength' => 160000,'placeholder' => 'Laravel, PHP, JavaScript']) }}
+                    <div class="form-text">You can add multiple skills separated by comma. Maximum 1000 skills at a time.</div>
                 </div>
                 <div class="mb-5">
                     {{ Form::label('description',__('messages.skill.description').(':'), ['class' => 'form-label'])}}
-                    <span class="required"></span>
                     <div id="addSkillDescriptionQuillData"></div>
                     {{ Form::hidden('description', null, ['id' => 'skill_desc']) }}
                 </div>

@@ -262,7 +262,7 @@
         }
 
         .candidate-profile-menu__main-link.active {
-            background: #fff4fa;
+            background: #ddf9ec;
             border-color: #f5d4e6;
         }
 
@@ -354,7 +354,7 @@
 
         .candidate-profile-menu__sub-link:hover,
         .candidate-profile-menu__sub-link.active {
-            background: #fff4fa;
+            background: #ddf9ec;
             color: #209776;
             font-weight: 600;
         }

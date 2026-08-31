@@ -14,7 +14,7 @@
                 <div class="mb-5">
                     {{ Form::label('city_id', __('messages.thana.city_name').':', ['class' => 'form-label']) }}
                     <span class="required"></span>
-                    {{ Form::select('city_id', $cities, null, ['class' => 'form-select', 'required', 'id' => 'importCityId', 'placeholder' => __('messages.company.select_city')]) }}
+                    {{ Form::select('city_id', $cities ?? [], null, ['class' => 'form-select', 'required', 'id' => 'importCityId', 'placeholder' => __('messages.company.select_city')]) }}
                 </div>
                 <div class="mb-5">
                     {{ Form::label('file', 'File:', ['class' => 'form-label']) }}

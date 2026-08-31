@@ -164,14 +164,17 @@ class Candidate extends Model implements HasMedia
         'salary_currency',
         'address',
         'present_address_type',
+        'present_country_name',
         'present_post_office',
         'present_state_division',
         'permanent_same_as_present',
         'permanent_address_type',
         'permanent_country_id',
+        'permanent_country_name',
         'permanent_state_id',
         'permanent_state_division',
         'permanent_city_id',
+        'permanent_city_village_id',
         'permanent_thana_id',
         'permanent_post_office',
         'permanent_address',
@@ -233,14 +236,17 @@ class Candidate extends Model implements HasMedia
         'salary_currency' => 'string',
         'address' => 'string',
         'present_address_type' => 'string',
+        'present_country_name' => 'string',
         'present_post_office' => 'string',
         'present_state_division' => 'string',
         'permanent_same_as_present' => 'boolean',
         'permanent_address_type' => 'string',
         'permanent_country_id' => 'integer',
+        'permanent_country_name' => 'string',
         'permanent_state_id' => 'integer',
         'permanent_state_division' => 'string',
         'permanent_city_id' => 'integer',
+        'permanent_city_village_id' => 'integer',
         'permanent_thana_id' => 'integer',
         'permanent_post_office' => 'string',
         'permanent_address' => 'string',
@@ -268,7 +274,7 @@ class Candidate extends Model implements HasMedia
         'marital_status_id' => 'required|integer|exists:marital_status,id',
     ];
 
-    protected $appends = ['country_name', 'state_name', 'city_name', 'thana_name', 'full_location', 'candidate_url'];
+    protected $appends = ['country_name', 'state_name', 'city_name', 'city_village_name', 'thana_name', 'full_location', 'candidate_url'];
 
     protected $with = ['user'];
 
@@ -293,6 +299,13 @@ class Candidate extends Model implements HasMedia
         }
     }
 
+    public function getCityVillageNameAttribute()
+    {
+        if (! empty($this->user->cityVillage)) {
+            return $this->user->cityVillage->name;
+        }
+    }
+
     public function getThanaNameAttribute()
     {
         if (! empty($this->user->thana)) {
@@ -311,6 +324,9 @@ class Candidate extends Model implements HasMedia
         }
         if (! empty($this->user->city)) {
             $location = $location.','.$this->user->city->name;
+        }
+        if (! empty($this->user->cityVillage)) {
+            $location = $location.','.$this->user->cityVillage->name;
         }
         if (! empty($this->user->thana)) {
             $location = $location.','.$this->user->thana->name;

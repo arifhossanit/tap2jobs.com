@@ -219,7 +219,7 @@
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-6 mb-5">
                             {{ Form::label('email', __('messages.candidate_profile.primary_email'), ['class' => 'form-label']) }}
-                            <span class="candidate-field-note">({{ __('messages.candidate_profile.email_note') }})</span>
+                            {{-- <span class="candidate-field-note">({{ __('messages.candidate_profile.email_note') }})</span> --}}
                             {{ Form::email('email', isset($user) ? $user->email : null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_primary_email')]) }}
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-6 mb-5">
@@ -286,7 +286,9 @@
                         $permanentStates = ! empty($candidate->permanent_country_id) ? getStates($candidate->permanent_country_id) : ($bangladeshId ? getStates($bangladeshId) : []);
                         $permanentCities = ! empty($candidate->permanent_state_id) ? getCities($candidate->permanent_state_id) : [];
                         $permanentThanas = ! empty($candidate->permanent_city_id) ? getThanas($candidate->permanent_city_id) : [];
-                        $addressCountry = ($data['countries'] ?? [])[$user->country_id ?? null] ?? null;
+                        $addressCountry = $presentAddressType === 'outside'
+                            ? ($candidate->present_country_name ?? null)
+                            : (($data['countries'] ?? [])[$user->country_id ?? null] ?? null);
                         $addressState = ($states ?? [])[$user->state_id ?? null] ?? null;
                         $addressCity = ($cities ?? [])[$user->city_id ?? null] ?? null;
                         $addressThana = ($presentThanas ?? [])[$user->thana_id ?? null] ?? null;
@@ -351,9 +353,9 @@
                             </label>
                         </div>
                         <div class="candidate-address-grid">
-                            <div class="candidate-address-field candidate-address-country-field d-none">
-                                {{ Form::label('country_id_display', 'Country', ['class' => 'form-label']) }}
-                                {{ Form::select('country_id_display', $data['countries'], $user->country_id ?? null, ['class' => 'form-select', 'id' => 'presentCountryDisplay', 'placeholder' => __('messages.company.select_country')]) }}
+                            <div class="candidate-address-field candidate-address-country-field {{ $presentAddressType === 'outside' ? '' : 'd-none' }}">
+                                {{ Form::label('present_country_name', 'Country', ['class' => 'form-label required']) }}
+                                {{ Form::text('present_country_name', $candidate->present_country_name ?? null, ['class' => 'form-control', 'id' => 'presentCountryName', 'placeholder' => 'Enter your Country']) }}
                             </div>
                             <div class="candidate-address-field candidate-present-district-field {{ $presentAddressType === 'outside' ? 'd-none' : '' }}">
                                 {{ Form::label('state_id', 'Division', ['class' => 'form-label required']) }}

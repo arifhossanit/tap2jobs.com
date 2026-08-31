@@ -45,6 +45,8 @@ function loadEmployeeCreateEditData() {
 
             setQuillHtml(editJobDescription, "#editJobDescription");
             setQuillHtml(editResponse, "#edit_responsibilities");
+            rememberJobEditorHeight("#editDetails", "tap2jobs:admin-job-editor:description-height");
+            rememberJobEditorHeight("#editResponse", "tap2jobs:admin-job-editor:responsibilities-height");
         }
     }
 
@@ -87,6 +89,8 @@ function loadEmployeeCreateEditData() {
 
             details.root.innerHTML = $("#job_desc").val() || "";
             response.root.innerHTML = $("#key_responsibilities").val() || "";
+            rememberJobEditorHeight("#details", "tap2jobs:admin-job-editor:description-height");
+            rememberJobEditorHeight("#response", "tap2jobs:admin-job-editor:responsibilities-height");
         }
     }
 
@@ -280,11 +284,16 @@ function loadEmployeeCreateEditData() {
 
     $("#createCityStateID").select2({
         width: "100%",
+        dropdownParent: $("#createStateModal")
+    });
+
+    $("#createCityStateID").select2({
+        width: "100%",
         dropdownParent: $("#createCityModal")
     });
 
     $("#SkillId").select2({
-        width: !$(".jobEmployeePanel").val() ? "calc(100% - 44px)" : "100%",
+        width: "100%",
         placeholder: Lang.get("js.select_job_skill"),
         tags: true,
         createTag: function(params) {
@@ -320,7 +329,7 @@ function loadEmployeeCreateEditData() {
         }
     });
     $("#tagId").select2({
-        width: !$(".jobEmployeePanel").val() ? "calc(100% - 44px)" : "100%",
+        width: "100%",
         placeholder: Lang.get("js.select_job_tag")
     });
     if (
@@ -577,13 +586,11 @@ function loadEmployeeCreateEditData() {
         $("#createSkillForm").on("submit", function(e) {
             let editor_content1 = skillDescription.root.innerHTML;
             let input = JSON.stringify(editor_content1);
-            if (skillDescription.getText().trim().length === 0) {
-                displayErrorMessage(
-                    Lang.get("js.description_required")
-                );
-                return false;
-            }
-            $("#skill_desc").val(input.replace(/"/g, ""));
+            $("#skill_desc").val(
+                skillDescription.getText().trim().length === 0
+                    ? ""
+                    : input.replace(/"/g, "")
+            );
             // if (!checkSummerNoteEmpty('#details',
             //     'Job Description field is required.', 1)) {
             //     e.preventDefault();
@@ -996,12 +1003,12 @@ listenSubmit("#createJobCategoryForm", function() {
 
 listenSubmit("#createSkillForm", function() {
     let editor_content = skillDescription.root.innerHTML;
-    if (skillDescription.getText().trim().length === 0) {
-        displayErrorMessage(Lang.get("js.description_required"));
-        return false;
-    }
     let input = JSON.stringify(editor_content);
-    $("#skill_desc").val(input.replace(/"/g, ""));
+    $("#skill_desc").val(
+        skillDescription.getText().trim().length === 0
+            ? ""
+            : input.replace(/"/g, "")
+    );
     // if (!checkSummerNoteEmpty('#skillDescription',
     //     'Description field is required.')) {
     //     return true;
@@ -1239,6 +1246,79 @@ function setQuillHtml(editor, selector) {
     }
 
     editor.clipboard.dangerouslyPasteHTML(0, $(selector).val() || "");
+}
+
+function rememberJobEditorHeight(selector, storageKey) {
+    const editor = document.querySelector(selector);
+    const editorShell = editor ? editor.closest(".job-rich-editor-shell") : null;
+
+    if (!editorShell) {
+        return;
+    }
+
+    const minHeight = 200;
+    const maxHeight = 600;
+    const savedHeight = Number(localStorage.getItem(storageKey));
+
+    if (savedHeight >= minHeight && savedHeight <= maxHeight) {
+        editorShell.style.height = `${savedHeight}px`;
+    }
+
+    const resizeHandle = editorShell.querySelector(".job-rich-editor-resize-handle");
+
+    if (resizeHandle && !editorShell.dataset.jobEditorResizeReady) {
+        editorShell.dataset.jobEditorResizeReady = "true";
+
+        resizeHandle.addEventListener("pointerdown", event => {
+            event.preventDefault();
+
+            const startY = event.clientY;
+            const startHeight = editorShell.getBoundingClientRect().height;
+
+            const resizeEditor = moveEvent => {
+                const nextHeight = Math.min(
+                    maxHeight,
+                    Math.max(minHeight, startHeight + moveEvent.clientY - startY)
+                );
+
+                editorShell.style.height = `${Math.round(nextHeight)}px`;
+            };
+
+            const stopResize = () => {
+                localStorage.setItem(
+                    storageKey,
+                    Math.round(editorShell.getBoundingClientRect().height)
+                );
+                document.removeEventListener("pointermove", resizeEditor);
+                document.removeEventListener("pointerup", stopResize);
+                document.body.classList.remove("job-editor-resizing");
+            };
+
+            document.body.classList.add("job-editor-resizing");
+            document.addEventListener("pointermove", resizeEditor);
+            document.addEventListener("pointerup", stopResize);
+        });
+    }
+
+    if (!window.ResizeObserver) {
+        return;
+    }
+
+    let lastSavedHeight = savedHeight || Math.round(editorShell.getBoundingClientRect().height);
+    const resizeObserver = new ResizeObserver(entries => {
+        const currentHeight = Math.round(entries[0].contentRect.height);
+
+        if (
+            currentHeight >= minHeight &&
+            currentHeight <= maxHeight &&
+            Math.abs(currentHeight - lastSavedHeight) > 2
+        ) {
+            localStorage.setItem(storageKey, currentHeight);
+            lastSavedHeight = currentHeight;
+        }
+    });
+
+    resizeObserver.observe(editorShell);
 }
 
 listenClick("#jobsSaveBtn, #saveDraft", function(e) {

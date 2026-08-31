@@ -12,7 +12,7 @@
         <div class="p-5">
             <div class="mb-5">
                 <label for="selectCity" class="form-label">{{ __('messages.thana.city_name') }}:</label>
-                {{ Form::select('city', ['0' => __('messages.company.select_city')] + getCity(), null, ['class' => 'form-select', 'id' => 'selectCity', 'data-control' => 'select2']) }}
+                {{ Form::select('city', ['0' => __('messages.company.select_city')] + ($cities ?? []), null, ['class' => 'form-select', 'id' => 'selectCity', 'data-control' => 'select2']) }}
             </div>
             <div class="d-flex justify-content-end">
                 <button type="button" class="btn btn-secondary" id="city-ResetFilter">{{ __('messages.common.reset') }}</button>

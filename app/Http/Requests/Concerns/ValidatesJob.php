@@ -109,10 +109,11 @@ trait ValidatesJob
             'job_title' => ['required', 'string', 'max:180'],
             'description' => ['required', 'string'],
             'key_responsibilities' => ['required', 'string'],
+            'job_category_id' => ['required', 'integer', Rule::exists('job_categories', 'id')],
+            'city_village_name' => ['nullable', 'string', 'max:255'],
             'currency_id' => ['required', 'integer', Rule::exists('salary_currencies', 'id')],
             'salary_period_id' => ['required', 'integer', Rule::exists('salary_periods', 'id')],
             'job_type_id' => ['required', 'integer', Rule::exists('job_types', 'id')],
-            'job_category_id' => ['required', 'integer', Rule::exists('job_categories', 'id')],
             'functional_area_id' => [
                 'required',
                 'string',
@@ -150,6 +151,7 @@ trait ValidatesJob
                 'integer',
                 Rule::exists('thanas', 'id')->where('city_id', $this->input('city_id')),
             ],
+            'address' => ['nullable', 'string'],
             'salary_from' => $hideSalary
                 ? ['nullable', 'numeric', 'min:0', 'max:9999999999']
                 : ['required', 'numeric', 'min:0', 'max:9999999999'],

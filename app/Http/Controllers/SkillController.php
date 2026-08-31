@@ -42,10 +42,29 @@ class SkillController extends AppBaseController
      */
     public function store(CreateSkillRequest $request): JsonResponse
     {
-        $input = $request->all();
-        $skill = $this->skillRepository->create($input);
+        $names = $request->skillNames();
+        $lastSkill = null;
+        $createdCount = 0;
 
-        return $this->sendResponse($skill, __('messages.flash.skill_save'));
+        foreach ($names as $name) {
+            if (empty($name)) {
+                continue;
+            }
+
+            $exists = Skill::where('name', $name)->exists();
+            if (! $exists) {
+                $input = $request->all();
+                $input['name'] = $name;
+                $lastSkill = $this->skillRepository->create($input);
+                $createdCount++;
+            }
+        }
+
+        if ($createdCount === 0 && ! empty($names)) {
+            $lastSkill = Skill::where('name', $names[0])->first();
+        }
+
+        return $this->sendResponse($lastSkill, __('messages.flash.skill_save'));
     }
 
     /**

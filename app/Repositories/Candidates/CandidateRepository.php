@@ -355,13 +355,15 @@ class CandidateRepository extends BaseRepository
             }
 
             if (($input['present_address_type'] ?? null) === 'outside') {
+                $input['country_id'] = null;
                 $input['state_id'] = null;
                 $input['present_post_office'] = null;
                 $input['city_id'] = null;
                 $input['thana_id'] = null;
             } else {
-                $input['country_id'] = Country::where('short_code', 'BD')->orWhere('name', 'Bangladesh')->value('id') ?? $input['country_id'];
+                $input['country_id'] = Country::where('short_code', 'BD')->orWhere('name', 'Bangladesh')->value('id') ?? ($input['country_id'] ?? null);
                 $input['present_state_division'] = null;
+                $input['present_country_name'] = null;
             }
 
             $input['permanent_same_as_present'] = ! empty($input['permanent_same_as_present']);
@@ -394,11 +396,13 @@ class CandidateRepository extends BaseRepository
 
             $this->ensureCandidateRecord($user)->update(Arr::only($input, [
                 'present_address_type',
+                'present_country_name',
                 'present_post_office',
                 'present_state_division',
                 'permanent_same_as_present',
                 'permanent_address_type',
                 'permanent_country_id',
+                'permanent_country_name',
                 'permanent_state_id',
                 'permanent_state_division',
                 'permanent_city_id',

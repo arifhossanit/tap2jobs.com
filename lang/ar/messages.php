@@ -555,6 +555,7 @@ return [
         'select_position' => 'حدد الوظيفة',
         'enter_experience_year' => 'أدخل الخبرة في العام',
         'select_company' => 'حدد شركة',
+        'select_job_skill' => 'حدد المهارة الوظيفية',
         'select_job_category' => 'حدد فئة الوظيفة',
         'select_job_type' => 'حدد نوع الوظيفة',
         'select_gender' => 'حدد نوع الجنس',

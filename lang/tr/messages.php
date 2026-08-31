@@ -532,6 +532,7 @@ return [
         'select_position' => 'Konum Seç',
         'enter_experience_year' => 'Yıldaki Deneyimi Girin',
         'select_company' => 'Şirket Seçin',
+        'select_job_skill' => 'İş Becerisini Seçin',
         'select_job_category' => 'İş Kategorisini Seçin',
         'select_job_type' => 'İş Türünü Seçin',
         'select_gender' => 'Cinsiyet seç',

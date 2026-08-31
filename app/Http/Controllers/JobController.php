@@ -236,10 +236,19 @@ class JobController extends AppBaseController
         return $this->sendResponse($cities, 'Retrieved successfully');
     }
 
+    public function getCityVillages(Request $request)
+    {
+        $city = $request->get('city');
+        $cityVillages = getCityVillages($city);
+
+        return $this->sendResponse($cityVillages, 'Retrieved successfully');
+    }
+
     public function getThanas(Request $request)
     {
         $city = $request->get('city');
-        $thanas = getThanas($city);
+        $cityVillage = $request->get('city_village');
+        $thanas = getThanas($city, $cityVillage);
 
         return $this->sendResponse($thanas, 'Retrieved successfully');
     }

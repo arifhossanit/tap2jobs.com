@@ -116,11 +116,9 @@ listenSubmit('#addSkillForm', function (e) {
     e.preventDefault();
     let addSkillEditorContent = addSkillDescriptionQuill.root.innerHTML;
 
-    if (addSkillDescriptionQuill.getText().trim().length === 0) {
-        displayErrorMessage(Lang.get('js.description_required'));
-        return false;
-    }
-    let input = JSON.stringify(addSkillEditorContent);
+    let input = addSkillDescriptionQuill.getText().trim().length === 0
+        ? ''
+        : JSON.stringify(addSkillEditorContent);
     $('#skill_desc').val(input.replace(/"/g, ''));
     processingBtn('#addSkillForm', '#skillBtnSave', 'loading');
     $.ajax({
@@ -148,11 +146,9 @@ listenSubmit('#editSkillsForm', function (event) {
     event.preventDefault();
     let editSkullEditorContent = editSkillDescriptionQuill.root.innerHTML;
 
-    if (editSkillDescriptionQuill.getText().trim().length === 0) {
-        displayErrorMessage(Lang.get('js.description_required'));
-        return false;
-    }
-    let input = JSON.stringify(editSkullEditorContent);
+    let input = editSkillDescriptionQuill.getText().trim().length === 0
+        ? ''
+        : JSON.stringify(editSkullEditorContent);
     $('#edit_skill_desc').val(input.replace(/"/g, ""));
     processingBtn('#editSkillsForm', '#btnEditSave', 'loading');
     const updateSkillId = $('#skillId').val();

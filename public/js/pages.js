@@ -3119,7 +3119,7 @@ function loadCandidateGeneralData() {
       }
       return;
     }
-    $('#countryId').val($('#presentCountryDisplay').val());
+    $('#countryId').val('');
   };
   var permanentAddressTypeChosen = $('.candidate-address-form').data('has-permanent-details') == 1;
   var togglePermanentAddress = function togglePermanentAddress() {
@@ -3142,9 +3142,6 @@ function loadCandidateGeneralData() {
   togglePermanentAddress();
   $('input[name="present_address_type"]').on('change', function () {
     togglePresentAddressMode(true);
-  });
-  $('#presentCountryDisplay').on('change', function () {
-    $('#countryId').val($(this).val());
   });
   $('#permanentSameAsPresent').on('change', function () {
     if ($(this).is(':checked')) {
@@ -3391,7 +3388,7 @@ function loadCandidateGeneralData() {
     });
   }
   if ($('#candidateProfileUpdate').length) {
-    $('#salaryCurrencyId,#stateId,#cityId,#thanaId,#industryId,#careerLevelId,#functionalAreaId,#presentCountryDisplay,#permanentCountryId,#permanentStateId,#permanentCityId,#permanentThanaId').select2({
+    $('#salaryCurrencyId,#stateId,#cityId,#thanaId,#industryId,#careerLevelId,#functionalAreaId,#permanentCountryId,#permanentStateId,#permanentCityId,#permanentThanaId').select2({
       width: '100%'
     });
     $('#createCityStateID').select2({
@@ -3672,6 +3669,12 @@ $(document).on('submit', '#candidateProfileUpdate', function (e) {
         Accept: 'application/json'
       },
       success: function success(result) {
+        if (result.data && result.data.profile_incomplete && window.sessionStorage) {
+          window.sessionStorage.setItem('pendingProfileIncompleteModal', JSON.stringify({
+            percentage: result.data.percentage || 0,
+            profile_url: result.data.profile_url || ''
+          }));
+        }
         displaySuccessMessage(result.message);
         setTimeout(function () {
           window.location.href = route('candidate.profile', {
@@ -12815,6 +12818,8 @@ function loadEmployeeCreateEditData() {
       });
       setQuillHtml(editJobDescription, "#editJobDescription");
       setQuillHtml(editResponse, "#edit_responsibilities");
+      rememberJobEditorHeight("#editDetails", "tap2jobs:admin-job-editor:description-height");
+      rememberJobEditorHeight("#editResponse", "tap2jobs:admin-job-editor:responsibilities-height");
     }
   }
   if ($("#details").length) {
@@ -12853,6 +12858,8 @@ function loadEmployeeCreateEditData() {
       });
       details.root.innerHTML = $("#job_desc").val() || "";
       response.root.innerHTML = $("#key_responsibilities").val() || "";
+      rememberJobEditorHeight("#details", "tap2jobs:admin-job-editor:description-height");
+      rememberJobEditorHeight("#response", "tap2jobs:admin-job-editor:responsibilities-height");
     }
   }
   if (!$("#createJobForm").length && !$("#editJobForm").length) {
@@ -13004,10 +13011,14 @@ function loadEmployeeCreateEditData() {
   });
   $("#createCityStateID").select2({
     width: "100%",
+    dropdownParent: $("#createStateModal")
+  });
+  $("#createCityStateID").select2({
+    width: "100%",
     dropdownParent: $("#createCityModal")
   });
   $("#SkillId").select2({
-    width: !$(".jobEmployeePanel").val() ? "calc(100% - 44px)" : "100%",
+    width: "100%",
     placeholder: Lang.get("js.select_job_skill"),
     tags: true,
     createTag: function createTag(params) {
@@ -13038,7 +13049,7 @@ function loadEmployeeCreateEditData() {
     }
   });
   $("#tagId").select2({
-    width: !$(".jobEmployeePanel").val() ? "calc(100% - 44px)" : "100%",
+    width: "100%",
     placeholder: Lang.get("js.select_job_tag")
   });
   if (!$("#companyId").hasClass(".select2-hidden-accessible") && $("#companyId").is("select")) {
@@ -13245,11 +13256,7 @@ function loadEmployeeCreateEditData() {
     $("#createSkillForm").on("submit", function (e) {
       var editor_content1 = skillDescription.root.innerHTML;
       var input = JSON.stringify(editor_content1);
-      if (skillDescription.getText().trim().length === 0) {
-        displayErrorMessage(Lang.get("js.description_required"));
-        return false;
-      }
-      $("#skill_desc").val(input.replace(/"/g, ""));
+      $("#skill_desc").val(skillDescription.getText().trim().length === 0 ? "" : input.replace(/"/g, ""));
       // if (!checkSummerNoteEmpty('#details',
       //     'Job Description field is required.', 1)) {
       //     e.preventDefault();
@@ -13604,12 +13611,8 @@ listenSubmit("#createJobCategoryForm", function () {
 });
 listenSubmit("#createSkillForm", function () {
   var editor_content = skillDescription.root.innerHTML;
-  if (skillDescription.getText().trim().length === 0) {
-    displayErrorMessage(Lang.get("js.description_required"));
-    return false;
-  }
   var input = JSON.stringify(editor_content);
-  $("#skill_desc").val(input.replace(/"/g, ""));
+  $("#skill_desc").val(skillDescription.getText().trim().length === 0 ? "" : input.replace(/"/g, ""));
   // if (!checkSummerNoteEmpty('#skillDescription',
   //     'Description field is required.')) {
   //     return true;
@@ -13809,6 +13812,53 @@ function setQuillHtml(editor, selector) {
     return;
   }
   editor.clipboard.dangerouslyPasteHTML(0, $(selector).val() || "");
+}
+function rememberJobEditorHeight(selector, storageKey) {
+  var editor = document.querySelector(selector);
+  var editorShell = editor ? editor.closest(".job-rich-editor-shell") : null;
+  if (!editorShell) {
+    return;
+  }
+  var minHeight = 200;
+  var maxHeight = 600;
+  var savedHeight = Number(localStorage.getItem(storageKey));
+  if (savedHeight >= minHeight && savedHeight <= maxHeight) {
+    editorShell.style.height = "".concat(savedHeight, "px");
+  }
+  var resizeHandle = editorShell.querySelector(".job-rich-editor-resize-handle");
+  if (resizeHandle && !editorShell.dataset.jobEditorResizeReady) {
+    editorShell.dataset.jobEditorResizeReady = "true";
+    resizeHandle.addEventListener("pointerdown", function (event) {
+      event.preventDefault();
+      var startY = event.clientY;
+      var startHeight = editorShell.getBoundingClientRect().height;
+      var resizeEditor = function resizeEditor(moveEvent) {
+        var nextHeight = Math.min(maxHeight, Math.max(minHeight, startHeight + moveEvent.clientY - startY));
+        editorShell.style.height = "".concat(Math.round(nextHeight), "px");
+      };
+      var _stopResize = function stopResize() {
+        localStorage.setItem(storageKey, Math.round(editorShell.getBoundingClientRect().height));
+        document.removeEventListener("pointermove", resizeEditor);
+        document.removeEventListener("pointerup", _stopResize);
+        document.body.classList.remove("job-editor-resizing");
+      };
+      document.body.classList.add("job-editor-resizing");
+      document.addEventListener("pointermove", resizeEditor);
+      document.addEventListener("pointerup", _stopResize);
+    });
+  }
+  if (!window.ResizeObserver) {
+    return;
+  }
+  var lastSavedHeight = savedHeight || Math.round(editorShell.getBoundingClientRect().height);
+  var resizeObserver = new ResizeObserver(function (entries) {
+    var currentHeight = Math.round(entries[0].contentRect.height);
+    if (currentHeight >= minHeight && currentHeight <= maxHeight && Math.abs(currentHeight - lastSavedHeight) > 2) {
+      localStorage.setItem(storageKey, currentHeight);
+      lastSavedHeight = currentHeight;
+    }
+  });
+  resizeObserver.observe(editorShell);
 }
 listenClick("#jobsSaveBtn, #saveDraft", function (e) {
   e.preventDefault();
@@ -16289,11 +16339,7 @@ listenHiddenBsModal('#editSkillsModal', function () {
 listenSubmit('#addSkillForm', function (e) {
   e.preventDefault();
   var addSkillEditorContent = addSkillDescriptionQuill.root.innerHTML;
-  if (addSkillDescriptionQuill.getText().trim().length === 0) {
-    displayErrorMessage(Lang.get('js.description_required'));
-    return false;
-  }
-  var input = JSON.stringify(addSkillEditorContent);
+  var input = addSkillDescriptionQuill.getText().trim().length === 0 ? '' : JSON.stringify(addSkillEditorContent);
   $('#skill_desc').val(input.replace(/"/g, ''));
   processingBtn('#addSkillForm', '#skillBtnSave', 'loading');
   $.ajax({
@@ -16319,11 +16365,7 @@ listenSubmit('#addSkillForm', function (e) {
 listenSubmit('#editSkillsForm', function (event) {
   event.preventDefault();
   var editSkullEditorContent = editSkillDescriptionQuill.root.innerHTML;
-  if (editSkillDescriptionQuill.getText().trim().length === 0) {
-    displayErrorMessage(Lang.get('js.description_required'));
-    return false;
-  }
-  var input = JSON.stringify(editSkullEditorContent);
+  var input = editSkillDescriptionQuill.getText().trim().length === 0 ? '' : JSON.stringify(editSkullEditorContent);
   $('#edit_skill_desc').val(input.replace(/"/g, ""));
   processingBtn('#editSkillsForm', '#btnEditSave', 'loading');
   var updateSkillId = $('#skillId').val();

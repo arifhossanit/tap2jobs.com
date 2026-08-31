@@ -323,16 +323,15 @@ class Job extends Model
         'state_id',
         'city_id',
         'thana_id',
+        'city_village_name',
+        'address',
         'status',
         'is_created_by_admin',
         'last_change',
         'key_responsibilities',
-        'reject_reason'
+        'reject_reason',
     ];
 
-    /**
-     * @var array
-     */
     public $casts = [
         'id' => 'integer',
         'job_id' => 'string',
@@ -361,6 +360,8 @@ class Job extends Model
         'city_id' => 'integer',
         'state_id' => 'integer',
         'thana_id' => 'integer',
+        'city_village_name' => 'string',
+        'address' => 'string',
         'description' => 'string',
         'job_expiry_date' => 'date',
         'no_preference' => 'integer',
@@ -372,7 +373,7 @@ class Job extends Model
         'last_change' => 'integer',
     ];
 
-    protected $appends = ['country_name', 'state_name', 'city_name', 'thana_name'];
+    protected $appends = ['country_name', 'state_name', 'city_name', 'city_village_name', 'thana_name'];
 
     protected $with = ['country', 'state', 'city', 'thana', 'activeFeatured'];
 
@@ -429,6 +430,11 @@ class Job extends Model
         return $this->belongsTo(City::class, 'city_id');
     }
 
+    public function cityVillage(): BelongsTo
+    {
+        return $this->belongsTo(CityVillage::class, 'city_village_id');
+    }
+
     public function thana(): BelongsTo
     {
         return $this->belongsTo(Thana::class, 'thana_id');
@@ -458,6 +464,11 @@ class Job extends Model
         if (! empty($this->city)) {
             return $this->city->name;
         }
+    }
+
+    public function getCityVillageNameAttribute()
+    {
+        return $this->attributes['city_village_name'] ?? null;
     }
 
     public function getThanaNameAttribute()

@@ -7,9 +7,11 @@
     $jobTitle = html_entity_decode($job->job_title);
     $location = collect([
         !empty($job->thana_id) ? $job->thana_name : null,
+        !empty($job->city_village_name) ? $job->city_village_name : null,
         !empty($job->city_id) ? $job->city_name : null,
         !empty($job->state_id) ? $job->state_name : null,
         !empty($job->country_id) ? $job->country_name : null,
+        !empty($job->address) ? $job->address : null,
     ])->filter()->implode(', ');
     $salaryRange = $job->hide_salary
         ? 'Negotiable'
@@ -315,8 +317,16 @@
                             <div class="text-gray-900 fs-6 fw-semibold">{{ !empty($job->city_id) ? $job->city_name : __('messages.n/a') }}</div>
                         </div>
                         <div>
+                            <div class="text-gray-600 fs-8 fw-semibold text-uppercase mb-1">{{ __('messages.city_village.city_villages') }}</div>
+                            <div class="text-gray-900 fs-6 fw-semibold">{{ !empty($job->city_village_name) ? $job->city_village_name : __('messages.n/a') }}</div>
+                        </div>
+                        <div>
                             <div class="text-gray-600 fs-8 fw-semibold text-uppercase mb-1">{{ __('messages.thana.thana_name') }}</div>
                             <div class="text-gray-900 fs-6 fw-semibold">{{ !empty($job->thana_id) ? $job->thana_name : __('messages.n/a') }}</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-600 fs-8 fw-semibold text-uppercase mb-1">{{ __('messages.candidate.address') }}</div>
+                            <div class="text-gray-900 fs-6 fw-semibold">{{ !empty($job->address) ? $job->address : __('messages.n/a') }}</div>
                         </div>
                         <div>
                             <div class="text-gray-600 fs-8 fw-semibold text-uppercase mb-1">{{ __('messages.common.created_on') }}</div>
