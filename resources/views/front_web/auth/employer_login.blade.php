@@ -37,12 +37,12 @@
                     $registerRightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT, \App\Models\Ad::PAGE_EMPLOYER_LOGIN);
                     $hasRegisterSideAds = $registerLeftAds->isNotEmpty() || $registerRightAds->isNotEmpty();
                 @endphp
-                <div class="row align-items-start justify-content-center">
+                <div class="row align-items-start justify-content-center front-auth-ad-layout">
                     @if ($hasRegisterSideAds)
-                        <div class="col-xl-3 col-lg-3 d-none d-lg-block mb-4 text-start">
+                        <div class="col-xl-3 col-lg-3 d-none d-lg-block mb-4 text-start front-auth-side-ads front-auth-side-ads--left">
                             @include('front_web.common.register_side_ad', ['ads' => $registerLeftAds])
                         </div>
-                        <div class="col-xl-4 col-lg-4">
+                        <div class="col-xl-4 col-lg-4 front-auth-form-col">
                     @else
                         <div class="col-xl-4 col-lg-4 mx-auto">
                     @endif
@@ -153,7 +153,7 @@
                         </form>
                     </div>
                     @if ($hasRegisterSideAds)
-                        <div class="col-xl-3 col-lg-3 d-none d-lg-block mb-4 text-end">
+                        <div class="col-xl-3 col-lg-3 d-none d-lg-block mb-4 text-end front-auth-side-ads front-auth-side-ads--right">
                             @include('front_web.common.register_side_ad', ['ads' => $registerRightAds])
                         </div>
                         <div class="col-12 d-lg-none mt-4">

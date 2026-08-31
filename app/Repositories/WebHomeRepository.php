@@ -132,6 +132,23 @@ class WebHomeRepository
             ->withQueryString();
     }
 
+    public function getFeaturedJobCategories(int $limit = 500): Collection
+    {
+        return JobCategory::with('media', 'jobs')->withCount([
+            'jobs' => function (Builder $q) {
+                $q->whereStatus(Job::STATUS_OPEN)
+                    ->where('status', '!=', Job::STATUS_DRAFT)
+                    ->whereIsSuspended(Job::NOT_SUSPENDED)
+                    ->whereDate('job_expiry_date', '>=', Carbon::now()->toDateString());
+            },
+        ])
+            ->whereIsFeatured(1)
+            ->where('status', JobCategory::STATUS_ACTIVE)
+            ->orderBy('name')
+            ->limit($limit)
+            ->get();
+    }
+
     public function getAllJobTypes(): \Illuminate\Support\Collection
     {
         return JobType::withCount([

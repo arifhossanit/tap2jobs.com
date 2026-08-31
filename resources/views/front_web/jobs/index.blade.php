@@ -64,13 +64,13 @@
                             :input="$input"
                         />
                     </div>
-                    <div class="{{ $rightAds->isNotEmpty() ? 'col-lg-7 col-12' : 'col-lg-8 col-12' }} px-lg-3">
+                    <div class="{{ $rightAds->isNotEmpty() ? 'col-lg-6 col-12' : 'col-lg-8 col-12' }} px-lg-3">
                         <div class="job-card">
                             @livewire('job-search')
                         </div>
                     </div>
                     @if ($rightAds->isNotEmpty())
-                        <div class="col-lg-2 col-12 find-jobs-right-ads-column">
+                        <div class="col-lg-3 col-12 find-jobs-right-ads-column">
                             <div class="find-jobs-right-ads sticky-top" style="top: 20px;">
                                 @include('front_web.common.register_side_ad', ['ads' => $rightAds])
                             </div>

@@ -12943,12 +12943,99 @@ html[dir='rtl'] .register-page .input-password-hide {
 .register-side-ad__image {
     object-fit: contain;
     max-height: 550px;
+    width: 100%;
+}
+
+.register-side-ad__media {
+    border-radius: 5px;
+    display: block;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.register-side-ad-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+.login-page .front-auth-ad-layout,
+.register-page .front-auth-ad-layout {
+    --front-auth-ad-gap: 28px;
+}
+
+@media (min-width: 992px) {
+    .login-page .front-auth-side-ads,
+    .register-page .front-auth-side-ads {
+        align-self: flex-start;
+        position: sticky;
+        top: 24px;
+        z-index: 1;
+    }
+
+    .login-page .front-auth-side-ads--left,
+    .register-page .front-auth-side-ads--left {
+        padding-right: var(--front-auth-ad-gap);
+    }
+
+    .login-page .front-auth-side-ads--right,
+    .register-page .front-auth-side-ads--right {
+        padding-left: var(--front-auth-ad-gap);
+    }
+
+    .login-page .front-auth-form-col,
+    .register-page .front-auth-form-col {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .login-page .front-auth-ad-layout,
+    .register-page .front-auth-ad-layout {
+        --front-auth-ad-gap: 32px;
+    }
 }
 
 .register-side-ad__video {
     background: #000;
     display: block;
     width: 100%;
+}
+
+.register-side-ad__overlay {
+    background-color: rgba(39, 39, 39, .5294117647);
+    bottom: 0;
+    height: 0;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    transition: .5s ease;
+    width: 100%;
+}
+
+.register-side-ad__media:hover .register-side-ad__overlay,
+.register-side-ad__media:focus .register-side-ad__overlay {
+    height: 100%;
+}
+
+.register-side-ad__read-more {
+    border: 1px solid #fff;
+    border-radius: 999px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    left: 50%;
+    line-height: 1.2;
+    min-width: 112px;
+    padding: 12px 24px;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .find-jobs-right-ads {
@@ -12958,14 +13045,14 @@ html[dir='rtl'] .register-page .input-password-hide {
 }
 
 .find-jobs-right-ads .register-side-ad {
-    margin-bottom: 16px;
-    border-radius: 10px;
+    margin-bottom: 0;
+    border-radius: 5px;
     overflow: hidden;
 }
 
 .find-jobs-right-ads .register-side-ad__image {
     width: 100%;
-    border-radius: 10px;
+    border-radius: 5px;
 }
 
 /* GLOBAL RED FOCUS AND BORDER HIGHLIGHT FOR ALL FORMS AND REQUIRED INPUTS */
@@ -13256,7 +13343,7 @@ html[dir='rtl'] .register-page .input-password-hide {
     overflow-x: hidden;
     overflow-y: auto;
     border: 1px solid #dce6f0;
-    border-radius: 12px;
+    border-radius: 5px;
     background: #fff;
     box-shadow: 0 8px 28px rgba(31, 55, 83, 0.07);
     scrollbar-color: #b9c7d7 transparent;

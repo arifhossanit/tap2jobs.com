@@ -223,6 +223,7 @@ return [
         'post' => 'পোস্ট',
         'posts' => 'পোস্ট',
         'read_more' => 'আরও পড়ুন',
+        'send_message' => 'মেসেজ পাঠান',
         'popular_post' => 'জনপ্রিয় পোস্ট',
         'newsletter' => 'নিউজলেটার',
         'share' => 'শেয়ার',

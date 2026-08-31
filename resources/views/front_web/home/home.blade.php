@@ -664,8 +664,11 @@
     .bd-category-grid a::before {
         content: '›';
         color: #3f4c58;
-        font-size: 25px;
-        vertical-align: -2px;
+        font-size: 20px;
+        font-weight: bold;
+        display: inline-flex;
+        align-items: center;
+        height: 1.4em;
         line-height: 1;
         margin-right: 7px;
         flex-shrink: 0;

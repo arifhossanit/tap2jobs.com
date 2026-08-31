@@ -73,8 +73,7 @@
 
         .category-card {
             height: 100%;
-            min-height: 194px;
-            padding: 30px;
+            padding: 20px;
             border: 0;
             border-radius: 8px;
             box-shadow: 0 10px 24px rgba(15, 23, 42, .10);

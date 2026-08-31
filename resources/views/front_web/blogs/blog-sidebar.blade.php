@@ -1,5 +1,9 @@
-<div class="col-lg-3">
-    <div class="Categories br-10 px-40 bg-light mb-40">
+@php
+    $blogSidebarAds = $blogSidebarAds ?? getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT, \App\Models\Ad::PAGE_BLOG);
+@endphp
+
+<div class="col-lg-4">
+    <div class="Categories br-10 px-20 bg-light mb-40">
         <h5 class="fs-18 text-secondary mb-4">{{ __('web.post_menu.categories') }}</h5>
         @foreach ($blogCategories as $blogCategory)
             @if ($blogCategory->post_assign_categories_count > 0)
@@ -12,7 +16,7 @@
             @endif
         @endforeach
     </div>
-    <div class="recent-post-section br-10 px-40 bg-light">
+    <div class="recent-post-section br-10 px-20 bg-light">
         <h5 class="fs-18 text-secondary mb-4">{{ __('web.web_blog.recent_posts') }}</h5>
         @foreach ($popularBlogs as $popularBlog)
             <div class="recent-post d-flex mb-40">
@@ -34,4 +38,9 @@
             </div>
         @endforeach
     </div>
+    @if ($blogSidebarAds->isNotEmpty())
+        <div class="blog-sidebar-ads mt-40">
+            @include('front_web.common.register_side_ad', ['ads' => $blogSidebarAds])
+        </div>
+    @endif
 </div>
