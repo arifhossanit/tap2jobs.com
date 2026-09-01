@@ -77,15 +77,9 @@
                     ->filter()
                     ->map(fn ($id) => (int) $id)
                     ->values();
-                $industryTypeOptions = ['all' => __('messages.employer_account.all')] + $data['industryTypes']->toArray();
             @endphp
             <div class="col-12 mb-5">
                 <div class="employer-industry-type-row">
-                    <div class="employer-industry-type-select">
-                        {{ Form::label('industry_filter', __('messages.employer_account.industry_type'), ['class' => 'form-label']) }}
-                        <span class="required"></span>
-                        {{ Form::select('industry_filter', $industryTypeOptions, 'all', ['class' => 'form-select', 'id' => 'employerIndustryType']) }}
-                    </div>
                     <button type="button" class="employer-add-industry-trigger" id="employerAddIndustryTrigger"
                             data-bs-toggle="modal" data-bs-target="#employerAddIndustryModal">
                         <i class="fa-solid fa-plus"></i>
@@ -104,8 +98,7 @@
                     <div class="employer-industry-options" id="employerIndustryOptions">
                         @foreach ($data['industryRecords'] as $industryOption)
                             <label class="employer-industry-option"
-                                   data-industry-name="{{ strtolower($industryOption->name) }}"
-                                   data-industry-type-id="{{ $industryOption->industry_type_id }}">
+                                   data-industry-name="{{ strtolower($industryOption->name) }}">
                                 <input type="checkbox" name="industry_ids[]" value="{{ $industryOption->id }}"
                                        {{ $selectedIndustryIds->contains((int) $industryOption->id) ? 'checked' : '' }}>
                                 <span>{{ $industryOption->name }}</span>

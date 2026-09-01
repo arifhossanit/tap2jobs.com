@@ -58,12 +58,12 @@ class IndustryController extends AppBaseController
     public function storeForEmployer(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'industry_type_id' => ['required', 'integer', 'exists:industry_types,id'],
+            'industry_type_id' => ['nullable', 'integer', 'exists:industry_types,id'],
             'name' => ['required', 'string', 'max:150', Rule::unique('industries', 'name')],
         ]);
 
         $industry = Industry::create([
-            'industry_type_id' => $validated['industry_type_id'],
+            'industry_type_id' => $validated['industry_type_id'] ?? null,
             'name' => trim($validated['name']),
             'description' => trim($validated['name']),
             'created_by' => Auth::id(),
@@ -167,3 +167,5 @@ class IndustryController extends AppBaseController
         return $this->sendSuccess(__('messages.flash.industry_delete'));
     }
 }
+
+

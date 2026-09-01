@@ -478,6 +478,33 @@ class JobRepository extends BaseRepository
             ->toArray();
     }
 
+    private function resolveJobTagIds(array $tags): array
+    {
+        return collect($tags)
+            ->map(function ($tag) {
+                $tag = trim((string) $tag);
+
+                if ($tag === '') {
+                    return null;
+                }
+
+                if (is_numeric($tag)) {
+                    return (int) $tag;
+                }
+
+                $existingTag = Tag::whereRaw('LOWER(name) = ?', [mb_strtolower($tag)])->first();
+
+                return ($existingTag ?: Tag::create([
+                    'name' => $tag,
+                    'description' => null,
+                ]))->id;
+            })
+            ->filter()
+            ->unique()
+            ->values()
+            ->toArray();
+    }
+
     private function resolveFunctionalAreaId(string|int $functionalArea): int
     {
         $functionalArea = trim((string) $functionalArea);

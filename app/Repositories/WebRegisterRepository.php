@@ -93,7 +93,7 @@ class WebRegisterRepository
                 $industryIds = array_values(array_unique($input['industry_ids'] ?? []));
                 foreach ($input['custom_industries'] ?? [] as $customIndustry) {
                     $industry = Industry::create([
-                        'industry_type_id' => $customIndustry['industry_type_id'],
+                        'industry_type_id' => $customIndustry['industry_type_id'] ?? null,
                         'name' => trim($customIndustry['name']),
                         'description' => trim($customIndustry['name']),
                         'created_by' => $user->id,
@@ -207,3 +207,5 @@ class WebRegisterRepository
         );
     }
 }
+
+

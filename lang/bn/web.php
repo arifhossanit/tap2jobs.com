@@ -176,6 +176,32 @@ return [
         'no_company_found' => 'কোন কোম্পানি পাওয়া যায়নি',
     ],
 
+    'consultation' => [
+        'title' => 'কনসালটেশন',
+        'name' => 'নাম',
+        'name_placeholder' => 'নাম',
+        'phone' => 'ফোন',
+        'phone_placeholder' => 'ফোন',
+        'email' => 'ইমেইল',
+        'email_placeholder' => 'ইমেইল',
+        'company_name' => 'কোম্পানির নাম',
+        'company_name_placeholder' => 'কোম্পানির নাম',
+        'consultation_type' => 'কনসালটেশনের ধরন',
+        'company_size' => 'কোম্পানির আকার',
+        'select_company_size' => 'কোম্পানির আকার নির্বাচন করুন',
+        'category' => 'ক্যাটাগরি',
+        'not_selected' => 'নির্বাচন করা হয়নি',
+        'not_mapped' => 'ম্যাপ করা নেই',
+        'preferred_contact_method' => 'পছন্দের যোগাযোগ মাধ্যম',
+        'select_contact_method' => 'যোগাযোগ মাধ্যম নির্বাচন করুন',
+        'preferred_contact_time' => 'পছন্দের যোগাযোগের সময়',
+        'select_date_time' => 'তারিখ ও সময় নির্বাচন করুন',
+        'requirement' => 'প্রয়োজনীয়তা',
+        'requirement_placeholder' => 'আপনার প্রয়োজনীয়তা লিখুন',
+        'submit_request' => 'অনুরোধ জমা দিন',
+        'success' => 'ধন্যবাদ। আপনার কনসালটেশন অনুরোধ সফলভাবে জমা হয়েছে।',
+    ],
+
     //Companies Menu
     'candidates_menu' => [
         'search_candidates' => 'প্রার্থী অনুসন্ধান',

@@ -331,44 +331,27 @@
                                                               maxlength="1000" rows="3"
                                                               placeholder="{{ __('messages.employer_register.company_address_bn_placeholder') }}">{{ old('company_address_bn') }}</textarea>
                                                 </div>
-
-                                                <div class="col-12">
-                                                    <div class="employer-register-industry-type-row">
-                                                        <div class="employer-register-industry-type-select">
-                                                            <label for="registerIndustryType" class="employer-company-information-label">
-                                                                {{ __('messages.employer_register.industry_type') }} <span class="text-danger">*</span>
-                                                            </label>
-                                                            <select id="registerIndustryType"
-                                                                    class="form-select employer-company-information-control">
-                                                                <option value="all" selected>{{ __('messages.employer_register.all') }}</option>
-                                                                @foreach ($industryTypes as $industryTypeId => $industryTypeName)
-                                                                    <option value="{{ $industryTypeId }}">{{ $industryTypeName }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                        <button type="button" class="employer-register-add-industry-trigger"
-                                                                id="registerAddIndustryTrigger" data-bs-toggle="modal"
-                                                                data-bs-target="#registerAddIndustryModal">
-                                                            <i class="fa-solid fa-plus"></i>
-                                                            <span>{{ __('messages.employer_register.add_new_industry') }}</span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-
                                                 <div class="col-12">
                                                     <div class="employer-company-industry-picker">
-                                                        <div class="employer-company-industry-search">
-                                                            <input type="search" id="registerIndustrySearch"
-                                                                   class="form-control employer-company-information-control"
-                                                                   placeholder="{{ __('messages.employer_register.search_industry') }}">
-                                                            <i class="fa-solid fa-magnifying-glass"></i>
+                                                        <div class="employer-company-industry-search-row">
+                                                            <div class="employer-company-industry-search">
+                                                                <input type="search" id="registerIndustrySearch"
+                                                                       class="form-control employer-company-information-control"
+                                                                       placeholder="{{ __('messages.employer_register.search_industry') }}">
+                                                                <i class="fa-solid fa-magnifying-glass"></i>
+                                                            </div>
+                                                            <button type="button" class="employer-register-add-industry-trigger"
+                                                                    id="registerAddIndustryTrigger" data-bs-toggle="modal"
+                                                                    data-bs-target="#registerAddIndustryModal">
+                                                                <i class="fa-solid fa-plus"></i>
+                                                                <span>{{ __('messages.employer_register.add_new_industry') }}</span>
+                                                            </button>
                                                         </div>
 
                                                         <div class="employer-register-industry-options employer-company-industry-options"
                                                              id="registerIndustryOptions">
                                                             @foreach ($industryRecords as $industry)
-                                                                <label data-industry-name="{{ strtolower($industry->name) }}"
-                                                                       data-industry-type-id="{{ $industry->industry_type_id }}">
+                                                                <label data-industry-name="{{ strtolower($industry->name) }}">
                                                                     <input type="checkbox" name="industry_ids[]"
                                                                            value="{{ $industry->id }}"
                                                                         {{ collect(old('industry_ids', []))->contains((string) $industry->id) ? 'checked' : '' }}>
@@ -682,7 +665,6 @@
                                             </span>
                                             <div>
                                                 <h2 class="modal-title employer-register-industry-modal__title" id="registerAddIndustryModalLabel">{{ __('messages.employer_register.add_new_industry_title') }}</h2>
-                                                <p class="employer-register-industry-modal__subtitle">{{ __('messages.employer_register.specify_industry') }}</p>
                                             </div>
                                         </div>
                                         <button type="button" class="btn-close employer-register-industry-modal__close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -690,21 +672,14 @@
                                     <div class="modal-body employer-register-industry-modal__body">
                                         <div class="alert alert-danger d-none employer-register-industry-modal__error" id="registerIndustryModalError"></div>
                                         <div class="employer-register-industry-modal__field">
-                                            <label for="registerModalIndustryType" class="form-label employer-register-industry-modal__label">{{ __('messages.employer_register.industry_type') }}</label>
-                                            <select class="form-select employer-register-industry-modal__control" id="registerModalIndustryType">
-                                                @foreach ($industryTypes as $industryTypeId => $industryTypeName)
-                                                    <option value="{{ $industryTypeId }}">{{ $industryTypeName }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="employer-register-industry-modal__field">
                                             <label for="registerModalIndustryName" class="form-label employer-register-industry-modal__label">{{ __('messages.employer_register.your_industry_name') }}</label>
                                             <input type="text" class="form-control employer-register-industry-modal__control" id="registerModalIndustryName"
                                                    maxlength="150" placeholder="{{ __('messages.employer_register.type_industry_name') }}">
                                         </div>
                                     </div>
                                     <div class="modal-footer employer-register-industry-modal__footer">
-                                        <button type="button" class="btn btn-success employer-register-industry-modal__submit" id="registerAddIndustryButton">{{ __('messages.employer_register.add') }}</button>
+                                        <button type="button" class="btn btn-light employer-register-industry-modal__cancel me-2" data-bs-dismiss="modal">{{ __('messages.common.cancel') }}</button>
+                                        <button type="button" class="btn btn-primary employer-register-industry-modal__submit" id="registerAddIndustryButton">{{ __('messages.employer_register.add') }}</button>
                                     </div>
                                 </div>
                             </div>

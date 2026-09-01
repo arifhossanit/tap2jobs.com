@@ -1,7 +1,7 @@
 @extends('front_web.layouts.app')
 
 @section('title')
-    Consultation
+    {{ __('web.consultation.title') }}
 @endsection
 
 @section('page_css')
@@ -31,14 +31,14 @@
                 <div class="row align-items-center justify-content-center">
                     <div class="col-lg-6 text-center">
                         <div class="hero-content">
-                            <h1 class="text-secondary mb-2">Consultation</h1>
+                            <h1 class="text-secondary mb-2">{{ __('web.consultation.title') }}</h1>
                             <nav aria-label="breadcrumb">
                                 <ol class="breadcrumb justify-content-center mb-0">
                                     <li class="breadcrumb-item">
                                         <a href="{{ route('front.home') }}" class="fs-18 text-gray">{{ __('web.home') }}</a>
                                     </li>
                                     <li class="breadcrumb-item text-primary fs-18" aria-current="page">
-                                        Consultation
+                                        {{ __('web.consultation.title') }}
                                     </li>
                                 </ol>
                             </nav>
@@ -54,7 +54,7 @@
                     <div class="row align-items-center">
                         <div class="col-lg-4 d-lg-flex d-none align-items-center justify-content-center p-4">
                             <div class="contact-img text-center">
-                                <img src="{{ asset('img_template/consult-1.png') }}" class="img-fluid" alt="Consultation">
+                                <img src="{{ asset('img_template/consult-1.png') }}" class="img-fluid" alt="{{ __('web.consultation.title') }}">
                             </div>
                         </div>
                         <div class="col-lg-8">
@@ -76,42 +76,42 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-4">
                                         <div class="form-group">
-                                            <label class="fs-16 text-secondary mb-2">Name:
+                                            <label class="fs-16 text-secondary mb-2">{{ __('web.consultation.name') }}:
                                                 <span class="text-danger">*</span>
                                             </label>
                                             <input type="text" name="name" class="form-control fs-14 text-gray br-10"
-                                                   value="{{ old('name') }}" placeholder="Name" autocomplete="off" required>
+                                                   value="{{ old('name') }}" placeholder="{{ __('web.consultation.name_placeholder') }}" autocomplete="off" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6 mb-4">
                                         <div class="form-group">
-                                            <label class="fs-16 text-secondary mb-2">Phone:
+                                            <label class="fs-16 text-secondary mb-2">{{ __('web.consultation.phone') }}:
                                                 <span class="text-danger">*</span>
                                             </label>
                                             <input type="text" name="phone" class="form-control fs-14 text-gray br-10"
-                                                   value="{{ old('phone') }}" placeholder="Phone" autocomplete="off" required>
+                                                   value="{{ old('phone') }}" placeholder="{{ __('web.consultation.phone_placeholder') }}" autocomplete="off" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6 mb-4">
                                         <div class="form-group">
-                                            <label class="fs-16 text-secondary mb-2">Email:
+                                            <label class="fs-16 text-secondary mb-2">{{ __('web.consultation.email') }}:
                                                 <span class="text-danger">*</span>
                                             </label>
                                             <input type="email" name="email" class="form-control fs-14 text-gray br-10"
-                                                   value="{{ old('email') }}" placeholder="Email" autocomplete="off" required>
+                                                   value="{{ old('email') }}" placeholder="{{ __('web.consultation.email_placeholder') }}" autocomplete="off" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6 mb-4">
                                         <div class="form-group">
-                                            <label class="fs-16 text-secondary mb-2">Company Name:</label>
+                                            <label class="fs-16 text-secondary mb-2">{{ __('web.consultation.company_name') }}:</label>
                                             <input type="text" name="company_name" class="form-control fs-14 text-gray br-10"
-                                                   value="{{ old('company_name') }}" placeholder="Company Name" autocomplete="off">
+                                                   value="{{ old('company_name') }}" placeholder="{{ __('web.consultation.company_name_placeholder') }}" autocomplete="off">
                                         </div>
                                     </div>
                                    
                                     <div class="col-md-6 mb-4">
                                         <div class="form-group">
-                                            <label class="fs-16 text-secondary mb-2">Consultation Type:
+                                            <label class="fs-16 text-secondary mb-2">{{ __('web.consultation.consultation_type') }}:
                                                 <span class="text-danger">*</span>
                                             </label>
                                             <select name="consultation_type" class="form-select fs-14 text-gray br-10" required>
@@ -123,12 +123,12 @@
                                     </div>
                                     <div class="col-md-6 mb-4">
                                         <div class="form-group">
-                                            <label class="fs-16 text-secondary mb-2">Company Size:
+                                            <label class="fs-16 text-secondary mb-2">{{ __('web.consultation.company_size') }}:
                                                 <span class="text-danger">*</span>
                                             </label>
                                             <select name="company_size_id" class="form-select fs-14 text-gray br-10"
                                                     id="consultationCompanySize" required>
-                                                <option value="">Select Company Size</option>
+                                                <option value="">{{ __('web.consultation.select_company_size') }}</option>
                                                 @foreach ($companySizes as $companySize)
                                                     <option value="{{ $companySize->id }}"
                                                             data-category-name="{{ $companySize->companyCategory?->name ?? '' }}"
@@ -138,15 +138,15 @@
                                                 @endforeach
                                             </select>
                                             <div class="fs-14 text-gray mt-2">
-                                                Category: <span class="text-primary" id="consultationCategoryPreview">Not selected</span>
+                                                {{ __('web.consultation.category') }}: <span class="text-primary" id="consultationCategoryPreview">{{ __('web.consultation.not_selected') }}</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6 mb-4">
                                         <div class="form-group">
-                                            <label class="fs-16 text-secondary mb-2">Preferred Contact Method:</label>
+                                            <label class="fs-16 text-secondary mb-2">{{ __('web.consultation.preferred_contact_method') }}:</label>
                                             <select name="preferred_contact_method" class="form-select fs-14 text-gray br-10">
-                                                <option value="">Select Contact Method</option>
+                                                <option value="">{{ __('web.consultation.select_contact_method') }}</option>
                                                 @foreach ($contactMethods as $value => $label)
                                                     <option value="{{ $value }}" {{ old('preferred_contact_method') === $value ? 'selected' : '' }}>{{ $label }}</option>
                                                 @endforeach
@@ -155,23 +155,23 @@
                                     </div>
                                     <div class="col-md-6 mb-4">
                                         <div class="form-group">
-                                            <label class="fs-16 text-secondary mb-2">Preferred Contact Time:</label>
+                                            <label class="fs-16 text-secondary mb-2">{{ __('web.consultation.preferred_contact_time') }}:</label>
                                             <input type="text" name="preferred_contact_time"
                                                    id="consultationPreferredContactTime"
                                                    class="form-control fs-14 text-gray br-10"
                                                    value="{{ old('preferred_contact_time') }}"
-                                                   placeholder="Select date and time" autocomplete="off">
+                                                   placeholder="{{ __('web.consultation.select_date_time') }}" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="col-12 mb-4">
                                         <div class="form-group">
-                                            <label class="fs-16 text-secondary mb-2">Requirement:</label>
+                                            <label class="fs-16 text-secondary mb-2">{{ __('web.consultation.requirement') }}:</label>
                                             <textarea name="message" rows="3" class="form-control fs-14 text-gray br-10"
-                                                      placeholder="Write your requirement">{{ old('message') }}</textarea>
+                                                      placeholder="{{ __('web.consultation.requirement_placeholder') }}">{{ old('message') }}</textarea>
                                         </div>
                                     </div>
                                     <div class="col-12 text-center text-md-start">
-                                        <button type="submit" class="btn btn-primary px-5 w-100 w-md-auto">Submit Request</button>
+                                        <button type="submit" class="btn btn-primary px-5 w-100 w-md-auto">{{ __('web.consultation.submit_request') }}</button>
                                     </div>
                                 </div>
                             </form>
@@ -186,11 +186,12 @@
         document.addEventListener('DOMContentLoaded', function () {
             var sizeSelect = document.getElementById('consultationCompanySize');
             var categoryPreview = document.getElementById('consultationCategoryPreview');
+            var notMappedLabel = @json(__('web.consultation.not_mapped'));
 
             function syncCategoryPreview() {
                 var selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
                 var categoryName = selectedOption ? selectedOption.getAttribute('data-category-name') : '';
-                categoryPreview.textContent = categoryName || 'Not mapped';
+                categoryPreview.textContent = categoryName || notMappedLabel;
             }
 
             if (sizeSelect && categoryPreview) {

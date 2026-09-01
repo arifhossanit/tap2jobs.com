@@ -364,9 +364,22 @@ body {
     padding: 24px;
 }
 
-.employer-company-industry-search {
+.employer-company-industry-search-row {
+    align-items: stretch;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: minmax(0, 1fr) auto;
     margin-bottom: 24px;
+}
+
+.employer-company-industry-search {
     position: relative;
+}
+
+@media (max-width: 575px) {
+    .employer-company-industry-search-row {
+        grid-template-columns: 1fr;
+    }
 }
 
 .employer-company-industry-search .form-control {
@@ -382,6 +395,23 @@ body {
     right: 17px;
     top: 50%;
     transform: translateY(-50%);
+}
+
+.register-side-ad__read-more {
+    border: 1px solid #fff;
+    border-radius: 999px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    left: 50%;
+    line-height: 1.2;
+    min-width: 112px;
+    padding: 12px 24px;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
 }
 
 .employer-company-industry-options {
@@ -457,87 +487,156 @@ body {
 body.employer-register-industry-modal-open .modal-backdrop,
 body:has(.employer-register-industry-modal.show) .modal-backdrop {
     z-index: 1190 !important;
+    background-color: rgba(15, 23, 42, 0.45) !important;
+    backdrop-filter: blur(3px);
 }
 
 .employer-register-industry-modal__dialog {
-    max-width: 550px;
+    max-width: 480px;
+    margin: 1.75rem auto;
 }
 
 .employer-register-industry-modal__content {
     background: #ffffff;
-    border: 0;
-    border-radius: 16px;
-    box-shadow: 0 18px 50px rgba(16, 24, 40, 0.22);
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
     overflow: hidden;
 }
 
 .employer-register-industry-modal__header {
     align-items: center;
-    border-bottom: 1px solid #d4e1ed;
-    padding: 28px 32px;
+    border-bottom: 1px solid #f1f5f9;
+    padding: 18px 24px;
+    background: #ffffff;
 }
 
 .employer-register-industry-modal__heading {
     align-items: center;
     display: flex;
-    gap: 18px;
+    gap: 14px;
 }
 
 .employer-register-industry-modal__icon {
     align-items: center;
-    border: 1px solid #d4e1ed;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(16, 24, 40, 0.08);
-    color: #3867f5;
+    background-color: #f0fdf4;
+    border: 1px solid #dcfce7;
+    border-radius: 6px;
+    color: #16a34a;
     display: flex;
-    flex: 0 0 50px;
-    font-size: 23px;
-    height: 50px;
+    flex: 0 0 40px;
+    font-size: 16px;
+    height: 40px;
+    width: 40px;
     justify-content: center;
 }
 
 .employer-register-industry-modal__title {
-    color: #272727;
-    font-size: 23px;
+    color: #0f172a;
+    font-size: 18px;
     font-weight: 600;
-    line-height: 1.2;
+    line-height: 1.3;
+    margin: 0;
 }
 
 .employer-register-industry-modal__subtitle {
-    color: #667085;
-    font-size: 16px;
-    margin: 3px 0 0;
+    color: #64748b;
+    font-size: 14px;
+    margin: 2px 0 0;
+}
+
+.employer-register-industry-modal__close {
+    border-radius: 6px;
+    opacity: 0.6;
+    padding: 6px;
+    transition: all 0.15s ease;
+}
+
+.employer-register-industry-modal__close:hover {
+    opacity: 1;
+    background-color: #f1f5f9;
 }
 
 .employer-register-industry-modal__body {
-    padding: 36px 32px 48px;
+    padding: 24px;
 }
 
 .employer-register-industry-modal__field + .employer-register-industry-modal__field {
-    margin-top: 24px;
+    margin-top: 18px;
 }
 
 .employer-register-industry-modal__label {
-    color: #344054;
+    color: #334155;
     font-size: 14px;
-    margin-bottom: 10px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: inline-block;
 }
 
 .employer-register-industry-modal__control {
-    border: 1px solid #d4e1ed;
-    border-radius: 8px;
-    height: 52px;
-    padding: 12px 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    height: 44px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #1e293b;
+    background-color: #ffffff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.employer-register-industry-modal__control:focus {
+    border-color: #209776;
+    box-shadow: 0 0 0 3px rgba(32, 151, 118, 0.15);
+    outline: none;
+}
+
+.employer-register-industry-modal__control::placeholder {
+    color: #94a3b8;
+}
+
+.employer-register-industry-modal__error {
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13.5px;
+    margin-bottom: 16px;
 }
 
 .employer-register-industry-modal__footer {
     background: #f8fafc;
-    border-top: 1px solid #d4e1ed;
-    padding: 16px 20px;
+    border-top: 1px solid #f1f5f9;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.employer-register-industry-modal__cancel {
+    border-radius: 6px;
+    height: 40px;
+    padding: 0 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #475569;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1 !important;
+    transition: all 0.2s ease;
+}
+
+.employer-register-industry-modal__cancel:hover {
+    background-color: #f1f5f9;
+    color: #0f172a;
+    border-color: #94a3b8 !important;
 }
 
 .employer-register-industry-modal__submit {
-    min-width: 80px;
+    border-radius: 6px;
+    height: 40px;
+    min-width: 90px;
+    padding: 0 20px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
 }
 
 .employer-contact-information-card {

@@ -34,11 +34,11 @@ class ConsultationLeadController extends AppBaseController
             ->orderBy('id')
             ->get();
 
-        $consultationTypes = ProfileReferenceOption::options(
+        $consultationTypes = ProfileReferenceOption::localizedOptions(
             ProfileReferenceOption::TYPE_CONSULTATION_TYPE,
             [ProfileReferenceOption::SCOPE_EMPLOYER]
         );
-        $contactMethods = ProfileReferenceOption::options(
+        $contactMethods = ProfileReferenceOption::localizedOptions(
             ProfileReferenceOption::TYPE_CONSULTATION_CONTACT_METHOD,
             [ProfileReferenceOption::SCOPE_EMPLOYER]
         );
@@ -64,7 +64,7 @@ class ConsultationLeadController extends AppBaseController
 
         return redirect()
             ->route('consultation.create', $request->only(['ad_id', 'utm_source', 'utm_medium', 'utm_campaign']))
-            ->with('success', 'Thanks. Your consultation request has been submitted successfully.');
+            ->with('success', __('web.consultation.success'));
     }
 
     public function index(): View

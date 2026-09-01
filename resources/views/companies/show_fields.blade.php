@@ -4,7 +4,7 @@
     $displayValue = fn ($value) => filled($value) ? html_entity_decode((string) $value) : __('messages.n/a');
     $yesNo = fn ($value) => $value ? __('messages.common.yes') : __('messages.common.no');
     $statusLabel = $user && $user->is_active == 1 ? __('messages.common.active') : __('messages.common.de_active');
-    $statusClass = $user && $user->is_active == 1 ? 'badge-light-success' : 'badge-light-danger';
+    $statusClass = $user && $user->is_active == 1 ? 'bg-light-success text-success' : 'bg-light-danger text-danger';
     $location = collect([
         $company->location,
         !empty($user->thana_id) ? $user->thana_name : null,
@@ -224,8 +224,8 @@
                 </div>
                 <div>
                     <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-                        <span class="badge {{ $statusClass }}">{{ $statusLabel }}</span>
-                        <span class="badge {{ $company->activeFeatured ? 'badge-light-info' : 'badge-light-secondary' }}">
+                        <span class="badge {{ $statusClass }} px-3 py-2 fs-7 fw-semibold">{{ $statusLabel }}</span>
+                        <span class="badge {{ $company->activeFeatured ? 'bg-light-info text-info' : 'bg-light-secondary text-secondary' }} px-3 py-2 fs-7 fw-semibold">
                             {{ $company->activeFeatured ? __('messages.company.is_featured') : __('messages.not_featured') }}
                         </span>
                     </div>

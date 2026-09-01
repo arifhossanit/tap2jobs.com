@@ -1846,7 +1846,6 @@ function loadEmployerRegistrationForm() {
       loadCities(state.value, city.dataset.oldCityId, thana ? thana.dataset.oldThanaId : null);
     }
   }
-  var industryType = document.getElementById('registerIndustryType');
   var industrySearch = document.getElementById('registerIndustrySearch');
   var industryOptions = document.getElementById('registerIndustryOptions');
   var industryMore = document.getElementById('registerIndustryMore');
@@ -1854,7 +1853,6 @@ function loadEmployerRegistrationForm() {
   var industryTags = document.getElementById('registerIndustryTags');
   var customIndustryInputs = document.getElementById('registerCustomIndustryInputs');
   var addIndustryTrigger = document.getElementById('registerAddIndustryTrigger');
-  var modalIndustryType = document.getElementById('registerModalIndustryType');
   var modalIndustryName = document.getElementById('registerModalIndustryName');
   var modalIndustryError = document.getElementById('registerIndustryModalError');
   var addIndustryButton = document.getElementById('registerAddIndustryButton');
@@ -1872,17 +1870,16 @@ function loadEmployerRegistrationForm() {
     });
   }
   var refreshIndustries = function refreshIndustries(resetExpansion) {
-    if (!industryType || !industryOptions) {
+    if (!industryOptions) {
       return;
     }
     if (resetExpansion) {
       industryOptions.classList.remove('is-expanded');
     }
-    var typeId = industryType.value;
     var query = industrySearch.value.trim().toLowerCase();
     var matched = 0;
     industryOptions.querySelectorAll('label[data-industry-name]').forEach(function (option) {
-      var isMatch = (typeId === 'all' || option.dataset.industryTypeId === typeId) && (!query || option.dataset.industryName.includes(query));
+      var isMatch = !query || option.dataset.industryName.includes(query);
       option.classList.toggle('is-filtered-out', !isMatch);
       option.classList.remove('is-extra');
       if (isMatch) {
@@ -1918,28 +1915,20 @@ function loadEmployerRegistrationForm() {
       tag.append(removeIcon);
       industryTags.append(tag);
       if (checkbox.dataset.customIndustry === 'true') {
-        var typeInput = document.createElement('input');
-        typeInput.type = 'hidden';
-        typeInput.name = 'custom_industries[' + customInputIndex + '][industry_type_id]';
-        typeInput.value = option.dataset.industryTypeId;
         var nameInput = document.createElement('input');
         nameInput.type = 'hidden';
         nameInput.name = 'custom_industries[' + customInputIndex + '][name]';
         nameInput.value = option.querySelector('span').textContent.trim();
-        customIndustryInputs.append(typeInput, nameInput);
+        customIndustryInputs.append(nameInput);
         customInputIndex += 1;
       }
     });
   };
-  if (industryType && industrySearch && industryOptions) {
+  if (industrySearch && industryOptions) {
     industryOptions.addEventListener('change', function (event) {
       if (event.target.matches('input[type="checkbox"]')) {
         updateIndustryPicker();
       }
-    });
-    industryType.addEventListener('change', function () {
-      industrySearch.value = '';
-      refreshIndustries(true);
     });
     industrySearch.addEventListener('input', function () {
       refreshIndustries(true);
@@ -1967,13 +1956,8 @@ function loadEmployerRegistrationForm() {
       }
     });
   }
-  if (addIndustryTrigger && modalIndustryType && modalIndustryName && modalIndustryError) {
+  if (addIndustryTrigger && modalIndustryName && modalIndustryError) {
     addIndustryTrigger.addEventListener('click', function () {
-      var selectedType = industryType ? industryType.value : '';
-      var selectedTypeExists = Array.from(modalIndustryType.options).some(function (option) {
-        return option.value === selectedType;
-      });
-      modalIndustryType.value = selectedTypeExists ? selectedType : modalIndustryType.options[0] ? modalIndustryType.options[0].value : '';
       modalIndustryName.value = '';
       modalIndustryError.classList.add('d-none');
       modalIndustryError.textContent = '';
@@ -1983,18 +1967,13 @@ function loadEmployerRegistrationForm() {
     });
   }
   var addRegistrationIndustry = function addRegistrationIndustry() {
-    if (!addIndustryButton || !industryOptions || !modalIndustryType || !modalIndustryName) {
+    if (!addIndustryButton || !industryOptions || !modalIndustryName) {
       return;
     }
     var industryName = modalIndustryName.value.trim();
     var normalizedName = industryName.toLowerCase();
     modalIndustryError.classList.add('d-none');
     modalIndustryError.textContent = '';
-    if (!modalIndustryType.value) {
-      modalIndustryError.textContent = 'Please select an industry type.';
-      modalIndustryError.classList.remove('d-none');
-      return;
-    }
     if (!industryName) {
       modalIndustryError.textContent = 'Please enter your industry name.';
       modalIndustryError.classList.remove('d-none');
@@ -2012,7 +1991,7 @@ function loadEmployerRegistrationForm() {
     customIndustrySequence += 1;
     var option = document.createElement('label');
     option.dataset.industryName = normalizedName;
-    option.dataset.industryTypeId = modalIndustryType.value;
+    option.dataset.industryTypeId = '';
     var checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.checked = true;
@@ -2022,7 +2001,6 @@ function loadEmployerRegistrationForm() {
     labelText.textContent = industryName;
     option.append(checkbox, labelText);
     industryOptions.append(option);
-    industryType.value = modalIndustryType.value;
     industrySearch.value = '';
     updateIndustryPicker();
     refreshIndustries(true);

@@ -22,26 +22,26 @@
     <tbody>
     @foreach($candidates as $candidate)
         <tr>
-            <td>{{ $candidate->user->full_name }}</td>
-            <td>{{ $candidate->user->email }}</td>
-            <td>{{ !empty($candidate->user->phone)?$candidate->user->phone:__('messages.n/a') }}</td>
+            <td>{{ $candidate->user?->full_name ?: __('messages.n/a') }}</td>
+            <td>{{ $candidate->user?->email ?: __('messages.n/a') }}</td>
+            <td>{{ !empty($candidate->user?->phone)?$candidate->user->phone:__('messages.n/a') }}</td>
             <td>{{ !empty($candidate->experience)?$candidate->experience.'  Year':__('messages.n/a') }}
             </td>
-            <td>{{ \Carbon\Carbon::parse($candidate->user->dob)->translatedFormat('d-m-y') }}</td>
-            <td>{{ $candidate->user->gender == 0 ? __('messages.common.male') : __('messages.common.female') }}</td>
-            <td>{{ !empty($candidate->user->country_id) ?$candidate->user->country_name:__('messages.n/a') }}</td>
-            <td>{{ !empty($candidate->user->state_id)?$candidate->user->state_name:__('messages.n/a') }}</td>
-            <td>{{ !empty($candidate->user->city_id)?$candidate->user->city_name:__('messages.n/a') }}</td>
-            <td>{{ !empty($candidate->user->thana_id)?$candidate->user->thana_name:__('messages.n/a') }}</td>
+            <td>{{ !empty($candidate->user?->dob) ? \Carbon\Carbon::parse($candidate->user->dob)->translatedFormat('d-m-y') : __('messages.n/a') }}</td>
+            <td>{{ $candidate->user?->gender === 0 ? __('messages.common.male') : ($candidate->user?->gender === 1 ? __('messages.common.female') : __('messages.n/a')) }}</td>
+            <td>{{ !empty($candidate->user?->country_id) ?$candidate->user->country_name:__('messages.n/a') }}</td>
+            <td>{{ !empty($candidate->user?->state_id)?$candidate->user->state_name:__('messages.n/a') }}</td>
+            <td>{{ !empty($candidate->user?->city_id)?$candidate->user->city_name:__('messages.n/a') }}</td>
+            <td>{{ !empty($candidate->user?->thana_id)?$candidate->user->thana_name:__('messages.n/a') }}</td>
             <td>{{ $candidate->immediate_available == 1 ? __('messages.candidate.immediate_available'):__('messages.candidate.not_immediate_available') }}</td>
-            <td>@if($candidate->user->candidateSkill->count())
+            <td>@if($candidate->user?->candidateSkill?->count())
                     @foreach($candidate->user->candidateSkill->pluck('name') as $key => $skill)  {{$loop->first?'':', '}} {{$skill}}  @endforeach
                 @else
                     <p>No skills</p>
                 @endif
             </td>
             <td>
-                @if($candidate->user->candidateLanguage->count())
+                @if($candidate->user?->candidateLanguage?->count())
                     @foreach($candidate->user->candidateLanguage->pluck('language') as $key => $lang)  {{$loop->first?'':', '}} {{$lang}}  @endforeach
                 @else
                     <p>No languages</p>
@@ -49,7 +49,7 @@
             </td>
             <td>{{ !empty($candidate->current_salary)?number_format($candidate->current_salary):__('messages.n/a') }}</td>
             <td>{{ !empty($candidate->expected_salary)?number_format($candidate->expected_salary):__('messages.n/a') }}</td>
-            <td>{{ $candidate->user->is_active == 1 ? __('messages.common.active') : __('messages.common.de_active') }}</td>
+            <td>{{ $candidate->user?->is_active == 1 ? __('messages.common.active') : __('messages.common.de_active') }}</td>
         </tr>
     @endforeach
     </tbody>

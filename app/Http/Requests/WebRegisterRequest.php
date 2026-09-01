@@ -63,7 +63,7 @@ class WebRegisterRequest extends FormRequest
                     Rule::exists('industries', 'id')->where(fn ($query) => $query->whereNull('created_by')),
                 ],
                 'custom_industries' => 'required_without:industry_ids|array|max:10',
-                'custom_industries.*.industry_type_id' => 'required|integer|exists:industry_types,id',
+                'custom_industries.*.industry_type_id' => 'nullable|integer|exists:industry_types,id',
                 'custom_industries.*.name' => [
                     'required',
                     'string',

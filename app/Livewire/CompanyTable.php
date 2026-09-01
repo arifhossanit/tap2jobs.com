@@ -22,7 +22,7 @@ class CompanyTable extends LivewireTableComponent
     public $status = Company::ALL;
     public string $createdBy = '';
 
-    public $buttonComponent = 'companies.table_components.add_button';
+    public $buttonComponent = 'companies.table_components.export_buttons';
     public array $filterComponents = ['companies.table_components.filter', Company::IS_FEATURED, Company::STATUS];
 
     public function configure(): void

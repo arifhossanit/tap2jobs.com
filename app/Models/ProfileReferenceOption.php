@@ -343,6 +343,35 @@ class ProfileReferenceOption extends Model
         return $options ?: self::defaultOptions($type, $scopes);
     }
 
+    public static function localizedOptions(string $type, array $scopes = [self::SCOPE_COMMON, self::SCOPE_CANDIDATE]): array
+    {
+        return collect(self::options($type, $scopes))
+            ->mapWithKeys(fn ($label, $value) => [$value => self::localizedLabel($type, (string) $value, (string) $label)])
+            ->toArray();
+    }
+
+    private static function localizedLabel(string $type, string $value, string $fallback): string
+    {
+        if (app()->getLocale() !== 'bn') {
+            return $fallback;
+        }
+
+        return [
+            self::TYPE_CONSULTATION_TYPE => [
+                'job_posting' => 'চাকরি পোস্টিং',
+                'employer_branding' => 'নিয়োগকর্তা ব্র্যান্ডিং',
+                'recruitment_support' => 'নিয়োগ সহায়তা',
+                'advertising' => 'বিজ্ঞাপন',
+                'other' => 'অন্যান্য',
+            ],
+            self::TYPE_CONSULTATION_CONTACT_METHOD => [
+                'phone' => 'ফোন',
+                'email' => 'ইমেইল',
+                'whatsapp' => 'হোয়াটসঅ্যাপ',
+            ],
+        ][$type][$value] ?? $fallback;
+    }
+
     public static function records(?string $type = null, ?string $scope = null): Collection
     {
         return collect(self::tableMap())

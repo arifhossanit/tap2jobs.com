@@ -398,6 +398,10 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          // Employers
          Route::get('employers', [CompanyController::class, 'index'])->name('company.index');
          Route::get('employers/create', [CompanyController::class, 'create'])->name('company.create');
+         Route::get('employers/export/{format}', [CompanyController::class, 'export'])
+                  ->whereIn('format', ['csv', 'excel', 'pdf'])
+                  ->name('company.export');
+         Route::get('employers/print', [CompanyController::class, 'print'])->name('company.print');
          Route::post('employers', [CompanyController::class, 'store'])->name('company.store');
          Route::get('employers/{company}', [CompanyController::class, 'show'])->name('company.show');
          Route::get('employers/{company}/edit', [CompanyController::class, 'edit'])->name('company.edit');
@@ -504,6 +508,10 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          // candidate routes
          Route::get('candidates', [CandidateController::class, 'index'])->name('candidates.index');
          Route::get('candidates/create', [CandidateController::class, 'create'])->name('candidates.create');
+         Route::get('candidates/export/{format}', [CandidateController::class, 'export'])
+                  ->whereIn('format', ['csv', 'excel', 'pdf'])
+                  ->name('candidates.export');
+         Route::get('candidates/print', [CandidateController::class, 'print'])->name('candidates.print');
          Route::post('candidates', [CandidateController::class, 'store'])->name('candidates.store');
          Route::get('candidates/{candidate}/edit', [CandidateController::class, 'edit'])->name('candidates.edit');
          Route::get('candidates/{candidate}', [CandidateController::class, 'show'])->name('candidates.show');

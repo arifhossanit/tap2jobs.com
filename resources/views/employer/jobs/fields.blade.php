@@ -17,7 +17,11 @@
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('skill_id', __('messages.job.job_skill').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{ Form::select('jobsSkill[]', $data['jobSkill'], old('jobsSkill'), ['class' => 'form-select', 'id' => 'SkillId', 'multiple' => true, 'data-control' => 'select2', 'data-placeholder' => __('messages.company.select_job_skill'), 'placeholder' => __('messages.company.select_job_skill'), 'required']) }}
+        {{ Form::select('jobsSkill[]', $data['jobSkill'], old('jobsSkill'), ['class' => 'form-select job-skill-select', 'id' => 'SkillId', 'multiple' => true, 'data-placeholder' => __('messages.company.select_job_skill'), 'required']) }}
+    </div>
+    <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+        {{ Form::label('tagId', __('messages.job_tag.show_job_tag').':', ['class' => 'form-label']) }}
+        {{Form::select('jobTag[]',$data['jobTag'], null, ['class' => 'form-select','id'=>'tagId','data-control'=>'select2','multiple'=>true])}}
     </div>
     @include('employer.jobs.employment_workplace_fields')
     <div class="col-xl-12 col-md-12 col-sm-12 mb-5">
@@ -112,10 +116,6 @@
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('job_shift_id', __('messages.job.job_shift').':', ['class' => 'form-label']) }}
         {{ Form::select('job_shift_id', $data['jobShift'], null, ['id'=>'jobShiftId','class' => 'form-select','data-control'=>'select2','placeholder' => __('messages.company.select_job_shift')]) }}
-    </div>
-    <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
-        {{ Form::label('tagId', __('messages.job_tag.show_job_tag').':', ['class' => 'form-label']) }}
-        {{Form::select('jobTag[]',$data['jobTag'], null, ['class' => 'form-select','id'=>'tagId','data-control'=>'select2','multiple'=>true])}}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('degree_level_id', __('messages.job.degree_level').':', ['class' => 'form-label']) }}

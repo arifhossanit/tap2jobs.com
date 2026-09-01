@@ -17,14 +17,14 @@
                                 <source src="{{ $ad->ad_media_url }}" type="{{ optional($ad->getFirstMedia(\App\Models\Ad::PATH))->mime_type }}">
                             </video>
                             <div class="register-side-ad__overlay">
-                                <span class="register-side-ad__read-more">{{ __('web.post_menu.read_more') }}</span>
+                                <span class="register-side-ad__read-more">{{ __('web.post_menu.send_message') }}</span>
                             </div>
                         </a>
                     @else
                         <a href="{{ $adClickUrl }}" class="register-side-ad__media d-inline-block">
                             <img src="{{ $ad->ad_media_url }}" alt="{{ $ad->title }}" class="img-fluid register-side-ad__image">
                             <div class="register-side-ad__overlay">
-                                <span class="register-side-ad__read-more">{{ __('web.post_menu.read_more') }}</span>
+                                <span class="register-side-ad__read-more">{{ __('web.post_menu.send_message') }}</span>
                             </div>
                         </a>
                     @endif

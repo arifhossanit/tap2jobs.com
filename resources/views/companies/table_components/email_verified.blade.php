@@ -2,7 +2,7 @@
     @if($row->user->email_verified_at)
         <button type="button"
                 title="Mark Unverified"
-                class="badge bg-light-success border-0 employer-email-status-toggle"
+                class="badge bg-light-success text-success border-0 employer-email-status-toggle"
                 data-id="{{ $row->id }}"
                 data-action="unverify"
                 data-bs-toggle="tooltip">
@@ -11,7 +11,7 @@
     @else
         <button type="button"
                 title="Mark Verified"
-                class="badge bg-light-warning border-0 employer-email-status-toggle"
+                class="badge bg-light-warning text-warning border-0 employer-email-status-toggle"
                 data-id="{{ $row->id }}"
                 data-action="verify"
                 data-bs-toggle="tooltip">

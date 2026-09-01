@@ -304,8 +304,6 @@ function loadEmployerRegistrationForm () {
             loadCities(state.value, city.dataset.oldCityId, thana ? thana.dataset.oldThanaId : null);
         }
     }
-
-    const industryType = document.getElementById('registerIndustryType');
     const industrySearch = document.getElementById('registerIndustrySearch');
     const industryOptions = document.getElementById('registerIndustryOptions');
     const industryMore = document.getElementById('registerIndustryMore');
@@ -313,7 +311,6 @@ function loadEmployerRegistrationForm () {
     const industryTags = document.getElementById('registerIndustryTags');
     const customIndustryInputs = document.getElementById('registerCustomIndustryInputs');
     const addIndustryTrigger = document.getElementById('registerAddIndustryTrigger');
-    const modalIndustryType = document.getElementById('registerModalIndustryType');
     const modalIndustryName = document.getElementById('registerModalIndustryName');
     const modalIndustryError = document.getElementById('registerIndustryModalError');
     const addIndustryButton = document.getElementById('registerAddIndustryButton');
@@ -334,21 +331,18 @@ function loadEmployerRegistrationForm () {
     }
 
     const refreshIndustries = function (resetExpansion) {
-        if (!industryType || !industryOptions) {
+        if (!industryOptions) {
             return;
         }
 
         if (resetExpansion) {
             industryOptions.classList.remove('is-expanded');
         }
-
-        const typeId = industryType.value;
         const query = industrySearch.value.trim().toLowerCase();
         let matched = 0;
 
         industryOptions.querySelectorAll('label[data-industry-name]').forEach(function (option) {
-            const isMatch = (typeId === 'all' || option.dataset.industryTypeId === typeId) &&
-                (!query || option.dataset.industryName.includes(query));
+            const isMatch = (!query || option.dataset.industryName.includes(query));
             option.classList.toggle('is-filtered-out', !isMatch);
             option.classList.remove('is-extra');
             if (isMatch) {
@@ -394,31 +388,22 @@ function loadEmployerRegistrationForm () {
             industryTags.append(tag);
 
             if (checkbox.dataset.customIndustry === 'true') {
-                const typeInput = document.createElement('input');
-                typeInput.type = 'hidden';
-                typeInput.name = 'custom_industries[' + customInputIndex + '][industry_type_id]';
-                typeInput.value = option.dataset.industryTypeId;
-
                 const nameInput = document.createElement('input');
                 nameInput.type = 'hidden';
                 nameInput.name = 'custom_industries[' + customInputIndex + '][name]';
                 nameInput.value = option.querySelector('span').textContent.trim();
 
-                customIndustryInputs.append(typeInput, nameInput);
+                customIndustryInputs.append(nameInput);
                 customInputIndex += 1;
             }
         });
     };
 
-    if (industryType && industrySearch && industryOptions) {
+    if (industrySearch && industryOptions) {
         industryOptions.addEventListener('change', function (event) {
             if (event.target.matches('input[type="checkbox"]')) {
                 updateIndustryPicker();
             }
-        });
-        industryType.addEventListener('change', function () {
-            industrySearch.value = '';
-            refreshIndustries(true);
         });
         industrySearch.addEventListener('input', function () {
             refreshIndustries(true);
@@ -450,15 +435,8 @@ function loadEmployerRegistrationForm () {
             }
         });
     }
-
-    if (addIndustryTrigger && modalIndustryType && modalIndustryName && modalIndustryError) {
+    if (addIndustryTrigger && modalIndustryName && modalIndustryError) {
         addIndustryTrigger.addEventListener('click', function () {
-            const selectedType = industryType ? industryType.value : '';
-            const selectedTypeExists = Array.from(modalIndustryType.options)
-                .some(option => option.value === selectedType);
-            modalIndustryType.value = selectedTypeExists
-                ? selectedType
-                : (modalIndustryType.options[0] ? modalIndustryType.options[0].value : '');
             modalIndustryName.value = '';
             modalIndustryError.classList.add('d-none');
             modalIndustryError.textContent = '';
@@ -469,7 +447,7 @@ function loadEmployerRegistrationForm () {
     }
 
     const addRegistrationIndustry = function () {
-        if (!addIndustryButton || !industryOptions || !modalIndustryType || !modalIndustryName) {
+        if (!addIndustryButton || !industryOptions || !modalIndustryName) {
             return;
         }
 
@@ -477,12 +455,6 @@ function loadEmployerRegistrationForm () {
         const normalizedName = industryName.toLowerCase();
         modalIndustryError.classList.add('d-none');
         modalIndustryError.textContent = '';
-
-        if (!modalIndustryType.value) {
-            modalIndustryError.textContent = 'Please select an industry type.';
-            modalIndustryError.classList.remove('d-none');
-            return;
-        }
 
         if (!industryName) {
             modalIndustryError.textContent = 'Please enter your industry name.';
@@ -502,7 +474,7 @@ function loadEmployerRegistrationForm () {
         customIndustrySequence += 1;
         const option = document.createElement('label');
         option.dataset.industryName = normalizedName;
-        option.dataset.industryTypeId = modalIndustryType.value;
+        option.dataset.industryTypeId = '';
 
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
@@ -515,7 +487,6 @@ function loadEmployerRegistrationForm () {
         option.append(checkbox, labelText);
         industryOptions.append(option);
 
-        industryType.value = modalIndustryType.value;
         industrySearch.value = '';
         updateIndustryPicker();
         refreshIndustries(true);
@@ -852,3 +823,6 @@ function showLiveRegistrationError (input, feedback, message) {
         feedback.textContent = message;
     }
 }
+
+
+

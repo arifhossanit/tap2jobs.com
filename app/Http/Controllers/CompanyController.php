@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CompaniesExport;
 use App\Http\Requests\CreateCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Company;
@@ -15,18 +16,25 @@ use App\Models\State;
 use App\Models\Transaction;
 use App\Notifications\UserVerifyNotification;
 use App\Repositories\CompanyRepository;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 use Laracasts\Flash\Flash;
+use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
 class CompanyController extends AppBaseController
@@ -67,6 +75,40 @@ class CompanyController extends AppBaseController
         $thanas = old('city_id') ? getThanas(old('city_id')) : [];
 
         return view('companies.create', compact('countries', 'states', 'state', 'cities', 'thanas'))->with('data', $data);
+    }
+
+    public function export(Request $request, string $format): BinaryFileResponse|StreamedResponse|Response
+    {
+        $companies = $this->companyExportQuery($request)->get();
+        $fileName = 'employers-'.time();
+
+        if ($format === 'excel') {
+            return Excel::download(new CompaniesExport($companies), $fileName.'.xlsx');
+        }
+
+        if ($format === 'pdf') {
+            return Pdf::loadView('exports.companies_pdf', compact('companies'))
+                ->setPaper('a4', 'landscape')
+                ->download($fileName.'.pdf');
+        }
+
+        return response()->streamDownload(function () use ($companies) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, $this->companyExportHeadings());
+
+            foreach ($companies as $company) {
+                fputcsv($handle, $this->companyExportRow($company));
+            }
+
+            fclose($handle);
+        }, $fileName.'.csv', ['Content-Type' => 'text/csv']);
+    }
+
+    public function print(Request $request): View
+    {
+        $companies = $this->companyExportQuery($request)->get();
+
+        return view('exports.companies_print', compact('companies'));
     }
 
     /**
@@ -437,5 +479,72 @@ class CompanyController extends AppBaseController
         }
 
         return $this->sendSuccess(__('messages.flash.verification_mail'));
+    }
+
+    private function companyExportQuery(Request $request): Builder
+    {
+        $query = Company::query()
+            ->with(['user', 'featured', 'admin', 'industry', 'companySize'])
+            ->latest();
+
+        if ($request->filled('featured') && (int) $request->get('featured') !== Company::ALL) {
+            if ((int) $request->get('featured') === Company::ISACTIVE) {
+                $query->whereHas('featured');
+            } else {
+                $query->doesntHave('featured');
+            }
+        }
+
+        if ($request->filled('status') && (int) $request->get('status') !== Company::ALL) {
+            $query->whereHas('user', function (Builder $userQuery) use ($request) {
+                $userQuery->where('is_active', (int) $request->get('status') === Company::ISACTIVE ? 1 : 0);
+            });
+        }
+
+        if ($request->filled('created_by') && Schema::hasColumn('companies', 'created_by')) {
+            $query->where('companies.created_by', $request->get('created_by'));
+        }
+
+        return $query->select('companies.*');
+    }
+
+    private function companyExportHeadings(): array
+    {
+        return [
+            'Company Name',
+            'Employer Name',
+            'Email',
+            'Phone',
+            'Featured',
+            'Email Verified',
+            'Status',
+            'Created By',
+            'Last Change By',
+            'Industry',
+            'Company Size',
+            'Website',
+            'Location',
+            'Created At',
+        ];
+    }
+
+    private function companyExportRow(Company $company): array
+    {
+        return [
+            $company->company_name ?: 'N/A',
+            $company->contact_person_name ?: ($company->user?->full_name ?: 'N/A'),
+            $company->user?->email ?: 'N/A',
+            $company->user?->phone ?: 'N/A',
+            $company->featured ? __('messages.common.yes') : __('messages.common.no'),
+            $company->user?->email_verified_at ? __('messages.common.yes') : __('messages.common.no'),
+            $company->user?->is_active ? __('messages.common.active') : __('messages.common.de_active'),
+            $company->created_by_label,
+            $company->admin?->full_name ?: 'N/A',
+            $company->industry?->name ?: 'N/A',
+            $company->companySize?->size ?: 'N/A',
+            $company->website ?: 'N/A',
+            $company->location ?: 'N/A',
+            $company->created_at?->format('d M Y h:i A') ?: 'N/A',
+        ];
     }
 }

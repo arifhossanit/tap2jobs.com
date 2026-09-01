@@ -11,20 +11,24 @@ use App\Models\SalaryCurrency;
 use App\Models\State;
 use App\ReportedToCandidate;
 use App\Repositories\Candidates\CandidateRepository;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Exception;
 use Flash;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CandidateController extends AppBaseController
 {
@@ -62,6 +66,40 @@ class CandidateController extends AppBaseController
         $userThanas = old('city_id') ? getThanas(old('city_id')) : [];
 
         return view('candidates.create', compact('data', 'countries', 'states', 'userThanas'));
+    }
+
+    public function export(Request $request, string $format): BinaryFileResponse|StreamedResponse|Response
+    {
+        $candidates = $this->candidateExportQuery($request)->get();
+        $fileName = 'candidates-'.time();
+
+        if ($format === 'excel') {
+            return Excel::download(new CandidatesExport($candidates), $fileName.'.xlsx');
+        }
+
+        if ($format === 'pdf') {
+            return Pdf::loadView('exports.candidates_pdf', compact('candidates'))
+                ->setPaper('a4', 'landscape')
+                ->download($fileName.'.pdf');
+        }
+
+        return response()->streamDownload(function () use ($candidates) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, $this->candidateExportHeadings());
+
+            foreach ($candidates as $candidate) {
+                fputcsv($handle, $this->candidateExportRow($candidate));
+            }
+
+            fclose($handle);
+        }, $fileName.'.csv', ['Content-Type' => 'text/csv']);
+    }
+
+    public function print(Request $request): View
+    {
+        $candidates = $this->candidateExportQuery($request)->get();
+
+        return view('exports.candidates_print', compact('candidates'));
     }
 
     /**
@@ -302,5 +340,80 @@ class CandidateController extends AppBaseController
         $media->delete();
 
         return $this->sendSuccess(__('messages.flash.resume_delete'));
+    }
+
+    private function candidateExportQuery(Request $request): Builder
+    {
+        $query = Candidate::query()
+            ->with([
+                'user.candidateSkill',
+                'user.candidateLanguage',
+                'user.country',
+                'user.state',
+                'user.city',
+                'user.thana',
+                'industry',
+                'maritalStatus',
+                'careerLevel',
+                'functionalArea',
+                'admin',
+            ])
+            ->latest();
+
+        if ($request->filled('status') && (int) $request->get('status') !== Candidate::ALL) {
+            $query->whereHas('user', function (Builder $userQuery) use ($request) {
+                $userQuery->where('is_active', (int) $request->get('status') === Candidate::ACTIVE ? 1 : 0);
+            });
+        }
+
+        if ($request->filled('immediate') && (int) $request->get('immediate') !== Candidate::ALL) {
+            $query->where('immediate_available', (int) $request->get('immediate') === Candidate::IMMEDIATE_AVAILABLE ? 1 : 0);
+        }
+
+        return $query->select('candidates.*');
+    }
+
+    private function candidateExportHeadings(): array
+    {
+        return [
+            'Name',
+            'Email',
+            'Phone',
+            'Experience',
+            'Birth Date',
+            'Gender',
+            'Country',
+            'State',
+            'City',
+            'Thana',
+            'Immediate Available',
+            'Skills',
+            'Languages',
+            'Current Salary',
+            'Expected Salary',
+            'Status',
+        ];
+    }
+
+    private function candidateExportRow(Candidate $candidate): array
+    {
+        return [
+            $candidate->user?->full_name ?: 'N/A',
+            $candidate->user?->email ?: 'N/A',
+            $candidate->user?->phone ?: 'N/A',
+            ! empty($candidate->experience) ? $candidate->experience.' Year' : 'N/A',
+            $candidate->user?->dob ? Carbon::parse($candidate->user->dob)->format('d-m-y') : 'N/A',
+            $candidate->user?->gender === 0 ? __('messages.common.male') : ($candidate->user?->gender === 1 ? __('messages.common.female') : 'N/A'),
+            $candidate->user?->country_name ?: 'N/A',
+            $candidate->user?->state_name ?: 'N/A',
+            $candidate->user?->city_name ?: 'N/A',
+            $candidate->user?->thana_name ?: 'N/A',
+            $candidate->immediate_available ? __('messages.candidate.immediate_available') : __('messages.candidate.not_immediate_available'),
+            $candidate->user?->candidateSkill?->pluck('name')->implode(', ') ?: 'No skills',
+            $candidate->user?->candidateLanguage?->pluck('language')->implode(', ') ?: 'No languages',
+            ! empty($candidate->current_salary) ? number_format($candidate->current_salary) : 'N/A',
+            ! empty($candidate->expected_salary) ? number_format($candidate->expected_salary) : 'N/A',
+            $candidate->user?->is_active ? __('messages.common.active') : __('messages.common.de_active'),
+        ];
     }
 }

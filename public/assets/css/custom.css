@@ -257,6 +257,17 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
   border-radius: 6px 6px 0 0;
 }
 
+.job-rich-editor-shell.is-invalid .ql-toolbar.ql-snow,
+.job-rich-editor-shell.is-invalid .job-rich-editor.ql-container.ql-snow,
+.select2-container.job-field-invalid .select2-selection {
+  border-color: #f62947 !important;
+}
+
+.job-rich-editor-shell.is-invalid .job-rich-editor.ql-container.ql-snow,
+.select2-container.job-field-invalid .select2-selection {
+  box-shadow: 0 0 0 0.25rem rgba(246, 41, 71, 0.15);
+}
+
 .job-rich-editor-shell .job-rich-editor.ql-container.ql-snow {
   height: calc(100% - 42px) !important;
   min-height: 0 !important;

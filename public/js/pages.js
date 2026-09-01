@@ -12850,8 +12850,12 @@ listenSubmit('#editJobTypeForm', function (event) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! flatpickr/dist/l10n */ "./node_modules/flatpickr/dist/l10n/index.js");
 /* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__);
+function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 document.addEventListener("DOMContentLoaded", loadEmployeeCreateEditData);
 
+var jobRequiredFieldMessage = "This field is required";
 function loadEmployeeCreateEditData() {
   if (!$(".jobEmployeePanel").length) {
     return;
@@ -12940,6 +12944,7 @@ function loadEmployeeCreateEditData() {
   if (!$("#createJobForm").length && !$("#editJobForm").length) {
     return;
   }
+  initJobRequiredFieldValidation();
   if ($("#toSalary").length) {
     new AutoNumeric("#toSalary", {
       maximumValue: 9999999999,
@@ -13092,16 +13097,18 @@ function loadEmployeeCreateEditData() {
     width: "100%",
     dropdownParent: $("#createCityModal")
   });
-  $("#SkillId").select2({
+  var $skillSelect = $("#SkillId");
+  $skillSelect.select2({
     width: "100%",
-    placeholder: Lang.get("js.select_job_skill"),
+    placeholder: $skillSelect.data("placeholder") || Lang.get("js.select_job_skill"),
+    closeOnSelect: false,
     tags: true,
     createTag: function createTag(params) {
       var term = $.trim(params.term);
       if (!term) {
         return null;
       }
-      var alreadyExists = $("#SkillId option").toArray().some(function (option) {
+      var alreadyExists = $skillSelect.find("option").toArray().some(function (option) {
         return $.trim(option.text).toLowerCase() === term.toLowerCase();
       });
       if (alreadyExists) {
@@ -13840,10 +13847,12 @@ listenSubmit("#createSalaryPeriodForm", function () {
   return false;
 });
 function prepareJobFormForSubmission(formSelector) {
+  var focusInvalid = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
   var form = $(formSelector)[0];
   if (!form) {
     return false;
   }
+  clearJobValidationState(form);
   if ($(form).find("#salary").is(":checked")) {
     $(form).find("#fromSalary, #toSalary").prop("disabled", true).prop("required", false).removeAttr("required");
   } else if ($(form).find("#salary").length) {
@@ -13855,6 +13864,7 @@ function prepareJobFormForSubmission(formSelector) {
       field.value = removeCommas(field.value).trim();
     }
   });
+  $(form).find("#job_desc, #key_responsibilities, #editJobDescription, #edit_responsibilities").prop("required", false).removeAttr("required");
   $(form).find("select.select2-hidden-accessible").each(function () {
     var select = $(this);
     var selectedIds = (select.select2("data") || []).map(function (item) {
@@ -13871,16 +13881,172 @@ function prepareJobFormForSubmission(formSelector) {
     countrySelect.val(countrySelect.find("option").first().val()).trigger("change.select2");
   }
   if (!form.checkValidity()) {
-    displayErrorMessage(Lang.get("js.required_field_messages"));
-    var invalidSelect = $(form).find("select:invalid").first();
-    if (invalidSelect.length && invalidSelect.hasClass("select2-hidden-accessible")) {
-      invalidSelect.select2("open");
-    } else {
-      $(form).find(":invalid").first().trigger("focus");
+    if (focusInvalid) {
+      focusInvalidJobField(form);
     }
     return false;
   }
   return true;
+}
+function initJobRequiredFieldValidation() {
+  $("#createJobForm, #editJobForm").off("input.jobRequired change.jobRequired", "input, select, textarea").on("input.jobRequired change.jobRequired", "input, select, textarea", function () {
+    clearJobFieldValidationState($(this));
+  });
+  [window.details, window.response, window.editJobDescription, window.editResponse].forEach(function (editor) {
+    if (!editor || editor.__jobValidationBound) {
+      return;
+    }
+    editor.__jobValidationBound = true;
+    editor.on("text-change", function () {
+      if (editor.getText().trim().length > 0) {
+        clearJobEditorValidationState(editor);
+      }
+    });
+  });
+}
+function clearJobValidationState(form) {
+  $(form).find(".is-invalid").removeClass("is-invalid");
+  $(form).find(".job-required-feedback").remove();
+  $(form).find("select.select2-hidden-accessible").each(function () {
+    $(this).next(".select2-container").removeClass("job-field-invalid");
+  });
+  [window.details, window.response, window.editJobDescription, window.editResponse].forEach(function (editor) {
+    clearJobEditorValidationState(editor);
+  });
+}
+function clearJobFieldValidationState($field) {
+  $field.removeClass("is-invalid");
+  if ($field.hasClass("select2-hidden-accessible")) {
+    $field.next(".select2-container").removeClass("job-field-invalid");
+  }
+  getJobValidationAnchor($field).next(".job-required-feedback").remove();
+}
+function focusInvalidJobField(form) {
+  var invalidField = getFirstInvalidJobField(form);
+  if (!invalidField.length) {
+    return;
+  }
+  invalidField.addClass("is-invalid");
+  if (invalidField.hasClass("select2-hidden-accessible")) {
+    var select2Container = invalidField.next(".select2-container");
+    select2Container.addClass("job-field-invalid");
+    showJobRequiredFeedback(getJobValidationAnchor(invalidField));
+    scrollToJobField(select2Container[0]);
+    invalidField.select2("open");
+    return;
+  }
+  showJobRequiredFeedback(getJobValidationAnchor(invalidField));
+  scrollToJobField(invalidField[0]);
+  invalidField.trigger("focus");
+}
+function getFirstInvalidJobField(form) {
+  return $(form).find(":invalid").filter(function () {
+    return $(this).is("input:not([type='hidden']), select, textarea");
+  }).first();
+}
+function validateJobFieldsInOrder(formSelector, editors) {
+  var form = $(formSelector)[0];
+  if (!prepareJobFormForSubmission(formSelector, false)) {
+    var invalidField = getFirstInvalidJobField(form);
+    var _iterator = _createForOfIteratorHelper(editors),
+      _step;
+    try {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+        var editor = _step.value;
+        var editorShell = getJobEditorShell(editor);
+        if (isJobEditorEmpty(editor) && (!invalidField.length || isBeforeJobField(editorShell[0], invalidField[0]))) {
+          markJobEditorInvalid(editor);
+          return false;
+        }
+        if (invalidField.length && editorShell.length && isBeforeJobField(invalidField[0], editorShell[0])) {
+          focusInvalidJobField(form);
+          return false;
+        }
+      }
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
+    }
+    focusInvalidJobField(form);
+    return false;
+  }
+  var _iterator2 = _createForOfIteratorHelper(editors),
+    _step2;
+  try {
+    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+      var _editor = _step2.value;
+      if (isJobEditorEmpty(_editor)) {
+        markJobEditorInvalid(_editor);
+        return false;
+      }
+    }
+  } catch (err) {
+    _iterator2.e(err);
+  } finally {
+    _iterator2.f();
+  }
+  return true;
+}
+function isJobEditorEmpty(editor) {
+  return !editor || editor.getText().trim().length === 0;
+}
+function getJobEditorShell(editor) {
+  if (!editor || !editor.container) {
+    return $();
+  }
+  return $(editor.container).closest(".job-rich-editor-shell");
+}
+function isBeforeJobField(firstField, secondField) {
+  if (!firstField || !secondField) {
+    return false;
+  }
+  return Boolean(firstField.compareDocumentPosition(secondField) & Node.DOCUMENT_POSITION_FOLLOWING);
+}
+function markJobEditorInvalid(editor) {
+  if (!editor || !editor.container) {
+    return;
+  }
+  var shell = $(editor.container).closest(".job-rich-editor-shell");
+  shell.addClass("is-invalid");
+  showJobRequiredFeedback(shell);
+  scrollToJobField(shell[0]);
+  editor.focus();
+}
+function clearJobEditorValidationState(editor) {
+  if (!editor || !editor.container) {
+    return;
+  }
+  $(editor.container).closest(".job-rich-editor-shell").removeClass("is-invalid");
+  $(editor.container).closest(".job-rich-editor-shell").next(".job-required-feedback").remove();
+}
+function getJobValidationAnchor($field) {
+  var inputGroup = $field.closest(".input-group");
+  if (inputGroup.length) {
+    return inputGroup;
+  }
+  if ($field.hasClass("select2-hidden-accessible")) {
+    var select2Container = $field.next(".select2-container");
+    if (select2Container.length) {
+      return select2Container;
+    }
+  }
+  return $field;
+}
+function showJobRequiredFeedback($anchor) {
+  if (!$anchor.length || $anchor.next(".job-required-feedback").length) {
+    return;
+  }
+  $('<div class="invalid-feedback d-block job-required-feedback"></div>').text(jobRequiredFieldMessage).insertAfter($anchor);
+}
+function scrollToJobField(field) {
+  if (!field || !field.scrollIntoView) {
+    return;
+  }
+  field.scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
 }
 function getQuillHtml(editor) {
   if (!editor || !editor.root) {
@@ -13992,12 +14158,12 @@ function rememberJobEditorHeight(selector, storageKey) {
 }
 listenClick("#jobsSaveBtn, #saveDraft", function (e) {
   e.preventDefault();
+  clearJobValidationState($("#createJobForm")[0]);
   $("#saveAsDraft").val($(this).val() === "draft" ? "1" : "0");
-  var editor_content1 = getQuillHtml(details);
-  if (details.getText().trim().length === 0) {
-    displayErrorMessage(Lang.get("js.description_required"));
+  if (!validateJobFieldsInOrder("#createJobForm", [details, response])) {
     return false;
   }
+  var editor_content1 = getQuillHtml(details);
   $("#job_desc").val(editor_content1);
   // if (!checkSummerNoteEmpty('#details',
   //     'Job Description field is required.', 1)) {
@@ -14006,17 +14172,10 @@ listenClick("#jobsSaveBtn, #saveDraft", function (e) {
   //     return false;
   // }
   var keyResponsibilitiesContent = getQuillHtml(response);
-  if (response.getText().trim().length === 0) {
-    displayErrorMessage(Lang.get("js.key_responsibilities_required"));
-    return false;
-  }
   $("#key_responsibilities").val(keyResponsibilitiesContent);
   if ($("#salaryToErrorMsg").text() !== "") {
     $("#toSalary").focus();
     $("#saveJob,#draftJob").attr("disabled", false);
-    return false;
-  }
-  if (!prepareJobFormForSubmission("#createJobForm")) {
     return false;
   }
   processingBtn("#createJobForm", $(this), "loading");
@@ -14024,24 +14183,17 @@ listenClick("#jobsSaveBtn, #saveDraft", function (e) {
 });
 listenClick("#editJobsSaveBtn, #saveDraft", function (e) {
   e.preventDefault();
-  var editor_content2 = getQuillHtml(editJobDescription);
-  if (editJobDescription.getText().trim().length === 0) {
-    displayErrorMessage(Lang.get("js.description_required"));
+  clearJobValidationState($("#editJobForm")[0]);
+  if (!validateJobFieldsInOrder("#editJobForm", [editJobDescription, editResponse])) {
     return false;
   }
+  var editor_content2 = getQuillHtml(editJobDescription);
   $("#editJobDescription").val(editor_content2);
   var editor_content3 = getQuillHtml(editResponse);
-  if (editResponse.getText().trim().length === 0) {
-    displayErrorMessage(Lang.get("js.key_responsibilities_required"));
-    return false;
-  }
   $("#edit_responsibilities").val(editor_content3);
   if ($("#salaryToErrorMsg").text() !== "") {
     $("#toSalary").focus();
     $("#saveJob,#draftJob").attr("disabled", false);
-    return false;
-  }
-  if (!prepareJobFormForSubmission("#editJobForm")) {
     return false;
   }
   processingBtn("#editJobForm", $(this), "loading");

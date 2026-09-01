@@ -176,6 +176,32 @@ return [
         'no_company_found' => 'No company found',
     ],
 
+    'consultation' => [
+        'title' => 'Consultation',
+        'name' => 'Name',
+        'name_placeholder' => 'Name',
+        'phone' => 'Phone',
+        'phone_placeholder' => 'Phone',
+        'email' => 'Email',
+        'email_placeholder' => 'Email',
+        'company_name' => 'Company Name',
+        'company_name_placeholder' => 'Company Name',
+        'consultation_type' => 'Consultation Type',
+        'company_size' => 'Company Size',
+        'select_company_size' => 'Select Company Size',
+        'category' => 'Category',
+        'not_selected' => 'Not selected',
+        'not_mapped' => 'Not mapped',
+        'preferred_contact_method' => 'Preferred Contact Method',
+        'select_contact_method' => 'Select Contact Method',
+        'preferred_contact_time' => 'Preferred Contact Time',
+        'select_date_time' => 'Select date and time',
+        'requirement' => 'Requirement',
+        'requirement_placeholder' => 'Write your requirement',
+        'submit_request' => 'Submit Request',
+        'success' => 'Thanks. Your consultation request has been submitted successfully.',
+    ],
+
     //Companies Menu
     'candidates_menu' => [
         'search_candidates' => 'Search Candidates',
