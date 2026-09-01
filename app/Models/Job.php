@@ -29,6 +29,7 @@ use Illuminate\Support\Carbon;
  * @property int $functional_area_id
  * @property int $job_shift_id
  * @property int $degree_level_id
+ * @property int|null $degree_title_id
  * @property int $position_id
  * @property string $job_expiry_date
  * @property int $no_preference
@@ -40,6 +41,7 @@ use Illuminate\Support\Carbon;
  * @property-read CareerLevel $careerLevel
  * @property-read SalaryCurrency $currency
  * @property-read RequiredDegreeLevel $degreeLevel
+ * @property-read EducationDegreeTitle|null $degreeTitle
  * @property-read FunctionalArea $functionalArea
  * @property-read JobShift $jobShift
  * @property-read JobType $jobType
@@ -309,6 +311,7 @@ class Job extends Model
         'functional_area_id',
         'job_shift_id',
         'degree_level_id',
+        'degree_title_id',
         'experience',
         'experience_unit',
         'experience_requirement',
@@ -349,6 +352,7 @@ class Job extends Model
         'functional_area_id' => 'integer',
         'job_shift_id' => 'integer',
         'degree_level_id' => 'integer',
+        'degree_title_id' => 'integer',
         'experience' => 'integer',
         'experience_unit' => 'string',
         'experience_requirement' => 'string',
@@ -523,6 +527,11 @@ class Job extends Model
         return $this->belongsTo(RequiredDegreeLevel::class, 'degree_level_id');
     }
 
+    public function degreeTitle(): BelongsTo
+    {
+        return $this->belongsTo(EducationDegreeTitle::class, 'degree_title_id');
+    }
+
     public function jobsSkill(): BelongsToMany
     {
         return $this->belongsToMany(Skill::class, 'jobs_skill', 'job_id', 'skill_id');
@@ -573,5 +582,25 @@ class Job extends Model
     public function activeFeatured(): MorphOne
     {
         return $this->morphOne(FeaturedRecord::class, 'owner')->where('end_time', '>', \Carbon\Carbon::now());
+    }
+
+    public function workplaces(): HasMany
+    {
+        return $this->hasMany(JobWorkplace::class);
+    }
+
+    public function getSelectedWorkplacesAttribute(): array
+    {
+        $workplaces = $this->workplaces()->pluck('workplace_value')->toArray();
+        if (!empty($workplaces)) {
+            return $workplaces;
+        }
+
+        $legacyWorkplaces = [];
+        if ($this->work_from_office) $legacyWorkplaces[] = 'work_from_office';
+        if ($this->work_from_home) $legacyWorkplaces[] = 'work_from_home';
+        if ($this->hybrid) $legacyWorkplaces[] = 'hybrid';
+
+        return $legacyWorkplaces;
     }
 }

@@ -24,11 +24,12 @@
             \App\Models\ProfileReferenceOption::TYPE_JOB_WORKPLACE,
             [\App\Models\ProfileReferenceOption::SCOPE_EMPLOYER]
         );
-        $workplaceOptions = array_intersect_key($workplaceOptions, array_flip([
-            'work_from_office',
-            'work_from_home',
-            'hybrid',
-        ]));
+        $selectedWorkplaces = old(
+            'workplaces',
+            isset($job)
+                ? $job->selected_workplaces
+                : collect($workplaceOptions)->keys()->filter(fn ($key) => old((string) $key, false))->values()->toArray()
+        );
     @endphp
     <span class="form-label d-block">
         {{ __('messages.job.employment_status') }}<span class="required"></span>
@@ -53,9 +54,9 @@
             @php
                 $workplaceId = 'workplace'.str_replace(' ', '', ucwords(str_replace('_', ' ', $value)));
             @endphp
-            <input class="job-choice-input" type="checkbox" name="{{ $value }}"
-                   id="{{ $workplaceId }}" value="1"
-                   {{ old($value, isset($job) ? $job->{$value} : false) ? 'checked' : '' }}>
+            <input class="job-choice-input" type="checkbox" name="workplaces[]"
+                   id="{{ $workplaceId }}" value="{{ $value }}"
+                   {{ in_array((string) $value, $selectedWorkplaces, true) ? 'checked' : '' }}>
             <label class="job-choice-label" for="{{ $workplaceId }}">{{ $label }}</label>
         @endforeach
     </div>

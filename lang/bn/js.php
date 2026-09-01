@@ -27,7 +27,7 @@ return [
     'candidate' => 'প্রার্থী',
     'select_language' => 'ভাষা নির্বাচন করুন',
     'select_state' => 'জেলা নির্বাচন করুন',
-    'select_city' => 'শহর নির্বাচন করুন',
+    'select_city' => 'জেলা নির্বাচন করুন',
     'select_thana' => 'থানা নির্বাচন করুন',
     'favourite_company' => 'পছন্দের কোম্পানি',
     'reported_candidate' => 'রিপোর্টকৃত প্রার্থী',

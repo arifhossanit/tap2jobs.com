@@ -605,7 +605,7 @@
                                                     </a>
                                                 @else
                                                     <a href="{{ route('front.job.details', $relatedJob['job_id']) }}"
-                                                        data-toggle="tooltip" data-placement="bottom" class="hover-color"
+                                                        data-toggle="tooltip" data-placement="bottom" class="text-secondary primary-link-hover hover-color"
                                                         title="{{ html_entity_decode($relatedJob['job_title']) }}">
                                                         <h5 class="card-title fs-20 mb-2">
                                                             {{ Str::limit(html_entity_decode($relatedJob['job_title']), 30, '...') }}

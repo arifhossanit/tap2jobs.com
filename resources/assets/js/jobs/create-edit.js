@@ -235,10 +235,86 @@ function loadEmployeeCreateEditData() {
     }
 
     initializeJobSelect2(
-        "#jobTypeId,#jobCategoryId,#careerLevelsId,#jobShiftId,#countryId,#stateId,#cityId,#thanaId,#salaryPeriodsId,#requiredDegreeLevelId",
+        "#jobTypeId,#jobCategoryId,#jobShiftId,#countryId,#stateId,#cityId,#thanaId,#salaryPeriodsId,#requiredDegreeLevelId",
         { width: "calc(100% - 44px)" }
     );
 
+    const $jobDegreeTitle = $("#jobDegreeTitleId");
+
+    $jobDegreeTitle.select2({
+        width: "100%"
+    });
+
+    function populateJobDegreeTitles(degreeLevelId, selectedDegreeTitleId) {
+        if (!$jobDegreeTitle.length) {
+            return;
+        }
+
+        $jobDegreeTitle.empty();
+        $jobDegreeTitle.append('<option value="">' + ($jobDegreeTitle.attr("placeholder") || "Select Degree Title") + '</option>');
+
+        if (degreeLevelId && window.jobDegreeTitleOptions && window.jobDegreeTitleOptions[degreeLevelId]) {
+            const options = window.jobDegreeTitleOptions[degreeLevelId];
+            $.each(options, function(id, name) {
+                $jobDegreeTitle.append($("<option></option>").attr("value", id).text(name));
+            });
+        }
+
+        if (selectedDegreeTitleId) {
+            $jobDegreeTitle.val(String(selectedDegreeTitleId));
+        }
+
+        $jobDegreeTitle.trigger("change.select2");
+    }
+
+    if ($jobDegreeTitle.length && $("#requiredDegreeLevelId").val()) {
+        populateJobDegreeTitles(
+            $("#requiredDegreeLevelId").val(),
+            $jobDegreeTitle.data("selected-value") || $jobDegreeTitle.val()
+        );
+    }
+
+    $(document).on("change", "#requiredDegreeLevelId", function() {
+        populateJobDegreeTitles($(this).val(), null);
+    });
+
+
+    $("#careerLevelsId").select2({
+        width: "100%",
+        placeholder: $("#careerLevelsId option:first").text(),
+        tags: true,
+        createTag: function(params) {
+            const term = $.trim(params.term);
+
+            if (!term) {
+                return null;
+            }
+
+            const alreadyExists = $("#careerLevelsId option").toArray().some(function(option) {
+                return $.trim(option.text).toLowerCase() === term.toLowerCase();
+            });
+
+            if (alreadyExists) {
+                return null;
+            }
+
+            return {
+                id: term,
+                text: term,
+                newTag: true
+            };
+        },
+        insertTag: function(data, tag) {
+            data.unshift(tag);
+        },
+        templateResult: function(data) {
+            if (data.newTag) {
+                return 'Add "' + data.text + '"';
+            }
+
+            return data.text;
+        }
+    });
     $("#functionalAreaId").select2({
         width: !$(".jobEmployeePanel").val() ? "calc(100% - 44px)" : "100%",
         placeholder: $("#functionalAreaId option:first").text(),

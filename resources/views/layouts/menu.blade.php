@@ -43,8 +43,8 @@
         \App\Models\ProfileReferenceOption::TYPE_CONSULTATION_TYPE,
         \App\Models\ProfileReferenceOption::TYPE_CONSULTATION_CONTACT_METHOD,
     ];
-    $referenceGeneralActive = Request::is('admin/profile-references/common*', 'admin/genders*', 'admin/language-proficiencies*', 'admin/online-profile-platforms*', 'admin/countries*', 'admin/divisions*', 'admin/districts*', 'admin/thanas*', 'admin/states*', 'admin/cities*', 'admin/degree-levels*', 'admin/skills*', 'admin/industries*', 'admin/functional-areas*', 'admin/career-levels*', 'admin/salary-currencies*', 'admin/ownership-types*');
-    $referenceCandidateActive = Request::is('admin/profile-references/candidate*', 'admin/education-degree-titles*', 'admin/education-major-groups*', 'admin/education-boards*', 'admin/education-results*', 'admin/candidate-religions*', 'admin/blood-groups*', 'admin/disability-difficulties*', 'admin/skill-learning-sources*', 'admin/candidate-reference-relations*', 'admin/army-ba-no-prefixes*', 'admin/army-ranks*', 'admin/army-employment-types*', 'admin/army-arms*', 'admin/marital-status*', 'admin/languages*');
+    $referenceGeneralActive = Request::is('admin/profile-references/common*', 'admin/genders*', 'admin/language-proficiencies*', 'admin/online-profile-platforms*', 'admin/countries*', 'admin/divisions*', 'admin/districts*', 'admin/thanas*', 'admin/states*', 'admin/cities*', 'admin/skills*', 'admin/industries*', 'admin/functional-areas*', 'admin/career-levels*', 'admin/salary-currencies*', 'admin/ownership-types*', 'admin/degree-levels*', 'admin/education-degree-titles*', 'admin/education-major-groups*', 'admin/education-boards*', 'admin/education-results*');
+    $referenceCandidateActive = Request::is('admin/profile-references/candidate*', 'admin/candidate-religions*', 'admin/blood-groups*', 'admin/disability-difficulties*', 'admin/skill-learning-sources*', 'admin/candidate-reference-relations*', 'admin/army-ba-no-prefixes*', 'admin/army-ranks*', 'admin/army-employment-types*', 'admin/army-arms*', 'admin/marital-status*', 'admin/languages*');
     $referenceEmployerActive = Request::is('admin/profile-references/employer*', 'admin/employer-reference-relations*', 'admin/job-gender-preferences*', 'admin/job-employment-statuses*', 'admin/job-workplaces*', 'admin/job-experience-units*', 'admin/employer-disability-facilities*', 'admin/job-categories*', 'admin/job-types*', 'admin/job-tags*', 'admin/job-shifts*', 'admin/salary-periods*', 'admin/company-sizes*', 'admin/company-categories*');
     $referencesActive = $referenceGeneralActive || $referenceCandidateActive || $referenceEmployerActive;
     $consultationActive = Request::is('admin/consultation-leads*', 'admin/consultation-types*', 'admin/consultation-contact-methods*');
@@ -215,7 +215,6 @@
         <span class="aside-menu-title">{{ __('messages.subscribers') }}</span>
     </a>
 </li> --}}
-
 <li class="nav-item aside-item-collapse {{ $referencesActive ? 'active collapse-submenu' : '' }}">
     <a class="nav-link d-flex align-items-center py-3" data-bs-toggle="collapse" href="#asideReferencesMenu"
        role="button" aria-expanded="{{ $referencesActive ? 'true' : 'false' }}" aria-controls="asideReferencesMenu">
@@ -266,69 +265,6 @@
                         </li>
                     </ul>
                 </li>
-                @foreach($profileReferenceMenuGroups[\App\Models\ProfileReferenceOption::SCOPE_COMMON] ?? [] as $profileReferenceType)
-                    <li class="nav-item {{ Request::is('admin/'.($commonReferencePaths[$profileReferenceType] ?? 'profile-references/common/'.$profileReferenceType).'*', 'admin/profile-references/common/'.$profileReferenceType) ? 'active' : '' }}">
-                        <a class="nav-link d-flex align-items-center py-2" href="{{ isset($commonReferenceRoutes[$profileReferenceType]) ? route($commonReferenceRoutes[$profileReferenceType].'.index') : route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_COMMON, $profileReferenceType]) }}">
-                            <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
-                            <span class="aside-menu-title">{{ $profileReferenceTypeLabels[$profileReferenceType] ?? $profileReferenceType }}</span>
-                        </a>
-                    </li>
-                @endforeach
-                <li class="nav-item {{ Request::is('admin/degree-levels*') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('requiredDegreeLevel.index') }}">
-                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
-                        <span class="aside-menu-title">{{ __('messages.required_degree_levels') }}</span>
-                    </a>
-                </li>
-                <li class="nav-item {{ Request::is('admin/skills*') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('skills.index') }}">
-                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
-                        <span class="aside-menu-title">{{ __('messages.skills') }}</span>
-                        <i class="fa-solid fa-eye ms-auto text-primary fs-8" title="Available from job create quick add" data-bs-toggle="tooltip"></i>
-                    </a>
-                </li>
-                <li class="nav-item {{ Request::is('admin/industries*') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('industry.index') }}">
-                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
-                        <span class="aside-menu-title">{{ __('messages.industries') }}</span>
-                    </a>
-                </li>
-                <li class="nav-item {{ Request::is('admin/functional-areas*') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('functionalArea.index') }}">
-                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
-                        <span class="aside-menu-title">{{ __('messages.functional_areas') }}</span>
-                        <i class="fa-solid fa-eye ms-auto text-primary fs-8" title="Available from job create quick add" data-bs-toggle="tooltip"></i>
-                    </a>
-                </li>
-                <li class="nav-item {{ Request::is('admin/career-levels*') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('careerLevel.index') }}">
-                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
-                        <span class="aside-menu-title">{{ __('messages.career_levels') }}</span>
-                    </a>
-                </li>
-                <li class="nav-item {{ Request::is('admin/salary-currencies*') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('salaryCurrency.index') }}">
-                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
-                        <span class="aside-menu-title">{{ __('messages.salary_currencies') }}</span>
-                    </a>
-                </li>
-                <li class="nav-item {{ Request::is('admin/ownership-types*') ? 'active' : '' }}">
-                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('ownerShipType.index') }}">
-                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
-                        <span class="aside-menu-title">{{ __('messages.ownership_types') }}</span>
-                    </a>
-                </li>
-            </ul>
-        </li>
-
-        <li class="nav-item aside-item-collapse {{ $referenceCandidateActive ? 'active collapse-submenu' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2 pe-3" data-bs-toggle="collapse" href="#asideReferenceCandidateMenu"
-               role="button" aria-expanded="{{ $referenceCandidateActive ? 'true' : 'false' }}" aria-controls="asideReferenceCandidateMenu">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title me-auto">Candidate</span>
-                <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
-            </a>
-            <ul class="aside-submenu nav flex-column collapse {{ $referenceCandidateActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideReferenceCandidateMenu">
                 <li class="nav-item aside-item-collapse {{ $educationActive ? 'active collapse-submenu' : '' }}">
                     <a class="nav-link d-flex align-items-center py-2 pe-3" data-bs-toggle="collapse" href="#asideEducationMenu"
                        role="button" aria-expanded="{{ $educationActive ? 'true' : 'false' }}" aria-controls="asideEducationMenu">
@@ -337,6 +273,12 @@
                         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
                     </a>
                     <ul class="aside-submenu nav flex-column collapse {{ $educationActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideEducationMenu">
+                        <li class="nav-item {{ Request::is('admin/degree-levels*') ? 'active' : '' }}">
+                            <a class="nav-link d-flex align-items-center py-2" href="{{ route('requiredDegreeLevel.index') }}">
+                                <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                                <span class="aside-menu-title">{{ __('messages.required_degree_levels') }}</span>
+                            </a>
+                        </li>
                         <li class="nav-item {{ Request::is('admin/education-degree-titles*') ? 'active' : '' }}">
                             <a class="nav-link d-flex align-items-center py-2" href="{{ route('educationDegreeTitles.index') }}">
                                 <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
@@ -364,6 +306,66 @@
                         </li>
                     </ul>
                 </li>
+                @foreach($profileReferenceMenuGroups[\App\Models\ProfileReferenceOption::SCOPE_COMMON] ?? [] as $profileReferenceType)
+                    <li class="nav-item {{ Request::is('admin/'.($commonReferencePaths[$profileReferenceType] ?? 'profile-references/common/'.$profileReferenceType).'*', 'admin/profile-references/common/'.$profileReferenceType) ? 'active' : '' }}">
+                        <a class="nav-link d-flex align-items-center py-2" href="{{ isset($commonReferenceRoutes[$profileReferenceType]) ? route($commonReferenceRoutes[$profileReferenceType].'.index') : route('profileReferenceOptions.index', [\App\Models\ProfileReferenceOption::SCOPE_COMMON, $profileReferenceType]) }}">
+                            <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                            <span class="aside-menu-title">{{ $profileReferenceTypeLabels[$profileReferenceType] ?? $profileReferenceType }}</span>
+                        </a>
+                    </li>
+                @endforeach
+
+                <li class="nav-item {{ Request::is('admin/skills*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('skills.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.skills') }}</span>
+                        <i class="fa-solid fa-eye ms-auto text-primary fs-8" title="Available from job create quick add" data-bs-toggle="tooltip"></i>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::is('admin/industries*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('industry.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.industries') }}</span>
+                        <i class="fa-solid fa-eye ms-auto text-primary fs-8" title="Available from job create quick add" data-bs-toggle="tooltip"></i>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::is('admin/functional-areas*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('functionalArea.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.functional_areas') }}</span>
+                        <i class="fa-solid fa-eye ms-auto text-primary fs-8" title="Available from job create quick add" data-bs-toggle="tooltip"></i>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::is('admin/career-levels*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('careerLevel.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.career_levels') }}</span>
+                        <i class="fa-solid fa-eye ms-auto text-primary fs-8" title="Available from job create quick add" data-bs-toggle="tooltip"></i>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::is('admin/salary-currencies*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('salaryCurrency.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.salary_currencies') }}</span>
+                    </a>
+                </li>
+                <li class="nav-item {{ Request::is('admin/ownership-types*') ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('ownerShipType.index') }}">
+                        <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
+                        <span class="aside-menu-title">{{ __('messages.ownership_types') }}</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="nav-item aside-item-collapse {{ $referenceCandidateActive ? 'active collapse-submenu' : '' }}">
+            <a class="nav-link d-flex align-items-center py-2 pe-3" data-bs-toggle="collapse" href="#asideReferenceCandidateMenu"
+               role="button" aria-expanded="{{ $referenceCandidateActive ? 'true' : 'false' }}" aria-controls="asideReferenceCandidateMenu">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
+                <span class="aside-menu-title me-auto">Candidate</span>
+                <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
+            </a>
+            <ul class="aside-submenu nav flex-column collapse {{ $referenceCandidateActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideReferenceCandidateMenu">
                 <li class="nav-item {{ Request::is('admin/marital-status*') ? 'active' : '' }}">
                     <a class="nav-link d-flex align-items-center py-2" href="{{ route('maritalStatus.index') }}">
                         <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
@@ -462,6 +464,7 @@
                     <a class="nav-link d-flex align-items-center py-2" href="{{ route('jobTag.index') }}">
                         <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
                         <span class="aside-menu-title">{{ __('messages.job_tags') }}</span>
+                         <i class="fa-solid fa-eye ms-auto text-primary fs-8" title="Available from job create quick add" data-bs-toggle="tooltip"></i>
                     </a>
                 </li>
                 <li class="nav-item {{ Request::is('admin/salary-periods*') ? 'active' : '' }}">

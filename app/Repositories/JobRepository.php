@@ -34,6 +34,7 @@ use App\Models\ProfileReferenceOption;
 use App\Models\SalaryCurrency;
 use App\Models\NotificationSetting;
 use App\Models\RequiredDegreeLevel;
+use App\Models\EducationDegreeTitle;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -116,6 +117,11 @@ class JobRepository extends BaseRepository
         $data['jobSkill'] = Skill::pluck('name', 'id');
         $data['jobTag'] = Tag::pluck('name', 'id');
         $data['requiredDegreeLevel'] = RequiredDegreeLevel::pluck('name', 'id');
+        $data['educationDegreeTitleOptions'] = EducationDegreeTitle::where('is_active', true)
+            ->orderBy('sort_order')
+            ->get()
+            ->groupBy('required_degree_level_id')
+            ->map(fn ($items) => $items->pluck('name', 'id'));
         $data['employmentStatus'] = $this->employmentStatusOptions();
         $data['workplaceOptions'] = ProfileReferenceOption::options(
             ProfileReferenceOption::TYPE_JOB_WORKPLACE,
@@ -168,6 +174,9 @@ class JobRepository extends BaseRepository
                 $input['state_id'] = null;
             }
             $input['functional_area_id'] = $this->resolveFunctionalAreaId($input['functional_area_id']);
+            if (! empty($input['career_level_id'])) {
+                $input['career_level_id'] = $this->resolveCareerLevelId($input['career_level_id']);
+            }
             if (Auth::user()->hasRole('Admin')) {
                 $input['is_created_by_admin'] = 1;
             }
@@ -178,7 +187,11 @@ class JobRepository extends BaseRepository
                 $job->jobsSkill()->sync($this->resolveJobSkillIds($input['jobsSkill']));
             }
             if (isset($input['jobTag']) && ! empty($input['jobTag'])) {
-                $job->jobsTag()->sync($input['jobTag']);
+                $job->jobsTag()->sync($this->resolveJobTagIds($input['jobTag']));
+            }
+            if (isset($input['workplaces'])) {
+                $workplacesData = collect($input['workplaces'])->map(fn ($val) => ['workplace_value' => $val])->toArray();
+                $job->workplaces()->createMany($workplacesData);
             }
             /** @var JobType $jobType */
             $jobType = JobType::with('candidateJobAlerts')->whereId($input['job_type_id'])->first();
@@ -230,6 +243,9 @@ class JobRepository extends BaseRepository
                 $input['state_id'] = null;
             }
             $input['functional_area_id'] = $this->resolveFunctionalAreaId($input['functional_area_id']);
+            if (! empty($input['career_level_id'])) {
+                $input['career_level_id'] = $this->resolveCareerLevelId($input['career_level_id']);
+            }
             $old_status = $job->status;
 
             if ($job->status == Job::STATUS_DRAFT) {
@@ -256,9 +272,14 @@ class JobRepository extends BaseRepository
                 $job->jobsSkill()->sync($this->resolveJobSkillIds($input['jobsSkill']));
             }
             if (isset($input['jobTag']) && ! empty($input['jobTag'])) {
-                $job->jobsTag()->sync($input['jobTag']);
+                $job->jobsTag()->sync($this->resolveJobTagIds($input['jobTag']));
             } else {
                 $job->jobsTag()->sync([]);
+            }
+            if (isset($input['workplaces'])) {
+                $job->workplaces()->delete();
+                $workplacesData = collect($input['workplaces'])->map(fn ($val) => ['workplace_value' => $val])->toArray();
+                $job->workplaces()->createMany($workplacesData);
             }
 
             DB::commit();
@@ -521,6 +542,20 @@ class JobRepository extends BaseRepository
         ]))->id;
     }
 
+    private function resolveCareerLevelId(string|int $careerLevel): int
+    {
+        $careerLevel = trim((string) $careerLevel);
+
+        if (is_numeric($careerLevel)) {
+            return (int) $careerLevel;
+        }
+
+        $existingCareerLevel = CareerLevel::whereRaw('LOWER(level_name) = ?', [mb_strtolower($careerLevel)])->first();
+
+        return ($existingCareerLevel ?: CareerLevel::create([
+            'level_name' => $careerLevel,
+        ]))->id;
+    }
     private function employmentStatusOptions(): array
     {
         $options = ProfileReferenceOption::options(

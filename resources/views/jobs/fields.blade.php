@@ -144,7 +144,7 @@
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('career_level_id', __('messages.job.career_level').':', ['class' => 'form-label']) }}
-        {{ Form::select('career_level_id', $data['careerLevels'], null, ['id' => 'careerLevelsId', 'class' => 'form-select', 'data-control' => 'select2', 'placeholder' => __('messages.company.select_career_level')]) }}
+        {{ Form::select('career_level_id', $data['careerLevels'], null, ['id' => 'careerLevelsId', 'class' => 'form-select', 'placeholder' => __('messages.company.select_career_level')]) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('job_shift_id', __('messages.job.job_shift').':', ['class' => 'form-label']) }}
@@ -153,6 +153,10 @@
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('degree_level_id', __('messages.job.degree_level').':', ['class' => 'form-label']) }}
         {{ Form::select('degree_level_id', $data['requiredDegreeLevel'], null, ['id' => 'requiredDegreeLevelId', 'class' => 'form-select', 'data-control' => 'select2', 'placeholder' => __('messages.company.select_degree_level')]) }}
+    </div>
+    <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+        {{ Form::label('degree_title_id', __('messages.candidate_profile.degree_title').':', ['class' => 'form-label']) }}
+        {{ Form::select('degree_title_id', [], null, ['id' => 'jobDegreeTitleId', 'class' => 'form-select', 'data-control' => 'select2', 'placeholder' => __('messages.candidate_profile.exam_degree_title'), 'data-selected-value' => old('degree_title_id')]) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('functional_area_id', __('messages.job.functional_area').':', ['class' => 'form-label']) }}
@@ -172,3 +176,5 @@
         <a href="{{ route('admin.jobs.index') }}" class="btn btn-secondary me-2">{{ __('messages.common.cancel') }}</a>
     </div>
 </div>
+
+<script>window.jobDegreeTitleOptions = @json($data['educationDegreeTitleOptions'] ?? []);</script>

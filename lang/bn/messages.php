@@ -484,6 +484,7 @@ return [
         'enter_experience_year' => 'বছরে অভিজ্ঞতা লিখুন',
         'select_company' => 'কোম্পানি নির্বাচন করুন',
         'select_job_category' => 'চাকরির বিভাগ নির্বাচন করুন',
+        'select_job_tag' => 'চাকরির ট্যাগ নির্বাচন করুন',
         'select_job_type' => 'চাকরির ধরন নির্বাচন করুন',
         'select_gender' => 'লিঙ্গ নির্বাচন করুন',
         'select_currency' => 'মুদ্রা নির্বাচন করুন',

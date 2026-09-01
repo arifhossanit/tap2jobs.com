@@ -19,6 +19,12 @@ trait ValidatesJob
         $employmentStatus = $this->input('employment_status');
         $usesEmploymentStatusForm = $this->routeIs('job.store', 'job.update', 'admin.job.store', 'admin.job.update');
         $workplace = $this->input('workplace');
+        $selectedWorkplaces = collect($this->input('workplaces', []));
+        if ($workplace) $selectedWorkplaces->push($workplace);
+        if ($this->boolean('work_from_office')) $selectedWorkplaces->push('work_from_office');
+        if ($this->boolean('work_from_home')) $selectedWorkplaces->push('work_from_home');
+        if ($this->boolean('hybrid')) $selectedWorkplaces->push('hybrid');
+        $selectedWorkplaces = $selectedWorkplaces->unique()->filter()->values()->toArray();
         $experienceUnit = $this->input('experience_unit');
         $experienceRequirement = trim((string) $this->input('experience_requirement'));
         $jobsSkill = collect($this->input('jobsSkill', []))
@@ -47,20 +53,15 @@ trait ValidatesJob
             'is_freelance' => $usesEmploymentStatusForm
                 ? ($employmentStatus === 'freelance' || $this->isFreelanceJobType())
                 : $this->boolean('is_freelance'),
-            'work_from_office' => $workplace
-                ? $workplace === 'work_from_office'
-                : $this->boolean('work_from_office'),
-            'work_from_home' => $workplace
-                ? $workplace === 'work_from_home'
-                : $this->boolean('work_from_home'),
-            'hybrid' => $workplace
-                ? $workplace === 'hybrid'
-                : $this->boolean('hybrid'),
+            'work_from_office' => in_array('work_from_office', $selectedWorkplaces),
+            'work_from_home' => in_array('work_from_home', $selectedWorkplaces),
+            'hybrid' => in_array('hybrid', $selectedWorkplaces),
             'experience_unit' => $experienceUnit,
             'experience_requirement' => $experienceRequirement,
             'freshers_encouraged' => $this->boolean('freshers_encouraged'),
             'experience' => $this->minimumExperienceYears($experienceUnit, $experienceRequirement),
             'jobsSkill' => $jobsSkill,
+            'workplaces' => $selectedWorkplaces,
         ]);
     }
 
@@ -164,6 +165,8 @@ trait ValidatesJob
                 Rule::in($this->employmentStatusValues()),
             ],
             'workplace' => ['nullable', Rule::in(['work_from_office', 'work_from_home', 'hybrid'])],
+            'workplaces' => ['nullable', 'array'],
+            'workplaces.*' => ['string', 'max:150'],
             'work_from_office' => ['required', 'boolean'],
             'work_from_home' => ['required', 'boolean'],
             'hybrid' => ['required', 'boolean'],

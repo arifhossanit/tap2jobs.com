@@ -14,26 +14,57 @@
                 @endif
             </li>
 
-            @foreach ($elements as $element)
+            @php
+                $currentPage = $paginator->currentPage();
+                $lastPage = $paginator->lastPage();
+                
+                // Custom pagination logic to avoid multiple ellipses
+                $customElements = [];
+                
+                if ($lastPage <= 7) {
+                    // Show all pages if 7 or fewer
+                    $customElements[] = range(1, $lastPage);
+                } else {
+                    if ($currentPage <= 4) {
+                        // Near the beginning: 1 2 3 4 5 ... 49 50
+                        $customElements[] = range(1, max(5, $currentPage + 1));
+                        $customElements[] = '...';
+                        $customElements[] = [$lastPage - 1, $lastPage];
+                    } elseif ($currentPage >= $lastPage - 3) {
+                        // Near the end: 1 2 ... 46 47 48 49 50
+                        $customElements[] = [1, 2];
+                        $customElements[] = '...';
+                        $customElements[] = range(min($lastPage - 4, $currentPage - 1), $lastPage);
+                    } else {
+                        // Middle: User requested NO multiple ellipses and NO "1, 2" if above page 5.
+                        // Example: 7 8 9 10 11 ... 49 50
+                        $customElements[] = [$currentPage - 2, $currentPage - 1, $currentPage, $currentPage + 1, $currentPage + 2];
+                        $customElements[] = '...';
+                        $customElements[] = [$lastPage - 1, $lastPage];
+                    }
+                }
+            @endphp
+
+            @foreach ($customElements as $index => $element)
                 @if (is_string($element))
-                    <li class="page-item disabled find-jobs-pagination__ellipsis d-none d-sm-block" aria-disabled="true">
+                    <li class="page-item disabled find-jobs-pagination__ellipsis d-none d-sm-block" aria-disabled="true" wire:key="ellipsis-{{ $index }}">
                         <span class="page-link">{{ $element }}</span>
                     </li>
                 @endif
 
                 @if (is_array($element))
-                    @foreach ($element as $page => $url)
+                    @foreach ($element as $page)
                         @php
                             $showOnMobile = $page === 1
-                                || $page === $paginator->lastPage()
-                                || abs($page - $paginator->currentPage()) <= 1;
+                                || $page === $lastPage
+                                || abs($page - $currentPage) <= 1;
                         @endphp
-                        @if ($page == $paginator->currentPage())
-                            <li class="page-item active" aria-current="page">
+                        @if ($page == $currentPage)
+                            <li class="page-item active" aria-current="page" wire:key="page-{{ $page }}">
                                 <span class="page-link">{{ $page }}</span>
                             </li>
                         @else
-                            <li class="page-item {{ $showOnMobile ? '' : 'd-none d-sm-block' }}">
+                            <li class="page-item {{ $showOnMobile ? '' : 'd-none d-sm-block' }}" wire:key="page-{{ $page }}">
                                 <button type="button" class="page-link" wire:click="gotoPage({{ $page }})"
                                         aria-label="{{ $page }}">
                                     {{ $page }}

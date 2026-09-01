@@ -21,10 +21,7 @@
     <a class="nav-link p-0 {{ Request::is('admin/candidates*') ? 'active' : '' }}"
        href="{{ route('candidates.index') }}">{{ __('messages.candidates') }}</a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/degree-levels*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/degree-levels*') ? 'active' : '' }}"
-       href="{{ route('requiredDegreeLevel.index') }}">{{ __('messages.required_degree_levels') }}</a>
-</li>
+
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/reported-candidates*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/reported-candidates*') ? 'active' : '' }}"
        href="{{ route('reported.candidates') }}">{{ __('messages.candidate.reported_candidates') }}</a>
@@ -115,12 +112,12 @@
        href="{{ route('cities.index') }}">{{ __('messages.city.cities') }}</a>
 </li>
 
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/profile-references/common*', 'admin/genders*', 'admin/language-proficiencies*', 'admin/online-profile-platforms*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/profile-references/common*', 'admin/genders*', 'admin/language-proficiencies*', 'admin/online-profile-platforms*') ? 'active' : '' }}"
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/profile-references/common*', 'admin/genders*', 'admin/language-proficiencies*', 'admin/online-profile-platforms*', 'admin/degree-levels*', 'admin/education-degree-titles*', 'admin/education-major-groups*', 'admin/education-boards*', 'admin/education-results*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('admin/profile-references/common*', 'admin/genders*', 'admin/language-proficiencies*', 'admin/online-profile-platforms*', 'admin/degree-levels*', 'admin/education-degree-titles*', 'admin/education-major-groups*', 'admin/education-boards*', 'admin/education-results*') ? 'active' : '' }}"
        href="{{ route('genders.index') }}">General</a>
 </li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/profile-references/candidate*', 'admin/candidate-religions*', 'admin/blood-groups*', 'admin/disability-difficulties*', 'admin/skill-learning-sources*', 'admin/candidate-reference-relations*', 'admin/education-results*', 'admin/army-ba-no-prefixes*', 'admin/army-ranks*', 'admin/army-employment-types*', 'admin/army-arms*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/profile-references/candidate*', 'admin/candidate-religions*', 'admin/blood-groups*', 'admin/disability-difficulties*', 'admin/skill-learning-sources*', 'admin/candidate-reference-relations*', 'admin/education-results*', 'admin/army-ba-no-prefixes*', 'admin/army-ranks*', 'admin/army-employment-types*', 'admin/army-arms*') ? 'active' : '' }}"
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/profile-references/candidate*', 'admin/candidate-religions*', 'admin/blood-groups*', 'admin/disability-difficulties*', 'admin/skill-learning-sources*', 'admin/candidate-reference-relations*', 'admin/army-ba-no-prefixes*', 'admin/army-ranks*', 'admin/army-employment-types*', 'admin/army-arms*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::is('admin/profile-references/candidate*', 'admin/candidate-religions*', 'admin/blood-groups*', 'admin/disability-difficulties*', 'admin/skill-learning-sources*', 'admin/candidate-reference-relations*', 'admin/army-ba-no-prefixes*', 'admin/army-ranks*', 'admin/army-employment-types*', 'admin/army-arms*') ? 'active' : '' }}"
        href="{{ route('candidateReligions.index') }}">Candidate</a>
 </li>
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/profile-references/employer*', 'admin/company-categories*', 'admin/employer-reference-relations*', 'admin/job-gender-preferences*', 'admin/job-employment-statuses*', 'admin/job-workplaces*', 'admin/job-experience-units*', 'admin/employer-disability-facilities*') ? 'd-none' : '' }}">

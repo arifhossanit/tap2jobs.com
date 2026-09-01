@@ -63,7 +63,7 @@ class JobTable extends LivewireTableComponent
         });
 
         $this->setTdAttributes(function (Column $column, $row, $columnIndex, $rowIndex) {
-            if ($columnIndex == '6') {
+            if ($columnIndex == '7') {
                 return [
                     'class' => 'text-center',
                     'width' => '15%',
@@ -89,6 +89,9 @@ class JobTable extends LivewireTableComponent
                 ->sortable()
                 ->searchable()
                 ->view('jobs.table-components.job_title'),
+            Column::make(__('messages.job_category.job_category'), 'job_category_id')
+                ->sortable()
+                ->view('jobs.table-components.job_category'),
             Column::make(__('messages.job.is_featured'), 'hide_salary')
                 ->sortable()
                 ->view('jobs.table-components.is_featured'),

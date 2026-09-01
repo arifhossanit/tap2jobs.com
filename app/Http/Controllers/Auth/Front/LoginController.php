@@ -89,6 +89,7 @@ class LoginController extends Controller
         $this->clearLoginAttempts($request);
 
         if (Auth::user()->hasRole('Employer') && $type == Company::COMPANY_LOGIN_TYPE) {
+            $request->session()->forget('url.intended');
             $this->redirectTo = RouteServiceProvider::EMPLOYER_HOME;
         } else {
             if (Auth::user()->hasRole('Candidate') && $type == Candidate::CANDIDATE_LOGIN_TYPE) {

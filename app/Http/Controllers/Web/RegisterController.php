@@ -121,7 +121,8 @@ class RegisterController extends AppBaseController
             session()->flash('candidate_registration_success', true);
             $suppressFlashMessage = true;
         } else {
-            $redirectUrl = resolveIntendedRedirectUrl(RouteServiceProvider::EMPLOYER_HOME, $user);
+            session()->forget('url.intended');
+            $redirectUrl = route('employer.dashboard');
             $suppressFlashMessage = false;
         }
 

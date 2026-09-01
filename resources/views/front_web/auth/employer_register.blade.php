@@ -341,8 +341,7 @@
                                                                 <i class="fa-solid fa-magnifying-glass"></i>
                                                             </div>
                                                             <button type="button" class="employer-register-add-industry-trigger"
-                                                                    id="registerAddIndustryTrigger" data-bs-toggle="modal"
-                                                                    data-bs-target="#registerAddIndustryModal">
+                                                                    id="registerAddIndustryTrigger">
                                                                 <i class="fa-solid fa-plus"></i>
                                                                 <span>{{ __('messages.employer_register.add_new_industry') }}</span>
                                                             </button>
@@ -366,7 +365,6 @@
                                                                 id="registerIndustryMore">{{ __('messages.employer_register.see_more') }}</button>
                                                     </div>
                                                 </div>
-
                                                 <div class="col-12">
                                                     <div class="employer-register-industry-tags" id="registerIndustryTags"></div>
                                                     <div id="registerCustomIndustryInputs"></div>

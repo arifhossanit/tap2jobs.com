@@ -42,13 +42,7 @@
                     @php
                         $leftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT, \App\Models\Ad::PAGE_BLOG_DETAILS);
                         $rightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT, \App\Models\Ad::PAGE_BLOG_DETAILS);
-                    @endphp
-
-                    <div class="col-lg-2 blog-detail-left-ads">
-                        @if ($leftAds->count() > 0)
-                            @include('front_web.common.register_side_ad', ['ads' => $leftAds])
-                        @endif
-                    </div>
+                    @endphp                   
 
                     <div class="col-lg-8 blog-detail-content">
                         <div class="blog-detail">
@@ -311,7 +305,7 @@
                     </div>{{-- /.blog-detail --}}
                     </div>{{-- /.blog-detail-content --}}
 
-                    <div class="col-lg-2 blog-detail-right-ads">
+                    <div class="col-lg-4 blog-detail-right-ads">
                         @if ($rightAds->count() > 0)
                             @include('front_web.common.register_side_ad', ['ads' => $rightAds])
                         @endif

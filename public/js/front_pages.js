@@ -1956,14 +1956,31 @@ function loadEmployerRegistrationForm() {
       }
     });
   }
-  if (addIndustryTrigger && modalIndustryName && modalIndustryError) {
-    addIndustryTrigger.addEventListener('click', function () {
-      modalIndustryName.value = '';
-      modalIndustryError.classList.add('d-none');
-      modalIndustryError.textContent = '';
-      setTimeout(function () {
-        modalIndustryName.focus();
-      }, 350);
+  var showRegisterIndustryModal = function showRegisterIndustryModal() {
+    if (!addIndustryModal || !modalIndustryName || !modalIndustryError) {
+      return;
+    }
+    modalIndustryName.value = '';
+    modalIndustryError.classList.add('d-none');
+    modalIndustryError.textContent = '';
+    if (window.bootstrap && window.bootstrap.Modal) {
+      window.bootstrap.Modal.getOrCreateInstance(addIndustryModal).show();
+    } else if (window.$ && typeof window.$(addIndustryModal).modal === 'function') {
+      window.$(addIndustryModal).modal('show');
+    } else {
+      addIndustryModal.classList.add('show');
+      addIndustryModal.removeAttribute('aria-hidden');
+      addIndustryModal.style.display = 'block';
+      document.body.classList.add('modal-open', 'employer-register-industry-modal-open');
+    }
+    setTimeout(function () {
+      modalIndustryName.focus();
+    }, 350);
+  };
+  if (addIndustryTrigger) {
+    addIndustryTrigger.addEventListener('click', function (event) {
+      event.preventDefault();
+      showRegisterIndustryModal();
     });
   }
   var addRegistrationIndustry = function addRegistrationIndustry() {
@@ -1995,12 +2012,13 @@ function loadEmployerRegistrationForm() {
     var checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.checked = true;
+    checkbox.disabled = true;
     checkbox.dataset.customIndustry = 'true';
     checkbox.dataset.optionKey = 'custom-' + customIndustrySequence;
     var labelText = document.createElement('span');
     labelText.textContent = industryName;
     option.append(checkbox, labelText);
-    industryOptions.append(option);
+    industryOptions.prepend(option);
     industrySearch.value = '';
     updateIndustryPicker();
     refreshIndustries(true);

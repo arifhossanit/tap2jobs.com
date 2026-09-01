@@ -23,4 +23,8 @@
     {{Form::hidden('employerPanel',true,['class'=>'jobEmployeePanel'])}}
     {{Form::hidden('isEdit',false,['class'=>'isEdit'])}}
     @include('jobs.modals.cities')
+    @include('jobs.modals.skills')
+    @include('jobs.modals.job_tags')
+    @include('jobs.modals.career_levels')
+    @include('jobs.modals.functional_areas')
 @endsection

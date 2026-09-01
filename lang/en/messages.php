@@ -488,6 +488,7 @@ return [
         'select_company' => 'Select Company',
         'select_job_category' => 'Select Job Category',
         'select_job_skill' => 'Select Job Skill',
+        'select_job_tag' => 'Select Job Tag',
         'select_job_type' => 'Select Job Type',
         'select_gender' => 'Select Gender',
         'select_currency' => 'Select Currency',
