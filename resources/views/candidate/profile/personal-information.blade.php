@@ -367,7 +367,7 @@
                             </div>
                             <div class="candidate-address-field candidate-present-district-field {{ $presentAddressType === 'outside' ? 'd-none' : '' }}">
                                 {{ Form::label('thana_id', 'Thana', ['class' => 'form-label']) }}
-                                {{ Form::select('thana_id', $presentThanas ?? [], $user->thana_id ?? null, ['id' => 'thanaId', 'class' => 'form-select', 'placeholder' => 'Select your Thana']) }}
+                                {{ Form::select('thana_id', $presentThanas ?? [], $user->thana_id ?? null, ['id' => 'thanaId', 'class' => 'form-select', 'placeholder' => 'Select Thana']) }}
                             </div>
                             <div class="candidate-address-field candidate-present-state-text-field {{ $presentAddressType === 'outside' ? '' : 'd-none' }}">
                                 {{ Form::label('present_state_division', 'State/Division', ['class' => 'form-label']) }}
@@ -419,7 +419,7 @@
                                 </div>
                                 <div class="candidate-address-field candidate-permanent-district-field {{ $permanentAddressType === 'outside' ? 'd-none' : '' }}">
                                     {{ Form::label('permanent_thana_id', 'Thana', ['class' => 'form-label']) }}
-                                    {{ Form::select('permanent_thana_id', $permanentThanas, $candidate->permanent_thana_id ?? null, ['id' => 'permanentThanaId', 'class' => 'form-select', 'placeholder' => 'Select your Thana']) }}
+                                    {{ Form::select('permanent_thana_id', $permanentThanas, $candidate->permanent_thana_id ?? null, ['id' => 'permanentThanaId', 'class' => 'form-select', 'placeholder' => 'Select Thana']) }}
                                 </div>
                                 <div class="candidate-address-field candidate-permanent-state-text-field {{ $permanentAddressType === 'outside' ? '' : 'd-none' }}">
                                     {{ Form::label('permanent_state_division', 'State/Division', ['class' => 'form-label']) }}
