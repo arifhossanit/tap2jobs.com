@@ -291,32 +291,34 @@ listenHiddenBsModal('#createCandidateCityModal', function () {
     resetModalForm('#createCandidateCityForm', '#cityValidationErrorsBox');
 });
 
-$('#countryId').on('change', function () {
-    $.ajax({
-        url: route('states-list'),
-        type: 'get',
-        dataType: 'json',
-        data: { postal: $(this).val() },
-        success: function (data) {
-            $('#cityId').empty();
-            $('#cityId').append(
-                $('<option value=""></option>').text(Lang.get('js.select_city')));
-            $('#thanaId').empty();
-            $('#thanaId').append(
-                $('<option value=""></option>').text(Lang.get('js.select_thana') || 'Select Thana'));
-            $('#stateId').empty();
-            $('#stateId').append(
-                $('<option value=""></option>').text(Lang.get('js.select_state')));
-            $.each(data.data, function (i, v) {
-                $('#stateId').append($('<option></option>').attr('value', i).text(v));
-            });
+if ($('#createCandidatesForm').length || $('#editCandidatesForm').length) {
+    $('#countryId').on('change', function () {
+        $.ajax({
+            url: route('states-list'),
+            type: 'get',
+            dataType: 'json',
+            data: { postal: $(this).val() },
+            success: function (data) {
+                $('#cityId').empty();
+                $('#cityId').append(
+                    $('<option value=""></option>').text(Lang.get('js.select_city')));
+                $('#thanaId').empty();
+                $('#thanaId').append(
+                    $('<option value=""></option>').text(Lang.get('js.select_thana') || 'Select Thana'));
+                $('#stateId').empty();
+                $('#stateId').append(
+                    $('<option value=""></option>').text(Lang.get('js.select_state')));
+                $.each(data.data, function (i, v) {
+                    $('#stateId').append($('<option></option>').attr('value', i).text(v));
+                });
 
-            // if (isEdit && stateId) {
-            //     $('#stateId').val(stateId).trigger('change');
-            // }
-        },
+                // if (isEdit && stateId) {
+                //     $('#stateId').val(stateId).trigger('change');
+                // }
+            },
+        });
     });
-});
+}
 
 function loadCandidateThanas (cityId) {
     if (!$('#thanaId').length) {
@@ -346,34 +348,36 @@ function loadCandidateThanas (cityId) {
     });
 }
 
-$('#stateId').on('change', function () {
-    $.ajax({
-        url: route('cities-list'),
-        type: 'get',
-        dataType: 'json',
-        data: {
-            state: $(this).val(),
-            country: $('#countryId').val(),
-        },
-        success: function (data) {
-            $('#cityId').empty();
-            $('#cityId').append(
-                $('<option value=""></option>').text(Lang.get('js.select_city')));
-            $.each(data.data, function (i, v) {
-                $('#cityId').append($('<option></option>').attr('value', i).text(v));
-            });
-            loadCandidateThanas($('#cityId').val());
+if ($('#createCandidatesForm').length || $('#editCandidatesForm').length) {
+    $('#stateId').on('change', function () {
+        $.ajax({
+            url: route('cities-list'),
+            type: 'get',
+            dataType: 'json',
+            data: {
+                state: $(this).val(),
+                country: $('#countryId').val(),
+            },
+            success: function (data) {
+                $('#cityId').empty();
+                $('#cityId').append(
+                    $('<option value=""></option>').text(Lang.get('js.select_city')));
+                $.each(data.data, function (i, v) {
+                    $('#cityId').append($('<option></option>').attr('value', i).text(v));
+                });
+                loadCandidateThanas($('#cityId').val());
 
-            // if (isEdit && cityId) {
-            //     $('#cityId').val(cityId).trigger('change');
-            // }
-        },
+                // if (isEdit && cityId) {
+                //     $('#cityId').val(cityId).trigger('change');
+                // }
+            },
+        });
     });
-});
 
-$('#cityId').on('change', function () {
-    loadCandidateThanas($(this).val());
-});
+    $('#cityId').on('change', function () {
+        loadCandidateThanas($(this).val());
+    });
+}
 
 
 listenClick('.createCandidateLanguageModal', function () {
