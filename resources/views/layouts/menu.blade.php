@@ -283,6 +283,7 @@
                             <a class="nav-link d-flex align-items-center py-2" href="{{ route('educationDegreeTitles.index') }}">
                                 <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
                                 <span class="aside-menu-title">Degree Titles</span>
+                                <i class="fa-solid fa-eye ms-auto text-primary fs-8" title="Available from candidate education quick add" data-bs-toggle="tooltip"></i>
                             </a>
                         </li>
                         <li class="nav-item {{ Request::is('admin/education-major-groups*') ? 'active' : '' }}">

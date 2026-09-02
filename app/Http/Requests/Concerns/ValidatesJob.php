@@ -139,6 +139,17 @@ trait ValidatesJob
             'career_level_id' => ['nullable', 'integer', Rule::exists('career_levels', 'id')],
             'job_shift_id' => ['nullable', 'integer', Rule::exists('job_shifts', 'id')],
             'degree_level_id' => ['nullable', 'integer', Rule::exists('education_degree_levels', 'id')],
+            'degree_title_id' => [
+                'nullable',
+                'string',
+                'max:150',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    $value = trim((string) $value);
+                    if (is_numeric($value) && ! \App\Models\EducationDegreeTitle::whereKey((int) $value)->exists()) {
+                        $fail(__('validation.exists', ['attribute' => $attribute]));
+                    }
+                },
+            ],
             'no_preference' => ['nullable', 'integer', Rule::in([0, 1, 2])],
             'experience' => ['required', 'integer', 'min:0', 'max:60'],
             'experience_unit' => ['required', Rule::in(['month', 'year', 'month_year'])],

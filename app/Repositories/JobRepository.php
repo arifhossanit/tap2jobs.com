@@ -182,6 +182,9 @@ class JobRepository extends BaseRepository
             if (! empty($input['career_level_id'])) {
                 $input['career_level_id'] = $this->resolveCareerLevelId($input['career_level_id']);
             }
+            if (! empty($input['degree_title_id'])) {
+                $input['degree_title_id'] = $this->resolveDegreeTitleId($input['degree_title_id'], $input['degree_level_id']);
+            }
             if (Auth::user()->hasRole('Admin')) {
                 $input['is_created_by_admin'] = 1;
             }
@@ -250,6 +253,9 @@ class JobRepository extends BaseRepository
             $input['functional_area_id'] = $this->resolveFunctionalAreaId($input['functional_area_id']);
             if (! empty($input['career_level_id'])) {
                 $input['career_level_id'] = $this->resolveCareerLevelId($input['career_level_id']);
+            }
+            if (! empty($input['degree_title_id'])) {
+                $input['degree_title_id'] = $this->resolveDegreeTitleId($input['degree_title_id'], $input['degree_level_id']);
             }
             $old_status = $job->status;
 
@@ -561,6 +567,28 @@ class JobRepository extends BaseRepository
             'level_name' => $careerLevel,
         ]))->id;
     }
+
+    private function resolveDegreeTitleId(string|int $degreeTitle, string|int|null $degreeLevelId): int
+    {
+        $degreeTitle = trim((string) $degreeTitle);
+
+        if (is_numeric($degreeTitle)) {
+            return (int) $degreeTitle;
+        }
+
+        $existingDegreeTitle = EducationDegreeTitle::whereRaw('LOWER(name) = ?', [mb_strtolower($degreeTitle)])
+            ->when($degreeLevelId, function ($query) use ($degreeLevelId) {
+                $query->where('required_degree_level_id', $degreeLevelId);
+            })
+            ->first();
+
+        return ($existingDegreeTitle ?: EducationDegreeTitle::create([
+            'name' => $degreeTitle,
+            'required_degree_level_id' => $degreeLevelId,
+            'is_active' => true,
+        ]))->id;
+    }
+
     private function employmentStatusOptions(): array
     {
         $options = ProfileReferenceOption::options(

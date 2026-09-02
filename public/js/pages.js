@@ -12600,14 +12600,14 @@ listenSubmit('#addJobTagForm', function (e) {
     url: route('jobTag.store'),
     type: 'POST',
     data: $(this).serialize(),
-    success: function (result) {
+    success: function success(result) {
       if (result.success) {
         displaySuccessMessage(result.message);
         $('#addJobTagModal').modal('hide');
         Livewire.dispatch('refreshDatatable');
       }
     },
-    error: function (result) {
+    error: function error(result) {
       displayErrorMessage(result.responseJSON.message);
     },
     complete: function complete() {
@@ -13114,28 +13114,73 @@ function loadEmployeeCreateEditData() {
     width: "calc(100% - 44px)"
   });
   var $jobDegreeTitle = $("#jobDegreeTitleId");
-  $jobDegreeTitle.select2({
-    width: "100%"
-  });
+  function initializeDegreeTitleSelect2() {
+    var disabled = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+    if ($jobDegreeTitle.hasClass("select2-hidden-accessible")) {
+      $jobDegreeTitle.select2("destroy");
+    }
+    $jobDegreeTitle.select2({
+      width: "100%",
+      disabled: disabled,
+      placeholder: disabled ? "Select degree level first" : $jobDegreeTitle.data('placeholder') || "Select Degree Title",
+      tags: !disabled,
+      createTag: function createTag(params) {
+        if (disabled) return null;
+        var term = $.trim(params.term);
+        if (!term) return null;
+        var alreadyExists = $jobDegreeTitle.find("option").toArray().some(function (option) {
+          return $.trim(option.text).toLowerCase() === term.toLowerCase();
+        });
+        if (alreadyExists) return null;
+        return {
+          id: term,
+          text: term,
+          newTag: true
+        };
+      },
+      insertTag: function insertTag(data, tag) {
+        data.unshift(tag);
+      },
+      templateResult: function templateResult(data) {
+        if (data.newTag) {
+          return 'Add "' + data.text + '"';
+        }
+        return data.text;
+      }
+    });
+  }
   function populateJobDegreeTitles(degreeLevelId, selectedDegreeTitleId) {
     if (!$jobDegreeTitle.length) {
       return;
     }
     $jobDegreeTitle.empty();
-    $jobDegreeTitle.append('<option value="">' + ($jobDegreeTitle.attr("placeholder") || "Select Degree Title") + '</option>');
+    var placeholderText = $jobDegreeTitle.data('placeholder') || "Select Degree Title";
+    if (!degreeLevelId) {
+      placeholderText = "Select degree level first";
+      $jobDegreeTitle.append('<option value="">' + placeholderText + '</option>');
+      initializeDegreeTitleSelect2(true);
+      return;
+    }
+    $jobDegreeTitle.append('<option value="">' + placeholderText + '</option>');
     if (degreeLevelId && window.jobDegreeTitleOptions && window.jobDegreeTitleOptions[degreeLevelId]) {
       var options = window.jobDegreeTitleOptions[degreeLevelId];
       $.each(options, function (id, name) {
         $jobDegreeTitle.append($("<option></option>").attr("value", id).text(name));
       });
     }
+    initializeDegreeTitleSelect2(false);
     if (selectedDegreeTitleId) {
       $jobDegreeTitle.val(String(selectedDegreeTitleId));
     }
     $jobDegreeTitle.trigger("change.select2");
   }
-  if ($jobDegreeTitle.length && $("#requiredDegreeLevelId").val()) {
-    populateJobDegreeTitles($("#requiredDegreeLevelId").val(), $jobDegreeTitle.data("selected-value") || $jobDegreeTitle.val());
+  if ($jobDegreeTitle.length) {
+    $jobDegreeTitle.data('placeholder', $jobDegreeTitle.attr("placeholder"));
+    if ($("#requiredDegreeLevelId").val()) {
+      populateJobDegreeTitles($("#requiredDegreeLevelId").val(), $jobDegreeTitle.data("selected-value") || $jobDegreeTitle.val());
+    } else {
+      populateJobDegreeTitles(null, null);
+    }
   }
   $(document).on("change", "#requiredDegreeLevelId", function () {
     populateJobDegreeTitles($(this).val(), null);
@@ -13876,7 +13921,7 @@ listenSubmit("#createSkillForm", function () {
 });
 listenSubmit("#createJobTagForm", function () {
   var editor_content = jobTagDescription ? jobTagDescription.root.innerHTML : '';
-  var input = (jobTagDescription && jobTagDescription.getText().trim().length > 0) ? JSON.stringify(editor_content).replace(/"/g, "") : '';
+  var input = jobTagDescription && jobTagDescription.getText().trim().length > 0 ? JSON.stringify(editor_content).replace(/"/g, "") : '';
   processingBtn("#createJobTagForm", "#jobTagBtnSave", "loading");
   $("#job_tag_desc").val(input);
   $.ajax({
