@@ -12593,30 +12593,21 @@ listen('hidden.bs.modal', '#editJobTagModal', function () {
 listenSubmit('#addJobTagForm', function (e) {
   e.preventDefault();
   var add_job_tag_editor_content = addJobTagDescriptionQuill.root.innerHTML;
-  if (add_job_tag_editor_content.length) {
-    if (addJobTagDescriptionQuill.getText().trim().length === 0) {
-      displayErrorMessage(Lang.get('js.description_required'));
-      return false;
-    }
-  } else {
-    displayErrorMessage(Lang.get('js.description_required'));
-    return false;
-  }
-  var input = JSON.stringify(add_job_tag_editor_content);
-  $('#job_tag_desc').val(input.replace(/"/g, ''));
+  var input = addJobTagDescriptionQuill.getText().trim().length > 0 ? JSON.stringify(add_job_tag_editor_content).replace(/"/g, '') : '';
+  $('#job_tag_desc').val(input);
   processingBtn('#addJobTagForm', '#jobTagBtnSave', 'loading');
   $.ajax({
     url: route('jobTag.store'),
     type: 'POST',
     data: $(this).serialize(),
-    success: function success(result) {
+    success: function (result) {
       if (result.success) {
         displaySuccessMessage(result.message);
         $('#addJobTagModal').modal('hide');
         Livewire.dispatch('refreshDatatable');
       }
     },
-    error: function error(result) {
+    error: function (result) {
       displayErrorMessage(result.responseJSON.message);
     },
     complete: function complete() {
@@ -12627,17 +12618,8 @@ listenSubmit('#addJobTagForm', function (e) {
 listenSubmit('#editJobTagForm', function (event) {
   event.preventDefault();
   var edit_job_tag_editor_content = editJobTagDescriptionQuill.root.innerHTML;
-  if (edit_job_tag_editor_content.length) {
-    if (editJobTagDescriptionQuill.getText().trim().length === 0) {
-      displayErrorMessage(Lang.get('js.description_required'));
-      return false;
-    }
-  } else {
-    displayErrorMessage(Lang.get('js.description_required'));
-    return false;
-  }
-  var input = JSON.stringify(edit_job_tag_editor_content);
-  $('#edit_job_tag_desc').val(input.replace(/"/g, ''));
+  var input = editJobTagDescriptionQuill.getText().trim().length > 0 ? JSON.stringify(edit_job_tag_editor_content).replace(/"/g, '') : '';
+  $('#edit_job_tag_desc').val(input);
   processingBtn('#editJobTagForm', '#JobTagEditSaveBtn', 'loading');
   var updateJobTagId = $('#jobTagId').val();
   $.ajax({
@@ -13893,19 +13875,10 @@ listenSubmit("#createSkillForm", function () {
   return false;
 });
 listenSubmit("#createJobTagForm", function () {
-  var editor_content = jobTagDescription.root.innerHTML;
-  if (editor_content.length) {
-    if (jobTagDescription.getText().trim().length === 0) {
-      displayErrorMessage(Lang.get("js.description_required"));
-      return false;
-    }
-  } else {
-    displayErrorMessage(Lang.get("js.description_required"));
-    return false;
-  }
+  var editor_content = jobTagDescription ? jobTagDescription.root.innerHTML : '';
+  var input = (jobTagDescription && jobTagDescription.getText().trim().length > 0) ? JSON.stringify(editor_content).replace(/"/g, "") : '';
   processingBtn("#createJobTagForm", "#jobTagBtnSave", "loading");
-  var input = JSON.stringify(editor_content);
-  $("#job_tag_desc").val(input.replace(/"/g, ""));
+  $("#job_tag_desc").val(input);
   $.ajax({
     url: route("jobTag.store"),
     type: "POST",

@@ -1251,21 +1251,10 @@ listenSubmit("#createSkillForm", function() {
 });
 
 listenSubmit("#createJobTagForm", function() {
-    let editor_content = jobTagDescription.root.innerHTML;
-    if (editor_content.length) {
-        if (jobTagDescription.getText().trim().length === 0) {
-            displayErrorMessage(
-                Lang.get("js.description_required")
-            );
-            return false;
-        }
-    } else {
-        displayErrorMessage(Lang.get("js.description_required"));
-        return false;
-    }
+    let editor_content = jobTagDescription ? jobTagDescription.root.innerHTML : '';
+    let input = (jobTagDescription && jobTagDescription.getText().trim().length > 0) ? JSON.stringify(editor_content).replace(/"/g, "") : '';
     processingBtn("#createJobTagForm", "#jobTagBtnSave", "loading");
-    let input = JSON.stringify(editor_content);
-    $("#job_tag_desc").val(input.replace(/"/g, ""));
+    $("#job_tag_desc").val(input);
     $.ajax({
         url: route("jobTag.store"),
         type: "POST",

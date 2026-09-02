@@ -7,6 +7,7 @@ use App\Models\JobType;
 use App\Models\ProfileReferenceOption;
 use App\Models\Skill;
 use App\Models\State;
+use App\Models\Tag;
 use App\Models\Thana;
 use Illuminate\Validation\Rule;
 
@@ -31,6 +32,12 @@ trait ValidatesJob
             ->map(fn ($skill) => trim((string) $skill))
             ->filter()
             ->unique(fn ($skill) => mb_strtolower($skill))
+            ->values()
+            ->toArray();
+        $jobTag = collect($this->input('jobTag', []))
+            ->map(fn ($tag) => trim((string) $tag))
+            ->filter()
+            ->unique(fn ($tag) => mb_strtolower($tag))
             ->values()
             ->toArray();
 
@@ -61,6 +68,7 @@ trait ValidatesJob
             'freshers_encouraged' => $this->boolean('freshers_encouraged'),
             'experience' => $this->minimumExperienceYears($experienceUnit, $experienceRequirement),
             'jobsSkill' => $jobsSkill,
+            'jobTag' => $jobTag,
             'workplaces' => $selectedWorkplaces,
         ]);
     }
@@ -188,7 +196,26 @@ trait ValidatesJob
                 },
             ],
             'jobTag' => ['nullable', 'array'],
-            'jobTag.*' => ['integer', 'distinct', Rule::exists('tags', 'id')],
+            'jobTag.*' => [
+                'nullable',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    $value = trim((string) $value);
+
+                    if ($value === '') {
+                        return;
+                    }
+
+                    if (mb_strlen($value) > 160) {
+                        $fail(__('validation.max.string', ['attribute' => $attribute, 'max' => 160]));
+
+                        return;
+                    }
+
+                    if (is_numeric($value) && ! Tag::whereKey((int) $value)->exists()) {
+                        $fail(__('validation.exists', ['attribute' => $attribute]));
+                    }
+                },
+            ],
         ];
     }
 
