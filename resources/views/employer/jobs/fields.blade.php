@@ -39,7 +39,7 @@
     </div>
     @include('employer.jobs.employment_workplace_fields')
     <div class="col-xl-12 col-md-12 col-sm-12 mb-5">
-        {{ Form::label('description', __('messages.job.description').':', ['class' => 'form-label']) }}
+        {{ Form::label('description', 'Requirements:', ['class' => 'form-label']) }}
         <span class="required"></span>
         <div class="job-rich-editor-shell">
             <div id="details" class="job-rich-editor" aria-required="true"></div>
@@ -55,6 +55,14 @@
             <div class="job-rich-editor-resize-handle" role="separator" aria-orientation="horizontal" title="Resize editor"></div>
         </div>
         {{ Form::hidden('key_responsibilities', old('key_responsibilities'), ['id' => 'key_responsibilities', 'required']) }}
+    </div>
+    <div class="col-xl-12 col-md-6 col-sm-12 mb-5">
+        {{ Form::label('compensation_and_other_benefits', 'Compensation and other benefits:', ['class' => 'form-label']) }}
+        <div class="job-rich-editor-shell">
+            <div id="compensationAndBenefits" class="job-rich-editor"></div>
+            <div class="job-rich-editor-resize-handle" role="separator" aria-orientation="horizontal" title="Resize editor"></div>
+        </div>
+        {{ Form::hidden('compensation_and_other_benefits', old('compensation_and_other_benefits'), ['id' => 'compensation_and_other_benefits']) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('no_preference', __('messages.candidate.gender').':', ['class' => 'form-label']) }}
@@ -182,3 +190,4 @@
 </div>
 
 <script>window.jobDegreeTitleOptions = @json($data['educationDegreeTitleOptions'] ?? []);</script>
+

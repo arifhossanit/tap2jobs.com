@@ -98,8 +98,8 @@
         <p  class="fw-bolder fs-6 text-gray-800">{{ !empty($job->thana_id) ?$job->thana_name:__('messages.n/a') }}</p>
     </div>
     <div class="form-group col-xl-12 col-md-12 col-sm-12">
-{{--        {{ Form::label('description', __('messages.job.description').':') }}--}}
-        {{ Form::label('description', __('messages.job.description').':', ['class' => 'form-label fs-6 fw-bolder text-gray-700 mb-3']) }}
+{{--        {{ Form::label('description', 'Requirements:') }}--}}
+        {{ Form::label('description', 'Requirements:', ['class' => 'form-label fs-6 fw-bolder text-gray-700 mb-3']) }}
 
     @if($job->description)
             <div class="fw-bolder fs-6 text-gray-800 job-editor-content">{!! $job->description !!}</div>
@@ -112,6 +112,15 @@
 
     @if($job->key_responsibilities)
             <div class="fw-bolder fs-6 text-gray-800 job-editor-content">{!! $job->key_responsibilities !!}</div>
+        @else
+            <p  class="fw-bolder fs-6 text-gray-800"> {{ __('messages.n/a') }}</p>
+        @endif
+    </div>
+    <div class="form-group col-xl-12 col-md-12 col-sm-12">
+        {{ Form::label('compensation_and_other_benefits', 'Compensation and other benefits:', ['class' => 'form-label fs-6 fw-bolder text-gray-700 mb-3']) }}
+
+    @if($job->compensation_and_other_benefits)
+            <div class="fw-bolder fs-6 text-gray-800 job-editor-content">{!! $job->compensation_and_other_benefits !!}</div>
         @else
             <p  class="fw-bolder fs-6 text-gray-800"> {{ __('messages.n/a') }}</p>
         @endif
@@ -171,3 +180,4 @@
         </p>
     </div>
 </div>
+

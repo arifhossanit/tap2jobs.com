@@ -17,6 +17,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string $job_title
  * @property string $description
+ * @property string|null $compensation_and_other_benefits
  * @property string $country
  * @property string $state
  * @property string $city
@@ -332,6 +333,7 @@ class Job extends Model
         'is_created_by_admin',
         'last_change',
         'key_responsibilities',
+        'compensation_and_other_benefits',
         'reject_reason',
     ];
 
@@ -367,6 +369,7 @@ class Job extends Model
         'city_village_name' => 'string',
         'address' => 'string',
         'description' => 'string',
+        'compensation_and_other_benefits' => 'string',
         'job_expiry_date' => 'date',
         'no_preference' => 'integer',
         'hide_salary' => 'boolean',
@@ -406,6 +409,11 @@ class Job extends Model
     }
 
     public function getKeyResponsibilitiesAttribute(?string $value): string
+    {
+        return $this->normalizeLegacyQuillHtml($value);
+    }
+
+    public function getCompensationAndOtherBenefitsAttribute(?string $value): string
     {
         return $this->normalizeLegacyQuillHtml($value);
     }
@@ -604,3 +612,4 @@ class Job extends Model
         return $legacyWorkplaces;
     }
 }
+

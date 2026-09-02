@@ -110,6 +110,7 @@ trait ValidatesJob
             'job_title' => ['required', 'string', 'max:180'],
             'description' => ['required', 'string'],
             'key_responsibilities' => ['required', 'string'],
+            'compensation_and_other_benefits' => ['nullable', 'string'],
             'job_category_id' => ['required', 'integer', Rule::exists('job_categories', 'id')],
             'city_village_name' => ['nullable', 'string', 'max:255'],
             'currency_id' => ['required', 'integer', Rule::exists('salary_currencies', 'id')],
@@ -234,3 +235,4 @@ trait ValidatesJob
         return $jobTypeName && mb_strtolower(trim($jobTypeName)) === 'freelance';
     }
 }
+

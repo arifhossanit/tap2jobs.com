@@ -3,10 +3,38 @@ import "flatpickr/dist/l10n";
 
 const jobRequiredFieldMessage = "This field is required";
 
-const shouldInsertSelect2Tag = function(data) {
+const normalizeSelect2Text = function(text) {
+    return $.trim(text || "").toLowerCase();
+};
+
+const hasSelectedSelect2Text = function($select, text) {
+    const normalizedText = normalizeSelect2Text(text);
+
+    return $select.find("option:selected").toArray().some(function(option) {
+        return normalizeSelect2Text(option.text) === normalizedText;
+    });
+};
+
+const shouldInsertSelect2Tag = function(data, $select, tag) {
+    if (hasSelectedSelect2Text($select, tag.text)) {
+        return false;
+    }
+
     return !data.some(function(item) {
         return !item.newTag && (!item.children || item.children.length > 0);
     });
+};
+
+const formatSelect2TagResult = function($select, data) {
+    if (data.newTag) {
+        if (hasSelectedSelect2Text($select, data.text)) {
+            return null;
+        }
+
+        return 'Add "' + data.text + '"';
+    }
+
+    return data.text;
 };
 
 const clearSelect2SearchAfterSelect = function($select) {
@@ -41,7 +69,7 @@ function loadEmployeeCreateEditData() {
                     }
                 }
             },
-            placeholder: Lang.get("js.enter_description"),
+            placeholder: "Enter Requirements",
             theme: "snow"
         });
         if ($("#editResponse").length) {
@@ -65,10 +93,32 @@ function loadEmployeeCreateEditData() {
                 theme: "snow"
             });
 
+            if ($("#editCompensationAndBenefits").length) {
+                window.editCompensationAndBenefits = new Quill("#editCompensationAndBenefits", {
+                    modules: {
+                        toolbar: [
+                            ["bold", "italic", "underline", "strike"],
+                            [{ list: "ordered" }, { list: "bullet" }],
+                            ["clean"]
+                        ],
+                        keyboard: {
+                            bindings: {
+                                tab: "disabled"
+                            }
+                        }
+                    },
+                    placeholder: "Enter Compensation and Other Benefits",
+                    theme: "snow"
+                });
+            }
             setQuillHtml(editJobDescription, "#editJobDescription");
             setQuillHtml(editResponse, "#edit_responsibilities");
             rememberJobEditorHeight("#editDetails", "tap2jobs:admin-job-editor:description-height");
             rememberJobEditorHeight("#editResponse", "tap2jobs:admin-job-editor:responsibilities-height");
+            if (window.editCompensationAndBenefits) {
+                setQuillHtml(editCompensationAndBenefits, "#edit_compensation_and_other_benefits");
+                rememberJobEditorHeight("#editCompensationAndBenefits", "tap2jobs:admin-job-editor:compensation-benefits-height");
+            }
         }
     }
 
@@ -86,7 +136,7 @@ function loadEmployeeCreateEditData() {
                     }
                 }
             },
-            placeholder: Lang.get("js.enter_description"),
+            placeholder: "Enter Requirements",
             theme: "snow"
         });
         if ($("#response").length) {
@@ -109,10 +159,32 @@ function loadEmployeeCreateEditData() {
                 theme: "snow"
             });
 
+            if ($("#compensationAndBenefits").length) {
+                window.compensationAndBenefits = new Quill("#compensationAndBenefits", {
+                    modules: {
+                        toolbar: [
+                            ["bold", "italic", "underline", "strike"],
+                            [{ list: "ordered" }, { list: "bullet" }],
+                            ["clean"]
+                        ],
+                        keyboard: {
+                            bindings: {
+                                tab: "disabled"
+                            }
+                        }
+                    },
+                    placeholder: "Enter Compensation and Other Benefits",
+                    theme: "snow"
+                });
+            }
             setQuillHtml(details, "#job_desc");
             setQuillHtml(response, "#key_responsibilities");
             rememberJobEditorHeight("#details", "tap2jobs:admin-job-editor:description-height");
             rememberJobEditorHeight("#response", "tap2jobs:admin-job-editor:responsibilities-height");
+            if (window.compensationAndBenefits) {
+                setQuillHtml(compensationAndBenefits, "#compensation_and_other_benefits");
+                rememberJobEditorHeight("#compensationAndBenefits", "tap2jobs:admin-job-editor:compensation-benefits-height");
+            }
         }
     }
 
@@ -420,16 +492,12 @@ function loadEmployeeCreateEditData() {
             };
         },
         insertTag: function(data, tag) {
-            if (shouldInsertSelect2Tag(data)) {
+            if (shouldInsertSelect2Tag(data, $skillSelect, tag)) {
                 data.unshift(tag);
             }
         },
         templateResult: function(data) {
-            if (data.newTag) {
-                return 'Add "' + data.text + '"';
-            }
-
-            return data.text;
+            return formatSelect2TagResult($skillSelect, data);
         }
     });
     clearSelect2SearchAfterSelect($skillSelect);
@@ -463,16 +531,12 @@ function loadEmployeeCreateEditData() {
             };
         },
         insertTag: function(data, tag) {
-            if (shouldInsertSelect2Tag(data)) {
+            if (shouldInsertSelect2Tag(data, $tagSelect, tag)) {
                 data.unshift(tag);
             }
         },
         templateResult: function(data) {
-            if (data.newTag) {
-                return 'Add "' + data.text + '"';
-            }
-
-            return data.text;
+            return formatSelect2TagResult($tagSelect, data);
         }
     });
     clearSelect2SearchAfterSelect($tagSelect);
@@ -1392,7 +1456,7 @@ function initJobRequiredFieldValidation() {
             clearJobFieldValidationState($(this));
         });
 
-    [window.details, window.response, window.editJobDescription, window.editResponse].forEach(function(editor) {
+    [window.details, window.response, window.compensationAndBenefits, window.editJobDescription, window.editResponse, window.editCompensationAndBenefits].forEach(function(editor) {
         if (!editor || editor.__jobValidationBound) {
             return;
         }
@@ -1413,7 +1477,7 @@ function clearJobValidationState(form) {
         $(this).next(".select2-container").removeClass("job-field-invalid");
     });
 
-    [window.details, window.response, window.editJobDescription, window.editResponse].forEach(function(editor) {
+    [window.details, window.response, window.compensationAndBenefits, window.editJobDescription, window.editResponse, window.editCompensationAndBenefits].forEach(function(editor) {
         clearJobEditorValidationState(editor);
     });
 }
@@ -1737,6 +1801,9 @@ listenClick("#jobsSaveBtn, #saveDraft", function(e) {
     // }
     let keyResponsibilitiesContent = getQuillHtml(response);
     $("#key_responsibilities").val(keyResponsibilitiesContent);
+    if (window.compensationAndBenefits) {
+        $("#compensation_and_other_benefits").val(getQuillHtml(compensationAndBenefits));
+    }
 
     if ($("#salaryToErrorMsg").text() !== "") {
         $("#toSalary").focus();
@@ -1760,6 +1827,9 @@ listenClick("#editJobsSaveBtn, #saveDraft", function(e) {
     $("#editJobDescription").val(editor_content2);
     let editor_content3 = getQuillHtml(editResponse);
     $("#edit_responsibilities").val(editor_content3);
+    if (window.editCompensationAndBenefits) {
+        $("#edit_compensation_and_other_benefits").val(getQuillHtml(editCompensationAndBenefits));
+    }
 
     if ($("#salaryToErrorMsg").text() !== "") {
         $("#toSalary").focus();
@@ -1770,3 +1840,4 @@ listenClick("#editJobsSaveBtn, #saveDraft", function(e) {
     processingBtn("#editJobForm", $(this), "loading");
     $("#editJobForm")[0].submit();
 });
+

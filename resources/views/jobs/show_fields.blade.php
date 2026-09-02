@@ -256,7 +256,7 @@
                 </div>
 
                 <div class="admin-job-detail__section mb-6">
-                    <h3 class="fs-3 fw-bold text-gray-900 mb-4">{{ __('messages.job.description') }}</h3>
+                    <h3 class="fs-3 fw-bold text-gray-900 mb-4">Requirements</h3>
                     @if($job->description)
                         <div class="admin-job-detail__content job-editor-content">{!! $job->description !!}</div>
                     @else
@@ -268,6 +268,15 @@
                     <h3 class="fs-3 fw-bold text-gray-900 mb-4">{{ __('messages.job.key_responsibilities') }}</h3>
                     @if($job->key_responsibilities)
                         <div class="admin-job-detail__content job-editor-content">{!! $job->key_responsibilities !!}</div>
+                    @else
+                        <div class="text-gray-700 fs-6">{{ __('messages.n/a') }}</div>
+                    @endif
+                </div>
+
+                <div class="admin-job-detail__section">
+                    <h3 class="fs-3 fw-bold text-gray-900 mb-4">Compensation and other benefits</h3>
+                    @if($job->compensation_and_other_benefits)
+                        <div class="admin-job-detail__content job-editor-content">{!! $job->compensation_and_other_benefits !!}</div>
                     @else
                         <div class="text-gray-700 fs-6">{{ __('messages.n/a') }}</div>
                     @endif
@@ -348,3 +357,4 @@
         </div>
     </div>
 </div>
+
