@@ -257,18 +257,22 @@ class JobRepository extends BaseRepository
             if (! empty($input['degree_title_id'])) {
                 $input['degree_title_id'] = $this->resolveDegreeTitleId($input['degree_title_id'], $input['degree_level_id']);
             }
-            $old_status = $job->status;
+            $old_status = (int) $job->status;
+            $oldExpiryDate = $job->job_expiry_date ? Carbon::parse($job->job_expiry_date) : null;
+            $newExpiryDate = ! empty($input['job_expiry_date']) ? Carbon::parse($input['job_expiry_date']) : null;
+            $isRenewingExpiredJob = $oldExpiryDate
+                && $newExpiryDate
+                && $oldExpiryDate->lt(Carbon::today())
+                && $newExpiryDate->gte(Carbon::today());
 
-            if ($job->status == Job::STATUS_DRAFT) {
-                $job->status = Job::STATUS_OPEN;
-            }
             if (auth()->user()->hasRole('Employer')) {
                 $jobApprovalRequired = (int) (Setting::where('key', 'job_approved')->value('value') ?? 1) === 1;
-                if ($old_status == Job::STATUS_DRAFT || $job->status == Job::SELECT_PANDING) {
+
+                if ($old_status === Job::STATUS_DRAFT || $old_status === Job::SELECT_PANDING || $isRenewingExpiredJob) {
                     $job->status = $jobApprovalRequired ? Job::SELECT_PANDING : Job::STATUS_OPEN;
-                }else{
-                    $job->status = Job::STATUS_OPEN;
                 }
+            } elseif ($old_status === Job::STATUS_DRAFT) {
+                $job->status = Job::STATUS_OPEN;
             }
 
             // if ($job->status!= Job::SELECT_PANDING) {
