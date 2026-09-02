@@ -183,10 +183,17 @@ class WebHomeRepository
 
     public function getAllCompanies()
     {
-        return Company::with('activeFeatured', 'jobs')->withCount(['jobs' => function (Builder $q) {
-            $q->where('status', '!=', Job::STATUS_DRAFT);
-            $q->where('status', '!=', Job::STATUS_CLOSED);
-        }])->get();
+        return Company::with('activeFeatured', 'user')
+            ->whereHas('user', function (Builder $query) {
+                $query->where('is_active', '=', true);
+            })
+            ->withCount(['jobs' => function (Builder $q) {
+                $q->where('status', '!=', Job::STATUS_DRAFT);
+                $q->where('status', '!=', Job::STATUS_CLOSED);
+            }])
+            ->orderByDesc('jobs_count')
+            ->take(12)
+            ->get();
     }
 
     /**

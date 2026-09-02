@@ -3,6 +3,26 @@ import "flatpickr/dist/l10n";
 
 const jobRequiredFieldMessage = "This field is required";
 
+const shouldInsertSelect2Tag = function(data) {
+    return !data.some(function(item) {
+        return !item.newTag && (!item.children || item.children.length > 0);
+    });
+};
+
+const clearSelect2SearchAfterSelect = function($select) {
+    $select.on("select2:select", function() {
+        window.setTimeout(function() {
+            const $containerSearch = $select
+                .next(".select2-container")
+                .find(".select2-search__field");
+            const $openSearch = $(".select2-container--open .select2-search__field");
+
+            $containerSearch.val("").trigger("input").trigger("keyup");
+            $openSearch.val("").trigger("input").trigger("keyup");
+        }, 0);
+    });
+};
+
 function loadEmployeeCreateEditData() {
     if (!$(".jobEmployeePanel").length) {
         return;
@@ -400,7 +420,9 @@ function loadEmployeeCreateEditData() {
             };
         },
         insertTag: function(data, tag) {
-            data.unshift(tag);
+            if (shouldInsertSelect2Tag(data)) {
+                data.unshift(tag);
+            }
         },
         templateResult: function(data) {
             if (data.newTag) {
@@ -410,6 +432,7 @@ function loadEmployeeCreateEditData() {
             return data.text;
         }
     });
+    clearSelect2SearchAfterSelect($skillSelect);
 
     const $tagSelect = $("#tagId");
 
@@ -440,7 +463,9 @@ function loadEmployeeCreateEditData() {
             };
         },
         insertTag: function(data, tag) {
-            data.unshift(tag);
+            if (shouldInsertSelect2Tag(data)) {
+                data.unshift(tag);
+            }
         },
         templateResult: function(data) {
             if (data.newTag) {
@@ -450,6 +475,7 @@ function loadEmployeeCreateEditData() {
             return data.text;
         }
     });
+    clearSelect2SearchAfterSelect($tagSelect);
     if (
         !$("#companyId").hasClass(".select2-hidden-accessible") &&
         $("#companyId").is("select")
@@ -598,7 +624,7 @@ function loadEmployeeCreateEditData() {
     //         success: function (data) {
     //             $('#cityId').empty();
     //             $('#cityId').append(
-    //                 $('<option value=""></option>').text('Select City'));
+    //                 $('<option value=""></option>').text('Select District'));
     //             $('#stateId').empty();
     //             $('#stateId').
     //                 append(
@@ -623,7 +649,7 @@ function loadEmployeeCreateEditData() {
     //         success: function (data) {
     //             $('#cityId').empty();
     //             $('#cityId').append(
-    //                 $('<option value=""></option>').text('Select City'));
+    //                 $('<option value=""></option>').text('Select District'));
     //             $.each(data.data, function (i, v) {
     //                 $('#cityId').append(
     //                     $('<option ></option>').attr('value', i).text(v));

@@ -434,7 +434,7 @@ function loadCandidateCareerInformationData() {
     //         'placeholder': 'Select State',
     //         dropdownParent: $('#addExperienceModal')
     //     });
-    //     $('#cityId').select2({'width': '100%', 'placeholder': 'Select City', dropdownParent: $('#addExperienceModal')});
+    //     $('#cityId').select2({'width': '100%', 'placeholder': 'Select District', dropdownParent: $('#addExperienceModal')});
     // };
     //
     // window.setEducationSelect2 = function () {
@@ -445,7 +445,7 @@ function loadCandidateCareerInformationData() {
     //     });
     //     $('#educationCityId').select2({
     //         'width': '100%',
-    //         'placeholder': 'Select City',
+    //         'placeholder': 'Select District',
     //         dropdownParent: $('#addEducationModal')
     //     });
     // };

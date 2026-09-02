@@ -125,7 +125,7 @@ function loadCandidateGeneralData() {
         }
 
         const city = $(citySelector).val();
-        resetAddressSelect(thanaSelector, 'Select your Thana');
+        resetAddressSelect(thanaSelector, 'Select Thana');
 
         if (!city) {
             return;
@@ -152,7 +152,7 @@ function loadCandidateGeneralData() {
         const state = $(stateSelector).val();
         resetAddressSelect(citySelector, 'Select your District');
         if (thanaSelector) {
-            resetAddressSelect(thanaSelector, 'Select your Thana');
+            resetAddressSelect(thanaSelector, 'Select Thana');
         }
 
         if (!state) {
@@ -187,7 +187,7 @@ function loadCandidateGeneralData() {
         $(stateSelector).empty().append($('<option value=""></option>').text(statePlaceholder));
         resetAddressSelect(citySelector, 'Select your District');
         if (thanaSelector) {
-            resetAddressSelect(thanaSelector, 'Select your Thana');
+            resetAddressSelect(thanaSelector, 'Select Thana');
         }
 
         if (!country) {

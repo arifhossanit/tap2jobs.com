@@ -133,8 +133,13 @@ class JobRepository extends BaseRepository
         $data['default_country_states'] = $data['default_country_id']
             ? getStates($data['default_country_id'])
             : [];
-        $data['companies'] = Company::with('user')->get()->where('user.is_active', '=', 1)
-            ->pluck('user.full_name', 'id')->sort();
+        $data['companies'] = Company::query()
+            ->join('users', 'users.id', '=', 'companies.user_id')
+            ->where('users.is_active', 1)
+            ->orderBy('users.first_name')
+            ->orderBy('users.last_name')
+            ->selectRaw("companies.id, TRIM(CONCAT(COALESCE(users.first_name, ''), ' ', COALESCE(users.last_name, ''))) as company_label")
+            ->pluck('company_label', 'companies.id');
 
         return $data;
     }

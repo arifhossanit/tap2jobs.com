@@ -830,11 +830,15 @@ if (! function_exists('getCurrentVersion')) {
     function getCurrentVersion()
     {
         if (config('app.is_version') == 'true') {
-            $composerFile = file_get_contents('../composer.json');
-            $composerData = json_decode($composerFile, true);
-            $currentVersion = $composerData['version'];
+            $composerPath = base_path('composer.json');
+            if (! is_file($composerPath)) {
+                return null;
+            }
 
-            return 'v'.$currentVersion;
+            $composerData = json_decode((string) file_get_contents($composerPath), true);
+            $currentVersion = $composerData['version'] ?? null;
+
+            return $currentVersion ? 'v'.$currentVersion : null;
         }
     }
 }
