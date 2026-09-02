@@ -16,13 +16,7 @@ const hasSelectedSelect2Text = function($select, text) {
 };
 
 const shouldInsertSelect2Tag = function(data, $select, tag) {
-    if (hasSelectedSelect2Text($select, tag.text)) {
-        return false;
-    }
-
-    return !data.some(function(item) {
-        return !item.newTag && (!item.children || item.children.length > 0);
-    });
+    return !hasSelectedSelect2Text($select, tag.text);
 };
 
 const formatSelect2TagResult = function($select, data) {

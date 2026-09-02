@@ -12850,12 +12850,7 @@ var hasSelectedSelect2Text = function hasSelectedSelect2Text($select, text) {
   });
 };
 var shouldInsertSelect2Tag = function shouldInsertSelect2Tag(data, $select, tag) {
-  if (hasSelectedSelect2Text($select, tag.text)) {
-    return false;
-  }
-  return !data.some(function (item) {
-    return !item.newTag && (!item.children || item.children.length > 0);
-  });
+  return !hasSelectedSelect2Text($select, tag.text);
 };
 var formatSelect2TagResult = function formatSelect2TagResult($select, data) {
   if (data.newTag) {
