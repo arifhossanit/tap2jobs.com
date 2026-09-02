@@ -41,8 +41,11 @@
                             <button type="button" class="employer-account-section-link"
                                     data-account-section="billingAddressPanel">
                                 {{ __('messages.employer_account.billing_address') }}
+                                {{ __('messages.employer_account.billing_address') }}
                             </button>
                         </div>
+                        <button type="button" class="employer-account-nav-action employer-account-password-link"
+                                data-account-password-panel="employerPasswordPanel">
                         <button type="button" class="employer-account-nav-action employer-account-password-link"
                                 data-account-password-panel="employerPasswordPanel">
                             <i class="fa-solid fa-key"></i>
@@ -148,6 +151,8 @@
                                     <div>
                                         <h2 class="modal-title" id="employerAddIndustryModalLabel">{{ __('messages.employer_account.add_new_industry_title') }}</h2>
                                         <p>{{ __('messages.employer_account.specify_industry') }}</p>
+                                        <h2 class="modal-title" id="employerAddIndustryModalLabel">{{ __('messages.employer_account.add_new_industry_title') }}</h2>
+                                        <p>{{ __('messages.employer_account.specify_industry') }}</p>
                                     </div>
                                 </div>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -156,11 +161,14 @@
                                 <div class="alert alert-danger d-none" id="employerIndustryModalError"></div>
                                 <div>
                                     <label for="employerModalIndustryName" class="form-label">{{ __('messages.employer_account.your_industry_name') }}</label>
+                                    <label for="employerModalIndustryName" class="form-label">{{ __('messages.employer_account.your_industry_name') }}</label>
                                     <input type="text" class="form-control" id="employerModalIndustryName"
+                                           maxlength="150" placeholder="{{ __('messages.employer_account.type_industry_name') }}">
                                            maxlength="150" placeholder="{{ __('messages.employer_account.type_industry_name') }}">
                                 </div>
                             </div>
                             <div class="modal-footer">
+                                <button type="button" class="btn btn-success" id="employerAddIndustryButton">{{ __('messages.employer_account.add') }}</button>
                                 <button type="button" class="btn btn-success" id="employerAddIndustryButton">{{ __('messages.employer_account.add') }}</button>
                             </div>
                         </div>
@@ -181,6 +189,61 @@
     {{--    <script src="https://js.stripe.com/v3/"></script> --}}
     <script>
         var phoneNo = "{{ old('region_code') . old('phone') }}";
+
+        $(document).off('submit.employerAccountSave', '#editCompanyForm')
+            .on('submit.employerAccountSave', '#editCompanyForm', function (event) {
+                event.preventDefault();
+
+                const form = this;
+                const errorBox = document.getElementById('editValidationErrorsBox');
+
+                if (window.editEmployeeDetail && window.editEmployeeDetail.getText().trim().length === 0) {
+                    return;
+                }
+
+                if (document.getElementById('error-msg')?.textContent.trim()) {
+                    document.getElementById('phoneNumber')?.focus();
+                    return;
+                }
+
+                if (form.dataset.saving === 'true') {
+                    return;
+                }
+
+                form.dataset.saving = 'true';
+                errorBox?.classList.add('d-none');
+                processingBtn('#editCompanyForm', '#employerSaveChanges', 'loading');
+
+                $.ajax({
+                    url: form.action,
+                    type: 'POST',
+                    data: new FormData(form),
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        Accept: 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    success: function (result) {
+                        if (result.success) {
+                            displaySuccessMessage(result.message);
+                        }
+                    },
+                    error: function (result) {
+                        const response = result.responseJSON || {};
+                        const errors = response.errors || {};
+                        const firstError = Object.keys(errors).length
+                            ? errors[Object.keys(errors)[0]][0]
+                            : response.message;
+
+                        displayErrorMessage(firstError || '{{ __('messages.common.save_failed') }}');
+                    },
+                    complete: function () {
+                        form.dataset.saving = 'false';
+                        processingBtn('#editCompanyForm', '#employerSaveChanges');
+                    }
+                });
+            });
 
         $(document).off('submit.employerAccountSave', '#editCompanyForm')
             .on('submit.employerAccountSave', '#editCompanyForm', function (event) {
@@ -336,10 +399,40 @@
                 return;
             }
 
+            const passwordVisibilityButton = event.target.closest('.employer-account-password-visibility');
+
+            if (passwordVisibilityButton) {
+                const input = document.getElementById(passwordVisibilityButton.dataset.passwordTarget);
+                const icon = passwordVisibilityButton.querySelector('i');
+
+                if (input) {
+                    const showPassword = input.type === 'password';
+                    input.type = showPassword ? 'text' : 'password';
+                    icon?.classList.toggle('fa-eye', showPassword);
+                    icon?.classList.toggle('fa-eye-slash', !showPassword);
+                    passwordVisibilityButton.setAttribute(
+                        'aria-label',
+                        showPassword ? 'Hide password' : 'Show password'
+                    );
+                }
+
+                return;
+            }
+
             const toggle = event.target.closest('.employer-account-nav-toggle');
 
             if (toggle) {
                 const subnav = document.getElementById(toggle.getAttribute('aria-controls'));
+                const passwordPanel = document.getElementById('employerPasswordPanel');
+
+                if (passwordPanel && !passwordPanel.classList.contains('d-none')) {
+                    setEmployerPasswordView(false);
+                    setActiveAccountSection('companyDetailsPanel');
+                    toggle.setAttribute('aria-expanded', 'true');
+                    subnav?.classList.remove('is-collapsed');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
                 const passwordPanel = document.getElementById('employerPasswordPanel');
 
                 if (passwordPanel && !passwordPanel.classList.contains('d-none')) {
@@ -366,6 +459,12 @@
                 return;
             }
 
+            const passwordLink = event.target.closest('.employer-account-password-link');
+            if (passwordLink) {
+                setEmployerPasswordView(true);
+                return;
+            }
+
             if (!sectionLink) {
                 return;
             }
@@ -377,6 +476,7 @@
             }
 
             setActiveAccountSection(targetPanel.id);
+            setEmployerPasswordView(false);
             setEmployerPasswordView(false);
 
             const profileToggle = document.querySelector('.employer-account-nav-toggle');
@@ -403,6 +503,10 @@
                     return;
                 }
 
+                if (!document.getElementById('employerPasswordPanel').classList.contains('d-none')) {
+                    return;
+                }
+
                 let currentPanel = accountPanels[0];
                 const activeThreshold = getEmployerAccountScrollOffset() + 8;
 
@@ -419,6 +523,22 @@
             window.addEventListener('resize', syncEmployerAccountScrollOffset, { passive: true });
             syncEmployerAccountScrollOffset();
             updateActiveSection();
+
+            const applyAccountHash = function () {
+                if (window.location.hash === '#change-password') {
+                    setEmployerPasswordView(true);
+                    return;
+                }
+
+                if (window.location.hash === '#company-details') {
+                    setEmployerPasswordView(false);
+                    setActiveAccountSection('companyDetailsPanel');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            };
+
+            window.addEventListener('hashchange', applyAccountHash);
+            applyAccountHash();
 
             const applyAccountHash = function () {
                 if (window.location.hash === '#change-password') {
@@ -654,6 +774,7 @@
                     });
 
                     this.textContent = isEditing ? 'Done' : 'Edit Contact Person';
+                    this.textContent = isEditing ? 'Done' : 'Edit Contact Person';
                     if (isEditing) {
                         editableContactFields[0].focus();
                     }
@@ -692,14 +813,17 @@
                 if (existingBillingNumber) {
                     billingPhone.setNumber('+' + String(existingBillingNumber).replace(/\D/g, ''));
                     normalizePhoneDigits(billingPhoneInput);
+                    normalizePhoneDigits(billingPhoneInput);
                 }
 
                 const updateBillingPrefix = function () {
                     billingPrefixCode.value = billingPhone.getSelectedCountryData().dialCode || '880';
                     normalizePhoneDigits(billingPhoneInput);
+                    normalizePhoneDigits(billingPhoneInput);
                 };
 
                 billingPhoneInput.addEventListener('input', function () {
+                    normalizePhoneDigits(this);
                     normalizePhoneDigits(this);
                 });
                 billingPhoneInput.addEventListener('countrychange', updateBillingPrefix);
@@ -758,6 +882,7 @@
 
             const businessDescription = document.querySelector('#companyDetailsPanel .ql-editor');
             if (businessDescription) {
+                businessDescription.setAttribute('data-placeholder', '{{ __('messages.employer_account.business_description') }}');
                 businessDescription.setAttribute('data-placeholder', '{{ __('messages.employer_account.business_description') }}');
             }
         });

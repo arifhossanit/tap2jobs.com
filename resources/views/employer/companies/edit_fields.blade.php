@@ -16,11 +16,13 @@
     <div class="employer-account-section-title">
         <i class="fa-solid fa-building"></i>
         <span>{{ __('messages.employer_account.company_details_information') }}</span>
+        <span>{{ __('messages.employer_account.company_details_information') }}</span>
     </div>
 
     <div class="employer-account-form">
         <div class="row">
             <div class="col-xl-4 col-md-6 col-sm-12 mb-5">
+                {{ Form::label('name', __('messages.employer_account.company_name'), ['class' => 'form-label']) }}
                 {{ Form::label('name', __('messages.employer_account.company_name'), ['class' => 'form-label']) }}
                 <span class="required"></span>
                 {{ Form::text('name', isset($user) ? $user->full_name : null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.company.name')]) }}
@@ -28,13 +30,17 @@
             <div class="col-xl-4 col-md-6 col-sm-12 mb-5">
                 {{ Form::label('company_name_bn', __('messages.employer_account.company_name_bn'), ['class' => 'form-label']) }}
                 {{ Form::text('company_name_bn', $company->company_name_bn, ['class' => 'form-control', 'placeholder' => __('messages.employer_account.company_name_bn_placeholder')]) }}
+                {{ Form::label('company_name_bn', __('messages.employer_account.company_name_bn'), ['class' => 'form-label']) }}
+                {{ Form::text('company_name_bn', $company->company_name_bn, ['class' => 'form-control', 'placeholder' => __('messages.employer_account.company_name_bn_placeholder')]) }}
             </div>
             <div class="col-xl-4 col-md-6 col-sm-12 mb-5">
+                {{ Form::label('established_in', __('messages.employer_account.year_of_establishment'), ['class' => 'form-label']) }}
                 {{ Form::label('established_in', __('messages.employer_account.year_of_establishment'), ['class' => 'form-label']) }}
                 <span class="required"></span>
                 {{ Form::selectYear('established_in', date('Y'), 2000, isset($company->established_in) ? $company->established_in : '', ['class' => 'form-select', 'data-control' => 'select2', 'id' => 'establishedIn']) }}
             </div>
             <div class="col-12 mb-5">
+                <div class="employer-account-field-heading required-heading">{{ __('messages.employer_account.number_of_employees') }}</div>
                 <div class="employer-account-field-heading required-heading">{{ __('messages.employer_account.number_of_employees') }}</div>
                 @php
                     $legacySize = $data['companySize'][$company->company_size_id] ?? null;
@@ -83,6 +89,7 @@
                     <button type="button" class="employer-add-industry-trigger" id="employerAddIndustryTrigger"
                             data-bs-toggle="modal" data-bs-target="#employerAddIndustryModal">
                         <i class="fa-solid fa-plus"></i>
+                        <span>{{ __('messages.employer_account.add_new_industry') }}</span>
                         <span>{{ __('messages.employer_account.add_new_industry') }}</span>
                     </button>
                 </div>
@@ -208,6 +215,7 @@
                 {{ Form::text('billing_address', old('billing_address', $company->billing_address ?: $company->location), ['class' => 'form-control', 'required', 'maxlength' => 255, 'placeholder' => __('messages.employer_account.enter_billing_address')]) }}
             </div>
             <div class="col-md-6 col-sm-12 employer-billing-mobile">
+                <label for="billingPhoneNumber" class="form-label">{{ __('messages.employer_account.billing_contact_number') }}<span class="text-danger">*</span></label>
                 <label for="billingPhoneNumber" class="form-label">{{ __('messages.employer_account.billing_contact_number') }}<span class="text-danger">*</span></label>
                 <input type="tel" name="billing_phone" id="billingPhoneNumber" class="form-control" required
                        maxlength="11" inputmode="numeric" pattern="[0-9]{1,11}"

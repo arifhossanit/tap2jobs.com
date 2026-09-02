@@ -162,6 +162,7 @@ function loadEmployerRegistrationForm () {
             showLiveError(username, usernameFeedback, '');
 
             if (!value || !/^[\p{L}\p{M}\p{N}._-]+$/u.test(value)) {
+            if (!value || !/^[\p{L}\p{M}\p{N}._-]+$/u.test(value)) {
                 return;
             }
 

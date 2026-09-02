@@ -114,6 +114,7 @@
                                         <h2 class="employer-user-information-title">
                                             <i class="fa-solid fa-user-tie"></i>
                                             <span>{{ __('messages.employer_register.user_information_title') }}</span>
+                                            <span>{{ __('messages.employer_register.user_information_title') }}</span>
                                         </h2>
 
                                         <div class="row g-4">
@@ -121,11 +122,13 @@
                                                 <div class="form-group">
                                                     <label for="employerUsername" class="employer-user-information-label">
                                                         {{ __('messages.employer_register.username') }} <span class="text-danger">*</span>
+                                                        {{ __('messages.employer_register.username') }} <span class="text-danger">*</span>
                                                     </label>
                                                     <div class="employer-user-information-input">
                                                         <i class="fa-regular fa-user"></i>
                                                         <input type="text" name="username" id="employerUsername"
                                                                class="form-control" value="{{ old('username') }}"
+                                                               maxlength="100" placeholder="{{ __('messages.employer_register.username_placeholder') }}" required>
                                                                maxlength="100" placeholder="{{ __('messages.employer_register.username_placeholder') }}" required>
                                                     </div>
                                                     <div class="employer-live-validation-message" id="employerUsernameFeedback"
