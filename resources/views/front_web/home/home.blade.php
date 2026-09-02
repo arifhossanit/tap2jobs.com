@@ -202,7 +202,7 @@
 
     .bd-nav-links a {
         color: #25374f;
-        font-size: 17px;
+        font-size: 19px;
         white-space: nowrap;
     }
 
@@ -653,7 +653,7 @@
         color: #4e4e4e;
         font-size: 14px;
         display: flex;
-        align-items: flex-start;
+        align-items: baseline;
         padding: 7px 0;
         white-space: normal;
         word-break: break-word;
@@ -664,13 +664,12 @@
     .bd-category-grid a::before {
         content: '›';
         color: #3f4c58;
-        font-size: 20px;
+        font-size: 19px;
         font-weight: bold;
-        display: inline-flex;
-        align-items: center;
-        height: 1.4em;
-        line-height: 1;
+        display: inline-block;
+        line-height: inherit;
         margin-right: 7px;
+        transform: translateY(-1px);
         flex-shrink: 0;
     }
 
@@ -1285,3 +1284,4 @@
     });
 </script>
 @endsection
+

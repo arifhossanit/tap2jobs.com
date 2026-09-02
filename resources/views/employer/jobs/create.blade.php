@@ -8,10 +8,11 @@
     <link href="{{ asset('css/bootstrap-datetimepicker.css') }}" rel="stylesheet" type="text/css"/>
 @endpush
 @section('content')
-    <div class="d-flex flex-column">
+    <div class="d-flex flex-column job-create-page is-loading">
         @include('layouts.errors')
 
-        <div class="card">
+        @include('jobs.partials.create_skeleton')
+        <div class="card job-create-form-card">
             <div class="card-body">
                 {{ Form::open(['route' => 'job.store','id' => 'createJobForm']) }}
                 @include('employer.jobs.fields')
@@ -28,3 +29,4 @@
     @include('jobs.modals.career_levels')
     @include('jobs.modals.functional_areas')
 @endsection
+
