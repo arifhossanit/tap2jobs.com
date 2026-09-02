@@ -5,7 +5,18 @@
 
                 <div class="mb-4">
                     <a href="{{ route('front.job.details', $job['job_id']) }}" class="card p-3 p-sm-4 border-0 shadow-sm text-decoration-none">
-                        <div class="d-flex gap-3 gap-sm-4 justify-content-between position-relative">
+                        <div class="d-flex gap-3 gap-sm-4 align-items-start position-relative">
+                            @php
+                                $logoUrl = $job->company?->company_url;
+                                $hasLogo = $logoUrl && !str_contains($logoUrl, 'infyom-logo.png') && !str_contains($logoUrl, 'employer-image.png');
+                            @endphp
+
+                            @if($hasLogo)
+                                <div class="flex-shrink-0">
+                                    <img src="{{ $logoUrl }}" class="card-img job-card-company-logo" alt="company logo" style="width: 72px; height: 60px; min-width: 72px; object-fit: contain; border: 1px solid #dee2e6; padding: 6px; border-radius: 5px;">
+                                </div>
+                            @endif
+
                             <div class="flex-grow-1 min-w-0">
                                 <div class="card-body p-0">
                                     <h5 class="card-title text-secondary fs-18 mb-0">
@@ -40,17 +51,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                            @php
-                                $logoUrl = $job->company?->company_url;
-                                $hasLogo = $logoUrl && !str_contains($logoUrl, 'infyom-logo.png') && !str_contains($logoUrl, 'employer-image.png');
-                            @endphp
-                            
-                            @if($hasLogo)
-                                <div class="flex-shrink-0">
-                                    <img src="{{ $logoUrl }}" class="card-img job-card-company-logo" alt="...">
-                                </div>
-                            @endif
+
                         </div>
                     </a>
                 </div>
@@ -66,3 +67,4 @@
         {{$jobs->links() }}
     @endif
 </div>
+

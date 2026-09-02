@@ -136,7 +136,18 @@ trait ValidatesJob
                     }
                 },
             ],
-            'career_level_id' => ['nullable', 'integer', Rule::exists('career_levels', 'id')],
+            'career_level_id' => [
+                'nullable',
+                'string',
+                'max:150',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    $value = trim((string) $value);
+
+                    if (is_numeric($value) && ! \App\Models\CareerLevel::whereKey((int) $value)->exists()) {
+                        $fail(__('validation.exists', ['attribute' => $attribute]));
+                    }
+                },
+            ],
             'job_shift_id' => ['nullable', 'integer', Rule::exists('job_shifts', 'id')],
             'degree_level_id' => ['nullable', 'integer', Rule::exists('education_degree_levels', 'id')],
             'degree_title_id' => [

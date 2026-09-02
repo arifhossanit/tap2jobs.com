@@ -22,13 +22,14 @@ function initCandidateProfileAccordion(options) {
         ? Array.from(document.querySelectorAll(options.menuSelector))
         : [];
 
-    const setActiveSection = function (panelId) {
+    const setActiveSection = function (panelId, sectionId) {
         if (!options.menuDatasetKey) {
             return;
         }
 
         menuLinks.forEach(function (link) {
-            link.classList.toggle('active', link.dataset[options.menuDatasetKey] === panelId);
+            const linkedSectionId = link.dataset[options.menuDatasetKey];
+            link.classList.toggle('active', linkedSectionId === panelId || linkedSectionId === sectionId);
         });
     };
 
@@ -66,8 +67,8 @@ function initCandidateProfileAccordion(options) {
             });
         }
 
-        if (expanded && panel) {
-            setActiveSection(panel.id);
+        if (expanded) {
+            setActiveSection(panel ? panel.id : null, section.id);
         }
     };
 
@@ -123,20 +124,27 @@ function initCandidateProfileAccordion(options) {
         link.addEventListener('click', function (event) {
             event.preventDefault();
 
-            const panelId = link.dataset[options.menuDatasetKey];
-            const panel = document.getElementById(panelId);
-            const section = panel ? panel.querySelector('.candidate-profile-section__collapse') : null;
+            const targetId = link.dataset[options.menuDatasetKey];
+            const target = document.getElementById(targetId);
+            const section = target
+                ? (target.classList.contains('candidate-profile-section__collapse')
+                    ? target
+                    : target.querySelector('.candidate-profile-section__collapse'))
+                : null;
+            const panel = section
+                ? section.closest('.candidate-profile-section, .candidate-education-panel')
+                : target;
 
-            if (!panel || !section || typeof bootstrap === 'undefined') {
+            if (!target || !section || typeof bootstrap === 'undefined') {
                 return;
             }
 
             bootstrap.Collapse.getOrCreateInstance(section, { toggle: false }).show();
-            setActiveSection(panel.id);
+            setActiveSection(panel ? panel.id : null, section.id);
             if (typeof window.scrollCandidateProfileSection === 'function') {
-                window.scrollCandidateProfileSection(panel);
+                window.scrollCandidateProfileSection(panel || section);
             } else {
-                panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                (panel || section).scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         });
     });
@@ -1556,3 +1564,4 @@ listenShowBsModal('#addExperienceModal', function () {
     $('#endDateExperience').prop('disabled', false);
     setDatePicker('#startDateExperience', '#endDateExperience');
 });
+

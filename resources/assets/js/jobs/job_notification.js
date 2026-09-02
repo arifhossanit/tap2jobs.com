@@ -5,9 +5,6 @@ Livewire.hook('element.init', ({ component, el }) => {
         if (!$('#createJobNotificationForm').length) {
             return;
         }
-
-
-        checkBoxSelect();
     },500)
 })
 
@@ -26,13 +23,35 @@ function loadSelect2() {
 }
 
 
-listenSubmit('#createJobNotificationForm', function () {
+listenSubmit('#createJobNotificationForm', function (e) {
+    e.preventDefault();
     if ($('.jobCheck:checked').length === 0) {
         displayErrorMessage(Lang.get('js.select_job'));
         return false;
     }
-    screenLock();
-    startLoader();
+    
+    let submitBtn = $(this).find('button[type="submit"], input[type="submit"]');
+    submitBtn.prop('disabled', true);
+    
+    $.ajax({
+        url: $(this).attr('action'),
+        type: 'POST',
+        data: $(this).serialize(),
+        success: function (result) {
+            if (result.success) {
+                displaySuccessMessage(result.message);
+                $('#candidateId').val(null).trigger('change');
+                $('.jobCheck').prop('checked', false);
+                $('#ckbCheckAll').prop('checked', false);
+            }
+        },
+        error: function (result) {
+            displayErrorMessage(result.responseJSON.message);
+        },
+        complete: function () {
+            submitBtn.prop('disabled', false);
+        }
+    });
 });
 
 listenClick('#resetJobNotificationFilter', function () {
@@ -44,36 +63,13 @@ listenClick('#resetJobNotificationFilter', function () {
         type: 'get',
         success: function (result) {
             if (result.success) {
-                let jobNotification = '';
                 let noJobsAvailable = `<li class="no-job-available"><h4 class="text-center mt-9">${Lang.get('js.no_jobs_available')}</h4></li>`;
-                let index;
-
-                if (result.data.length > 0) {
-                    for (index = 0; index <
-                    result.data.length ; index++) {
-                        let jobs = [
-                            {
-                                'job_id': result.data[index].id,
-                                'job_title': result.data[index].job_title,
-                                'created_by': humanReadableFormatDate(
-                                    result.data[index].created_at),
-                                'jobDetails': $('#indexJobDetails').
-                                        val() + '/' +
-                                    result.data[index].id,
-                            }];
-
-                        let jobNotificationLi = prepareTemplateRender(
-                            '#jobNotificationTemplate', jobs);
-                        jobNotification += jobNotificationLi;
-                    }
+                if (result.data && result.data.html) {
+                    $('.job-notification-ul').html(result.data.html);
+                } else {
+                    $('.job-notification-ul').html(noJobsAvailable);
                 }
-
-                $('.job-notification-ul').
-                    append(jobNotification != ''
-                        ? jobNotification
-                        : noJobsAvailable);
-                checkBoxSelect();
-
+                $('#ckbCheckAll').prop('checked', false);
             }
         },
         error: function (result) {
@@ -99,54 +95,41 @@ listenChange('#filter_employers', function () {
         type: 'get',
         success: function (result) {
             if (result.success) {
-                let jobNotification = '';
                 let noJobsAvailable = `<li class="no-job-available"><h4 class="text-center mt-9">${Lang.get('js.no_jobs_available')}</h4></li>`;
-                if (!isEmpty(employerId)) {
-                    let index;
-                    if (result.data.jobs.length > 0) {
-                        for (index = 0; index <
-                        result.data.jobs.length; ++index) {
-                            let data = [
-                                {
-                                    'job_id': result.data.jobs[index].id,
-                                    'job_title': result.data.jobs[index].job_title,
-                                    'created_by': humanReadableFormatDate(
-                                        result.data.jobs[index].created_at),
-                                    'jobDetails': $('#indexJobDetails').
-                                        val() + '/' +
-                                        result.data.jobs[index].id,
-                                }];
-                            let jobNotificationLi = prepareTemplateRender(
-                                '#jobNotificationTemplate', data);
-                            jobNotification += jobNotificationLi;
-                        }
-                    }
+                if (result.data && result.data.html) {
+                    $('.job-notification-ul').html(result.data.html);
                 } else {
-                    if (result.data.length > 0) {
-                        let count;
-                        for (count = 0; count <
-                        result.data.length; ++count) {
-                            let data = [
-                                {
-                                    'job_id': result.data[count].id,
-                                    'job_title': result.data[count].job_title,
-                                    'created_by': humanReadableFormatDate(
-                                        result.data[count].created_at),
-                                    'jobDetails': $('#indexJobDetails').
-                                        val() + '/' +
-                                        result.data[count].id,
-                                }];
-                            let jobLi = prepareTemplateRender(
-                                '#jobNotificationTemplate', data);
-                            jobNotification += jobLi;
-                        }
-                    }
+                    $('.job-notification-ul').html(noJobsAvailable);
                 }
-                $('.job-notification-ul').
-                append(jobNotification != ''
-                    ? jobNotification
-                    : noJobsAvailable);
-                checkBoxSelect();
+                $('#ckbCheckAll').prop('checked', false);
+            }
+        },
+        error: function (result) {
+            manageAjaxErrors(result);
+        },
+    });
+});
+
+// Handle AJAX pagination clicks
+$(document).on('click', '.job-notification-ul .pagination a', function (e) {
+    e.preventDefault();
+    let url = $(this).attr('href');
+    let employerId = $('#filter_employers').val();
+
+    if (!url.includes('employer-jobs') && !isEmpty(employerId)) {
+        // If pagination URL doesn't have employer-jobs route but filter is applied
+        url = $('#indexGetEmployerJobs').val() + '/' + employerId + '?page=' + new URL(url).searchParams.get('page');
+    } else if (isEmpty(employerId) && !url.includes('employer-jobs')) {
+        url = $('#indexGetEmployerJobs').val() + '?page=' + new URL(url).searchParams.get('page');
+    }
+
+    $.ajax({
+        url: url,
+        type: 'get',
+        success: function (result) {
+            if (result.success && result.data && result.data.html) {
+                $('.job-notification-ul').html(result.data.html);
+                $('#ckbCheckAll').prop('checked', false);
             }
         },
         error: function (result) {
@@ -160,16 +143,15 @@ function humanReadableFormatDate (date) {
 };
 
 //select all checkbox
-function checkBoxSelect () {
-    $('#ckbCheckAll').click(function () {
-        $('.jobCheck').prop('checked', $(this).prop('checked'));
-    });
+$(document).on('click', '#ckbCheckAll', function () {
+    $('.jobCheck').prop('checked', $(this).prop('checked'));
+});
 
-    $('.jobCheck').on('click', function () {
-        if ($('.jobCheck:checked').length == $('.jobCheck').length) {
-            $('#ckbCheckAll').prop('checked', true);
-        } else {
-            $('#ckbCheckAll').prop('checked', false);
-        }
-    });
-}
+$(document).on('click', '.jobCheck', function () {
+    if ($('.jobCheck:checked').length === $('.jobCheck').length && $('.jobCheck').length > 0) {
+        $('#ckbCheckAll').prop('checked', true);
+    } else {
+        $('#ckbCheckAll').prop('checked', false);
+    }
+});
+

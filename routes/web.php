@@ -504,6 +504,7 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
 
          //job expired
          Route::get('expired-jobs', [JobController::class, 'getExpiredJobs'])->name('admin.jobs.expiredJobs');
+         Route::get('expire-in-7-days', [JobController::class, 'getExpireIn7DaysJobs'])->name('admin.jobs.expireIn7DaysJobs');
 
          // candidate routes
          Route::get('candidates', [CandidateController::class, 'index'])->name('candidates.index');

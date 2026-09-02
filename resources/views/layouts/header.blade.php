@@ -1,5 +1,7 @@
 @php($notifications = \App\Models\Notification::whereNotificationFor(\App\Models\Notification::ADMIN)->where('user_id', getLoggedInUserId())->orderByDesc('created_at')->take(10)->get())
 @php($notificationCount = $notifications->whereNull('read_at')->count())
+@php($pendingJobsCount = \App\Models\Job::where('status', \App\Models\Job::SELECT_PANDING)->count())
+@php($expireIn7DaysCount = \App\Models\Job::whereDate('job_expiry_date', '<=', \Carbon\Carbon::today()->addDays(7)->toDateString())->whereDate('job_expiry_date', '>=', \Carbon\Carbon::today()->toDateString())->where('status', \App\Models\Job::STATUS_OPEN)->where('is_suspended', \App\Models\Job::NOT_SUSPENDED)->count())
 <header class='d-flex align-items-center justify-content-between flex-grow-1 header px-4 px-lg-7 px-xl-0'>
     <button type="button" class="btn px-0 aside-menu-container__aside-menubar d-block d-xl-none sidebar-btn">
         <i class="fa-solid fa-bars fs-1"></i>
@@ -14,6 +16,26 @@
         </div>
     </nav>
     <ul class="nav align-items-center">
+        <li class="px-sm-3 px-2 d-none d-lg-block">
+            <a href="{{ route('admin.PendingJobs.index') }}" class="btn btn-outline-warning btn-sm d-flex align-items-center gap-2">
+                Pending Jobs
+                @if($pendingJobsCount > 0)
+                    <span class="badge bg-danger text-white rounded-pill border border-light">
+                        {{ $pendingJobsCount }}
+                    </span>
+                @endif
+            </a>
+        </li>
+        <li class="px-sm-3 px-2 d-none d-lg-block">
+            <a href="{{ route('admin.jobs.expireIn7DaysJobs') }}" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-2">
+                Expire in 7 days
+                @if($expireIn7DaysCount > 0)
+                    <span class="badge bg-danger text-white rounded-pill border border-light">
+                        {{ $expireIn7DaysCount }}
+                    </span>
+                @endif
+            </a>
+        </li>
         @if(getLoggedInUser()->theme_mode)
             <li class="px-sm-3 px-2">
                 <a  href="{{ route('theme.mode') }}" title="Switch to Light Mode">

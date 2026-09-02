@@ -58,6 +58,7 @@ class UserVerifyNotification extends VerifyEmail implements ShouldQueue
         $body = str_replace($keyVariable, $value, $templateBody->body);
         $data['body'] = $body;
         $data['logo_path'] = $this->resolveLogoPath();
+        $data['logo_data_uri'] = $this->pathToDataUri($data['logo_path']);
 
         return (new MailMessage)
             ->subject($templateBody->subject)
@@ -92,6 +93,17 @@ class UserVerifyNotification extends VerifyEmail implements ShouldQueue
         return file_exists($fallbackLogoPath) ? $fallbackLogoPath : null;
     }
 
+    private function pathToDataUri(?string $path): ?string
+    {
+        if (empty($path) || ! file_exists($path)) {
+            return null;
+        }
+
+        $mimeType = mime_content_type($path) ?: 'image/png';
+
+        return 'data:'.$mimeType.';base64,'.base64_encode((string) file_get_contents($path));
+    }
+
     /**
      * Get the array representation of the notification.
      *
@@ -104,3 +116,4 @@ class UserVerifyNotification extends VerifyEmail implements ShouldQueue
         ];
     }
 }
+

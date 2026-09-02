@@ -3981,12 +3981,13 @@ function initCandidateProfileAccordion(options) {
   accordion.dataset.profileAccordionReady = 'true';
   var sectionBodies = Array.from(accordion.querySelectorAll('.candidate-profile-section__collapse'));
   var menuLinks = options.menuSelector ? Array.from(document.querySelectorAll(options.menuSelector)) : [];
-  var setActiveSection = function setActiveSection(panelId) {
+  var setActiveSection = function setActiveSection(panelId, sectionId) {
     if (!options.menuDatasetKey) {
       return;
     }
     menuLinks.forEach(function (link) {
-      link.classList.toggle('active', link.dataset[options.menuDatasetKey] === panelId);
+      var linkedSectionId = link.dataset[options.menuDatasetKey];
+      link.classList.toggle('active', linkedSectionId === panelId || linkedSectionId === sectionId);
     });
   };
   var setPanelToggleState = function setPanelToggleState(section, expanded) {
@@ -4014,8 +4015,8 @@ function initCandidateProfileAccordion(options) {
         action.classList.toggle('d-none', !expanded);
       });
     }
-    if (expanded && panel) {
-      setActiveSection(panel.id);
+    if (expanded) {
+      setActiveSection(panel ? panel.id : null, section.id);
     }
   };
   var refreshSection = function refreshSection(section) {
@@ -4058,20 +4059,21 @@ function initCandidateProfileAccordion(options) {
   menuLinks.forEach(function (link) {
     link.addEventListener('click', function (event) {
       event.preventDefault();
-      var panelId = link.dataset[options.menuDatasetKey];
-      var panel = document.getElementById(panelId);
-      var section = panel ? panel.querySelector('.candidate-profile-section__collapse') : null;
-      if (!panel || !section || typeof bootstrap === 'undefined') {
+      var targetId = link.dataset[options.menuDatasetKey];
+      var target = document.getElementById(targetId);
+      var section = target ? target.classList.contains('candidate-profile-section__collapse') ? target : target.querySelector('.candidate-profile-section__collapse') : null;
+      var panel = section ? section.closest('.candidate-profile-section, .candidate-education-panel') : target;
+      if (!target || !section || typeof bootstrap === 'undefined') {
         return;
       }
       bootstrap.Collapse.getOrCreateInstance(section, {
         toggle: false
       }).show();
-      setActiveSection(panel.id);
+      setActiveSection(panel ? panel.id : null, section.id);
       if (typeof window.scrollCandidateProfileSection === 'function') {
-        window.scrollCandidateProfileSection(panel);
+        window.scrollCandidateProfileSection(panel || section);
       } else {
-        panel.scrollIntoView({
+        (panel || section).scrollIntoView({
           behavior: 'smooth',
           block: 'start'
         });
@@ -14521,7 +14523,6 @@ Livewire.hook('element.init', function (_ref) {
     if (!$('#createJobNotificationForm').length) {
       return;
     }
-    checkBoxSelect();
   }, 500);
 });
 function loadSelect2() {
@@ -14534,13 +14535,33 @@ function loadSelect2() {
   }
   $('#filter_employers').select2();
 }
-listenSubmit('#createJobNotificationForm', function () {
+listenSubmit('#createJobNotificationForm', function (e) {
+  e.preventDefault();
   if ($('.jobCheck:checked').length === 0) {
     displayErrorMessage(Lang.get('js.select_job'));
     return false;
   }
-  screenLock();
-  startLoader();
+  var submitBtn = $(this).find('button[type="submit"], input[type="submit"]');
+  submitBtn.prop('disabled', true);
+  $.ajax({
+    url: $(this).attr('action'),
+    type: 'POST',
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        $('#candidateId').val(null).trigger('change');
+        $('.jobCheck').prop('checked', false);
+        $('#ckbCheckAll').prop('checked', false);
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    },
+    complete: function complete() {
+      submitBtn.prop('disabled', false);
+    }
+  });
 });
 listenClick('#resetJobNotificationFilter', function () {
   $('#filter_employers').val('').trigger('change');
@@ -14550,23 +14571,13 @@ listenClick('#resetJobNotificationFilter', function () {
     type: 'get',
     success: function success(result) {
       if (result.success) {
-        var jobNotification = '';
         var noJobsAvailable = "<li class=\"no-job-available\"><h4 class=\"text-center mt-9\">".concat(Lang.get('js.no_jobs_available'), "</h4></li>");
-        var index;
-        if (result.data.length > 0) {
-          for (index = 0; index < result.data.length; index++) {
-            var jobs = [{
-              'job_id': result.data[index].id,
-              'job_title': result.data[index].job_title,
-              'created_by': humanReadableFormatDate(result.data[index].created_at),
-              'jobDetails': $('#indexJobDetails').val() + '/' + result.data[index].id
-            }];
-            var jobNotificationLi = prepareTemplateRender('#jobNotificationTemplate', jobs);
-            jobNotification += jobNotificationLi;
-          }
+        if (result.data && result.data.html) {
+          $('.job-notification-ul').html(result.data.html);
+        } else {
+          $('.job-notification-ul').html(noJobsAvailable);
         }
-        $('.job-notification-ul').append(jobNotification != '' ? jobNotification : noJobsAvailable);
-        checkBoxSelect();
+        $('#ckbCheckAll').prop('checked', false);
       }
     },
     error: function error(result) {
@@ -14591,39 +14602,39 @@ listenChange('#filter_employers', function () {
     type: 'get',
     success: function success(result) {
       if (result.success) {
-        var jobNotification = '';
         var noJobsAvailable = "<li class=\"no-job-available\"><h4 class=\"text-center mt-9\">".concat(Lang.get('js.no_jobs_available'), "</h4></li>");
-        if (!isEmpty(employerId)) {
-          var index;
-          if (result.data.jobs.length > 0) {
-            for (index = 0; index < result.data.jobs.length; ++index) {
-              var data = [{
-                'job_id': result.data.jobs[index].id,
-                'job_title': result.data.jobs[index].job_title,
-                'created_by': humanReadableFormatDate(result.data.jobs[index].created_at),
-                'jobDetails': $('#indexJobDetails').val() + '/' + result.data.jobs[index].id
-              }];
-              var jobNotificationLi = prepareTemplateRender('#jobNotificationTemplate', data);
-              jobNotification += jobNotificationLi;
-            }
-          }
+        if (result.data && result.data.html) {
+          $('.job-notification-ul').html(result.data.html);
         } else {
-          if (result.data.length > 0) {
-            var count;
-            for (count = 0; count < result.data.length; ++count) {
-              var _data = [{
-                'job_id': result.data[count].id,
-                'job_title': result.data[count].job_title,
-                'created_by': humanReadableFormatDate(result.data[count].created_at),
-                'jobDetails': $('#indexJobDetails').val() + '/' + result.data[count].id
-              }];
-              var jobLi = prepareTemplateRender('#jobNotificationTemplate', _data);
-              jobNotification += jobLi;
-            }
-          }
+          $('.job-notification-ul').html(noJobsAvailable);
         }
-        $('.job-notification-ul').append(jobNotification != '' ? jobNotification : noJobsAvailable);
-        checkBoxSelect();
+        $('#ckbCheckAll').prop('checked', false);
+      }
+    },
+    error: function error(result) {
+      manageAjaxErrors(result);
+    }
+  });
+});
+
+// Handle AJAX pagination clicks
+$(document).on('click', '.job-notification-ul .pagination a', function (e) {
+  e.preventDefault();
+  var url = $(this).attr('href');
+  var employerId = $('#filter_employers').val();
+  if (!url.includes('employer-jobs') && !isEmpty(employerId)) {
+    // If pagination URL doesn't have employer-jobs route but filter is applied
+    url = $('#indexGetEmployerJobs').val() + '/' + employerId + '?page=' + new URL(url).searchParams.get('page');
+  } else if (isEmpty(employerId) && !url.includes('employer-jobs')) {
+    url = $('#indexGetEmployerJobs').val() + '?page=' + new URL(url).searchParams.get('page');
+  }
+  $.ajax({
+    url: url,
+    type: 'get',
+    success: function success(result) {
+      if (result.success && result.data && result.data.html) {
+        $('.job-notification-ul').html(result.data.html);
+        $('#ckbCheckAll').prop('checked', false);
       }
     },
     error: function error(result) {
@@ -14637,18 +14648,16 @@ function humanReadableFormatDate(date) {
 ;
 
 //select all checkbox
-function checkBoxSelect() {
-  $('#ckbCheckAll').click(function () {
-    $('.jobCheck').prop('checked', $(this).prop('checked'));
-  });
-  $('.jobCheck').on('click', function () {
-    if ($('.jobCheck:checked').length == $('.jobCheck').length) {
-      $('#ckbCheckAll').prop('checked', true);
-    } else {
-      $('#ckbCheckAll').prop('checked', false);
-    }
-  });
-}
+$(document).on('click', '#ckbCheckAll', function () {
+  $('.jobCheck').prop('checked', $(this).prop('checked'));
+});
+$(document).on('click', '.jobCheck', function () {
+  if ($('.jobCheck:checked').length === $('.jobCheck').length && $('.jobCheck').length > 0) {
+    $('#ckbCheckAll').prop('checked', true);
+  } else {
+    $('#ckbCheckAll').prop('checked', false);
+  }
+});
 
 /***/ },
 

@@ -1123,7 +1123,7 @@
                     <div class="bd-stat__icon">
                         <i class="fa-solid fa-user-tie"></i>
                     </div>
-                    <span>@lang('web.home_page.vacancies')<b>{{ number_format(($dataCounts['jobs'] ?? 0) * 3) }}+</b></span>
+                    <span>@lang('web.home_page.vacancies')<b>{{ number_format($dataCounts['vacancies'] ?? 0) }}</b></span>
                 </div>
                 <div class="bd-stat">
                     <div class="bd-stat__icon">
@@ -1135,7 +1135,7 @@
                     <div class="bd-stat__icon">
                         <i class="fa-solid fa-burst"></i>
                     </div>
-                    <span>@lang('web.home_page.new_jobs')<b>{{ $latestJobs->count() }}</b></span>
+                    <span>@lang('web.home_page.new_jobs')<b>{{ number_format($quickLinkCounts['new_jobs'] ?? 0) }}</b></span>
                 </div>
             </div>
             <!-- <form class="bd-search" action="{{ route('front.search.jobs') }}" method="get">

@@ -38,31 +38,41 @@ class JobNotificationController extends AppBaseController
         return view('job_notification.index')->with($data);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): JsonResponse
     {
-        $input = $request->all();
+        $input = $request->validate([
+            'candidate_id' => ['required', 'array', 'min:1'],
+            'candidate_id.*' => ['required', 'integer', 'exists:candidates,id'],
+            'job_id' => ['required', 'array', 'min:1'],
+            'job_id.*' => ['required', 'integer', 'exists:jobs,id'],
+        ]);
 
-        $jobNotification = $this->jobNotificationRepository->sendJobNotification($input);
+        $this->jobNotificationRepository->sendJobNotification($input);
 
-        Flash::success(__('messages.flash.job_notification'));
-
-        return redirect(route('job-notification.index'));
+        return $this->sendSuccess(__('messages.flash.job_notification'));
     }
 
-    public function getEmployerJobs($id = null): JsonResponse
+    public function getEmployerJobs(Request $request, $id = null): JsonResponse
     {
         if (! empty($id)) {
-            $employerJobs = Company::where('id', $id)->with([
-                'user', 'jobs' => function (HasMany $query) {
-                    $query->whereDate('job_expiry_date', '>=', Carbon::now()->toDateString())->where('status', '=', '1');
-                },
-            ])->first();
+            // Need to paginate the relation or fetch from Job model directly
+            $employerJobs = Job::where('company_id', $id)
+                ->whereDate('job_expiry_date', '>=', Carbon::now()->toDateString())
+                ->where('status', '=', '1')
+                ->where('is_suspended', Job::NOT_SUSPENDED)
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
         } else {
-            $employerJobs = Job::whereDate('job_expiry_date', '>=', Carbon::now()->toDateString())->where('status',
-                '1')->where('is_suspended', Job::NOT_SUSPENDED)->orderBy('created_at',
-                    'desc')->get();
+            $employerJobs = Job::whereDate('job_expiry_date', '>=', Carbon::now()->toDateString())
+                ->where('status', '1')
+                ->where('is_suspended', Job::NOT_SUSPENDED)
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
         }
 
-        return $this->sendResponse($employerJobs, 'Employer jobs retrieved successfully.');
+        $html = view('job_notification.job_list', ['jobs' => $employerJobs])->render();
+
+        return $this->sendResponse(['html' => $html], 'Employer jobs retrieved successfully.');
     }
 }
+

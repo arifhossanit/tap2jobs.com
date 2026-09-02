@@ -31,25 +31,11 @@
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('skill_id', __('messages.job.job_skill').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        <div class="input-group flex-nowrap">
-            {{ Form::select('jobsSkill[]', $data['jobSkill'], old('jobsSkill'), ['class' => 'form-select job-skill-select', 'id' => 'SkillId', 'multiple' => true, 'data-placeholder' => __('messages.company.select_job_skill'), 'required']) }}
-            <div class="input-group-text border-0">
-                <a href="javascript:void(0)" class="text-gray-500 createSkillModal" title="{{ __('messages.common.add') }}" data-bs-toggle="tooltip">
-                    <i class="fa fa-plus"></i>
-                </a>
-            </div>
-        </div>
+        {{ Form::select('jobsSkill[]', $data['jobSkill'], old('jobsSkill'), ['class' => 'form-select job-skill-select', 'id' => 'SkillId', 'multiple' => true, 'data-placeholder' => __('messages.company.select_job_skill'), 'required']) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('tagId', __('messages.job_tag.show_job_tag').':', ['class' => 'form-label']) }}
-        <div class="input-group flex-nowrap">
-            {{ Form::select('jobTag[]', $data['jobTag'], null, ['class' => 'form-select job-tag-select', 'id' => 'tagId', 'multiple' => true, 'data-placeholder' => __('messages.company.select_job_tag')]) }}
-            <div class="input-group-text border-0">
-                <a href="javascript:void(0)" class="text-gray-500 createJobTagModal" title="{{ __('messages.common.add') }}" data-bs-toggle="tooltip">
-                    <i class="fa fa-plus"></i>
-                </a>
-            </div>
-        </div>
+        {{ Form::select('jobTag[]', $data['jobTag'], null, ['class' => 'form-select job-tag-select', 'id' => 'tagId', 'multiple' => true, 'data-placeholder' => __('messages.company.select_job_tag')]) }}
     </div>
     @include('employer.jobs.employment_workplace_fields')
     <div class="col-xl-12 col-md-12 col-sm-12 mb-5">
