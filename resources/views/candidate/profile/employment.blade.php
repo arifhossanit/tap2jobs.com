@@ -507,12 +507,40 @@
                 }
             };
 
+            const scrollToProfileTarget = function (target) {
+                if (!target) {
+                    return;
+                }
+
+                window.setTimeout(function () {
+                    if (typeof window.scrollCandidateProfileSection === 'function') {
+                        window.scrollCandidateProfileSection(target);
+                        return;
+                    }
+
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 50);
+            };
+
+            const openEmploymentPanel = function (panelId) {
+                const panelBody = document.getElementById(panelId);
+                if (panelBody && typeof bootstrap !== 'undefined') {
+                    bootstrap.Collapse.getOrCreateInstance(panelBody, { toggle: false }).show();
+                }
+                return panelBody;
+            };
+
+            const reloadEmploymentPanel = function (panelId) {
+                window.location.href = route('candidate.profile', { section: 'employment' }) + '#' + panelId;
+            };
+
             if (addTrigger && addFormWrap) {
                 addTrigger.addEventListener('click', function (event) {
                     event.preventDefault();
+                    openEmploymentPanel('candidateExperiencePanelBody');
                     hideInlineForms();
                     addFormWrap.classList.remove('d-none');
-                    addFormWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    scrollToProfileTarget(addFormWrap);
                 });
             }
 
@@ -524,9 +552,10 @@
                     const summary = item ? item.querySelector('[data-employment-summary]') : null;
                     const form = item ? item.querySelector('.candidate-employment-edit-form') : null;
                     if (summary && form) {
+                        openEmploymentPanel('candidateExperiencePanelBody');
                         summary.classList.add('d-none');
                         form.classList.remove('d-none');
-                        item.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        scrollToProfileTarget(item);
                     }
                 });
             });
@@ -580,7 +609,7 @@
                 }
                 if (retiredArmyAddFormWrap) {
                     retiredArmyAddFormWrap.classList.remove('d-none');
-                    retiredArmyAddFormWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    scrollToProfileTarget(retiredArmyAddFormWrap);
                 }
                 if (retiredArmyAddForm) {
                     retiredArmyAddForm.reset();
@@ -595,10 +624,7 @@
             if (retiredArmyAddTrigger) {
                 retiredArmyAddTrigger.addEventListener('click', function (event) {
                     event.preventDefault();
-                    const panelBody = document.getElementById('candidateRetiredArmyEmploymentPanelBody');
-                    if (panelBody && typeof bootstrap !== 'undefined') {
-                        bootstrap.Collapse.getOrCreateInstance(panelBody, { toggle: false }).show();
-                    }
+                    openEmploymentPanel('candidateRetiredArmyEmploymentPanelBody');
                     showRetiredArmyAddFormView();
                 });
             }
@@ -696,7 +722,9 @@
             document.querySelectorAll('[data-retired-army-edit]').forEach(function (button) {
                 button.addEventListener('click', function (event) {
                     event.preventDefault();
+                    openEmploymentPanel('candidateRetiredArmyEmploymentPanelBody');
                     showRetiredArmyEditFormView();
+                    scrollToProfileTarget(retiredArmyItem || retiredArmyEditForm);
                 });
             });
 
@@ -920,7 +948,7 @@
                             if (typeof displaySuccessMessage === 'function') {
                                 displaySuccessMessage(result.message || 'Experience deleted successfully');
                             }
-                            window.location.reload();
+                            reloadEmploymentPanel('candidateExperiencePanelBody');
                         })
                         .catch(function (error) {
                             if (typeof displayErrorMessage === 'function') {
@@ -1022,7 +1050,7 @@
                         }
                         return response.json();
                     }).then(function () {
-                        window.location.reload();
+                        reloadEmploymentPanel('candidateExperiencePanelBody');
                     }).catch(function (error) {
                         if (typeof displayErrorMessage === 'function') {
                             displayErrorMessage(error.message);

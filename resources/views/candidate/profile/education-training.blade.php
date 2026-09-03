@@ -863,6 +863,10 @@
                 return label + ' ' + formatCandidateProfileNumber(number);
             };
 
+            const reloadEducationPanel = function (panelId) {
+                window.location.href = route('candidate.profile', { section: 'education-training' }) + '#' + panelId;
+            };
+
             const trainingPanel = document.getElementById('candidateTrainingDetails');
             const trainingFormWrap = trainingPanel ? trainingPanel.querySelector('[data-training-form]') : null;
             const trainingList = trainingPanel ? trainingPanel.querySelector('.candidate-training-container') : null;
@@ -904,14 +908,13 @@
 
                 const scrollToTrainingForm = function () {
                     window.setTimeout(function () {
-                        const stickyOffset = 150;
-                        const top = window.scrollY + trainingFormWrap.getBoundingClientRect().top - stickyOffset;
+                        if (typeof window.scrollCandidateProfileSection === 'function') {
+                            window.scrollCandidateProfileSection(trainingFormWrap);
+                            return;
+                        }
 
-                        window.scrollTo({
-                            top: Math.max(0, top),
-                            behavior: 'smooth',
-                        });
-                    }, 100);
+                        trainingFormWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 50);
                 };
 
                 const setTrainingFormMode = function (item, shouldScroll) {
@@ -965,7 +968,7 @@
                         event.preventDefault();
                         const item = editButton.closest('[data-training-item]');
                         if (item) {
-                            setTrainingFormMode(item, false);
+                            setTrainingFormMode(item, true);
                         }
                         return;
                     }
@@ -993,7 +996,7 @@
                                 type: 'DELETE',
                                 success: function (result) {
                                     displaySuccessMessage(result.message);
-                                    window.location.reload();
+                                    reloadEducationPanel('candidateTrainingPanelBody');
                                 },
                                 error: function (result) {
                                     displayErrorMessage(result.responseJSON.message);
@@ -1020,7 +1023,7 @@
                         data: $(trainingForm).serialize(),
                         success: function (result) {
                             displaySuccessMessage(result.message);
-                            window.location.reload();
+                            reloadEducationPanel('candidateTrainingPanelBody');
                         },
                         error: function (result) {
                             displayErrorMessage(result.responseJSON.message);
@@ -1091,10 +1094,12 @@
 
                 const scrollToCertificationForm = function () {
                     window.setTimeout(function () {
-                        certificationFormWrap.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start',
-                        });
+                        if (typeof window.scrollCandidateProfileSection === 'function') {
+                            window.scrollCandidateProfileSection(certificationFormWrap);
+                            return;
+                        }
+
+                        certificationFormWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }, 50);
                 };
 
@@ -1169,7 +1174,7 @@
                         event.preventDefault();
                         const item = editButton.closest('[data-certification-item]');
                         if (item) {
-                            setCertificationFormMode(item, false);
+                            setCertificationFormMode(item, true);
                         }
                         return;
                     }
@@ -1314,7 +1319,7 @@
                         if (typeof displaySuccessMessage === 'function') {
                             displaySuccessMessage(result.message || 'Experience deleted successfully');
                         }
-                        window.location.reload();
+                        reloadEducationPanel('candidateProfessionalCertificationPanelBody');
                     })
                     .catch(function (error) {
                         if (typeof displayErrorMessage === 'function') {

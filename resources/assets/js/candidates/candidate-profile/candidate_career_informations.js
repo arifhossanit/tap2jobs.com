@@ -81,6 +81,11 @@ function initCandidateProfileAccordion(options) {
         const header = toggle ? toggle.closest('.candidate-profile-section__header') : null;
 
         section.addEventListener('show.bs.collapse', function () {
+            sectionBodies.forEach(function (otherSection) {
+                if (otherSection !== section && otherSection.classList.contains('show') && typeof bootstrap !== 'undefined') {
+                    bootstrap.Collapse.getOrCreateInstance(otherSection, { toggle: false }).hide();
+                }
+            });
             setPanelToggleState(section, true);
         });
 
@@ -267,7 +272,104 @@ function initCandidatePersonalInformationAccordion() {
     });
 }
 
+function bootCandidateProfileActionScroll() {
+    if (document.body.dataset.candidateProfileActionScrollReady === 'true') {
+        return;
+    }
+
+    document.body.dataset.candidateProfileActionScrollReady = 'true';
+
+    const actionSelector = [
+        '[data-personal-edit-toggle]',
+        '[data-address-edit-toggle]',
+        '[data-career-edit-toggle]',
+        '[data-preferred-edit-toggle]',
+        '[data-relevant-edit-toggle]',
+        '[data-disability-edit-toggle]',
+        '[data-inline-education-add]',
+        '[data-panel-add-action]',
+        '[data-certification-add-action]',
+        '[data-employment-add-trigger]',
+        '.candidate-employment-edit-trigger',
+        '[data-retired-army-add-trigger]',
+        '[data-retired-army-edit]',
+        '[data-skill-add-action]',
+        '[data-skill-edit]',
+        '[data-activity-add-action]',
+        '[data-activity-edit]',
+        '[data-language-edit-action]',
+        '[data-language-item-edit]',
+        '[data-link-add-action]',
+        '[data-link-edit]',
+        '[data-reference-add-action]',
+        '[data-reference-edit]',
+        '[data-portfolio-add-action]',
+        '[data-portfolio-edit]',
+        '[data-publication-add-action]',
+        '[data-publication-edit]',
+        '[data-award-add-action]',
+        '[data-award-edit]',
+        '[data-project-add-action]',
+        '[data-project-edit]',
+        '[data-other-add-action]',
+        '[data-other-edit]',
+    ].join(',');
+
+    const formSelector = [
+        '.candidate-personal-form',
+        '.candidate-address-form',
+        '.candidate-career-form',
+        '.candidate-preferred-form',
+        '.candidate-relevant-form',
+        '.candidate-disability-form',
+        '.candidate-education-inline-form',
+        '.candidate-employment-form',
+        '.candidate-retired-army-form',
+        '.candidate-skill-form',
+        '.candidate-link-form',
+        '.candidate-reference-form',
+        '.candidate-activity-form',
+        '.candidate-language-form',
+        '.candidate-portfolio-form',
+        '.candidate-publication-form',
+        '.candidate-award-form',
+        '.candidate-project-form',
+        '.candidate-other-form',
+        'form',
+    ].join(',');
+
+    const isVisible = function (element) {
+        return element && element.offsetParent !== null && !element.classList.contains('d-none') && !element.closest('.d-none');
+    };
+
+    document.addEventListener('click', function (event) {
+        const trigger = event.target.closest(actionSelector);
+        if (!trigger) {
+            return;
+        }
+
+        window.setTimeout(function () {
+            const section = trigger.closest('.candidate-profile-section, .candidate-education-panel');
+            if (!section) {
+                return;
+            }
+
+            const visibleForm = Array.from(section.querySelectorAll(formSelector)).find(isVisible);
+            if (!visibleForm) {
+                return;
+            }
+
+            if (typeof window.scrollCandidateProfileSection === 'function') {
+                window.scrollCandidateProfileSection(visibleForm);
+                return;
+            }
+
+            visibleForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 120);
+    });
+}
 function bootCandidateCareerInformationData() {
+    bootCandidateProfileActionScroll();
     initCandidateEducationAccordion();
     initCandidateEmploymentAccordion();
     initCandidateOtherInformationAccordion();
@@ -301,9 +403,16 @@ function loadCandidateCareerInformationData() {
         const formElement = targetElement || document.querySelector('[data-education-add-form]') || document.querySelector('[data-training-add-form]');
         if (!formElement) return;
 
-        const stickyOffset = 150;
-        const targetTop = formElement.getBoundingClientRect().top + window.pageYOffset - stickyOffset;
-        window.scrollTo({ top: targetTop, behavior: 'smooth' });
+        if (typeof window.scrollCandidateProfileSection === 'function') {
+            window.scrollCandidateProfileSection(formElement);
+            return;
+        }
+
+        formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function reloadCandidateProfileSection(section, panelId) {
+        window.location.href = route('candidate.profile', { section: section }) + (panelId ? '#' + panelId : '');
     }
 
     const educationCustomSelectSelector = '.candidate-education-form-grid select.form-select:not([data-education-major-select])';
@@ -588,21 +697,20 @@ function loadCandidateCareerInformationData() {
     }
 
     function scrollToEducationInlineForm() {
-        const form = document.querySelector('[data-education-add-form]');
+        const form = document.querySelector('[data-education-add-form]') || document.querySelector('[data-education-edit-form]:not(.d-none)');
 
         if (!form) {
             return;
         }
 
         window.setTimeout(function () {
-            const stickyOffset = 150;
-            const top = window.scrollY + form.getBoundingClientRect().top - stickyOffset;
+            if (typeof window.scrollCandidateProfileSection === 'function') {
+                window.scrollCandidateProfileSection(form);
+                return;
+            }
 
-            window.scrollTo({
-                top: Math.max(0, top),
-                behavior: 'smooth',
-            });
-        }, 100);
+            form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 50);
     }
 
     listenClick('[data-inline-education-add]', function () {
@@ -1422,7 +1530,7 @@ listenSubmit('#addNewEducationForm', function (e) {
                 $('#notfoundEducation').addClass('d-none');
                 displaySuccessMessage(result.message);
                 if ($('[data-education-add-form]').length) {
-                    window.location.reload();
+                    reloadCandidateProfileSection('education-training', 'candidateEducationPanelBody');
                     return;
                 }
                 $('#addEducationModal').modal('hide');
@@ -1459,7 +1567,7 @@ listenSubmit('#editCareerEducationForm', function (event) {
             if (result.success) {
                 displaySuccessMessage(result.message);
                 if ($('[data-education-edit-form]').length) {
-                    window.location.reload();
+                    reloadCandidateProfileSection('education-training', 'candidateEducationPanelBody');
                     return;
                 }
                 $('#editEducationModal').modal('hide');
@@ -1501,7 +1609,7 @@ listenSubmit('#addNewExperienceForm', function (e) {
                 $('#notfoundExperience').addClass('d-none');
                 displaySuccessMessage(result.message);
                 setTimeout(function () {
-                    window.location.reload();
+                    reloadCandidateProfileSection('employment', 'candidateExperiencePanelBody');
 
                 }, 3000);
                 $('#addExperienceModal').modal('hide');
@@ -1538,7 +1646,7 @@ listenSubmit('#editExperienceForm', function (event) {
             if (result.success) {
                 displaySuccessMessage(result.message);
                 setTimeout(function () {
-                    window.location.reload();
+                    reloadCandidateProfileSection('employment', 'candidateExperiencePanelBody');
 
                 }, 3000);
                 $('#editExperienceModal').modal('hide');

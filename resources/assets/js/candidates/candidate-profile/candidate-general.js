@@ -76,6 +76,22 @@ function loadCandidateGeneralData() {
 
     initRelevantQuillEditors();
 
+    function scrollToProfileEditTarget(selector) {
+        const target = document.querySelector(selector);
+        if (!target) {
+            return;
+        }
+
+        window.setTimeout(function () {
+            if (typeof window.scrollCandidateProfileSection === 'function') {
+                window.scrollCandidateProfileSection(target);
+                return;
+            }
+
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 50);
+    }
+
     $('[data-personal-edit-toggle]').on('click', function (event) {
         event.preventDefault();
         event.stopPropagation();
@@ -83,6 +99,7 @@ function loadCandidateGeneralData() {
         $('.candidate-personal-form').removeClass('d-none');
         $('.candidate-personal-image-actions').removeClass('d-none');
         $(this).addClass('d-none').closest('.candidate-profile-section__header').addClass('candidate-profile-section__header--editing');
+        scrollToProfileEditTarget('.candidate-personal-form');
     });
 
     $('[data-personal-edit-close]').on('click', function (event) {
@@ -100,6 +117,7 @@ function loadCandidateGeneralData() {
         $('.candidate-address-summary').addClass('d-none');
         $('.candidate-address-form').removeClass('d-none');
         $(this).addClass('d-none').closest('.candidate-profile-section__header').addClass('candidate-profile-section__header--editing');
+        scrollToProfileEditTarget('.candidate-address-form');
     });
 
     $('[data-address-edit-close]').on('click', function (event) {
@@ -382,6 +400,7 @@ function loadCandidateGeneralData() {
         $('.candidate-career-summary').addClass('d-none');
         $('.candidate-career-form').removeClass('d-none');
         $(this).addClass('d-none').closest('.candidate-profile-section__header').addClass('candidate-profile-section__header--editing');
+        scrollToProfileEditTarget('.candidate-career-form');
     });
 
     $('[data-career-edit-close]').on('click', function (event) {
@@ -398,6 +417,7 @@ function loadCandidateGeneralData() {
         $('.candidate-preferred-summary').addClass('d-none');
         $('.candidate-preferred-form').removeClass('d-none');
         $(this).addClass('d-none').closest('.candidate-profile-section__header').addClass('candidate-profile-section__header--editing');
+        scrollToProfileEditTarget('.candidate-preferred-form');
     });
 
     $('[data-preferred-edit-close]').on('click', function (event) {
@@ -413,8 +433,9 @@ function loadCandidateGeneralData() {
         event.stopPropagation();
         $('.candidate-relevant-summary').addClass('d-none');
         $('.candidate-relevant-form').removeClass('d-none');
-        initRelevantQuillEditors();
+    initRelevantQuillEditors();
         $(this).addClass('d-none').closest('.candidate-profile-section__header').addClass('candidate-profile-section__header--editing');
+        scrollToProfileEditTarget('.candidate-relevant-form');
     });
 
     $('[data-relevant-edit-close]').on('click', function (event) {
@@ -431,6 +452,7 @@ function loadCandidateGeneralData() {
         $('.candidate-disability-summary').addClass('d-none');
         $('.candidate-disability-form').removeClass('d-none');
         $(this).addClass('d-none').closest('.candidate-profile-section__header').addClass('candidate-profile-section__header--editing');
+        scrollToProfileEditTarget('.candidate-disability-form');
     });
 
     $('[data-disability-edit-close]').on('click', function (event) {
