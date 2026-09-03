@@ -282,7 +282,9 @@ class CompanyController extends AppBaseController
      * Update the specified Company in storage.
      *
      * @return JsonResponse|RedirectResponse
+     * @return JsonResponse|RedirectResponse
      */
+    public function updateCompany(Company $company, UpdateCompanyRequest $request): JsonResponse|RedirectResponse
     public function updateCompany(Company $company, UpdateCompanyRequest $request): JsonResponse|RedirectResponse
     {
         $input = $request->validated();
