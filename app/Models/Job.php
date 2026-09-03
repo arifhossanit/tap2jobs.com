@@ -555,6 +555,11 @@ class Job extends Model
         return $this->hasMany(JobApplication::class, 'job_id', 'id');
     }
 
+    public function locations(): HasMany
+    {
+        return $this->hasMany(JobLocation::class);
+    }
+
     public function jobCategory(): BelongsTo
     {
         return $this->belongsTo(JobCategory::class, 'job_category_id');
@@ -562,6 +567,21 @@ class Job extends Model
 
     public function getFullLocationAttribute(): string
     {
+        if (\Illuminate\Support\Facades\Schema::hasTable('job_locations')) {
+            $locations = $this->relationLoaded('locations')
+                ? $this->locations
+                : $this->locations()->with(['country', 'state', 'city', 'thana'])->get();
+
+            if ($locations->isNotEmpty()) {
+                return $locations
+                    ->sortByDesc('is_primary')
+                    ->map(fn (JobLocation $location) => $location->full_location)
+                    ->filter()
+                    ->unique()
+                    ->implode(' | ');
+            }
+        }
+
         $location = '';
         if (! empty($this->city)) {
             $location = $this->city->name.', ';
@@ -580,6 +600,47 @@ class Job extends Model
         }
 
         return $location;
+    }
+
+    public function getDistrictThanaLocationAttribute(): string
+    {
+        if (\Illuminate\Support\Facades\Schema::hasTable('job_locations')) {
+            $locations = $this->relationLoaded('locations')
+                ? $this->locations
+                : $this->locations()->with(['city', 'thana', 'country', 'state'])->get();
+
+            if ($locations->isNotEmpty()) {
+                $groupedLocations = $locations
+                    ->sortByDesc('is_primary')
+                    ->groupBy(fn (JobLocation $location): string => $location->city?->name ?: $location->full_location)
+                    ->map(function ($districtLocations, string $district): string {
+                        $thanas = $districtLocations
+                            ->pluck('thana.name')
+                            ->filter()
+                            ->unique()
+                            ->values();
+
+                        if ($district && $thanas->isNotEmpty()) {
+                            return $district.' ('.$thanas->implode(', ').')';
+                        }
+
+                        return $district;
+                    })
+                    ->filter()
+                    ->unique()
+                    ->values();
+
+                if ($groupedLocations->isNotEmpty()) {
+                    return $groupedLocations->implode(', ');
+                }
+            }
+        }
+
+        if (! empty($this->city) && ! empty($this->thana)) {
+            return $this->city->name.' ('.$this->thana->name.')';
+        }
+
+        return ! empty($this->city) ? $this->city->name : $this->full_location;
     }
 
     public function featured(): MorphOne

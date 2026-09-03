@@ -11,12 +11,6 @@
                                 $hasLogo = $logoUrl && !str_contains($logoUrl, 'infyom-logo.png') && !str_contains($logoUrl, 'employer-image.png');
                             @endphp
 
-                            @if($hasLogo)
-                                <div class="flex-shrink-0">
-                                    <img src="{{ $logoUrl }}" class="card-img job-card-company-logo" alt="company logo" style="width: 72px; height: 60px; min-width: 72px; object-fit: contain; border: 1px solid #dee2e6; padding: 6px; border-radius: 5px;">
-                                </div>
-                            @endif
-
                             <div class="flex-grow-1 min-w-0">
                                 <div class="card-body p-0">
                                     <h5 class="card-title text-secondary fs-18 mb-0">
@@ -51,6 +45,12 @@
                                     </div>
                                 </div>
                             </div>
+
+                            @if($hasLogo)
+                                <div class="flex-shrink-0 d-flex align-items-center justify-content-center">
+                                    <img src="{{ $logoUrl }}" class="card-img job-card-company-logo" alt="company logo" style="width: 72px; height: 60px; min-width: 72px; object-fit: contain; padding: 6px; border-radius: 5px;">
+                                </div>
+                            @endif
 
                         </div>
                     </a>

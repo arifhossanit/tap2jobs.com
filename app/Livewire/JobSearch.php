@@ -284,6 +284,9 @@ class JobSearch extends Component
                 $sub->whereNull('country_id')
                     ->orWhereHas('country', function (Builder $cq) {
                         $cq->where('short_code', '!=', 'BD');
+                    })
+                    ->orWhereHas('locations.country', function (Builder $cq) {
+                        $cq->where('short_code', '!=', 'BD');
                     });
             });
         });
@@ -323,6 +326,24 @@ class JobSearch extends Component
                     'city',
                     function (Builder $q) {
                         $q->where('name', 'like', '%'.$this->searchByLocation.'%');
+                    }
+                )->orWhereHas(
+                    'locations',
+                    function (Builder $q) {
+                        $q->where('city_village_name', 'like', '%'.$this->searchByLocation.'%')
+                            ->orWhere('address', 'like', '%'.$this->searchByLocation.'%')
+                            ->orWhereHas('country', function (Builder $q) {
+                                $q->where('name', 'like', '%'.$this->searchByLocation.'%');
+                            })
+                            ->orWhereHas('state', function (Builder $q) {
+                                $q->where('name', 'like', '%'.$this->searchByLocation.'%');
+                            })
+                            ->orWhereHas('city', function (Builder $q) {
+                                $q->where('name', 'like', '%'.$this->searchByLocation.'%');
+                            })
+                            ->orWhereHas('thana', function (Builder $q) {
+                                $q->where('name', 'like', '%'.$this->searchByLocation.'%');
+                            });
                     }
                 )->orWhereHas(
                     'company.user',

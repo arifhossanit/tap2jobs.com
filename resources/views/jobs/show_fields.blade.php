@@ -5,7 +5,7 @@
         ? html_entity_decode($companyUser->full_name)
         : __('messages.n/a');
     $jobTitle = html_entity_decode($job->job_title);
-    $location = collect([
+    $location = $job->full_location ?: collect([
         !empty($job->thana_id) ? $job->thana_name : null,
         !empty($job->city_village_name) ? $job->city_village_name : null,
         !empty($job->city_id) ? $job->city_name : null,

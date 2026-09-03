@@ -96,32 +96,43 @@
         <span class="required"></span>
         {{ Form::select('salary_period_id', $data['salaryPeriods'], null, ['id'=>'salaryPeriodsId','class' => 'form-select','placeholder' => __('messages.company.select_salary_period'),'data-control'=>'select2','required']) }}
     </div>
-    <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
+    <div class="col-12 mb-5">
+        <div class="border rounded p-4 job-location-container">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h3 class="fs-5 fw-bold mb-0">Job location</h3>
+            </div>
+            <div class="border rounded p-4 mb-4 job-location-row">
+                <div class="d-flex align-items-center mb-3">
+                    <strong>Location 1</strong>
+                </div>
+                <div class="row">
+                    <div class="col-xl-2 col-md-4 col-sm-12 mb-5">
         {{ Form::label('country', __('messages.company.country').':', ['class' => 'form-label']) }}
         <span class="required"></span>
         {{ Form::select('country_id', $data['countries'], $data['selected_country_id'] ?? $data['default_country_id'] ?? null, ['id'=>'countryId','class' => 'form-select','data-control'=>'select2','required']) }}
     </div>
-    <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
+    <div class="col-xl-2 col-md-4 col-sm-12 mb-5">
         {{ Form::label('state', __('messages.company.state').':', ['class' => 'form-label']) }}
         <span class="required"></span>
         {{ Form::select('state_id', $data['default_country_states'] ?? [], old('state_id'), ['id'=>'stateId','class' => 'form-select','placeholder' => __('messages.company.select_state'),'data-control'=>'select2','required']) }}
     </div>
-    <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
+    <div class="col-xl-2 col-md-4 col-sm-12 mb-5">
         {{ Form::label('city', __('messages.company.city').':', ['class' => 'form-label']) }}
         <span class="required"></span>
         {{ Form::select('city_id', $data['selected_state_cities'] ?? [], old('city_id'), ['id'=>'cityId','class' => 'form-select','placeholder' => __('messages.company.select_city'),'data-control'=>'select2','required']) }}
     </div>
-    <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
+    <div class="col-xl-2 col-md-4 col-sm-12 mb-5">
         {{ Form::label('thana', __('messages.thana.thana_name').':', ['class' => 'form-label']) }}
         {{ Form::select('thana_id', $data['selected_city_thanas'] ?? [], old('thana_id'), ['id'=>'thanaId','class' => 'form-select','placeholder' => __('messages.company.select_thana'),'data-control'=>'select2']) }}
     </div>
-    <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
+    <div class="col-xl-4 col-md-4 col-sm-12 mb-5">
         {{ Form::label('city_village_name', __('messages.city_village.city_villages').':', ['class' => 'form-label']) }}
         {{ Form::text('city_village_name', old('city_village_name'), ['class' => 'form-control', 'placeholder' => 'Enter Area / City / Village']) }}
     </div>
-    <div class="col-xl-9 col-md-6 col-sm-12 mb-5">
-        {{ Form::label('address', __('messages.candidate.address').':', ['class' => 'form-label']) }}
-        {{ Form::textarea('address', old('address'), ['id' => 'jobAddress', 'class' => 'form-control', 'rows' => 3, 'placeholder' => __('messages.candidate.address')]) }}
+                </div>
+            </div>
+            @include('jobs.partials.additional_locations')
+        </div>
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('career_level_id', __('messages.job.career_level').':', ['class' => 'form-label']) }}

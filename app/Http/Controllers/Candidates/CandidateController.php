@@ -309,9 +309,49 @@ class CandidateController extends AppBaseController
         Flash::success(__('messages.flash.candidate_profile'));
 
 
-        return redirect(route('candidate.profile'));
+        return $this->profileSectionRedirect();
     }
 
+    private function allowedProfileSections(): array
+    {
+        return [
+            'personal-information',
+            'employment',
+            'education-training',
+            'other-information',
+            'accomplishment',
+            'resume',
+        ];
+    }
+
+    private function normalizeProfileSection(?string $section): ?string
+    {
+        if ($section === null || $section === '') {
+            return null;
+        }
+
+        $sectionAliases = [
+            'general' => 'personal-information',
+            'career-informations' => 'education-training',
+            'cv-builder' => 'other-information',
+        ];
+
+        $section = $sectionAliases[$section] ?? $section;
+
+        return in_array($section, $this->allowedProfileSections(), true) ? $section : null;
+    }
+
+    private function profileSectionRedirect(string $fallback = 'personal-information'): RedirectResponse
+    {
+        $query = parse_url(url()->previous(), PHP_URL_QUERY);
+        parse_str((string) $query, $params);
+
+        $section = $this->normalizeProfileSection($params['section'] ?? null)
+            ?? $this->normalizeProfileSection($fallback)
+            ?? 'personal-information';
+
+        return redirect(route('candidate.profile', ['section' => $section]));
+    }
     private function candidateProfilePercentage(?\App\Models\Candidate $candidate): int
     {
         if (! $candidate) {
@@ -377,7 +417,7 @@ class CandidateController extends AppBaseController
 
         Flash::success(__('messages.flash.candidate_profile'));
 
-        return redirect(route('candidate.profile', ['section' => 'personal-information']));
+        return $this->profileSectionRedirect('personal-information');
     }
 
     /**
@@ -398,7 +438,7 @@ class CandidateController extends AppBaseController
 
         Flash::success(__('messages.flash.candidate_profile'));
 
-        return redirect(route('candidate.profile', ['section' => 'personal-information']));
+        return $this->profileSectionRedirect('personal-information');
     }
 
     /**
@@ -420,7 +460,7 @@ class CandidateController extends AppBaseController
 
         Flash::success(__('messages.flash.candidate_profile'));
 
-        return redirect(route('candidate.profile', ['section' => 'personal-information']));
+        return $this->profileSectionRedirect('personal-information');
     }
 
     /**
@@ -442,7 +482,7 @@ class CandidateController extends AppBaseController
 
         Flash::success(__('messages.flash.candidate_profile'));
 
-        return redirect(route('candidate.profile', ['section' => 'personal-information']));
+        return $this->profileSectionRedirect('personal-information');
     }
 
     /**
@@ -464,7 +504,7 @@ class CandidateController extends AppBaseController
 
         Flash::success(__('messages.flash.candidate_profile'));
 
-        return redirect(route('candidate.profile', ['section' => 'personal-information']));
+        return $this->profileSectionRedirect('personal-information');
     }
 
     /**
@@ -486,7 +526,7 @@ class CandidateController extends AppBaseController
 
         Flash::success(__('messages.flash.candidate_profile'));
 
-        return redirect(route('candidate.profile', ['section' => 'personal-information']));
+        return $this->profileSectionRedirect('personal-information');
     }
 
     public function updateExtraCurricular(
@@ -1078,7 +1118,7 @@ class CandidateController extends AppBaseController
 
         Flash::success(__('messages.candidate_profile.cv_privacy_updated'));
 
-        return redirect(route('candidate.profile', ['section' => 'resume']));
+        return $this->profileSectionRedirect('resume');
     }
 
     public function downloadResume(int $media): Media

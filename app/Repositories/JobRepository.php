@@ -172,6 +172,9 @@ class JobRepository extends BaseRepository
 
             $input['salary_from'] = (float) removeCommaFromNumbers($input['salary_from'] ?? 0);
             $input['salary_to'] = (float) removeCommaFromNumbers($input['salary_to'] ?? 0);
+            $jobLocations = $this->extractJobLocations($input);
+            $this->applyPrimaryJobLocation($input, $jobLocations);
+            unset($input['job_locations']);
             $input['company_id'] = (isset($input['company_id'])) ? $input['company_id'] : Auth::user()->owner_id;
             $input['job_id'] = $this->getUniqueJobId();
             /** @var Job $job */
@@ -201,6 +204,7 @@ class JobRepository extends BaseRepository
                 $workplacesData = collect($input['workplaces'])->map(fn ($val) => ['workplace_value' => $val])->toArray();
                 $job->workplaces()->createMany($workplacesData);
             }
+            $this->syncJobLocations($job, $jobLocations);
             /** @var JobType $jobType */
             $jobType = JobType::with('candidateJobAlerts')->whereId($input['job_type_id'])->first();
             $userIds = $jobType->candidateJobAlerts->where('job_alert', '=', 1)->pluck('user_id');
@@ -246,6 +250,9 @@ class JobRepository extends BaseRepository
             DB::beginTransaction();
             $input['salary_from'] = (float) removeCommaFromNumbers($input['salary_from']);
             $input['salary_to'] = (float) removeCommaFromNumbers($input['salary_to']);
+            $jobLocations = $this->extractJobLocations($input);
+            $this->applyPrimaryJobLocation($input, $jobLocations);
+            unset($input['job_locations']);
             // update Job
             if (isset($input['state_id']) && ! is_numeric($input['state_id'])) {
                 $input['state_id'] = null;
@@ -296,6 +303,7 @@ class JobRepository extends BaseRepository
                 $workplacesData = collect($input['workplaces'])->map(fn ($val) => ['workplace_value' => $val])->toArray();
                 $job->workplaces()->createMany($workplacesData);
             }
+            $this->syncJobLocations($job, $jobLocations);
 
             DB::commit();
 
@@ -323,6 +331,55 @@ class JobRepository extends BaseRepository
         return ReportedJob::where('user_id', Auth::user()->id)->where('job_id', $jobId)->exists();
     }
 
+    private function extractJobLocations(array $input): array
+    {
+        $locations = collect($input['job_locations'] ?? [])
+            ->filter(fn ($location) => is_array($location))
+            ->map(function (array $location): array {
+                return [
+                    'country_id' => $location['country_id'] ?? null,
+                    'state_id' => $location['state_id'] ?? null,
+                    'city_id' => $location['city_id'] ?? null,
+                    'thana_id' => $location['thana_id'] ?? null,
+                    'city_village_name' => $location['city_village_name'] ?? null,
+                    'address' => $location['address'] ?? null,
+                    'is_primary' => (bool) ($location['is_primary'] ?? false),
+                ];
+            })
+            ->values()
+            ->all();
+
+        if ($locations === []) {
+            $locations[] = [
+                'country_id' => $input['country_id'] ?? null,
+                'state_id' => $input['state_id'] ?? null,
+                'city_id' => $input['city_id'] ?? null,
+                'thana_id' => $input['thana_id'] ?? null,
+                'city_village_name' => $input['city_village_name'] ?? null,
+                'address' => $input['address'] ?? null,
+                'is_primary' => true,
+            ];
+        }
+
+        $locations[0]['is_primary'] = true;
+
+        return $locations;
+    }
+
+    private function applyPrimaryJobLocation(array &$input, array $jobLocations): void
+    {
+        $primaryLocation = collect($jobLocations)->firstWhere('is_primary', true) ?? $jobLocations[0] ?? [];
+
+        foreach (['country_id', 'state_id', 'city_id', 'thana_id', 'city_village_name', 'address'] as $field) {
+            $input[$field] = $primaryLocation[$field] ?? null;
+        }
+    }
+
+    private function syncJobLocations(Job $job, array $jobLocations): void
+    {
+        $job->locations()->delete();
+        $job->locations()->createMany($jobLocations);
+    }
     /**
      * @return mixed
      */
