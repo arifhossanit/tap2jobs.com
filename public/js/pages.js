@@ -3752,9 +3752,13 @@ $(document).on('submit', '#candidateProfileUpdate', function (e) {
         }
         displaySuccessMessage(result.message);
         setTimeout(function () {
-          window.location.href = route('candidate.profile', {
-            section: 'personal-information'
+          var params = new URLSearchParams(window.location.search);
+          var section = params.get('section') || 'personal-information';
+          var activeCollapse = submitter.closest('.candidate-profile-section__collapse');
+          var profileUrl = route('candidate.profile', {
+            section: section
           });
+          window.location.href = activeCollapse && activeCollapse.id ? profileUrl + '#' + activeCollapse.id : profileUrl;
         }, 800);
       },
       error: function error(result) {
@@ -4056,28 +4060,40 @@ function initCandidateProfileAccordion(options) {
       });
     }
   });
+  var openSection = function openSection(targetId) {
+    var scrollToSection = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+    var target = document.getElementById(targetId);
+    var section = target ? target.classList.contains('candidate-profile-section__collapse') ? target : target.querySelector('.candidate-profile-section__collapse') : null;
+    var panel = section ? section.closest('.candidate-profile-section, .candidate-education-panel') : target;
+    if (!target || !section || typeof bootstrap === 'undefined') {
+      return;
+    }
+    bootstrap.Collapse.getOrCreateInstance(section, {
+      toggle: false
+    }).show();
+    setActiveSection(panel ? panel.id : null, section.id);
+    if (!scrollToSection) {
+      return;
+    }
+    if (typeof window.scrollCandidateProfileSection === 'function') {
+      window.scrollCandidateProfileSection(panel || section);
+    } else {
+      (panel || section).scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+  var hashTargetId = window.location.hash ? window.location.hash.substring(1) : '';
+  if (hashTargetId) {
+    setTimeout(function () {
+      openSection(hashTargetId, true);
+    }, 0);
+  }
   menuLinks.forEach(function (link) {
     link.addEventListener('click', function (event) {
       event.preventDefault();
-      var targetId = link.dataset[options.menuDatasetKey];
-      var target = document.getElementById(targetId);
-      var section = target ? target.classList.contains('candidate-profile-section__collapse') ? target : target.querySelector('.candidate-profile-section__collapse') : null;
-      var panel = section ? section.closest('.candidate-profile-section, .candidate-education-panel') : target;
-      if (!target || !section || typeof bootstrap === 'undefined') {
-        return;
-      }
-      bootstrap.Collapse.getOrCreateInstance(section, {
-        toggle: false
-      }).show();
-      setActiveSection(panel ? panel.id : null, section.id);
-      if (typeof window.scrollCandidateProfileSection === 'function') {
-        window.scrollCandidateProfileSection(panel || section);
-      } else {
-        (panel || section).scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }
+      openSection(link.dataset[options.menuDatasetKey], true);
     });
   });
 }

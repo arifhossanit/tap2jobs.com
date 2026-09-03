@@ -352,6 +352,7 @@ class CandidateController extends AppBaseController
 
         return redirect(route('candidate.profile', ['section' => $section]));
     }
+
     private function candidateProfilePercentage(?\App\Models\Candidate $candidate): int
     {
         if (! $candidate) {

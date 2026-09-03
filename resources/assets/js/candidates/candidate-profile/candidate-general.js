@@ -965,7 +965,14 @@ $(document).on('submit', '#candidateProfileUpdate', function (e) {
                 }
                 displaySuccessMessage(result.message);
                 setTimeout(function () {
-                    window.location.href = route('candidate.profile', {section: 'personal-information'});
+                    const params = new URLSearchParams(window.location.search);
+                    const section = params.get('section') || 'personal-information';
+                    const activeCollapse = submitter.closest('.candidate-profile-section__collapse');
+                    const profileUrl = route('candidate.profile', { section: section });
+
+                    window.location.href = activeCollapse && activeCollapse.id
+                        ? profileUrl + '#' + activeCollapse.id
+                        : profileUrl;
                 }, 800);
             },
             error: function (result) {

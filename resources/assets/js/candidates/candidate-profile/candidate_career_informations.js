@@ -120,32 +120,46 @@ function initCandidateProfileAccordion(options) {
         }
     });
 
+    const openSection = function (targetId, scrollToSection = true) {
+        const target = document.getElementById(targetId);
+        const section = target
+            ? (target.classList.contains('candidate-profile-section__collapse')
+                ? target
+                : target.querySelector('.candidate-profile-section__collapse'))
+            : null;
+        const panel = section
+            ? section.closest('.candidate-profile-section, .candidate-education-panel')
+            : target;
+
+        if (!target || !section || typeof bootstrap === 'undefined') {
+            return;
+        }
+
+        bootstrap.Collapse.getOrCreateInstance(section, { toggle: false }).show();
+        setActiveSection(panel ? panel.id : null, section.id);
+
+        if (!scrollToSection) {
+            return;
+        }
+
+        if (typeof window.scrollCandidateProfileSection === 'function') {
+            window.scrollCandidateProfileSection(panel || section);
+        } else {
+            (panel || section).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
+    const hashTargetId = window.location.hash ? window.location.hash.substring(1) : '';
+    if (hashTargetId) {
+        setTimeout(function () {
+            openSection(hashTargetId, true);
+        }, 0);
+    }
+
     menuLinks.forEach(function (link) {
         link.addEventListener('click', function (event) {
             event.preventDefault();
-
-            const targetId = link.dataset[options.menuDatasetKey];
-            const target = document.getElementById(targetId);
-            const section = target
-                ? (target.classList.contains('candidate-profile-section__collapse')
-                    ? target
-                    : target.querySelector('.candidate-profile-section__collapse'))
-                : null;
-            const panel = section
-                ? section.closest('.candidate-profile-section, .candidate-education-panel')
-                : target;
-
-            if (!target || !section || typeof bootstrap === 'undefined') {
-                return;
-            }
-
-            bootstrap.Collapse.getOrCreateInstance(section, { toggle: false }).show();
-            setActiveSection(panel ? panel.id : null, section.id);
-            if (typeof window.scrollCandidateProfileSection === 'function') {
-                window.scrollCandidateProfileSection(panel || section);
-            } else {
-                (panel || section).scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+            openSection(link.dataset[options.menuDatasetKey], true);
         });
     });
 }
