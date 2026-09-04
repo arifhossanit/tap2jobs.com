@@ -148,7 +148,11 @@ function initCandidateProfileAccordion(options) {
         }
 
         if (typeof window.scrollCandidateProfileSection === 'function') {
-            window.scrollCandidateProfileSection(panel || section);
+            if (panel) {
+                window.scrollCandidateProfileSection(panel);
+            } else {
+                window.scrollCandidateProfileSection(section);
+            }
         } else {
             (panel || section).scrollIntoView({ behavior: 'smooth', block: 'start' });
         }

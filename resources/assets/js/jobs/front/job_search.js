@@ -245,7 +245,7 @@ listenChange("#searchFunctionalArea", function () {
 });
 
 let jobSearchInputTimer;
-listenKeyup("#searchByLocation", function () {
+listen("input", "#searchByLocation", function () {
     let value = $(this).val();
     clearTimeout(jobSearchInputTimer);
     jobSearchInputTimer = setTimeout(function () {

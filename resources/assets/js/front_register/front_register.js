@@ -9,6 +9,25 @@ function visitRegisterRedirect (url) {
     window.location.href = url;
 }
 
+const registerPasswordMismatchMessage = 'Passwords do not match';
+
+function updateRegistrationPasswordMatch (password, confirmPassword, feedback) {
+    if (!password || !confirmPassword || !feedback) {
+        return true;
+    }
+
+    const mismatch = confirmPassword.value !== '' && password.value !== confirmPassword.value;
+    confirmPassword.setCustomValidity(mismatch ? registerPasswordMismatchMessage : '');
+    if (mismatch) {
+        confirmPassword.classList.add('is-invalid');
+    } else if (confirmPassword.checkValidity()) {
+        confirmPassword.classList.remove('is-invalid');
+    }
+    feedback.textContent = mismatch ? registerPasswordMismatchMessage : '';
+
+    return !mismatch;
+}
+
 function loadFrontRegisterData () {
     if (!$('#addEmployerNewForm').length && !$('#addCandidateNewForm').length) {
         return;
@@ -71,6 +90,19 @@ function loadCandidateRegistrationForm () {
             }
         }
     });
+
+    const password = document.getElementById('candidatePassword');
+    const confirmPassword = document.getElementById('candidateConfirmPassword');
+    const confirmPasswordFeedback = document.getElementById('candidateConfirmPasswordFeedback');
+
+    if (password && confirmPassword && confirmPasswordFeedback) {
+        password.addEventListener('input', function () {
+            updateRegistrationPasswordMatch(password, confirmPassword, confirmPasswordFeedback);
+        });
+        confirmPassword.addEventListener('input', function () {
+            updateRegistrationPasswordMatch(password, confirmPassword, confirmPasswordFeedback);
+        });
+    }
 }
 
 function loadEmployerRegistrationForm () {
@@ -127,24 +159,13 @@ function loadEmployerRegistrationForm () {
         feedback.textContent = message || '';
     };
 
-    const validatePasswordMatch = function () {
-        if (!password || !confirmPassword || !confirmPasswordFeedback) {
-            return true;
-        }
-
-        const mismatch = confirmPassword.value !== '' && password.value !== confirmPassword.value;
-        showLiveError(
-            confirmPassword,
-            confirmPasswordFeedback,
-            mismatch ? 'Passwords do not match' : ''
-        );
-
-        return !mismatch;
-    };
-
     if (password && confirmPassword && confirmPasswordFeedback) {
-        password.addEventListener('input', validatePasswordMatch);
-        confirmPassword.addEventListener('input', validatePasswordMatch);
+        password.addEventListener('input', function () {
+            updateRegistrationPasswordMatch(password, confirmPassword, confirmPasswordFeedback);
+        });
+        confirmPassword.addEventListener('input', function () {
+            updateRegistrationPasswordMatch(password, confirmPassword, confirmPasswordFeedback);
+        });
     }
 
     if (username && usernameFeedback) {
@@ -649,9 +670,9 @@ listenSubmit('#addCandidateNewForm', function (e) {
 
     const password = document.getElementById('candidatePassword');
     const confirmPassword = document.getElementById('candidateConfirmPassword');
-    if (password && confirmPassword && confirmPassword.value !== password.value) {
+    const confirmPasswordFeedback = document.getElementById('candidateConfirmPasswordFeedback');
+    if (!updateRegistrationPasswordMatch(password, confirmPassword, confirmPasswordFeedback)) {
         isValid = false;
-        confirmPassword.classList.add('is-invalid');
         if (!firstInvalidElement) firstInvalidElement = confirmPassword;
     }
 
@@ -839,10 +860,10 @@ listenSubmit('#addEmployerNewForm', function (e) {
 });
 
 function showLiveRegistrationError (input, feedback, message) {
-    input.classList.add('is-invalid');
-    input.setCustomValidity(message);
+    input.classList.toggle('is-invalid', Boolean(message));
+    input.setCustomValidity(message || '');
     if (feedback) {
-        feedback.textContent = message;
+        feedback.textContent = message || '';
     }
 }
 

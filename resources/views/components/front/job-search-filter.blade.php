@@ -14,7 +14,7 @@
 @endphp
 
 <aside class="latest-job-left find-jobs-filter" id="findJobsFilter">
-    <form class="find-jobs-filter__form" autocomplete="off">
+    <div class="find-jobs-filter__form">
         <div class="find-jobs-filter__header">
             <h2><i class="fa-solid fa-sliders" aria-hidden="true"></i>{{ __('messages.common.filters') }}</h2>
             <button type="button" class="btn reset-filter">{{ __('web.reset_filter') }}</button>
@@ -135,5 +135,5 @@
                 <input type="text" id="jobExperience" data-max="{{ max(1, (int) $maximumExperience) }}" autocomplete="off" tabindex="-1" readonly>
             </div>
         </div>
-    </form>
+    </div>
 </aside>

@@ -18,7 +18,7 @@ trait ValidatesJob
         $this->restoreLocationHierarchy();
 
         $employmentStatus = $this->input('employment_status');
-        $usesEmploymentStatusForm = $this->routeIs('job.store', 'job.update', 'admin.job.store', 'admin.job.update');
+        $usesEmploymentStatusForm = $this->routeIs('job.store', 'job.update');
         $workplace = $this->input('workplace');
         $selectedWorkplaces = collect($this->input('workplaces', []));
         if ($workplace) $selectedWorkplaces->push($workplace);
@@ -196,7 +196,7 @@ trait ValidatesJob
 
     protected function jobRules(): array
     {
-        $usesEmploymentStatusForm = $this->routeIs('job.store', 'job.update', 'admin.job.store', 'admin.job.update');
+        $usesEmploymentStatusForm = $this->routeIs('job.store', 'job.update');
         $hideSalary = $this->boolean('hide_salary');
 
         return [

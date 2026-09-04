@@ -41,7 +41,7 @@ class CandidateUpdatePersonalDetailsRequest extends FormRequest
             'father_name' => 'nullable|max:150',
             'mother_name' => 'nullable|max:150',
             'dob' => 'nullable|date|before_or_equal:today',
-            'gender' => ['required', Rule::in(ProfileReferenceOption::values(ProfileReferenceOption::TYPE_GENDER))],
+            'gender' => 'required|integer|in:0,1',
             'religion' => ['nullable', 'max:100', Rule::in(ProfileReferenceOption::values(ProfileReferenceOption::TYPE_RELIGION))],
             'marital_status_id' => 'required|integer|exists:marital_status,id',
             'nationality' => 'nullable|max:150',

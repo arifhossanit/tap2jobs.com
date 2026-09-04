@@ -4105,7 +4105,11 @@ function initCandidateProfileAccordion(options) {
       return;
     }
     if (typeof window.scrollCandidateProfileSection === 'function') {
-      window.scrollCandidateProfileSection(panel || section);
+      if (panel) {
+        window.scrollCandidateProfileSection(panel);
+      } else {
+        window.scrollCandidateProfileSection(section);
+      }
     } else {
       (panel || section).scrollIntoView({
         behavior: 'smooth',
@@ -13080,8 +13084,8 @@ function loadEmployeeCreateEditData() {
           theme: "snow"
         });
       }
-      setQuillHtml(details, "#job_desc");
-      setQuillHtml(response, "#key_responsibilities");
+      details.root.innerHTML = $("#job_desc").val() || "";
+      response.root.innerHTML = $("#key_responsibilities").val() || "";
       rememberJobEditorHeight("#details", "tap2jobs:admin-job-editor:description-height");
       rememberJobEditorHeight("#response", "tap2jobs:admin-job-editor:responsibilities-height");
       if (window.compensationAndBenefits) {
@@ -14119,6 +14123,9 @@ listenSubmit("#createSalaryPeriodForm", function () {
   return false;
 });
 function prepareJobFormForSubmission(formSelector) {
+  return prepareJobFormForSubmissionWithOptions(formSelector, true);
+}
+function prepareJobFormForSubmissionWithOptions(formSelector) {
   var focusInvalid = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
   var form = $(formSelector)[0];
   if (!form) {
@@ -14153,6 +14160,7 @@ function prepareJobFormForSubmission(formSelector) {
     countrySelect.val(countrySelect.find("option").first().val()).trigger("change.select2");
   }
   if (!form.checkValidity()) {
+    displayErrorMessage(Lang.get("js.required_field_messages"));
     if (focusInvalid) {
       focusInvalidJobField(form);
     }
@@ -14218,7 +14226,7 @@ function getFirstInvalidJobField(form) {
 }
 function validateJobFieldsInOrder(formSelector, editors) {
   var form = $(formSelector)[0];
-  if (!prepareJobFormForSubmission(formSelector, false)) {
+  if (!prepareJobFormForSubmissionWithOptions(formSelector, false)) {
     var invalidField = getFirstInvalidJobField(form);
     var _iterator = _createForOfIteratorHelper(editors),
       _step;
@@ -14432,6 +14440,9 @@ listenClick("#jobsSaveBtn, #saveDraft", function (e) {
   e.preventDefault();
   clearJobValidationState($("#createJobForm")[0]);
   $("#saveAsDraft").val($(this).val() === "draft" ? "1" : "0");
+  if (!prepareJobFormForSubmission("#createJobForm")) {
+    return false;
+  }
   if (!validateJobFieldsInOrder("#createJobForm", [details, response])) {
     return false;
   }
@@ -14459,6 +14470,9 @@ listenClick("#jobsSaveBtn, #saveDraft", function (e) {
 listenClick("#editJobsSaveBtn, #saveDraft", function (e) {
   e.preventDefault();
   clearJobValidationState($("#editJobForm")[0]);
+  if (!prepareJobFormForSubmission("#editJobForm")) {
+    return false;
+  }
   if (!validateJobFieldsInOrder("#editJobForm", [editJobDescription, editResponse])) {
     return false;
   }

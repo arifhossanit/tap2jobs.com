@@ -913,7 +913,11 @@
                             return;
                         }
 
-                        trainingFormWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        const stickyOffset = 150;
+                        window.scrollTo({
+                            top: trainingFormWrap.getBoundingClientRect().top - stickyOffset + window.pageYOffset,
+                            behavior: 'smooth',
+                        });
                     }, 50);
                 };
 

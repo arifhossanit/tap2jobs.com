@@ -6721,9 +6721,7 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
     transition: transform 0.18s ease;
 }
 
-#candidateEducationAccordion
-    .candidate-profile-section__toggle[aria-expanded="false"]
-    .fa-chevron-up,
+#candidateEducationAccordion .candidate-profile-section__toggle[aria-expanded="false"] .fa-chevron-up,
 #candidateEmploymentAccordion
     .candidate-profile-section__toggle[aria-expanded="false"]
     .fa-chevron-up,

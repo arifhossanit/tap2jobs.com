@@ -1,10 +1,6 @@
 @php
-    $notifications = \App\Models\Notification::where('notification_for', \App\Models\Notification::EMPLOYER)
-        ->where('user_id', getLoggedInUserId())
-        ->latest()
-        ->take(10)
-        ->get();
-    $notificationCount = $notifications->whereNull('read_at')->count();
+    $notifications = getNotification(\App\Models\Notification::EMPLOYER);
+    $notificationCount = $notifications->count();
     $loggedInEmployer = getLoggedInUser();
     $employerHeaderName = $loggedInEmployer->company?->contact_person_name ?: $loggedInEmployer->full_name;
 @endphp

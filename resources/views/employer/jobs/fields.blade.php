@@ -28,7 +28,7 @@
         {{ Form::label('description', 'Requirements:', ['class' => 'form-label']) }}
         <span class="required"></span>
         <div class="job-rich-editor-shell">
-            <div id="details" class="job-rich-editor" aria-required="true"></div>
+            <div id="details" aria-required="true" class="job-rich-editor"></div>
             <div class="job-rich-editor-resize-handle" role="separator" aria-orientation="horizontal" title="Resize editor"></div>
         </div>
         {{ Form::hidden('description', old('description'), ['id' => 'job_desc', 'required']) }}
@@ -37,7 +37,7 @@
         {{ Form::label('key_responsibilities', __('messages.job.key_responsibilities').':', ['class' => 'form-label']) }}
         <span class="required"></span>
         <div class="job-rich-editor-shell">
-            <div id="response" class="job-rich-editor" aria-required="true"></div>
+            <div id="response" aria-required="true" class="job-rich-editor"></div>
             <div class="job-rich-editor-resize-handle" role="separator" aria-orientation="horizontal" title="Resize editor"></div>
         </div>
         {{ Form::hidden('key_responsibilities', old('key_responsibilities'), ['id' => 'key_responsibilities', 'required']) }}

@@ -1078,5 +1078,13 @@
         var phoneNo = "{{ old('region_code') . old('phone') }}";
         var candidateProfileCollapseText = "{{ __('messages.candidate_profile.collapse') }}";
         var candidateProfileExpandText = "{{ __('messages.candidate_profile.expand') }}";
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var target = window.location.hash ? document.querySelector(window.location.hash) : null;
+
+            if (target && typeof window.scrollCandidateProfileSection === 'function') {
+                window.scrollCandidateProfileSection(target);
+            }
+        });
     </script>
 @endpush

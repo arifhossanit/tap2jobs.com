@@ -161,6 +161,8 @@
                                             class="position-absolute d-flex align-items-center top-1 bottom-0 {{ getFrontSelectLanguage() == 'ar' ? 'start-0' : 'end-0' }} me-6 input-icon input-password-hide cursor-pointer text-gray-600 change-type change-type-register ">
                                             <i class="fas fa-eye-slash"></i>
                                         </span>
+                                        <div class="register-password-feedback text-danger fs-14 mt-2"
+                                             id="candidateConfirmPasswordFeedback" aria-live="polite"></div>
                                     </div>
                                 </div>
                             </div>

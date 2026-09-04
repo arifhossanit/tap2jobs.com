@@ -32,7 +32,15 @@
 
             const showFlashToasts = function () {
                 @foreach($flashNotifications as $message)
-                    notify(@json($message['level']), @json($message['message']));
+                    @if($message['level'] === 'success')
+                        if (typeof displaySuccessMessage === 'function') {
+                            displaySuccessMessage(@json($message['message']));
+                        } else {
+                            notify(@json($message['level']), @json($message['message']));
+                        }
+                    @else
+                        notify(@json($message['level']), @json($message['message']));
+                    @endif
                 @endforeach
             };
 

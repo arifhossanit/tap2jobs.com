@@ -1,5 +1,5 @@
-@php($notifications = \App\Models\Notification::whereNotificationFor(\App\Models\Notification::CANDIDATE)->where('user_id', getLoggedInUserId())->orderByDesc('created_at')->take(10)->get())
-@php($notificationCount = $notifications->whereNull('read_at')->count())
+@php($notifications = getNotification(\App\Models\Notification::CANDIDATE))
+@php($notificationCount = $notifications->count())
 @php($isCandidateUserDropdownActive = Request::is('candidate/profile*', 'candidate/favourite-companies*', 'candidate/change-password*'))
 <style>
     .candidate-user-dropdown-menu .dropdown-item.active,

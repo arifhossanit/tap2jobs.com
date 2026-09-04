@@ -1111,7 +1111,7 @@ class CandidateController extends AppBaseController
     {
         $candidate = Auth::user()->candidate;
         $candidate->update($request->validated());
-        $this->applicationCvService->ensure($candidate->fresh(), true);
+        $this->applicationCvService->ensure($candidate->fresh());
 
         if ($request->ajax() || $request->wantsJson()) {
             return $this->sendSuccess(__('messages.candidate_profile.cv_privacy_updated'));

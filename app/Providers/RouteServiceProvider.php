@@ -37,7 +37,9 @@ class RouteServiceProvider extends ServiceProvider
 
             $this->mapWebRoutes();
 
-            $this->mapUpgradeRoutes();
+            if ($this->app->isLocal()) {
+                $this->mapUpgradeRoutes();
+            }
 
             //
         });
@@ -54,7 +56,7 @@ class RouteServiceProvider extends ServiceProvider
             ->group(base_path('routes/web.php'));
     }
 
-    protected function mapUpgradeRoutes()
+    protected function mapUpgradeRoutes(): void
     {
         Route::middleware('web')
             ->group(base_path('routes/upgrade.php'));

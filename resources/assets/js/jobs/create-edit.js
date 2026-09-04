@@ -171,8 +171,8 @@ function loadEmployeeCreateEditData() {
                     theme: "snow"
                 });
             }
-            setQuillHtml(details, "#job_desc");
-            setQuillHtml(response, "#key_responsibilities");
+            details.root.innerHTML = $("#job_desc").val() || "";
+            response.root.innerHTML = $("#key_responsibilities").val() || "";
             rememberJobEditorHeight("#details", "tap2jobs:admin-job-editor:description-height");
             rememberJobEditorHeight("#response", "tap2jobs:admin-job-editor:responsibilities-height");
             if (window.compensationAndBenefits) {
@@ -1416,7 +1416,11 @@ listenSubmit("#createSalaryPeriodForm", function() {
 });
 
 
-function prepareJobFormForSubmission(formSelector, focusInvalid = true) {
+function prepareJobFormForSubmission(formSelector) {
+    return prepareJobFormForSubmissionWithOptions(formSelector, true);
+}
+
+function prepareJobFormForSubmissionWithOptions(formSelector, focusInvalid = true) {
     const form = $(formSelector)[0];
 
     if (!form) {
@@ -1470,6 +1474,8 @@ function prepareJobFormForSubmission(formSelector, focusInvalid = true) {
     }
 
     if (!form.checkValidity()) {
+        displayErrorMessage(Lang.get("js.required_field_messages"));
+
         if (focusInvalid) {
             focusInvalidJobField(form);
         }
@@ -1555,7 +1561,7 @@ function getFirstInvalidJobField(form) {
 function validateJobFieldsInOrder(formSelector, editors) {
     const form = $(formSelector)[0];
 
-    if (!prepareJobFormForSubmission(formSelector, false)) {
+    if (!prepareJobFormForSubmissionWithOptions(formSelector, false)) {
         const invalidField = getFirstInvalidJobField(form);
 
         for (const editor of editors) {
@@ -1818,6 +1824,10 @@ listenClick("#jobsSaveBtn, #saveDraft", function(e) {
     clearJobValidationState($("#createJobForm")[0]);
     $("#saveAsDraft").val($(this).val() === "draft" ? "1" : "0");
 
+    if (!prepareJobFormForSubmission("#createJobForm")) {
+        return false;
+    }
+
     if (!validateJobFieldsInOrder("#createJobForm", [details, response])) {
         return false;
     }
@@ -1849,6 +1859,10 @@ listenClick("#jobsSaveBtn, #saveDraft", function(e) {
 listenClick("#editJobsSaveBtn, #saveDraft", function(e) {
     e.preventDefault();
     clearJobValidationState($("#editJobForm")[0]);
+
+    if (!prepareJobFormForSubmission("#editJobForm")) {
+        return false;
+    }
 
     if (!validateJobFieldsInOrder("#editJobForm", [editJobDescription, editResponse])) {
         return false;
