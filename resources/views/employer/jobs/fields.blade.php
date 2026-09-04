@@ -17,29 +17,15 @@
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('skill_id', __('messages.job.job_skill').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        <div class="input-group flex-nowrap">
-            {{ Form::select('jobsSkill[]', $data['jobSkill'], old('jobsSkill'), ['class' => 'form-select job-skill-select', 'id' => 'SkillId', 'multiple' => true, 'data-placeholder' => __('messages.company.select_job_skill'), 'required']) }}
-            <div class="input-group-text border-0">
-                <a href="javascript:void(0)" class="text-gray-500 createSkillModal" title="{{ __('messages.common.add') }}" data-bs-toggle="tooltip">
-                    <i class="fa fa-plus"></i>
-                </a>
-            </div>
-        </div>
+        {{ Form::select('jobsSkill[]', $data['jobSkill'], old('jobsSkill'), ['class' => 'form-select job-skill-select', 'id' => 'SkillId', 'multiple' => true, 'data-placeholder' => __('messages.company.select_job_skill'), 'required']) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('tagId', __('messages.job_tag.show_job_tag').':', ['class' => 'form-label']) }}
-        <div class="input-group flex-nowrap">
-            {{ Form::select('jobTag[]', $data['jobTag'], null, ['class' => 'form-select job-tag-select', 'id' => 'tagId', 'multiple' => true, 'data-placeholder' => __('messages.company.select_job_tag')]) }}
-            <div class="input-group-text border-0">
-                <a href="javascript:void(0)" class="text-gray-500 createJobTagModal" title="{{ __('messages.common.add') }}" data-bs-toggle="tooltip">
-                    <i class="fa fa-plus"></i>
-                </a>
-            </div>
-        </div>
+        {{ Form::select('jobTag[]', $data['jobTag'], null, ['class' => 'form-select job-tag-select', 'id' => 'tagId', 'multiple' => true, 'data-placeholder' => __('messages.company.select_job_tag')]) }}
     </div>
     @include('employer.jobs.employment_workplace_fields')
     <div class="col-xl-12 col-md-12 col-sm-12 mb-5">
-        {{ Form::label('description', __('messages.job.description').':', ['class' => 'form-label']) }}
+        {{ Form::label('description', 'Requirements:', ['class' => 'form-label']) }}
         <span class="required"></span>
         <div class="job-rich-editor-shell">
             <div id="details" class="job-rich-editor" aria-required="true"></div>
@@ -55,6 +41,14 @@
             <div class="job-rich-editor-resize-handle" role="separator" aria-orientation="horizontal" title="Resize editor"></div>
         </div>
         {{ Form::hidden('key_responsibilities', old('key_responsibilities'), ['id' => 'key_responsibilities', 'required']) }}
+    </div>
+    <div class="col-xl-12 col-md-6 col-sm-12 mb-5">
+        {{ Form::label('compensation_and_other_benefits', 'Compensation and other benefits:', ['class' => 'form-label']) }}
+        <div class="job-rich-editor-shell">
+            <div id="compensationAndBenefits" class="job-rich-editor"></div>
+            <div class="job-rich-editor-resize-handle" role="separator" aria-orientation="horizontal" title="Resize editor"></div>
+        </div>
+        {{ Form::hidden('compensation_and_other_benefits', old('compensation_and_other_benefits'), ['id' => 'compensation_and_other_benefits']) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('no_preference', __('messages.candidate.gender').':', ['class' => 'form-label']) }}
@@ -102,43 +96,47 @@
         <span class="required"></span>
         {{ Form::select('salary_period_id', $data['salaryPeriods'], null, ['id'=>'salaryPeriodsId','class' => 'form-select','placeholder' => __('messages.company.select_salary_period'),'data-control'=>'select2','required']) }}
     </div>
-    <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
+    <div class="col-12 mb-5">
+        <div class="border rounded p-4 job-location-container">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h3 class="fs-5 fw-bold mb-0">Job location</h3>
+            </div>
+            <div class="border rounded p-4 mb-4 job-location-row">
+                <div class="d-flex align-items-center mb-3">
+                    <strong>Location 1</strong>
+                </div>
+                <div class="row">
+                    <div class="col-xl-2 col-md-4 col-sm-12 mb-5">
         {{ Form::label('country', __('messages.company.country').':', ['class' => 'form-label']) }}
         <span class="required"></span>
         {{ Form::select('country_id', $data['countries'], $data['selected_country_id'] ?? $data['default_country_id'] ?? null, ['id'=>'countryId','class' => 'form-select','data-control'=>'select2','required']) }}
     </div>
-    <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
+    <div class="col-xl-2 col-md-4 col-sm-12 mb-5">
         {{ Form::label('state', __('messages.company.state').':', ['class' => 'form-label']) }}
         <span class="required"></span>
         {{ Form::select('state_id', $data['default_country_states'] ?? [], old('state_id'), ['id'=>'stateId','class' => 'form-select','placeholder' => __('messages.company.select_state'),'data-control'=>'select2','required']) }}
     </div>
-    <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
+    <div class="col-xl-2 col-md-4 col-sm-12 mb-5">
         {{ Form::label('city', __('messages.company.city').':', ['class' => 'form-label']) }}
         <span class="required"></span>
         {{ Form::select('city_id', $data['selected_state_cities'] ?? [], old('city_id'), ['id'=>'cityId','class' => 'form-select','placeholder' => __('messages.company.select_city'),'data-control'=>'select2','required']) }}
     </div>
-    <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
+    <div class="col-xl-2 col-md-4 col-sm-12 mb-5">
         {{ Form::label('thana', __('messages.thana.thana_name').':', ['class' => 'form-label']) }}
         {{ Form::select('thana_id', $data['selected_city_thanas'] ?? [], old('thana_id'), ['id'=>'thanaId','class' => 'form-select','placeholder' => __('messages.company.select_thana'),'data-control'=>'select2']) }}
     </div>
-    <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
+    <div class="col-xl-4 col-md-4 col-sm-12 mb-5">
         {{ Form::label('city_village_name', __('messages.city_village.city_villages').':', ['class' => 'form-label']) }}
         {{ Form::text('city_village_name', old('city_village_name'), ['class' => 'form-control', 'placeholder' => 'Enter Area / City / Village']) }}
     </div>
-    <div class="col-xl-9 col-md-6 col-sm-12 mb-5">
-        {{ Form::label('address', __('messages.candidate.address').':', ['class' => 'form-label']) }}
-        {{ Form::textarea('address', old('address'), ['id' => 'jobAddress', 'class' => 'form-control', 'rows' => 3, 'placeholder' => __('messages.candidate.address')]) }}
+                </div>
+            </div>
+            @include('jobs.partials.additional_locations')
+        </div>
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('career_level_id', __('messages.job.career_level').':', ['class' => 'form-label']) }}
-        <div class="input-group flex-nowrap">
-            {{ Form::select('career_level_id', $data['careerLevels'],null, ['id'=>'careerLevelsId','class' => 'form-select','data-control'=>'select2','placeholder' => __('messages.company.select_career_level')]) }}
-            <div class="input-group-text border-0">
-                <a href="javascript:void(0)" class="text-gray-500 createCareerLevelModal" title="{{ __('messages.common.add') }}" data-bs-toggle="tooltip">
-                    <i class="fa fa-plus"></i>
-                </a>
-            </div>
-        </div>
+        {{ Form::select('career_level_id', $data['careerLevels'],null, ['id'=>'careerLevelsId','class' => 'form-select','data-control'=>'select2','placeholder' => __('messages.company.select_career_level')]) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('job_shift_id', __('messages.job.job_shift').':', ['class' => 'form-label']) }}
@@ -155,14 +153,7 @@
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('functional_area_id', __('messages.job.functional_area').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        <div class="input-group flex-nowrap">
-            {{ Form::select('functional_area_id', $data['functionalArea'], null, ['id'=>'functionalAreaId','class' => 'form-select','placeholder' => __('messages.company.select_functional_area'),'data-control'=>'select2','required']) }}
-            <div class="input-group-text border-0">
-                <a href="javascript:void(0)" class="text-gray-500 createFunctionalAreaModal" title="{{ __('messages.common.add') }}" data-bs-toggle="tooltip">
-                    <i class="fa fa-plus"></i>
-                </a>
-            </div>
-        </div>
+        {{ Form::select('functional_area_id', $data['functionalArea'], null, ['id'=>'functionalAreaId','class' => 'form-select','placeholder' => __('messages.company.select_functional_area'),'data-control'=>'select2','required']) }}
     </div>
     @include('jobs.experience_fields')
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
@@ -182,3 +173,4 @@
 </div>
 
 <script>window.jobDegreeTitleOptions = @json($data['educationDegreeTitleOptions'] ?? []);</script>
+

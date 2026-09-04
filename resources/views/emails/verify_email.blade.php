@@ -72,7 +72,15 @@
                     <table width="100%">
                         <tr>
                             <td>
-                                <img style="text-align: center;" src="{{ ! empty($logo_path) && isset($message) ? $message->embed($logo_path) : getLogoUrl() }}"
+                                @php
+                                    $logoSrc = getLogoUrl();
+                                    if (! empty($logo_path) && isset($message)) {
+                                        $logoSrc = $message->embed($logo_path);
+                                    } elseif (! empty($logo_data_uri)) {
+                                        $logoSrc = $logo_data_uri;
+                                    }
+                                @endphp
+                                <img style="text-align: center;" src="{{ $logoSrc }}"
                                     alt="company logo" class="img-fluid main-logo">
                             </td>
                         </tr>
@@ -100,6 +108,7 @@
                                             class="company-name">{{ getAppName() }}</a>.</strong>
                                     {{__('messages.all_rights_reserved')}}.
                                 </p>
+                            </td>
                         </tr>
                     </table>
                 </td>
@@ -109,3 +118,4 @@
 </body>
 
 </html>
+

@@ -7,6 +7,7 @@ use App\Models\JobType;
 use App\Models\ProfileReferenceOption;
 use App\Models\Skill;
 use App\Models\State;
+use App\Models\Tag;
 use App\Models\Thana;
 use Illuminate\Validation\Rule;
 
@@ -31,6 +32,12 @@ trait ValidatesJob
             ->map(fn ($skill) => trim((string) $skill))
             ->filter()
             ->unique(fn ($skill) => mb_strtolower($skill))
+            ->values()
+            ->toArray();
+        $jobTag = collect($this->input('jobTag', []))
+            ->map(fn ($tag) => trim((string) $tag))
+            ->filter()
+            ->unique(fn ($tag) => mb_strtolower($tag))
             ->values()
             ->toArray();
 
@@ -61,7 +68,9 @@ trait ValidatesJob
             'freshers_encouraged' => $this->boolean('freshers_encouraged'),
             'experience' => $this->minimumExperienceYears($experienceUnit, $experienceRequirement),
             'jobsSkill' => $jobsSkill,
+            'jobTag' => $jobTag,
             'workplaces' => $selectedWorkplaces,
+            'job_locations' => $this->normalizedJobLocations(),
         ]);
     }
 
@@ -100,6 +109,91 @@ trait ValidatesJob
         }
     }
 
+    private function normalizedJobLocations(): array
+    {
+        $locations = [];
+        $primary = $this->normalizeJobLocationRow([
+            'country_id' => $this->input('country_id'),
+            'state_id' => $this->input('state_id'),
+            'city_id' => $this->input('city_id'),
+            'thana_id' => $this->input('thana_id'),
+            'city_village_name' => $this->input('city_village_name'),
+            'address' => $this->input('address'),
+        ]);
+
+        if ($this->hasMeaningfulJobLocation($primary)) {
+            $primary['is_primary'] = true;
+            $locations[] = $primary;
+        }
+
+        foreach ($this->input('job_locations', []) as $location) {
+            if (! is_array($location)) {
+                continue;
+            }
+
+            $location = $this->normalizeJobLocationRow($location);
+
+            if (! $this->hasMeaningfulJobLocation($location)) {
+                continue;
+            }
+
+            $location['is_primary'] = false;
+            $locations[] = $location;
+        }
+
+        return collect($locations)
+            ->unique(fn (array $location): string => implode('|', [
+                $location['country_id'] ?? '',
+                $location['state_id'] ?? '',
+                $location['city_id'] ?? '',
+                $location['thana_id'] ?? '',
+                mb_strtolower($location['city_village_name'] ?? ''),
+                mb_strtolower($location['address'] ?? ''),
+            ]))
+            ->values()
+            ->all();
+    }
+
+    private function normalizeJobLocationRow(array $location): array
+    {
+        $normalized = [
+            'country_id' => $location['country_id'] ?? null,
+            'state_id' => $location['state_id'] ?? null,
+            'city_id' => $location['city_id'] ?? null,
+            'thana_id' => $location['thana_id'] ?? null,
+            'city_village_name' => filled($location['city_village_name'] ?? null) ? trim((string) $location['city_village_name']) : null,
+            'address' => filled($location['address'] ?? null) ? trim((string) $location['address']) : null,
+        ];
+
+        foreach (['country_id', 'state_id', 'city_id', 'thana_id'] as $field) {
+            if ($normalized[$field] === '') {
+                $normalized[$field] = null;
+            }
+        }
+
+        if (! $normalized['city_id'] && $normalized['thana_id']) {
+            $normalized['city_id'] = Thana::whereKey($normalized['thana_id'])->value('city_id');
+        }
+
+        if (! $normalized['state_id'] && $normalized['city_id']) {
+            $normalized['state_id'] = City::whereKey($normalized['city_id'])->value('state_id');
+        }
+
+        if (! $normalized['country_id'] && $normalized['state_id']) {
+            $normalized['country_id'] = State::whereKey($normalized['state_id'])->value('country_id');
+        }
+
+        return $normalized;
+    }
+
+    private function hasMeaningfulJobLocation(array $location): bool
+    {
+        return collect($location)
+            ->except('is_primary')
+            ->filter(fn ($value) => $value !== null && $value !== '')
+            ->isNotEmpty();
+    }
+
     protected function jobRules(): array
     {
         $usesEmploymentStatusForm = $this->routeIs('job.store', 'job.update', 'admin.job.store', 'admin.job.update');
@@ -110,6 +204,7 @@ trait ValidatesJob
             'job_title' => ['required', 'string', 'max:180'],
             'description' => ['required', 'string'],
             'key_responsibilities' => ['required', 'string'],
+            'compensation_and_other_benefits' => ['nullable', 'string'],
             'job_category_id' => ['required', 'integer', Rule::exists('job_categories', 'id')],
             'city_village_name' => ['nullable', 'string', 'max:255'],
             'currency_id' => ['required', 'integer', Rule::exists('salary_currencies', 'id')],
@@ -127,9 +222,31 @@ trait ValidatesJob
                     }
                 },
             ],
-            'career_level_id' => ['nullable', 'integer', Rule::exists('career_levels', 'id')],
+            'career_level_id' => [
+                'nullable',
+                'string',
+                'max:150',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    $value = trim((string) $value);
+
+                    if (is_numeric($value) && ! \App\Models\CareerLevel::whereKey((int) $value)->exists()) {
+                        $fail(__('validation.exists', ['attribute' => $attribute]));
+                    }
+                },
+            ],
             'job_shift_id' => ['nullable', 'integer', Rule::exists('job_shifts', 'id')],
             'degree_level_id' => ['nullable', 'integer', Rule::exists('education_degree_levels', 'id')],
+            'degree_title_id' => [
+                'nullable',
+                'string',
+                'max:150',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    $value = trim((string) $value);
+                    if (is_numeric($value) && ! \App\Models\EducationDegreeTitle::whereKey((int) $value)->exists()) {
+                        $fail(__('validation.exists', ['attribute' => $attribute]));
+                    }
+                },
+            ],
             'no_preference' => ['nullable', 'integer', Rule::in([0, 1, 2])],
             'experience' => ['required', 'integer', 'min:0', 'max:60'],
             'experience_unit' => ['required', Rule::in(['month', 'year', 'month_year'])],
@@ -153,6 +270,14 @@ trait ValidatesJob
                 Rule::exists('thanas', 'id')->where('city_id', $this->input('city_id')),
             ],
             'address' => ['nullable', 'string'],
+            'job_locations' => ['required', 'array', 'min:1'],
+            'job_locations.*.country_id' => ['required', 'integer', Rule::exists('countries', 'id')],
+            'job_locations.*.state_id' => ['required', 'integer', Rule::exists('states', 'id')],
+            'job_locations.*.city_id' => ['required', 'integer', Rule::exists('cities', 'id')],
+            'job_locations.*.thana_id' => ['nullable', 'integer', Rule::exists('thanas', 'id')],
+            'job_locations.*.city_village_name' => ['nullable', 'string', 'max:255'],
+            'job_locations.*.address' => ['nullable', 'string'],
+            'job_locations.*.is_primary' => ['required', 'boolean'],
             'salary_from' => $hideSalary
                 ? ['nullable', 'numeric', 'min:0', 'max:9999999999']
                 : ['required', 'numeric', 'min:0', 'max:9999999999'],
@@ -187,7 +312,26 @@ trait ValidatesJob
                 },
             ],
             'jobTag' => ['nullable', 'array'],
-            'jobTag.*' => ['integer', 'distinct', Rule::exists('tags', 'id')],
+            'jobTag.*' => [
+                'nullable',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    $value = trim((string) $value);
+
+                    if ($value === '') {
+                        return;
+                    }
+
+                    if (mb_strlen($value) > 160) {
+                        $fail(__('validation.max.string', ['attribute' => $attribute, 'max' => 160]));
+
+                        return;
+                    }
+
+                    if (is_numeric($value) && ! Tag::whereKey((int) $value)->exists()) {
+                        $fail(__('validation.exists', ['attribute' => $attribute]));
+                    }
+                },
+            ],
         ];
     }
 

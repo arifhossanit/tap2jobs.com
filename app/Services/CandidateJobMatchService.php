@@ -35,7 +35,7 @@ class CandidateJobMatchService
             ->pluck('job_id');
 
         $jobs = Job::query()
-            ->with(['company', 'jobsSkill', 'jobCategory', 'functionalArea', 'city', 'state', 'country'])
+            ->with(['company', 'jobsSkill', 'jobCategory', 'functionalArea', 'city', 'state', 'country', 'locations'])
             ->where('status', Job::STATUS_OPEN)
             ->where('is_suspended', Job::NOT_SUSPENDED)
             ->whereDate('job_expiry_date', '>=', now()->toDateString())
@@ -276,20 +276,34 @@ class CandidateJobMatchService
     private function locationScore(Job $job, Candidate $candidate, Collection $preferredLocationIds): int
     {
         $user = $candidate->user;
+        $locations = \Illuminate\Support\Facades\Schema::hasTable('job_locations') && $job->locations->isNotEmpty()
+            ? $job->locations
+            : collect([(object) [
+                'country_id' => $job->country_id,
+                'state_id' => $job->state_id,
+                'city_id' => $job->city_id,
+                'thana_id' => $job->thana_id,
+            ]]);
 
-        if (($user?->thana_id && $job->thana_id === $user->thana_id)
-            || ($user?->city_id && $job->city_id === $user->city_id)) {
-            return 10;
+        foreach ($locations as $location) {
+            if (($user?->thana_id && $location->thana_id === $user->thana_id)
+                || ($user?->city_id && $location->city_id === $user->city_id)) {
+                return 10;
+            }
         }
 
-        if (($user?->state_id && $job->state_id === $user->state_id)
-            || $preferredLocationIds->contains((int) $job->city_id)) {
-            return 7;
+        foreach ($locations as $location) {
+            if (($user?->state_id && $location->state_id === $user->state_id)
+                || $preferredLocationIds->contains((int) $location->city_id)) {
+                return 7;
+            }
         }
 
-        if (($user?->country_id && $job->country_id === $user->country_id)
-            || $preferredLocationIds->contains((int) $job->state_id)) {
-            return 4;
+        foreach ($locations as $location) {
+            if (($user?->country_id && $location->country_id === $user->country_id)
+                || $preferredLocationIds->contains((int) $location->state_id)) {
+                return 4;
+            }
         }
 
         return 0;

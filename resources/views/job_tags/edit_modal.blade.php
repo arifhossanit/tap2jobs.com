@@ -19,7 +19,6 @@
             </div>
             <div class="mb-5">
                 {{ Form::label('description', __('messages.marital_status.description').(':'),['class' => 'form-label']) }}
-                <span class="required"></span>
                 <div id="editJobTagDescriptionQuillData"></div>
                 {{ Form::hidden('description', null, ['id' => 'edit_job_tag_desc']) }}
             </div>

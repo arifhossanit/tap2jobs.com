@@ -15,8 +15,8 @@ use Spatie\Permission\Models\Role;
 
 class DemoEmployerSeeder extends Seeder
 {
-    private const PER_LETTER_LIMIT = 20;
     private const DEFAULT_PASSWORD = '123456';
+    private const CHUNK_SIZE = 500;
     private const DEFAULT_CSV = 'database/seeders/data/demo-employer-names.csv';
 
     public function run(): void
@@ -30,86 +30,93 @@ class DemoEmployerSeeder extends Seeder
             return;
         }
 
-        DB::transaction(function () use ($names) {
-            $now = Carbon::now();
-            $role = Role::firstOrCreate(['name' => 'Employer', 'guard_name' => 'web']);
-            $adminId = User::query()
-                ->whereHas('roles', fn ($query) => $query->where('name', 'Admin'))
-                ->value('id') ?: User::query()->value('id');
+        $now = Carbon::now();
+        $role = Role::firstOrCreate(['name' => 'Employer', 'guard_name' => 'web']);
+        $adminId = User::query()
+            ->whereHas('roles', fn ($query) => $query->where('name', 'Admin'))
+            ->value('id') ?: User::query()->value('id');
+        $lookups = $this->lookups($now);
+        $password = Hash::make(self::DEFAULT_PASSWORD);
+        $seeded = 0;
+        $total = count($names);
 
-            $lookups = $this->lookups($now);
+        foreach (array_chunk($names, self::CHUNK_SIZE, true) as $chunk) {
+            DB::transaction(function () use ($chunk, $role, $adminId, $lookups, $password, $now) {
+                foreach ($chunk as $index => $companyName) {
+                    $serial = $index + 1;
+                    $slug = Str::limit(Str::slug(Str::ascii($companyName)) ?: 'demo-employer-'.$serial, 60, '');
+                    $email = $this->uniqueEmail($slug, $serial);
+                    $username = $this->uniqueUsername($slug, $serial);
+                    $phone = $this->uniquePhone($serial);
+                    $contactName = $companyName.' HR';
+                    $industryIds = [$lookups['industry_ids'][$index % count($lookups['industry_ids'])]];
+                    $companySizeId = $lookups['company_size_ids'][$index % count($lookups['company_size_ids'])];
+                    $companySize = $lookups['company_sizes']->get($companySizeId);
+                    $location = $lookups['locations'][$index % count($lookups['locations'])];
 
-            foreach ($names as $index => $companyName) {
-                $serial = $index + 1;
-                $slug = Str::limit(Str::slug(Str::ascii($companyName)) ?: 'demo-employer-'.$serial, 60, '');
-                $email = $this->uniqueEmail($slug, $serial);
-                $username = $this->uniqueUsername($slug, $serial);
-                $phone = $this->uniquePhone($serial);
-                $contactName = $companyName.' HR';
-                $industryIds = [$lookups['industry_ids'][$index % count($lookups['industry_ids'])]];
-                $companySizeId = $lookups['company_size_ids'][$index % count($lookups['company_size_ids'])];
-                $companySize = DB::table('company_sizes')->where('id', $companySizeId)->first();
-                $location = $lookups['locations'][$index % count($lookups['locations'])];
+                    /** @var User $user */
+                    $user = User::query()->create([
+                        'username' => $username,
+                        'first_name' => $companyName,
+                        'email' => $email,
+                        'phone' => $phone,
+                        'password' => $password,
+                        'country_id' => $location['country_id'],
+                        'state_id' => $location['state_id'],
+                        'city_id' => $location['city_id'],
+                        'thana_id' => $location['thana_id'],
+                        'region_code' => '880',
+                        'is_active' => 1,
+                        'is_verified' => 1,
+                        'email_verified_at' => $now,
+                    ]);
+                    $user->assignRole($role);
 
-                /** @var User $user */
-                $user = User::query()->create([
-                    'username' => $username,
-                    'first_name' => $companyName,
-                    'email' => $email,
-                    'phone' => $phone,
-                    'password' => Hash::make(self::DEFAULT_PASSWORD),
-                    'country_id' => $location['country_id'],
-                    'state_id' => $location['state_id'],
-                    'city_id' => $location['city_id'],
-                    'thana_id' => $location['thana_id'],
-                    'region_code' => '880',
-                    'is_active' => 1,
-                    'is_verified' => 1,
-                    'email_verified_at' => $now,
-                ]);
-                $user->assignRole($role);
+                    /** @var Company $company */
+                    $company = Company::query()->create([
+                        'user_id' => $user->id,
+                        'unique_id' => getUniqueCompanyId(),
+                        'company_name' => $companyName,
+                        'contact_person_name' => $contactName,
+                        'contact_person_designation' => 'HR Manager',
+                        'ceo' => 'HR Manager',
+                        'industry_id' => $industryIds[0],
+                        'industry_ids' => $industryIds,
+                        'ownership_type_id' => $lookups['ownership_type_id'],
+                        'company_size_id' => $companySizeId,
+                        'employee_range' => $companySize?->size,
+                        'established_in' => random_int(2000, (int) date('Y')),
+                        'no_of_offices' => random_int(1, 4),
+                        'details' => '<p>Demo employer profile for '.$companyName.'. This is fake data for testing.</p>',
+                        'website' => 'https://'.$slug.'.example.test',
+                        'location' => $location['address'],
+                        'billing_address' => $location['address'],
+                        'billing_phone' => $phone,
+                        'billing_region_code' => '880',
+                        'billing_email' => $email,
+                        'has_disability_facilities' => false,
+                        'disability_inclusion_policy' => null,
+                        'disability_inclusion_support' => null,
+                        'disability_inclusion_training' => null,
+                        'disability_facilities' => [],
+                        'last_change' => $adminId,
+                        'created_by' => Company::CREATED_BY_ADMIN_DEMO,
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ]);
 
-                /** @var Company $company */
-                $company = Company::query()->create([
-                    'user_id' => $user->id,
-                    'unique_id' => getUniqueCompanyId(),
-                    'company_name' => $companyName,
-                    'contact_person_name' => $contactName,
-                    'contact_person_designation' => 'HR Manager',
-                    'ceo' => 'HR Manager',
-                    'industry_id' => $industryIds[0],
-                    'industry_ids' => $industryIds,
-                    'ownership_type_id' => $lookups['ownership_type_id'],
-                    'company_size_id' => $companySizeId,
-                    'employee_range' => $companySize?->size,
-                    'established_in' => random_int(2000, (int) date('Y')),
-                    'no_of_offices' => random_int(1, 4),
-                    'details' => '<p>Demo employer profile for '.$companyName.'. This is fake data for testing.</p>',
-                    'website' => 'https://'.$slug.'.example.test',
-                    'location' => $location['address'],
-                    'billing_address' => $location['address'],
-                    'billing_phone' => $phone,
-                    'billing_region_code' => '880',
-                    'billing_email' => $email,
-                    'has_disability_facilities' => false,
-                    'disability_inclusion_policy' => null,
-                    'disability_inclusion_support' => null,
-                    'disability_inclusion_training' => null,
-                    'disability_facilities' => [],
-                    'last_change' => $adminId,
-                    'created_by' => Company::CREATED_BY_ADMIN_DEMO,
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ]);
+                    $user->update([
+                        'owner_id' => $company->id,
+                        'owner_type' => Company::class,
+                    ]);
 
-                $user->update([
-                    'owner_id' => $company->id,
-                    'owner_type' => Company::class,
-                ]);
+                    $this->createLead($company, $user, $companySize, $now);
+                }
+            });
 
-                $this->createLead($company, $user, $companySize, $now);
-            }
-        });
+            $seeded += count($chunk);
+            $this->command?->info('Seeded '.$seeded.'/'.$total.' demo employers...');
+        }
 
         $this->command?->info('Demo employers seeded from '.$csvPath);
     }
@@ -180,10 +187,8 @@ class DemoEmployerSeeder extends Seeder
             if (! isset($groupedNames[$letter])) {
                 $groupedNames[$letter] = [];
             }
-            if (count($groupedNames[$letter]) < self::PER_LETTER_LIMIT) {
-                if (! in_array($name, $groupedNames[$letter], true)) {
-                    $groupedNames[$letter][] = $name;
-                }
+            if (! in_array($name, $groupedNames[$letter], true)) {
+                $groupedNames[$letter][] = $name;
             }
         }
     }
@@ -259,11 +264,13 @@ class DemoEmployerSeeder extends Seeder
                 'updated_at' => $now,
             ]);
         }
+        $companySizes = DB::table('company_sizes')->whereIn('id', $companySizeIds)->get()->keyBy('id');
 
         return [
             'industry_ids' => $industryIds,
             'ownership_type_id' => $ownershipTypeId,
             'company_size_ids' => $companySizeIds,
+            'company_sizes' => $companySizes,
             'locations' => [[
                 'country_id' => $countryId,
                 'state_id' => $stateId,

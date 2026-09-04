@@ -127,17 +127,8 @@ listenSubmit('#addJobTagForm', function (e) {
     e.preventDefault();
 
     let add_job_tag_editor_content = addJobTagDescriptionQuill.root.innerHTML;
-    if (add_job_tag_editor_content.length) {
-        if (addJobTagDescriptionQuill.getText().trim().length === 0) {
-            displayErrorMessage(Lang.get('js.description_required'));
-            return false;
-        }
-    } else {
-        displayErrorMessage(Lang.get('js.description_required'));
-        return false;
-    }
-    let input = JSON.stringify(add_job_tag_editor_content);
-    $('#job_tag_desc').val(input.replace(/"/g, ''));
+    let input = addJobTagDescriptionQuill.getText().trim().length > 0 ? JSON.stringify(add_job_tag_editor_content).replace(/"/g, '') : '';
+    $('#job_tag_desc').val(input);
     processingBtn('#addJobTagForm', '#jobTagBtnSave', 'loading');
     $.ajax({
         url: route('jobTag.store'),
@@ -162,17 +153,8 @@ listenSubmit('#addJobTagForm', function (e) {
 listenSubmit('#editJobTagForm', function (event) {
     event.preventDefault();
     var edit_job_tag_editor_content = editJobTagDescriptionQuill.root.innerHTML;
-    if (edit_job_tag_editor_content.length) {
-        if (editJobTagDescriptionQuill.getText().trim().length === 0) {
-            displayErrorMessage(Lang.get('js.description_required'));
-            return false;
-        }
-    } else {
-        displayErrorMessage(Lang.get('js.description_required'));
-        return false;
-    }
-    let input = JSON.stringify(edit_job_tag_editor_content);
-    $('#edit_job_tag_desc').val(input.replace(/"/g, ''));
+    let input = editJobTagDescriptionQuill.getText().trim().length > 0 ? JSON.stringify(edit_job_tag_editor_content).replace(/"/g, '') : '';
+    $('#edit_job_tag_desc').val(input);
     processingBtn('#editJobTagForm', '#JobTagEditSaveBtn', 'loading');
     const updateJobTagId = $('#jobTagId').val();
 

@@ -16,11 +16,13 @@
     <div class="employer-account-section-title">
         <i class="fa-solid fa-building"></i>
         <span>{{ __('messages.employer_account.company_details_information') }}</span>
+        <span>{{ __('messages.employer_account.company_details_information') }}</span>
     </div>
 
     <div class="employer-account-form">
         <div class="row">
             <div class="col-xl-4 col-md-6 col-sm-12 mb-5">
+                {{ Form::label('name', __('messages.employer_account.company_name'), ['class' => 'form-label']) }}
                 {{ Form::label('name', __('messages.employer_account.company_name'), ['class' => 'form-label']) }}
                 <span class="required"></span>
                 {{ Form::text('name', isset($user) ? $user->full_name : null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.company.name')]) }}
@@ -28,13 +30,17 @@
             <div class="col-xl-4 col-md-6 col-sm-12 mb-5">
                 {{ Form::label('company_name_bn', __('messages.employer_account.company_name_bn'), ['class' => 'form-label']) }}
                 {{ Form::text('company_name_bn', $company->company_name_bn, ['class' => 'form-control', 'placeholder' => __('messages.employer_account.company_name_bn_placeholder')]) }}
+                {{ Form::label('company_name_bn', __('messages.employer_account.company_name_bn'), ['class' => 'form-label']) }}
+                {{ Form::text('company_name_bn', $company->company_name_bn, ['class' => 'form-control', 'placeholder' => __('messages.employer_account.company_name_bn_placeholder')]) }}
             </div>
             <div class="col-xl-4 col-md-6 col-sm-12 mb-5">
+                {{ Form::label('established_in', __('messages.employer_account.year_of_establishment'), ['class' => 'form-label']) }}
                 {{ Form::label('established_in', __('messages.employer_account.year_of_establishment'), ['class' => 'form-label']) }}
                 <span class="required"></span>
                 {{ Form::selectYear('established_in', date('Y'), 2000, isset($company->established_in) ? $company->established_in : '', ['class' => 'form-select', 'data-control' => 'select2', 'id' => 'establishedIn']) }}
             </div>
             <div class="col-12 mb-5">
+                <div class="employer-account-field-heading required-heading">{{ __('messages.employer_account.number_of_employees') }}</div>
                 <div class="employer-account-field-heading required-heading">{{ __('messages.employer_account.number_of_employees') }}</div>
                 @php
                     $legacySize = $data['companySize'][$company->company_size_id] ?? null;
@@ -68,8 +74,10 @@
             </div>
             <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
                 {{ Form::textarea('location', old('location', $company->location ?: $company->company_summary), ['class' => 'form-control employer-company-summary', 'rows' => 3, 'maxlength' => 255, 'required', 'placeholder' => __('messages.employer_register.company_address_en_placeholder')]) }}
+                {{ Form::textarea('location', old('location', $company->location ?: $company->company_summary), ['class' => 'form-control employer-company-summary', 'rows' => 3, 'maxlength' => 255, 'required', 'placeholder' => __('messages.employer_register.company_address_en_placeholder')]) }}
             </div>
             <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                {{ Form::textarea('company_address_bn', old('company_address_bn', $company->company_address_bn ?: $company->company_summary_bn), ['class' => 'form-control employer-company-summary', 'rows' => 3, 'maxlength' => 1000, 'placeholder' => __('messages.employer_register.company_address_bn_placeholder')]) }}
                 {{ Form::textarea('company_address_bn', old('company_address_bn', $company->company_address_bn ?: $company->company_summary_bn), ['class' => 'form-control employer-company-summary', 'rows' => 3, 'maxlength' => 1000, 'placeholder' => __('messages.employer_register.company_address_bn_placeholder')]) }}
             </div>
             @php
@@ -84,12 +92,14 @@
                             data-bs-toggle="modal" data-bs-target="#employerAddIndustryModal">
                         <i class="fa-solid fa-plus"></i>
                         <span>{{ __('messages.employer_account.add_new_industry') }}</span>
+                        <span>{{ __('messages.employer_account.add_new_industry') }}</span>
                     </button>
                 </div>
             </div>
             <div class="col-12 mb-4">
                 <div class="employer-industry-picker">
                     <div class="employer-industry-search-wrap">
+                        <input type="search" class="form-control" id="employerIndustrySearch" placeholder="{{ __('messages.employer_account.search_industry') }}">
                         <input type="search" class="form-control" id="employerIndustrySearch" placeholder="{{ __('messages.employer_account.search_industry') }}">
                         <span class="employer-industry-search-icon" aria-hidden="true">
                             <i class="fa-solid fa-magnifying-glass"></i>
@@ -107,6 +117,8 @@
                     </div>
                     <div class="employer-industry-empty d-none" id="employerIndustryEmpty">{{ __('messages.employer_account.no_industry_found_category') }}</div>
                     <button type="button" class="employer-industry-more d-none" id="employerIndustryMore">{{ __('messages.employer_account.see_more') }}</button>
+                    <div class="employer-industry-empty d-none" id="employerIndustryEmpty">{{ __('messages.employer_account.no_industry_found_category') }}</div>
+                    <button type="button" class="employer-industry-more d-none" id="employerIndustryMore">{{ __('messages.employer_account.see_more') }}</button>
                 </div>
             </div>
             <div class="col-12 mb-5">
@@ -122,6 +134,7 @@
             </div>
             <div class="col-12 mb-5">
                 {{ Form::label('details', __('messages.employer_account.business_description'), ['class' => 'form-label']) }}
+                {{ Form::label('details', __('messages.employer_account.business_description'), ['class' => 'form-label']) }}
                 <span class="required"></span>
                 <div id="editEmployeeDetails"></div>
                 {{ Form::hidden('details', $company->details, ['id' => 'editEmployerDetail']) }}
@@ -129,11 +142,15 @@
             <div class="col-xl-4 col-md-6 col-sm-12 mb-5 employer-company-final-field">
                 {{ Form::label('trade_license_no', __('messages.employer_account.trade_license_no'), ['class' => 'form-label']) }}
                 {{ Form::text('trade_license_no', $company->trade_license_no, ['class' => 'form-control', 'placeholder' => __('messages.employer_account.enter_trade_license_no')]) }}
+                {{ Form::label('trade_license_no', __('messages.employer_account.trade_license_no'), ['class' => 'form-label']) }}
+                {{ Form::text('trade_license_no', $company->trade_license_no, ['class' => 'form-control', 'placeholder' => __('messages.employer_account.enter_trade_license_no')]) }}
             </div>
             <div class="col-xl-4 col-md-6 col-sm-12 mb-5 employer-company-final-field">
                 <label for="rl_no" class="form-label">
                     {{ __('messages.employer_account.rl_no') }} <span class="text-muted fw-normal">({{ __('messages.employer_account.rl_no_only_recruiting_agency') }})</span>
+                    {{ __('messages.employer_account.rl_no') }} <span class="text-muted fw-normal">({{ __('messages.employer_account.rl_no_only_recruiting_agency') }})</span>
                 </label>
+                {{ Form::text('rl_no', $company->rl_no, ['class' => 'form-control', 'placeholder' => __('messages.employer_account.enter_number_only'), 'inputmode' => 'numeric', 'pattern' => '[0-9]*', 'oninput' => "this.value = this.value.replace(/\\D/g, '')"]) }}
                 {{ Form::text('rl_no', $company->rl_no, ['class' => 'form-control', 'placeholder' => __('messages.employer_account.enter_number_only'), 'inputmode' => 'numeric', 'pattern' => '[0-9]*', 'oninput' => "this.value = this.value.replace(/\\D/g, '')"]) }}
             </div>
             <div class="col-xl-4 col-md-6 col-sm-12 mb-5 employer-company-final-field">
@@ -152,9 +169,11 @@
 
     <div class="employer-account-form">
         <h3 class="employer-account-section-subtitle">{{ __('messages.employer_account.primary_contact') }}</h3>
+        <h3 class="employer-account-section-subtitle">{{ __('messages.employer_account.primary_contact') }}</h3>
         <div class="row employer-primary-contact-grid">
             <div class="col-md-6 col-sm-12">
                 <label for="employerContactPerson" class="form-label">
+                    {{ __('messages.employer_account.contact_person_name') }} <span class="text-danger">*</span>
                     {{ __('messages.employer_account.contact_person_name') }} <span class="text-danger">*</span>
                 </label>
                 <input type="text" name="contact_person_name" id="employerContactPerson"
@@ -164,6 +183,7 @@
             </div>
             <div class="col-md-6 col-sm-12">
                 <label for="employerContactDesignation" class="form-label">
+                    {{ __('messages.employer_account.contact_person_designation') }} <span class="text-danger">*</span>
                     {{ __('messages.employer_account.contact_person_designation') }} <span class="text-danger">*</span>
                 </label>
                 <input type="text" name="ceo" id="employerContactDesignation"
@@ -208,6 +228,7 @@
                 {{ Form::text('billing_address', old('billing_address', $company->billing_address ?: $company->location), ['class' => 'form-control', 'required', 'maxlength' => 255, 'placeholder' => __('messages.employer_account.enter_billing_address')]) }}
             </div>
             <div class="col-md-6 col-sm-12 employer-billing-mobile">
+                <label for="billingPhoneNumber" class="form-label">{{ __('messages.employer_account.billing_contact_number') }}<span class="text-danger">*</span></label>
                 <label for="billingPhoneNumber" class="form-label">{{ __('messages.employer_account.billing_contact_number') }}<span class="text-danger">*</span></label>
                 <input type="tel" name="billing_phone" id="billingPhoneNumber" class="form-control" required
                        maxlength="11" inputmode="numeric" pattern="[0-9]{1,11}"

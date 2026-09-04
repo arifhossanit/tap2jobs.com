@@ -2,7 +2,7 @@
     $iconPad = checkLanguageSession() == 'ar' ? 'ps-3' : 'pe-3';
     $employersActive = Request::is('admin/employers*', 'admin/reported-employers*');
     $candidatesActive = Request::is('admin/candidates*', 'admin/reported-candidates*', 'admin/resumes*', 'admin/selected-candidate*');
-    $jobsActive = Request::is('admin/jobs*', 'admin/pending-jobs*', 'admin/reported-jobs*', 'admin/job-notification*', 'admin/expired-jobs*')
+    $jobsActive = Request::is('admin/jobs*', 'admin/pending-jobs*', 'admin/reported-jobs*', 'admin/job-notification*', 'admin/expired-jobs*', 'admin/expire-in-7-days*')
         && ! Request::is('admin/job-categories*', 'admin/job-types*', 'admin/job-tags*', 'admin/job-shifts*');
     $blogsActive = Request::is('admin/post-categories*', 'admin/posts*', 'admin/post-comments*');
     $subscriptionsActive = Request::is('admin/plans*', 'admin/transactions*');
@@ -147,18 +147,30 @@
         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
     </a>
     <ul class="aside-submenu nav flex-column collapse {{ $jobsActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideJobsMenu">
-        <li class="nav-item {{ Request::is('admin/jobs*') && !Request::is('admin/job-categories*', 'admin/job-types*', 'admin/job-tags*', 'admin/job-shifts*', 'admin/job-notification*') ? 'active' : '' }}">
+        <li class="nav-item {{ Request::is('admin/jobs*') && !request()->has('expiry_alert') && !Request::is('admin/job-categories*', 'admin/job-types*', 'admin/job-tags*', 'admin/job-shifts*', 'admin/job-notification*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('admin.jobs.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.jobs') }}</span>
             </a>
         </li>
+        @php
+            $pendingJobsCount = \App\Models\Job::where('status', \App\Models\Job::SELECT_PANDING)->count();
+            $expireIn7DaysCount = \App\Models\Job::whereDate('job_expiry_date', '<=', \Carbon\Carbon::today()->addDays(7)->toDateString())
+                                      ->whereDate('job_expiry_date', '>=', \Carbon\Carbon::today()->toDateString())
+                                      ->where('status', \App\Models\Job::STATUS_OPEN)
+                                      ->where('is_suspended', \App\Models\Job::NOT_SUSPENDED)
+                                      ->count();
+        @endphp
         <li class="nav-item {{ Request::is('admin/pending-jobs*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('admin.PendingJobs.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.pending_jobs.pending_jobs') }}</span>
+                @if($pendingJobsCount > 0)
+                    <span class="badge bg-primary ms-auto">{{ $pendingJobsCount }}</span>
+                @endif
             </a>
         </li>
+        
         <li class="nav-item {{ Request::is('admin/reported-jobs*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('reported.jobs') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
@@ -169,6 +181,15 @@
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('job-notification.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.job_notification.job_notifications') }}</span>
+            </a>
+        </li>
+        <li class="nav-item {{ Request::is('admin/expire-in-7-days*') ? 'active' : '' }}">
+            <a class="nav-link d-flex align-items-center py-2" href="{{ route('admin.jobs.expireIn7DaysJobs') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
+                <span class="aside-menu-title">Expire in 7 days</span>
+                @if($expireIn7DaysCount > 0)
+                    <span class="badge bg-danger ms-auto">{{ $expireIn7DaysCount }}</span>
+                @endif
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/expired-jobs*') ? 'active' : '' }}">
@@ -283,6 +304,7 @@
                             <a class="nav-link d-flex align-items-center py-2" href="{{ route('educationDegreeTitles.index') }}">
                                 <i class="fa-solid fa-angle-right me-2 text-muted fs-8"></i>
                                 <span class="aside-menu-title">Degree Titles</span>
+                                <i class="fa-solid fa-eye ms-auto text-primary fs-8" title="Available from candidate education quick add" data-bs-toggle="tooltip"></i>
                             </a>
                         </li>
                         <li class="nav-item {{ Request::is('admin/education-major-groups*') ? 'active' : '' }}">

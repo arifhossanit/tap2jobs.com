@@ -86,16 +86,30 @@ function loadCandidateGeneralData() {
 
     initRelevantQuillEditors();
 
-    $("[data-personal-edit-toggle]").on("click", function (event) {
+    function scrollToProfileEditTarget(selector) {
+        const target = document.querySelector(selector);
+        if (!target) {
+            return;
+        }
+
+        window.setTimeout(function () {
+            if (typeof window.scrollCandidateProfileSection === 'function') {
+                window.scrollCandidateProfileSection(target);
+                return;
+            }
+
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 50);
+    }
+
+    $('[data-personal-edit-toggle]').on('click', function (event) {
         event.preventDefault();
         event.stopPropagation();
-        $(".candidate-personal-summary").addClass("d-none");
-        $(".candidate-personal-form").removeClass("d-none");
-        $(".candidate-personal-image-actions").removeClass("d-none");
-        $(this)
-            .addClass("d-none")
-            .closest(".candidate-profile-section__header")
-            .addClass("candidate-profile-section__header--editing");
+        $('.candidate-personal-summary').addClass('d-none');
+        $('.candidate-personal-form').removeClass('d-none');
+        $('.candidate-personal-image-actions').removeClass('d-none');
+        $(this).addClass('d-none').closest('.candidate-profile-section__header').addClass('candidate-profile-section__header--editing');
+        scrollToProfileEditTarget('.candidate-personal-form');
     });
 
     $("[data-personal-edit-close]").on("click", function (event) {
@@ -112,12 +126,10 @@ function loadCandidateGeneralData() {
     $("[data-address-edit-toggle]").on("click", function (event) {
         event.preventDefault();
         event.stopPropagation();
-        $(".candidate-address-summary").addClass("d-none");
-        $(".candidate-address-form").removeClass("d-none");
-        $(this)
-            .addClass("d-none")
-            .closest(".candidate-profile-section__header")
-            .addClass("candidate-profile-section__header--editing");
+        $('.candidate-address-summary').addClass('d-none');
+        $('.candidate-address-form').removeClass('d-none');
+        $(this).addClass('d-none').closest('.candidate-profile-section__header').addClass('candidate-profile-section__header--editing');
+        scrollToProfileEditTarget('.candidate-address-form');
     });
 
     $("[data-address-edit-close]").on("click", function (event) {
@@ -151,7 +163,7 @@ function loadCandidateGeneralData() {
         }
 
         const city = $(citySelector).val();
-        resetAddressSelect(thanaSelector, "Select Thana");
+        resetAddressSelect(thanaSelector, 'Select Thana');
 
         if (!city) {
             return;
@@ -187,7 +199,7 @@ function loadCandidateGeneralData() {
         const state = $(stateSelector).val();
         resetAddressSelect(citySelector, "Select your District");
         if (thanaSelector) {
-            resetAddressSelect(thanaSelector, "Select Thana");
+            resetAddressSelect(thanaSelector, 'Select Thana');
         }
 
         if (!state) {
@@ -239,7 +251,7 @@ function loadCandidateGeneralData() {
             .append($('<option value=""></option>').text(statePlaceholder));
         resetAddressSelect(citySelector, "Select your District");
         if (thanaSelector) {
-            resetAddressSelect(thanaSelector, "Select Thana");
+            resetAddressSelect(thanaSelector, 'Select Thana');
         }
 
         if (!country) {
@@ -523,12 +535,10 @@ function loadCandidateGeneralData() {
     $("[data-career-edit-toggle]").on("click", function (event) {
         event.preventDefault();
         event.stopPropagation();
-        $(".candidate-career-summary").addClass("d-none");
-        $(".candidate-career-form").removeClass("d-none");
-        $(this)
-            .addClass("d-none")
-            .closest(".candidate-profile-section__header")
-            .addClass("candidate-profile-section__header--editing");
+        $('.candidate-career-summary').addClass('d-none');
+        $('.candidate-career-form').removeClass('d-none');
+        $(this).addClass('d-none').closest('.candidate-profile-section__header').addClass('candidate-profile-section__header--editing');
+        scrollToProfileEditTarget('.candidate-career-form');
     });
 
     $("[data-career-edit-close]").on("click", function (event) {
@@ -544,12 +554,10 @@ function loadCandidateGeneralData() {
     $("[data-preferred-edit-toggle]").on("click", function (event) {
         event.preventDefault();
         event.stopPropagation();
-        $(".candidate-preferred-summary").addClass("d-none");
-        $(".candidate-preferred-form").removeClass("d-none");
-        $(this)
-            .addClass("d-none")
-            .closest(".candidate-profile-section__header")
-            .addClass("candidate-profile-section__header--editing");
+        $('.candidate-preferred-summary').addClass('d-none');
+        $('.candidate-preferred-form').removeClass('d-none');
+        $(this).addClass('d-none').closest('.candidate-profile-section__header').addClass('candidate-profile-section__header--editing');
+        scrollToProfileEditTarget('.candidate-preferred-form');
     });
 
     $("[data-preferred-edit-close]").on("click", function (event) {
@@ -565,13 +573,11 @@ function loadCandidateGeneralData() {
     $("[data-relevant-edit-toggle]").on("click", function (event) {
         event.preventDefault();
         event.stopPropagation();
-        $(".candidate-relevant-summary").addClass("d-none");
-        $(".candidate-relevant-form").removeClass("d-none");
-        initRelevantQuillEditors();
-        $(this)
-            .addClass("d-none")
-            .closest(".candidate-profile-section__header")
-            .addClass("candidate-profile-section__header--editing");
+        $('.candidate-relevant-summary').addClass('d-none');
+        $('.candidate-relevant-form').removeClass('d-none');
+    initRelevantQuillEditors();
+        $(this).addClass('d-none').closest('.candidate-profile-section__header').addClass('candidate-profile-section__header--editing');
+        scrollToProfileEditTarget('.candidate-relevant-form');
     });
 
     $("[data-relevant-edit-close]").on("click", function (event) {
@@ -587,12 +593,10 @@ function loadCandidateGeneralData() {
     $("[data-disability-edit-toggle]").on("click", function (event) {
         event.preventDefault();
         event.stopPropagation();
-        $(".candidate-disability-summary").addClass("d-none");
-        $(".candidate-disability-form").removeClass("d-none");
-        $(this)
-            .addClass("d-none")
-            .closest(".candidate-profile-section__header")
-            .addClass("candidate-profile-section__header--editing");
+        $('.candidate-disability-summary').addClass('d-none');
+        $('.candidate-disability-form').removeClass('d-none');
+        $(this).addClass('d-none').closest('.candidate-profile-section__header').addClass('candidate-profile-section__header--editing');
+        scrollToProfileEditTarget('.candidate-disability-form');
     });
 
     $("[data-disability-edit-close]").on("click", function (event) {
@@ -1276,9 +1280,14 @@ $(document).on("submit", "#candidateProfileUpdate", function (e) {
                 }
                 displaySuccessMessage(result.message);
                 setTimeout(function () {
-                    window.location.href = route("candidate.profile", {
-                        section: "personal-information",
-                    });
+                    const params = new URLSearchParams(window.location.search);
+                    const section = params.get('section') || 'personal-information';
+                    const activeCollapse = submitter.closest('.candidate-profile-section__collapse');
+                    const profileUrl = route('candidate.profile', { section: section });
+
+                    window.location.href = activeCollapse && activeCollapse.id
+                        ? profileUrl + '#' + activeCollapse.id
+                        : profileUrl;
                 }, 800);
             },
             error: function (result) {

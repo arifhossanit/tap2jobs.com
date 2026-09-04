@@ -3,6 +3,48 @@ import "flatpickr/dist/l10n";
 
 const jobRequiredFieldMessage = "This field is required";
 
+const normalizeSelect2Text = function(text) {
+    return $.trim(text || "").toLowerCase();
+};
+
+const hasSelectedSelect2Text = function($select, text) {
+    const normalizedText = normalizeSelect2Text(text);
+
+    return $select.find("option:selected").toArray().some(function(option) {
+        return normalizeSelect2Text(option.text) === normalizedText;
+    });
+};
+
+const shouldInsertSelect2Tag = function(data, $select, tag) {
+    return !hasSelectedSelect2Text($select, tag.text);
+};
+
+const formatSelect2TagResult = function($select, data) {
+    if (data.newTag) {
+        if (hasSelectedSelect2Text($select, data.text)) {
+            return null;
+        }
+
+        return 'Add "' + data.text + '"';
+    }
+
+    return data.text;
+};
+
+const clearSelect2SearchAfterSelect = function($select) {
+    $select.on("select2:select", function() {
+        window.setTimeout(function() {
+            const $containerSearch = $select
+                .next(".select2-container")
+                .find(".select2-search__field");
+            const $openSearch = $(".select2-container--open .select2-search__field");
+
+            $containerSearch.val("").trigger("input").trigger("keyup");
+            $openSearch.val("").trigger("input").trigger("keyup");
+        }, 0);
+    });
+};
+
 function loadEmployeeCreateEditData() {
     if (!$(".jobEmployeePanel").length) {
         return;
@@ -21,7 +63,7 @@ function loadEmployeeCreateEditData() {
                     }
                 }
             },
-            placeholder: Lang.get("js.enter_description"),
+            placeholder: "Enter Requirements",
             theme: "snow"
         });
         if ($("#editResponse").length) {
@@ -45,10 +87,32 @@ function loadEmployeeCreateEditData() {
                 theme: "snow"
             });
 
+            if ($("#editCompensationAndBenefits").length) {
+                window.editCompensationAndBenefits = new Quill("#editCompensationAndBenefits", {
+                    modules: {
+                        toolbar: [
+                            ["bold", "italic", "underline", "strike"],
+                            [{ list: "ordered" }, { list: "bullet" }],
+                            ["clean"]
+                        ],
+                        keyboard: {
+                            bindings: {
+                                tab: "disabled"
+                            }
+                        }
+                    },
+                    placeholder: "Enter Compensation and Other Benefits",
+                    theme: "snow"
+                });
+            }
             setQuillHtml(editJobDescription, "#editJobDescription");
             setQuillHtml(editResponse, "#edit_responsibilities");
             rememberJobEditorHeight("#editDetails", "tap2jobs:admin-job-editor:description-height");
             rememberJobEditorHeight("#editResponse", "tap2jobs:admin-job-editor:responsibilities-height");
+            if (window.editCompensationAndBenefits) {
+                setQuillHtml(editCompensationAndBenefits, "#edit_compensation_and_other_benefits");
+                rememberJobEditorHeight("#editCompensationAndBenefits", "tap2jobs:admin-job-editor:compensation-benefits-height");
+            }
         }
     }
 
@@ -66,7 +130,7 @@ function loadEmployeeCreateEditData() {
                     }
                 }
             },
-            placeholder: Lang.get("js.enter_description"),
+            placeholder: "Enter Requirements",
             theme: "snow"
         });
         if ($("#response").length) {
@@ -89,10 +153,32 @@ function loadEmployeeCreateEditData() {
                 theme: "snow"
             });
 
+            if ($("#compensationAndBenefits").length) {
+                window.compensationAndBenefits = new Quill("#compensationAndBenefits", {
+                    modules: {
+                        toolbar: [
+                            ["bold", "italic", "underline", "strike"],
+                            [{ list: "ordered" }, { list: "bullet" }],
+                            ["clean"]
+                        ],
+                        keyboard: {
+                            bindings: {
+                                tab: "disabled"
+                            }
+                        }
+                    },
+                    placeholder: "Enter Compensation and Other Benefits",
+                    theme: "snow"
+                });
+            }
             setQuillHtml(details, "#job_desc");
             setQuillHtml(response, "#key_responsibilities");
             rememberJobEditorHeight("#details", "tap2jobs:admin-job-editor:description-height");
             rememberJobEditorHeight("#response", "tap2jobs:admin-job-editor:responsibilities-height");
+            if (window.compensationAndBenefits) {
+                setQuillHtml(compensationAndBenefits, "#compensation_and_other_benefits");
+                rememberJobEditorHeight("#compensationAndBenefits", "tap2jobs:admin-job-editor:compensation-benefits-height");
+            }
         }
     }
 
@@ -241,9 +327,40 @@ function loadEmployeeCreateEditData() {
 
     const $jobDegreeTitle = $("#jobDegreeTitleId");
 
-    $jobDegreeTitle.select2({
-        width: "100%"
-    });
+    function initializeDegreeTitleSelect2(disabled = false) {
+        if ($jobDegreeTitle.hasClass("select2-hidden-accessible")) {
+            $jobDegreeTitle.select2("destroy");
+        }
+        $jobDegreeTitle.select2({
+            width: "100%",
+            disabled: disabled,
+            placeholder: disabled ? "Select degree level first" : ($jobDegreeTitle.data('placeholder') || "Select Degree Title"),
+            tags: !disabled,
+            createTag: function(params) {
+                if (disabled) return null;
+                const term = $.trim(params.term);
+                if (!term) return null;
+                const alreadyExists = $jobDegreeTitle.find("option").toArray().some(function(option) {
+                    return $.trim(option.text).toLowerCase() === term.toLowerCase();
+                });
+                if (alreadyExists) return null;
+                return {
+                    id: term,
+                    text: term,
+                    newTag: true
+                };
+            },
+            insertTag: function(data, tag) {
+                data.unshift(tag);
+            },
+            templateResult: function(data) {
+                if (data.newTag) {
+                    return 'Add "' + data.text + '"';
+                }
+                return data.text;
+            }
+        });
+    }
 
     function populateJobDegreeTitles(degreeLevelId, selectedDegreeTitleId) {
         if (!$jobDegreeTitle.length) {
@@ -251,7 +368,16 @@ function loadEmployeeCreateEditData() {
         }
 
         $jobDegreeTitle.empty();
-        $jobDegreeTitle.append('<option value="">' + ($jobDegreeTitle.attr("placeholder") || "Select Degree Title") + '</option>');
+        
+        let placeholderText = $jobDegreeTitle.data('placeholder') || "Select Degree Title";
+        if (!degreeLevelId) {
+            placeholderText = "Select degree level first";
+            $jobDegreeTitle.append('<option value="">' + placeholderText + '</option>');
+            initializeDegreeTitleSelect2(true);
+            return;
+        }
+
+        $jobDegreeTitle.append('<option value="">' + placeholderText + '</option>');
 
         if (degreeLevelId && window.jobDegreeTitleOptions && window.jobDegreeTitleOptions[degreeLevelId]) {
             const options = window.jobDegreeTitleOptions[degreeLevelId];
@@ -260,6 +386,8 @@ function loadEmployeeCreateEditData() {
             });
         }
 
+        initializeDegreeTitleSelect2(false);
+
         if (selectedDegreeTitleId) {
             $jobDegreeTitle.val(String(selectedDegreeTitleId));
         }
@@ -267,11 +395,17 @@ function loadEmployeeCreateEditData() {
         $jobDegreeTitle.trigger("change.select2");
     }
 
-    if ($jobDegreeTitle.length && $("#requiredDegreeLevelId").val()) {
-        populateJobDegreeTitles(
-            $("#requiredDegreeLevelId").val(),
-            $jobDegreeTitle.data("selected-value") || $jobDegreeTitle.val()
-        );
+    if ($jobDegreeTitle.length) {
+        $jobDegreeTitle.data('placeholder', $jobDegreeTitle.attr("placeholder"));
+        
+        if ($("#requiredDegreeLevelId").val()) {
+            populateJobDegreeTitles(
+                $("#requiredDegreeLevelId").val(),
+                $jobDegreeTitle.data("selected-value") || $jobDegreeTitle.val()
+            );
+        } else {
+            populateJobDegreeTitles(null, null);
+        }
     }
 
     $(document).on("change", "#requiredDegreeLevelId", function() {
@@ -400,16 +534,15 @@ function loadEmployeeCreateEditData() {
             };
         },
         insertTag: function(data, tag) {
-            data.unshift(tag);
+            if (shouldInsertSelect2Tag(data, $skillSelect, tag)) {
+                data.unshift(tag);
+            }
         },
         templateResult: function(data) {
-            if (data.newTag) {
-                return 'Add "' + data.text + '"';
-            }
-
-            return data.text;
+            return formatSelect2TagResult($skillSelect, data);
         }
     });
+    clearSelect2SearchAfterSelect($skillSelect);
 
     const $tagSelect = $("#tagId");
 
@@ -440,16 +573,15 @@ function loadEmployeeCreateEditData() {
             };
         },
         insertTag: function(data, tag) {
-            data.unshift(tag);
+            if (shouldInsertSelect2Tag(data, $tagSelect, tag)) {
+                data.unshift(tag);
+            }
         },
         templateResult: function(data) {
-            if (data.newTag) {
-                return 'Add "' + data.text + '"';
-            }
-
-            return data.text;
+            return formatSelect2TagResult($tagSelect, data);
         }
     });
+    clearSelect2SearchAfterSelect($tagSelect);
     if (
         !$("#companyId").hasClass(".select2-hidden-accessible") &&
         $("#companyId").is("select")
@@ -598,7 +730,7 @@ function loadEmployeeCreateEditData() {
     //         success: function (data) {
     //             $('#cityId').empty();
     //             $('#cityId').append(
-    //                 $('<option value=""></option>').text('Select City'));
+    //                 $('<option value=""></option>').text('Select District'));
     //             $('#stateId').empty();
     //             $('#stateId').
     //                 append(
@@ -623,7 +755,7 @@ function loadEmployeeCreateEditData() {
     //         success: function (data) {
     //             $('#cityId').empty();
     //             $('#cityId').append(
-    //                 $('<option value=""></option>').text('Select City'));
+    //                 $('<option value=""></option>').text('Select District'));
     //             $.each(data.data, function (i, v) {
     //                 $('#cityId').append(
     //                     $('<option ></option>').attr('value', i).text(v));
@@ -1161,21 +1293,10 @@ listenSubmit("#createSkillForm", function() {
 });
 
 listenSubmit("#createJobTagForm", function() {
-    let editor_content = jobTagDescription.root.innerHTML;
-    if (editor_content.length) {
-        if (jobTagDescription.getText().trim().length === 0) {
-            displayErrorMessage(
-                Lang.get("js.description_required")
-            );
-            return false;
-        }
-    } else {
-        displayErrorMessage(Lang.get("js.description_required"));
-        return false;
-    }
+    let editor_content = jobTagDescription ? jobTagDescription.root.innerHTML : '';
+    let input = (jobTagDescription && jobTagDescription.getText().trim().length > 0) ? JSON.stringify(editor_content).replace(/"/g, "") : '';
     processingBtn("#createJobTagForm", "#jobTagBtnSave", "loading");
-    let input = JSON.stringify(editor_content);
-    $("#job_tag_desc").val(input.replace(/"/g, ""));
+    $("#job_tag_desc").val(input);
     $.ajax({
         url: route("jobTag.store"),
         type: "POST",
@@ -1366,7 +1487,7 @@ function initJobRequiredFieldValidation() {
             clearJobFieldValidationState($(this));
         });
 
-    [window.details, window.response, window.editJobDescription, window.editResponse].forEach(function(editor) {
+    [window.details, window.response, window.compensationAndBenefits, window.editJobDescription, window.editResponse, window.editCompensationAndBenefits].forEach(function(editor) {
         if (!editor || editor.__jobValidationBound) {
             return;
         }
@@ -1387,7 +1508,7 @@ function clearJobValidationState(form) {
         $(this).next(".select2-container").removeClass("job-field-invalid");
     });
 
-    [window.details, window.response, window.editJobDescription, window.editResponse].forEach(function(editor) {
+    [window.details, window.response, window.compensationAndBenefits, window.editJobDescription, window.editResponse, window.editCompensationAndBenefits].forEach(function(editor) {
         clearJobEditorValidationState(editor);
     });
 }
@@ -1711,6 +1832,9 @@ listenClick("#jobsSaveBtn, #saveDraft", function(e) {
     // }
     let keyResponsibilitiesContent = getQuillHtml(response);
     $("#key_responsibilities").val(keyResponsibilitiesContent);
+    if (window.compensationAndBenefits) {
+        $("#compensation_and_other_benefits").val(getQuillHtml(compensationAndBenefits));
+    }
 
     if ($("#salaryToErrorMsg").text() !== "") {
         $("#toSalary").focus();
@@ -1734,6 +1858,9 @@ listenClick("#editJobsSaveBtn, #saveDraft", function(e) {
     $("#editJobDescription").val(editor_content2);
     let editor_content3 = getQuillHtml(editResponse);
     $("#edit_responsibilities").val(editor_content3);
+    if (window.editCompensationAndBenefits) {
+        $("#edit_compensation_and_other_benefits").val(getQuillHtml(editCompensationAndBenefits));
+    }
 
     if ($("#salaryToErrorMsg").text() !== "") {
         $("#toSalary").focus();
@@ -1744,3 +1871,4 @@ listenClick("#editJobsSaveBtn, #saveDraft", function(e) {
     processingBtn("#editJobForm", $(this), "loading");
     $("#editJobForm")[0].submit();
 });
+

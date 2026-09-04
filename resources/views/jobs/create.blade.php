@@ -15,13 +15,14 @@
 @section('content')
     <div class="container-fluid">
         @include('layouts.flash-toasts')
-        <div class="d-flex flex-column">
+        <div class="d-flex flex-column job-create-page is-loading">
             <div class="row">
                 <div class="col-12">
                     @include('layouts.errors')
                 </div>
             </div>
-            <div class="card ">
+            @include('jobs.partials.create_skeleton')
+            <div class="card job-create-form-card">
                 <div class="card-body ">
                     {{ Form::open(['route' => 'admin.job.store','id' => 'createJobForm']) }}
 
@@ -51,3 +52,4 @@
 {{--@push('scripts')--}}
     {{--    <script src="{{ asset('assets/js/autonumeric/autoNumeric.min.js') }}"></script>--}}
 {{--@endpush--}}
+

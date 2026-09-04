@@ -92,9 +92,12 @@ class JobTable extends LivewireTableComponent
             Column::make(__('messages.job_category.job_category'), 'job_category_id')
                 ->sortable()
                 ->view('jobs.table-components.job_category'),
-            Column::make(__('messages.job.is_featured'), 'hide_salary')
+            // Column::make(__('messages.job.is_featured'), 'hide_salary')
+            //     ->sortable()
+            //     ->view('jobs.table-components.is_featured'),
+            Column::make('Created By', 'is_created_by_admin')
                 ->sortable()
-                ->view('jobs.table-components.is_featured'),
+                ->view('jobs.table-components.created_by'),
             Column::make(__('messages.job.is_suspended'), 'is_suspended')
                 ->sortable()
                 ->view('jobs.table-components.is_suspended'),
@@ -133,6 +136,14 @@ class JobTable extends LivewireTableComponent
                 'tomorrow' => Carbon::tomorrow()->toDateString(),
                 '7_days' => Carbon::today()->addDays(7)->toDateString(),
             };
+
+            if ($deadline === '7_days') {
+                return $query->whereDate('job_expiry_date', '>=', Carbon::today()->toDateString())
+                    ->whereDate('job_expiry_date', '<=', $expiryDate)
+                    ->status(Job::STATUS_OPEN)
+                    ->where('is_suspended', Job::NOT_SUSPENDED)
+                    ->select('jobs.*');
+            }
 
             return $query->whereDate('job_expiry_date', $expiryDate)
                 ->status(Job::STATUS_OPEN)

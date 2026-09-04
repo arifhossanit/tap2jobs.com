@@ -22,7 +22,6 @@
                     </div>
                     <div class="mb-5">
                         {{ Form::label('description', __('messages.job_tag.description').(':'),['class' => 'form-label']) }}
-                        <span class="required"></span>
                         <div id="addJobTagDescriptionQuillData"></div>
                         {{ Form::hidden('description', null, ['id' => 'job_tag_desc']) }}
                     </div>

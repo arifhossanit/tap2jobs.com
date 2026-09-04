@@ -587,6 +587,11 @@ class JobController extends AppBaseController
         return view('job_expired.index');
     }
 
+    public function getExpireIn7DaysJobs(): View
+    {
+        return view('job_expire_in_7_days.index');
+    }
+
     public function getPendingJobs(): View
     {
         return view('pending_jobs.index');

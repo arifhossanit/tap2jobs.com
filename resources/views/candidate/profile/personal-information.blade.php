@@ -142,45 +142,45 @@
                         </div>
                     </div>
                     <div class="row candidate-personal-form d-none">
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('first_name', __('messages.candidate_profile.first_name'), ['class' => 'form-label']) }}
                             <span class="required"></span>
                             {{ Form::text('first_name', $user->first_name, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_first_name')]) }}
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('last_name', __('messages.candidate_profile.last_name'), ['class' => 'form-label']) }}
                             {{ Form::text('last_name', $user->last_name, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_last_name')]) }}
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('father_name', __('messages.candidate_profile.father_name'), ['class' => 'form-label']) }}
                             {{ Form::text('father_name', $candidate->father_name, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_father_name')]) }}
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('mother_name', __('messages.candidate_profile.mother_name'), ['class' => 'form-label']) }}
                             {{ Form::text('mother_name', $candidate->mother_name ?? null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_mother_name')]) }}
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('dob', __('messages.candidate_profile.date_of_birth'), ['class' => 'form-label']) }}
                             <input type="text" name="dob" id="birthDate"
                                    class="form-control {{ getLoggedInUser()->theme_mode ? 'bg-light' : 'bg-white' }}"
                                    autocomplete="off" placeholder="{{ __('messages.candidate_profile.enter_date_of_birth') }}"
                                    value="{{ $user->dob }}">
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('gender', __('messages.candidate.gender'), ['class' => 'form-label']) }}
                             <span class="required"></span>
                             {{ Form::select('gender', $genderOptions, isset($user->gender) ? (string) $user->gender : '0', ['class' => 'form-select', 'required']) }}
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('religion', __('messages.candidate_profile.religion'), ['class' => 'form-label']) }}
                             {{ Form::select('religion', $religionOptions, $candidate->religion ?? null, ['class' => 'form-select']) }}
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('marital_status', __('messages.candidate.marital_status'), ['class' => 'form-label']) }}
                             <span class="required"></span>
                             {{ Form::select('marital_status_id', $data['maritalStatus'], isset($candidate->marital_status_id) ? $candidate->marital_status_id : null, ['class' => 'form-select', 'id' => 'maritalStatusId', 'required']) }}
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-12 ">
                             <div class="candidate-nationality-label">
                                 <span>{{ Form::label('nationality', __('messages.candidate.nationality'), ['class' => 'form-label mb-0']) }}</span>
                                 <label class="candidate-nationality-check">
@@ -190,22 +190,22 @@
                             </div>
                             {{ Form::text('nationality', isset($candidate->nationality) ? $candidate->nationality : 'Bangladeshi', ['class' => 'form-control', 'id' => 'nationalityInput', 'placeholder' => __('messages.candidate_profile.enter_nationality')]) }}
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('national_id_card', __('messages.candidate_profile.national_id_number'), ['class' => 'form-label']) }}
                             {{ Form::text('national_id_card', isset($candidate->national_id_card) ? $candidate->national_id_card : null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_national_id_number')]) }}
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('passport_number', __('messages.candidate_profile.passport_number'), ['class' => 'form-label']) }}
                             {{ Form::text('passport_number', $candidate->passport_number ?? null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_passport_number')]) }}
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('passport_issue_date', __('messages.candidate_profile.passport_issue_date'), ['class' => 'form-label']) }}
                             <input type="text" name="passport_issue_date" id="passportIssueDate"
                                    class="form-control {{ getLoggedInUser()->theme_mode ? 'bg-light' : 'bg-white' }}"
                                    autocomplete="off" placeholder="{{ __('messages.candidate_profile.enter_passport_issue_date') }}"
                                    value="{{ $candidate->passport_issue_date ?? null }}">
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5 mobile-itel-width">
+                        <div class="col-xl-6 col-md-6 col-sm-12  mobile-itel-width">
                             {{ Form::label('phone', __('messages.candidate_profile.primary_mobile'), ['class' => 'form-label']) }}
                             <span class="candidate-field-note">({{ __('messages.candidate_profile.phone_note') }})</span>
                             {{ Form::tel('phone', isset($user->phone) ? $user->phone : null, ['class' => 'form-control', 'maxlength' => '11', 'inputmode' => 'numeric', 'pattern' => '[0-9]{1,11}', 'oninput' => 'this.value = this.value.replace(/\D/g,"").slice(0, 11)', 'id' => 'phoneNumber']) }}
@@ -213,32 +213,32 @@
                             <span id="valid-msg" class="text-success d-block fw-400 fs-small mt-2 d-none">{{ __('messages.phone.valid_number') }}</span>
                             <span id="error-msg" class="text-danger d-block fw-400 fs-small mt-2 d-none"></span>                            
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('secondary_mobile', __('messages.candidate_profile.secondary_mobile'), ['class' => 'form-label']) }}
                             {{ Form::text('secondary_mobile', $candidate->secondary_mobile ?? null, ['class' => 'form-control', 'maxlength' => '11', 'inputmode' => 'numeric', 'pattern' => '[0-9]{1,11}', 'placeholder' => __('messages.candidate_profile.enter_phone_number'), 'oninput' => 'this.value = this.value.replace(/\D/g,"").slice(0, 11)']) }}
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-6 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-6 ">
                             {{ Form::label('email', __('messages.candidate_profile.primary_email'), ['class' => 'form-label']) }}
                             {{-- <span class="candidate-field-note">({{ __('messages.candidate_profile.email_note') }})</span> --}}
                             {{ Form::email('email', isset($user) ? $user->email : null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_primary_email')]) }}
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-6 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-6 ">
                             {{ Form::label('alternate_email', __('messages.candidate_profile.alternate_email'), ['class' => 'form-label']) }}
                             {{ Form::email('alternate_email', $candidate->alternate_email ?? null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_alternate_email')]) }}
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('emergency_contact', __('messages.candidate_profile.emergency_contact'), ['class' => 'form-label']) }}
                             {{ Form::text('emergency_contact', $candidate->emergency_contact ?? null, ['class' => 'form-control', 'maxlength' => '11', 'inputmode' => 'numeric', 'pattern' => '[0-9]{1,11}', 'placeholder' => __('messages.candidate_profile.enter_emergency_contact'), 'oninput' => 'this.value = this.value.replace(/\D/g,"").slice(0, 11)']) }}
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('blood_group', __('messages.candidate_profile.blood_group'), ['class' => 'form-label']) }}
                             {{ Form::select('blood_group', $bloodGroups, $candidate->blood_group ?? null, ['class' => 'form-select']) }}
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('height', __('messages.candidate_profile.height_meters'), ['class' => 'form-label']) }}
                             {{ Form::number('height', $candidate->height ?? null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_height'), 'step' => '0.01', 'min' => '0']) }}
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('weight', __('messages.candidate_profile.weight_kg'), ['class' => 'form-label']) }}
                             {{ Form::number('weight', $candidate->weight ?? null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_weight'), 'step' => '0.01', 'min' => '0']) }}
                         </div>
@@ -518,7 +518,7 @@
                         </div>
                     </div>
                     <div class="row candidate-career-form d-none">
-                        <div class="col-12 mb-5">
+                        <div class="col-12 ">
                             <div class="candidate-objective-head">
                                 <div>
                                     {{ Form::label('objective', __('messages.candidate_profile.objective'), ['class' => 'form-label']) }}
@@ -540,17 +540,17 @@
                             </div>
                             {{ Form::textarea('objective', $candidate->objective ?? null, ['class' => 'form-control candidate-objective-textarea', 'rows' => 5, 'placeholder' => $defaultObjective]) }}
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('current_salary', __('messages.candidate_profile.present_salary'), ['class' => 'form-label']) }}
                             <span class="candidate-field-note">({{ __('messages.candidate_profile.taka_month') }})</span>
                             {{ Form::text('current_salary', $candidate->current_salary ?? null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_current_salary')]) }}
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('expected_salary', __('messages.candidate_profile.expected_salary'), ['class' => 'form-label']) }}
                             <span class="candidate-field-note">({{ __('messages.candidate_profile.taka_month') }})</span>
                             {{ Form::text('expected_salary', $candidate->expected_salary ?? null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_expected_salary')]) }}
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-12 ">
                             <div class="form-label mb-3">
                                 {{ __('messages.candidate_profile.looking_for') }}
                                 <span class="candidate-field-note">({{ __('messages.candidate_profile.job_level') }})</span>
@@ -570,7 +570,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+                        <div class="col-xl-6 col-md-6 col-sm-12 ">
                             <div class="form-label mb-3">
                                 {{ __('messages.candidate_profile.available_for') }}
                                 <span class="candidate-field-note">({{ __('messages.candidate_profile.job_nature') }})</span>
@@ -1078,91 +1078,5 @@
         var phoneNo = "{{ old('region_code') . old('phone') }}";
         var candidateProfileCollapseText = "{{ __('messages.candidate_profile.collapse') }}";
         var candidateProfileExpandText = "{{ __('messages.candidate_profile.expand') }}";
-
-        document.addEventListener('DOMContentLoaded', function () {
-            const accordion = document.getElementById('candidateProfileAccordion');
-            const menuLinks = document.querySelectorAll('[data-profile-section-link]');
-            if (!accordion || !menuLinks.length || typeof bootstrap === 'undefined') {
-                return;
-            }
-
-            function setActiveSection(sectionId) {
-                menuLinks.forEach(function (link) {
-                    link.classList.toggle('active', link.dataset.profileSectionLink === sectionId);
-                });
-            }
-
-            function setHeaderState(section, expanded) {
-                const control = document.querySelector('[data-bs-target="#' + section.id + '"]');
-                const header = control ? control.closest('.candidate-profile-section__header') : null;
-                const toggle = header
-                    ? header.querySelector('.candidate-profile-section__toggle')
-                    : null;
-                if (!toggle) {
-                    return;
-                }
-
-                toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-
-                const label = toggle.querySelector('span');
-                if (label) {
-                    label.textContent = expanded
-                        ? (toggle.dataset.collapseLabel || candidateProfileCollapseText)
-                        : (toggle.dataset.expandLabel || candidateProfileExpandText);
-                }
-
-                if (header) {
-                    header.classList.toggle('collapsed', !expanded);
-                }
-
-                const editAction = header ? header.querySelector('.candidate-section-edit-action, .candidate-personal-edit-action, .candidate-address-edit-action') : null;
-                if (editAction) {
-                    editAction.classList.toggle('d-none', !expanded || header.classList.contains('candidate-profile-section__header--editing'));
-                }
-            }
-
-            menuLinks.forEach(function (link) {
-                link.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const sectionId = link.dataset.profileSectionLink;
-                    const target = document.getElementById(sectionId);
-                    if (!target) {
-                        return;
-                    }
-                    bootstrap.Collapse.getOrCreateInstance(target, { toggle: false }).show();
-                    window.scrollCandidateProfileSection(target);
-                });
-            });
-
-            accordion.querySelectorAll('.candidate-profile-section__collapse').forEach(function (section) {
-                section.addEventListener('show.bs.collapse', function () {
-                    setActiveSection(section.id);
-                    setHeaderState(section, true);
-                });
-                section.addEventListener('shown.bs.collapse', function () {
-                    setActiveSection(section.id);
-                    setHeaderState(section, true);
-                });
-                section.addEventListener('hide.bs.collapse', function () {
-                    setHeaderState(section, false);
-                });
-                section.addEventListener('hidden.bs.collapse', function () {
-                    setHeaderState(section, false);
-                });
-            });
-
-            accordion.querySelectorAll('.candidate-profile-section__header').forEach(function (header) {
-                header.addEventListener('click', function (event) {
-                    if (event.target.closest('button, a, input, select, textarea, label, .ql-toolbar, .ql-container')) {
-                        return;
-                    }
-
-                    const toggle = header.querySelector('.candidate-profile-section__toggle');
-                    if (toggle) {
-                        toggle.click();
-                    }
-                });
-            });
-        });
     </script>
 @endpush

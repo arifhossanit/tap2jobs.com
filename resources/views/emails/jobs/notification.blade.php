@@ -81,7 +81,15 @@
                 <table width="100%">
                     <tr>
                         <td>
-                            <img style="text-align: center;" src='{{ getLogoUrl() }}'
+                            @php
+                                $appLogoSrc = getLogoUrl();
+                                if (! empty($data['logo_path']) && isset($message)) {
+                                    $appLogoSrc = $message->embed($data['logo_path']);
+                                } elseif (! empty($data['logo_data_uri'])) {
+                                    $appLogoSrc = $data['logo_data_uri'];
+                                }
+                            @endphp
+                            <img style="text-align: center;" src="{{ $appLogoSrc }}"
                                  alt="company logo"
                                  class="img-fluid main-logo">
                         </td>
@@ -97,8 +105,17 @@
                             {!! $data['body'] !!}
                             @foreach($data['jobs'] as $key => $job)
                                 <li class="media">
-                                    <img alt="image" class="mr-3 rounded-circle" width="70"
-                                         src="{{$job->company->company_url}}">
+                                    @php
+                                        $companyLogoPath = $data['company_logo_paths'][$job->id] ?? null;
+                                        $companyLogoSrc = $job->company?->company_url ?? asset('assets/img/employer-image.png');
+                                        if (! empty($companyLogoPath) && isset($message)) {
+                                            $companyLogoSrc = $message->embed($companyLogoPath);
+                                        } elseif (! empty($data['company_logo_data_uris'][$job->id])) {
+                                            $companyLogoSrc = $data['company_logo_data_uris'][$job->id];
+                                        }
+                                    @endphp
+                                    <img alt="company logo" class="mr-3 rounded-circle" width="70"
+                                         src="{{ $companyLogoSrc }}">
                                     <div class="media-body">
                                         <a class="media-title mb-1"
                                            href="{{ route('front.job.details', $job->job_id) }}">{{ $job->job_title }}</a>
@@ -129,6 +146,7 @@
                                                       class="company-name">{{ getAppName() }}</a>.</strong>
                                 {{__('messages.all_rights_reserved')}}.
                             </p>
+                        </td>
                     </tr>
                 </table>
             </td>
@@ -137,3 +155,4 @@
 </div>
 </body>
 </html>
+

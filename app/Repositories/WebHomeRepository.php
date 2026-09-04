@@ -58,6 +58,7 @@ class WebHomeRepository
             }
         )->count();
         $data['jobs'] = Job::whereStatus(Job::STATUS_OPEN)->where('status', '!=',Job::STATUS_DRAFT)->whereIsSuspended(Job::NOT_SUSPENDED)->whereDate('job_expiry_date', '>=', Carbon::tomorrow()->toDateString())->count();
+        $data['vacancies'] = Job::whereStatus(Job::STATUS_OPEN)->where('status', '!=',Job::STATUS_DRAFT)->whereIsSuspended(Job::NOT_SUSPENDED)->whereDate('job_expiry_date', '>=', Carbon::tomorrow()->toDateString())->sum('vacancy');
         $data['resumes'] = Media::where('model_type', Candidate::class)->where('collection_name',Candidate::RESUME_PATH)
         ->join('candidates', 'media.model_id', '=', 'candidates.id')
         ->join('users', 'candidates.user_id', '=', 'users.id')->with('candidate.user')
@@ -183,10 +184,17 @@ class WebHomeRepository
 
     public function getAllCompanies()
     {
-        return Company::with('activeFeatured', 'jobs')->withCount(['jobs' => function (Builder $q) {
-            $q->where('status', '!=', Job::STATUS_DRAFT);
-            $q->where('status', '!=', Job::STATUS_CLOSED);
-        }])->get();
+        return Company::with('activeFeatured', 'user')
+            ->whereHas('user', function (Builder $query) {
+                $query->where('is_active', '=', true);
+            })
+            ->withCount(['jobs' => function (Builder $q) {
+                $q->where('status', '!=', Job::STATUS_DRAFT);
+                $q->where('status', '!=', Job::STATUS_CLOSED);
+            }])
+            ->orderByDesc('jobs_count')
+            ->take(12)
+            ->get();
     }
 
     /**

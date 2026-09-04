@@ -1559,33 +1559,31 @@ listenHiddenBsModal('#createCandidateCityModal', function () {
   $('#stateID').val('').trigger('change');
   resetModalForm('#createCandidateCityForm', '#cityValidationErrorsBox');
 });
-if ($('#createCandidatesForm').length || $('#editCandidatesForm').length) {
-  $('#countryId').on('change', function () {
-    $.ajax({
-      url: route('states-list'),
-      type: 'get',
-      dataType: 'json',
-      data: {
-        postal: $(this).val()
-      },
-      success: function success(data) {
-        $('#cityId').empty();
-        $('#cityId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
-        $('#thanaId').empty();
-        $('#thanaId').append($('<option value=""></option>').text(Lang.get('js.select_thana') || 'Select Thana'));
-        $('#stateId').empty();
-        $('#stateId').append($('<option value=""></option>').text(Lang.get('js.select_state')));
-        $.each(data.data, function (i, v) {
-          $('#stateId').append($('<option></option>').attr('value', i).text(v));
-        });
+$('#countryId').on('change', function () {
+  $.ajax({
+    url: route('states-list'),
+    type: 'get',
+    dataType: 'json',
+    data: {
+      postal: $(this).val()
+    },
+    success: function success(data) {
+      $('#cityId').empty();
+      $('#cityId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
+      $('#thanaId').empty();
+      $('#thanaId').append($('<option value=""></option>').text(Lang.get('js.select_thana') || 'Select Thana'));
+      $('#stateId').empty();
+      $('#stateId').append($('<option value=""></option>').text(Lang.get('js.select_state')));
+      $.each(data.data, function (i, v) {
+        $('#stateId').append($('<option></option>').attr('value', i).text(v));
+      });
 
-        // if (isEdit && stateId) {
-        //     $('#stateId').val(stateId).trigger('change');
-        // }
-      }
-    });
+      // if (isEdit && stateId) {
+      //     $('#stateId').val(stateId).trigger('change');
+      // }
+    }
   });
-}
+});
 function loadCandidateThanas(cityId) {
   if (!$('#thanaId').length) {
     return;
@@ -1611,34 +1609,32 @@ function loadCandidateThanas(cityId) {
     }
   });
 }
-if ($('#createCandidatesForm').length || $('#editCandidatesForm').length) {
-  $('#stateId').on('change', function () {
-    $.ajax({
-      url: route('cities-list'),
-      type: 'get',
-      dataType: 'json',
-      data: {
-        state: $(this).val(),
-        country: $('#countryId').val()
-      },
-      success: function success(data) {
-        $('#cityId').empty();
-        $('#cityId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
-        $.each(data.data, function (i, v) {
-          $('#cityId').append($('<option></option>').attr('value', i).text(v));
-        });
-        loadCandidateThanas($('#cityId').val());
+$('#stateId').on('change', function () {
+  $.ajax({
+    url: route('cities-list'),
+    type: 'get',
+    dataType: 'json',
+    data: {
+      state: $(this).val(),
+      country: $('#countryId').val()
+    },
+    success: function success(data) {
+      $('#cityId').empty();
+      $('#cityId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
+      $.each(data.data, function (i, v) {
+        $('#cityId').append($('<option></option>').attr('value', i).text(v));
+      });
+      loadCandidateThanas($('#cityId').val());
 
-        // if (isEdit && cityId) {
-        //     $('#cityId').val(cityId).trigger('change');
-        // }
-      }
-    });
+      // if (isEdit && cityId) {
+      //     $('#cityId').val(cityId).trigger('change');
+      // }
+    }
   });
-  $('#cityId').on('change', function () {
-    loadCandidateThanas($(this).val());
-  });
-}
+});
+$('#cityId').on('change', function () {
+  loadCandidateThanas($(this).val());
+});
 listenClick('.createCandidateLanguageModal', function () {
   $('#createCandidateLanguageModal').appendTo('body').modal('show');
 });
@@ -2911,59 +2907,59 @@ listenSubmit('#editCVExperienceForm', function (event) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! flatpickr/dist/l10n */ "./node_modules/flatpickr/dist/l10n/index.js");
 /* harmony import */ var flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(flatpickr_dist_l10n__WEBPACK_IMPORTED_MODULE_0__);
-document.addEventListener("DOMContentLoaded", loadCandidateGeneralData);
+document.addEventListener('DOMContentLoaded', loadCandidateGeneralData);
 
 function loadCandidateGeneralData() {
-  if (!$("#birthDate").length && !$("#availableAt").length) {
+  if (!$('#birthDate').length && !$('#availableAt').length) {
     return;
   }
-  var $nationalityInput = $("#nationalityInput");
-  var $isBangladeshi = $("#isBangladeshi");
+  var $nationalityInput = $('#nationalityInput');
+  var $isBangladeshi = $('#isBangladeshi');
   function syncNationalityInput() {
     if (!$nationalityInput.length || !$isBangladeshi.length) {
       return;
     }
-    if ($isBangladeshi.prop("checked")) {
-      $nationalityInput.val("Bangladeshi").prop("readonly", true).addClass("candidate-readonly-cross");
+    if ($isBangladeshi.prop('checked')) {
+      $nationalityInput.val('Bangladeshi').prop('readonly', true).addClass('candidate-readonly-cross');
     } else {
-      $nationalityInput.prop("readonly", false).removeClass("candidate-readonly-cross");
+      $nationalityInput.prop('readonly', false).removeClass('candidate-readonly-cross');
     }
   }
   syncNationalityInput();
-  $isBangladeshi.on("change", syncNationalityInput);
+  $isBangladeshi.on('change', syncNationalityInput);
   var relevantQuillEditors = [];
   function initRelevantQuillEditors() {
-    if (typeof Quill === "undefined") {
+    if (typeof Quill === 'undefined') {
       return;
     }
-    document.querySelectorAll("[data-relevant-quill-editor]").forEach(function (element) {
-      if (element.dataset.quillReady === "true") {
+    document.querySelectorAll('[data-relevant-quill-editor]').forEach(function (element) {
+      if (element.dataset.quillReady === 'true') {
         return;
       }
-      var input = element.closest(".candidate-relevant-editor").querySelector("[data-relevant-quill-input]");
+      var input = element.closest('.candidate-relevant-editor').querySelector('[data-relevant-quill-input]');
       var quill = new Quill(element, {
         modules: {
-          toolbar: [["bold", "italic"], [{
-            list: "bullet"
+          toolbar: [['bold', 'italic'], [{
+            list: 'bullet'
           }]],
           keyboard: {
             bindings: {
-              tab: "disabled"
+              tab: 'disabled'
             }
           }
         },
-        placeholder: element.dataset.placeholder || "",
-        theme: "snow"
+        placeholder: element.dataset.placeholder || '',
+        theme: 'snow'
       });
       if (input && input.value) {
         quill.root.innerHTML = input.value;
       }
-      quill.on("text-change", function () {
+      quill.on('text-change', function () {
         if (input) {
-          input.value = quill.getText().trim().length ? quill.root.innerHTML : "";
+          input.value = quill.getText().trim().length ? quill.root.innerHTML : '';
         }
       });
-      element.dataset.quillReady = "true";
+      element.dataset.quillReady = 'true';
       relevantQuillEditors.push({
         quill: quill,
         input: input
@@ -2973,45 +2969,63 @@ function loadCandidateGeneralData() {
   window.syncRelevantQuillEditors = function () {
     relevantQuillEditors.forEach(function (editor) {
       if (editor.input) {
-        editor.input.value = editor.quill.getText().trim().length ? editor.quill.root.innerHTML : "";
+        editor.input.value = editor.quill.getText().trim().length ? editor.quill.root.innerHTML : '';
       }
     });
   };
   initRelevantQuillEditors();
-  $("[data-personal-edit-toggle]").on("click", function (event) {
+  function scrollToProfileEditTarget(selector) {
+    var target = document.querySelector(selector);
+    if (!target) {
+      return;
+    }
+    window.setTimeout(function () {
+      if (typeof window.scrollCandidateProfileSection === 'function') {
+        window.scrollCandidateProfileSection(target);
+        return;
+      }
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }, 50);
+  }
+  $('[data-personal-edit-toggle]').on('click', function (event) {
     event.preventDefault();
     event.stopPropagation();
-    $(".candidate-personal-summary").addClass("d-none");
-    $(".candidate-personal-form").removeClass("d-none");
-    $(".candidate-personal-image-actions").removeClass("d-none");
-    $(this).addClass("d-none").closest(".candidate-profile-section__header").addClass("candidate-profile-section__header--editing");
+    $('.candidate-personal-summary').addClass('d-none');
+    $('.candidate-personal-form').removeClass('d-none');
+    $('.candidate-personal-image-actions').removeClass('d-none');
+    $(this).addClass('d-none').closest('.candidate-profile-section__header').addClass('candidate-profile-section__header--editing');
+    scrollToProfileEditTarget('.candidate-personal-form');
   });
-  $("[data-personal-edit-close]").on("click", function (event) {
+  $('[data-personal-edit-close]').on('click', function (event) {
     event.preventDefault();
-    $(".candidate-personal-form").addClass("d-none");
-    $(".candidate-personal-image-actions").addClass("d-none");
-    $(".candidate-personal-summary").removeClass("d-none");
-    $("[data-personal-edit-toggle]").removeClass("d-none").closest(".candidate-profile-section__header").removeClass("candidate-profile-section__header--editing");
+    $('.candidate-personal-form').addClass('d-none');
+    $('.candidate-personal-image-actions').addClass('d-none');
+    $('.candidate-personal-summary').removeClass('d-none');
+    $('[data-personal-edit-toggle]').removeClass('d-none').closest('.candidate-profile-section__header').removeClass('candidate-profile-section__header--editing');
   });
-  $("[data-address-edit-toggle]").on("click", function (event) {
+  $('[data-address-edit-toggle]').on('click', function (event) {
     event.preventDefault();
     event.stopPropagation();
-    $(".candidate-address-summary").addClass("d-none");
-    $(".candidate-address-form").removeClass("d-none");
-    $(this).addClass("d-none").closest(".candidate-profile-section__header").addClass("candidate-profile-section__header--editing");
+    $('.candidate-address-summary').addClass('d-none');
+    $('.candidate-address-form').removeClass('d-none');
+    $(this).addClass('d-none').closest('.candidate-profile-section__header').addClass('candidate-profile-section__header--editing');
+    scrollToProfileEditTarget('.candidate-address-form');
   });
-  $("[data-address-edit-close]").on("click", function (event) {
+  $('[data-address-edit-close]').on('click', function (event) {
     event.preventDefault();
-    $(".candidate-address-form").addClass("d-none");
-    $(".candidate-address-summary").removeClass("d-none");
-    $("[data-address-edit-toggle]").removeClass("d-none").closest(".candidate-profile-section__header").removeClass("candidate-profile-section__header--editing");
+    $('.candidate-address-form').addClass('d-none');
+    $('.candidate-address-summary').removeClass('d-none');
+    $('[data-address-edit-toggle]').removeClass('d-none').closest('.candidate-profile-section__header').removeClass('candidate-profile-section__header--editing');
   });
   var resetAddressSelect = function resetAddressSelect(selector, placeholder) {
     if (!$(selector).length) {
       return;
     }
     $(selector).empty().append($('<option value=""></option>').text(placeholder));
-    $(selector).trigger("change.select2");
+    $(selector).trigger('change.select2');
   };
   var loadAddressThanas = function loadAddressThanas(citySelector, thanaSelector) {
     var selectedThana = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
@@ -3019,25 +3033,25 @@ function loadCandidateGeneralData() {
       return;
     }
     var city = $(citySelector).val();
-    resetAddressSelect(thanaSelector, "Select Thana");
+    resetAddressSelect(thanaSelector, 'Select Thana');
     if (!city) {
       return;
     }
     $.ajax({
-      url: route("thanas-list"),
-      type: "get",
-      dataType: "json",
+      url: route('thanas-list'),
+      type: 'get',
+      dataType: 'json',
       data: {
         city: city
       },
       success: function success(data) {
         $.each(data.data, function (i, v) {
-          $(thanaSelector).append($("<option></option>").attr("value", i).text(v));
+          $(thanaSelector).append($('<option></option>').attr('value', i).text(v));
         });
         if (selectedThana) {
           $(thanaSelector).val(selectedThana);
         }
-        $(thanaSelector).trigger("change.select2");
+        $(thanaSelector).trigger('change.select2');
       }
     });
   };
@@ -3046,29 +3060,29 @@ function loadCandidateGeneralData() {
     var selectedCity = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : null;
     var selectedThana = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : null;
     var state = $(stateSelector).val();
-    resetAddressSelect(citySelector, "Select your District");
+    resetAddressSelect(citySelector, 'Select your District');
     if (thanaSelector) {
-      resetAddressSelect(thanaSelector, "Select Thana");
+      resetAddressSelect(thanaSelector, 'Select Thana');
     }
     if (!state) {
       return;
     }
     $.ajax({
-      url: route("cities-list"),
-      type: "get",
-      dataType: "json",
+      url: route('cities-list'),
+      type: 'get',
+      dataType: 'json',
       data: {
         state: state,
         country: $(countrySelector).val()
       },
       success: function success(data) {
         $.each(data.data, function (i, v) {
-          $(citySelector).append($("<option></option>").attr("value", i).text(v));
+          $(citySelector).append($('<option></option>').attr('value', i).text(v));
         });
         if (selectedCity) {
           $(citySelector).val(selectedCity);
         }
-        $(citySelector).trigger("change.select2");
+        $(citySelector).trigger('change.select2');
         if (thanaSelector) {
           loadAddressThanas(citySelector, thanaSelector, selectedThana);
         }
@@ -3080,426 +3094,430 @@ function loadCandidateGeneralData() {
     var selectedState = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : null;
     var selectedCity = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : null;
     var selectedThana = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : null;
-    var statePlaceholder = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : "Select your Division";
+    var statePlaceholder = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : 'Select your Division';
     var country = $(countrySelector).val();
     $(stateSelector).empty().append($('<option value=""></option>').text(statePlaceholder));
-    resetAddressSelect(citySelector, "Select your District");
+    resetAddressSelect(citySelector, 'Select your District');
     if (thanaSelector) {
-      resetAddressSelect(thanaSelector, "Select Thana");
+      resetAddressSelect(thanaSelector, 'Select Thana');
     }
     if (!country) {
-      $(stateSelector).trigger("change.select2");
+      $(stateSelector).trigger('change.select2');
       return;
     }
     $.ajax({
-      url: route("states-list"),
-      type: "get",
-      dataType: "json",
+      url: route('states-list'),
+      type: 'get',
+      dataType: 'json',
       data: {
         postal: country
       },
       success: function success(data) {
         $.each(data.data, function (i, v) {
-          $(stateSelector).append($("<option></option>").attr("value", i).text(v));
+          $(stateSelector).append($('<option></option>').attr('value', i).text(v));
         });
         if (selectedState) {
           $(stateSelector).val(selectedState);
-          $(stateSelector).trigger("change.select2");
+          $(stateSelector).trigger('change.select2');
           if (citySelector && (selectedCity || selectedThana)) {
             loadAddressCities(stateSelector, countrySelector, citySelector, thanaSelector, selectedCity, selectedThana);
           }
         } else {
-          $(stateSelector).trigger("change.select2");
+          $(stateSelector).trigger('change.select2');
         }
       }
     });
   };
-  var lastPresentStateId = $("#stateId").val() || null;
-  var lastPresentCityId = $("#cityId").val() || null;
-  var lastPresentThanaId = $("#thanaId").val() || null;
-  var lastPermanentStateId = $("#permanentStateId").val() || null;
-  var lastPermanentCityId = $("#permanentCityId").val() || null;
-  var lastPermanentThanaId = $("#permanentThanaId").val() || null;
+  var lastPresentStateId = $('#stateId').val() || null;
+  var lastPresentCityId = $('#cityId').val() || null;
+  var lastPresentThanaId = $('#thanaId').val() || null;
+  var lastPermanentStateId = $('#permanentStateId').val() || null;
+  var lastPermanentCityId = $('#permanentCityId').val() || null;
+  var lastPermanentThanaId = $('#permanentThanaId').val() || null;
   var togglePresentAddressMode = function togglePresentAddressMode() {
     var resetLocation = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
     var type = $('input[name="present_address_type"]:checked').val();
-    var bangladeshId = $("#countryId").data("bangladesh-id");
-    var isOutside = type === "outside";
-    $(".candidate-address-country-field").toggleClass("d-none", !isOutside);
-    $(".candidate-present-district-field").toggleClass("d-none", isOutside);
-    $(".candidate-present-state-text-field").toggleClass("d-none", !isOutside);
-    $(".candidate-present-thana-po-field").toggleClass("d-none", isOutside);
-    if (type === "inside" && bangladeshId) {
-      $("#countryId").val(bangladeshId);
+    var bangladeshId = $('#countryId').data('bangladesh-id');
+    var isOutside = type === 'outside';
+    $('.candidate-address-country-field').toggleClass('d-none', !isOutside);
+    $('.candidate-present-district-field').toggleClass('d-none', isOutside);
+    $('.candidate-present-state-text-field').toggleClass('d-none', !isOutside);
+    $('.candidate-present-thana-po-field').toggleClass('d-none', isOutside);
+    if (type === 'inside' && bangladeshId) {
+      $('#countryId').val(bangladeshId);
       if (resetLocation) {
-        var hasStateOptions = $("#stateId option").length > 1;
-        var hasCityOptions = $("#cityId option").length > 1;
-        var hasThanaOptions = $("#thanaId option").length > 1;
+        var hasStateOptions = $('#stateId option').length > 1;
+        var hasCityOptions = $('#cityId option').length > 1;
+        var hasThanaOptions = $('#thanaId option').length > 1;
         if (hasStateOptions && lastPresentStateId) {
-          $("#stateId").val(lastPresentStateId).trigger("change.select2");
+          $('#stateId').val(lastPresentStateId).trigger('change.select2');
           if (hasCityOptions && lastPresentCityId) {
-            $("#cityId").val(lastPresentCityId).trigger("change.select2");
+            $('#cityId').val(lastPresentCityId).trigger('change.select2');
             if (hasThanaOptions && lastPresentThanaId) {
-              $("#thanaId").val(lastPresentThanaId).trigger("change.select2");
+              $('#thanaId').val(lastPresentThanaId).trigger('change.select2');
             } else if (lastPresentThanaId) {
-              loadAddressThanas("#cityId", "#thanaId", lastPresentThanaId);
+              loadAddressThanas('#cityId', '#thanaId', lastPresentThanaId);
             }
           } else if (lastPresentCityId) {
-            loadAddressCities("#stateId", "#countryId", "#cityId", "#thanaId", lastPresentCityId, lastPresentThanaId);
+            loadAddressCities('#stateId', '#countryId', '#cityId', '#thanaId', lastPresentCityId, lastPresentThanaId);
           }
         } else {
-          loadAddressStates("#countryId", "#stateId", "#cityId", "#thanaId", lastPresentStateId, lastPresentCityId, lastPresentThanaId);
+          loadAddressStates('#countryId', '#stateId', '#cityId', '#thanaId', lastPresentStateId, lastPresentCityId, lastPresentThanaId);
         }
       }
       return;
     }
-    $("#countryId").val("");
+    $('#countryId').val('');
   };
-  var permanentAddressTypeChosen = $(".candidate-address-form").data("has-permanent-details") == 1;
+  var permanentAddressTypeChosen = $('.candidate-address-form').data('has-permanent-details') == 1;
   var togglePermanentAddress = function togglePermanentAddress() {
-    var sameAsPresent = $("#permanentSameAsPresent").is(":checked");
+    var sameAsPresent = $('#permanentSameAsPresent').is(':checked');
     var type = $('input[name="permanent_address_type"]:checked').val();
-    var bangladeshId = $("#countryId").data("bangladesh-id");
+    var bangladeshId = $('#countryId').data('bangladesh-id');
     var showPermanentFields = !sameAsPresent && permanentAddressTypeChosen;
-    var isOutside = type === "outside";
-    $(".candidate-permanent-address-options").toggleClass("d-none", sameAsPresent);
-    $(".candidate-permanent-address-fields").toggleClass("d-none", !showPermanentFields);
-    $(".candidate-permanent-country-field").toggleClass("d-none", !showPermanentFields || !isOutside);
-    $(".candidate-permanent-district-field").toggleClass("d-none", showPermanentFields && isOutside);
-    $(".candidate-permanent-state-text-field").toggleClass("d-none", !showPermanentFields || !isOutside);
-    $(".candidate-permanent-thana-po-field").toggleClass("d-none", showPermanentFields && isOutside);
-    if (showPermanentFields && type === "inside" && bangladeshId) {
-      $("#permanentCountryId").val(bangladeshId).trigger("change.select2");
+    var isOutside = type === 'outside';
+    $('.candidate-permanent-address-options').toggleClass('d-none', sameAsPresent);
+    $('.candidate-permanent-address-fields').toggleClass('d-none', !showPermanentFields);
+    $('.candidate-permanent-country-field').toggleClass('d-none', !showPermanentFields || !isOutside);
+    $('.candidate-permanent-district-field').toggleClass('d-none', showPermanentFields && isOutside);
+    $('.candidate-permanent-state-text-field').toggleClass('d-none', !showPermanentFields || !isOutside);
+    $('.candidate-permanent-thana-po-field').toggleClass('d-none', showPermanentFields && isOutside);
+    if (showPermanentFields && type === 'inside' && bangladeshId) {
+      $('#permanentCountryId').val(bangladeshId).trigger('change.select2');
     }
   };
   togglePresentAddressMode(false);
   togglePermanentAddress();
-  $('input[name="present_address_type"]').on("change", function () {
+  $('input[name="present_address_type"]').on('change', function () {
     togglePresentAddressMode(true);
   });
-  $("#permanentSameAsPresent").on("change", function () {
-    if ($(this).is(":checked")) {
+  $('#permanentSameAsPresent').on('change', function () {
+    if ($(this).is(':checked')) {
       permanentAddressTypeChosen = false;
-      $("#permanentAddressSelected").val("0");
+      $('#permanentAddressSelected').val('0');
     }
     togglePermanentAddress();
   });
-  $('input[name="permanent_address_type"]').on("change", function () {
+  $('input[name="permanent_address_type"]').on('change', function () {
     permanentAddressTypeChosen = true;
-    $("#permanentAddressSelected").val("1");
+    $('#permanentAddressSelected').val('1');
     togglePermanentAddress();
   });
-  $("#permanentCountryId").on("change", function () {
-    if ($('input[name="permanent_address_type"]:checked').val() !== "outside") {
-      var hasStateOptions = $("#permanentStateId option").length > 1;
-      var hasCityOptions = $("#permanentCityId option").length > 1;
-      var hasThanaOptions = $("#permanentThanaId option").length > 1;
+  $('#permanentCountryId').on('change', function () {
+    if ($('input[name="permanent_address_type"]:checked').val() !== 'outside') {
+      var hasStateOptions = $('#permanentStateId option').length > 1;
+      var hasCityOptions = $('#permanentCityId option').length > 1;
+      var hasThanaOptions = $('#permanentThanaId option').length > 1;
       if (hasStateOptions && lastPermanentStateId) {
-        $("#permanentStateId").val(lastPermanentStateId).trigger("change.select2");
+        $('#permanentStateId').val(lastPermanentStateId).trigger('change.select2');
         if (hasCityOptions && lastPermanentCityId) {
-          $("#permanentCityId").val(lastPermanentCityId).trigger("change.select2");
+          $('#permanentCityId').val(lastPermanentCityId).trigger('change.select2');
           if (hasThanaOptions && lastPermanentThanaId) {
-            $("#permanentThanaId").val(lastPermanentThanaId).trigger("change.select2");
+            $('#permanentThanaId').val(lastPermanentThanaId).trigger('change.select2');
           } else if (lastPermanentThanaId) {
-            loadAddressThanas("#permanentCityId", "#permanentThanaId", lastPermanentThanaId);
+            loadAddressThanas('#permanentCityId', '#permanentThanaId', lastPermanentThanaId);
           }
         } else if (lastPermanentCityId) {
-          loadAddressCities("#permanentStateId", "#permanentCountryId", "#permanentCityId", "#permanentThanaId", lastPermanentCityId, lastPermanentThanaId);
+          loadAddressCities('#permanentStateId', '#permanentCountryId', '#permanentCityId', '#permanentThanaId', lastPermanentCityId, lastPermanentThanaId);
         }
       } else {
-        loadAddressStates("#permanentCountryId", "#permanentStateId", "#permanentCityId", "#permanentThanaId", lastPermanentStateId, lastPermanentCityId, lastPermanentThanaId);
+        loadAddressStates('#permanentCountryId', '#permanentStateId', '#permanentCityId', '#permanentThanaId', lastPermanentStateId, lastPermanentCityId, lastPermanentThanaId);
       }
     }
   });
-  $("#stateId").on("change", function () {
+  $('#stateId').on('change', function () {
     var val = $(this).val();
     if (val) {
       lastPresentStateId = val;
     }
-    loadAddressCities("#stateId", "#countryId", "#cityId", "#thanaId");
+    loadAddressCities('#stateId', '#countryId', '#cityId', '#thanaId');
   });
-  $("#cityId").on("change", function () {
+  $('#cityId').on('change', function () {
     var val = $(this).val();
     if (val) {
       lastPresentCityId = val;
     }
-    loadAddressThanas("#cityId", "#thanaId");
+    loadAddressThanas('#cityId', '#thanaId');
   });
-  $("#thanaId").on("change", function () {
+  $('#thanaId').on('change', function () {
     var val = $(this).val();
     if (val) {
       lastPresentThanaId = val;
     }
   });
-  $("#permanentStateId").on("change", function () {
+  $('#permanentStateId').on('change', function () {
     var val = $(this).val();
     if (val) {
       lastPermanentStateId = val;
     }
-    loadAddressCities("#permanentStateId", "#permanentCountryId", "#permanentCityId", "#permanentThanaId");
+    loadAddressCities('#permanentStateId', '#permanentCountryId', '#permanentCityId', '#permanentThanaId');
   });
-  $("#permanentCityId").on("change", function () {
+  $('#permanentCityId').on('change', function () {
     var val = $(this).val();
     if (val) {
       lastPermanentCityId = val;
     }
-    loadAddressThanas("#permanentCityId", "#permanentThanaId");
+    loadAddressThanas('#permanentCityId', '#permanentThanaId');
   });
-  $("#permanentThanaId").on("change", function () {
+  $('#permanentThanaId').on('change', function () {
     var val = $(this).val();
     if (val) {
       lastPermanentThanaId = val;
     }
   });
-  $("[data-career-edit-toggle]").on("click", function (event) {
+  $('[data-career-edit-toggle]').on('click', function (event) {
     event.preventDefault();
     event.stopPropagation();
-    $(".candidate-career-summary").addClass("d-none");
-    $(".candidate-career-form").removeClass("d-none");
-    $(this).addClass("d-none").closest(".candidate-profile-section__header").addClass("candidate-profile-section__header--editing");
+    $('.candidate-career-summary').addClass('d-none');
+    $('.candidate-career-form').removeClass('d-none');
+    $(this).addClass('d-none').closest('.candidate-profile-section__header').addClass('candidate-profile-section__header--editing');
+    scrollToProfileEditTarget('.candidate-career-form');
   });
-  $("[data-career-edit-close]").on("click", function (event) {
+  $('[data-career-edit-close]').on('click', function (event) {
     event.preventDefault();
-    $(".candidate-career-form").addClass("d-none");
-    $(".candidate-career-summary").removeClass("d-none");
-    $("[data-career-edit-toggle]").removeClass("d-none").closest(".candidate-profile-section__header").removeClass("candidate-profile-section__header--editing");
+    $('.candidate-career-form').addClass('d-none');
+    $('.candidate-career-summary').removeClass('d-none');
+    $('[data-career-edit-toggle]').removeClass('d-none').closest('.candidate-profile-section__header').removeClass('candidate-profile-section__header--editing');
   });
-  $("[data-preferred-edit-toggle]").on("click", function (event) {
-    event.preventDefault();
-    event.stopPropagation();
-    $(".candidate-preferred-summary").addClass("d-none");
-    $(".candidate-preferred-form").removeClass("d-none");
-    $(this).addClass("d-none").closest(".candidate-profile-section__header").addClass("candidate-profile-section__header--editing");
-  });
-  $("[data-preferred-edit-close]").on("click", function (event) {
-    event.preventDefault();
-    $(".candidate-preferred-form").addClass("d-none");
-    $(".candidate-preferred-summary").removeClass("d-none");
-    $("[data-preferred-edit-toggle]").removeClass("d-none").closest(".candidate-profile-section__header").removeClass("candidate-profile-section__header--editing");
-  });
-  $("[data-relevant-edit-toggle]").on("click", function (event) {
+  $('[data-preferred-edit-toggle]').on('click', function (event) {
     event.preventDefault();
     event.stopPropagation();
-    $(".candidate-relevant-summary").addClass("d-none");
-    $(".candidate-relevant-form").removeClass("d-none");
+    $('.candidate-preferred-summary').addClass('d-none');
+    $('.candidate-preferred-form').removeClass('d-none');
+    $(this).addClass('d-none').closest('.candidate-profile-section__header').addClass('candidate-profile-section__header--editing');
+    scrollToProfileEditTarget('.candidate-preferred-form');
+  });
+  $('[data-preferred-edit-close]').on('click', function (event) {
+    event.preventDefault();
+    $('.candidate-preferred-form').addClass('d-none');
+    $('.candidate-preferred-summary').removeClass('d-none');
+    $('[data-preferred-edit-toggle]').removeClass('d-none').closest('.candidate-profile-section__header').removeClass('candidate-profile-section__header--editing');
+  });
+  $('[data-relevant-edit-toggle]').on('click', function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    $('.candidate-relevant-summary').addClass('d-none');
+    $('.candidate-relevant-form').removeClass('d-none');
     initRelevantQuillEditors();
-    $(this).addClass("d-none").closest(".candidate-profile-section__header").addClass("candidate-profile-section__header--editing");
+    $(this).addClass('d-none').closest('.candidate-profile-section__header').addClass('candidate-profile-section__header--editing');
+    scrollToProfileEditTarget('.candidate-relevant-form');
   });
-  $("[data-relevant-edit-close]").on("click", function (event) {
+  $('[data-relevant-edit-close]').on('click', function (event) {
     event.preventDefault();
-    $(".candidate-relevant-form").addClass("d-none");
-    $(".candidate-relevant-summary").removeClass("d-none");
-    $("[data-relevant-edit-toggle]").removeClass("d-none").closest(".candidate-profile-section__header").removeClass("candidate-profile-section__header--editing");
+    $('.candidate-relevant-form').addClass('d-none');
+    $('.candidate-relevant-summary').removeClass('d-none');
+    $('[data-relevant-edit-toggle]').removeClass('d-none').closest('.candidate-profile-section__header').removeClass('candidate-profile-section__header--editing');
   });
-  $("[data-disability-edit-toggle]").on("click", function (event) {
+  $('[data-disability-edit-toggle]').on('click', function (event) {
     event.preventDefault();
     event.stopPropagation();
-    $(".candidate-disability-summary").addClass("d-none");
-    $(".candidate-disability-form").removeClass("d-none");
-    $(this).addClass("d-none").closest(".candidate-profile-section__header").addClass("candidate-profile-section__header--editing");
+    $('.candidate-disability-summary').addClass('d-none');
+    $('.candidate-disability-form').removeClass('d-none');
+    $(this).addClass('d-none').closest('.candidate-profile-section__header').addClass('candidate-profile-section__header--editing');
+    scrollToProfileEditTarget('.candidate-disability-form');
   });
-  $("[data-disability-edit-close]").on("click", function (event) {
+  $('[data-disability-edit-close]').on('click', function (event) {
     event.preventDefault();
-    $(".candidate-disability-form").addClass("d-none");
-    $(".candidate-disability-summary").removeClass("d-none");
-    $("[data-disability-edit-toggle]").removeClass("d-none").closest(".candidate-profile-section__header").removeClass("candidate-profile-section__header--editing");
+    $('.candidate-disability-form').addClass('d-none');
+    $('.candidate-disability-summary').removeClass('d-none');
+    $('[data-disability-edit-toggle]').removeClass('d-none').closest('.candidate-profile-section__header').removeClass('candidate-profile-section__header--editing');
   });
   function syncDisabilityDetails() {
-    var showDetails = $("[data-disability-toggle]:checked").val() === "1";
-    var $details = $("[data-disability-details]");
-    var $detailInputs = $("[data-disability-detail-input]");
-    $details.toggleClass("d-none", !showDetails);
-    $("[data-disability-support]").toggleClass("d-none", showDetails);
-    $detailInputs.prop("disabled", !showDetails);
+    var showDetails = $('[data-disability-toggle]:checked').val() === '1';
+    var $details = $('[data-disability-details]');
+    var $detailInputs = $('[data-disability-detail-input]');
+    $details.toggleClass('d-none', !showDetails);
+    $('[data-disability-support]').toggleClass('d-none', showDetails);
+    $detailInputs.prop('disabled', !showDetails);
     if (!showDetails) {
       $detailInputs.each(function () {
-        if ($(this).is(":radio")) {
-          $(this).prop("checked", $(this).val() === "1");
+        if ($(this).is(':radio')) {
+          $(this).prop('checked', $(this).val() === '1');
           return;
         }
-        $(this).val("");
+        $(this).val('');
       });
     }
   }
   syncDisabilityDetails();
-  $("[data-disability-toggle]").on("change", syncDisabilityDetails);
-  $("#candidatePersonalImageInput").on("change", function () {
+  $('[data-disability-toggle]').on('change', syncDisabilityDetails);
+  $('#candidatePersonalImageInput').on('change', function () {
     var input = this;
     var file = this.files && this.files[0];
-    if (!isValidFile($(this), "#validationErrors")) {
-      displayErrorMessage("The image must be a file of type: jpeg, jpg, png.");
-      $(".btnSave").prop("disabled", true);
+    if (!isValidFile($(this), '#validationErrors')) {
+      displayErrorMessage('The image must be a file of type: jpeg, jpg, png.');
+      $('.btnSave').prop('disabled', true);
       return;
     }
-    if (!file || !["image/jpeg", "image/png"].includes(file.type) || file.size > 1024 * 1024) {
-      $(this).val("");
-      displayErrorMessage("Upload your Profile image JPG or PNG, 1MB max.");
-      $(".btnSave").prop("disabled", true);
+    if (!file || !['image/jpeg', 'image/png'].includes(file.type) || file.size > 1024 * 1024) {
+      $(this).val('');
+      displayErrorMessage('Upload your Profile image JPG or PNG, 1MB max.');
+      $('.btnSave').prop('disabled', true);
       return;
     }
     var formData = new FormData();
-    formData.append("image", file);
-    $(".candidate-image-upload-modal__upload, [data-candidate-image-input-trigger]").prop("disabled", true);
+    formData.append('image', file);
+    $('.candidate-image-upload-modal__upload, [data-candidate-image-input-trigger]').prop('disabled', true);
     $.ajax({
-      url: route("candidate-profile.image.update"),
-      type: "post",
+      url: route('candidate-profile.image.update'),
+      type: 'post',
       data: formData,
       processData: false,
       contentType: false,
       success: function success(result) {
         var avatar = result.data && result.data.avatar ? result.data.avatar : null;
         if (avatar) {
-          $("#candidatePersonalAvatar").attr("src", avatar).attr("data-original-src", avatar).data("original-src", avatar);
+          $('#candidatePersonalAvatar').attr('src', avatar).attr('data-original-src', avatar).data('original-src', avatar);
         } else {
-          displayPhoto(input, "#candidatePersonalAvatar");
+          displayPhoto(input, '#candidatePersonalAvatar');
         }
         closeCandidateImageModal();
         displaySuccessMessage(result.message);
       },
       error: function error(result) {
-        displayErrorMessage(result.responseJSON && result.responseJSON.message ? result.responseJSON.message : "The image could not be uploaded.");
+        displayErrorMessage(result.responseJSON && result.responseJSON.message ? result.responseJSON.message : 'The image could not be uploaded.');
       },
       complete: function complete() {
-        $("#candidatePersonalImageInput").val("");
-        $(".candidate-image-upload-modal__upload, [data-candidate-image-input-trigger]").prop("disabled", false);
-        $(".btnSave").prop("disabled", false);
+        $('#candidatePersonalImageInput').val('');
+        $('.candidate-image-upload-modal__upload, [data-candidate-image-input-trigger]').prop('disabled', false);
+        $('.btnSave').prop('disabled', false);
       }
     });
   });
   function openCandidateImageModal() {
-    $("#candidateImageUploadModal").removeClass("d-none").attr("aria-hidden", "false");
-    $("body").addClass("candidate-image-upload-modal-open");
+    $('#candidateImageUploadModal').removeClass('d-none').attr('aria-hidden', 'false');
+    $('body').addClass('candidate-image-upload-modal-open');
   }
   function closeCandidateImageModal() {
-    $("#candidateImageUploadModal").addClass("d-none").attr("aria-hidden", "true");
-    $("body").removeClass("candidate-image-upload-modal-open");
-    $("[data-candidate-image-dropzone]").removeClass("candidate-image-upload-modal__dropzone--dragging");
+    $('#candidateImageUploadModal').addClass('d-none').attr('aria-hidden', 'true');
+    $('body').removeClass('candidate-image-upload-modal-open');
+    $('[data-candidate-image-dropzone]').removeClass('candidate-image-upload-modal__dropzone--dragging');
   }
-  $("[data-candidate-image-modal-open]").on("click", function (event) {
+  $('[data-candidate-image-modal-open]').on('click', function (event) {
     event.preventDefault();
     openCandidateImageModal();
   });
-  $("[data-candidate-image-modal-close]").on("click", function (event) {
+  $('[data-candidate-image-modal-close]').on('click', function (event) {
     event.preventDefault();
     closeCandidateImageModal();
   });
-  $("[data-candidate-image-input-trigger]").on("click", function (event) {
+  $('[data-candidate-image-input-trigger]').on('click', function (event) {
     event.preventDefault();
-    $("#candidatePersonalImageInput").trigger("click");
+    $('#candidatePersonalImageInput').trigger('click');
   });
-  $("[data-candidate-image-dropzone]").on("click", function (event) {
-    if ($(event.target).closest("[data-candidate-image-input-trigger]").length) {
+  $('[data-candidate-image-dropzone]').on('click', function (event) {
+    if ($(event.target).closest('[data-candidate-image-input-trigger]').length) {
       return;
     }
-    $("#candidatePersonalImageInput").trigger("click");
-  }).on("dragover", function (event) {
+    $('#candidatePersonalImageInput').trigger('click');
+  }).on('dragover', function (event) {
     event.preventDefault();
-    $(this).addClass("candidate-image-upload-modal__dropzone--dragging");
-  }).on("dragleave drop", function (event) {
+    $(this).addClass('candidate-image-upload-modal__dropzone--dragging');
+  }).on('dragleave drop', function (event) {
     event.preventDefault();
-    $(this).removeClass("candidate-image-upload-modal__dropzone--dragging");
-    if (event.type !== "drop") {
+    $(this).removeClass('candidate-image-upload-modal__dropzone--dragging');
+    if (event.type !== 'drop') {
       return;
     }
     var files = event.originalEvent.dataTransfer && event.originalEvent.dataTransfer.files;
     if (!files || !files.length) {
       return;
     }
-    $("#candidatePersonalImageInput")[0].files = files;
-    $("#candidatePersonalImageInput").trigger("change");
+    $('#candidatePersonalImageInput')[0].files = files;
+    $('#candidatePersonalImageInput').trigger('change');
   });
-  $(".candidate-personal-delete").on("click", function (event) {
+  $('.candidate-personal-delete').on('click', function (event) {
     event.preventDefault();
     var $button = $(this);
     swal({
-      title: Lang.get("js.delete") + " !",
-      text: Lang.get("js.are_you_sure") + ' "Profile Image" ?',
+      title: Lang.get('js.delete') + ' !',
+      text: Lang.get('js.are_you_sure') + ' "Profile Image" ?',
       buttons: {
-        confirm: Lang.get("js.yes_delete"),
-        cancel: Lang.get("js.no_cancel")
+        confirm: Lang.get('js.yes_delete'),
+        cancel: Lang.get('js.no_cancel')
       },
       reverseButtons: true,
-      icon: "warning",
-      confirmButtonColor: "#F62947"
+      icon: 'warning',
+      confirmButtonColor: '#F62947'
     }).then(function (willDelete) {
       if (!willDelete) {
         return;
       }
-      $button.prop("disabled", true);
+      $button.prop('disabled', true);
       $.ajax({
-        url: route("candidate-profile.image.delete"),
-        type: "delete",
+        url: route('candidate-profile.image.delete'),
+        type: 'delete',
         success: function success(result) {
-          var avatar = result.data && result.data.avatar ? result.data.avatar : $("#candidatePersonalAvatar").data("original-src");
-          $("#candidatePersonalImageInput").val("");
-          $("#candidatePersonalAvatar").attr("src", avatar).attr("data-original-src", avatar).data("original-src", avatar);
+          var avatar = result.data && result.data.avatar ? result.data.avatar : $('#candidatePersonalAvatar').data('original-src');
+          $('#candidatePersonalImageInput').val('');
+          $('#candidatePersonalAvatar').attr('src', avatar).attr('data-original-src', avatar).data('original-src', avatar);
           displaySuccessMessage(result.message);
         },
         error: function error(result) {
-          displayErrorMessage(result.responseJSON && result.responseJSON.message ? result.responseJSON.message : "The image could not be deleted.");
+          displayErrorMessage(result.responseJSON && result.responseJSON.message ? result.responseJSON.message : 'The image could not be deleted.');
         },
         complete: function complete() {
-          $button.prop("disabled", false);
+          $button.prop('disabled', false);
         }
       });
     });
   });
-  $("#birthDate").flatpickr({
-    format: "YYYY-MM-DD",
+  $('#birthDate').flatpickr({
+    format: 'YYYY-MM-DD',
     useCurrent: true,
     sideBySide: true,
-    locale: getLoggedInUserLang,
+    "locale": getLoggedInUserLang,
     maxDate: new Date()
   });
-  $("#availableAt").flatpickr({
-    format: "YYYY-MM-DD",
+  $('#availableAt').flatpickr({
+    format: 'YYYY-MM-DD',
     useCurrent: false,
     sideBySide: true,
-    locale: getLoggedInUserLang,
+    "locale": getLoggedInUserLang,
     minDate: new Date()
   });
-  if ($("#passportIssueDate").length) {
-    $("#passportIssueDate").flatpickr({
-      format: "YYYY-MM-DD",
+  if ($('#passportIssueDate').length) {
+    $('#passportIssueDate').flatpickr({
+      format: 'YYYY-MM-DD',
       useCurrent: false,
       sideBySide: true,
-      locale: getLoggedInUserLang
+      "locale": getLoggedInUserLang
     });
   }
-  if ($("#candidateProfileUpdate").length) {
-    $("#salaryCurrencyId,#stateId,#cityId,#thanaId,#industryId,#careerLevelId,#functionalAreaId,#permanentCountryId,#permanentStateId,#permanentCityId,#permanentThanaId").select2({
-      width: "100%"
+  if ($('#candidateProfileUpdate').length) {
+    $('#salaryCurrencyId,#stateId,#cityId,#thanaId,#industryId,#careerLevelId,#functionalAreaId,#permanentCountryId,#permanentStateId,#permanentCityId,#permanentThanaId').select2({
+      width: '100%'
     });
-    $("#createCityStateID").select2({
-      width: "100%",
-      dropdownParent: $("#createCityModal")
-    });
-  }
-  if ($("#skillId").length && $("#languageId").length) {
-    $("#skillId").select2({
-      width: "100%",
-      placeholder: Lang.get("js.select_skill")
-    });
-    $("#languageId").select2({
-      width: "100%",
-      placeholder: Lang.get("js.select_language")
+    $('#createCityStateID').select2({
+      width: '100%',
+      dropdownParent: $('#createCityModal')
     });
   }
-  $(".form-select").on("select2:open", function () {
-    $(this).next(".select2-container").addClass("select2-container--open-chevron");
-  }).on("select2:close", function () {
-    $(this).next(".select2-container").removeClass("select2-container--open-chevron");
+  if ($('#skillId').length && $('#languageId').length) {
+    $('#skillId').select2({
+      width: '100%',
+      placeholder: Lang.get('js.select_skill')
+    });
+    $('#languageId').select2({
+      width: '100%',
+      placeholder: Lang.get('js.select_language')
+    });
+  }
+  $('.form-select').on('select2:open', function () {
+    $(this).next('.select2-container').addClass('select2-container--open-chevron');
+  }).on('select2:close', function () {
+    $(this).next('.select2-container').removeClass('select2-container--open-chevron');
   });
-  $(".candidate-profile-accordion .form-select").not("[multiple]").on("mousedown", function () {
-    if ($(this).next(".select2-container").length) {
+  $('.candidate-profile-accordion .form-select').not('[multiple]').on('mousedown', function () {
+    if ($(this).next('.select2-container').length) {
       return;
     }
-    $(this).addClass("candidate-select-open");
-  }).on("change blur", function () {
-    $(this).removeClass("candidate-select-open");
+    $(this).addClass('candidate-select-open');
+  }).on('change blur', function () {
+    $(this).removeClass('candidate-select-open');
   });
   setTimeout(function () {
-    $("input[type=radio][name=immediate_available]").trigger("change");
+    $('input[type=radio][name=immediate_available]').trigger('change');
   }, 300);
   function renderPreferredCheckboxChips(target) {
     var $target = $(target);
@@ -3510,74 +3528,74 @@ function loadCandidateGeneralData() {
     $('.candidate-preferred-checkbox[data-chip-target="' + target + '"]:checked').each(function () {
       var $checkbox = $(this);
       var $chip = $('<span class="candidate-preferred-chip"></span>');
-      $chip.text($checkbox.data("label"));
-      $('<button type="button" aria-label="Remove">&times;</button>').appendTo($chip).on("click", function () {
-        $checkbox.prop("checked", false).trigger("change");
+      $chip.text($checkbox.data('label'));
+      $('<button type="button" aria-label="Remove">&times;</button>').appendTo($chip).on('click', function () {
+        $checkbox.prop('checked', false).trigger('change');
       });
       $target.append($chip);
     });
   }
   function renderPreferredSelectChips($select) {
-    var target = $select.data("chip-target");
+    var target = $select.data('chip-target');
     var $target = $(target);
     if (!$target.length) {
       return;
     }
-    var $container = $select.next(".select2-container");
-    $container.find(".select2-selection__choice").remove();
-    $container.find(".select2-selection__rendered > li:not(.select2-search--inline)").remove();
-    $container.find(".select2-search__field").attr("placeholder", $select.data("placeholder") || "");
+    var $container = $select.next('.select2-container');
+    $container.find('.select2-selection__choice').remove();
+    $container.find('.select2-selection__rendered > li:not(.select2-search--inline)').remove();
+    $container.find('.select2-search__field').attr('placeholder', $select.data('placeholder') || '');
     $target.empty();
-    $select.find("option:selected").each(function () {
+    $select.find('option:selected').each(function () {
       var $option = $(this);
       var $chip = $('<span class="candidate-preferred-chip"></span>');
       $chip.text($option.text());
-      $('<button type="button" aria-label="Remove">&times;</button>').appendTo($chip).on("click", function () {
-        $option.prop("selected", false);
-        $select.trigger("change");
+      $('<button type="button" aria-label="Remove">&times;</button>').appendTo($chip).on('click', function () {
+        $option.prop('selected', false);
+        $select.trigger('change');
       });
       $target.append($chip);
     });
   }
-  $(".candidate-preferred-checkbox").each(function () {
-    renderPreferredCheckboxChips($(this).data("chip-target"));
-  }).on("change", function () {
-    renderPreferredCheckboxChips($(this).data("chip-target"));
+  $('.candidate-preferred-checkbox').each(function () {
+    renderPreferredCheckboxChips($(this).data('chip-target'));
+  }).on('change', function () {
+    renderPreferredCheckboxChips($(this).data('chip-target'));
   });
-  $(".candidate-preferred-select").each(function () {
-    if (!$(this).hasClass("select2-hidden-accessible")) {
+  $('.candidate-preferred-select').each(function () {
+    if (!$(this).hasClass('select2-hidden-accessible')) {
       $(this).select2({
-        width: "100%",
+        width: '100%',
         closeOnSelect: false,
-        placeholder: $(this).data("placeholder") || ""
+        placeholder: $(this).data('placeholder') || ''
       });
     }
     renderPreferredSelectChips($(this));
-  }).on("change", function () {
+  }).on('change', function () {
     renderPreferredSelectChips($(this));
-  }).on("select2:select select2:unselect select2:open select2:close", function () {
+  }).on('select2:select select2:unselect select2:open select2:close', function () {
     var select = this;
     setTimeout(function () {
       renderPreferredSelectChips($(select));
     }, 0);
   });
-  $("#countryId").on("change", function () {
+  $('#countryId').on('change', function () {
     $.ajax({
-      url: route("states-list"),
-      type: "get",
-      dataType: "json",
+      url: route('states-list'),
+      type: 'get',
+      dataType: 'json',
       data: {
         postal: $(this).val()
       },
       success: function success(data) {
-        $("#cityId").empty();
-        $("#cityId").append($('<option value=""></option>').text(Lang.get("js.select_city")));
-        $("#thanaId").empty();
-        $("#thanaId").append($('<option value=""></option>').text(Lang.get("js.select_thana") || "Select Thana"));
-        $("#stateId").empty();
-        $("#stateId").append($('<option value=""></option>').text(Lang.get("js.select_state")));
+        $('#cityId').empty();
+        $('#cityId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
+        $('#thanaId').empty();
+        $('#thanaId').append($('<option value=""></option>').text(Lang.get('js.select_thana') || 'Select Thana'));
+        $('#stateId').empty();
+        $('#stateId').append($('<option value=""></option>').text(Lang.get('js.select_state')));
         $.each(data.data, function (i, v) {
-          $("#stateId").append($("<option></option>").attr("value", i).text(v));
+          $('#stateId').append($('<option></option>').attr('value', i).text(v));
         });
         // if (isEdit && stateId) {
         //     $('#stateId').val(stateId).trigger('change');
@@ -3585,25 +3603,25 @@ function loadCandidateGeneralData() {
       }
     });
   });
-  $("#stateId").on("change", function () {
-    if (!$("#cityId").length) {
+  $('#stateId').on('change', function () {
+    if (!$('#cityId').length) {
       return;
     }
     $.ajax({
-      url: route("cities-list"),
-      type: "get",
-      dataType: "json",
+      url: route('cities-list'),
+      type: 'get',
+      dataType: 'json',
       data: {
         state: $(this).val(),
-        country: $("#countryId").val()
+        country: $('#countryId').val()
       },
       success: function success(data) {
-        $("#cityId").empty();
-        $("#cityId").append($('<option value=""></option>').text(Lang.get("js.select_city")));
+        $('#cityId').empty();
+        $('#cityId').append($('<option value=""></option>').text(Lang.get('js.select_city')));
         $.each(data.data, function (i, v) {
-          $("#cityId").append($("<option ></option>").attr("value", i).text(v));
+          $('#cityId').append($('<option ></option>').attr('value', i).text(v));
         });
-        loadAddressThanas("#cityId", "#thanaId");
+        loadAddressThanas('#cityId', '#thanaId');
         // if (isEdit && cityId) {
         //     $('#cityId').val(cityId).trigger('change');
         // }
@@ -3614,103 +3632,103 @@ function loadCandidateGeneralData() {
   //     $('#countryId').val(countryId).trigger('change');
   // }
 
-  $(document).on("change", "#profile", function () {
-    var validFile = isValidFile($(this), "#validationErrors");
+  $(document).on('change', '#profile', function () {
+    var validFile = isValidFile($(this), '#validationErrors');
     if (validFile) {
-      displayPhoto(this, "#profilePreview");
-      $(".btnSave").prop("disabled", false);
+      displayPhoto(this, '#profilePreview');
+      $('.btnSave').prop('disabled', false);
     } else {
-      $(".btnSave").prop("disabled", true);
+      $('.btnSave').prop('disabled', true);
     }
   });
-  $("input[type=radio][name=immediate_available]").change(function () {
-    var radioValue = $("input[name='immediate_available']:checked").val();
+  $('input[type=radio][name=immediate_available]').change(function () {
+    var radioValue = $('input[name=\'immediate_available\']:checked').val();
     if (radioValue == 1) {
-      $(".available-at").hide();
+      $('.available-at').hide();
     } else {
-      $(".available-at").show();
+      $('.available-at').show();
     }
   });
-  $("#available").click(function () {
+  $('#available').click(function () {
     radio();
   });
-  $("#not_available").click(function () {
+  $('#not_available').click(function () {
     radio();
   });
   function radio() {
-    var radioValue = $("input[name='immediate_available']:checked").val();
-    if (radioValue == "0") {
-      $(".available-at").show();
+    var radioValue = $('input[name=\'immediate_available\']:checked').val();
+    if (radioValue == '0') {
+      $('.available-at').show();
     } else {
-      $(".available-at").hide();
+      $('.available-at').hide();
     }
   }
 }
-$(document).on("keyup", "#facebookUrl", function () {
+$(document).on('keyup', '#facebookUrl', function () {
   this.value = this.value.toLowerCase();
 });
-$(document).on("keyup", "#twitterUrl", function () {
+$(document).on('keyup', '#twitterUrl', function () {
   this.value = this.value.toLowerCase();
 });
-$(document).on("keyup", "#linkedInUrl", function () {
+$(document).on('keyup', '#linkedInUrl', function () {
   this.value = this.value.toLowerCase();
 });
-$(document).on("keyup", "#googlePlusUrl", function () {
+$(document).on('keyup', '#googlePlusUrl', function () {
   this.value = this.value.toLowerCase();
 });
-$(document).on("keyup", "#pinterestUrl", function () {
+$(document).on('keyup', '#pinterestUrl', function () {
   this.value = this.value.toLowerCase();
 });
 
 // City modal handlers for candidate profile
 // (jobs/create-edit.js registers .createCityModal only on job forms)
-$(document).on("click", ".createCityModal", function () {
-  if (!$("#candidateProfileUpdate").length || !$("#createCityModal").length) {
+$(document).on('click', '.createCityModal', function () {
+  if (!$('#candidateProfileUpdate').length || !$('#createCityModal').length) {
     return;
   }
-  var $modalState = $("#createCityStateID");
-  var state = $("#stateId").val();
+  var $modalState = $('#createCityStateID');
+  var state = $('#stateId').val();
 
   // Keep modal states in sync with the profile state dropdown (country-filtered)
-  if ($modalState.length && $("#stateId").length) {
+  if ($modalState.length && $('#stateId').length) {
     $modalState.empty();
-    $("#stateId option").each(function () {
+    $('#stateId option').each(function () {
       $modalState.append($(this).clone());
     });
-    $modalState.val(state).trigger("change");
+    $modalState.val(state).trigger('change');
   }
-  $("#createCityModal").appendTo("body").modal("show");
+  $('#createCityModal').appendTo('body').modal('show');
 });
-$(document).on("hidden.bs.modal", "#createCityModal", function () {
-  if (!$("#candidateProfileUpdate").length) {
+$(document).on('hidden.bs.modal', '#createCityModal', function () {
+  if (!$('#candidateProfileUpdate').length) {
     return;
   }
-  $("#createCityStateID").val("").trigger("change");
-  resetModalForm("#createCityForm", "#cityValidationErrorsBox");
+  $('#createCityStateID').val('').trigger('change');
+  resetModalForm('#createCityForm', '#cityValidationErrorsBox');
 });
-$(document).on("submit", "#candidateProfileUpdate", function (e) {
+$(document).on('submit', '#candidateProfileUpdate', function (e) {
   e.preventDefault();
   var form = this;
   var submitter = e.originalEvent && e.originalEvent.submitter ? e.originalEvent.submitter : null;
-  var submitAction = submitter && submitter.getAttribute("formaction") ? submitter.getAttribute("formaction") : null;
-  var submitMethod = submitter && submitter.getAttribute("formmethod") ? submitter.getAttribute("formmethod") : null;
-  var isScopedSectionSubmit = submitAction && submitAction !== form.getAttribute("action");
-  var isScopedAjaxSubmit = submitter && submitter.hasAttribute("data-scoped-ajax-submit");
-  if (typeof window.syncRelevantQuillEditors === "function") {
+  var submitAction = submitter && submitter.getAttribute('formaction') ? submitter.getAttribute('formaction') : null;
+  var submitMethod = submitter && submitter.getAttribute('formmethod') ? submitter.getAttribute('formmethod') : null;
+  var isScopedSectionSubmit = submitAction && submitAction !== form.getAttribute('action');
+  var isScopedAjaxSubmit = submitter && submitter.hasAttribute('data-scoped-ajax-submit');
+  if (typeof window.syncRelevantQuillEditors === 'function') {
     window.syncRelevantQuillEditors();
   }
-  if (!isScopedSectionSubmit && !$("#error-msg").hasClass("d-none") && $("#error-msg").text() !== "") {
-    $("#phoneNumber").focus();
+  if (!isScopedSectionSubmit && !$('#error-msg').hasClass('d-none') && $('#error-msg').text() !== '') {
+    $('#phoneNumber').focus();
     return false;
   }
-  $("#candidateProfileUpdate").find("input:text:visible:first").focus();
+  $('#candidateProfileUpdate').find('input:text:visible:first').focus();
   var facebookExp = new RegExp(/^(https?:\/\/)?((m{1}\.)?)?((w{3}\.)?)facebook.[a-z]{2,3}\/?.*/i);
   var twitterExp = new RegExp(/^(https?:\/\/)?((m{1}\.)?)?((w{3}\.)?)twitter\.[a-z]{2,3}\/?.*/i);
   var googlePlusExp = new RegExp(/^(https?:\/\/)?((w{3}\.)?)?(plus\.)?(google\.[a-z]{2,3})\/?(([a-zA-Z 0-9._])?).*/i);
   var linkedInExp = new RegExp(/^(https?:\/\/)?((w{3}\.)?)linkedin\.[a-z]{2,3}\/?.*/i);
   var pinterestExp = new RegExp(/^(https?:\/\/)?((w{3}\.)?)pinterest\.[a-z]{2,3}\/?.*/i);
   var validateOptionalUrl = function validateOptionalUrl(selector, expression, message) {
-    var value = $(selector).length ? $(selector).val() : "";
+    var value = $(selector).length ? $(selector).val() : '';
     if (!urlValidation(value, expression)) {
       displayErrorMessage(message);
       return false;
@@ -3718,51 +3736,55 @@ $(document).on("submit", "#candidateProfileUpdate", function (e) {
     return true;
   };
   if (!isScopedSectionSubmit) {
-    if (!validateOptionalUrl("#facebookUrl", facebookExp, Lang.get("js.valid_facebook_url"))) {
+    if (!validateOptionalUrl('#facebookUrl', facebookExp, Lang.get('js.valid_facebook_url'))) {
       return false;
     }
-    if (!validateOptionalUrl("#twitterUrl", twitterExp, Lang.get("js.valid_twitter_url"))) {
+    if (!validateOptionalUrl('#twitterUrl', twitterExp, Lang.get('js.valid_twitter_url'))) {
       return false;
     }
-    if (!validateOptionalUrl("#googlePlusUrl", googlePlusExp, Lang.get("js.valid_google_plus_url"))) {
+    if (!validateOptionalUrl('#googlePlusUrl', googlePlusExp, Lang.get('js.valid_google_plus_url'))) {
       return false;
     }
-    if (!validateOptionalUrl("#linkedInUrl", linkedInExp, Lang.get("js.valid_linkedin_url"))) {
+    if (!validateOptionalUrl('#linkedInUrl', linkedInExp, Lang.get('js.valid_linkedin_url'))) {
       return false;
     }
-    if (!validateOptionalUrl("#pinterestUrl", pinterestExp, Lang.get("js.valid_pinterest_url"))) {
+    if (!validateOptionalUrl('#pinterestUrl', pinterestExp, Lang.get('js.valid_pinterest_url'))) {
       return false;
     }
   }
   if (isScopedAjaxSubmit) {
     var formData = new FormData(form);
     var $submitter = $(submitter);
-    $submitter.prop("disabled", true);
+    $submitter.prop('disabled', true);
     $.ajax({
       url: submitAction,
-      type: "post",
+      type: 'post',
       data: formData,
       processData: false,
       contentType: false,
       headers: {
-        Accept: "application/json"
+        Accept: 'application/json'
       },
       success: function success(result) {
         if (result.data && result.data.profile_incomplete && window.sessionStorage) {
-          window.sessionStorage.setItem("pendingProfileIncompleteModal", JSON.stringify({
+          window.sessionStorage.setItem('pendingProfileIncompleteModal', JSON.stringify({
             percentage: result.data.percentage || 0,
-            profile_url: result.data.profile_url || ""
+            profile_url: result.data.profile_url || ''
           }));
         }
         displaySuccessMessage(result.message);
         setTimeout(function () {
-          window.location.href = route("candidate.profile", {
-            section: "personal-information"
+          var params = new URLSearchParams(window.location.search);
+          var section = params.get('section') || 'personal-information';
+          var activeCollapse = submitter.closest('.candidate-profile-section__collapse');
+          var profileUrl = route('candidate.profile', {
+            section: section
           });
+          window.location.href = activeCollapse && activeCollapse.id ? profileUrl + '#' + activeCollapse.id : profileUrl;
         }, 800);
       },
       error: function error(result) {
-        var message = result.responseJSON && result.responseJSON.message ? result.responseJSON.message : Lang.get("js.error");
+        var message = result.responseJSON && result.responseJSON.message ? result.responseJSON.message : Lang.get('js.error');
         if (result.status === 422 && result.responseJSON && result.responseJSON.errors) {
           var firstErrorKey = Object.keys(result.responseJSON.errors)[0];
           if (firstErrorKey && result.responseJSON.errors[firstErrorKey][0]) {
@@ -3772,16 +3794,16 @@ $(document).on("submit", "#candidateProfileUpdate", function (e) {
         displayErrorMessage(message);
       },
       complete: function complete() {
-        $submitter.prop("disabled", false);
+        $submitter.prop('disabled', false);
       }
     });
     return false;
   }
   if (submitAction) {
-    form.setAttribute("action", submitAction);
+    form.setAttribute('action', submitAction);
   }
   if (submitMethod) {
-    form.setAttribute("method", submitMethod);
+    form.setAttribute('method', submitMethod);
   }
   form.submit();
   return true;
@@ -3985,12 +4007,13 @@ function initCandidateProfileAccordion(options) {
   accordion.dataset.profileAccordionReady = 'true';
   var sectionBodies = Array.from(accordion.querySelectorAll('.candidate-profile-section__collapse'));
   var menuLinks = options.menuSelector ? Array.from(document.querySelectorAll(options.menuSelector)) : [];
-  var setActiveSection = function setActiveSection(panelId) {
+  var setActiveSection = function setActiveSection(panelId, sectionId) {
     if (!options.menuDatasetKey) {
       return;
     }
     menuLinks.forEach(function (link) {
-      link.classList.toggle('active', link.dataset[options.menuDatasetKey] === panelId);
+      var linkedSectionId = link.dataset[options.menuDatasetKey];
+      link.classList.toggle('active', linkedSectionId === panelId || linkedSectionId === sectionId);
     });
   };
   var setPanelToggleState = function setPanelToggleState(section, expanded) {
@@ -4018,8 +4041,8 @@ function initCandidateProfileAccordion(options) {
         action.classList.toggle('d-none', !expanded);
       });
     }
-    if (expanded && panel) {
-      setActiveSection(panel.id);
+    if (expanded) {
+      setActiveSection(panel ? panel.id : null, section.id);
     }
   };
   var refreshSection = function refreshSection(section) {
@@ -4029,6 +4052,13 @@ function initCandidateProfileAccordion(options) {
     var toggle = getCandidateProfileAccordionToggle(accordion, section.id);
     var header = toggle ? toggle.closest('.candidate-profile-section__header') : null;
     section.addEventListener('show.bs.collapse', function () {
+      sectionBodies.forEach(function (otherSection) {
+        if (otherSection !== section && otherSection.classList.contains('show') && typeof bootstrap !== 'undefined') {
+          bootstrap.Collapse.getOrCreateInstance(otherSection, {
+            toggle: false
+          }).hide();
+        }
+      });
       setPanelToggleState(section, true);
     });
     section.addEventListener('shown.bs.collapse', function () {
@@ -4059,27 +4089,40 @@ function initCandidateProfileAccordion(options) {
       });
     }
   });
+  var openSection = function openSection(targetId) {
+    var scrollToSection = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+    var target = document.getElementById(targetId);
+    var section = target ? target.classList.contains('candidate-profile-section__collapse') ? target : target.querySelector('.candidate-profile-section__collapse') : null;
+    var panel = section ? section.closest('.candidate-profile-section, .candidate-education-panel') : target;
+    if (!target || !section || typeof bootstrap === 'undefined') {
+      return;
+    }
+    bootstrap.Collapse.getOrCreateInstance(section, {
+      toggle: false
+    }).show();
+    setActiveSection(panel ? panel.id : null, section.id);
+    if (!scrollToSection) {
+      return;
+    }
+    if (typeof window.scrollCandidateProfileSection === 'function') {
+      window.scrollCandidateProfileSection(panel || section);
+    } else {
+      (panel || section).scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+  var hashTargetId = window.location.hash ? window.location.hash.substring(1) : '';
+  if (hashTargetId) {
+    setTimeout(function () {
+      openSection(hashTargetId, true);
+    }, 0);
+  }
   menuLinks.forEach(function (link) {
     link.addEventListener('click', function (event) {
       event.preventDefault();
-      var panelId = link.dataset[options.menuDatasetKey];
-      var panel = document.getElementById(panelId);
-      var section = panel ? panel.querySelector('.candidate-profile-section__collapse') : null;
-      if (!panel || !section || typeof bootstrap === 'undefined') {
-        return;
-      }
-      bootstrap.Collapse.getOrCreateInstance(section, {
-        toggle: false
-      }).show();
-      setActiveSection(panel.id);
-      if (typeof window.scrollCandidateProfileSection === 'function') {
-        window.scrollCandidateProfileSection(panel);
-      } else {
-        panel.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }
+      openSection(link.dataset[options.menuDatasetKey], true);
     });
   });
 }
@@ -4187,7 +4230,43 @@ function initCandidatePersonalInformationAccordion() {
     }
   });
 }
+function bootCandidateProfileActionScroll() {
+  if (document.body.dataset.candidateProfileActionScrollReady === 'true') {
+    return;
+  }
+  document.body.dataset.candidateProfileActionScrollReady = 'true';
+  var actionSelector = ['[data-personal-edit-toggle]', '[data-address-edit-toggle]', '[data-career-edit-toggle]', '[data-preferred-edit-toggle]', '[data-relevant-edit-toggle]', '[data-disability-edit-toggle]', '[data-inline-education-add]', '[data-panel-add-action]', '[data-certification-add-action]', '[data-employment-add-trigger]', '.candidate-employment-edit-trigger', '[data-retired-army-add-trigger]', '[data-retired-army-edit]', '[data-skill-add-action]', '[data-skill-edit]', '[data-activity-add-action]', '[data-activity-edit]', '[data-language-edit-action]', '[data-language-item-edit]', '[data-link-add-action]', '[data-link-edit]', '[data-reference-add-action]', '[data-reference-edit]', '[data-portfolio-add-action]', '[data-portfolio-edit]', '[data-publication-add-action]', '[data-publication-edit]', '[data-award-add-action]', '[data-award-edit]', '[data-project-add-action]', '[data-project-edit]', '[data-other-add-action]', '[data-other-edit]'].join(',');
+  var formSelector = ['.candidate-personal-form', '.candidate-address-form', '.candidate-career-form', '.candidate-preferred-form', '.candidate-relevant-form', '.candidate-disability-form', '.candidate-education-inline-form', '.candidate-employment-form', '.candidate-retired-army-form', '.candidate-skill-form', '.candidate-link-form', '.candidate-reference-form', '.candidate-activity-form', '.candidate-language-form', '.candidate-portfolio-form', '.candidate-publication-form', '.candidate-award-form', '.candidate-project-form', '.candidate-other-form', 'form'].join(',');
+  var isVisible = function isVisible(element) {
+    return element && element.offsetParent !== null && !element.classList.contains('d-none') && !element.closest('.d-none');
+  };
+  document.addEventListener('click', function (event) {
+    var trigger = event.target.closest(actionSelector);
+    if (!trigger) {
+      return;
+    }
+    window.setTimeout(function () {
+      var section = trigger.closest('.candidate-profile-section, .candidate-education-panel');
+      if (!section) {
+        return;
+      }
+      var visibleForm = Array.from(section.querySelectorAll(formSelector)).find(isVisible);
+      if (!visibleForm) {
+        return;
+      }
+      if (typeof window.scrollCandidateProfileSection === 'function') {
+        window.scrollCandidateProfileSection(visibleForm);
+        return;
+      }
+      visibleForm.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }, 120);
+  });
+}
 function bootCandidateCareerInformationData() {
+  bootCandidateProfileActionScroll();
   initCandidateEducationAccordion();
   initCandidateEmploymentAccordion();
   initCandidateOtherInformationAccordion();
@@ -4215,12 +4294,19 @@ function loadCandidateCareerInformationData() {
   function scrollToEducationInlineForm(targetElement) {
     var formElement = targetElement || document.querySelector('[data-education-add-form]') || document.querySelector('[data-training-add-form]');
     if (!formElement) return;
-    var stickyOffset = 150;
-    var targetTop = formElement.getBoundingClientRect().top + window.pageYOffset - stickyOffset;
-    window.scrollTo({
-      top: targetTop,
-      behavior: 'smooth'
+    if (typeof window.scrollCandidateProfileSection === 'function') {
+      window.scrollCandidateProfileSection(formElement);
+      return;
+    }
+    formElement.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
     });
+  }
+  function reloadCandidateProfileSection(section, panelId) {
+    window.location.href = route('candidate.profile', {
+      section: section
+    }) + (panelId ? '#' + panelId : '');
   }
   var educationCustomSelectSelector = '.candidate-education-form-grid select.form-select:not([data-education-major-select])';
   function closeEducationCustomSelects() {
@@ -4345,7 +4431,7 @@ function loadCandidateCareerInformationData() {
   //         'placeholder': 'Select State',
   //         dropdownParent: $('#addExperienceModal')
   //     });
-  //     $('#cityId').select2({'width': '100%', 'placeholder': 'Select City', dropdownParent: $('#addExperienceModal')});
+  //     $('#cityId').select2({'width': '100%', 'placeholder': 'Select District', dropdownParent: $('#addExperienceModal')});
   // };
   //
   // window.setEducationSelect2 = function () {
@@ -4356,7 +4442,7 @@ function loadCandidateCareerInformationData() {
   //     });
   //     $('#educationCityId').select2({
   //         'width': '100%',
-  //         'placeholder': 'Select City',
+  //         'placeholder': 'Select District',
   //         dropdownParent: $('#addEducationModal')
   //     });
   // };
@@ -4459,18 +4545,20 @@ function loadCandidateCareerInformationData() {
     $('.candidate-education-container').removeClass('d-none');
   }
   function scrollToEducationInlineForm() {
-    var form = document.querySelector('[data-education-add-form]');
+    var form = document.querySelector('[data-education-add-form]') || document.querySelector('[data-education-edit-form]:not(.d-none)');
     if (!form) {
       return;
     }
     window.setTimeout(function () {
-      var stickyOffset = 150;
-      var top = window.scrollY + form.getBoundingClientRect().top - stickyOffset;
-      window.scrollTo({
-        top: Math.max(0, top),
-        behavior: 'smooth'
+      if (typeof window.scrollCandidateProfileSection === 'function') {
+        window.scrollCandidateProfileSection(form);
+        return;
+      }
+      form.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
       });
-    }, 100);
+    }, 50);
   }
   listenClick('[data-inline-education-add]', function () {
     closeEducationInlineForms();
@@ -5159,7 +5247,7 @@ listenSubmit('#addNewEducationForm', function (e) {
         $('#notfoundEducation').addClass('d-none');
         displaySuccessMessage(result.message);
         if ($('[data-education-add-form]').length) {
-          window.location.reload();
+          reloadCandidateProfileSection('education-training', 'candidateEducationPanelBody');
           return;
         }
         $('#addEducationModal').modal('hide');
@@ -5194,7 +5282,7 @@ listenSubmit('#editCareerEducationForm', function (event) {
       if (result.success) {
         displaySuccessMessage(result.message);
         if ($('[data-education-edit-form]').length) {
-          window.location.reload();
+          reloadCandidateProfileSection('education-training', 'candidateEducationPanelBody');
           return;
         }
         $('#editEducationModal').modal('hide');
@@ -5234,7 +5322,7 @@ listenSubmit('#addNewExperienceForm', function (e) {
         $('#notfoundExperience').addClass('d-none');
         displaySuccessMessage(result.message);
         setTimeout(function () {
-          window.location.reload();
+          reloadCandidateProfileSection('employment', 'candidateExperiencePanelBody');
         }, 3000);
         $('#addExperienceModal').modal('hide');
         renderExperienceTemplate(result.data);
@@ -5266,7 +5354,7 @@ listenSubmit('#editExperienceForm', function (event) {
       if (result.success) {
         displaySuccessMessage(result.message);
         setTimeout(function () {
-          window.location.reload();
+          reloadCandidateProfileSection('employment', 'candidateExperiencePanelBody');
         }, 3000);
         $('#editExperienceModal').modal('hide');
 
@@ -12597,17 +12685,8 @@ listen('hidden.bs.modal', '#editJobTagModal', function () {
 listenSubmit('#addJobTagForm', function (e) {
   e.preventDefault();
   var add_job_tag_editor_content = addJobTagDescriptionQuill.root.innerHTML;
-  if (add_job_tag_editor_content.length) {
-    if (addJobTagDescriptionQuill.getText().trim().length === 0) {
-      displayErrorMessage(Lang.get('js.description_required'));
-      return false;
-    }
-  } else {
-    displayErrorMessage(Lang.get('js.description_required'));
-    return false;
-  }
-  var input = JSON.stringify(add_job_tag_editor_content);
-  $('#job_tag_desc').val(input.replace(/"/g, ''));
+  var input = addJobTagDescriptionQuill.getText().trim().length > 0 ? JSON.stringify(add_job_tag_editor_content).replace(/"/g, '') : '';
+  $('#job_tag_desc').val(input);
   processingBtn('#addJobTagForm', '#jobTagBtnSave', 'loading');
   $.ajax({
     url: route('jobTag.store'),
@@ -12631,17 +12710,8 @@ listenSubmit('#addJobTagForm', function (e) {
 listenSubmit('#editJobTagForm', function (event) {
   event.preventDefault();
   var edit_job_tag_editor_content = editJobTagDescriptionQuill.root.innerHTML;
-  if (edit_job_tag_editor_content.length) {
-    if (editJobTagDescriptionQuill.getText().trim().length === 0) {
-      displayErrorMessage(Lang.get('js.description_required'));
-      return false;
-    }
-  } else {
-    displayErrorMessage(Lang.get('js.description_required'));
-    return false;
-  }
-  var input = JSON.stringify(edit_job_tag_editor_content);
-  $('#edit_job_tag_desc').val(input.replace(/"/g, ''));
+  var input = editJobTagDescriptionQuill.getText().trim().length > 0 ? JSON.stringify(edit_job_tag_editor_content).replace(/"/g, '') : '';
+  $('#edit_job_tag_desc').val(input);
   processingBtn('#editJobTagForm', '#JobTagEditSaveBtn', 'loading');
   var updateJobTagId = $('#jobTagId').val();
   $.ajax({
@@ -12860,6 +12930,37 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
 document.addEventListener("DOMContentLoaded", loadEmployeeCreateEditData);
 
 var jobRequiredFieldMessage = "This field is required";
+var normalizeSelect2Text = function normalizeSelect2Text(text) {
+  return $.trim(text || "").toLowerCase();
+};
+var hasSelectedSelect2Text = function hasSelectedSelect2Text($select, text) {
+  var normalizedText = normalizeSelect2Text(text);
+  return $select.find("option:selected").toArray().some(function (option) {
+    return normalizeSelect2Text(option.text) === normalizedText;
+  });
+};
+var shouldInsertSelect2Tag = function shouldInsertSelect2Tag(data, $select, tag) {
+  return !hasSelectedSelect2Text($select, tag.text);
+};
+var formatSelect2TagResult = function formatSelect2TagResult($select, data) {
+  if (data.newTag) {
+    if (hasSelectedSelect2Text($select, data.text)) {
+      return null;
+    }
+    return 'Add "' + data.text + '"';
+  }
+  return data.text;
+};
+var clearSelect2SearchAfterSelect = function clearSelect2SearchAfterSelect($select) {
+  $select.on("select2:select", function () {
+    window.setTimeout(function () {
+      var $containerSearch = $select.next(".select2-container").find(".select2-search__field");
+      var $openSearch = $(".select2-container--open .select2-search__field");
+      $containerSearch.val("").trigger("input").trigger("keyup");
+      $openSearch.val("").trigger("input").trigger("keyup");
+    }, 0);
+  });
+};
 function loadEmployeeCreateEditData() {
   if (!$(".jobEmployeePanel").length) {
     return;
@@ -12878,7 +12979,7 @@ function loadEmployeeCreateEditData() {
           }
         }
       },
-      placeholder: Lang.get("js.enter_description"),
+      placeholder: "Enter Requirements",
       theme: "snow"
     });
     if ($("#editResponse").length) {
@@ -12899,10 +13000,32 @@ function loadEmployeeCreateEditData() {
         placeholder: Lang.get("js.enter_key_responsibilities"),
         theme: "snow"
       });
+      if ($("#editCompensationAndBenefits").length) {
+        window.editCompensationAndBenefits = new Quill("#editCompensationAndBenefits", {
+          modules: {
+            toolbar: [["bold", "italic", "underline", "strike"], [{
+              list: "ordered"
+            }, {
+              list: "bullet"
+            }], ["clean"]],
+            keyboard: {
+              bindings: {
+                tab: "disabled"
+              }
+            }
+          },
+          placeholder: "Enter Compensation and Other Benefits",
+          theme: "snow"
+        });
+      }
       setQuillHtml(editJobDescription, "#editJobDescription");
       setQuillHtml(editResponse, "#edit_responsibilities");
       rememberJobEditorHeight("#editDetails", "tap2jobs:admin-job-editor:description-height");
       rememberJobEditorHeight("#editResponse", "tap2jobs:admin-job-editor:responsibilities-height");
+      if (window.editCompensationAndBenefits) {
+        setQuillHtml(editCompensationAndBenefits, "#edit_compensation_and_other_benefits");
+        rememberJobEditorHeight("#editCompensationAndBenefits", "tap2jobs:admin-job-editor:compensation-benefits-height");
+      }
     }
   }
   if ($("#details").length) {
@@ -12919,7 +13042,7 @@ function loadEmployeeCreateEditData() {
           }
         }
       },
-      placeholder: Lang.get("js.enter_description"),
+      placeholder: "Enter Requirements",
       theme: "snow"
     });
     if ($("#response").length) {
@@ -12939,10 +13062,32 @@ function loadEmployeeCreateEditData() {
         placeholder: Lang.get("js.enter_key_responsibilities"),
         theme: "snow"
       });
+      if ($("#compensationAndBenefits").length) {
+        window.compensationAndBenefits = new Quill("#compensationAndBenefits", {
+          modules: {
+            toolbar: [["bold", "italic", "underline", "strike"], [{
+              list: "ordered"
+            }, {
+              list: "bullet"
+            }], ["clean"]],
+            keyboard: {
+              bindings: {
+                tab: "disabled"
+              }
+            }
+          },
+          placeholder: "Enter Compensation and Other Benefits",
+          theme: "snow"
+        });
+      }
       setQuillHtml(details, "#job_desc");
       setQuillHtml(response, "#key_responsibilities");
       rememberJobEditorHeight("#details", "tap2jobs:admin-job-editor:description-height");
       rememberJobEditorHeight("#response", "tap2jobs:admin-job-editor:responsibilities-height");
+      if (window.compensationAndBenefits) {
+        setQuillHtml(compensationAndBenefits, "#compensation_and_other_benefits");
+        rememberJobEditorHeight("#compensationAndBenefits", "tap2jobs:admin-job-editor:compensation-benefits-height");
+      }
     }
   }
   if (!$("#createJobForm").length && !$("#editJobForm").length) {
@@ -13056,28 +13201,73 @@ function loadEmployeeCreateEditData() {
     width: "calc(100% - 44px)"
   });
   var $jobDegreeTitle = $("#jobDegreeTitleId");
-  $jobDegreeTitle.select2({
-    width: "100%"
-  });
+  function initializeDegreeTitleSelect2() {
+    var disabled = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+    if ($jobDegreeTitle.hasClass("select2-hidden-accessible")) {
+      $jobDegreeTitle.select2("destroy");
+    }
+    $jobDegreeTitle.select2({
+      width: "100%",
+      disabled: disabled,
+      placeholder: disabled ? "Select degree level first" : $jobDegreeTitle.data('placeholder') || "Select Degree Title",
+      tags: !disabled,
+      createTag: function createTag(params) {
+        if (disabled) return null;
+        var term = $.trim(params.term);
+        if (!term) return null;
+        var alreadyExists = $jobDegreeTitle.find("option").toArray().some(function (option) {
+          return $.trim(option.text).toLowerCase() === term.toLowerCase();
+        });
+        if (alreadyExists) return null;
+        return {
+          id: term,
+          text: term,
+          newTag: true
+        };
+      },
+      insertTag: function insertTag(data, tag) {
+        data.unshift(tag);
+      },
+      templateResult: function templateResult(data) {
+        if (data.newTag) {
+          return 'Add "' + data.text + '"';
+        }
+        return data.text;
+      }
+    });
+  }
   function populateJobDegreeTitles(degreeLevelId, selectedDegreeTitleId) {
     if (!$jobDegreeTitle.length) {
       return;
     }
     $jobDegreeTitle.empty();
-    $jobDegreeTitle.append('<option value="">' + ($jobDegreeTitle.attr("placeholder") || "Select Degree Title") + '</option>');
+    var placeholderText = $jobDegreeTitle.data('placeholder') || "Select Degree Title";
+    if (!degreeLevelId) {
+      placeholderText = "Select degree level first";
+      $jobDegreeTitle.append('<option value="">' + placeholderText + '</option>');
+      initializeDegreeTitleSelect2(true);
+      return;
+    }
+    $jobDegreeTitle.append('<option value="">' + placeholderText + '</option>');
     if (degreeLevelId && window.jobDegreeTitleOptions && window.jobDegreeTitleOptions[degreeLevelId]) {
       var options = window.jobDegreeTitleOptions[degreeLevelId];
       $.each(options, function (id, name) {
         $jobDegreeTitle.append($("<option></option>").attr("value", id).text(name));
       });
     }
+    initializeDegreeTitleSelect2(false);
     if (selectedDegreeTitleId) {
       $jobDegreeTitle.val(String(selectedDegreeTitleId));
     }
     $jobDegreeTitle.trigger("change.select2");
   }
-  if ($jobDegreeTitle.length && $("#requiredDegreeLevelId").val()) {
-    populateJobDegreeTitles($("#requiredDegreeLevelId").val(), $jobDegreeTitle.data("selected-value") || $jobDegreeTitle.val());
+  if ($jobDegreeTitle.length) {
+    $jobDegreeTitle.data('placeholder', $jobDegreeTitle.attr("placeholder"));
+    if ($("#requiredDegreeLevelId").val()) {
+      populateJobDegreeTitles($("#requiredDegreeLevelId").val(), $jobDegreeTitle.data("selected-value") || $jobDegreeTitle.val());
+    } else {
+      populateJobDegreeTitles(null, null);
+    }
   }
   $(document).on("change", "#requiredDegreeLevelId", function () {
     populateJobDegreeTitles($(this).val(), null);
@@ -13183,15 +13373,15 @@ function loadEmployeeCreateEditData() {
       };
     },
     insertTag: function insertTag(data, tag) {
-      data.unshift(tag);
+      if (shouldInsertSelect2Tag(data, $skillSelect, tag)) {
+        data.unshift(tag);
+      }
     },
     templateResult: function templateResult(data) {
-      if (data.newTag) {
-        return 'Add "' + data.text + '"';
-      }
-      return data.text;
+      return formatSelect2TagResult($skillSelect, data);
     }
   });
+  clearSelect2SearchAfterSelect($skillSelect);
   var $tagSelect = $("#tagId");
   $tagSelect.select2({
     width: "100%",
@@ -13216,15 +13406,15 @@ function loadEmployeeCreateEditData() {
       };
     },
     insertTag: function insertTag(data, tag) {
-      data.unshift(tag);
+      if (shouldInsertSelect2Tag(data, $tagSelect, tag)) {
+        data.unshift(tag);
+      }
     },
     templateResult: function templateResult(data) {
-      if (data.newTag) {
-        return 'Add "' + data.text + '"';
-      }
-      return data.text;
+      return formatSelect2TagResult($tagSelect, data);
     }
   });
+  clearSelect2SearchAfterSelect($tagSelect);
   if (!$("#companyId").hasClass(".select2-hidden-accessible") && $("#companyId").is("select")) {
     $("#companyId").select2({
       width: "100%"
@@ -13339,7 +13529,7 @@ function loadEmployeeCreateEditData() {
   //         success: function (data) {
   //             $('#cityId').empty();
   //             $('#cityId').append(
-  //                 $('<option value=""></option>').text('Select City'));
+  //                 $('<option value=""></option>').text('Select District'));
   //             $('#stateId').empty();
   //             $('#stateId').
   //                 append(
@@ -13364,7 +13554,7 @@ function loadEmployeeCreateEditData() {
   //         success: function (data) {
   //             $('#cityId').empty();
   //             $('#cityId').append(
-  //                 $('<option value=""></option>').text('Select City'));
+  //                 $('<option value=""></option>').text('Select District'));
   //             $.each(data.data, function (i, v) {
   //                 $('#cityId').append(
   //                     $('<option ></option>').attr('value', i).text(v));
@@ -13817,19 +14007,10 @@ listenSubmit("#createSkillForm", function () {
   return false;
 });
 listenSubmit("#createJobTagForm", function () {
-  var editor_content = jobTagDescription.root.innerHTML;
-  if (editor_content.length) {
-    if (jobTagDescription.getText().trim().length === 0) {
-      displayErrorMessage(Lang.get("js.description_required"));
-      return false;
-    }
-  } else {
-    displayErrorMessage(Lang.get("js.description_required"));
-    return false;
-  }
+  var editor_content = jobTagDescription ? jobTagDescription.root.innerHTML : '';
+  var input = jobTagDescription && jobTagDescription.getText().trim().length > 0 ? JSON.stringify(editor_content).replace(/"/g, "") : '';
   processingBtn("#createJobTagForm", "#jobTagBtnSave", "loading");
-  var input = JSON.stringify(editor_content);
-  $("#job_tag_desc").val(input.replace(/"/g, ""));
+  $("#job_tag_desc").val(input);
   $.ajax({
     url: route("jobTag.store"),
     type: "POST",
@@ -13983,7 +14164,7 @@ function initJobRequiredFieldValidation() {
   $("#createJobForm, #editJobForm").off("input.jobRequired change.jobRequired", "input, select, textarea").on("input.jobRequired change.jobRequired", "input, select, textarea", function () {
     clearJobFieldValidationState($(this));
   });
-  [window.details, window.response, window.editJobDescription, window.editResponse].forEach(function (editor) {
+  [window.details, window.response, window.compensationAndBenefits, window.editJobDescription, window.editResponse, window.editCompensationAndBenefits].forEach(function (editor) {
     if (!editor || editor.__jobValidationBound) {
       return;
     }
@@ -14001,7 +14182,7 @@ function clearJobValidationState(form) {
   $(form).find("select.select2-hidden-accessible").each(function () {
     $(this).next(".select2-container").removeClass("job-field-invalid");
   });
-  [window.details, window.response, window.editJobDescription, window.editResponse].forEach(function (editor) {
+  [window.details, window.response, window.compensationAndBenefits, window.editJobDescription, window.editResponse, window.editCompensationAndBenefits].forEach(function (editor) {
     clearJobEditorValidationState(editor);
   });
 }
@@ -14264,6 +14445,9 @@ listenClick("#jobsSaveBtn, #saveDraft", function (e) {
   // }
   var keyResponsibilitiesContent = getQuillHtml(response);
   $("#key_responsibilities").val(keyResponsibilitiesContent);
+  if (window.compensationAndBenefits) {
+    $("#compensation_and_other_benefits").val(getQuillHtml(compensationAndBenefits));
+  }
   if ($("#salaryToErrorMsg").text() !== "") {
     $("#toSalary").focus();
     $("#saveJob,#draftJob").attr("disabled", false);
@@ -14282,6 +14466,9 @@ listenClick("#editJobsSaveBtn, #saveDraft", function (e) {
   $("#editJobDescription").val(editor_content2);
   var editor_content3 = getQuillHtml(editResponse);
   $("#edit_responsibilities").val(editor_content3);
+  if (window.editCompensationAndBenefits) {
+    $("#edit_compensation_and_other_benefits").val(getQuillHtml(editCompensationAndBenefits));
+  }
   if ($("#salaryToErrorMsg").text() !== "") {
     $("#toSalary").focus();
     $("#saveJob,#draftJob").attr("disabled", false);
@@ -14421,7 +14608,6 @@ Livewire.hook('element.init', function (_ref) {
     if (!$('#createJobNotificationForm').length) {
       return;
     }
-    checkBoxSelect();
   }, 500);
 });
 function loadSelect2() {
@@ -14434,13 +14620,33 @@ function loadSelect2() {
   }
   $('#filter_employers').select2();
 }
-listenSubmit('#createJobNotificationForm', function () {
+listenSubmit('#createJobNotificationForm', function (e) {
+  e.preventDefault();
   if ($('.jobCheck:checked').length === 0) {
     displayErrorMessage(Lang.get('js.select_job'));
     return false;
   }
-  screenLock();
-  startLoader();
+  var submitBtn = $(this).find('button[type="submit"], input[type="submit"]');
+  submitBtn.prop('disabled', true);
+  $.ajax({
+    url: $(this).attr('action'),
+    type: 'POST',
+    data: $(this).serialize(),
+    success: function success(result) {
+      if (result.success) {
+        displaySuccessMessage(result.message);
+        $('#candidateId').val(null).trigger('change');
+        $('.jobCheck').prop('checked', false);
+        $('#ckbCheckAll').prop('checked', false);
+      }
+    },
+    error: function error(result) {
+      displayErrorMessage(result.responseJSON.message);
+    },
+    complete: function complete() {
+      submitBtn.prop('disabled', false);
+    }
+  });
 });
 listenClick('#resetJobNotificationFilter', function () {
   $('#filter_employers').val('').trigger('change');
@@ -14450,23 +14656,13 @@ listenClick('#resetJobNotificationFilter', function () {
     type: 'get',
     success: function success(result) {
       if (result.success) {
-        var jobNotification = '';
         var noJobsAvailable = "<li class=\"no-job-available\"><h4 class=\"text-center mt-9\">".concat(Lang.get('js.no_jobs_available'), "</h4></li>");
-        var index;
-        if (result.data.length > 0) {
-          for (index = 0; index < result.data.length; index++) {
-            var jobs = [{
-              'job_id': result.data[index].id,
-              'job_title': result.data[index].job_title,
-              'created_by': humanReadableFormatDate(result.data[index].created_at),
-              'jobDetails': $('#indexJobDetails').val() + '/' + result.data[index].id
-            }];
-            var jobNotificationLi = prepareTemplateRender('#jobNotificationTemplate', jobs);
-            jobNotification += jobNotificationLi;
-          }
+        if (result.data && result.data.html) {
+          $('.job-notification-ul').html(result.data.html);
+        } else {
+          $('.job-notification-ul').html(noJobsAvailable);
         }
-        $('.job-notification-ul').append(jobNotification != '' ? jobNotification : noJobsAvailable);
-        checkBoxSelect();
+        $('#ckbCheckAll').prop('checked', false);
       }
     },
     error: function error(result) {
@@ -14491,39 +14687,39 @@ listenChange('#filter_employers', function () {
     type: 'get',
     success: function success(result) {
       if (result.success) {
-        var jobNotification = '';
         var noJobsAvailable = "<li class=\"no-job-available\"><h4 class=\"text-center mt-9\">".concat(Lang.get('js.no_jobs_available'), "</h4></li>");
-        if (!isEmpty(employerId)) {
-          var index;
-          if (result.data.jobs.length > 0) {
-            for (index = 0; index < result.data.jobs.length; ++index) {
-              var data = [{
-                'job_id': result.data.jobs[index].id,
-                'job_title': result.data.jobs[index].job_title,
-                'created_by': humanReadableFormatDate(result.data.jobs[index].created_at),
-                'jobDetails': $('#indexJobDetails').val() + '/' + result.data.jobs[index].id
-              }];
-              var jobNotificationLi = prepareTemplateRender('#jobNotificationTemplate', data);
-              jobNotification += jobNotificationLi;
-            }
-          }
+        if (result.data && result.data.html) {
+          $('.job-notification-ul').html(result.data.html);
         } else {
-          if (result.data.length > 0) {
-            var count;
-            for (count = 0; count < result.data.length; ++count) {
-              var _data = [{
-                'job_id': result.data[count].id,
-                'job_title': result.data[count].job_title,
-                'created_by': humanReadableFormatDate(result.data[count].created_at),
-                'jobDetails': $('#indexJobDetails').val() + '/' + result.data[count].id
-              }];
-              var jobLi = prepareTemplateRender('#jobNotificationTemplate', _data);
-              jobNotification += jobLi;
-            }
-          }
+          $('.job-notification-ul').html(noJobsAvailable);
         }
-        $('.job-notification-ul').append(jobNotification != '' ? jobNotification : noJobsAvailable);
-        checkBoxSelect();
+        $('#ckbCheckAll').prop('checked', false);
+      }
+    },
+    error: function error(result) {
+      manageAjaxErrors(result);
+    }
+  });
+});
+
+// Handle AJAX pagination clicks
+$(document).on('click', '.job-notification-ul .pagination a', function (e) {
+  e.preventDefault();
+  var url = $(this).attr('href');
+  var employerId = $('#filter_employers').val();
+  if (!url.includes('employer-jobs') && !isEmpty(employerId)) {
+    // If pagination URL doesn't have employer-jobs route but filter is applied
+    url = $('#indexGetEmployerJobs').val() + '/' + employerId + '?page=' + new URL(url).searchParams.get('page');
+  } else if (isEmpty(employerId) && !url.includes('employer-jobs')) {
+    url = $('#indexGetEmployerJobs').val() + '?page=' + new URL(url).searchParams.get('page');
+  }
+  $.ajax({
+    url: url,
+    type: 'get',
+    success: function success(result) {
+      if (result.success && result.data && result.data.html) {
+        $('.job-notification-ul').html(result.data.html);
+        $('#ckbCheckAll').prop('checked', false);
       }
     },
     error: function error(result) {
@@ -14537,18 +14733,16 @@ function humanReadableFormatDate(date) {
 ;
 
 //select all checkbox
-function checkBoxSelect() {
-  $('#ckbCheckAll').click(function () {
-    $('.jobCheck').prop('checked', $(this).prop('checked'));
-  });
-  $('.jobCheck').on('click', function () {
-    if ($('.jobCheck:checked').length == $('.jobCheck').length) {
-      $('#ckbCheckAll').prop('checked', true);
-    } else {
-      $('#ckbCheckAll').prop('checked', false);
-    }
-  });
-}
+$(document).on('click', '#ckbCheckAll', function () {
+  $('.jobCheck').prop('checked', $(this).prop('checked'));
+});
+$(document).on('click', '.jobCheck', function () {
+  if ($('.jobCheck:checked').length === $('.jobCheck').length && $('.jobCheck').length > 0) {
+    $('#ckbCheckAll').prop('checked', true);
+  } else {
+    $('#ckbCheckAll').prop('checked', false);
+  }
+});
 
 /***/ },
 

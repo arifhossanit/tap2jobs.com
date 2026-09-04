@@ -306,6 +306,9 @@
                     </div>{{-- /.blog-detail-content --}}
 
                     <div class="col-lg-4 blog-detail-right-ads">
+                        @if ($leftAds->count() > 0)
+                            @include('front_web.common.register_side_ad', ['ads' => $leftAds])
+                        @endif
                         @if ($rightAds->count() > 0)
                             @include('front_web.common.register_side_ad', ['ads' => $rightAds])
                         @endif

@@ -133,8 +133,13 @@ class JobRepository extends BaseRepository
         $data['default_country_states'] = $data['default_country_id']
             ? getStates($data['default_country_id'])
             : [];
-        $data['companies'] = Company::with('user')->get()->where('user.is_active', '=', 1)
-            ->pluck('user.full_name', 'id')->sort();
+        $data['companies'] = Company::query()
+            ->join('users', 'users.id', '=', 'companies.user_id')
+            ->where('users.is_active', 1)
+            ->orderBy('users.first_name')
+            ->orderBy('users.last_name')
+            ->selectRaw("companies.id, TRIM(CONCAT(COALESCE(users.first_name, ''), ' ', COALESCE(users.last_name, ''))) as company_label")
+            ->pluck('company_label', 'companies.id');
 
         return $data;
     }
@@ -167,6 +172,9 @@ class JobRepository extends BaseRepository
 
             $input['salary_from'] = (float) removeCommaFromNumbers($input['salary_from'] ?? 0);
             $input['salary_to'] = (float) removeCommaFromNumbers($input['salary_to'] ?? 0);
+            $jobLocations = $this->extractJobLocations($input);
+            $this->applyPrimaryJobLocation($input, $jobLocations);
+            unset($input['job_locations']);
             $input['company_id'] = (isset($input['company_id'])) ? $input['company_id'] : Auth::user()->owner_id;
             $input['job_id'] = $this->getUniqueJobId();
             /** @var Job $job */
@@ -176,6 +184,9 @@ class JobRepository extends BaseRepository
             $input['functional_area_id'] = $this->resolveFunctionalAreaId($input['functional_area_id']);
             if (! empty($input['career_level_id'])) {
                 $input['career_level_id'] = $this->resolveCareerLevelId($input['career_level_id']);
+            }
+            if (! empty($input['degree_title_id'])) {
+                $input['degree_title_id'] = $this->resolveDegreeTitleId($input['degree_title_id'], $input['degree_level_id']);
             }
             if (Auth::user()->hasRole('Admin')) {
                 $input['is_created_by_admin'] = 1;
@@ -193,6 +204,7 @@ class JobRepository extends BaseRepository
                 $workplacesData = collect($input['workplaces'])->map(fn ($val) => ['workplace_value' => $val])->toArray();
                 $job->workplaces()->createMany($workplacesData);
             }
+            $this->syncJobLocations($job, $jobLocations);
             /** @var JobType $jobType */
             $jobType = JobType::with('candidateJobAlerts')->whereId($input['job_type_id'])->first();
             $userIds = $jobType->candidateJobAlerts->where('job_alert', '=', 1)->pluck('user_id');
@@ -238,6 +250,9 @@ class JobRepository extends BaseRepository
             DB::beginTransaction();
             $input['salary_from'] = (float) removeCommaFromNumbers($input['salary_from']);
             $input['salary_to'] = (float) removeCommaFromNumbers($input['salary_to']);
+            $jobLocations = $this->extractJobLocations($input);
+            $this->applyPrimaryJobLocation($input, $jobLocations);
+            unset($input['job_locations']);
             // update Job
             if (isset($input['state_id']) && ! is_numeric($input['state_id'])) {
                 $input['state_id'] = null;
@@ -246,18 +261,25 @@ class JobRepository extends BaseRepository
             if (! empty($input['career_level_id'])) {
                 $input['career_level_id'] = $this->resolveCareerLevelId($input['career_level_id']);
             }
-            $old_status = $job->status;
-
-            if ($job->status == Job::STATUS_DRAFT) {
-                $job->status = Job::STATUS_OPEN;
+            if (! empty($input['degree_title_id'])) {
+                $input['degree_title_id'] = $this->resolveDegreeTitleId($input['degree_title_id'], $input['degree_level_id']);
             }
+            $old_status = (int) $job->status;
+            $oldExpiryDate = $job->job_expiry_date ? Carbon::parse($job->job_expiry_date) : null;
+            $newExpiryDate = ! empty($input['job_expiry_date']) ? Carbon::parse($input['job_expiry_date']) : null;
+            $isRenewingExpiredJob = $oldExpiryDate
+                && $newExpiryDate
+                && $oldExpiryDate->lt(Carbon::today())
+                && $newExpiryDate->gte(Carbon::today());
+
             if (auth()->user()->hasRole('Employer')) {
                 $jobApprovalRequired = (int) (Setting::where('key', 'job_approved')->value('value') ?? 1) === 1;
-                if ($old_status == Job::STATUS_DRAFT || $job->status == Job::SELECT_PANDING) {
+
+                if ($old_status === Job::STATUS_DRAFT || $old_status === Job::SELECT_PANDING || $isRenewingExpiredJob) {
                     $job->status = $jobApprovalRequired ? Job::SELECT_PANDING : Job::STATUS_OPEN;
-                }else{
-                    $job->status = Job::STATUS_OPEN;
                 }
+            } elseif ($old_status === Job::STATUS_DRAFT) {
+                $job->status = Job::STATUS_OPEN;
             }
 
             // if ($job->status!= Job::SELECT_PANDING) {
@@ -281,6 +303,7 @@ class JobRepository extends BaseRepository
                 $workplacesData = collect($input['workplaces'])->map(fn ($val) => ['workplace_value' => $val])->toArray();
                 $job->workplaces()->createMany($workplacesData);
             }
+            $this->syncJobLocations($job, $jobLocations);
 
             DB::commit();
 
@@ -308,6 +331,55 @@ class JobRepository extends BaseRepository
         return ReportedJob::where('user_id', Auth::user()->id)->where('job_id', $jobId)->exists();
     }
 
+    private function extractJobLocations(array $input): array
+    {
+        $locations = collect($input['job_locations'] ?? [])
+            ->filter(fn ($location) => is_array($location))
+            ->map(function (array $location): array {
+                return [
+                    'country_id' => $location['country_id'] ?? null,
+                    'state_id' => $location['state_id'] ?? null,
+                    'city_id' => $location['city_id'] ?? null,
+                    'thana_id' => $location['thana_id'] ?? null,
+                    'city_village_name' => $location['city_village_name'] ?? null,
+                    'address' => $location['address'] ?? null,
+                    'is_primary' => (bool) ($location['is_primary'] ?? false),
+                ];
+            })
+            ->values()
+            ->all();
+
+        if ($locations === []) {
+            $locations[] = [
+                'country_id' => $input['country_id'] ?? null,
+                'state_id' => $input['state_id'] ?? null,
+                'city_id' => $input['city_id'] ?? null,
+                'thana_id' => $input['thana_id'] ?? null,
+                'city_village_name' => $input['city_village_name'] ?? null,
+                'address' => $input['address'] ?? null,
+                'is_primary' => true,
+            ];
+        }
+
+        $locations[0]['is_primary'] = true;
+
+        return $locations;
+    }
+
+    private function applyPrimaryJobLocation(array &$input, array $jobLocations): void
+    {
+        $primaryLocation = collect($jobLocations)->firstWhere('is_primary', true) ?? $jobLocations[0] ?? [];
+
+        foreach (['country_id', 'state_id', 'city_id', 'thana_id', 'city_village_name', 'address'] as $field) {
+            $input[$field] = $primaryLocation[$field] ?? null;
+        }
+    }
+
+    private function syncJobLocations(Job $job, array $jobLocations): void
+    {
+        $job->locations()->delete();
+        $job->locations()->createMany($jobLocations);
+    }
     /**
      * @return mixed
      */
@@ -556,6 +628,28 @@ class JobRepository extends BaseRepository
             'level_name' => $careerLevel,
         ]))->id;
     }
+
+    private function resolveDegreeTitleId(string|int $degreeTitle, string|int|null $degreeLevelId): int
+    {
+        $degreeTitle = trim((string) $degreeTitle);
+
+        if (is_numeric($degreeTitle)) {
+            return (int) $degreeTitle;
+        }
+
+        $existingDegreeTitle = EducationDegreeTitle::whereRaw('LOWER(name) = ?', [mb_strtolower($degreeTitle)])
+            ->when($degreeLevelId, function ($query) use ($degreeLevelId) {
+                $query->where('required_degree_level_id', $degreeLevelId);
+            })
+            ->first();
+
+        return ($existingDegreeTitle ?: EducationDegreeTitle::create([
+            'name' => $degreeTitle,
+            'required_degree_level_id' => $degreeLevelId,
+            'is_active' => true,
+        ]))->id;
+    }
+
     private function employmentStatusOptions(): array
     {
         $options = ProfileReferenceOption::options(
