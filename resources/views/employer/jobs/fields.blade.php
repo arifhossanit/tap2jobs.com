@@ -66,6 +66,15 @@
 {{--            {{ Form::text('job_expiry_date', isset($job->job_expiry_date) ? $job->job_expiry_date : null, ['class' => 'form-control expiryDatepicker', 'required', 'autocomplete' => 'off', 'placeholder' => __('messages.job.job_expiry_date')]) }}--}}
         </div>
     </div>
+    <div class="col-xl-1 col-md-1 col-sm-12 mb-5">
+        <label class="form-label">{{ __('messages.job.hide_salary').':' }}</label><br>
+        <label class="form-check form-switch form-switch-sm {{ checkLanguageSession() == 'ar' ? 'float-end' : 'float-start' }}">
+            <input type="checkbox" name="hide_salary" class="form-check-input"
+                   value="1"
+                   id="salary" {{ old('hide_salary', isset($job) ? $job->hide_salary : false) ? 'checked' : '' }}>
+            <input type="hidden" name="is_freelance" value="{{ old('is_freelance', isset($job) ? $job->is_freelance : 0) }}">
+        </label>
+    </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('salary_from', __('messages.job.salary_from').':', ['class' => 'form-label']) }}
         <span class="required"></span>
@@ -76,15 +85,6 @@
         <span class="required"></span>
         {{ Form::text('salary_to', null, ['class' => 'form-control salary', 'id' => 'toSalary', 'required', 'autocomplete' => 'off', 'inputmode' => 'decimal', 'placeholder' =>__('messages.job.salary_to')]) }}
         <span id="salaryToErrorMsg" class="text-danger"></span>
-    </div>
-    <div class="col-xl-1 col-md-1 col-sm-12 mb-5">
-        <label class="form-label">{{ __('messages.job.hide_salary').':' }}</label><br>
-        <label class="form-check form-switch form-switch-sm {{ checkLanguageSession() == 'ar' ? 'float-end' : 'float-start' }}">
-            <input type="checkbox" name="hide_salary" class="form-check-input"
-                   value="1"
-                   id="salary" {{ old('hide_salary', isset($job) ? $job->hide_salary : false) ? 'checked' : '' }}>
-            <input type="hidden" name="is_freelance" value="{{ old('is_freelance', isset($job) ? $job->is_freelance : 0) }}">
-        </label>
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('currency_id', __('messages.job.currency').':', ['class' => 'form-label']) }}

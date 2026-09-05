@@ -144,7 +144,7 @@
                 var city = row.find('.job-location-city');
                 var thana = row.find('.job-location-thana');
 
-                resetSelect(state, placeholder('js.select_state', 'Select State'));
+                resetSelect(state, placeholder('js.select_state', 'Select District'));
                 resetSelect(city, placeholder('js.select_city', 'Select City'));
                 resetSelect(thana, placeholder('js.select_thana', 'Select Thana'));
 

@@ -26,7 +26,7 @@ return [
     'you_have_selected_this_slot' => 'You Have Selected this Slot',
     'candidate' => 'Candidate',
     'select_language' => 'Select Language',
-    'select_state' => 'Select State',
+    'select_state' => 'Select Division',
     'select_city' => 'Select District',
     'select_thana' => 'Select Thana',
     'favourite_company' => 'Favourite Company',

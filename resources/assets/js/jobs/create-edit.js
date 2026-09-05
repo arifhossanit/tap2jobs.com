@@ -741,7 +741,7 @@ function loadEmployeeCreateEditData() {
     //             $('#stateId').empty();
     //             $('#stateId').
     //                 append(
-    //                     $('<option value=""></option>').text('Select State'));
+    //                     $('<option value=""></option>').text('Select District'));
     //             $.each(data.data, function (i, v) {
     //                 $('#stateId').
     //                     append($('<option></option>').attr('value', i).text(v));
