@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -108,8 +108,8 @@ class JobCategory extends Model implements HasMedia
         return self::FEATURED[$this->is_featured];
     }
 
-    public function jobs(): HasMany
+    public function jobs(): BelongsToMany
     {
-        return $this->hasMany(Job::class, 'job_category_id');
+        return $this->belongsToMany(Job::class, 'job_assigned_categories', 'job_category_id', 'job_id');
     }
 }

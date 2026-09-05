@@ -46,8 +46,8 @@ class JobController extends AppBaseController
      */
     public function jobDetails(string $uniqueJobId)
     {
-        $job = Job::with(['jobsTag', 'company.user'])->whereJobId($uniqueJobId)->first();
-        $skill = Job::with('jobCategory', 'jobShift', 'jobsSkill', 'company')->whereJobId($uniqueJobId)
+        $job = Job::with(['jobsTag', 'company.user', 'jobCategory', 'jobCategories'])->whereJobId($uniqueJobId)->first();
+        $skill = Job::with('jobCategory', 'jobCategories', 'jobShift', 'jobsSkill', 'company')->whereJobId($uniqueJobId)
             ->orderByDesc('created_at')->get();
         $valuee = [];
         $counter = 1;
@@ -88,10 +88,16 @@ class JobController extends AppBaseController
         // check job status is active or not
         $data['isActive'] = ($job->status == Job::STATUS_OPEN) ? true : false;
 
-        $relatedJobs = Job::with('jobCategory', 'jobShift', 'jobsSkill', 'company')
+        $relatedCategoryIds = $job->selected_job_categories->pluck('id')->filter()->values()->toArray();
+        $relatedJobs = Job::with('jobCategory', 'jobCategories', 'jobShift', 'jobsSkill', 'company')
             ->whereStatus(Job::STATUS_OPEN)
             ->whereIsSuspended(Job::NOT_SUSPENDED)
-            ->whereJobCategoryId($job->job_category_id)
+            ->where(function ($query) use ($relatedCategoryIds, $job) {
+                $query->whereIn('job_category_id', $relatedCategoryIds ?: [$job->job_category_id])
+                    ->orWhereHas('jobCategories', function ($query) use ($relatedCategoryIds, $job) {
+                        $query->whereIn('job_categories.id', $relatedCategoryIds ?: [$job->job_category_id]);
+                    });
+            })
             ->whereDate('job_expiry_date', '>=', Carbon::now()->toDateString());
         $data['getRelatedJobs'] = $relatedJobs->whereNotIn('id', [$job->id])->orderByDesc('created_at')->take(6)->get();
         $url = [

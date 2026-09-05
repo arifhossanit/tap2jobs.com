@@ -25,6 +25,11 @@
     outline: 2px solid #dc3545 !important;
     box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.35) !important;
 }
+#addCandidateNewForm .change-type-register {
+    bottom: auto !important;
+    top: 70px !important;
+    transform: translateY(-50%);
+}
 </style>
 @endsection
 @section('content')

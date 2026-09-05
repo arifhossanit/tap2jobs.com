@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Job;
 use App\Models\JobCategory;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -68,6 +69,11 @@ class JobCategories extends Component
     public function deleteJobCategory(int $jobCategoryId)
     {
         $jobCategory = JobCategory::findOrFail($jobCategoryId);
+
+        if (Job::where('job_category_id', $jobCategoryId)->exists() || $jobCategory->jobs()->exists()) {
+            return;
+        }
+
         $jobCategory->delete();
         $this->dispatch('delete');
     }

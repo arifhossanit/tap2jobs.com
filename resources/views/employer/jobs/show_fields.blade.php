@@ -31,7 +31,7 @@
 {{--        {{ Form::label('job_category_id', __('messages.job_category.job_category').':') }}--}}
         {{ Form::label('job_category_id',  __('messages.job_category.job_category').(':'), ['class' => 'form-label fs-6 fw-bolder text-gray-700 mb-3']) }}
 
-        <p  class="fw-bolder fs-6 text-gray-800">{{ $job->jobCategory->name }}</p>
+        <p  class="fw-bolder fs-6 text-gray-800">{{ $job->selected_job_categories->pluck('name')->implode(', ') ?: __('messages.n/a') }}</p>
     </div>
     <div class="form-group col-xl-6 col-md-6 col-sm-12">
         {{ Form::label('career_level_id', __('messages.job.career_level').':') }}
@@ -185,4 +185,3 @@
         </p>
     </div>
 </div>
-

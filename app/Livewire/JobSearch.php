@@ -199,7 +199,7 @@ class JobSearch extends Component
     {
         /** @var Job $query */
         $query = Job::with([
-            'company', 'country', 'state', 'city', 'jobShift', 'company.user', 'jobsSkill', 'jobCategory',
+            'company', 'country', 'state', 'city', 'jobShift', 'company.user', 'jobsSkill', 'jobCategory', 'jobCategories',
         ]);
 
         if ($this->matchingOnly) {
@@ -218,7 +218,12 @@ class JobSearch extends Component
         });
 
         $query->when(! empty($this->category), function (Builder $q) {
-            $q->where('job_category_id', '=', $this->category);
+            $q->where(function (Builder $q) {
+                $q->where('job_category_id', '=', $this->category)
+                    ->orWhereHas('jobCategories', function (Builder $q) {
+                        $q->where('job_categories.id', '=', $this->category);
+                    });
+            });
         });
 
         $query->when(! empty($this->salaryFrom), function (Builder $q) {

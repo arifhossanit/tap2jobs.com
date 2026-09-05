@@ -1,7 +1,7 @@
-<div class="d-flex">
-    @if($row->jobCategory)
-        <span class="badge bg-light-primary">{{ Str::limit($row->jobCategory->name, 30) }}</span>
-    @else
+<div class="d-flex flex-wrap gap-1">
+    @forelse($row->selected_job_categories as $category)
+        <span class="badge bg-light-primary">{{ Str::limit($category->name, 30) }}</span>
+    @empty
         <span class="badge bg-secondary">-</span>
-    @endif
+    @endforelse
 </div>

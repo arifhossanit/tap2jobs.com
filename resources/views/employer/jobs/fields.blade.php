@@ -10,9 +10,10 @@
         {{ Form::select('job_type_id', $data['jobType'],null, ['id'=>'jobTypeId','class' => 'form-select','placeholder' => __('messages.company.select_job_type'),'data-control'=>'select2','required']) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
-        {{ Form::label('job_category_id', __('messages.job_category.job_category').':', ['class' => 'form-label']) }}
+        {{ Form::label('jobCategory', __('messages.job_category.job_category').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{ Form::select('job_category_id', $data['jobCategory'],null, ['id'=>'jobCategoryId','class' => 'form-select','placeholder' => __('messages.company.select_job_category'),'data-control'=>'select2','required']) }}
+        {{ Form::select('jobCategory[]', $data['jobCategory'], old('jobCategory'), ['id'=>'jobCategoryId','class' => 'form-select','data-placeholder' => __('messages.company.select_job_category'),'data-control'=>'select2','required','multiple' => true]) }}
+        {{ Form::hidden('job_category_id', old('job_category_id'), ['id' => 'primaryJobCategoryId']) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('skill_id', __('messages.job.job_skill').':', ['class' => 'form-label']) }}
@@ -173,4 +174,3 @@
 </div>
 
 <script>window.jobDegreeTitleOptions = @json($data['educationDegreeTitleOptions'] ?? []);</script>
-

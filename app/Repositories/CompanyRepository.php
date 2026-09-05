@@ -324,7 +324,7 @@ class CompanyRepository extends BaseRepository
     public function getCompanyDetail($companyId)
     {
         $data['companyDetail'] = Company::with('user','ownerShipType','companySize')->findOrFail($companyId);
-        $data['jobDetails'] = Job::with('jobShift','jobsSkill','company', 'jobCategory')
+        $data['jobDetails'] = Job::with('jobShift','jobsSkill','company', 'jobCategory', 'jobCategories')
             ->whereDate('job_expiry_date', '>=', Carbon::now()->toDateString())
             ->where('is_suspended', '===', Job::NOT_SUSPENDED)
             ->where([

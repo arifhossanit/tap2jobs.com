@@ -321,7 +321,7 @@ function loadEmployeeCreateEditData() {
     }
 
     initializeJobSelect2(
-        "#jobTypeId,#jobCategoryId,#jobShiftId,#countryId,#stateId,#cityId,#thanaId,#salaryPeriodsId,#requiredDegreeLevelId",
+        "#jobTypeId,#jobShiftId,#countryId,#stateId,#cityId,#thanaId,#salaryPeriodsId,#requiredDegreeLevelId",
         { width: "calc(100% - 44px)" }
     );
 
@@ -505,6 +505,13 @@ function loadEmployeeCreateEditData() {
         dropdownParent: $("#createCityModal")
     });
 
+    const $jobCategorySelect = $("#jobCategoryId");
+
+    $jobCategorySelect.select2({
+        width: "100%",
+        placeholder: $jobCategorySelect.data("placeholder") || Lang.get("js.select_job_category"),
+        closeOnSelect: false
+    });
     const $skillSelect = $("#SkillId");
 
     $skillSelect.select2({
@@ -1473,6 +1480,12 @@ function prepareJobFormForSubmissionWithOptions(formSelector, focusInvalid = tru
         countrySelect.val(countrySelect.find("option").first().val()).trigger("change.select2");
     }
 
+    const jobCategorySelect = $(form).find("#jobCategoryId");
+    const primaryJobCategory = $(form).find("#primaryJobCategoryId");
+    if (jobCategorySelect.length && primaryJobCategory.length) {
+        const selectedCategories = jobCategorySelect.val() || [];
+        primaryJobCategory.val(Array.isArray(selectedCategories) ? selectedCategories[0] || "" : selectedCategories);
+    }
     if (!form.checkValidity()) {
         displayErrorMessage(Lang.get("js.required_field_messages"));
 
@@ -1885,4 +1898,3 @@ listenClick("#editJobsSaveBtn, #saveDraft", function(e) {
     processingBtn("#editJobForm", $(this), "loading");
     $("#editJobForm")[0].submit();
 });
-

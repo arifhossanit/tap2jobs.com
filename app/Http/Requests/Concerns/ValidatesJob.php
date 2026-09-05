@@ -41,6 +41,12 @@ trait ValidatesJob
             ->values()
             ->toArray();
 
+        $jobCategories = collect($this->input('jobCategory', $this->input('job_category_id') ? [$this->input('job_category_id')] : []))
+            ->map(fn ($category) => is_numeric($category) ? (int) $category : null)
+            ->filter()
+            ->unique()
+            ->values()
+            ->toArray();
         $hideSalary = $this->boolean('hide_salary');
         $rawSalaryFrom = $this->input('salary_from');
         $rawSalaryTo = $this->input('salary_to');
@@ -69,6 +75,8 @@ trait ValidatesJob
             'experience' => $this->minimumExperienceYears($experienceUnit, $experienceRequirement),
             'jobsSkill' => $jobsSkill,
             'jobTag' => $jobTag,
+            'jobCategory' => $jobCategories,
+            'job_category_id' => $jobCategories[0] ?? $this->input('job_category_id'),
             'workplaces' => $selectedWorkplaces,
             'job_locations' => $this->normalizedJobLocations(),
         ]);
@@ -197,6 +205,7 @@ trait ValidatesJob
     protected function jobRules(): array
     {
         $usesEmploymentStatusForm = $this->routeIs('job.store', 'job.update');
+
         $hideSalary = $this->boolean('hide_salary');
 
         return [
@@ -206,6 +215,8 @@ trait ValidatesJob
             'key_responsibilities' => ['required', 'string'],
             'compensation_and_other_benefits' => ['nullable', 'string'],
             'job_category_id' => ['required', 'integer', Rule::exists('job_categories', 'id')],
+            'jobCategory' => ['required', 'array', 'min:1'],
+            'jobCategory.*' => ['required', 'integer', Rule::exists('job_categories', 'id')],
             'city_village_name' => ['nullable', 'string', 'max:255'],
             'currency_id' => ['required', 'integer', Rule::exists('salary_currencies', 'id')],
             'salary_period_id' => ['required', 'integer', Rule::exists('salary_periods', 'id')],

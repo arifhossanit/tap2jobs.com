@@ -565,6 +565,26 @@ class Job extends Model
         return $this->belongsTo(JobCategory::class, 'job_category_id');
     }
 
+    public function jobCategories(): BelongsToMany
+    {
+        return $this->belongsToMany(JobCategory::class, 'job_assigned_categories', 'job_id', 'job_category_id');
+    }
+    public function getSelectedJobCategoriesAttribute(): \Illuminate\Support\Collection
+    {
+        $categories = $this->relationLoaded('jobCategories')
+            ? $this->jobCategories
+            : $this->jobCategories()->get();
+
+        if ($categories->isNotEmpty()) {
+            return $categories;
+        }
+
+        $primaryCategory = $this->relationLoaded('jobCategory')
+            ? $this->jobCategory
+            : $this->jobCategory()->first();
+
+        return collect($primaryCategory ? [$primaryCategory] : []);
+    }
     public function getFullLocationAttribute(): string
     {
         if (\Illuminate\Support\Facades\Schema::hasTable('job_locations')) {
@@ -673,4 +693,3 @@ class Job extends Model
         return $legacyWorkplaces;
     }
 }
-

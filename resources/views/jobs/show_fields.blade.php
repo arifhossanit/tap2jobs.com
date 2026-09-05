@@ -21,7 +21,7 @@
     $displayValue = fn ($value) => filled($value) ? html_entity_decode((string) $value) : __('messages.n/a');
     $overviewItems = [
         ['label' => __('messages.job.job_type'), 'value' => optional($job->jobType)->name, 'icon' => 'fa-briefcase'],
-        ['label' => __('messages.job_category.job_category'), 'value' => optional($job->jobCategory)->name, 'icon' => 'fa-layer-group'],
+        ['label' => __('messages.job_category.job_category'), 'value' => $job->selected_job_categories->pluck('name')->implode(', '), 'icon' => 'fa-layer-group'],
         ['label' => __('messages.job.career_level'), 'value' => optional($job->careerLevel)->level_name, 'icon' => 'fa-chart-line'],
         ['label' => __('messages.job.job_shift'), 'value' => optional($job->jobShift)->shift, 'icon' => 'fa-clock'],
         ['label' => __('messages.job_experience.job_experience'), 'value' => $job->formatted_experience, 'icon' => 'fa-user-tie'],
@@ -205,7 +205,7 @@
                 </div>
                 <div>
                     {{-- <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-                        <span class="badge badge-light-primary">{{ $displayValue(optional($job->jobCategory)->name) }}</span>
+                        <span class="badge badge-light-primary">{{ $displayValue($job->selected_job_categories->pluck('name')->implode(', ')) }}</span>
                         <span class="badge badge-light-info">{{ $displayValue(optional($job->jobType)->name) }}</span>
                         @if($job->freshers_encouraged)
                             <span class="badge badge-light-success">{{ __('messages.job.freshers_encouraged') }}</span>
@@ -357,4 +357,3 @@
         </div>
     </div>
 </div>
-

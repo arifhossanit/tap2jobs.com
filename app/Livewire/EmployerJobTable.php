@@ -128,6 +128,7 @@ class EmployerJobTable extends LivewireTableComponent
             'featured',
             'company',
             'jobCategory',
+            'jobCategories',
             'jobType',
             'jobShift'
         )

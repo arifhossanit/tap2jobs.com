@@ -136,7 +136,7 @@
                                                                             class="w-100" />
                                                                     </div>
                                                                     <p class="fs-14 text-gray mb-2">
-                                                                        {{ $job->jobCategory->name }}
+                                                                        {{ $job->selected_job_categories->pluck('name')->implode(', ') }}
                                                                     </p>
                                                                 </div>
                                                                 <div class="desc d-flex {{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">

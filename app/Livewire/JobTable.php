@@ -118,7 +118,7 @@ class JobTable extends LivewireTableComponent
 
     public function builder(): Builder
     {
-        $query =  Job::with('company', 'jobCategory', 'jobType', 'jobShift', 'activeFeatured', 'featured', 'admin')->whereNot('status', job::SELECT_PANDING);
+        $query =  Job::with('company', 'jobCategory', 'jobCategories', 'jobType', 'jobShift', 'activeFeatured', 'featured', 'admin')->whereNot('status', job::SELECT_PANDING);
         $deadline = $this->deadline ?: request()->query('deadline');
         $legacyExpiryAlert = $this->expiryAlert ?: request()->query('expiry_alert');
 

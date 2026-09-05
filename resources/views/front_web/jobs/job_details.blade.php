@@ -57,7 +57,7 @@
                                                 <img src="{{ asset('img_template/briefcase.svg') }}" class="w-100" />
                                             </div>
                                             <p class="fs-14 text-gray mb-0">
-                                                {{ html_entity_decode($job->jobCategory->name) }}
+                                                {{ html_entity_decode($job->selected_job_categories->pluck('name')->implode(', ')) }}
                                             </p>
                                         </div>
                                         <div class="desc d-flex align-items-center">
@@ -637,7 +637,7 @@
                                                                     class="w-100 d-block" />
                                                             </div>
                                                             <p class="fs-14 text-gray mb-0">
-                                                                {{ !empty($relatedJob->jobCategory->name) ? $relatedJob->jobCategory->name : '' }}
+                                                                {{ $relatedJob->selected_job_categories->pluck('name')->implode(', ') }}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -649,7 +649,7 @@
                                 @if ($getRelatedJobs->count() > 0)
                                     <div class="row justify-content-center">
                                         <div class="col-8 text-center">
-                                            <a href="{{ route('front.search.jobs', ['categories' => $relatedJob->jobCategory->id]) }}"
+                                            <a href="{{ route('front.search.jobs', ['categories' => $relatedJob->selected_job_categories->first()?->id ?? $relatedJob->job_category_id]) }}"
                                                 class="btn btn-primary">
                                                 @lang('messages.front_job_details.show_all')</a>
                                         </div>
@@ -671,4 +671,3 @@
     {{ Form::hidden('removeFromFavorite', __('messages.front_job_details.remove_from_favorite'), ['id' => 'removeFromFavorite']) }}
     {{ Form::hidden('addToFavorites', __('messages.front_job_details.add_to_favorite'), ['id' => 'addToFavorites']) }}
 @endsection
-

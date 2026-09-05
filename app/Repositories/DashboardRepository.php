@@ -132,7 +132,7 @@ class DashboardRepository
      */
     public function getRecentJobsData()
     {
-        return Job::with(['company', 'jobCategory', 'jobType', 'jobShift', 'activeFeatured'])->orderBy('created_at',
+        return Job::with(['company', 'jobCategory', 'jobCategories', 'jobType', 'jobShift', 'activeFeatured'])->orderBy('created_at',
             'desc')->limit(5)->get();
     }
 

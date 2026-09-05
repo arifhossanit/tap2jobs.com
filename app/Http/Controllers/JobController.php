@@ -146,6 +146,7 @@ class JobController extends AppBaseController
         $data = $this->jobRepository->prepareData();
         $data['jobTags'] = $job->jobsTag()->pluck('tag_id')->toArray();
         $data['jobSkills'] = $job->jobsSkill()->pluck('skill_id')->toArray();
+        $data['jobCategories'] = $job->jobCategories()->pluck('job_categories.id')->toArray() ?: [$job->job_category_id];
         $firstCountryId = array_key_first($data['countries']);
         $selectedCountryId = old('country_id', $job->country_id ?: ($data['default_country_id'] ?: $firstCountryId));
         $selectedStateId = old('state_id', $job->state_id);
@@ -323,6 +324,7 @@ class JobController extends AppBaseController
         $data = $this->jobRepository->prepareData();
         $data['jobTags'] = $job->jobsTag()->pluck('tag_id')->toArray();
         $data['jobSkills'] = $job->jobsSkill()->pluck('skill_id')->toArray();
+        $data['jobCategories'] = $job->jobCategories()->pluck('job_categories.id')->toArray() ?: [$job->job_category_id];
         $data['selected_country_id'] = old('country_id', $job->country_id);
         $states = $cities = null;
         if (isset($job->country_id)) {

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -91,6 +92,8 @@ class Company extends Model implements HasMedia
     public $table = 'companies';
 
     public const COMPANY_LOGIN_TYPE = 0;
+
+    public const JOB_FORM_COMPANIES_CACHE_KEY = 'job_form_active_companies';
 
     public const ISACTIVE = 1;
 
@@ -234,6 +237,11 @@ class Company extends Model implements HasMedia
 
     protected $with = ['user'];
 
+    protected static function booted(): void
+    {
+        static::saved(fn () => Cache::forget(self::JOB_FORM_COMPANIES_CACHE_KEY));
+        static::deleted(fn () => Cache::forget(self::JOB_FORM_COMPANIES_CACHE_KEY));
+    }
     public function getCountryNameAttribute()
     {
         if (! empty($this->user->country)) {

@@ -75,7 +75,7 @@ class WebHomeRepository
      */
     public function getLatestJobs()
     {
-        return Job::with(['company', 'jobCategory', 'jobsSkill'])
+        return Job::with(['company', 'jobCategory', 'jobCategories', 'jobsSkill'])
             ->whereStatus(Job::STATUS_OPEN)
             ->whereIsSuspended(Job::NOT_SUSPENDED)
             ->whereDate('job_expiry_date', '>=', Carbon::now()->toDateString())
@@ -206,7 +206,7 @@ class WebHomeRepository
             ->whereStatus(Job::STATUS_OPEN)
             ->whereDate('job_expiry_date', '>=', Carbon::now()->toDateString())
             ->where('is_suspended', '=', Job::NOT_SUSPENDED)
-            ->with(['company', 'jobCategory', 'jobsSkill'])
+            ->with(['company', 'jobCategory', 'jobCategories', 'jobsSkill'])
             ->orderBy('created_at', 'desc')
             ->get();
     }
@@ -346,7 +346,7 @@ class WebHomeRepository
     {
         if ($searchTerm) {
             $jobSearchResult = Job::with([
-                'company', 'country', 'state', 'city', 'jobShift', 'company.user', 'jobsSkill', 'jobCategory',
+                'company', 'country', 'state', 'city', 'jobShift', 'company.user', 'jobsSkill', 'jobCategory', 'jobCategories',
             ])
                 ->where('job_title', 'LIKE', '%'.$searchTerm.'%')
                 ->whereStatus(Job::STATUS_OPEN)->where('status', '!=',

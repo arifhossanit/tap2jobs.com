@@ -229,7 +229,7 @@
                         <img src="{{ asset('img_template/briefcase.svg') }}" class="w-100" />
                     </div>
                     <p class="fs-14 text-gray mb-0">
-                        {{ !empty($job->jobCategory->name) ? $job->jobCategory->name : '' }}
+                        {{ $job->selected_job_categories->pluck('name')->implode(', ') }}
                     </p>
                 </div>
                 <div class="d-flex mb-2">

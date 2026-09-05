@@ -37,6 +37,7 @@ use App\Models\RequiredDegreeLevel;
 use App\Models\EducationDegreeTitle;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -133,13 +134,15 @@ class JobRepository extends BaseRepository
         $data['default_country_states'] = $data['default_country_id']
             ? getStates($data['default_country_id'])
             : [];
-        $data['companies'] = Company::query()
-            ->join('users', 'users.id', '=', 'companies.user_id')
-            ->where('users.is_active', 1)
-            ->orderBy('users.first_name')
-            ->orderBy('users.last_name')
-            ->selectRaw("companies.id, TRIM(CONCAT(COALESCE(users.first_name, ''), ' ', COALESCE(users.last_name, ''))) as company_label")
-            ->pluck('company_label', 'companies.id');
+        $data['companies'] = Cache::remember(Company::JOB_FORM_COMPANIES_CACHE_KEY, now()->addMinutes(30), function () {
+            return Company::query()
+                ->join('users', 'users.id', '=', 'companies.user_id')
+                ->where('users.is_active', 1)
+                ->orderBy('users.first_name')
+                ->orderBy('users.last_name')
+                ->selectRaw("companies.id, TRIM(CONCAT(COALESCE(users.first_name, ''), ' ', COALESCE(users.last_name, ''))) as company_label")
+                ->pluck('company_label', 'companies.id');
+        });
 
         return $data;
     }
@@ -173,8 +176,9 @@ class JobRepository extends BaseRepository
             $input['salary_from'] = (float) removeCommaFromNumbers($input['salary_from'] ?? 0);
             $input['salary_to'] = (float) removeCommaFromNumbers($input['salary_to'] ?? 0);
             $jobLocations = $this->extractJobLocations($input);
+            $jobCategoryIds = $this->extractJobCategoryIds($input);
             $this->applyPrimaryJobLocation($input, $jobLocations);
-            unset($input['job_locations']);
+            unset($input['job_locations'], $input['jobCategory']);
             $input['company_id'] = (isset($input['company_id'])) ? $input['company_id'] : Auth::user()->owner_id;
             $input['job_id'] = $this->getUniqueJobId();
             /** @var Job $job */
@@ -193,6 +197,7 @@ class JobRepository extends BaseRepository
             }
 
             $job = $this->create($input);
+            $job->jobCategories()->sync($jobCategoryIds);
 
             if (isset($input['jobsSkill']) && ! empty($input['jobsSkill'])) {
                 $job->jobsSkill()->sync($this->resolveJobSkillIds($input['jobsSkill']));
@@ -251,8 +256,9 @@ class JobRepository extends BaseRepository
             $input['salary_from'] = (float) removeCommaFromNumbers($input['salary_from']);
             $input['salary_to'] = (float) removeCommaFromNumbers($input['salary_to']);
             $jobLocations = $this->extractJobLocations($input);
+            $jobCategoryIds = $this->extractJobCategoryIds($input);
             $this->applyPrimaryJobLocation($input, $jobLocations);
-            unset($input['job_locations']);
+            unset($input['job_locations'], $input['jobCategory']);
             // update Job
             if (isset($input['state_id']) && ! is_numeric($input['state_id'])) {
                 $input['state_id'] = null;
@@ -289,6 +295,7 @@ class JobRepository extends BaseRepository
             // }
 
             $job->update($input);
+            $job->jobCategories()->sync($jobCategoryIds);
 
             if (isset($input['jobsSkill']) && ! empty($input['jobsSkill'])) {
                 $job->jobsSkill()->sync($this->resolveJobSkillIds($input['jobsSkill']));
@@ -366,6 +373,21 @@ class JobRepository extends BaseRepository
         return $locations;
     }
 
+    private function extractJobCategoryIds(array &$input): array
+    {
+        $categoryIds = collect($input['jobCategory'] ?? [$input['job_category_id'] ?? null])
+            ->map(fn ($categoryId) => is_numeric($categoryId) ? (int) $categoryId : null)
+            ->filter()
+            ->unique()
+            ->values()
+            ->toArray();
+
+        if ($categoryIds !== []) {
+            $input['job_category_id'] = $categoryIds[0];
+        }
+
+        return $categoryIds;
+    }
     private function applyPrimaryJobLocation(array &$input, array $jobLocations): void
     {
         $primaryLocation = collect($jobLocations)->firstWhere('is_primary', true) ?? $jobLocations[0] ?? [];
