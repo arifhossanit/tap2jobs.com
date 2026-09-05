@@ -87,7 +87,7 @@ Route::middleware('setLanguage')->group(
         );
         Route::post('users/login', [\App\Http\Controllers\Auth\Front\LoginController::class, 'login'])->name(
             'front.login'
-        )->middleware('verified.user');
+        )->middleware(['throttle:5,1', 'verified.user']);
         Route::get(
             'users/employee-login',
             [\App\Http\Controllers\Auth\Front\LoginController::class, 'employeeLogin']
@@ -957,7 +957,9 @@ Route::middleware('xss', 'setLanguage')->group(function () {
                   return view('front_web.contact.index');
          })->name('front.contact');
          Route::post('/send-contact-mail', [Web\HomeController::class, 'sendContactEmail'])->name('send.contact.email');
-         Route::post('/register', [Web\RegisterController::class, 'register'])->name('front.save.register');
+         Route::post('/register', [Web\RegisterController::class, 'register'])
+                  ->middleware('throttle:10,1')
+                  ->name('front.save.register');
 
          //Blog comments Routes
          Route::post('/posts-details/{post}/comment', [Web\PostController::class, 'blogCommentStore'])->name('blog.create.comment');
