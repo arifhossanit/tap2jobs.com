@@ -383,7 +383,8 @@ class JobSearch extends Component
         $query->whereStatus(Job::STATUS_OPEN)
             ->where('status', '!=', Job::STATUS_DRAFT)
             ->whereIsSuspended(Job::NOT_SUSPENDED)
-            ->whereDate('job_expiry_date', '>=', $minimumExpiryDate);
+            ->whereDate('job_expiry_date', '>=', $minimumExpiryDate)
+            ->latest();
 
         $all = $query->paginate($this->perPage)->onEachSide(1);
         $currentPage = $all->currentPage();

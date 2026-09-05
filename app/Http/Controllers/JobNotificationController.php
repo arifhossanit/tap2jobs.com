@@ -17,9 +17,6 @@ use Laracasts\Flash\Flash;
 
 class JobNotificationController extends AppBaseController
 {
-    /**
-     * @var JobNotificationRepository
-     */
     private $jobNotificationRepository;
 
     public function __construct(JobNotificationRepository $jobNotificationRepository)
@@ -27,10 +24,6 @@ class JobNotificationController extends AppBaseController
         $this->jobNotificationRepository = $jobNotificationRepository;
     }
 
-    /**
-     * @param  Request  $request
-     * @return Application|Factory|JsonResponse|View
-     */
     public function index(): View
     {
         $data = $this->jobNotificationRepository->getJobNotificationData();

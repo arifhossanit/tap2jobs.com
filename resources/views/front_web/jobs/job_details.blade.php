@@ -51,6 +51,9 @@
                                             </span>
                                         @endrole
                                     </h4>
+                                    <h5 class="fs-16 text-primary mb-3">
+                                        {{ $job->company->user->first_name }} {{ $job->company->user->last_name }}
+                                    </h5>
                                     <div class="hero-desc job-hero-meta d-flex flex-wrap align-items-center">
                                         <div class="desc d-flex align-items-center">
                                             <div class="job-hero-meta-icon w-20">
@@ -249,44 +252,29 @@
                             <div class="share-this-job mb-lg-0 mb-40">
                                 <h5 class="fs-18 text-secondary mb-4">@lang('messages.front_job_details.share_this_job'):</h5>
                                 <div class="icon-box d-flex">
-                                    <a href="{{ $url['facebook'] }}" target="_blank" class="facebook d-flex"
-                                        title="@lang('messages.front_job_details.facebook')">
-                                    <div class="social-icon me-sm-4 me-3 d-flex align-items-center justify-content-center">
-                                            <div class="icon d-flex">
-                                                <i class="fa-brands fa-facebook-f text-white"></i>
-                                            </div>
+                                    <a href="{{ $url['facebook'] }}" target="_blank" class="social-icon facebook me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.facebook')">
+                                        <div class="icon d-flex">
+                                            <i class="fa-brands fa-facebook-f text-white"></i>
                                         </div>
                                     </a>
-                                    <a href="https://www.linkedin.com/shareArticle/?url={{ rawurlencode(URL::to('/job-details/' . $job->job_id)) }}"
-                                        title="@lang('messages.front_job_details.linkedin')" target="_blank" class="linkedin d-flex">
-                                    <div class="social-icon me-sm-4 me-3 d-flex align-items-center justify-content-center">
-                                            <div class="icon d-flex">
-                                                <i class="fa-brands fa-linkedin-in text-white"></i>
-                                            </div>
+                                    <a href="https://www.linkedin.com/shareArticle/?url={{ rawurlencode(URL::to('/job-details/' . $job->job_id)) }}" target="_blank" class="social-icon linkedin me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.linkedin')">
+                                        <div class="icon d-flex">
+                                            <i class="fa-brands fa-linkedin-in text-white"></i>
                                         </div>
                                     </a>
-                                    <a href="{{ $url['twitter'] }}" target="_blank" class="twitter d-flex"
-                                        title="@lang('messages.front_job_details.twitter')">
-                                    <div class="social-icon me-sm-4 me-3 d-flex align-items-center justify-content-center">
-                                            <div class="icon d-flex">
-                                                <i class="fa-brands fa-twitter text-white"></i>
-                                            </div>
+                                    <a href="{{ $url['twitter'] }}" target="_blank" class="social-icon twitter me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.twitter')">
+                                        <div class="icon d-flex">
+                                            <i class="fa-brands fa-twitter text-white"></i>
                                         </div>
                                     </a>
-                                    <a href="{{ $url['gmail'] }}" target="_blank" class="google d-flex"
-                                        title="@lang('messages.front_job_details.google')">
-                                    <div class="social-icon me-sm-4 me-3 d-flex align-items-center justify-content-center">
-                                            <div class="icon d-flex">
-                                                <i class="fa-brands fa-google-plus-g text-white"></i>
-                                            </div>
+                                    <a href="{{ $url['gmail'] }}" target="_blank" class="social-icon google me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.google')">
+                                        <div class="icon d-flex">
+                                            <i class="fa-brands fa-google-plus-g text-white"></i>
                                         </div>
                                     </a>
-                                    <a href="{{ $url['pinterest'] }}" target="_blank" class="pinterest d-flex"
-                                        title="@lang('messages.front_job_details.pinterest')">
-                                    <div class="social-icon me-sm-4 me-3 d-flex align-items-center justify-content-center">
-                                            <div class="icon d-flex">
-                                                <i class="fa-brands fa-pinterest-p text-white"></i>
-                                            </div>
+                                    <a href="{{ $url['pinterest'] }}" target="_blank" class="social-icon pinterest me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.pinterest')">
+                                        <div class="icon d-flex">
+                                            <i class="fa-brands fa-pinterest-p text-white"></i>
                                         </div>
                                     </a>
                                 </div>
