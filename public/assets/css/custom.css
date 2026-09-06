@@ -248,7 +248,9 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 
 .job-editor-resizing {
   cursor: ns-resize !important;
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
 }
 
 .job-rich-editor-shell .ql-toolbar.ql-snow {
@@ -651,6 +653,10 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
   padding: 8px 44px 8px 16px;
 }
 
+.employer-account-password-input .form-control::-moz-placeholder {
+  color: #97a3b5;
+}
+
 .employer-account-password-input .form-control::placeholder {
   color: #97a3b5;
 }
@@ -738,6 +744,10 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
   padding: 8px 44px 8px 16px;
 }
 
+.employer-account-password-input .form-control::-moz-placeholder {
+  color: #97a3b5;
+}
+
 .employer-account-password-input .form-control::placeholder {
   color: #97a3b5;
 }
@@ -809,7 +819,8 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 
 .employer-account-logo-picker img {
   height: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   opacity: 0.25;
   width: 100%;
 }
@@ -1083,8 +1094,10 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 .employer-disability-illustration img {
   display: block;
   height: 100%;
-  object-fit: fill;
-  object-position: center;
+  -o-object-fit: fill;
+     object-fit: fill;
+  -o-object-position: center;
+     object-position: center;
   width: 100%;
 }
 
@@ -1308,7 +1321,9 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 }
 
 .employer-industry-option input {
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
   background: #fff;
   border: 1px solid #98a2b3;
   border-radius: 2px;
@@ -2331,7 +2346,8 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
   border-radius: 50%;
   flex: 0 0 auto;
   height: 72px;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   width: 72px;
 }
 
@@ -4030,7 +4046,9 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
   margin: 0 !important;
 }
 .candidate-skill-source input {
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
   border: 1px solid #cfd6e2;
   border-radius: 4px;
   height: 16px;
@@ -4378,6 +4396,7 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
   gap: 8px;
   line-height: 1;
   padding: 7px 12px;
+  width: -moz-max-content;
   width: max-content;
 }
 .candidate-link-platform i {
@@ -4821,6 +4840,7 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
   display: inline-flex;
   height: 44px;
   overflow: hidden;
+  width: -moz-fit-content;
   width: fit-content;
 }
 .candidate-disability-segmented label {
@@ -4924,7 +4944,9 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
   transition: border-color 0.15s ease, color 0.15s ease;
 }
 .candidate-address-choice input {
-  appearance: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
   background: #ffffff;
   border: 1px solid #cbd5e1;
   border-radius: 50%;
@@ -5546,6 +5568,10 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
   background-color: transparent;
   border: 0;
   box-shadow: none;
+}
+.candidate-certification-duration-input .candidate-certification-duration-control::-moz-placeholder {
+  color: #667085;
+  opacity: 1;
 }
 .candidate-certification-duration-input .candidate-certification-duration-control::placeholder {
   color: #667085;
@@ -6389,7 +6415,9 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
   background-position: right center !important;
 }
 .cv-privacy-card .custom-toggle-switch .form-check-label {
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
   line-height: 1.4;
   color: #1e293b !important;
 }
@@ -6526,7 +6554,8 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
   .navbar-brand img {
     height: 35px !important;
     max-width: 120px !important;
-    object-fit: contain;
+    -o-object-fit: contain;
+       object-fit: contain;
   }
 }
 @media (max-width: 767.98px) {
@@ -6645,7 +6674,8 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
   .navbar-brand img {
     height: 35px !important;
     max-width: 120px !important;
-    object-fit: contain;
+    -o-object-fit: contain;
+       object-fit: contain;
   }
 }
 @media (max-width: 767.98px) {

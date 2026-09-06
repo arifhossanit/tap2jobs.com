@@ -12941,6 +12941,71 @@ var jobRequiredFieldMessage = "This field is required";
 var normalizeSelect2Text = function normalizeSelect2Text(text) {
   return $.trim(text || "").toLowerCase();
 };
+var getJobSelect2MatchPriority = function getJobSelect2MatchPriority(text, term) {
+  var normalizedText = normalizeSelect2Text(text);
+  var normalizedTerm = normalizeSelect2Text(term);
+  if (!normalizedTerm) {
+    return 0;
+  }
+  if (!normalizedText.includes(normalizedTerm)) {
+    return null;
+  }
+  var words = normalizedText.split(/[\s\-\/]+/).filter(Boolean);
+  if (normalizedText.startsWith(normalizedTerm) || (words[0] || "").startsWith(normalizedTerm)) {
+    return 0;
+  }
+  if (words.some(function (word) {
+    return word.startsWith(normalizedTerm);
+  })) {
+    return 1;
+  }
+  return 2;
+};
+var _jobSelect2Matcher = function jobSelect2Matcher(params, data) {
+  var term = params.term;
+  if ($.trim(term || "") === "") {
+    return data;
+  }
+  if (data.children && data.children.length) {
+    var matchedChildren = [];
+    $.each(data.children, function (index, child) {
+      var matchedChild = _jobSelect2Matcher(params, child);
+      if (matchedChild) {
+        matchedChildren.push(matchedChild);
+      }
+    });
+    if (matchedChildren.length) {
+      var modifiedData = $.extend(true, {}, data);
+      modifiedData.children = matchedChildren;
+      modifiedData.matchPriority = Math.min.apply(null, matchedChildren.map(function (child) {
+        return child.matchPriority || 0;
+      }));
+      return modifiedData;
+    }
+    return null;
+  }
+  var priority = getJobSelect2MatchPriority(data.text, term);
+  if (priority === null) {
+    return null;
+  }
+  var matchedData = $.extend(true, {}, data);
+  matchedData.matchPriority = priority;
+  return matchedData;
+};
+var jobSelect2Sorter = function jobSelect2Sorter(data) {
+  return data.sort(function (a, b) {
+    var firstPriority = a.matchPriority || 0;
+    var secondPriority = b.matchPriority || 0;
+    if (firstPriority !== secondPriority) {
+      return firstPriority - secondPriority;
+    }
+    return normalizeSelect2Text(a.text).localeCompare(normalizeSelect2Text(b.text));
+  });
+};
+var jobSelect2SearchOptions = {
+  matcher: _jobSelect2Matcher,
+  sorter: jobSelect2Sorter
+};
 var hasSelectedSelect2Text = function hasSelectedSelect2Text($select, text) {
   var normalizedText = normalizeSelect2Text(text);
   return $select.find("option:selected").toArray().some(function (option) {
@@ -13205,16 +13270,16 @@ function loadEmployeeCreateEditData() {
   if (countrySelect.length && !countrySelect.val()) {
     countrySelect.val(countrySelect.find("option").first().val());
   }
-  initializeJobSelect2("#jobTypeId,#jobShiftId,#countryId,#stateId,#cityId,#thanaId,#salaryPeriodsId,#requiredDegreeLevelId", {
+  initializeJobSelect2("#jobTypeId,#jobShiftId,#countryId,#stateId,#cityId,#thanaId,#salaryPeriodsId,#requiredDegreeLevelId", $.extend({
     width: "calc(100% - 44px)"
-  });
+  }, jobSelect2SearchOptions));
   var $jobDegreeTitle = $("#jobDegreeTitleId");
   function initializeDegreeTitleSelect2() {
     var disabled = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
     if ($jobDegreeTitle.hasClass("select2-hidden-accessible")) {
       $jobDegreeTitle.select2("destroy");
     }
-    $jobDegreeTitle.select2({
+    $jobDegreeTitle.select2($.extend({
       width: "100%",
       disabled: disabled,
       placeholder: disabled ? "Select degree level first" : $jobDegreeTitle.data('placeholder') || "Select Degree Title",
@@ -13242,7 +13307,7 @@ function loadEmployeeCreateEditData() {
         }
         return data.text;
       }
-    });
+    }, jobSelect2SearchOptions));
   }
   function populateJobDegreeTitles(degreeLevelId, selectedDegreeTitleId) {
     if (!$jobDegreeTitle.length) {
@@ -13280,7 +13345,7 @@ function loadEmployeeCreateEditData() {
   $(document).on("change", "#requiredDegreeLevelId", function () {
     populateJobDegreeTitles($(this).val(), null);
   });
-  $("#careerLevelsId").select2({
+  $("#careerLevelsId").select2($.extend({
     width: "100%",
     placeholder: $("#careerLevelsId option:first").text(),
     tags: true,
@@ -13310,8 +13375,8 @@ function loadEmployeeCreateEditData() {
       }
       return data.text;
     }
-  });
-  $("#functionalAreaId").select2({
+  }, jobSelect2SearchOptions));
+  $("#functionalAreaId").select2($.extend({
     width: !$(".jobEmployeePanel").val() ? "calc(100% - 44px)" : "100%",
     placeholder: $("#functionalAreaId option:first").text(),
     tags: true,
@@ -13341,30 +13406,30 @@ function loadEmployeeCreateEditData() {
       }
       return data.text;
     }
-  });
-  $("#preferenceId,#currencyId,#createCityStateID").select2({
+  }, jobSelect2SearchOptions));
+  $("#preferenceId,#currencyId,#createCityStateID").select2($.extend({
     width: "100%"
-  });
-  $("#jobCountryID").select2({
+  }, jobSelect2SearchOptions));
+  $("#jobCountryID").select2($.extend({
     width: "100%",
     dropdownParent: $("#createStateModal")
-  });
-  $("#createCityStateID").select2({
+  }, jobSelect2SearchOptions));
+  $("#createCityStateID").select2($.extend({
     width: "100%",
     dropdownParent: $("#createStateModal")
-  });
-  $("#createCityStateID").select2({
+  }, jobSelect2SearchOptions));
+  $("#createCityStateID").select2($.extend({
     width: "100%",
     dropdownParent: $("#createCityModal")
-  });
+  }, jobSelect2SearchOptions));
   var $jobCategorySelect = $("#jobCategoryId");
-  $jobCategorySelect.select2({
+  $jobCategorySelect.select2($.extend({
     width: "100%",
     placeholder: $jobCategorySelect.data("placeholder") || Lang.get("js.select_job_category"),
     closeOnSelect: false
-  });
+  }, jobSelect2SearchOptions));
   var $skillSelect = $("#SkillId");
-  $skillSelect.select2({
+  $skillSelect.select2($.extend({
     width: "100%",
     placeholder: $skillSelect.data("placeholder") || Lang.get("js.select_job_skill"),
     closeOnSelect: false,
@@ -13394,10 +13459,10 @@ function loadEmployeeCreateEditData() {
     templateResult: function templateResult(data) {
       return formatSelect2TagResult($skillSelect, data);
     }
-  });
+  }, jobSelect2SearchOptions));
   clearSelect2SearchAfterSelect($skillSelect);
   var $tagSelect = $("#tagId");
-  $tagSelect.select2({
+  $tagSelect.select2($.extend({
     width: "100%",
     placeholder: $tagSelect.data("placeholder") || Lang.get("js.select_job_tag"),
     closeOnSelect: false,
@@ -13427,12 +13492,12 @@ function loadEmployeeCreateEditData() {
     templateResult: function templateResult(data) {
       return formatSelect2TagResult($tagSelect, data);
     }
-  });
+  }, jobSelect2SearchOptions));
   clearSelect2SearchAfterSelect($tagSelect);
   if (!$("#companyId").hasClass(".select2-hidden-accessible") && $("#companyId").is("select")) {
-    $("#companyId").select2({
+    $("#companyId").select2($.extend({
       width: "100%"
-    });
+    }, jobSelect2SearchOptions));
   }
   var date = new Date();
   date.setDate(date.getDate() + 1);
