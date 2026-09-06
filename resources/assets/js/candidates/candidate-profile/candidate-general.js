@@ -1285,9 +1285,19 @@ $(document).on("submit", "#candidateProfileUpdate", function (e) {
                     const activeCollapse = submitter.closest('.candidate-profile-section__collapse');
                     const profileUrl = route('candidate.profile', { section: section });
 
-                    window.location.href = activeCollapse && activeCollapse.id
+                    const targetUrl = activeCollapse && activeCollapse.id
                         ? profileUrl + '#' + activeCollapse.id
                         : profileUrl;
+                    const target = new URL(targetUrl, window.location.origin);
+                    const targetPath = target.pathname + target.search;
+                    const currentPath = window.location.pathname + window.location.search;
+
+                    if (currentPath === targetPath) {
+                        window.location.reload();
+                        return;
+                    }
+
+                    window.location.href = targetUrl;
                 }, 800);
             },
             error: function (result) {

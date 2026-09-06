@@ -33,11 +33,19 @@ const getJobSelect2MatchPriority = function(text, term) {
 
     return 2;
 };
+const isJobSelect2Placeholder = function(data) {
+    return data && (data.id === "" || data.id === null || data.id === undefined);
+};
+
 const jobSelect2Matcher = function(params, data) {
     const term = params.term;
 
     if ($.trim(term || "") === "") {
         return data;
+    }
+
+    if (isJobSelect2Placeholder(data)) {
+        return null;
     }
 
     if (data.children && data.children.length) {
@@ -80,7 +88,35 @@ const jobSelect2Matcher = function(params, data) {
 };
 
 const jobSelect2Sorter = function(data) {
-    return data.sort(function(a, b) {
+    const seenTexts = {};
+    const uniqueData = data.filter(function(item) {
+        const normalizedText = normalizeSelect2Text(item.text);
+
+        if (!normalizedText || isJobSelect2Placeholder(item)) {
+            return true;
+        }
+
+        if (seenTexts[normalizedText]) {
+            return false;
+        }
+
+        seenTexts[normalizedText] = true;
+        return true;
+    });
+
+    if (!uniqueData.some(function(item) { return item.matchPriority !== undefined; })) {
+        return uniqueData;
+    }
+
+    return uniqueData.sort(function(a, b) {
+        if (isJobSelect2Placeholder(a)) {
+            return -1;
+        }
+
+        if (isJobSelect2Placeholder(b)) {
+            return 1;
+        }
+
         const firstPriority = a.matchPriority || 0;
         const secondPriority = b.matchPriority || 0;
 
@@ -1990,3 +2026,4 @@ listenClick("#editJobsSaveBtn, #saveDraft", function(e) {
     processingBtn("#editJobForm", $(this), "loading");
     $("#editJobForm")[0].submit();
 });
+

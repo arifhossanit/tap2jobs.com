@@ -864,7 +864,17 @@
             };
 
             const reloadEducationPanel = function (panelId) {
-                window.location.href = route('candidate.profile', { section: 'education-training' }) + '#' + panelId;
+                const targetUrl = route('candidate.profile', { section: 'education-training' }) + '#' + panelId;
+                const target = new URL(targetUrl, window.location.origin);
+                const targetPath = target.pathname + target.search;
+                const currentPath = window.location.pathname + window.location.search;
+
+                if (currentPath === targetPath) {
+                    window.location.reload();
+                    return;
+                }
+
+                window.location.href = targetUrl;
             };
 
             const trainingPanel = document.getElementById('candidateTrainingDetails');

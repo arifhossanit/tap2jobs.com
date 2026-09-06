@@ -3784,7 +3784,15 @@ $(document).on("submit", "#candidateProfileUpdate", function (e) {
           var profileUrl = route('candidate.profile', {
             section: section
           });
-          window.location.href = activeCollapse && activeCollapse.id ? profileUrl + '#' + activeCollapse.id : profileUrl;
+          var targetUrl = activeCollapse && activeCollapse.id ? profileUrl + '#' + activeCollapse.id : profileUrl;
+          var target = new URL(targetUrl, window.location.origin);
+          var targetPath = target.pathname + target.search;
+          var currentPath = window.location.pathname + window.location.search;
+          if (currentPath === targetPath) {
+            window.location.reload();
+            return;
+          }
+          window.location.href = targetUrl;
         }, 800);
       },
       error: function error(result) {
@@ -4312,9 +4320,17 @@ function loadCandidateCareerInformationData() {
     });
   }
   function reloadCandidateProfileSection(section, panelId) {
-    window.location.href = route('candidate.profile', {
+    var targetUrl = route('candidate.profile', {
       section: section
     }) + (panelId ? '#' + panelId : '');
+    var target = new URL(targetUrl, window.location.origin);
+    var targetPath = target.pathname + target.search;
+    var currentPath = window.location.pathname + window.location.search;
+    if (currentPath === targetPath) {
+      window.location.reload();
+      return;
+    }
+    window.location.href = targetUrl;
   }
   var educationCustomSelectSelector = '.candidate-education-form-grid select.form-select:not([data-education-major-select])';
   function closeEducationCustomSelects() {
@@ -5254,7 +5270,7 @@ listenSubmit('#addNewEducationForm', function (e) {
       if (result.success) {
         $('#notfoundEducation').addClass('d-none');
         displaySuccessMessage(result.message);
-        if ($('[data-education-add-form]').length) {
+        if ($('#indexCareerInfoData').length) {
           reloadCandidateProfileSection('education-training', 'candidateEducationPanelBody');
           return;
         }
@@ -5289,7 +5305,7 @@ listenSubmit('#editCareerEducationForm', function (event) {
     success: function success(result) {
       if (result.success) {
         displaySuccessMessage(result.message);
-        if ($('[data-education-edit-form]').length) {
+        if ($('#indexCareerInfoData').length) {
           reloadCandidateProfileSection('education-training', 'candidateEducationPanelBody');
           return;
         }
@@ -12961,10 +12977,16 @@ var getJobSelect2MatchPriority = function getJobSelect2MatchPriority(text, term)
   }
   return 2;
 };
+var isJobSelect2Placeholder = function isJobSelect2Placeholder(data) {
+  return data && (data.id === "" || data.id === null || data.id === undefined);
+};
 var _jobSelect2Matcher = function jobSelect2Matcher(params, data) {
   var term = params.term;
   if ($.trim(term || "") === "") {
     return data;
+  }
+  if (isJobSelect2Placeholder(data)) {
+    return null;
   }
   if (data.children && data.children.length) {
     var matchedChildren = [];
@@ -12993,7 +13015,30 @@ var _jobSelect2Matcher = function jobSelect2Matcher(params, data) {
   return matchedData;
 };
 var jobSelect2Sorter = function jobSelect2Sorter(data) {
-  return data.sort(function (a, b) {
+  var seenTexts = {};
+  var uniqueData = data.filter(function (item) {
+    var normalizedText = normalizeSelect2Text(item.text);
+    if (!normalizedText || isJobSelect2Placeholder(item)) {
+      return true;
+    }
+    if (seenTexts[normalizedText]) {
+      return false;
+    }
+    seenTexts[normalizedText] = true;
+    return true;
+  });
+  if (!uniqueData.some(function (item) {
+    return item.matchPriority !== undefined;
+  })) {
+    return uniqueData;
+  }
+  return uniqueData.sort(function (a, b) {
+    if (isJobSelect2Placeholder(a)) {
+      return -1;
+    }
+    if (isJobSelect2Placeholder(b)) {
+      return 1;
+    }
     var firstPriority = a.matchPriority || 0;
     var secondPriority = b.matchPriority || 0;
     if (firstPriority !== secondPriority) {
