@@ -530,6 +530,12 @@ class CandidateController extends AppBaseController
         return $this->profileSectionRedirect('personal-information');
     }
 
+    public function storeExtraCurricular(CandidateUpdateExtraCurricularRequest $request): JsonResponse
+    {
+        $extraCurricular = $this->candidateRepository->createExtraCurricular($request->validated());
+
+        return $this->sendResponse($this->extraCurricularResponse($extraCurricular), __('messages.flash.candidate_profile'));
+    }
     public function updateExtraCurricular(
         CandidateExtraCurricular $candidateExtraCurricular,
         CandidateUpdateExtraCurricularRequest $request

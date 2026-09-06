@@ -246,7 +246,7 @@
                         <p class="candidate-activity-count">
                             {{ __('messages.candidate_profile.you_wrote') }} <strong data-activity-character-count>0/500</strong> {{ __('messages.candidate_profile.characters') }}
                         </p>
-                        <div class="candidate-skill-form__actions candidate-activity-form__actions candidate-profile-section-actions mt-5">
+                        <div class="candidate-skill-form__actions candidate-activity-form__actions candidate-profile-section-actions">
                             <button type="submit" class="btn btn-primary candidate-skill-save">{{ __('messages.candidate_profile.save') }}</button>
                             <button type="button" class="btn btn-secondary candidate-skill-close" data-activity-close>{{ __('messages.candidate_profile.close') }}</button>
                         </div>

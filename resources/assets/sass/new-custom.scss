@@ -4398,6 +4398,10 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
     }
 }
 
+.candidate-activity-form:not(.d-none) + .candidate-activity-item.d-none + .candidate-activity-item {
+    border-top: 1px solid #dfe3ea;
+    margin-top: 24px;
+}
 .candidate-activity-item__header {
     align-items: flex-start;
     display: flex;
