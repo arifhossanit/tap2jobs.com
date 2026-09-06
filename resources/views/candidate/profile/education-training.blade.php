@@ -870,6 +870,9 @@
                 const currentPath = window.location.pathname + window.location.search;
 
                 if (currentPath === targetPath) {
+                    if (target.hash) {
+                        window.location.hash = target.hash;
+                    }
                     window.location.reload();
                     return;
                 }

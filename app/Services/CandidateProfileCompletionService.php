@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Schema;
 
 class CandidateProfileCompletionService
 {
-    public const MINIMUM_APPLICATION_PERCENTAGE = 50;
+    public const MINIMUM_APPLICATION_PERCENTAGE = 30;
 
     public function calculate(Candidate $candidate): array
     {
@@ -25,18 +25,19 @@ class CandidateProfileCompletionService
 
         $checks = [
             'Personal details' => [
-                'weight' => 20,
+                'weight' => 30,
                 'score' => $this->score([
                     [filled($user?->first_name), 3],
                     [filled($user?->last_name), 3],
-                    [filled($user?->email), 3],
-                    [filled($user?->phone), 3],
-                    [filled($user?->dob), 1],
+                    [filled($user?->email), 4],
+                    [filled($user?->phone), 4],
+                    [filled($user?->dob), 2],
                     [filled($user?->gender), 1],
                     [filled($candidate->marital_status_id), 1],
-                    [filled($candidate->father_name), 1],
-                    [filled($candidate->mother_name), 1],
-                    [filled($candidate->nationality), 1],
+                    [filled($candidate->father_name), 2],
+                    [filled($candidate->mother_name), 2],
+                    [filled($candidate->religion), 2],
+                    [filled($candidate->nationality), 2],
                     [filled($candidate->national_id_card) || filled($candidate->passport_number), 1],
                     [
                         filled($candidate->secondary_mobile)
@@ -55,6 +56,7 @@ class CandidateProfileCompletionService
                     [filled($candidate->marital_status_id), 'Select marital status'],
                     [filled($candidate->father_name), 'Add father name'],
                     [filled($candidate->mother_name), 'Add mother name'],
+                    [filled($candidate->religion), 'Select religion'],
                     [filled($candidate->nationality), 'Add nationality'],
                     [filled($candidate->national_id_card) || filled($candidate->passport_number), 'Add national ID or passport number'],
                     [
@@ -66,15 +68,15 @@ class CandidateProfileCompletionService
                 ]),
             ],
             'Address details' => [
-                'weight' => 20,
+                'weight' => 10,
                 'score' => $this->score([
-                    [filled($candidate->present_address_type), 2],
-                    [filled($user?->country_id), 3],
-                    [filled($user?->state_id), 3],
-                    [filled($user?->city_id), 3],
-                    [filled($user?->thana_id), 3],
-                    [filled($candidate->present_post_office), 2],
-                    [filled($candidate->address), 3],
+                    [filled($candidate->present_address_type), 1],
+                    [filled($user?->country_id), 1],
+                    [filled($user?->state_id), 2],
+                    [filled($user?->city_id), 2],
+                    [filled($user?->thana_id), 1],
+                    [filled($candidate->present_post_office), 1],
+                    [filled($candidate->address), 1],
                     [
                         $candidate->permanent_same_as_present
                             || filled($candidate->permanent_address)

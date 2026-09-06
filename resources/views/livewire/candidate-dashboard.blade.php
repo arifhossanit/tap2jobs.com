@@ -4,11 +4,11 @@
     $completionPercentage = $profileCompletion['percentage'] ?? 0;
     $completionColor = $profileCompletion['color'] ?? '#209776';
     $dashboardScoringBars = [
-        ['label' => 'Completed profile', 'percent' => $completionPercentage],
-        ['label' => 'Skill', 'percent' => max(0, $completionPercentage - 12)],
-        ['label' => 'Experience', 'percent' => max(0, $completionPercentage - 24)],
-        ['label' => 'Education', 'percent' => max(0, $completionPercentage - 36)],
-        ['label' => 'Location', 'percent' => max(0, $completionPercentage - 48)],
+        ['label' => __('messages.candidate_dashboard.completed_profile'), 'percent' => $completionPercentage],
+        ['label' => __('messages.candidate_dashboard.skill'), 'percent' => max(0, $completionPercentage - 12)],
+        ['label' => __('messages.candidate_dashboard.experience'), 'percent' => max(0, $completionPercentage - 24)],
+        ['label' => __('messages.candidate_dashboard.education'), 'percent' => max(0, $completionPercentage - 36)],
+        ['label' => __('messages.candidate_dashboard.location'), 'percent' => max(0, $completionPercentage - 48)],
     ];
     $dashboardNumber = function ($value) {
         $value = (string) $value;
@@ -112,6 +112,13 @@
                 </div>
             </div>
         </section>
+
+        <div class="p-3 rounded" style="background-color: #419b82; border: 1px solid #e2e8f0; border-left: 4px solid #070a0dff; color: #e1e4e7ff;">
+            <div class="d-flex align-items-center">
+                <i class="fa-solid fa-circle-info me-3 fs-4" style="color: #ffffff;"></i>
+                <span style="font-size: 15px; font-weight: 700;">{{ __('messages.candidate_dashboard.profile_completion_message') }}</span>
+            </div>
+        </div>
 
         <section class="candidate-dashboard-stats">
             @foreach($dashboardStats as $stat)
@@ -241,7 +248,7 @@
                     <div class="candidate-profile-breakdown">
                         <div class="candidate-dashboard-panel__header candidate-dashboard-panel__header--compact">
                             <div>
-                                <h2>Job Matching Criteria</h2>
+                                <h2>{{ __('messages.candidate_dashboard.job_matching_criteria') }}</h2>
                             </div>
                         </div>
                         <div class="candidate-profile-breakdown__list">

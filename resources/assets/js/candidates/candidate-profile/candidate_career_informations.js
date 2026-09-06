@@ -398,6 +398,22 @@ if (document.readyState === 'loading') {
 
 document.addEventListener('turbo:load', bootCandidateCareerInformationData);
 
+const reloadCandidateProfileSection = function(section, panelId) {
+    const targetUrl = route('candidate.profile', { section: section }) + (panelId ? '#' + panelId : '');
+    const target = new URL(targetUrl, window.location.origin);
+    const targetPath = target.pathname + target.search;
+    const currentPath = window.location.pathname + window.location.search;
+
+    if (currentPath === targetPath) {
+        if (target.hash) {
+            window.location.hash = target.hash;
+        }
+        window.location.reload();
+        return;
+    }
+
+    window.location.href = targetUrl;
+};
 function loadCandidateCareerInformationData() {
 
     if (!$('#indexCareerInfoData').length) {
@@ -415,19 +431,6 @@ function loadCandidateCareerInformationData() {
         formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    function reloadCandidateProfileSection(section, panelId) {
-        const targetUrl = route('candidate.profile', { section: section }) + (panelId ? '#' + panelId : '');
-        const target = new URL(targetUrl, window.location.origin);
-        const targetPath = target.pathname + target.search;
-        const currentPath = window.location.pathname + window.location.search;
-
-        if (currentPath === targetPath) {
-            window.location.reload();
-            return;
-        }
-
-        window.location.href = targetUrl;
-    }
     const educationCustomSelectSelector = '.candidate-education-form-grid select.form-select:not([data-education-major-select])';
 
     function closeEducationCustomSelects($except = $()) {
@@ -1699,4 +1702,3 @@ listenShowBsModal('#addExperienceModal', function () {
     $('#endDateExperience').prop('disabled', false);
     setDatePicker('#startDateExperience', '#endDateExperience');
 });
-

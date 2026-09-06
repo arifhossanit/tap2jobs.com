@@ -13,18 +13,18 @@
                     @method('PUT')
                     <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 gap-md-4">
                         <div class="d-flex align-items-start gap-3 me-md-3">
+                            <div class="form-check form-switch custom-toggle-switch p-0 m-0 flex-shrink-0 mt-1">
+                                <input type="hidden" name="include_sensitive_personal_data_in_cv" value="0">
+                                <input class="form-check-input custom-switch-input m-0" type="checkbox" role="switch"
+                                    id="includeSensitivePersonalDataInCv"
+                                    name="include_sensitive_personal_data_in_cv" value="1"
+                                    @checked((bool) ($user->candidate?->include_sensitive_personal_data_in_cv))>
+                            </div>
                             <div class="flex-grow-1">
-                                <div class="form-check form-switch custom-toggle-switch p-0 m-0 d-flex align-items-center gap-3">
-                                    <input type="hidden" name="include_sensitive_personal_data_in_cv" value="0">
-                                    <input class="form-check-input custom-switch-input m-0 flex-shrink-0" type="checkbox" role="switch"
-                                        id="includeSensitivePersonalDataInCv"
-                                        name="include_sensitive_personal_data_in_cv" value="1"
-                                        @checked((bool) ($user->candidate?->include_sensitive_personal_data_in_cv))>
-                                    <label class="form-check-label fw-bold text-dark fs-6 cursor-pointer mb-0" for="includeSensitivePersonalDataInCv">
-                                        {{ __('messages.candidate_profile.include_sensitive_personal_data_in_cv') }}
-                                    </label>
-                                </div>
-                                <p class="text-muted fs-7 mb-0 mt-2">
+                                <label class="form-check-label fw-bold text-dark fs-6 cursor-pointer mb-0" for="includeSensitivePersonalDataInCv">
+                                    {{ __('messages.candidate_profile.include_sensitive_personal_data_in_cv') }}
+                                </label>
+                                <p class="text-muted fs-7 mb-0 mt-1">
                                     {{ __('messages.candidate_profile.cv_sensitive_data_help') }}
                                 </p>
                             </div>

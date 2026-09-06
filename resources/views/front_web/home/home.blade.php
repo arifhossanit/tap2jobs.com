@@ -1232,7 +1232,7 @@
                     <a href="{{ route('front.company.lists') }}">Employer List ({{ $quickLinkCounts['employer_list'] ?? 0 }})</a>
                     <a href="{{ route('front.search.jobs', ['filter' => 'new']) }}">New Jobs ({{ $quickLinkCounts['new_jobs'] ?? 0 }})</a>
                     <a href="{{ route('front.search.jobs', ['filter' => 'deadline_tomorrow']) }}">Deadline Tomorrow ({{ $quickLinkCounts['deadline_tomorrow'] ?? 0 }})</a>
-                    <a href="{{ route('front.search.jobs', ['job_type' => $quickJobTypeIds['internship'] ?? '']) }}">Internship Opportunity ({{ $quickLinkCounts['internship'] ?? 0 }})<mark>new</mark></a>
+                    <a href="{{ route('front.search.jobs', ['job_type' => $quickJobTypeIds['internship'] ?? '']) }}">Internship Opportunity ({{ $quickLinkCounts['internship'] ?? 0 }})</a>
                     <a href="{{ route('front.search.jobs', ['job_type' => $quickJobTypeIds['contractual'] ?? '']) }}">Contractual Jobs ({{ $quickLinkCounts['contractual'] ?? 0 }})</a>
                     <a href="{{ route('front.search.jobs', ['job_type' => $quickJobTypeIds['part_time'] ?? '']) }}">Part time Jobs ({{ $quickLinkCounts['part_time'] ?? 0 }})</a>
                     <a href="{{ route('front.search.jobs', ['overseas' => 1]) }}">Overseas Jobs ({{ $quickLinkCounts['overseas'] ?? 0 }})</a>
@@ -1284,4 +1284,3 @@
     });
 </script>
 @endsection
-

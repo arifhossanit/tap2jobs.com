@@ -879,6 +879,13 @@ return [
         'drafts' => 'Drafts',
         'hired' => 'Hired',
         'ongoing' => 'Ongoing',
+        'job_matching_criteria' => 'Job Matching Criteria',
+        'skill' => 'Skill',
+        'experience' => 'Experience',
+        'education' => 'Education',
+        'location' => 'Location',
+        'completed_profile' => 'Completed profile',
+        'profile_completion_message' => 'The more information you fill out in your Profile, the higher the chances of getting more and accurate Job Matches. Complete your Profile and get more job opportunities.',
     ],
     'candidate_profile' => [
         'upload_resume' => 'Upload Resume',

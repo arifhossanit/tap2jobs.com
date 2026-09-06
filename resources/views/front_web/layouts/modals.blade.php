@@ -76,7 +76,7 @@
     window.showProfileIncompleteModal = function (percentage, profileUrl, retryCount) {
         percentage = parseInt(percentage) || 0;
         var isBn = (typeof lancode !== 'undefined' && lancode === 'bn');
-        var minimumApplicationPercentage = 50;
+        var minimumApplicationPercentage = {{ \App\Services\CandidateProfileCompletionService::MINIMUM_APPLICATION_PERCENTAGE }};
         var isComplete = percentage >= minimumApplicationPercentage;
 
         var titleText = isComplete 
@@ -88,8 +88,8 @@
                 ? "আপনার প্রোফাইল <b>" + percentage + "%</b> সম্পূর্ণ হয়েছে। এখন আপনি চাকরিতে আবেদন করতে পারবেন।" 
                 : "Your profile is <b>" + percentage + "%</b> complete. Now you can apply for job.")
             : (isBn 
-                ? "চাকরিতে আবেদন করতে আপনার প্রোফাইল অন্তত <b>৫০%</b> সম্পূর্ণ করতে হবে।"
-                : "Your profile must be at least <b>50%</b> complete to apply for jobs.");
+                ? "চাকরিতে আবেদন করতে আপনার প্রোফাইল অন্তত <b>" + minimumApplicationPercentage + "%</b> সম্পূর্ণ করতে হবে।"
+                : "Your profile must be at least <b>" + minimumApplicationPercentage + "%</b> complete to apply for jobs.");
 
         var confirmBtnText = isComplete
             ? (isBn ? "চাকরি খুঁজুন" : "Browse Jobs")
@@ -143,7 +143,7 @@
     };
 
     window.handleApplyClick = function (e, applyUrl, percentage, profileUrl) {
-        if (percentage < 50) {
+        if (percentage < {{ \App\Services\CandidateProfileCompletionService::MINIMUM_APPLICATION_PERCENTAGE }}) {
             if (e && e.preventDefault) {
                 e.preventDefault();
             }

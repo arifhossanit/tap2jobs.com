@@ -214,8 +214,8 @@ return [
     //Company Details keys
     'company_details' => [
         'company_details' => 'কোম্পানির বিবরণ',
-        'follow' => 'অনুসরণ',
-        'unfollow' => 'অনুসরণ বন্ধ',
+        'follow' => 'ফলো',
+        'unfollow' => 'আনফলো',
         'report_to_company' => 'কোম্পানিতে রিপোর্ট',
         'our_latest_jobs' => 'আমাদের সর্বশেষ চাকরি',
         'processing' => 'প্রক্রিয়াকরণ...',

@@ -35,10 +35,11 @@
                     </div>
                     <div class="col-xl-6 col-md-6 col-sm-6 mb-5">
                         {{ Form::label('dob', __('messages.candidate.birth_date') . ':', ['class' => 'form-label']) }}
+                        <span class="required"></span>
                         <input type="text" name="dob" id="birthDate"
                             class="form-control {{ getLoggedInUser()->theme_mode ? 'bg-light' : 'bg-white' }}"
                             autocomplete="off" placeholder="{{ __('messages.candidate.birth_date') }}"
-                            value="{{ $user->dob }}">
+                            value="{{ $user->dob }}" required>
                     </div>
                     <div class="col-sm-6 mb-5">
                         {{ Form::label('gender', __('messages.candidate.gender') . ':', ['class' => 'form-label']) }}
@@ -100,8 +101,9 @@
                     </div>
                     <div class="col-sm-6 mb-5 mobile-itel-width">
                         {{ Form::label('phone', __('messages.candidate.phone') . ':', ['class' => 'form-label']) }}
+                        <span class="required"></span>
                         <div class="col-sm-12 mb-5">
-                            {{ Form::tel('phone', isset($user->phone) ? $user->phone : null, ['class' => 'form-control', 'maxlength' => '11', 'inputmode' => 'numeric', 'pattern' => '[0-9]{1,11}', 'oninput' => 'this.value = this.value.replace(/\D/g,"").slice(0, 11)', 'id' => 'phoneNumber']) }}
+                            {{ Form::tel('phone', isset($user->phone) ? $user->phone : null, ['class' => 'form-control', 'maxlength' => '11', 'inputmode' => 'numeric', 'pattern' => '[0-9]{1,11}', 'oninput' => 'this.value = this.value.replace(/\D/g,"").slice(0, 11)', 'id' => 'phoneNumber', 'required']) }}
                         </div>
                         {{ Form::hidden('region_code', null, ['id' => 'prefix_code']) }}
                         <span id="valid-msg"

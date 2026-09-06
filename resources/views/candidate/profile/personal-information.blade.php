@@ -153,18 +153,21 @@
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('father_name', __('messages.candidate_profile.father_name'), ['class' => 'form-label']) }}
-                            {{ Form::text('father_name', $candidate->father_name, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_father_name')]) }}
+                            <span class="required"></span>
+                            {{ Form::text('father_name', $candidate->father_name, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_father_name')]) }}
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('mother_name', __('messages.candidate_profile.mother_name'), ['class' => 'form-label']) }}
-                            {{ Form::text('mother_name', $candidate->mother_name ?? null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_mother_name')]) }}
+                            <span class="required"></span>
+                            {{ Form::text('mother_name', $candidate->mother_name ?? null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_mother_name')]) }}
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('dob', __('messages.candidate_profile.date_of_birth'), ['class' => 'form-label']) }}
+                            <span class="required"></span>
                             <input type="text" name="dob" id="birthDate"
                                    class="form-control {{ getLoggedInUser()->theme_mode ? 'bg-light' : 'bg-white' }}"
                                    autocomplete="off" placeholder="{{ __('messages.candidate_profile.enter_date_of_birth') }}"
-                                   value="{{ $user->dob }}">
+                                   value="{{ $user->dob }}" required>
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('gender', __('messages.candidate.gender'), ['class' => 'form-label']) }}
@@ -173,7 +176,8 @@
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('religion', __('messages.candidate_profile.religion'), ['class' => 'form-label']) }}
-                            {{ Form::select('religion', $religionOptions, $candidate->religion ?? null, ['class' => 'form-select']) }}
+                            <span class="required"></span>
+                            {{ Form::select('religion', $religionOptions, $candidate->religion ?? null, ['class' => 'form-select', 'required']) }}
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('marital_status', __('messages.candidate.marital_status'), ['class' => 'form-label']) }}
@@ -182,13 +186,13 @@
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-12 ">
                             <div class="candidate-nationality-label">
-                                <span>{{ Form::label('nationality', __('messages.candidate.nationality'), ['class' => 'form-label mb-0']) }}</span>
+                                <span>{{ Form::label('nationality', __('messages.candidate.nationality'), ['class' => 'form-label mb-0']) }} <span class="required"></span></span>
                                 <label class="candidate-nationality-check">
                                     {{ Form::checkbox('is_bangladeshi', '1', (isset($candidate->nationality) ? $candidate->nationality : 'Bangladeshi') == 'Bangladeshi', ['class' => 'form-check-input', 'id' => 'isBangladeshi']) }}
                                     <span>{{ __('messages.candidate_profile.bangladeshi') }}</span>
                                 </label>
                             </div>
-                            {{ Form::text('nationality', isset($candidate->nationality) ? $candidate->nationality : 'Bangladeshi', ['class' => 'form-control', 'id' => 'nationalityInput', 'placeholder' => __('messages.candidate_profile.enter_nationality')]) }}
+                            {{ Form::text('nationality', isset($candidate->nationality) ? $candidate->nationality : 'Bangladeshi', ['class' => 'form-control', 'id' => 'nationalityInput', 'required', 'placeholder' => __('messages.candidate_profile.enter_nationality')]) }}
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('national_id_card', __('messages.candidate_profile.national_id_number'), ['class' => 'form-label']) }}
@@ -207,8 +211,9 @@
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-12  mobile-itel-width">
                             {{ Form::label('phone', __('messages.candidate_profile.primary_mobile'), ['class' => 'form-label']) }}
+                            <span class="required"></span>
                             <span class="candidate-field-note">({{ __('messages.candidate_profile.phone_note') }})</span>
-                            {{ Form::tel('phone', isset($user->phone) ? $user->phone : null, ['class' => 'form-control', 'maxlength' => '11', 'inputmode' => 'numeric', 'pattern' => '[0-9]{1,11}', 'oninput' => 'this.value = this.value.replace(/\D/g,"").slice(0, 11)', 'id' => 'phoneNumber']) }}
+                            {{ Form::tel('phone', isset($user->phone) ? $user->phone : null, ['class' => 'form-control', 'maxlength' => '11', 'inputmode' => 'numeric', 'pattern' => '[0-9]{1,11}', 'oninput' => 'this.value = this.value.replace(/\D/g,"").slice(0, 11)', 'id' => 'phoneNumber', 'required']) }}
                             {{ Form::hidden('region_code', null, ['id' => 'prefix_code']) }}
                             <span id="valid-msg" class="text-success d-block fw-400 fs-small mt-2 d-none">{{ __('messages.phone.valid_number') }}</span>
                             <span id="error-msg" class="text-danger d-block fw-400 fs-small mt-2 d-none"></span>                            
@@ -219,6 +224,7 @@
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-6 ">
                             {{ Form::label('email', __('messages.candidate_profile.primary_email'), ['class' => 'form-label']) }}
+                            <span class="required"></span>
                             {{-- <span class="candidate-field-note">({{ __('messages.candidate_profile.email_note') }})</span> --}}
                             {{ Form::email('email', isset($user) ? $user->email : null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_primary_email')]) }}
                         </div>

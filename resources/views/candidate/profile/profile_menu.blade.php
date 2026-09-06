@@ -394,9 +394,7 @@
 
         window.clearTimeout(window.candidateProfileSectionScrollTimer);
         window.candidateProfileSectionScrollTimer = window.setTimeout(function () {
-            const section = target.matches('.candidate-profile-section, .candidate-education-panel')
-                ? target
-                : target.closest('.candidate-profile-section, .candidate-education-panel') || target;
+            const section = target;
             const header = document.querySelector('.candidate-dashboard-header');
             const stickyMenu = document.querySelector('.candidate-profile-menu-shell');
             const headerHeight = header ? header.getBoundingClientRect().height : 0;
