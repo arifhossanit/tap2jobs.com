@@ -37,13 +37,22 @@ class JobApplicationController extends AppBaseController
         $this->jobApplicationRepository = $jobApplicationRepo;
     }
 
-    /**
-     * Display a listing of the Industry.
-     *
-     * @return Factory|View
-     *
-     * @throws Exception
-     */
+    private function ownedApplication($id): JobApplication
+    {
+        validator(['application_id' => $id], ['application_id' => 'required|integer'])->validate();
+        return JobApplication::whereHas('job', function ($query) {
+            $query->where('company_id', Auth::user()->owner_id);
+        })->findOrFail($id);
+    }
+
+    private function ownedSlot($id): JobApplicationSchedule
+    {
+        validator(['slot_id' => $id], ['slot_id' => 'required|integer'])->validate();
+        return JobApplicationSchedule::whereHas('jobApplication.job', function ($query) {
+            $query->where('company_id', Auth::user()->owner_id);
+        })->findOrFail($id);
+    }
+
     public function index(int $jobId, Request $request): View
     {
         $userId = Auth::user()->owner_id;
@@ -70,6 +79,7 @@ class JobApplicationController extends AppBaseController
      */
     public function destroy(JobApplication $jobApplication, Request $request): JsonResponse
     {
+        $this->ownedApplication($jobApplication->id);
         $jobId = $request->get('jobId');
         $jobCandidateId = JobApplication::whereJobId($jobId)->pluck('id')->toArray();
         if (! in_array($jobApplication->id, $jobCandidateId)) {
@@ -86,6 +96,8 @@ class JobApplicationController extends AppBaseController
      */
     public function changeJobApplicationStatus($id, $status, Request $request)
     {
+        validator(['status' => $status], ['status' => 'required|integer|in:1,2,3,4'])->validate();
+        $this->ownedApplication($id);
         $jobId = $request->get('jobId');
 
         $jobCandidateId = JobApplication::whereJobId($jobId)->pluck('id')->toArray();
@@ -200,10 +212,12 @@ class JobApplicationController extends AppBaseController
 
     public function changeJobStage(Request $request): JsonResponse
     {
-        $jobApplication = JobApplication::with(['candidate.user', 'job.company.user'])->findOrFail($request->get('job_application_id'));
+        $jobApplication = $this->ownedApplication($request->get('job_application_id'));
+        $request->validate(['job_stage' => 'required|integer']);
+        $stage = JobStage::whereCompanyId(Auth::user()->owner_id)->findOrFail($request->get('job_stage'));
         $jobApplication->update(['job_stage_id' => $request->get('job_stage')]);
 
-        $stage = JobStage::find($request->get('job_stage'));
+
         $stageName = $stage ? $stage->name : 'New Stage';
         $jobTitle = $jobApplication->job->job_title;
         $candidateUser = $jobApplication->candidate->user;
@@ -293,110 +307,74 @@ class JobApplicationController extends AppBaseController
 
     public function interviewSlotStore($jobId, Request $request): JsonResponse
     {
-        try {
-            DB::beginTransaction();
-            $input = $request->all();
-
-            /** @var JobApplication $jobApplication */
-            $jobApplication = JobApplication::whereId($input['job_application_id'])->first();
-
-            /** @var JobApplicationSchedule $lastJobSchedule */
-            $lastJobSchedule = JobApplicationSchedule::whereJobApplicationId($input['job_application_id'])
-                ->latest()->first();
-            $lastJobScheduleExists = JobApplicationSchedule::whereJobApplicationId($input['job_application_id'])
-                ->whereIn('date', $input['date'])
-                ->whereIn('time', $input['time'])
-                ->exists();
-
-            if ($lastJobScheduleExists) {
+        $application = $this->ownedApplication($request->input('job_application_id'));
+        $input = $request->validate([
+            'date' => 'required|array|min:1|max:100',
+            'date.*' => 'required|date',
+            'time' => 'required|array|min:1|max:100',
+            'time.*' => 'required|date_format:H:i',
+            'notes' => 'nullable|array',
+            'notes.*' => 'nullable|string|max:5000',
+        ]);
+        $slots = [];
+        foreach ($input['time'] as $index => $time) {
+            abort_unless(isset($input['date'][$index]), 422, 'Each slot requires a date.');
+            $date = Carbon::parse($input['date'][$index])->toDateString();
+            $key = $date.' '.$time;
+            if (isset($slots[$key])) {
                 return $this->sendError(__('messages.flash.slot_already_taken'));
             }
-
-            $isPageReload = false;
-            if (empty($lastJobSchedule)) {
-                $batch = 1;
-            } else {
-                if ($lastJobSchedule['stage_id'] == $jobApplication->job_stage_id) {
-                    $batch = $lastJobSchedule['batch'] + 1;
-                    $isPageReload = false;
-                } else {
-                    $batch = 1;
-                    $isPageReload = true;
-                }
-            }
-
-            for ($i = 1; $i <= $input['scheduleSlotCount']; $i++) {
-                if (isset($input['time'][$i])) {
-                    // validation date/time code
-                    if (count($input['time']) > 1) {
-                        $slotDates = \Arr::except($input['date'], [$i]);
-                        $slotHours = \Arr::except($input['time'], [$i]);
-                        if (in_array($input['date'][$i], $slotDates)) {
-                            if (in_array($input['time'][$i], $slotHours)) {
-                                return $this->sendError(__('messages.flash.slot_already_taken'));
-                            }
-                        }
-                    }
-                    JobApplicationSchedule::create([
-                        'job_application_id' => $input['job_application_id'],
-                        'time' => $input['time'][$i],
-                        'date' => $input['date'][$i],
-                        'notes' => $input['notes'][$i],
-                        'status' => JobApplicationSchedule::STATUS_NOT_SEND,
-                        'batch' => $batch,
-                        'stage_id' => $jobApplication->job_stage_id,
-                    ]);
-                }
-            }
-
-            DB::commit();
-
-            return $this->sendResponse($isPageReload, __('messages.flash.slot_create'));
-        } catch (Exception $e) {
-            DB::rollBack();
-
-            return $this->sendError($e->getMessage(), 422);
+            $slots[$key] = ['date' => $date, 'time' => $time, 'notes' => $input['notes'][$index] ?? null];
         }
+
+        return DB::transaction(function () use ($application, $slots) {
+            JobApplication::whereKey($application->id)->lockForUpdate()->firstOrFail();
+            foreach ($slots as $slot) {
+                if (JobApplicationSchedule::whereJobApplicationId($application->id)
+                    ->whereDate('date', $slot['date'])->where('time', $slot['time'])->exists()) {
+                    return $this->sendError(__('messages.flash.slot_already_taken'));
+                }
+            }
+            $last = JobApplicationSchedule::whereJobApplicationId($application->id)->latest()->first();
+            $sameStage = $last && $last->stage_id == $application->job_stage_id;
+            $batch = $sameStage ? $last->batch + 1 : 1;
+            foreach ($slots as $slot) {
+                JobApplicationSchedule::create($slot + [
+                    'job_application_id' => $application->id,
+                    'status' => JobApplicationSchedule::STATUS_NOT_SEND,
+                    'batch' => $batch,
+                    'stage_id' => $application->job_stage_id,
+                ]);
+            }
+            return $this->sendResponse((bool) ($last && ! $sameStage), __('messages.flash.slot_create'));
+        });
     }
 
     public function batchSlotStore(Request $request): JsonResponse
     {
-        try {
-            DB::beginTransaction();
-            $input = $request->all();
-            /** @var JobApplication $jobApplication */
-            $jobApplication = JobApplication::whereId($input['job_application_id'])->first();
-
-            $lastJobScheduleExists = JobApplicationSchedule::whereJobApplicationId($input['job_application_id'])
-                ->where('date', $input['date'])
-                ->where('time', $input['time'])
-                ->exists();
-            if ($lastJobScheduleExists) {
+        $application = $this->ownedApplication($request->input('job_application_id'));
+        $input = $request->validate([
+            'date' => 'required|date',
+            'time' => 'required|date_format:H:i',
+            'notes' => 'nullable|string|max:5000',
+            'batch' => 'required|integer|min:1',
+        ]);
+        $input['date'] = Carbon::parse($input['date'])->toDateString();
+        return DB::transaction(function () use ($application, $input) {
+            JobApplication::whereKey($application->id)->lockForUpdate()->firstOrFail();
+            if (JobApplicationSchedule::whereJobApplicationId($application->id)
+                ->whereDate('date', $input['date'])->where('time', $input['time'])->exists()) {
                 return $this->sendError(__('messages.flash.slot_already_taken'));
             }
-
-            JobApplicationSchedule::create([
-                'job_application_id' => $input['job_application_id'],
-                'time' => $input['time'],
-                'date' => $input['date'],
-                'notes' => $input['notes'],
+            JobApplicationSchedule::create($input + [
+                'job_application_id' => $application->id,
                 'status' => JobApplicationSchedule::STATUS_NOT_SEND,
-                'batch' => $input['batch'],
-                'stage_id' => $jobApplication->job_stage_id,
+                'stage_id' => $application->job_stage_id,
             ]);
-
-            DB::commit();
-
             return $this->sendSuccess(__('messages.flash.slot_create'));
-        } catch (Exception $e) {
-            DB::rollBack();
-            $this->sendError($e->getMessage(), 422);
-        }
+        });
     }
 
-    /**
-     * @param  JobApplicationSchedule  $slot
-     */
     public function editSlot($jobId, Request $request): JsonResponse
     {
         try {
@@ -417,28 +395,25 @@ class JobApplicationController extends AppBaseController
 
     public function updateSlot(Request $request, $jobId, JobApplicationSchedule $slot): JsonResponse
     {
-        $input = $request->all();
-        if ($input['time'] != $slot->time) {
-            $isExist = JobApplicationSchedule::whereJobApplicationId($input['job_application_id'])
-                ->where('date', $input['date'])
-                ->where('time', $input['time'])
-                ->exists();
-            if ($isExist) {
+        $slot = $this->ownedSlot($slot->id);
+        $input = $request->validate([
+            'date' => 'required|date',
+            'time' => 'required|date_format:H:i',
+            'notes' => 'nullable|string|max:5000',
+        ]);
+        $input['date'] = Carbon::parse($input['date'])->toDateString();
+        return DB::transaction(function () use ($slot, $input) {
+            JobApplication::whereKey($slot->job_application_id)->lockForUpdate()->firstOrFail();
+            if (JobApplicationSchedule::whereJobApplicationId($slot->job_application_id)
+                ->where('id', '!=', $slot->id)->whereDate('date', $input['date'])
+                ->where('time', $input['time'])->exists()) {
                 return $this->sendError(__('messages.flash.slot_already_taken'));
             }
-        }
-        $slot->update([
-            'date' => $input['date'],
-            'time' => $input['time'],
-            'notes' => $input['notes'],
-        ]);
-
-        return $this->sendSuccess(__('messages.flash.slot_update'));
+            $slot->update($input);
+            return $this->sendSuccess(__('messages.flash.slot_update'));
+        });
     }
 
-    /**
-     * @param  JobApplicationSchedule  $slot
-     */
     public function slotDestroy($jobId, Request $request): JsonResponse
     {
         try {
@@ -465,6 +440,7 @@ class JobApplicationController extends AppBaseController
 
     public function getScheduleHistory(Request $request): JsonResponse
     {
+        $this->ownedApplication($request->get('jobApplicationId'));
         $jobApplicationSchedules = JobApplicationSchedule::with('jobApplication.candidate')
             ->where('job_application_id', $request->get('jobApplicationId'));
 
@@ -494,10 +470,11 @@ class JobApplicationController extends AppBaseController
             return $this->sendError(__('messages.flash.cancel_reason_require'));
         }
 
+        $request->validate(['cancelSlotNote' => 'required|array|min:1', 'cancelSlotNote.*' => 'required|string|max:5000']);
         $cancelSlotNote = implode(',', $request->get('cancelSlotNote'));
 
         /** @var JobApplicationSchedule $jobApplicationSchedules */
-        $jobApplicationSchedules = JobApplicationSchedule::whereId($request->get('slotId'))->first();
+        $jobApplicationSchedules = $this->ownedSlot($request->get('slotId'));
         $jobApplicationSchedules->update([
             'status' => JobApplicationSchedule::STATUS_REJECTED,
             'employer_cancel_slot_notes' => $cancelSlotNote,
@@ -525,7 +502,7 @@ class JobApplicationController extends AppBaseController
     public function checkStage($jobApplicationId): JsonResponse
     {
         $data = [];
-        $jobApplication = JobApplication::whereId($jobApplicationId)->first();
+        $jobApplication = $this->ownedApplication($jobApplicationId);
         $data['current_stage'] = $jobApplication->job_stage_id;
         $data['current_stage_cleared'] = JobApplicationSchedule::whereJobApplicationId($jobApplication->id)->whereStatus(JobApplicationSchedule::STATUS_SEND)->exists();
         $data['job_stages'] = JobStage::whereCompanyId(getLoggedInUser()->owner_id)->pluck('name', 'id');

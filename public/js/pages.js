@@ -11304,7 +11304,7 @@ function changeJobApplicationStatus(jobApplicationId, applicationStatus, jobId) 
       'id': jobApplicationId,
       'status': applicationStatus
     }),
-    method: 'get',
+    method: 'post',
     data: {
       jobId: jobId
     },
@@ -11341,7 +11341,7 @@ function rejectedJobApplicationItem(jobApplicationId, applicationStatus, jobId) 
           'id': jobApplicationId,
           'status': applicationStatus
         }),
-        method: 'get',
+        method: 'post',
         data: {
           jobId: jobId
         },
@@ -11426,7 +11426,7 @@ function selectedJobApplicationItem(jobApplicationId, applicationStatus, jobId) 
             'id': jobApplicationId,
             'status': applicationStatus
           }),
-          method: 'get',
+          method: 'post',
           data: {
             jobId: jobId
           },
@@ -14836,7 +14836,7 @@ function changeStatus(jobId, jobStatus) {
       'id': jobId,
       'status': jobStatus
     }),
-    method: 'get',
+    method: 'post',
     cache: false,
     success: function success(result) {
       if (result.success) {

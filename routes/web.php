@@ -858,7 +858,7 @@ Route::middleware('auth', 'role:Employer', 'xss', 'verified.user')->prefix('empl
 
          // Job Applications
          Route::get('jobs/{jobId}/applications', [JobApplicationController::class, 'index'])->name('job-applications');
-         Route::get('job-applications/{id}/status/{status}', [JobApplicationController::class, 'changeJobApplicationStatus'])->name('change-job-application-status');
+         Route::post('job-applications/{id}/status/{status}', [JobApplicationController::class, 'changeJobApplicationStatus'])->name('change-job-application-status');
          Route::delete(
                   'job-applications/{jobApplication}',
                   [JobApplicationController::class, 'destroy']
@@ -888,7 +888,7 @@ Route::middleware('auth', 'role:Employer', 'xss', 'verified.user')->prefix('empl
          Route::get('jobs/{job}/edit', [JobController::class, 'edit'])->name('job.edit');
          Route::put('jobs/{job}', [JobController::class, 'update'])->name('job.update');
          Route::delete('jobs/{job}', [JobController::class, 'destroy'])->name('job.destroy');
-         Route::get('job/{id}/status/{status}', [JobController::class, 'changeJobStatus'])->name('change-job-status');
+         Route::post('job/{id}/status/{status}', [JobController::class, 'changeJobStatus'])->name('change-job-status');
 
          Route::get('pending-jobs-add-reason', [JobController::class, 'getPendingJobsAddReason'])->name('employer.PendingJobs.AddReason');
 

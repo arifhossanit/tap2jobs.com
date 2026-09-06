@@ -426,6 +426,7 @@ class JobController extends AppBaseController
      */
     public function changeJobStatus($id, $status)
     {
+        validator(['status' => $status], ['status' => 'required|integer|in:1,2,3'])->validate();
         /** @var Job $job */
         $job = Job::findOrFail($id);
 
@@ -433,6 +434,11 @@ class JobController extends AppBaseController
             return $this->sendError(__('messages.common.seems_message'));
         }
 
+        if (! in_array((int) $job->status, [Job::STATUS_OPEN, Job::STATUS_CLOSED, Job::STATUS_PAUSED], true)
+            || $job->is_suspended
+            || ($status == Job::STATUS_OPEN && $job->job_expiry_date && Carbon::parse($job->job_expiry_date)->isBefore(Carbon::today()))) {
+            return $this->sendError('Please submit this job through the edit form for review before publishing.');
+        }
         if ($job->status != Job::STATUS_OPEN && $status == Job::STATUS_OPEN) {
             if (! $this->checkJobLimit()) {
                 return $this->sendError(__('messages.flash.job_create_limit'));

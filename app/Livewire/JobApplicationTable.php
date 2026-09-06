@@ -16,6 +16,7 @@ class JobApplicationTable extends LivewireTableComponent
 
     public $buttonComponent = 'employer.job_applications.table_components.edit_button';
 
+    #[\Livewire\Attributes\Locked]
     public $jobId;
 
     public function configure(): void
@@ -92,6 +93,7 @@ class JobApplicationTable extends LivewireTableComponent
     public function builder(): Builder
     {
         $query = JobApplication::with(['job.currency', 'candidate.user', 'jobStage', 'job'])
+            ->whereHas('job', fn (Builder $query) => $query->where('company_id', auth()->user()->owner_id))
             ->where('job_id', $this->jobId)
             ->where('status', '!=', JobApplication::STATUS_DRAFT)
             ->select('job_applications.*');

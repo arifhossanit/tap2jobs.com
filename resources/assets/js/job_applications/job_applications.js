@@ -171,7 +171,7 @@ function changeJobApplicationStatus (jobApplicationId, applicationStatus, jobId)
     $.ajax({
         url: route('change-job-application-status',
             { 'id': jobApplicationId, 'status': applicationStatus }),
-        method: 'get',
+        method: 'post',
         data: {jobId:jobId},
         cache: false,
         success: function (result) {
@@ -205,7 +205,7 @@ function rejectedJobApplicationItem (jobApplicationId, applicationStatus, jobId)
             $.ajax({
                 url: route('change-job-application-status',
                     { 'id': jobApplicationId, 'status': applicationStatus }),
-                method: 'get',
+                method: 'post',
                 data: {jobId:jobId},
                 cache: false,
                 success: function (result) {
@@ -288,7 +288,7 @@ function selectedJobApplicationItem (jobApplicationId, applicationStatus, jobId)
                 $.ajax({
                     url: route('change-job-application-status',
                         { 'id': jobApplicationId, 'status': applicationStatus }),
-                    method: 'get',
+                    method: 'post',
                     data: {jobId:jobId},
                     cache: false,
                     success: function (result) {

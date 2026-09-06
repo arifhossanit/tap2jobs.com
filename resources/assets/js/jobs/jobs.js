@@ -51,7 +51,7 @@ function loadEmployerJobData() {
     function changeStatus(jobId, jobStatus) {
         $.ajax({
             url: route('change-job-status', {'id' : jobId ,'status' : jobStatus} ),
-            method: 'get',
+            method: 'post',
             cache: false,
             success: function (result) {
                 if (result.success) {
