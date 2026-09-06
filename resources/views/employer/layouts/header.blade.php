@@ -53,6 +53,35 @@
             <li class="px-xxl-3 px-2 d-flex align-items-stretch">
                 <div class="dropdown d-flex align-items-stretch">
                     <button type="button"
+                            class="btn dropdown-toggle px-0 text-gray-600 d-flex align-items-center"
+                            id="employerLanguageDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ getCurrentLanguageName() }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow p-2"
+                        aria-labelledby="employerLanguageDropdown">
+                        @foreach (getUserLanguages() as $languageCode => $languageName)
+                            <li>
+                                <button type="button"
+                                        class="dropdown-item rounded d-flex align-items-center gap-3 px-3 py-2 employer-header-language-option {{ checkLanguageSession() === $languageCode ? 'active' : '' }}"
+                                        data-language="{{ $languageCode }}"
+                                        {{ checkLanguageSession() === $languageCode ? 'aria-current=true' : '' }}>
+                                    @if (isset(\App\Models\User::LANGUAGES_IMAGE[$languageCode]))
+                                        <img src="{{ asset(\App\Models\User::LANGUAGES_IMAGE[$languageCode]) }}"
+                                             width="20" height="14" alt="" class="flex-shrink-0">
+                                    @else
+                                        <i class="fa-solid fa-flag text-primary" style="width: 20px"></i>
+                                    @endif
+                                    <span>{{ $languageName }}</span>
+                                </button>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </li>
+            <li class="px-xxl-3 px-2 d-flex align-items-stretch">
+                <div class="dropdown d-flex align-items-stretch">
+                    <button type="button"
                             class="btn dropdown-toggle employer-language-toggle px-0 text-gray-600 d-flex align-items-center"
                             id="employerLanguageDropdown"
                             data-bs-toggle="dropdown" aria-expanded="false">

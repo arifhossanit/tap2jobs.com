@@ -199,6 +199,7 @@
             <div class="col-md-6 col-sm-12 mobile-itel-width employer-contact-mobile">
                 <label for="phoneNumber" class="form-label">
                     {{ __('messages.employer_account.contact_person_mobile') }} <span class="text-danger">*</span>
+                    {{ __('messages.employer_account.contact_person_mobile') }} <span class="text-danger">*</span>
                 </label>
                 {{ Form::tel('phone', null, ['class' => 'form-control employer-contact-readonly', 'required', 'readonly', 'id' => 'phoneNumber', 'maxlength' => 11, 'inputmode' => 'numeric', 'pattern' => '[0-9]{1,11}', 'oninput' => "this.value = this.value.replace(/\\D/g, '').slice(0, 11)"]) }}
                 {{ Form::tel('phone', null, ['class' => 'form-control employer-contact-readonly', 'required', 'readonly', 'id' => 'phoneNumber', 'maxlength' => 11, 'inputmode' => 'numeric', 'pattern' => '[0-9]{1,11}', 'oninput' => "this.value = this.value.replace(/\\D/g, '').slice(0, 11)"]) }}

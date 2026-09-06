@@ -459,6 +459,7 @@
                                                 <div class="form-group employer-register-phone-field employer-contact-phone-field">
                                                     <label for="employerRegisterPhone" class="employer-contact-information-label">
                                                         {{ __('messages.employer_register.contact_person_mobile') }} <span class="text-danger">*</span>
+                                                        {{ __('messages.employer_register.contact_person_mobile') }} <span class="text-danger">*</span>
                                                     </label>
                                                     <input type="tel" name="phone" id="employerRegisterPhone"
                                                            class="form-control employer-contact-information-control"
