@@ -13446,7 +13446,7 @@ html[dir='rtl'] .register-page .input-password-hide {
     position: sticky;
     top: 20px;
     max-height: calc(100vh - 40px);
-    padding: 28px;
+    padding: 20px;
     overflow-x: hidden;
     overflow-y: auto;
     border: 1px solid #dce6f0;
@@ -14054,23 +14054,23 @@ html[dir="rtl"]
     text-decoration: line-through;
 }
 
-.job-details-section .share-this-job .icon-box .facebook .social-icon {
+.job-details-section .share-this-job .icon-box .social-icon.facebook {
     background-color: #3a5ba0;
 }
 
-.job-details-section .share-this-job .icon-box .linkedin .social-icon {
+.job-details-section .share-this-job .icon-box .social-icon.linkedin {
     background-color: #1da1f2;
 }
 
-.job-details-section .share-this-job .icon-box .twitter .social-icon {
+.job-details-section .share-this-job .icon-box .social-icon.twitter {
     background-color: #0077b5;
 }
 
-.job-details-section .share-this-job .icon-box .google .social-icon {
+.job-details-section .share-this-job .icon-box .social-icon.google {
     background-color: #db4a39;
 }
 
-.job-details-section .share-this-job .icon-box .pinterest .social-icon {
+.job-details-section .share-this-job .icon-box .social-icon.pinterest {
     background-color: #e60023;
 }
 
@@ -14260,6 +14260,27 @@ body:has(.job-action-modal.show) .modal-backdrop {
     }
 }
 
+.job-safety-notice {
+    background: #fff0f0;
+    border: 1px solid #ffb3b3;
+    border-radius: 4px;
+    padding: 12px 20px;
+    margin-top: 28px;
+    color: #555;
+}
+.job-safety-notice__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+.job-safety-notice h5 { color: #cf2626; font-size: 16px; margin: 0; }
+.job-safety-notice p { font-size: 15px; line-height: 1.85; margin: 0; }
+.job-safety-notice .btn { white-space: nowrap; border-radius: 4px; }
+.job-details-section .share-this-job .icon-box { flex-wrap: wrap; gap: 10px 0; }
+.job-details-section .share-this-job .icon-box .social-icon { width: 40px; height: 40px; border-radius: 4px; }
 header .navbar {
     padding: 20px 0
 }

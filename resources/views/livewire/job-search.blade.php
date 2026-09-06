@@ -16,6 +16,14 @@
                                     <h5 class="card-title text-secondary fs-18 mb-0">
                                         {{ html_entity_decode(Str::limit($job['job_title'], 50)) }}
                                     </h5>
+                                    @php
+                                        $companyName = getFrontSelectLanguage() === 'bn' && filled($job->company?->company_name_bn)
+                                            ? $job->company->company_name_bn
+                                            : ($job->company?->company_name ?: $job->company?->user?->full_name);
+                                    @endphp
+                                    @if (filled($companyName))
+                                        <p class="fs-14 text-gray mt-2 mb-0 d-flex align-items-baseline gap-2"><i class="fa-regular fa-building flex-shrink-0" aria-hidden="true"></i><span class="text-break" style="color: #1254ad;">{{ $companyName }}</span></p>
+                                    @endif
                                     <div>
                                         <div class="card-desc d-flex flex-wrap mt-2">
                                             <div class="desc job-card-meta d-flex align-items-center {{ getFrontSelectLanguage() == 'ar' ? 'ms-3 ms-sm-4' : 'me-3 me-sm-4' }}">

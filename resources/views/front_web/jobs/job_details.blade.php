@@ -249,7 +249,7 @@
                                     <p class="fs-16 text-gray mb-5 pb-lg-4">{{ __('messages.n/a') }}</p>
                                 @endif
                             </div>
-                            <div class="share-this-job mb-lg-0 mb-40">
+                            <div class="share-this-job mb-lg-5 mb-5">
                                 <h5 class="fs-18 text-secondary mb-4">@lang('messages.front_job_details.share_this_job'):</h5>
                                 <div class="icon-box d-flex">
                                     <a href="{{ $url['facebook'] }}" target="_blank" class="social-icon facebook me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.facebook')">
@@ -566,6 +566,31 @@
                                     <p class="fs-14 text-gray mb-0">{{ __('messages.common.n/a') }}</p>
                                 @endif
                             </div> --}}
+                        </div>
+                        <div class="col-12">
+                            <section class="job-safety-notice" aria-labelledby="job-safety-heading" lang="bn">
+                                <div class="job-safety-notice__header">
+                                    <h5 id="job-safety-heading">Report this Job / Company (রিপোর্ট)</h5>
+                                    {{-- @role('Candidate')
+                                        <button type="button" class="btn btn-outline-danger reportJobAbuse"
+                                            @if ($isJobReportedAsAbuse) disabled @endif
+                                            data-bs-toggle="modal" data-bs-target="#reportJobAbuseModal">
+                                            <i class="fa-solid fa-triangle-exclamation me-1" aria-hidden="true"></i>
+                                            {{ $isJobReportedAsAbuse ? __('messages.candidate.already_reported') : 'রিপোর্ট' }}
+                                        </button>
+                                    @else
+                                        @guest
+                                            <a href="{{ route('front.candidate.login') }}" class="btn btn-outline-danger">
+                                                <i class="fa-solid fa-triangle-exclamation me-1" aria-hidden="true"></i> রিপোর্ট
+                                            </a>
+                                        @endguest
+                                    @endrole --}}
+                                </div>
+                                <p><strong>সতর্কতা:</strong> এই চাকরির জন্য কোনো ব্যক্তি/প্রতিষ্ঠান আপনার কাছে অর্থ দাবি করলে, নিয়োগ প্রক্রিয়ার সময় কোনো ধরনের হয়রানি, প্রতারণা বা অনৈতিক আচরণ করলে অনুগ্রহ করে দ্রুত আমাদের জানান অথবা সংশ্লিষ্ট চাকরিটি রিপোর্ট করুন। চাকরি পাওয়ার আশায় কোনো ব্যক্তি বা প্রতিষ্ঠানকে অর্থ প্রদান করবেন না। নিয়োগ প্রক্রিয়া বা চাকরিতে যোগদানের পর শারীরিক, মানসিক কিংবা অন্য কোনো ধরনের হয়রানির আশঙ্কা থাকলে সতর্ক থাকুন এবং প্রয়োজনীয় ব্যবস্থা গ্রহণ করুন। কোনো ধরনের অর্থ লেনদেন, প্রতারণা বা নিয়োগকর্তার অনৈতিক/হয়রানিমূলক আচরণের জন্য TAP2JOBS দায়ী থাকবে না। চাকরিতে আবেদন বা যোগদানের আগে নিয়োগদাতা ও চাকরির তথ্য যথাযথভাবে যাচাই করে নিন।</p>
+                                <p>
+                                    <i class="fa-regular fa-envelope me-1" aria-hidden="true"></i><strong>complain@bdjobs.com</strong>
+                                </p>
+                            </section>
                         </div>
                         @if (count($getRelatedJobs) > 0)
                             <div class="row job-details-related-jobs our-latest-jobs">
