@@ -73,7 +73,13 @@ class CreateCandidateExperienceRequest extends FormRequest
                 : $query->where('city_id', $this->input('city_id'))),
         ];
         $rules['start_date'] = 'required|date|before_or_equal:today';
-        $rules['end_date'] = 'required_unless:currently_working,1|nullable|date|after_or_equal:start_date|before_or_equal:today';
+        $rules['end_date'] = [
+            Rule::requiredIf(fn () => ! $this->boolean('currently_working')),
+            'nullable',
+            'date',
+            'after_or_equal:start_date',
+            'before_or_equal:today',
+        ];
 
         return $rules;
     }

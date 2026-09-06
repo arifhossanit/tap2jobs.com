@@ -34,7 +34,9 @@ class CandidateProfileValidationTest extends TestCase
         $education = file_get_contents(app_path('Http/Requests/CreateCandidateEducationRequest.php'));
 
         $this->assertStringContainsString("'required|date|before_or_equal:today'", $experience);
-        $this->assertStringContainsString('after_or_equal:start_date|before_or_equal:today', $experience);
+        $this->assertStringContainsString('Rule::requiredIf(fn () => ! $this->boolean(\'currently_working\'))', $experience);
+        $this->assertStringContainsString('after_or_equal:start_date', $experience);
+        $this->assertStringContainsString('before_or_equal:today', $experience);
         $this->assertStringContainsString("'|lte:scale'", $education);
     }
 }

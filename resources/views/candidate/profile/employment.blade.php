@@ -531,7 +531,13 @@
             };
 
             const reloadEmploymentPanel = function (panelId) {
-                window.location.href = route('candidate.profile', { section: 'employment' }) + '#' + panelId;
+                const targetUrl = route('candidate.profile', { section: 'employment' }) + '#' + panelId;
+                if (window.location.href === targetUrl) {
+                    window.location.reload();
+                    return;
+                }
+
+                window.location.href = targetUrl;
             };
 
             if (addTrigger && addFormWrap) {
@@ -1049,7 +1055,11 @@
                             });
                         }
                         return response.json();
-                    }).then(function () {
+                    }).then(function (data) {
+                        if (typeof displaySuccessMessage === 'function') {
+                            displaySuccessMessage(data.message || 'Experience saved successfully');
+                        }
+                        hideInlineForms();
                         reloadEmploymentPanel('candidateExperiencePanelBody');
                     }).catch(function (error) {
                         if (typeof displayErrorMessage === 'function') {

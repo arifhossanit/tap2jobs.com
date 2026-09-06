@@ -1326,6 +1326,7 @@
                 const languageFormHome = languageForm.parentElement;
                 const languageOptions = {};
                 let editingLanguageName = '';
+                let activeLanguageItem = null;
 
                 languageForm.querySelectorAll('[data-language-option]').forEach(function (option) {
                     languageOptions[String(option.dataset.name || '').toLowerCase()] = {
@@ -1335,6 +1336,10 @@
                 });
 
                 const setLanguageFormMode = function (isEditing) {
+                    if (!isEditing) {
+                        activeLanguageItem?.classList.remove('d-none');
+                        activeLanguageItem = null;
+                    }
                     languageForm.classList.toggle('d-none', !isEditing);
                     if (isEditing) {
                         languageInput.focus();
@@ -1511,6 +1516,7 @@
                 };
 
                 const openLanguageCreateForm = function () {
+                    setLanguageFormMode(false);
                     const section = document.getElementById('candidateLanguageProficiencyPanelBody');
                     if (section && typeof bootstrap !== 'undefined') {
                         bootstrap.Collapse.getOrCreateInstance(section, { toggle: false }).show();
@@ -1550,7 +1556,10 @@
                             return String(languageItem.dataset.languageName || '').toLowerCase() === editingLanguageName.toLowerCase();
                         });
                         setLanguageFormTitle(current);
-                        moveLanguageFormAfter(item);
+                        activeLanguageItem?.classList.remove('d-none');
+                        activeLanguageItem = item;
+                        item.before(languageForm);
+                        item.classList.add('d-none');
                         languageInput.value = item.dataset.languageName || '';
                         languageReadingInput.value = item.dataset.languageReading || '';
                         languageWritingInput.value = item.dataset.languageWriting || '';
