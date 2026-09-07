@@ -640,6 +640,8 @@ function loadEmployeeCreateEditData() {
         placeholder: $jobCategorySelect.data("placeholder") || Lang.get("js.select_job_category"),
         closeOnSelect: false
     }, jobSelect2SearchOptions));
+    clearSelect2SearchAfterSelect($jobCategorySelect);
+
     const $skillSelect = $("#SkillId");
 
     $skillSelect.select2($.extend({
