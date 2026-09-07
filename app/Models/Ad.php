@@ -55,6 +55,7 @@ class Ad extends Model implements HasMedia
     public const PAGE_BLOG_DETAILS = 'blog_details';
     public const PAGE_JOBS = 'jobs';
     public const PAGE_JOB_DETAILS = 'job_details';
+    public const PAGE_GOVERNMENT_JOB_DETAILS = 'government_job_details';
 
     public const PAGES = [
         self::PAGE_ALL => 'all',
@@ -67,6 +68,7 @@ class Ad extends Model implements HasMedia
         self::PAGE_BLOG_DETAILS => 'blog_details',
         self::PAGE_JOBS => 'jobs',
         self::PAGE_JOB_DETAILS => 'job_details',
+        self::PAGE_GOVERNMENT_JOB_DETAILS => 'government_job_details',
     ];
 
     public const POSITIONS = [
@@ -88,6 +90,7 @@ class Ad extends Model implements HasMedia
             self::PAGE_BLOG,
             self::PAGE_BLOG_DETAILS,
             self::PAGE_JOBS,
+            self::PAGE_GOVERNMENT_JOB_DETAILS,
         ],
         self::POSITION_REGISTER_RIGHT => [
             self::PAGE_ALL,
@@ -97,6 +100,7 @@ class Ad extends Model implements HasMedia
             self::PAGE_EMPLOYER_LOGIN,
             self::PAGE_BLOG_DETAILS,
             self::PAGE_JOBS,
+            self::PAGE_GOVERNMENT_JOB_DETAILS,
         ],
     ];
 

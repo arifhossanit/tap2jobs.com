@@ -113,7 +113,7 @@
             </div>
         </section>
 
-        <div class="p-3 rounded" style="background-color: #419b82; border: 1px solid #e2e8f0; border-left: 4px solid #070a0dff; color: #e1e4e7ff;">
+        <div class="p-3 rounded shadow-sm" style="background-color: #419b82; border: 1px solid #e2e8f0; border-left: 4px solid #070a0dff; color: #ffffff; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">
             <div class="d-flex align-items-center">
                 <i class="fa-solid fa-circle-info me-3 fs-4" style="color: #ffffff;"></i>
                 <span style="font-size: 15px; font-weight: 700;">{{ __('messages.candidate_dashboard.profile_completion_message') }}</span>

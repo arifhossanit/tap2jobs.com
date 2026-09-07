@@ -1562,6 +1562,7 @@ return [
             'blog_details' => 'ব্লগ বিস্তারিত পেইজ',
             'jobs' => 'চাকরির পেইজ',
             'job_details' => 'চাকরির বিস্তারিত পেইজ',
+            'government_job_details' => 'সরকারি চাকরির বিস্তারিত পেইজ',
         ],
         'positions' => [
             'header' => 'হেডার ব্যানার',

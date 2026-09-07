@@ -3,7 +3,9 @@
 @section('content')
 <section class="py-5 bg-light"><div class="container">
     <div class="d-flex flex-wrap gap-3 justify-content-between align-items-center mb-4">
-        <div><h1 class="fs-2 mb-1">Government Jobs</h1><p class="text-muted mb-0">Latest government job circulars</p></div>
+        <div>
+            <h1 class="fs-2 mb-1">Latest Government Jobs</h1>
+        </div>
         <form method="GET" class="d-flex gap-2"><input name="search" value="{{ request('search') }}" class="form-control" placeholder="Search organization or circular"><button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button></form>
     </div>
     <div class="row g-4">@forelse($governmentJobs as $job)<div class="col-lg-6">

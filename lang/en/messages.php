@@ -1569,6 +1569,7 @@ return [
             'blog_details' => 'Blog Details Page',
             'jobs' => 'Jobs Page',
             'job_details' => 'Job Details Page',
+            'government_job_details' => 'Government Job Details Page',
         ],
         'positions' => [
             'header' => 'Header Banner',

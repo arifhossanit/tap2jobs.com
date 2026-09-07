@@ -10,22 +10,9 @@ use Illuminate\View\View;
 
 class GovernmentJobController extends AppBaseController
 {
-    public function index(Request $request): View
+    public function index(): View
     {
-        $governmentJobs = GovernmentJob::query()
-            ->when($request->filled('search'), function ($query) use ($request) {
-                $search = trim((string) $request->input('search'));
-                $query->where(function ($query) use ($search) {
-                    $query->where('title', 'like', "%{$search}%")
-                        ->orWhere('organization_name', 'like', "%{$search}%")
-                        ->orWhere('source_name', 'like', "%{$search}%");
-                });
-            })
-            ->latest()
-            ->paginate(15)
-            ->withQueryString();
-
-        return view('government_jobs.index', compact('governmentJobs'));
+        return view('government_jobs.index');
     }
 
     public function create(): View
