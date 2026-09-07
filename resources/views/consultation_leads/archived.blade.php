@@ -1,17 +1,17 @@
 @extends('layouts.app')
 
 @section('title')
-    Archived Leads
+    {{ $pageTitle }}
 @endsection
 
 @section('content')
     <div class="container-fluid">
         @include('flash::message')
         <div class="mb-5 d-flex justify-content-end">
-            <a href="{{ route('consultation-leads.index') }}" class="btn btn-primary">Back</a>
+            <a href="{{ $leadFrom === AppModelsConsultationLead::LEAD_FROM_EMPLOYER ? route('consultation-leads.employer') : route('consultation-leads.consultation') }}" class="btn btn-primary">Back</a>
         </div>
         <div class="d-flex flex-column">
-            <livewire:consultation-lead-table :archived="true" lazy/>
+            <livewire:consultation-lead-table :archived="true" :lead-from="$leadFrom" :key="'archived-consultation-leads-'.$leadFrom" lazy/>
         </div>
     </div>
 

@@ -32,6 +32,11 @@ class ConsultationLead extends Model
         self::LEAD_FROM_EMPLOYER => 'Employer',
     ];
 
+    public const LEAD_SOURCE_LABELS = [
+        self::LEAD_FROM_CONSULTATION_FORM => 'Ads',
+        self::LEAD_FROM_EMPLOYER => 'Employer Registration',
+    ];
+
     public $table = 'consultation_leads';
 
     public $fillable = [
@@ -68,7 +73,7 @@ class ConsultationLead extends Model
         'deleted_at' => 'datetime',
     ];
 
-    protected $appends = ['status_label', 'consultation_type_label', 'preferred_contact_method_label', 'lead_from_label'];
+    protected $appends = ['status_label', 'consultation_type_label', 'preferred_contact_method_label', 'lead_from_label', 'lead_source_label'];
 
     public function ad(): BelongsTo
     {
@@ -118,5 +123,10 @@ class ConsultationLead extends Model
     public function getLeadFromLabelAttribute(): string
     {
         return self::LEAD_FROM_LABELS[$this->lead_from] ?? 'Consultation Form';
+    }
+
+    public function getLeadSourceLabelAttribute(): string
+    {
+        return self::LEAD_SOURCE_LABELS[$this->lead_from] ?? 'Ads';
     }
 }

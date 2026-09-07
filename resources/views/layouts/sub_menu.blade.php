@@ -125,8 +125,12 @@
        href="{{ route('employerReferenceRelations.index') }}">Employer</a>
 </li>
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/consultation-leads*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/consultation-leads*') ? 'active' : '' }}"
-       href="{{ route('consultation-leads.index') }}">Leads</a>
+    <a class="nav-link p-0 {{ Request::routeIs('consultation-leads.employer') ? 'active' : '' }}"
+       href="{{ route('consultation-leads.employer') }}">Employer Leads</a>
+</li>
+<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/consultation-leads*') ? 'd-none' : '' }}">
+    <a class="nav-link p-0 {{ Request::routeIs('consultation-leads.consultation') ? 'active' : '' }}"
+       href="{{ route('consultation-leads.consultation') }}">Consultation Leads</a>
 </li>
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/consultation-types*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/consultation-types*') ? 'active' : '' }}"

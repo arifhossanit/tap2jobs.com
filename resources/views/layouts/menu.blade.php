@@ -2,7 +2,7 @@
     $iconPad = checkLanguageSession() == 'ar' ? 'ps-3' : 'pe-3';
     $employersActive = Request::is('admin/employers*', 'admin/reported-employers*');
     $candidatesActive = Request::is('admin/candidates*', 'admin/reported-candidates*', 'admin/resumes*', 'admin/selected-candidate*');
-    $jobsActive = Request::is('admin/jobs*', 'admin/pending-jobs*', 'admin/reported-jobs*', 'admin/job-notification*', 'admin/expired-jobs*', 'admin/expire-in-7-days*')
+    $jobsActive = Request::is('admin/jobs*', 'admin/government-jobs*', 'admin/pending-jobs*', 'admin/reported-jobs*', 'admin/job-notification*', 'admin/expired-jobs*', 'admin/expire-in-7-days*')
         && ! Request::is('admin/job-categories*', 'admin/job-types*', 'admin/job-tags*', 'admin/job-shifts*');
     $blogsActive = Request::is('admin/post-categories*', 'admin/posts*', 'admin/post-comments*');
     $subscriptionsActive = Request::is('admin/plans*', 'admin/transactions*');
@@ -48,6 +48,11 @@
     $referenceEmployerActive = Request::is('admin/profile-references/employer*', 'admin/employer-reference-relations*', 'admin/job-gender-preferences*', 'admin/job-employment-statuses*', 'admin/job-workplaces*', 'admin/job-experience-units*', 'admin/employer-disability-facilities*', 'admin/job-categories*', 'admin/job-types*', 'admin/job-tags*', 'admin/job-shifts*', 'admin/salary-periods*', 'admin/company-sizes*', 'admin/company-categories*');
     $referencesActive = $referenceGeneralActive || $referenceCandidateActive || $referenceEmployerActive;
     $consultationActive = Request::is('admin/consultation-leads*', 'admin/consultation-types*', 'admin/consultation-contact-methods*');
+    $employerLeadsActive = Request::routeIs('consultation-leads.employer')
+        || (Request::routeIs('consultation-leads.archived') && request('lead_from') === AppModelsConsultationLead::LEAD_FROM_EMPLOYER);
+    $consultationLeadsActive = Request::routeIs('consultation-leads.consultation', 'consultation-leads.index')
+        || (Request::routeIs('consultation-leads.archived') && request('lead_from') !== AppModelsConsultationLead::LEAD_FROM_EMPLOYER);
+    $leadsActive = $employerLeadsActive || $consultationLeadsActive;
     $cmsActive = Request::is('admin/noticeboards*', 'admin/faqs*', 'admin/inquires*', 'admin/privacy-policy*', 'admin/front-settings*');
     $cmsSlidersActive = Request::is('admin/testimonials*', 'admin/branding-sliders*', 'admin/header-sliders*', 'admin/image-sliders*', 'admin/ads*');
     $frontCmsActive = Request::is('admin/cms-services*', 'admin/cms-about-us*');
@@ -151,6 +156,12 @@
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('admin.jobs.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.jobs') }}</span>
+            </a>
+        </li>
+        <li class="nav-item {{ Request::is('admin/government-jobs*') ? 'active' : '' }}">
+            <a class="nav-link d-flex align-items-center py-2" href="{{ route('admin.government-jobs.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
+                <span class="aside-menu-title">Government Jobs</span>
             </a>
         </li>
         @php
@@ -537,11 +548,28 @@
         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
     </a>
     <ul class="aside-submenu nav flex-column collapse {{ $consultationActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideConsultationMenu">
-        <li class="nav-item {{ Request::is('admin/consultation-leads*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('consultation-leads.index') }}">
+        <li class="nav-item aside-item-collapse {{ $leadsActive ? 'active collapse-submenu' : '' }}">
+            <a class="nav-link d-flex align-items-center py-2" data-bs-toggle="collapse" href="#asideConsultationLeadsMenu"
+               role="button" aria-expanded="{{ $leadsActive ? 'true' : 'false' }}" aria-controls="asideConsultationLeadsMenu">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">Leads</span>
+                <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
             </a>
+            <ul class="aside-submenu nav flex-column collapse {{ $leadsActive ? 'show' : '' }} ps-4 ms-2 border-start"
+                id="asideConsultationLeadsMenu">
+                <li class="nav-item {{ $employerLeadsActive ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('consultation-leads.employer') }}">
+                        <i class="fa-solid fa-circle me-2" style="font-size: 6px;"></i>
+                        <span class="aside-menu-title">Employer Leads</span>
+                    </a>
+                </li>
+                <li class="nav-item {{ $consultationLeadsActive ? 'active' : '' }}">
+                    <a class="nav-link d-flex align-items-center py-2" href="{{ route('consultation-leads.consultation') }}">
+                        <i class="fa-solid fa-circle me-2" style="font-size: 6px;"></i>
+                        <span class="aside-menu-title">Consultation Leads</span>
+                    </a>
+                </li>
+            </ul>
         </li>
         <li class="nav-item {{ Request::is('admin/consultation-types*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('consultationTypes.index') }}">

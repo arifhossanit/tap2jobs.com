@@ -82,6 +82,10 @@
                                 href="{{ route('front.search.jobs') }}">{{ __('web.jobs') }}</a>
                         </li>
                         <li class="nav-item mb-2 mb-lg-0">
+                            <a class="header-navbar-color text-gray nav-link px-2 px-lg-0 {{ Request::is('government-jobs*') ? 'header-navbar-color-active' : '' }}"
+                               href="{{ route('front.government-jobs.index') }}">Government Jobs</a>
+                        </li>
+                        <li class="nav-item mb-2 mb-lg-0">
                             <div class="dropdown language-dropdown"
                                  data-language-url="{{ route('front.change-language') }}">
                                 <a href="#" class="nav-link text-gray dropdown-toggle language-dropdown-btn px-2 px-lg-0"

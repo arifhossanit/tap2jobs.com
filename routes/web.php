@@ -486,6 +486,13 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          )->name('salaryCurrency.destroy');
 
          // jobs route
+         Route::get('government-jobs', [\App\Http\Controllers\GovernmentJobController::class, 'index'])->name('admin.government-jobs.index');
+         Route::get('government-jobs/create', [\App\Http\Controllers\GovernmentJobController::class, 'create'])->name('admin.government-jobs.create');
+         Route::post('government-jobs', [\App\Http\Controllers\GovernmentJobController::class, 'store'])->name('admin.government-jobs.store');
+         Route::get('government-jobs/{governmentJob}/edit', [\App\Http\Controllers\GovernmentJobController::class, 'edit'])->name('admin.government-jobs.edit');
+         Route::put('government-jobs/{governmentJob}', [\App\Http\Controllers\GovernmentJobController::class, 'update'])->name('admin.government-jobs.update');
+         Route::delete('government-jobs/{governmentJob}', [\App\Http\Controllers\GovernmentJobController::class, 'destroy'])->name('admin.government-jobs.destroy');
+
          Route::get('jobs', [JobController::class, 'getJobs'])->name('admin.jobs.index');
          Route::get('jobs/create', [JobController::class, 'createJob'])->name('admin.job.create');
          Route::post('jobs', [JobController::class, 'storeJob'])->name('admin.job.store');
@@ -593,6 +600,8 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
 
          // Consultation Leads Routes
          Route::get('consultation-leads', [ConsultationLeadController::class, 'index'])->name('consultation-leads.index');
+         Route::get('consultation-leads/employer', [ConsultationLeadController::class, 'employerLeads'])->name('consultation-leads.employer');
+         Route::get('consultation-leads/consultation', [ConsultationLeadController::class, 'consultationLeads'])->name('consultation-leads.consultation');
          Route::get('consultation-leads/archived', [ConsultationLeadController::class, 'archived'])->name('consultation-leads.archived');
          Route::get('consultation-leads/export/{format}', [ConsultationLeadController::class, 'export'])
                   ->where('format', 'csv|excel|pdf')
@@ -931,6 +940,8 @@ Route::middleware('xss', 'setLanguage')->group(function () {
          Route::get('/', [Web\HomeController::class, 'index'])->name('front.home');
          Route::get('/get-jobs-search', [Web\HomeController::class, 'getJobsSearch'])->name('get.jobs.search');
          Route::get('/search-jobs', [Web\JobController::class, 'index'])->name('front.search.jobs');
+         Route::get('/government-jobs', [\App\Http\Controllers\GovernmentJobController::class, 'publicIndex'])->name('front.government-jobs.index');
+         Route::get('/government-jobs/{governmentJob}', [\App\Http\Controllers\GovernmentJobController::class, 'publicShow'])->name('front.government-jobs.show');
          Route::get('/job-details/{uniqueId?}', [Web\JobController::class, 'jobDetails'])->name('front.job.details');
          Route::get('/company-lists', [Web\CompanyController::class, 'getCompaniesLists'])->name('front.company.lists');
          Route::get(

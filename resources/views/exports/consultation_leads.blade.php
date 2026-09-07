@@ -26,7 +26,7 @@
             <td>{{ $lead->company_category_name ?: $lead->companyCategory?->name ?: $lead->companySize?->companyCategory?->name ?: 'N/A' }}</td>
             <td>{{ $lead->consultation_type ? $lead->consultation_type_label : 'N/A' }}</td>
             <td>{{ $lead->lead_from_label }}</td>
-            <td>{{ $lead->source_page ?: $leadSource ?: 'N/A' }}</td>
+            <td>{{ $lead->lead_source_label }}</td>
             <td>{{ $lead->status_label ?: 'N/A' }}</td>
             <td>{{ $lead->created_at?->format('d M Y h:i A') ?: 'N/A' }}</td>
         </tr>

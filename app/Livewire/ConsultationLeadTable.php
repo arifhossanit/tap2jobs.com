@@ -29,6 +29,8 @@ class ConsultationLeadTable extends LivewireTableComponent
 
     public bool $archived = false;
 
+    public string $leadFrom = ConsultationLead::LEAD_FROM_CONSULTATION_FORM;
+
     public $showButtonOnHeader = true;
 
     public $showFilterOnHeader = true;
@@ -98,9 +100,7 @@ class ConsultationLeadTable extends LivewireTableComponent
             Column::make('Type', 'consultation_type')
                 ->sortable()
                 ->view('consultation_leads.table_components.type'),
-            Column::make('Lead Type', 'lead_from')
-                ->sortable()
-                ->view('consultation_leads.table_components.lead_from'),
+
             Column::make('Lead Source', 'source_page')
                 ->view('consultation_leads.table_components.lead_source'),
             Column::make('Status', 'status')
@@ -120,6 +120,7 @@ class ConsultationLeadTable extends LivewireTableComponent
     {
         return ConsultationLead::query()
             ->with(['ad', 'companySize.companyCategory', 'companyCategory', 'employer'])
+            ->where('lead_from', $this->leadFrom)
             ->when($this->archived, fn (Builder $query) => $query->onlyTrashed())
             ->when($this->status !== '', function (Builder $query) {
                 $query->where('status', $this->status);
@@ -157,7 +158,9 @@ class ConsultationLeadTable extends LivewireTableComponent
 
             foreach ($selectedIds as $id) {
                 try {
-                    $record = ConsultationLead::query()->find($id);
+                    $record = ConsultationLead::query()
+                        ->where('lead_from', $this->leadFrom)
+                        ->find($id);
 
                     if (! $record) {
                         $failed++;
@@ -198,7 +201,10 @@ class ConsultationLeadTable extends LivewireTableComponent
 
         foreach ($selectedIds as $id) {
             try {
-                $record = ConsultationLead::query()->onlyTrashed()->find($id);
+                $record = ConsultationLead::query()
+                    ->onlyTrashed()
+                    ->where('lead_from', $this->leadFrom)
+                    ->find($id);
 
                 if (! $record) {
                     $failed++;

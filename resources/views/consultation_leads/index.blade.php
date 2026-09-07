@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
 @section('title')
-    Leads
+    {{ $pageTitle }}
 @endsection
 
 @section('content')
     <div class="container-fluid">
         @include('flash::message')
         <div class="d-flex flex-column">
-            <livewire:consultation-lead-table lazy/>
+            <livewire:consultation-lead-table :lead-from="$leadFrom" :key="'consultation-leads-'.$leadFrom" lazy/>
         </div>
     </div>
 
@@ -104,7 +104,7 @@
                         $('#consultationLeadContactTime').text(text(lead.preferred_contact_time));
                         $('#consultationLeadMessage').text(text(lead.message));
                         $('#consultationLeadAd').text(text(lead.ad ? lead.ad.title : null));
-                        $('#consultationLeadSource').text(text(lead.source_page));
+                        $('#consultationLeadSource').text(text(lead.lead_source_label));
                         $('#consultationLeadUtm').text([lead.utm_source, lead.utm_medium, lead.utm_campaign].filter(Boolean).join(' / ') || 'N/A');
                         $('#consultationLeadStatus').val(lead.status);
                         $('#consultationLeadNotes').val(lead.admin_notes || '');

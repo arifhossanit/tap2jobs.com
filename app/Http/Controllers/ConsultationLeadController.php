@@ -67,14 +67,29 @@ class ConsultationLeadController extends AppBaseController
             ->with('success', __('web.consultation.success'));
     }
 
-    public function index(): View
+    public function index(): RedirectResponse
     {
-        return view('consultation_leads.index');
+        return redirect()->route('consultation-leads.consultation');
     }
 
-    public function archived(): View
+    public function employerLeads(): View
     {
-        return view('consultation_leads.archived');
+        return $this->leadIndex(ConsultationLead::LEAD_FROM_EMPLOYER, 'Employer Leads');
+    }
+
+    public function consultationLeads(): View
+    {
+        return $this->leadIndex(ConsultationLead::LEAD_FROM_CONSULTATION_FORM, 'Consultation Leads');
+    }
+
+    public function archived(Request $request): View
+    {
+        $leadFrom = $this->validatedLeadFrom($request);
+        $pageTitle = $leadFrom === ConsultationLead::LEAD_FROM_EMPLOYER
+            ? 'Archived Employer Leads'
+            : 'Archived Consultation Leads';
+
+        return view('consultation_leads.archived', compact('leadFrom', 'pageTitle'));
     }
 
     public function export(Request $request, string $format): BinaryFileResponse|StreamedResponse|Response
@@ -152,8 +167,10 @@ class ConsultationLeadController extends AppBaseController
 
     private function consultationLeadQuery(Request $request): Builder
     {
+        $leadFrom = $this->validatedLeadFrom($request);
         $query = ConsultationLead::query()
             ->with(['ad', 'companySize.companyCategory', 'companyCategory', 'employer'])
+            ->where('lead_from', $leadFrom)
             ->latest();
 
         if ($request->filled('status')) {
@@ -165,6 +182,21 @@ class ConsultationLeadController extends AppBaseController
         }
 
         return $query;
+    }
+
+    private function leadIndex(string $leadFrom, string $pageTitle): View
+    {
+        return view('consultation_leads.index', compact('leadFrom', 'pageTitle'));
+    }
+
+    private function validatedLeadFrom(Request $request): string
+    {
+        $leadFrom = (string) $request->query('lead_from', ConsultationLead::LEAD_FROM_CONSULTATION_FORM);
+
+        return in_array($leadFrom, [
+            ConsultationLead::LEAD_FROM_EMPLOYER,
+            ConsultationLead::LEAD_FROM_CONSULTATION_FORM,
+        ], true) ? $leadFrom : ConsultationLead::LEAD_FROM_CONSULTATION_FORM;
     }
 
     private function consultationLeadExportHeadings(): array
@@ -191,7 +223,7 @@ class ConsultationLeadController extends AppBaseController
             $lead->company_category_name ?: $lead->companyCategory?->name ?: $lead->companySize?->companyCategory?->name ?: 'N/A',
             $lead->consultation_type ? $lead->consultation_type_label : 'N/A',
             $lead->lead_from_label,
-            $lead->source_page ?: $leadSource ?: 'N/A',
+            $lead->lead_source_label,
             $lead->status_label ?: 'N/A',
             $lead->created_at?->format('d M Y h:i A') ?: 'N/A',
         ];

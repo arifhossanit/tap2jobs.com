@@ -1,5 +1,5 @@
 @php
-    $query = [];
+    $query = ['lead_from' => $component->leadFrom];
 
     if ($component->status !== '') {
         $query['status'] = $component->status;
@@ -37,7 +37,7 @@
        data-bs-toggle="tooltip">
         <i class="fa-solid fa-print"></i>
     </a>
-    <a href="{{ route('consultation-leads.archived') }}"
+    <a href="{{ route('consultation-leads.archived', ['lead_from' => $component->leadFrom]) }}"
        class="btn btn-secondary"
        title="Archived Leads"
        data-bs-toggle="tooltip">

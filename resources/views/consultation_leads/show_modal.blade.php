@@ -23,7 +23,7 @@
                         <div class="col-md-6"><strong>Contact Method:</strong> <span id="consultationLeadContactMethod"></span></div>
                         <div class="col-md-6"><strong>Contact Time:</strong> <span id="consultationLeadContactTime"></span></div>
                         <div class="col-md-6"><strong>Source Ad:</strong> <span id="consultationLeadAd"></span></div>
-                        <div class="col-12"><strong>Source Page:</strong> <span id="consultationLeadSource"></span></div>
+                        <div class="col-12"><strong>Lead Source:</strong> <span id="consultationLeadSource"></span></div>
                         <div class="col-12"><strong>UTM:</strong> <span id="consultationLeadUtm"></span></div>
                         <div class="col-12"><strong>Requirement:</strong> <div id="consultationLeadMessage" class="mt-1 text-gray"></div></div>
                         <div class="col-md-6">
