@@ -21,7 +21,7 @@
                 $locationCities = ! empty($location['state_id']) ? getCities($location['state_id']) : [];
                 $locationThanas = ! empty($location['city_id']) ? getThanas($location['city_id']) : [];
             @endphp
-            <div class="border rounded p-4 mb-4 job-location-row" data-location-index="{{ $fieldIndex }}">
+            <div class="border rounded p-4 my-4 job-location-row" data-location-index="{{ $fieldIndex }}">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <strong>Location {{ $fieldIndex + 1 }}</strong>
                     <button type="button" class="btn btn-sm btn-light-danger remove-job-location">
@@ -64,7 +64,7 @@
 </div>
 
 <template id="jobLocationTemplate">
-    <div class="border rounded p-4 mb-4 job-location-row" data-location-index="__INDEX__">
+    <div class="border rounded p-4 my-4 job-location-row" data-location-index="__INDEX__">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <strong>Location __NUMBER__</strong>
             <button type="button" class="btn btn-sm btn-light-danger remove-job-location">

@@ -113,11 +113,11 @@
     </div>
     <div class="col-12 mb-5">
         <div class="border rounded p-4 job-location-container">
-            <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between mb-4">
+            <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between">
                 <h3 class="fs-5 fw-bold mb-0">Job location</h3>
                 @include('jobs.partials.anywhere_in_bangladesh')
             </div>
-            <div class="border rounded p-4 mb-4 job-location-row">
+            <div class="border rounded p-4 my-4 job-location-row">
                 <div class="d-flex align-items-center mb-3">
                     <strong>Location 1</strong>
                 </div>
