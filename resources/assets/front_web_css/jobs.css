@@ -537,3 +537,101 @@ html[dir="rtl"]
         font-size: 13px;
     }
 }
+.job-search-result-card {
+    display: block;
+    margin-bottom: 16px;
+    padding: 18px 20px;
+    border: 1px solid #d8dadd;
+    border-radius: 7px;
+    color: #606165;
+    background: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.job-search-result-card:hover,
+.job-search-result-card:focus-visible {
+    border-color: #9fbea4;
+    color: #606165;
+    box-shadow: 0 5px 16px rgba(31, 69, 38, 0.08);
+}
+
+.job-search-result-card:focus-visible {
+    outline: 3px solid rgba(45, 128, 54, 0.2);
+    outline-offset: 2px;
+}
+
+.job-search-result-card__title {
+    margin: 0 0 10px;
+    color: #2d8036;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.job-search-result-card__company {
+    margin: 0 0 13px;
+    color: #343434;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.job-search-result-card__details {
+    display: grid;
+    gap: 8px;
+}
+
+.job-search-result-card__detail,
+.job-search-result-card__deadline {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+    color: #606165;
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+.job-search-result-card__detail i,
+.job-search-result-card__deadline i {
+    width: 14px;
+    margin-top: 3px;
+    color: #666;
+    text-align: center;
+    flex: 0 0 14px;
+}
+
+.job-search-result-card__footer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 17px;
+}
+
+.job-search-result-card__deadline {
+    align-items: center;
+    justify-content: flex-end;
+    white-space: nowrap;
+}
+
+.job-search-result-card__deadline i {
+    margin-top: 0;
+}
+
+@media (max-width: 575.98px) {
+    .job-search-result-card {
+        padding: 16px;
+    }
+
+    .job-search-result-card__footer {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 9px;
+        margin-top: 14px;
+    }
+
+    .job-search-result-card__deadline {
+        justify-content: flex-start;
+    }
+}

@@ -340,6 +340,10 @@ class JobRepository extends BaseRepository
 
     private function extractJobLocations(array $input): array
     {
+        if (! empty($input['anywhere_in_bangladesh'])) {
+            return [];
+        }
+
         $locations = collect($input['job_locations'] ?? [])
             ->filter(fn ($location) => is_array($location))
             ->map(function (array $location): array {

@@ -329,6 +329,7 @@ class Job extends Model
         'thana_id',
         'city_village_name',
         'address',
+        'anywhere_in_bangladesh',
         'status',
         'is_created_by_admin',
         'last_change',
@@ -368,6 +369,7 @@ class Job extends Model
         'thana_id' => 'integer',
         'city_village_name' => 'string',
         'address' => 'string',
+        'anywhere_in_bangladesh' => 'boolean',
         'description' => 'string',
         'compensation_and_other_benefits' => 'string',
         'job_expiry_date' => 'date',
@@ -392,12 +394,24 @@ class Job extends Model
             return $requirement;
         }
 
+        if (is_numeric($requirement) && (float) $requirement === 0.0) {
+            return __('messages.common.no');
+        }
+
         if ($this->experience_unit === self::EXPERIENCE_UNIT_MONTH) {
-            return $requirement.' '.__('messages.job.months');
+            $unit = is_numeric($requirement) && (float) $requirement === 1.0
+                ? __('messages.job.month')
+                : __('messages.job.months');
+
+            return $requirement.' '.$unit;
         }
 
         if ($this->experience_unit === self::EXPERIENCE_UNIT_YEAR) {
-            return $requirement.' '.__('messages.job.years');
+            $unit = is_numeric($requirement) && (float) $requirement === 1.0
+                ? __('messages.job.year')
+                : __('messages.job.years');
+
+            return $requirement.' '.$unit;
         }
 
         return $requirement;
@@ -587,6 +601,10 @@ class Job extends Model
     }
     public function getFullLocationAttribute(): string
     {
+        if ($this->anywhere_in_bangladesh) {
+            return __('messages.job.anywhere_in_bangladesh');
+        }
+
         if (\Illuminate\Support\Facades\Schema::hasTable('job_locations')) {
             $locations = $this->relationLoaded('locations')
                 ? $this->locations
@@ -624,6 +642,10 @@ class Job extends Model
 
     public function getDistrictThanaLocationAttribute(): string
     {
+        if ($this->anywhere_in_bangladesh) {
+            return __('messages.job.anywhere_in_bangladesh');
+        }
+
         if (\Illuminate\Support\Facades\Schema::hasTable('job_locations')) {
             $locations = $this->relationLoaded('locations')
                 ? $this->locations

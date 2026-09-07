@@ -702,6 +702,7 @@ return [
         'no_salary_currency_available' => 'কোন বেতনের মুদ্রা  নেই',
     ],
     'job' => [
+        'anywhere_in_bangladesh' => 'বাংলাদেশের যেকোনো স্থানে',
         'new_job' => 'নতুন চাকরি',
         'edit_job' => 'চাকরি এডিট',
         'job_details' => 'চাকরির বিবরণ',
@@ -758,6 +759,7 @@ return [
         'position' => 'পদ',
         'vacancy' => 'শূন্যপদের সংখ্যা',
         'job_expiry_date' => 'চাকরির মেয়াদ শেষের তারিখ',
+        'deadline' => 'আবেদনের শেষ তারিখ',
         'salary_from' => 'বেতন থেকে',
         'salary_to' => 'বেতন পর্যন্ত',
         'no_preference' => 'কোন পছন্দ নেই',

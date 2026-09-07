@@ -706,6 +706,7 @@ return [
         'no_salary_currency_available' => 'No Salary Currency Available',
     ],
     'job' => [
+        'anywhere_in_bangladesh' => 'Anywhere in Bangladesh',
         'new_job' => 'New Job',
         'edit_job' => 'Edit Job',
         'job_details' => 'Job Details',
@@ -762,6 +763,7 @@ return [
         'position' => 'Position',
         'vacancy' => 'Vacancy',
         'job_expiry_date' => 'Job Expiry Date',
+        'deadline' => 'Deadline',
         'salary_from' => 'Salary From',
         'salary_to' => 'Salary To',
         'no_preference' => 'No Preference',

@@ -15,7 +15,11 @@ trait ValidatesJob
 {
     protected function prepareJobForValidation(): void
     {
-        $this->restoreLocationHierarchy();
+        $anywhereInBangladesh = $this->boolean('anywhere_in_bangladesh');
+
+        if (! $anywhereInBangladesh) {
+            $this->restoreLocationHierarchy();
+        }
 
         $employmentStatus = $this->input('employment_status');
         $usesEmploymentStatusForm = $this->routeIs('job.store', 'job.update');
@@ -72,6 +76,7 @@ trait ValidatesJob
             'experience_unit' => $experienceUnit,
             'experience_requirement' => $experienceRequirement,
             'freshers_encouraged' => $this->boolean('freshers_encouraged'),
+            'anywhere_in_bangladesh' => $anywhereInBangladesh,
             'experience' => $this->minimumExperienceYears($experienceUnit, $experienceRequirement),
             'jobsSkill' => $jobsSkill,
             'jobTag' => $jobTag,
@@ -119,6 +124,10 @@ trait ValidatesJob
 
     private function normalizedJobLocations(): array
     {
+        if ($this->boolean('anywhere_in_bangladesh')) {
+            return [];
+        }
+
         $locations = [];
         $primary = $this->normalizeJobLocationRow([
             'country_id' => $this->input('country_id'),
@@ -246,7 +255,7 @@ trait ValidatesJob
                 },
             ],
             'job_shift_id' => ['nullable', 'integer', Rule::exists('job_shifts', 'id')],
-            'degree_level_id' => ['nullable', 'integer', Rule::exists('education_degree_levels', 'id')],
+            'degree_level_id' => ['required', 'integer', Rule::exists('education_degree_levels', 'id')],
             'degree_title_id' => [
                 'nullable',
                 'string',
@@ -264,14 +273,17 @@ trait ValidatesJob
             'experience_requirement' => ['required', 'string', 'max:100', 'regex:/\d/'],
             'freshers_encouraged' => ['required', 'boolean'],
             'vacancy' => ['required', 'integer', 'min:1', 'max:4294967295'],
-            'country_id' => ['required', 'integer', Rule::exists('countries', 'id')],
+            'anywhere_in_bangladesh' => ['required', 'boolean'],
+            'country_id' => [Rule::requiredIf(fn (): bool => ! $this->boolean('anywhere_in_bangladesh')), 'nullable', 'integer', Rule::exists('countries', 'id')],
             'state_id' => [
-                'required',
+                Rule::requiredIf(fn (): bool => ! $this->boolean('anywhere_in_bangladesh')),
+                'nullable',
                 'integer',
                 Rule::exists('states', 'id')->where('country_id', $this->input('country_id')),
             ],
             'city_id' => [
-                'required',
+                Rule::requiredIf(fn (): bool => ! $this->boolean('anywhere_in_bangladesh')),
+                'nullable',
                 'integer',
                 Rule::exists('cities', 'id')->where('state_id', $this->input('state_id')),
             ],
@@ -281,7 +293,7 @@ trait ValidatesJob
                 Rule::exists('thanas', 'id')->where('city_id', $this->input('city_id')),
             ],
             'address' => ['nullable', 'string'],
-            'job_locations' => ['required', 'array', 'min:1'],
+            'job_locations' => [Rule::excludeIf(fn (): bool => $this->boolean('anywhere_in_bangladesh')), 'required', 'array', 'min:1'],
             'job_locations.*.country_id' => ['required', 'integer', Rule::exists('countries', 'id')],
             'job_locations.*.state_id' => ['required', 'integer', Rule::exists('states', 'id')],
             'job_locations.*.city_id' => ['required', 'integer', Rule::exists('cities', 'id')],

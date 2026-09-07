@@ -99,8 +99,9 @@
     </div>
     <div class="col-12 mb-5">
         <div class="border rounded p-4 job-location-container">
-            <div class="d-flex align-items-center justify-content-between mb-4">
+            <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between mb-4">
                 <h3 class="fs-5 fw-bold mb-0">Job location</h3>
+                @include('jobs.partials.anywhere_in_bangladesh')
             </div>
             <div class="border rounded p-4 mb-4 job-location-row">
                 <div class="d-flex align-items-center mb-3">
@@ -145,7 +146,8 @@
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('degree_level_id', __('messages.job.degree_level').':', ['class' => 'form-label']) }}
-        {{ Form::select('degree_level_id', $data['requiredDegreeLevel'], null, ['id'=>'requiredDegreeLevelId','class' => 'form-select','data-control'=>'select2','placeholder' => __('messages.company.select_degree_level')]) }}
+        <span class="required"></span>
+        {{ Form::select('degree_level_id', $data['requiredDegreeLevel'], null, ['id'=>'requiredDegreeLevelId','class' => 'form-select','data-control'=>'select2','placeholder' => __('messages.company.select_degree_level'),'required']) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('degree_title_id', __('messages.candidate_profile.degree_title').':', ['class' => 'form-label']) }}

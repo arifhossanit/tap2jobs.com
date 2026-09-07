@@ -200,6 +200,7 @@ class JobSearch extends Component
         /** @var Job $query */
         $query = Job::with([
             'company', 'country', 'state', 'city', 'jobShift', 'company.user', 'jobsSkill', 'jobCategory', 'jobCategories',
+            'degreeLevel', 'degreeTitle', 'locations.city', 'locations.thana',
         ]);
 
         if ($this->matchingOnly) {

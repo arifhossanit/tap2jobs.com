@@ -113,10 +113,35 @@
             var container = document.getElementById('additionalJobLocations');
             var template = document.getElementById('jobLocationTemplate');
             var addButton = document.getElementById('addJobLocationBtn');
+            var anywhereCheckbox = document.getElementById('anywhereInBangladesh');
 
-            if (!container || !template || !addButton || typeof $ === 'undefined') {
+            if (!container || !template || !addButton || !anywhereCheckbox || typeof $ === 'undefined') {
                 return;
             }
+
+            function toggleLocationFields() {
+                var isAnywhere = anywhereCheckbox.checked;
+                var locationSections = $('.job-location-container')
+                    .find('.job-location-row, .job-additional-locations');
+
+                locationSections.toggleClass('d-none', isAnywhere);
+                locationSections.find('input, select, textarea, button').each(function () {
+                    var field = $(this);
+
+                    if (field.prop('required')) {
+                        field.attr('data-location-required', '1');
+                    }
+
+                    field.prop('disabled', isAnywhere);
+                    field.prop('required', !isAnywhere && field.attr('data-location-required') === '1');
+
+                    if (field.is('select')) {
+                        field.trigger('change.select2');
+                    }
+                });
+            }
+
+            anywhereCheckbox.addEventListener('change', toggleLocationFields);
 
             function placeholder(key, fallback) {
                 return typeof Lang !== 'undefined' && Lang.get ? (Lang.get(key) || fallback) : fallback;
@@ -243,6 +268,7 @@
                 });
 
             initSelects(container);
+            toggleLocationFields();
         });
     </script>
 @endonce
