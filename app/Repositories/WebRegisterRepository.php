@@ -163,7 +163,7 @@ class WebRegisterRepository
                 $subscriptionRepo->createStripeCustomer($user);
             }
 
-            $user->notifyNow(new \App\Notifications\UserVerifyNotification($user));
+            $user->sendEmailVerificationNotification();
 
             DB::commit();
 
