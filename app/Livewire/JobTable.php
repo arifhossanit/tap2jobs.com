@@ -89,6 +89,10 @@ class JobTable extends LivewireTableComponent
                 ->sortable()
                 ->searchable()
                 ->view('jobs.table-components.job_title'),
+            Column::make(__('messages.company.company_name'), 'company.company_name')
+                ->sortable()
+                ->searchable()
+                ->view('jobs.table-components.company_name'),
             Column::make(__('messages.job_category.job_category'), 'job_category_id')
                 ->sortable()
                 ->view('jobs.table-components.job_category'),

@@ -13,11 +13,6 @@
 @endphp
 
 <div class="job-additional-locations">
-    <div class="d-flex align-items-center justify-content-end mb-3">
-        <button type="button" class="btn btn-sm btn-outline-primary" id="addJobLocationBtn">
-            <i class="fa fa-plus me-1"></i> Add location
-        </button>
-    </div>
     <div id="additionalJobLocations" data-next-index="{{ max(1, $additionalJobLocations->count() + 1) }}">
         @foreach($additionalJobLocations as $locationIndex => $location)
             @php
@@ -60,6 +55,11 @@
                 </div>
             </div>
         @endforeach
+    </div>
+    <div class="d-flex align-items-center justify-content-end mt-3 mb-3">
+        <button type="button" class="btn btn-sm btn-outline-primary" id="addJobLocationBtn">
+            <i class="fa fa-plus me-1"></i> Add location
+        </button>
     </div>
 </div>
 
