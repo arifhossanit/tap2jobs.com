@@ -396,20 +396,26 @@
 @endsection
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const addTrigger = document.querySelector('[data-employment-add-trigger]');
-            const addFormWrap = document.querySelector('[data-employment-add-form-wrap]');
+        window.initCandidateEmploymentPage = function (element = document) {
+            if (!element) return;
+            const root = {
+                querySelector: selector => element.matches && element.matches(selector) ? element : element.querySelector(selector),
+                querySelectorAll: selector => element.querySelectorAll(selector),
+                addEventListener: (...args) => element.addEventListener(...args)
+            };
+            const addTrigger = root.querySelector('[data-employment-add-trigger]');
+            const addFormWrap = root.querySelector('[data-employment-add-form-wrap]');
             const employmentQuillEditors = [];
 
             const initEmploymentQuillEditors = function () {
                 if (typeof Quill === 'undefined') {
-                    document.querySelectorAll('[data-employment-quill-input]').forEach(function (input) {
+                    root.querySelectorAll('[data-employment-quill-input]').forEach(function (input) {
                         input.classList.remove('d-none');
                     });
                     return;
                 }
 
-                document.querySelectorAll('[data-employment-quill-editor]').forEach(function (element) {
+                root.querySelectorAll('[data-employment-quill-editor]').forEach(function (element) {
                     if (element.dataset.quillReady === 'true') {
                         return;
                     }
@@ -457,7 +463,7 @@
                     return;
                 }
 
-                document.querySelectorAll('[data-employment-form], [data-retired-army-form]').forEach(function (form) {
+                root.querySelectorAll('[data-employment-form], [data-retired-army-form]').forEach(function (form) {
                     const startInput = form.querySelector('[data-employment-date="start"]');
                     const endInput = form.querySelector('[data-employment-date="end"]');
 
@@ -493,7 +499,7 @@
             };
 
             const hideInlineForms = function () {
-                document.querySelectorAll('.candidate-employment-edit-form').forEach(function (form) {
+                root.querySelectorAll('.candidate-employment-edit-form').forEach(function (form) {
                     form.classList.add('d-none');
                     const item = form.closest('.candidate-employment-list-item');
                     const summary = item ? item.querySelector('[data-employment-summary]') : null;
@@ -523,7 +529,7 @@
             };
 
             const openEmploymentPanel = function (panelId) {
-                const panelBody = document.getElementById(panelId);
+                const panelBody = root.querySelector('#' + panelId);
                 if (panelBody && typeof bootstrap !== 'undefined') {
                     bootstrap.Collapse.getOrCreateInstance(panelBody, { toggle: false }).show();
                 }
@@ -531,13 +537,7 @@
             };
 
             const reloadEmploymentPanel = function (panelId) {
-                const targetUrl = route('candidate.profile', { section: 'employment' }) + '#' + panelId;
-                if (window.location.href === targetUrl) {
-                    window.location.reload();
-                    return;
-                }
-
-                window.location.href = targetUrl;
+                return window.refreshCandidateProfileSection('employment', panelId);
             };
 
             if (addTrigger && addFormWrap) {
@@ -550,7 +550,7 @@
                 });
             }
 
-            document.querySelectorAll('.candidate-employment-edit-trigger').forEach(function (trigger) {
+            root.querySelectorAll('.candidate-employment-edit-trigger').forEach(function (trigger) {
                 trigger.addEventListener('click', function (event) {
                     event.preventDefault();
                     hideInlineForms();
@@ -566,17 +566,17 @@
                 });
             });
 
-            document.querySelectorAll('[data-employment-form-close]').forEach(function (button) {
+            root.querySelectorAll('[data-employment-form-close]').forEach(function (button) {
                 button.addEventListener('click', function () {
                     hideInlineForms();
                 });
             });
 
-            const retiredArmyItem = document.querySelector('[data-retired-army-item]');
-            const retiredArmySummary = document.querySelector('[data-retired-army-summary]');
-            const retiredArmyEditForm = document.querySelector('[data-retired-army-edit-form]');
-            const retiredArmyAddFormWrap = document.querySelector('[data-retired-army-add-form-wrap]');
-            const retiredArmyAddForm = document.querySelector('[data-retired-army-add-form]');
+            const retiredArmyItem = root.querySelector('[data-retired-army-item]');
+            const retiredArmySummary = root.querySelector('[data-retired-army-summary]');
+            const retiredArmyEditForm = root.querySelector('[data-retired-army-edit-form]');
+            const retiredArmyAddFormWrap = root.querySelector('[data-retired-army-add-form-wrap]');
+            const retiredArmyAddForm = root.querySelector('[data-retired-army-add-form]');
             let hasRetiredArmyEmployment = {{ $hasRetiredArmyEmployment ? 'true' : 'false' }};
 
             const showRetiredArmySummaryView = function () {
@@ -620,13 +620,13 @@
                 if (retiredArmyAddForm) {
                     retiredArmyAddForm.reset();
                 }
-                const emptyState = document.querySelector('[data-retired-army-empty]');
+                const emptyState = root.querySelector('[data-retired-army-empty]');
                 if (emptyState) {
                     emptyState.classList.add('d-none');
                 }
             };
 
-            const retiredArmyAddTrigger = document.querySelector('[data-retired-army-add-trigger]');
+            const retiredArmyAddTrigger = root.querySelector('[data-retired-army-add-trigger]');
             if (retiredArmyAddTrigger) {
                 retiredArmyAddTrigger.addEventListener('click', function (event) {
                     event.preventDefault();
@@ -636,7 +636,7 @@
             }
 
             const setRetiredArmyValue = function (name, value) {
-                document.querySelectorAll('[data-retired-army-value="' + name + '"]').forEach(function (element) {
+                root.querySelectorAll('[data-retired-army-value="' + name + '"]').forEach(function (element) {
                     element.textContent = value || (name === 'baNo' ? '-' : '---');
                 });
             };
@@ -725,7 +725,7 @@
                 return (data && data.message) || fallback;
             };
 
-            document.querySelectorAll('[data-retired-army-edit]').forEach(function (button) {
+            root.querySelectorAll('[data-retired-army-edit]').forEach(function (button) {
                 button.addEventListener('click', function (event) {
                     event.preventDefault();
                     openEmploymentPanel('candidateRetiredArmyEmploymentPanelBody');
@@ -734,19 +734,19 @@
                 });
             });
 
-            document.querySelectorAll('[data-retired-army-edit-close]').forEach(function (button) {
+            root.querySelectorAll('[data-retired-army-edit-close]').forEach(function (button) {
                 button.addEventListener('click', function () {
                     showRetiredArmySummaryView();
                 });
             });
 
-            document.querySelectorAll('[data-retired-army-add-close]').forEach(function (button) {
+            root.querySelectorAll('[data-retired-army-add-close]').forEach(function (button) {
                 button.addEventListener('click', function () {
                     if (retiredArmyAddFormWrap) {
                         retiredArmyAddFormWrap.classList.add('d-none');
                     }
                     if (!hasRetiredArmyEmployment) {
-                        const emptyState = document.querySelector('[data-retired-army-empty]');
+                        const emptyState = root.querySelector('[data-retired-army-empty]');
                         if (emptyState) {
                             emptyState.classList.remove('d-none');
                         }
@@ -754,7 +754,7 @@
                 });
             });
 
-            document.querySelectorAll('[data-retired-army-form]').forEach(function (form) {
+            root.querySelectorAll('[data-retired-army-form]').forEach(function (form) {
                 form.addEventListener('submit', function (event) {
                     event.preventDefault();
 
@@ -790,12 +790,12 @@
                         if (retiredArmyAddForm) {
                             retiredArmyAddForm.reset();
                         }
-                        const emptyState = document.querySelector('[data-retired-army-empty]');
+                        const emptyState = root.querySelector('[data-retired-army-empty]');
                         if (emptyState) {
                             emptyState.classList.add('d-none');
                         }
                         if (typeof displaySuccessMessage === 'function') {
-                            displaySuccessMessage(data.message);
+                            displaySuccessMessage(data.message); window.refreshCandidateProfileSection('employment');
                         }
                     }).catch(function (error) {
                         if (typeof displayErrorMessage === 'function') {
@@ -805,7 +805,7 @@
                 });
             });
 
-            document.querySelectorAll('[data-retired-army-delete]').forEach(function (button) {
+            root.querySelectorAll('[data-retired-army-delete]').forEach(function (button) {
                 button.addEventListener('click', function (event) {
                     event.preventDefault();
 
@@ -841,12 +841,12 @@
                             if (retiredArmyAddFormWrap) {
                                 retiredArmyAddFormWrap.classList.add('d-none');
                             }
-                            const emptyState = document.querySelector('[data-retired-army-empty]');
+                            const emptyState = root.querySelector('[data-retired-army-empty]');
                             if (emptyState) {
                                 emptyState.classList.remove('d-none');
                             }
                             if (typeof displaySuccessMessage === 'function') {
-                                displaySuccessMessage(data.message);
+                                displaySuccessMessage(data.message); window.refreshCandidateProfileSection('employment');
                             }
                         }).catch(function (error) {
                             if (typeof displayErrorMessage === 'function') {
@@ -878,7 +878,7 @@
                 });
             });
 
-            document.querySelectorAll('[data-employment-working]').forEach(function (checkbox) {
+            root.querySelectorAll('[data-employment-working]').forEach(function (checkbox) {
                 const form = checkbox.closest('[data-employment-form]');
                 const endInput = form ? form.querySelector('[data-employment-end-date]') : null;
                 const syncEndInput = function () {
@@ -895,7 +895,7 @@
                 syncEndInput();
             });
 
-            document.querySelectorAll('[data-employment-expertise-add]').forEach(function (button) {
+            root.querySelectorAll('[data-employment-expertise-add]').forEach(function (button) {
                 button.addEventListener('click', function () {
                     const field = button.closest('.candidate-education-form-field');
                     const firstRow = field ? field.querySelector('[data-employment-expertise-row]') : null;
@@ -916,7 +916,7 @@
                 });
             });
 
-            document.addEventListener('click', function (event) {
+            root.addEventListener('click', function (event) {
                 const deleteExpBtn = event.target.closest('.delete-experience');
                 if (deleteExpBtn) {
                     event.preventDefault();
@@ -1017,7 +1017,7 @@
                 }
             });
 
-            document.querySelectorAll('[data-employment-form]').forEach(function (form) {
+            root.querySelectorAll('[data-employment-form]').forEach(function (form) {
                 form.addEventListener('submit', function (event) {
                     event.preventDefault();
 
@@ -1071,6 +1071,9 @@
 
             initEmploymentDatePickers();
             initEmploymentQuillEditors();
+        };
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('#candidateEmploymentAccordion > .candidate-profile-section').forEach(window.initCandidateEmploymentPage);
         });
     </script>
 @endpush

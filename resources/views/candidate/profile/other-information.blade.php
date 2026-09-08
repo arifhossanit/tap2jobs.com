@@ -887,7 +887,7 @@
                                 }
                                 refreshLinkAddAction();
                                 if (response && response.message && typeof displaySuccessMessage === 'function') {
-                                    displaySuccessMessage(response.message);
+                                    displaySuccessMessage(response.message); window.refreshCandidateProfileSection('other-information');
                                 }
                             }).catch(function (error) {
                                 const message = linkMessage(error);
@@ -951,7 +951,7 @@
 
                         closeLinkForm();
                         if (response && response.message && typeof displaySuccessMessage === 'function') {
-                            displaySuccessMessage(response.message);
+                            displaySuccessMessage(response.message); window.refreshCandidateProfileSection('other-information');
                         }
                     }).catch(function (error) {
                         const message = linkMessage(error);
@@ -1228,7 +1228,7 @@
                                 }
                                 renderReferenceNumbers();
                                 if (response && response.message && typeof displaySuccessMessage === 'function') {
-                                    displaySuccessMessage(response.message);
+                                    displaySuccessMessage(response.message); window.refreshCandidateProfileSection('other-information');
                                 }
                             }).catch(function (error) {
                                 const message = referenceMessage(error);
@@ -1297,7 +1297,7 @@
                         closeReferenceForm();
                         renderReferenceNumbers();
                         if (response && response.message && typeof displaySuccessMessage === 'function') {
-                            displaySuccessMessage(response.message);
+                            displaySuccessMessage(response.message); window.refreshCandidateProfileSection('other-information');
                         }
                     }).catch(function (error) {
                         const message = referenceMessage(error);
@@ -1506,7 +1506,7 @@
                         });
                         renderLanguageSummary();
                         if (response && response.message && typeof displaySuccessMessage === 'function') {
-                            displaySuccessMessage(response.message);
+                            displaySuccessMessage(response.message); window.refreshCandidateProfileSection('other-information');
                         }
                     }).catch(function (error) {
                         if (error && error.message && typeof displayErrorMessage === 'function') {
@@ -1915,7 +1915,7 @@
 
                         closeActivityForm();
                         if (response && response.message && typeof displaySuccessMessage === 'function') {
-                            displaySuccessMessage(response.message);
+                            displaySuccessMessage(response.message); window.refreshCandidateProfileSection('other-information');
                         }
                     }).catch(function (error) {
                         showActivityError(error);
@@ -1985,7 +1985,7 @@
                             item.remove();
                             renderActivityNumbers();
                             if (response && response.message && typeof displaySuccessMessage === 'function') {
-                                displaySuccessMessage(response.message);
+                                displaySuccessMessage(response.message); window.refreshCandidateProfileSection('other-information');
                             }
                         }).catch(showActivityError);
                     });
@@ -2143,7 +2143,7 @@
                             }
                         });
                         if (response && response.message && typeof displaySuccessMessage === 'function') {
-                            displaySuccessMessage(response.message);
+                            displaySuccessMessage(response.message); window.refreshCandidateProfileSection('other-information');
                         }
                     }).catch(function (error) {
                         if (error && error.message && typeof displayErrorMessage === 'function') {

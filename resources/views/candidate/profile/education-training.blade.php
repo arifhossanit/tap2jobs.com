@@ -832,7 +832,13 @@
 @endsection
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        window.initCandidateEducationPage = function (element = document) {
+            if (!element) return;
+            const root = {
+                querySelector: selector => element.matches && element.matches(selector) ? element : element.querySelector(selector),
+                querySelectorAll: selector => element.querySelectorAll(selector),
+                addEventListener: (...args) => element.addEventListener(...args)
+            };
             const formatCandidateProfileNumber = function (number) {
                 const value = String(number);
 
@@ -863,27 +869,14 @@
             };
 
             const reloadEducationPanel = function (panelId) {
-                const targetUrl = route('candidate.profile', { section: 'education-training' }) + '#' + panelId;
-                const target = new URL(targetUrl, window.location.origin);
-                const targetPath = target.pathname + target.search;
-                const currentPath = window.location.pathname + window.location.search;
-
-                if (currentPath === targetPath) {
-                    if (target.hash) {
-                        window.location.hash = target.hash;
-                    }
-                    window.location.reload();
-                    return;
-                }
-
-                window.location.href = targetUrl;
+                return window.refreshCandidateProfileSection('education-training', panelId);
             };
 
-            const trainingPanel = document.getElementById('candidateTrainingDetails');
+            const trainingPanel = root.querySelector('#' + 'candidateTrainingDetails');
             const trainingFormWrap = trainingPanel ? trainingPanel.querySelector('[data-training-form]') : null;
             const trainingList = trainingPanel ? trainingPanel.querySelector('.candidate-training-container') : null;
             const trainingAdd = trainingPanel ? trainingPanel.querySelector('[data-panel-add-action]') : null;
-            const trainingForm = document.getElementById('candidateTrainingForm');
+            const trainingForm = root.querySelector('#' + 'candidateTrainingForm');
 
             if (trainingPanel && trainingFormWrap && trainingList && trainingForm) {
                 const trainingTitle = trainingFormWrap.querySelector('[data-training-form-title]');
@@ -1051,10 +1044,10 @@
                 });
             }
 
-            const certificationPanel = document.getElementById('candidateProfessionalCertification');
+            const certificationPanel = root.querySelector('#' + 'candidateProfessionalCertification');
             const certificationFormWrap = certificationPanel ? certificationPanel.querySelector('[data-certification-form]') : null;
             const certificationList = certificationPanel ? certificationPanel.querySelector('.candidate-certification-container') : null;
-            const certificationForm = document.getElementById('candidateCertificationForm');
+            const certificationForm = root.querySelector('#' + 'candidateCertificationForm');
                 const certificationFooterAction = certificationPanel ? certificationPanel.querySelector('.candidate-certification-footer-action') : null;
 
                 if (certificationPanel && certificationFormWrap && certificationList && certificationForm) {
@@ -1294,7 +1287,7 @@
                     });
                 }
                 }
-            document.addEventListener('click', function (event) {
+            root.addEventListener('click', function (event) {
                 const deleteExpBtn = event.target.closest('.delete-experience');
                 if (!deleteExpBtn) {
                     return;
@@ -1379,6 +1372,9 @@
                     }
                 }
             });
+        };
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('#candidateEducationAccordion > .candidate-profile-section').forEach(window.initCandidateEducationPage);
         });
 
         {{-- let addExperienceUrl = "{{ route('candidate.create-experience') }}"; --}}

@@ -319,7 +319,7 @@
                             $permanentStateDivision,
                             ($data['countries'] ?? [])[$candidate->permanent_country_id ?? null] ?? null,
                         ])->filter(fn ($value) => filled($value))->values();
-                        $permanentAddress = $permanentSameAsPresent
+                        $permanentAddress = (bool) ($candidate->permanent_same_as_present ?? false)
                             ? __('messages.candidate_profile.same_as_present_address')
                             : ($permanentAddressParts->isNotEmpty() ? $permanentAddressParts->implode(', ') : '---');
                         $hasPermanentDetails = ! $permanentSameAsPresent;

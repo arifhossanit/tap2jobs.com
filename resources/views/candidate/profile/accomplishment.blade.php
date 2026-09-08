@@ -1139,7 +1139,7 @@
                                 renderPortfolioNumbers();
                                 refreshPortfolioAddActions();
                                 if (response && response.message && typeof displaySuccessMessage === 'function') {
-                                    displaySuccessMessage(response.message);
+                                    displaySuccessMessage(response.message); window.refreshCandidateProfileSection('accomplishment');
                                 }
                             }).catch(function (error) {
                                 const message = portfolioMessage(error);
@@ -1233,7 +1233,7 @@
                         renderPortfolioNumbers();
                         refreshPortfolioAddActions();
                         if (response && response.message && typeof displaySuccessMessage === 'function') {
-                            displaySuccessMessage(response.message);
+                            displaySuccessMessage(response.message); window.refreshCandidateProfileSection('accomplishment');
                         }
                     }).catch(function (error) {
                         const message = portfolioMessage(error);
@@ -1535,7 +1535,7 @@
                                 renderPublicationNumbers();
                                 refreshPublicationAddActions();
                                 if (response && response.message && typeof displaySuccessMessage === 'function') {
-                                    displaySuccessMessage(response.message);
+                                    displaySuccessMessage(response.message); window.refreshCandidateProfileSection('accomplishment');
                                 }
                             }).catch(function (error) {
                                 const message = publicationMessage(error);
@@ -1639,7 +1639,7 @@
                         renderPublicationNumbers();
                         refreshPublicationAddActions();
                         if (response && response.message && typeof displaySuccessMessage === 'function') {
-                            displaySuccessMessage(response.message);
+                            displaySuccessMessage(response.message); window.refreshCandidateProfileSection('accomplishment');
                         }
                     }).catch(function (error) {
                         const message = publicationMessage(error);
@@ -1933,7 +1933,7 @@
                                 renderAwardNumbers();
                                 refreshAwardAddActions();
                                 if (response && response.message && typeof displaySuccessMessage === 'function') {
-                                    displaySuccessMessage(response.message);
+                                    displaySuccessMessage(response.message); window.refreshCandidateProfileSection('accomplishment');
                                 }
                             }).catch(function (error) {
                                 const message = awardMessage(error);
@@ -2030,7 +2030,7 @@
                         renderAwardNumbers();
                         refreshAwardAddActions();
                         if (response && response.message && typeof displaySuccessMessage === 'function') {
-                            displaySuccessMessage(response.message);
+                            displaySuccessMessage(response.message); window.refreshCandidateProfileSection('accomplishment');
                         }
                     }).catch(function (error) {
                         const message = awardMessage(error);
@@ -2337,7 +2337,7 @@
                                 renderProjectNumbers();
                                 refreshProjectAddActions();
                                 if (response && response.message && typeof displaySuccessMessage === 'function') {
-                                    displaySuccessMessage(response.message);
+                                    displaySuccessMessage(response.message); window.refreshCandidateProfileSection('accomplishment');
                                 }
                             }).catch(function (error) {
                                 const message = projectMessage(error);
@@ -2434,7 +2434,7 @@
                         renderProjectNumbers();
                         refreshProjectAddActions();
                         if (response && response.message && typeof displaySuccessMessage === 'function') {
-                            displaySuccessMessage(response.message);
+                            displaySuccessMessage(response.message); window.refreshCandidateProfileSection('accomplishment');
                         }
                     }).catch(function (error) {
                         const message = projectMessage(error);
@@ -2733,7 +2733,7 @@
                                 renderOtherNumbers();
                                 refreshOtherAddActions();
                                 if (response && response.message && typeof displaySuccessMessage === 'function') {
-                                    displaySuccessMessage(response.message);
+                                    displaySuccessMessage(response.message); window.refreshCandidateProfileSection('accomplishment');
                                 }
                             }).catch(function (error) {
                                 const message = otherMessage(error);
@@ -2830,7 +2830,7 @@
                         renderOtherNumbers();
                         refreshOtherAddActions();
                         if (response && response.message && typeof displaySuccessMessage === 'function') {
-                            displaySuccessMessage(response.message);
+                            displaySuccessMessage(response.message); window.refreshCandidateProfileSection('accomplishment');
                         }
                     }).catch(function (error) {
                         const message = otherMessage(error);

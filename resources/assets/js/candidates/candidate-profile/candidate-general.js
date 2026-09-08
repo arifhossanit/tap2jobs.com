@@ -1181,7 +1181,7 @@ $(document).on("submit", "#candidateProfileUpdate", function (e) {
         $("#phoneNumber").focus();
         return false;
     }
-    $("#candidateProfileUpdate").find("input:text:visible:first").focus();
+
 
     let facebookExp = new RegExp(
         /^(https?:\/\/)?((m{1}\.)?)?((w{3}\.)?)facebook.[a-z]{2,3}\/?.*/i,
@@ -1272,40 +1272,9 @@ $(document).on("submit", "#candidateProfileUpdate", function (e) {
                 Accept: "application/json",
             },
             success: function (result) {
-                if (
-                    result.data &&
-                    result.data.profile_incomplete &&
-                    window.sessionStorage
-                ) {
-                    window.sessionStorage.setItem(
-                        "pendingProfileIncompleteModal",
-                        JSON.stringify({
-                            percentage: result.data.percentage || 0,
-                            profile_url: result.data.profile_url || "",
-                        }),
-                    );
-                }
                 displaySuccessMessage(result.message);
-                setTimeout(function () {
-                    const params = new URLSearchParams(window.location.search);
-                    const section = params.get('section') || 'personal-information';
-                    const activeCollapse = submitter.closest('.candidate-profile-section__collapse');
-                    const profileUrl = route('candidate.profile', { section: section });
-
-                    const targetUrl = activeCollapse && activeCollapse.id
-                        ? profileUrl + '#' + activeCollapse.id
-                        : profileUrl;
-                    const target = new URL(targetUrl, window.location.origin);
-                    const targetPath = target.pathname + target.search;
-                    const currentPath = window.location.pathname + window.location.search;
-
-                    if (currentPath === targetPath) {
-                        window.location.reload();
-                        return;
-                    }
-
-                    window.location.href = targetUrl;
-                }, 800);
+                const panel = submitter.closest('.candidate-profile-section__collapse');
+                window.refreshCandidateProfileSection('personal-information', panel.id);
             },
             error: function (result) {
                 let message =
@@ -1349,3 +1318,46 @@ $(document).on("submit", "#candidateProfileUpdate", function (e) {
 
     return true;
 });
+
+// Refresh saved results without navigating or replacing sibling edit forms.
+window.refreshCandidateProfileSection = async function (section, panelId) {
+    try {
+        const response = await fetch(route('candidate.profile', { section: section }), {
+            headers: { Accept: 'text/html' }, cache: 'no-store'
+        });
+        if (!response.ok || response.redirected) throw new Error('Unable to refresh profile.');
+        const page = new DOMParser().parseFromString(await response.text(), 'text/html');
+        const progress = page.querySelector('.candidate-profile-progress');
+        if (!progress) throw new Error('Unable to refresh profile.');
+        const currentProgress = document.querySelector('.candidate-profile-progress');
+        if (currentProgress) currentProgress.replaceWith(progress);
+        if (!panelId) return;
+        const currentBody = document.getElementById(panelId);
+        const freshBody = page.getElementById(panelId);
+        if (!currentBody || !freshBody) throw new Error('Unable to refresh saved section.');
+        if (section === 'personal-information') {
+            for (const name of ['personal', 'address', 'career', 'preferred', 'relevant', 'disability']) {
+                const selector = '.candidate-' + name + '-summary';
+                const current = currentBody.querySelector(selector);
+                const fresh = freshBody.querySelector(selector);
+                if (current && fresh) {
+                    current.innerHTML = fresh.innerHTML;
+                    const close = currentBody.querySelector('[data-' + name + '-edit-close]');
+                    if (close) close.click();
+                }
+            }
+            return;
+        }
+        const current = currentBody.closest('.candidate-profile-section');
+        const fresh = freshBody.closest('.candidate-profile-section');
+        if (!current || !fresh) throw new Error('Unable to refresh saved section.');
+        current.replaceWith(fresh);
+        freshBody.removeAttribute('data-bs-parent');
+        freshBody.classList.add('show');
+        if (section === 'education-training' && window.initCandidateEducationPage) window.initCandidateEducationPage(fresh);
+        if (section === 'employment' && window.initCandidateEmploymentPage) window.initCandidateEmploymentPage(fresh);
+        if (window.initCandidateProfileRefreshedPanel) window.initCandidateProfileRefreshedPanel(fresh);
+    } catch (error) {
+        displayErrorMessage('Saved, but the displayed result could not be refreshed. Please refresh the page to see it.');
+    }
+};

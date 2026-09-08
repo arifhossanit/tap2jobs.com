@@ -1199,7 +1199,7 @@ return [
         'difficulty_to_communicate' => 'যোগাযোগ করতে অসুবিধা',
         'difficulty_of_taking_care' => 'নিজের যত্ন নিতে অসুবিধা (যেমন গোসল, পোশাক পরা)',
         'disability_support_prefix' => 'আপনি যদি প্রতিবন্ধী ব্যক্তি হন এবং আপনার প্রতিবন্ধিতা আইডি না থাকে, অনুগ্রহ করে যোগাযোগ করুন',
-        'disability_support_contact' => 'i2i support +8801730369802',
+        'disability_support_contact' => '+8801336427721',
         'disability_support_suffix' => 'Call/ SMS/ WhatsApp এর মাধ্যমে।',
         'application_cv' => 'ডিফল্ট',
         'resume' => 'জীবনবৃত্তান্ত',

@@ -399,20 +399,30 @@ if (document.readyState === 'loading') {
 document.addEventListener('turbo:load', bootCandidateCareerInformationData);
 
 const reloadCandidateProfileSection = function(section, panelId) {
-    const targetUrl = route('candidate.profile', { section: section }) + (panelId ? '#' + panelId : '');
-    const target = new URL(targetUrl, window.location.origin);
-    const targetPath = target.pathname + target.search;
-    const currentPath = window.location.pathname + window.location.search;
-
-    if (currentPath === targetPath) {
-        if (target.hash) {
-            window.location.hash = target.hash;
-        }
-        window.location.reload();
-        return;
-    }
-
-    window.location.href = targetUrl;
+    return window.refreshCandidateProfileSection(section, panelId);
+};
+window.initCandidateProfileRefreshedPanel = function (panel) {
+    const body = panel.querySelector('.candidate-profile-section__collapse');
+    const toggle = panel.querySelector('.candidate-profile-section__toggle');
+    const header = panel.querySelector('.candidate-profile-section__header');
+    if (!body || !toggle || !header) return;
+    const sync = function () {
+        const expanded = body.classList.contains('show');
+        header.classList.toggle('collapsed', !expanded);
+        toggle.setAttribute('aria-expanded', String(expanded));
+        const label = toggle.querySelector('span');
+        if (label) label.textContent = expanded ? toggle.dataset.collapseLabel : toggle.dataset.expandLabel;
+        header.querySelectorAll('button:not(.candidate-profile-section__toggle)').forEach(action => {
+            action.classList.toggle('d-none', !expanded);
+        });
+    };
+    header.addEventListener('click', function (event) {
+        if (!event.target.closest('button, a, input, select, textarea, label')) toggle.click();
+    });
+    body.addEventListener('shown.bs.collapse', sync);
+    body.addEventListener('hidden.bs.collapse', sync);
+    sync();
+    if (window.initCandidateEducationWidgets) window.initCandidateEducationWidgets(panel);
 };
 function loadCandidateCareerInformationData() {
 
@@ -523,6 +533,10 @@ function loadCandidateCareerInformationData() {
             dropdownParent: $('#editEducationModal')
         });
     }
+    window.initCandidateEducationWidgets = function (scope) {
+        initEducationCustomSelects($(scope));
+        initEducationQuillEditors();
+    };
     initEducationCustomSelects($(document));
 
     if ($('#editExperienceModal').length) {
