@@ -562,7 +562,6 @@
     .bd-quick-links h2 {
         font-size: 16px;
         line-height: 1.2 !important;
-        margin: 0;
     }
 
     .bd-quick-links a {
@@ -672,7 +671,7 @@
 
     /* Directory */
     .bd-directory {
-        padding: var(--bd-section-gap) 0 24px;
+        padding: var(--bd-section-gap);
     }
 
     .bd-directory__layout {
@@ -740,7 +739,7 @@
         color: #4e4e4e;
         font-size: 14px;
         display: flex;
-        align-items: baseline;
+        align-items: center;
         padding: 7px 0;
         white-space: normal;
         word-break: break-word;

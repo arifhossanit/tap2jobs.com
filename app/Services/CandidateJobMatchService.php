@@ -85,9 +85,9 @@ class CandidateJobMatchService
         if ($candidate->functional_area_id && $job->functional_area_id === $candidate->functional_area_id) {
             $score += 17;
             $reasons[] = 'Functional area matched';
-        } elseif ($preferredFunctionalIds->contains((int) $job->functional_area_id)) {
+        } elseif ($preferredFunctionalIds->contains((int) $job->job_category_id) || $preferredFunctionalIds->contains((int) $job->functional_area_id)) {
             $score += 14;
-            $reasons[] = 'Preferred functional category matched';
+            $reasons[] = 'Preferred job category matched';
         }
 
         $keywordScore = $this->keywordScore($job, $candidateKeywords);

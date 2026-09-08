@@ -138,6 +138,7 @@ class Candidate extends Model implements HasMedia
         'objective',
         'job_level',
         'job_nature',
+        'preferred_job_categories',
         'preferred_functional_categories',
         'preferred_special_skills',
         'preferred_job_locations_inside',
@@ -210,6 +211,7 @@ class Candidate extends Model implements HasMedia
         'objective' => 'string',
         'job_level' => 'string',
         'job_nature' => 'string',
+        'preferred_job_categories' => 'array',
         'preferred_functional_categories' => 'array',
         'preferred_special_skills' => 'array',
         'preferred_job_locations_inside' => 'array',
@@ -412,5 +414,12 @@ class Candidate extends Model implements HasMedia
     public function penddingJobApplications(): HasMany
     {
         return $this->hasMany(JobApplication::class, 'candidate_id')->where('status', JobApplication::STATUS_APPLIED);
+    }
+
+    public function getPreferredJobCategoriesAttribute($value)
+    {
+        $decoded = is_string($value) ? json_decode($value, true) : $value;
+
+        return ! empty($decoded) ? $decoded : ($this->preferred_functional_categories ?? []);
     }
 }

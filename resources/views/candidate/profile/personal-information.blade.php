@@ -625,10 +625,10 @@
                  data-bs-parent="#candidateProfileAccordion">
                 <div class="candidate-profile-section__body">
                     @php
-                        $functionalOptions = collect($data['functionalArea'] ?? []);
+                        $jobCategoryOptions = collect($data['jobCategory'] ?? []);
                         $districtOptions = collect($data['districts'] ?? []);
 
-                        $preferredFunctional = collect($candidate->preferred_functional_categories ?? [])->map(fn ($id) => (string) $id)->toArray();
+                        $preferredJobCategories = collect($candidate->preferred_job_categories ?? $candidate->preferred_functional_categories ?? [])->map(fn ($id) => (string) $id)->toArray();
                         $preferredInside = collect($candidate->preferred_job_locations_inside ?? [])->map(fn ($id) => (string) $id)->toArray();
 
                         $preferredNames = function ($ids, $options) {
@@ -636,7 +636,7 @@
                                 return $options[$id] ?? null;
                             })->filter(fn ($value) => filled($value))->values();
                         };
-                        $preferredFunctionalNames = $preferredNames($preferredFunctional, $functionalOptions);
+                        $preferredJobCategoryNames = $preferredNames($preferredJobCategories, $jobCategoryOptions);
                         $preferredInsideNames = $preferredNames($preferredInside, $districtOptions);
                     @endphp
                     <div class="candidate-preferred-summary">
@@ -644,9 +644,9 @@
                             <h3>{{ __('messages.candidate_profile.preferred_job_categories') }}</h3>
                             <div class="candidate-preferred-summary-grid">
                                 <div class="candidate-preferred-summary-item">
-                                    <span>{{ __('messages.candidate_profile.functional') }}</span>
+                                    <span>{{ __('messages.candidate_profile.job_category') }}</span>
                                     <div class="candidate-preferred-summary-chips">
-                                        @forelse($preferredFunctionalNames as $name)
+                                        @forelse($preferredJobCategoryNames as $name)
                                             <span>{{ html_entity_decode($name) }}</span>
                                         @empty
                                             <strong>---</strong>
@@ -677,9 +677,9 @@
                             <h3>{{ __('messages.candidate_profile.preferred_job_categories') }}<span class="required"></span></h3>
                             <p>{{ __('messages.candidate_profile.preferred_job_categories_help') }}</p>
                             <div>
-                                <div class="candidate-preferred-label">{{ __('messages.candidate_profile.functional') }} <span>({{ __('messages.candidate_profile.max_3') }})</span></div>
-                                {{ Form::select('preferred_functional_categories[]', $functionalOptions->toArray(), $preferredFunctional, ['class' => 'form-select candidate-preferred-select', 'id' => 'preferredFunctionalAreas', 'multiple' => true, 'data-placeholder' => __('messages.company.select_functional_area'), 'data-chip-target' => '#functionalAreaChips', 'data-maximum-selection-length' => 3]) }}
-                                <div class="candidate-preferred-chips" id="functionalAreaChips"></div>
+                                <div class="candidate-preferred-label">{{ __('messages.candidate_profile.job_category') }} <span>({{ __('messages.candidate_profile.max_3') }})</span></div>
+                                {{ Form::select('preferred_job_categories[]', $jobCategoryOptions->toArray(), $preferredJobCategories, ['class' => 'form-select candidate-preferred-select', 'id' => 'preferredJobCategories', 'multiple' => true, 'data-placeholder' => __('messages.candidate_profile.select_job_category'), 'data-chip-target' => '#jobCategoryChips', 'data-maximum-selection-length' => 3]) }}
+                                <div class="candidate-preferred-chips" id="jobCategoryChips"></div>
                             </div>
                         </div>
 

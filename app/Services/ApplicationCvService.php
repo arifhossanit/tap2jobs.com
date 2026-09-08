@@ -14,6 +14,7 @@ use App\Models\CandidateTraining;
 use App\Models\City;
 use App\Models\Country;
 use App\Models\FunctionalArea;
+use App\Models\JobCategory;
 use App\Models\OwnerShipType;
 use App\Models\Skill;
 use App\Models\State;
@@ -169,10 +170,13 @@ class ApplicationCvService
             'extraCurriculars' => CandidateExtraCurricular::where('candidate_id', $candidateId)->get(),
             'certifications' => $certifications,
             'languages' => $languages,
-            'preferredFunctionalAreas' => FunctionalArea::whereIn(
+            'preferredFunctionalAreas' => JobCategory::whereIn(
+                'id',
+                $candidate->preferred_job_categories ?? $candidate->preferred_functional_categories ?? []
+            )->pluck('name')->whenEmpty(fn () => FunctionalArea::whereIn(
                 'id',
                 $candidate->preferred_functional_categories ?? []
-            )->pluck('name'),
+            )->pluck('name')),
             'preferredSkills' => Skill::whereIn(
                 'id',
                 $candidate->preferred_special_skills ?? []

@@ -116,7 +116,7 @@ class CandidateProfileCompletionService
             'Preferred area' => [
                 'weight' => 4,
                 'score' => $this->score([
-                    [! empty($candidate->preferred_functional_categories), 2],
+                    [! empty($candidate->preferred_job_categories) || ! empty($candidate->preferred_functional_categories), 2],
                     [! empty($candidate->preferred_job_locations_inside), 1],
                     [
                         ! empty($candidate->preferred_special_skills)
@@ -126,7 +126,7 @@ class CandidateProfileCompletionService
                     ],
                 ]),
                 'missing' => $this->missing([
-                    [! empty($candidate->preferred_functional_categories), 'Add preferred functional category'],
+                    [! empty($candidate->preferred_job_categories) || ! empty($candidate->preferred_functional_categories), 'Add preferred job category'],
                     [! empty($candidate->preferred_job_locations_inside), 'Add preferred job location'],
                     [
                         ! empty($candidate->preferred_special_skills)

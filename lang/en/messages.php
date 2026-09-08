@@ -1023,6 +1023,8 @@ return [
         'freelance' => 'Freelance',
         'preferred_job_categories' => 'Preferred Job Categories',
         'preferred_job_categories_help' => 'Preferred job categories represents your desired sector(s) to work. (Select at least one category from any of the following sections)',
+        'job_category' => 'Job Category',
+        'select_job_category' => 'Select Job Category',
         'functional' => 'Functional Area',
         'special_skills' => 'Special Skills',
         'max_3' => 'max 3',

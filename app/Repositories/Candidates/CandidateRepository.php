@@ -230,6 +230,7 @@ class CandidateRepository extends BaseRepository
             $input['current_salary'] = removeCommaFromNumbers($input['current_salary']);
             $input['expected_salary'] = removeCommaFromNumbers($input['expected_salary']);
             foreach ([
+                'preferred_job_categories',
                 'preferred_functional_categories',
                 'preferred_special_skills',
                 'preferred_job_locations_inside',
@@ -461,7 +462,14 @@ class CandidateRepository extends BaseRepository
             /** @var User $user */
             $user = Auth::user();
 
+            if (isset($input['preferred_job_categories']) && ! isset($input['preferred_functional_categories'])) {
+                $input['preferred_functional_categories'] = $input['preferred_job_categories'];
+            } elseif (isset($input['preferred_functional_categories']) && ! isset($input['preferred_job_categories'])) {
+                $input['preferred_job_categories'] = $input['preferred_functional_categories'];
+            }
+
             $preferredFields = [
+                'preferred_job_categories',
                 'preferred_functional_categories',
                 'preferred_special_skills',
                 'preferred_job_locations_inside',
