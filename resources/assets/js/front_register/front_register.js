@@ -1,4 +1,46 @@
 document.addEventListener('DOMContentLoaded', loadFrontRegisterData);
+window.addEventListener('load', function () {
+    const employerForm = document.getElementById('addEmployerNewForm');
+    const email = document.getElementById('employerEmail');
+    if (!employerForm || !email) {
+        return;
+    }
+
+    window.setTimeout(function () {
+        const previouslyFocusedField = document.activeElement;
+        email.focus({ preventScroll: true });
+
+        if (previouslyFocusedField &&
+            previouslyFocusedField !== email &&
+            employerForm.contains(previouslyFocusedField)) {
+            previouslyFocusedField.classList.remove('is-invalid');
+        }
+        email.classList.remove('is-invalid');
+    }, 0);
+});
+document.addEventListener('click', function (event) {
+    const toggle = event.target.closest('.employer-register-password-toggle');
+    if (!toggle) {
+        return;
+    }
+
+    const input = document.getElementById(toggle.dataset.passwordToggle);
+    if (!input) {
+        return;
+    }
+
+    const showPassword = input.type === 'password';
+    input.type = showPassword ? 'text' : 'password';
+
+    const icon = toggle.querySelector('i');
+    if (icon) {
+        icon.classList.toggle('fa-eye', showPassword);
+        icon.classList.toggle('fa-eye-slash', !showPassword);
+    }
+
+    toggle.setAttribute('aria-label', showPassword ? 'Hide password' : 'Show password');
+    toggle.setAttribute('aria-pressed', showPassword ? 'true' : 'false');
+});
 
 function visitRegisterRedirect (url) {
     if (window.Turbo && typeof window.Turbo.visit === 'function') {

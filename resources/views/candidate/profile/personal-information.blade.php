@@ -1,8 +1,4 @@
 @extends('candidate.profile.index')
-@push('css')
-    <link rel="stylesheet" href="{{ asset('assets/css/inttel/css/intlTelInput.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/bootstrap-datetimepicker.css') }}">
-@endpush
 @section('section')
     @php
         $candidate = optional($user->candidate);
@@ -16,7 +12,9 @@
         $profileDisplayDate = filled($user->dob) ? \Carbon\Carbon::parse($user->dob)->format('d M Y') : '---';
         $passportIssueDate = filled($candidate->passport_issue_date ?? null) ? \Carbon\Carbon::parse($candidate->passport_issue_date)->format('d M Y') : '---';
         $profileGender = $genderOptions[(string) ($user->gender ?? '0')] ?? '---';
-        $profileMaritalStatus = isset($candidate->marital_status_id) && isset($data['maritalStatus'][$candidate->marital_status_id]) ? $data['maritalStatus'][$candidate->marital_status_id] : '---';
+        $defaultSingleId = collect($data['maritalStatus'] ?? [])->search(fn ($status) => strcasecmp(trim($status), 'Single') === 0) ?: 5;
+        $selectedMaritalStatusId = $candidate->marital_status_id ?? $defaultSingleId;
+        $profileMaritalStatus = isset($candidate->marital_status_id) && isset($data['maritalStatus'][$candidate->marital_status_id]) ? $data['maritalStatus'][$candidate->marital_status_id] : ($data['maritalStatus'][$defaultSingleId] ?? 'Single');
     @endphp
     {{ Form::model($user, ['route' => 'candidate-profile.update', 'files' => true, 'id' => 'candidateProfileUpdate', 'method' => 'put']) }}
     {{ Form::hidden('isEdit', true, ['id' => 'isEdit']) }}
@@ -182,7 +180,7 @@
                         <div class="col-xl-6 col-md-6 col-sm-12 ">
                             {{ Form::label('marital_status', __('messages.candidate.marital_status'), ['class' => 'form-label']) }}
                             <span class="required"></span>
-                            {{ Form::select('marital_status_id', $data['maritalStatus'], isset($candidate->marital_status_id) ? $candidate->marital_status_id : null, ['class' => 'form-select', 'id' => 'maritalStatusId', 'required']) }}
+                            {{ Form::select('marital_status_id', $data['maritalStatus'], $selectedMaritalStatusId, ['class' => 'form-select', 'id' => 'maritalStatusId', 'required']) }}
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-12 ">
                             <div class="candidate-nationality-label">
@@ -285,8 +283,8 @@
                         };
                         $bangladeshId = \App\Models\Country::where('short_code', 'BD')->orWhere('name', 'Bangladesh')->value('id');
                         $presentAddressType = $candidate->present_address_type ?? (($bangladeshId && (int) $user->country_id === (int) $bangladeshId) ? 'inside' : 'inside');
-                        $permanentSameAsPresent = $candidate->permanent_same_as_present ?? true;
-                        $permanentAddressType = $candidate->permanent_address_type ?? null;
+                        $permanentSameAsPresent = false;
+                        $permanentAddressType = $candidate->permanent_address_type ?? 'inside';
                         $districtList = $data['districts'] ?? ($states ?? []);
                         $presentThanas = ! empty($user->city_id) ? getThanas($user->city_id) : [];
                         $permanentStates = ! empty($candidate->permanent_country_id) ? getStates($candidate->permanent_country_id) : ($bangladeshId ? getStates($bangladeshId) : []);
@@ -324,16 +322,7 @@
                         $permanentAddress = $permanentSameAsPresent
                             ? __('messages.candidate_profile.same_as_present_address')
                             : ($permanentAddressParts->isNotEmpty() ? $permanentAddressParts->implode(', ') : '---');
-                        $hasPermanentDetails = ! $permanentSameAsPresent && collect([
-                            $candidate->permanent_address_type ?? null,
-                            $candidate->permanent_country_id ?? null,
-                            $candidate->permanent_state_id ?? null,
-                            $candidate->permanent_state_division ?? null,
-                            $candidate->permanent_city_id ?? null,
-                            $candidate->permanent_thana_id ?? null,
-                            $candidate->permanent_post_office ?? null,
-                            $candidate->permanent_address ?? null,
-                        ])->contains(fn ($value) => filled($value));
+                        $hasPermanentDetails = ! $permanentSameAsPresent;
                     @endphp
                     <div class="candidate-address-summary">
                         <div class="candidate-address-summary-item">
@@ -391,7 +380,7 @@
                         <div class="candidate-address-permanent-row">
                             <h3>Permanent Address</h3>
                             <label class="candidate-address-same-check">
-                                <input class="form-check-input" type="checkbox" name="permanent_same_as_present" value="1"
+                                <input class="form-check-input" type="checkbox" name="permanent_same_as_present" value="1" autocomplete="off"
                                        id="permanentSameAsPresent" {{ $permanentSameAsPresent ? 'checked' : '' }}>
                                 <span>Same as Present Address</span>
                             </label>
@@ -847,7 +836,7 @@
                             <div class="candidate-relevant-editor">
                                 {{ Form::textarea('career_summary', $candidate->career_summary ?? null, ['class' => 'd-none', 'data-relevant-quill-input' => true]) }}
                                 <div class="candidate-relevant-quill" data-relevant-quill-editor
-                                     data-placeholder="{{ __('messages.candidate_profile.enter_writing_texts') }}"></div>
+                                     data-placeholder="{{ __('messages.candidate_profile.career_summary_placeholder') }}"></div>
                             </div>
                         </div>
 
@@ -862,7 +851,7 @@
                                     <i class="fa-solid fa-circle-info"></i>
                                 </button> --}}
                             </div>
-                            {{ Form::textarea('special_qualification', $candidate->special_qualification ?? null, ['class' => 'form-control candidate-relevant-textarea', 'rows' => 4, 'placeholder' => __('messages.candidate_profile.special_qualification_default')]) }}
+                            {{ Form::textarea('special_qualification', $candidate->special_qualification ?? null, ['class' => 'form-control candidate-relevant-textarea', 'rows' => 4, 'placeholder' => __('messages.candidate_profile.special_qualification_placeholder')]) }}
                         </div>
 
                         <div class="candidate-relevant-field">
@@ -877,7 +866,7 @@
                                     <i class="fa-solid fa-circle-info"></i>
                                 </button> --}}
                             </div>
-                            {{ Form::textarea('keywords', $candidate->keywords ?? null, ['class' => 'form-control candidate-relevant-textarea', 'rows' => 4, 'placeholder' => __('messages.candidate_profile.keywords_default'), 'required' => true]) }}
+                            {{ Form::textarea('keywords', $candidate->keywords ?? null, ['class' => 'form-control candidate-relevant-textarea', 'rows' => 4, 'placeholder' => __('messages.candidate_profile.keywords_placeholder'), 'required' => true]) }}
                         </div>
 
                         <div class="candidate-profile-section-actions">

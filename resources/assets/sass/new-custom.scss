@@ -1961,6 +1961,58 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
     padding: 4px 12px;
 }
 
+.candidate-profile-menu__completion {
+    align-items: center;
+    color: #475467;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 13px;
+    gap: 8px 16px;
+    min-height: 37px;
+    padding: 0 8px;
+
+    > strong {
+        color: #0f1b3d;
+        font-size: 13px;
+        margin-right: 4px;
+    }
+}
+
+.candidate-profile-menu__completion-item {
+    align-items: center;
+    border: 1px solid;
+    border-radius: 3px;
+    color: #ffffff;
+    display: inline-flex;
+    font-size: 12px;
+    font-weight: 500;
+    gap: 5px;
+    line-height: 18px;
+    padding: 0 5px;
+
+    i {
+        background: #ffffff;
+        border-radius: 50%;
+        display: inline-block;
+        height: 5px;
+        width: 5px;
+    }
+}
+
+.candidate-profile-menu__completion-item--danger {
+    background-color: #f04438;
+    border-color: #f04438;
+}
+
+.candidate-profile-menu__completion-item--warning {
+    background-color: #f79009;
+    border-color: #f79009;
+}
+
+.candidate-profile-menu__completion-item--success {
+    background-color: #12b76a;
+    border-color: #12b76a;
+}
 .candidate-profile-menu__sub-link {
     align-items: center;
     color: var(--candidate-profile-menu-text);
@@ -4541,8 +4593,11 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 
     .ql-editor.ql-blank:before {
         color: #667085;
+        font-size: 14px;
         font-style: normal;
+        font-weight: 300;
         left: 14px;
+        line-height: 1.5;
         right: 14px;
     }
 }
@@ -5075,7 +5130,7 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
         border: 0;
         color: #0f1b3d;
         font-family: inherit;
-        font-size: 14px;
+        font-size: 13px;
         min-height: 112px;
     }
 
@@ -5086,15 +5141,29 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 
     .ql-editor.ql-blank:before {
         color: #667085;
+        font-size: 13px;
         font-style: normal;
+        font-weight: 300;
         left: 14px;
+        line-height: 1.5;
         right: 14px;
     }
 }
 
 .candidate-relevant-textarea {
+    color: #0f1b3d;
+    font-size: 13px;
+    line-height: 1.5;
     min-height: 100px;
     resize: vertical;
+
+    &::placeholder {
+        color: #667085;
+        font-size: 13px;
+        font-weight: 300;
+        line-height: 1.5;
+        opacity: 1;
+    }
 }
 
 .candidate-disability-area {
@@ -6391,8 +6460,11 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 
     .ql-editor.ql-blank:before {
         color: #667085;
+        font-size: 14px;
         font-style: normal;
+        font-weight: 300;
         left: 14px;
+        line-height: 1.5;
         right: 14px;
     }
 }
@@ -6857,6 +6929,27 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
     div:has(> select[wire\:model*="perPage"]),
     div:has(> .pagination) {
         display: none !important;
+    }
+}
+
+.candidate-resume-inline-preview {
+    background: #fff;
+    height: calc(100vh - 190px);
+    min-height: 720px;
+    overflow: hidden;
+
+    iframe {
+        background: #fff;
+        border: 0;
+        height: 100%;
+        width: 100%;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .candidate-resume-inline-preview {
+        height: calc(100vh - 150px);
+        min-height: 560px;
     }
 }
 

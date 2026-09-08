@@ -2,7 +2,8 @@
     $sectionName = $data['sectionName'] ?? 'personal-information';
     $profileCompletion = $data['profileCompletion'] ?? ['percentage' => 0, 'completed' => 0, 'total' => 11, 'color' => '#f04438'];
     $completionPercentage = max(0, min(100, (int) ($profileCompletion['percentage'] ?? 0)));
-    $completionColor = $profileCompletion['color'] ?? '#f04438';
+    $completionTone = $completionPercentage <= 30 ? 'danger' : ($completionPercentage <= 60 ? 'warning' : 'success');
+    $completionColor = ['danger' => '#f04438', 'warning' => '#f79009', 'success' => '#12b76a'][$completionTone];
     $missingProfileItems = collect($profileCompletion['missing'] ?? [])->take(8);
 @endphp
 
@@ -51,100 +52,17 @@
     </div>
 
     <div class="candidate-profile-menu__sub">
-        @if($sectionName == 'education-training')
-            <a class="candidate-profile-menu__sub-link active" href="#candidateEducationDetails"
-               data-career-section-link="candidateEducationDetails">
-                {{ __('messages.candidate_profile.education') }}
-            </a>
-            <a class="candidate-profile-menu__sub-link" href="#candidateTrainingDetails"
-               data-career-section-link="candidateTrainingDetails">
-                {{ __('messages.candidate_profile.training') }}
-            </a>
-            <a class="candidate-profile-menu__sub-link" href="#candidateProfessionalCertification"
-               data-career-section-link="candidateProfessionalCertification">
-                {{ __('messages.candidate_profile.professional_certification') }}
-            </a>
-        @elseif($sectionName == 'employment')
-            <a class="candidate-profile-menu__sub-link active" href="#candidateExperienceDetails"
-               data-employment-section-link="candidateExperienceDetails">
-                {{ __('messages.candidate_profile.job_experience') }}
-            </a>
-            <a class="candidate-profile-menu__sub-link" href="#candidateRetiredArmyEmployment"
-               data-employment-section-link="candidateRetiredArmyEmployment">
-                {{ __('messages.candidate_profile.army_experience') }}
-            </a>
-        @elseif($sectionName == 'other-information')
-            <a class="candidate-profile-menu__sub-link active" href="#candidateSkillInformation"
-               data-other-section-link="candidateSkillInformation">
-                {{ __('messages.candidate_profile.skill') }}
-            </a>
-            <a class="candidate-profile-menu__sub-link" href="#candidateExtracurricularActivities"
-               data-other-section-link="candidateExtracurricularActivities">
-                {{ __('messages.candidate_profile.extracurricular_activities') }}
-            </a>
-            <a class="candidate-profile-menu__sub-link" href="#candidateLanguageProficiency"
-               data-other-section-link="candidateLanguageProficiency">
-                {{ __('messages.candidate_profile.language_proficiency') }}
-            </a>
-            <a class="candidate-profile-menu__sub-link" href="#candidateLinkAccount"
-               data-other-section-link="candidateLinkAccount">
-                {{ __('messages.candidate_profile.link_account') }}
-            </a>
-            <a class="candidate-profile-menu__sub-link" href="#candidateReference"
-               data-other-section-link="candidateReference">
-                {{ __('messages.candidate_profile.reference') }}
-            </a>
-        @elseif($sectionName == 'accomplishment')
-            <a class="candidate-profile-menu__sub-link active" href="#candidatePortfolioInformation"
-               data-accomplishment-section-link="candidatePortfolioInformation">
-                {{ __('messages.candidate_profile.portfolio') }}
-            </a>
-            <a class="candidate-profile-menu__sub-link" href="#candidatePublicationInformation"
-               data-accomplishment-section-link="candidatePublicationInformation">
-                {{ __('messages.candidate_profile.publication') }}
-            </a>
-            <a class="candidate-profile-menu__sub-link" href="#candidateAwardHonorInformation"
-               data-accomplishment-section-link="candidateAwardHonorInformation">
-                {{ __('messages.candidate_profile.award_honor') }}
-            </a>
-            <a class="candidate-profile-menu__sub-link" href="#candidateProjectInformation"
-               data-accomplishment-section-link="candidateProjectInformation">
-                {{ __('messages.candidate_profile.project') }}
-            </a>
-            <a class="candidate-profile-menu__sub-link" href="#candidateOtherAccomplishmentInformation"
-               data-accomplishment-section-link="candidateOtherAccomplishmentInformation">
-                {{ __('messages.candidate_profile.other') }}
-            </a>
-        @elseif($sectionName == 'resume')
-            <a class="candidate-profile-menu__sub-link active" href="#">
-                {{ __('messages.candidate_profile.application_cv') }}
-            </a>
-        @else
-            <a class="candidate-profile-menu__sub-link active" href="#candidatePersonalDetails"
-               data-profile-section-link="candidatePersonalDetails">
-                {{ __('messages.candidate_profile.personal_details') }}
-            </a>
-            <a class="candidate-profile-menu__sub-link" href="#candidateAddressDetails"
-               data-profile-section-link="candidateAddressDetails">
-                {{ __('messages.candidate_profile.address_details') }}
-            </a>
-            <a class="candidate-profile-menu__sub-link" href="#candidateCareerApplication"
-               data-profile-section-link="candidateCareerApplication">
-                {{ __('messages.candidate_profile.career_and_application') }}
-            </a>
-            <a class="candidate-profile-menu__sub-link" href="#candidatePreferredArea"
-               data-profile-section-link="candidatePreferredArea">
-                {{ __('messages.candidate_profile.preferred_area') }}
-            </a>
-            <a class="candidate-profile-menu__sub-link" href="#candidateRelevantInformation"
-               data-profile-section-link="candidateRelevantInformation">
-                {{ __('messages.candidate_profile.relevant_information') }}
-            </a>
-            <a class="candidate-profile-menu__sub-link" href="#candidateDisabilityInformation"
-               data-profile-section-link="candidateDisabilityInformation">
-                {{ __('messages.candidate_profile.disability_information') }}
-            </a>
-        @endif
+        <div class="candidate-profile-menu__completion">
+            <span class="candidate-profile-menu__completion-item candidate-profile-menu__completion-item--danger">
+                Low <i aria-hidden="true"></i> 0–30%
+            </span>
+            <span class="candidate-profile-menu__completion-item candidate-profile-menu__completion-item--warning">
+                Medium <i aria-hidden="true"></i> 31–60%
+            </span>
+            <span class="candidate-profile-menu__completion-item candidate-profile-menu__completion-item--success">
+                High <i aria-hidden="true"></i> 61–100%
+            </span>
+        </div>
     </div>
     <div class="candidate-profile-progress">
         <div class="candidate-profile-progress__track"
@@ -170,6 +88,51 @@
 </div>
 
 <style>
+    .candidate-profile-menu__completion {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 16px;
+        min-height: 37px;
+        padding: 0 8px;
+    }
+
+    .candidate-profile-menu__completion-item {
+        align-items: center;
+        border: 1px solid;
+        border-radius: 3px;
+        color: white;
+        display: inline-flex;
+        font-size: 12px;
+        font-weight: 500;
+        gap: 5px;
+        line-height: 18px;
+        padding: 0 5px;
+    }
+
+    .candidate-profile-menu__completion-item i {
+        background: white;
+        border-radius: 50%;
+        display: inline-block;
+        height: 5px;
+        width: 5px;
+    }
+
+    .candidate-profile-menu__completion-item--danger {
+        background: #f04438;
+        border-color: #f04438;
+    }
+
+    .candidate-profile-menu__completion-item--warning {
+        background: #f79009;
+        border-color: #f79009;
+    }
+
+    .candidate-profile-menu__completion-item--success {
+        background: #12b76a;
+        border-color: #12b76a;
+    }
+
     .candidate-profile-menu__top-shell {
         position: relative;
     }

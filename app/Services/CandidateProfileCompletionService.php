@@ -249,14 +249,14 @@ class CandidateProfileCompletionService
 
     private function color(int $percentage): string
     {
-        if ($percentage >= self::MINIMUM_APPLICATION_PERCENTAGE) {
-            return '#12b76a';
+        if ($percentage <= 30) {
+            return '#f04438';
         }
 
-        if ($percentage >= 30) {
+        if ($percentage <= 60) {
             return '#f79009';
         }
 
-        return '#f04438';
+        return '#12b76a';
     }
 }

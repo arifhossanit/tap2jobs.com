@@ -365,6 +365,9 @@ function loadCandidateGeneralData() {
         $("#countryId").val("");
     };
 
+    $("#permanentSameAsPresent").prop("checked", false);
+    $("#permanentAddressSelected").val("1");
+
     let permanentAddressTypeChosen =
         $(".candidate-address-form").data("has-permanent-details") == 1;
 
@@ -419,6 +422,10 @@ function loadCandidateGeneralData() {
         if ($(this).is(":checked")) {
             permanentAddressTypeChosen = false;
             $("#permanentAddressSelected").val("0");
+        } else {
+            permanentAddressTypeChosen =
+                $('input[name="permanent_address_type"]:checked').length > 0;
+            $("#permanentAddressSelected").val("1");
         }
         togglePermanentAddress();
     });

@@ -1,8 +1,4 @@
 @extends('candidate.profile.index')
-@push('css')
-    <link rel="stylesheet" href="{{ asset('assets/css/inttel/css/intlTelInput.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/bootstrap-datetimepicker.css') }}">
-@endpush
 @section('section')
     <div class="card">
         <div class="card-body">
@@ -70,8 +66,10 @@
 
                     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
                         {{ Form::label('marital_status', __('messages.candidate.marital_status') . ':', ['class' => 'form-label']) }}
-                        <span class="required"></span>
-                        {{ Form::select('marital_status_id', $data['maritalStatus'], isset($user->candidate->marital_status_id) ? $user->candidate->marital_status_id : null, ['class' => 'form-select ', 'id' => 'maritalStatusId', 'required']) }}
+                        @php
+                            $defaultSingleId = collect($data['maritalStatus'] ?? [])->search(fn ($status) => strcasecmp(trim($status), 'Single') === 0) ?: 5;
+                        @endphp
+                        {{ Form::select('marital_status_id', $data['maritalStatus'], $user->candidate->marital_status_id ?? $defaultSingleId, ['class' => 'form-select ', 'id' => 'maritalStatusId', 'required']) }}
 
                     </div>
                     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">

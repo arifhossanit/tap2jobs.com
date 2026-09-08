@@ -1,6 +1,5 @@
 @extends('candidate.profile.index')
 @push('css')
-    <link rel="stylesheet" href="{{ asset('css/bootstrap-datetimepicker.css') }}">
     <style>
         .candidate-education-form-field[data-education-major-field] {
             position: relative;

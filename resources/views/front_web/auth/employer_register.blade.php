@@ -140,7 +140,8 @@
                                                     <input type="email" name="email" id="employerEmail"
                                                            class="form-control employer-contact-information-control"
                                                            value="{{ old('email') }}" maxlength="170"
-                                                           placeholder="{{ __('messages.employer_register.contact_person_email_placeholder') }}" required>
+                                                           placeholder="{{ __('messages.employer_register.contact_person_email_placeholder') }}"
+                                                           autocomplete="email" autofocus required>
                                                 </div>
                                             </div>
 
@@ -157,7 +158,7 @@
                                                                onkeypress="return avoidSpace(event)">
                                                         <button type="button" class="employer-register-password-toggle"
                                                                 data-password-toggle="employerPassword"
-                                                                aria-label="Show password">
+                                                                aria-label="Show password" aria-pressed="false">
                                                             <i class="fas fa-eye-slash"></i>
                                                         </button>
                                                     </div>
@@ -177,7 +178,7 @@
                                                                required onkeypress="return avoidSpace(event)">
                                                         <button type="button" class="employer-register-password-toggle"
                                                                 data-password-toggle="employerConfirmPassword"
-                                                                aria-label="Show password">
+                                                                aria-label="Show password" aria-pressed="false">
                                                             <i class="fas fa-eye-slash"></i>
                                                         </button>
                                                     </div>
@@ -708,23 +709,4 @@
     </div>
 
     {{ Form::hidden('isGoogleReCaptchaEnabled', (bool) $isGoogleReCaptchaEnabled, ['id' => 'isGoogleReCaptchaEnabled']) }}
-@endsection
-
-@section('page_scripts')
-    <script>
-        document.addEventListener('click', function (event) {
-            const toggle = event.target.closest('.employer-register-password-toggle');
-            if (!toggle) return;
-
-            const input = document.getElementById(toggle.dataset.passwordToggle);
-            const icon = toggle.querySelector('i');
-            if (!input || !icon) return;
-
-            const showPassword = input.type === 'password';
-            input.type = showPassword ? 'text' : 'password';
-            icon.classList.toggle('fa-eye', showPassword);
-            icon.classList.toggle('fa-eye-slash', !showPassword);
-            toggle.setAttribute('aria-label', showPassword ? 'Hide password' : 'Show password');
-        });
-    </script>
 @endsection

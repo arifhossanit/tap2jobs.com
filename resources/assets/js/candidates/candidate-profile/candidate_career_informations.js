@@ -22,6 +22,11 @@ function initCandidateProfileAccordion(options) {
         ? Array.from(document.querySelectorAll(options.menuSelector))
         : [];
 
+    sectionBodies.forEach(function (section) {
+        section.removeAttribute('data-bs-parent');
+        section.classList.add('show');
+    });
+
     const setActiveSection = function (panelId, sectionId) {
         if (!options.menuDatasetKey) {
             return;
@@ -81,11 +86,6 @@ function initCandidateProfileAccordion(options) {
         const header = toggle ? toggle.closest('.candidate-profile-section__header') : null;
 
         section.addEventListener('show.bs.collapse', function () {
-            sectionBodies.forEach(function (otherSection) {
-                if (otherSection !== section && otherSection.classList.contains('show') && typeof bootstrap !== 'undefined') {
-                    bootstrap.Collapse.getOrCreateInstance(otherSection, { toggle: false }).hide();
-                }
-            });
             setPanelToggleState(section, true);
         });
 
