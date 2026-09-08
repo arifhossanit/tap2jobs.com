@@ -2459,7 +2459,9 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 .candidate-profile-section__header:not(.collapsed):not(
         .candidate-profile-section__header--editing
     )
-    .candidate-profile-section__header-actions:has(> button:not(.candidate-profile-section__toggle):not(.d-none):not([hidden]))
+    .candidate-profile-section__header-actions:has(
+        > :not(.candidate-profile-section__toggle):not(.d-none):not([hidden])
+    )
     .candidate-profile-section__toggle {
     border-left: 1px solid #4b77c2;
     padding-left: 18px;
@@ -2488,7 +2490,9 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
     font-weight: 400;
 
     .candidate-profile-section__toggle {
+        border-left: 0;
         color: #0f1b3d;
+        padding-left: 0;
     }
 }
 
@@ -2915,6 +2919,19 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 
 .candidate-career-form {
     margin-top: 4px;
+    row-gap: 22px;
+
+    > [class*="col-"] {
+        min-width: 0;
+    }
+
+    .form-label {
+        margin-bottom: 8px;
+    }
+
+    .candidate-profile-section-actions {
+        margin-top: 2px;
+    }
 }
 
 .candidate-preferred-area {
@@ -4685,7 +4702,7 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
     background: #fff;
     border: 1px solid #d83b9f;
     border-radius: 6px;
-    color: #c43a97;
+    color: #419b82;
     display: inline-flex;
     font-size: 14px;
     font-weight: 600;
@@ -6249,6 +6266,8 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 }
 
 .candidate-education-form-field {
+    position: relative;
+
     &[data-education-major-field] {
         position: relative;
     }
@@ -6275,10 +6294,26 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 }
 
 .candidate-education-native-select {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    clip: rect(0, 0, 0, 0) !important;
     height: 1px !important;
-    opacity: 0;
-    pointer-events: none;
-    position: absolute;
+    left: -9999px !important;
+    margin: -1px !important;
+    min-height: 0 !important;
+    min-width: 0 !important;
+    opacity: 0 !important;
+    outline: none !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    pointer-events: none !important;
+    position: absolute !important;
+    top: -9999px !important;
+    white-space: nowrap !important;
     width: 1px !important;
 }
 
@@ -6288,7 +6323,7 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 
     &.is-open {
         .candidate-education-custom-select__toggle {
-            border-color: #c43a97;
+            border-color: #419b82;
         }
 
         .candidate-education-custom-select__toggle i {
@@ -6301,8 +6336,20 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
     }
 
     &.is-disabled {
-        opacity: 0.72;
+        cursor: not-allowed;
         pointer-events: none;
+
+        .candidate-education-custom-select__toggle {
+            background-color: #f8fafc;
+            border-color: #e2e8f0;
+            color: #94a3b8;
+            cursor: not-allowed;
+            box-shadow: none;
+
+            i {
+                color: #cbd5e1;
+            }
+        }
     }
 }
 
@@ -6321,8 +6368,21 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
     width: 100%;
 
     &:focus {
-        border-color: #c43a97;
+        border-color: #419b82;
         outline: 0;
+    }
+
+    &:disabled,
+    &[disabled] {
+        background-color: #f8fafc;
+        border-color: #e2e8f0;
+        color: #94a3b8;
+        cursor: not-allowed;
+        box-shadow: none;
+
+        i {
+            color: #cbd5e1;
+        }
     }
 
     span {
@@ -6344,12 +6404,51 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
     box-shadow: 0 2px 6px rgba(15, 27, 61, 0.16);
     display: none;
     left: 0;
-    max-height: 180px;
-    overflow-y: auto;
     position: absolute;
     right: 0;
     top: calc(100% + 5px);
     z-index: 35;
+}
+
+.candidate-education-custom-select__search-wrap {
+    align-items: center;
+    border-bottom: 1px solid #e4e7ec;
+    display: flex;
+    gap: 8px;
+    padding: 8px;
+
+    i {
+        color: #98a2b3;
+        font-size: 13px;
+    }
+}
+
+.candidate-education-custom-select__search {
+    border: 1px solid #d0d5dd;
+    border-radius: 4px;
+    color: #344054;
+    font-size: 14px;
+    min-height: 34px;
+    outline: 0;
+    padding: 6px 9px;
+    width: 100%;
+
+    &:focus {
+        border-color: #419b82;
+        box-shadow: 0 0 0 2px rgba(196, 58, 151, 0.1);
+    }
+}
+
+.candidate-education-custom-select__options {
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+.candidate-education-custom-select__empty {
+    color: #667085;
+    font-size: 13px;
+    padding: 12px 14px;
+    text-align: center;
 }
 
 .candidate-education-custom-select__option {
@@ -6366,7 +6465,8 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 
     &:hover,
     &:focus,
-    &.is-selected {
+    &.is-selected,
+    &.is-active {
         background: #f5f7fb;
         outline: 0;
     }
@@ -6561,6 +6661,16 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 
     .candidate-profile-section__header-actions {
         gap: 12px;
+    }
+
+    .candidate-profile-section__header:not(.collapsed):not(
+            .candidate-profile-section__header--editing
+        )
+        .candidate-profile-section__header-actions:has(
+            > :not(.candidate-profile-section__toggle):not(.d-none):not([hidden])
+        )
+        .candidate-profile-section__toggle {
+        padding-left: 12px;
     }
 
     .candidate-profile-accordion .candidate-education-add,
@@ -7490,3 +7600,10 @@ html[dir="rtl"] {
 
 
 
+
+.candidate-profile-section .candidate-profile-field-invalid,
+.candidate-profile-section .candidate-profile-field-invalid .select2-selection,
+.candidate-profile-section .candidate-profile-field-invalid [data-education-custom-select-toggle] {
+    border: 1px solid #f04438 !important;
+    box-shadow: 0 0 0 2px rgba(240, 68, 56, .12) !important;
+}

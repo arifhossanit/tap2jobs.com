@@ -137,8 +137,13 @@
 
                             <div class="candidate-skill-form__field">
                                 <label for="candidateSkillName">{{ __('messages.candidate_profile.skill') }} <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="candidateSkillName" data-skill-name-input
-                                       placeholder="{{ __('messages.candidate_profile.enter_skill') }}">
+                                <select class="form-control" id="candidateSkillName" data-skill-name-input
+                                        data-placeholder="{{ __('messages.candidate_profile.enter_skill') }}">
+                                    <option value=""></option>
+                                    @foreach($data['skills'] ?? [] as $skillId => $skillName)
+                                        <option value="{{ $skillName }}" data-skill-id="{{ $skillId }}">{{ $skillName }}</option>
+                                    @endforeach
+                                </select>
                             </div>
 
                             <div class="candidate-skill-form__field">
@@ -2014,6 +2019,41 @@
                     'NTVQF': @json(__('messages.candidate_profile.ntvqf')),
                 };
                 const defaultSourceTranslated = @json(__('messages.candidate_profile.professional_training'));
+                const $skillNameInput = $(skillNameInput);
+
+                const ensureSkillOption = function (name, id) {
+                    if (!name) return;
+                    const existingOption = Array.from(skillNameInput.options).find(function (option) {
+                        return option.value.toLowerCase() === String(name).toLowerCase();
+                    });
+                    if (existingOption) {
+                        existingOption.dataset.skillId = id || existingOption.dataset.skillId || '';
+                        return;
+                    }
+                    const option = new Option(name, name, false, false);
+                    option.dataset.skillId = id || '';
+                    skillNameInput.add(option);
+                };
+
+                $skillNameInput.select2({
+                    width: '100%',
+                    placeholder: $skillNameInput.data('placeholder') || 'Select or add skill',
+                    tags: true,
+                    createTag: function (params) {
+                        const term = $.trim(params.term);
+                        if (!term) return null;
+                        const exists = Array.from(skillNameInput.options).some(function (option) {
+                            return option.text.trim().toLowerCase() === term.toLowerCase();
+                        });
+                        return exists ? null : { id: term, text: term, newTag: true };
+                    },
+                    templateResult: function (data) {
+                        if (!data.newTag) return data.text;
+                        return $('<span><i class="fa-solid fa-plus me-2"></i></span>')
+                            .append(document.createTextNode('Add "' + data.text + '"'));
+                    },
+                });
+
 
                 const formatSourcesTranslated = function (sources) {
                     if (!sources || !sources.length) {
@@ -2072,15 +2112,17 @@
 
                 const openSkillForm = function (item) {
                     skillForm.classList.remove('d-none');
-                    skillNameInput.value = item ? item.dataset.skillName : '';
+                    const selectedName = item ? item.dataset.skillName : '';
+                    ensureSkillOption(selectedName, item ? item.dataset.skillId : '');
+                    $skillNameInput.val(selectedName || null).trigger('change');
                     skillEditingId.value = item ? item.dataset.skillId : '';
                     setSelectedSources(item ? String(item.dataset.skillSources || '').split(', ').filter(Boolean) : []);
-                    skillNameInput.focus();
                 };
 
                 const closeSkillForm = function () {
                     skillForm.classList.add('d-none');
                     skillForm.reset();
+                    $skillNameInput.val(null).trigger('change');
                     skillEditingId.value = '';
                     setSelectedSources([]);
                 };
@@ -2140,6 +2182,7 @@
                                     id: savedItem.id,
                                     name: savedItem.name,
                                 };
+                                ensureSkillOption(savedItem.name, savedItem.id);
                             }
                         });
                         if (response && response.message && typeof displaySuccessMessage === 'function') {

@@ -195,7 +195,7 @@
             <div class="candidate-profile-section__header collapsed">
                 <span>{{ __('messages.candidate_profile.army_experience') }}</span>
                 <span class="candidate-profile-section__header-actions">
-                    <a class="candidate-education-add" href="javascript:void(0)" data-retired-army-add-trigger data-retired-army-add-action>
+                    <a class="candidate-education-add d-none" href="javascript:void(0)" data-retired-army-add-trigger data-retired-army-add-action>
                         <i class="fa-solid fa-plus"></i>
                         <span>{{ __('messages.candidate_profile.add_employment_history') }}</span>
                     </a>

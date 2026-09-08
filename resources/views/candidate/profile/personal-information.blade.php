@@ -626,16 +626,10 @@
                 <div class="candidate-profile-section__body">
                     @php
                         $functionalOptions = collect($data['functionalArea'] ?? []);
-                        $specialSkillOptions = collect($data['skills'] ?? []);
                         $districtOptions = collect($data['districts'] ?? []);
-                        $countryOptions = collect($data['outsideCountries'] ?? []);
-                        $organizationOptions = collect($data['organizationTypes'] ?? []);
 
                         $preferredFunctional = collect($candidate->preferred_functional_categories ?? [])->map(fn ($id) => (string) $id)->toArray();
-                        $preferredSkills = collect($candidate->preferred_special_skills ?? [])->map(fn ($id) => (string) $id)->toArray();
                         $preferredInside = collect($candidate->preferred_job_locations_inside ?? [])->map(fn ($id) => (string) $id)->toArray();
-                        $preferredOutside = collect($candidate->preferred_job_locations_outside ?? [])->map(fn ($id) => (string) $id)->toArray();
-                        $preferredOrganizations = collect($candidate->preferred_organization_types ?? [])->map(fn ($id) => (string) $id)->toArray();
 
                         $preferredNames = function ($ids, $options) {
                             return collect($ids)->map(function ($id) use ($options) {
@@ -643,10 +637,7 @@
                             })->filter(fn ($value) => filled($value))->values();
                         };
                         $preferredFunctionalNames = $preferredNames($preferredFunctional, $functionalOptions);
-                        $preferredSkillNames = $preferredNames($preferredSkills, $specialSkillOptions);
                         $preferredInsideNames = $preferredNames($preferredInside, $districtOptions);
-                        $preferredOutsideNames = $preferredNames($preferredOutside, $countryOptions);
-                        $preferredOrganizationNames = $preferredNames($preferredOrganizations, $organizationOptions);
                     @endphp
                     <div class="candidate-preferred-summary">
                         <div class="candidate-preferred-summary-block">
@@ -656,16 +647,6 @@
                                     <span>{{ __('messages.candidate_profile.functional') }}</span>
                                     <div class="candidate-preferred-summary-chips">
                                         @forelse($preferredFunctionalNames as $name)
-                                            <span>{{ html_entity_decode($name) }}</span>
-                                        @empty
-                                            <strong>---</strong>
-                                        @endforelse
-                                    </div>
-                                </div>
-                                <div class="candidate-preferred-summary-item">
-                                    <span>{{ __('messages.candidate_profile.special_skills') }}</span>
-                                    <div class="candidate-preferred-summary-chips">
-                                        @forelse($preferredSkillNames as $name)
                                             <span>{{ html_entity_decode($name) }}</span>
                                         @empty
                                             <strong>---</strong>
@@ -688,26 +669,6 @@
                                         @endforelse
                                     </div>
                                 </div>
-                                <div class="candidate-preferred-summary-item">
-                                    <span>{{ __('messages.candidate_profile.outside_bangladesh_countries') }}</span>
-                                    <div class="candidate-preferred-summary-chips">
-                                        @forelse($preferredOutsideNames as $name)
-                                            <span>{{ html_entity_decode($name) }}</span>
-                                        @empty
-                                            <strong>---</strong>
-                                        @endforelse
-                                    </div>
-                                </div>
-                                <div class="candidate-preferred-summary-item">
-                                    <span>{{ __('messages.candidate_profile.add_preferred_organization_type') }}</span>
-                                    <div class="candidate-preferred-summary-chips">
-                                        @forelse($preferredOrganizationNames as $name)
-                                            <span>{{ html_entity_decode($name) }}</span>
-                                        @empty
-                                            <strong>---</strong>
-                                        @endforelse
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -715,57 +676,19 @@
                         <div class="candidate-preferred-block">
                             <h3>{{ __('messages.candidate_profile.preferred_job_categories') }}<span class="required"></span></h3>
                             <p>{{ __('messages.candidate_profile.preferred_job_categories_help') }}</p>
-                            <div class="candidate-preferred-category-grid">
-                                <div>
-                                    <div class="candidate-preferred-label">{{ __('messages.candidate_profile.functional') }} <span>({{ __('messages.candidate_profile.max_3') }})</span></div>
-                                    <div class="candidate-preferred-checklist">
-                                        @foreach($functionalOptions as $id => $name)
-                                            <label class="candidate-preferred-check">
-                                                <input class="form-check-input candidate-preferred-checkbox" type="checkbox"
-                                                       name="preferred_functional_categories[]"
-                                                       value="{{ $id }}" data-label="{{ html_entity_decode($name) }}"
-                                                       data-chip-target="#functionalCategoryChips"
-                                                       {{ in_array((string) $id, $preferredFunctional, true) ? 'checked' : '' }}>
-                                                <span>{{ html_entity_decode($name) }}</span>
-                                            </label>
-                                        @endforeach
-                                    </div>
-                                    <div class="candidate-preferred-chips" id="functionalCategoryChips"></div>
-                                </div>
-                                <div>
-                                    <div class="candidate-preferred-label">{{ __('messages.candidate_profile.special_skills') }} <span>({{ __('messages.candidate_profile.max_3') }})</span></div>
-                                    <div class="candidate-preferred-checklist">
-                                        @foreach($specialSkillOptions as $id => $name)
-                                            <label class="candidate-preferred-check">
-                                                <input class="form-check-input candidate-preferred-checkbox" type="checkbox"
-                                                       name="preferred_special_skills[]"
-                                                       value="{{ $id }}" data-label="{{ html_entity_decode($name) }}"
-                                                       data-chip-target="#specialSkillChips"
-                                                       {{ in_array((string) $id, $preferredSkills, true) ? 'checked' : '' }}>
-                                                <span>{{ html_entity_decode($name) }}</span>
-                                            </label>
-                                        @endforeach
-                                    </div>
-                                    <div class="candidate-preferred-chips" id="specialSkillChips"></div>
-                                </div>
+                            <div>
+                                <div class="candidate-preferred-label">{{ __('messages.candidate_profile.functional') }} <span>({{ __('messages.candidate_profile.max_3') }})</span></div>
+                                {{ Form::select('preferred_functional_categories[]', $functionalOptions->toArray(), $preferredFunctional, ['class' => 'form-select candidate-preferred-select', 'id' => 'preferredFunctionalAreas', 'multiple' => true, 'data-placeholder' => __('messages.company.select_functional_area'), 'data-chip-target' => '#functionalAreaChips', 'data-maximum-selection-length' => 3]) }}
+                                <div class="candidate-preferred-chips" id="functionalAreaChips"></div>
                             </div>
                         </div>
 
                         <div class="candidate-preferred-block">
                             <h3>{{ __('messages.candidate_profile.preferred_job_location') }} <span class="required"></span></h3>
                             <p>{{ __('messages.candidate_profile.preferred_job_location_help') }}</p>
-
                             <div class="candidate-preferred-label">{{ __('messages.candidate_profile.inside_bangladesh_districts') }} <span>({{ __('messages.candidate_profile.max_15') }})</span></div>
-                            {{ Form::select('preferred_job_locations_inside[]', $districtOptions->toArray(), $preferredInside, ['class' => 'form-select candidate-preferred-select', 'id' => 'preferredInsideDistricts', 'multiple' => true, 'data-placeholder' => __('messages.candidate_profile.add_districts'), 'data-chip-target' => '#insideDistrictChips']) }}
+                            {{ Form::select('preferred_job_locations_inside[]', $districtOptions->toArray(), $preferredInside, ['class' => 'form-select candidate-preferred-select', 'id' => 'preferredInsideDistricts', 'multiple' => true, 'data-placeholder' => __('messages.candidate_profile.add_districts'), 'data-chip-target' => '#insideDistrictChips', 'data-maximum-selection-length' => 15]) }}
                             <div class="candidate-preferred-chips" id="insideDistrictChips"></div>
-
-                            <div class="candidate-preferred-label mt-4">{{ __('messages.candidate_profile.outside_bangladesh_countries') }} <span>({{ __('messages.candidate_profile.max_10') }})</span></div>
-                            {{ Form::select('preferred_job_locations_outside[]', $countryOptions->toArray(), $preferredOutside, ['class' => 'form-select candidate-preferred-select', 'id' => 'preferredOutsideCountries', 'multiple' => true, 'data-placeholder' => __('messages.candidate_profile.add_countries'), 'data-chip-target' => '#outsideCountryChips']) }}
-                            <div class="candidate-preferred-chips" id="outsideCountryChips"></div>
-
-                            <div class="candidate-preferred-label mt-4">{{ __('messages.candidate_profile.add_preferred_organization_type') }} <span>({{ __('messages.candidate_profile.max_12') }})</span></div>
-                            {{ Form::select('preferred_organization_types[]', $organizationOptions->toArray(), $preferredOrganizations, ['class' => 'form-select candidate-preferred-select', 'id' => 'preferredOrganizationTypes', 'multiple' => true, 'data-placeholder' => __('messages.candidate_profile.add_organization_type'), 'data-chip-target' => '#organizationTypeChips']) }}
-                            <div class="candidate-preferred-chips" id="organizationTypeChips"></div>
                         </div>
 
                         <div class="candidate-profile-section-actions">
@@ -962,11 +885,11 @@
                                     @endif
                                 </strong>
                             </p>
-                            <p>
+                            {{-- <p>
                                 {{ __('messages.candidate_profile.disability_support_prefix') }}
-                                {{-- <a href="tel:+8801730369802">{{ __('messages.candidate_profile.disability_support_contact') }}</a> --}}
+                                <a href="tel:+8801730369802">{{ __('messages.candidate_profile.disability_support_contact') }}</a>
                                 {{ __('messages.candidate_profile.disability_support_suffix') }}
-                            </p>
+                            </p> --}}
                         @endif
                     </div>
                     <div class="candidate-disability-area candidate-disability-form d-none">
@@ -1028,11 +951,11 @@
                                 </div>
                             </div>
                         </div>
-                        <p class="candidate-disability-support {{ $showDisabilityDetails ? 'd-none' : '' }}" data-disability-support>
+                        {{-- <p class="candidate-disability-support {{ $showDisabilityDetails ? 'd-none' : '' }}" data-disability-support>
                             {{ __('messages.candidate_profile.disability_support_prefix') }}
                             <a href="tel:+8801730369802">{{ __('messages.candidate_profile.disability_support_contact') }}</a>
                             {{ __('messages.candidate_profile.disability_support_suffix') }}
-                        </p>
+                        </p> --}}
                         <div class="candidate-profile-section-actions">
                             {{ Form::submit(__('messages.common.save'), ['class' => 'candidate-skill-save', 'formaction' => route('candidate-profile.disability-information.update'), 'formnovalidate' => true, 'data-scoped-ajax-submit' => true]) }}
                             <button type="button" class="candidate-skill-close" data-disability-edit-close>{{ __('messages.common.close') }}</button>

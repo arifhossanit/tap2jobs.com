@@ -11,6 +11,7 @@ use App\Models\CandidateLink;
 use App\Models\CandidateReference;
 use App\Models\CandidateSkill;
 use App\Models\CareerLevel;
+use App\Models\City;
 use App\Models\Country;
 use App\Models\FunctionalArea;
 use App\Models\Industry;
@@ -93,14 +94,14 @@ class CandidateRepository extends BaseRepository
         $data['careerLevel'] = CareerLevel::toBase()->pluck('level_name', 'id');
         $data['jobCategory'] = JobCategory::where('status', JobCategory::STATUS_ACTIVE)->toBase()->orderBy('name', 'ASC')->pluck('name', 'id');
         $data['industry'] = Industry::toBase()->pluck('name', 'id');
-        $data['functionalArea'] = FunctionalArea::toBase()->pluck('name', 'id');
+        $data['functionalArea'] = FunctionalArea::toBase()->orderBy('name')->pluck('name', 'id');
         $data['skills'] = Skill::toBase()->orderBy('name', 'ASC')->pluck('name', 'id');
         $data['language'] = Language::toBase()->pluck('language', 'id');
         $data['currency'] = SalaryCurrency::toBase()->pluck('currency_name', 'id');
         $bangladeshId = Country::where('short_code', 'BD')->orWhere('name', 'Bangladesh')->value('id');
-        $data['districts'] = State::when($bangladeshId, function ($query) use ($bangladeshId) {
-            $query->where('country_id', $bangladeshId);
-        })->toBase()->orderBy('name', 'ASC')->pluck('name', 'id');
+        $data['districts'] = City::whereHas('state', function ($query) use ($bangladeshId) {
+            $query->when($bangladeshId, fn ($stateQuery) => $stateQuery->where('country_id', $bangladeshId));
+        })->orderBy('name')->pluck('name', 'id');
         $data['outsideCountries'] = Country::when($bangladeshId, function ($query) use ($bangladeshId) {
             $query->where('id', '!=', $bangladeshId);
         })->toBase()->orderBy('name', 'ASC')->pluck('name', 'id');

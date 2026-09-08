@@ -85,21 +85,7 @@
         ];
 
         $candidateTrainings = $data['candidateTrainings'] ?? collect();
-
-        $candidateCertificationItems = [
-            [
-                'certification' => 'Web Application Development with Laravel, React, Vue.js & WordPress',
-                'institute' => 'IsDB-BISEW Scholarship',
-                'location' => 'Agargaon, Dhaka',
-                'duration' => '31 Dec 2024 to 30 Oct 2025',
-            ],
-            [
-                'certification' => 'Shorthand and Computer Basic',
-                'institute' => 'Joyti Commercial',
-                'location' => 'Malibag, Dhaka',
-                'duration' => '1 Jan 2024 to 28 Aug 2024',
-            ],
-        ];
+        $candidateCertificationItems = $data['candidateCertifications'] ?? collect();
     @endphp
     <script>
         window.candidateEducationExamTitleOptions = @json($educationExamTitleOptions);
@@ -214,7 +200,7 @@
                         </div>
                         <div class="candidate-education-form-field">
                             {{ Form::label('degree_title', __('messages.candidate_profile.exam_degree_title'), ['class' => 'form-label required']) }}
-                            {{ Form::select('degree_title', ['' => 'Select your Exam/Degree Title'], null, ['class' => 'form-select', 'required', 'data-education-title-select' => true, 'data-placeholder' => 'Select your Exam/Degree Title']) }}
+                            {{ Form::select('degree_title', ['' => 'Select your Exam/Degree Title'], null, ['class' => 'form-select', 'disabled' => true, 'data-education-title-select' => true, 'data-placeholder' => 'Select your Exam/Degree Title']) }}
                             <div class="mt-2 d-none" data-education-other-title-field>
                                 {{ Form::text('other_degree_title', null, ['class' => 'form-control', 'placeholder' => 'Select your Exam/Degree Title', 'data-education-other-title-input' => true, 'autocomplete' => 'off']) }}
                             </div>
@@ -660,13 +646,32 @@
                  data-bs-parent="#candidateEducationAccordion">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <div class="candidate-certification-container">
+                        <div class="{{ count($candidateCertificationItems) ? 'd-none' : '' }}" id="notfoundCertification">
+                            <h5 class="candidate-education-empty">
+                                {{ __('messages.candidate_profile.certification_not_found') }}
+                            </h5>
+                        </div>
                         @foreach ($candidateCertificationItems as $candidateCertification)
+                            @php
+                                $certName = is_array($candidateCertification)
+                                    ? ($candidateCertification['certification'] ?? $candidateCertification['name'] ?? '')
+                                    : ($candidateCertification->certification ?? $candidateCertification->name ?? '');
+                                $certInstitute = is_array($candidateCertification)
+                                    ? ($candidateCertification['institute'] ?? '')
+                                    : ($candidateCertification->institute ?? '');
+                                $certLocation = is_array($candidateCertification)
+                                    ? ($candidateCertification['location'] ?? '')
+                                    : ($candidateCertification->location ?? '');
+                                $certDuration = is_array($candidateCertification)
+                                    ? ($candidateCertification['duration'] ?? '')
+                                    : ($candidateCertification->duration ?? '');
+                            @endphp
                             <div class="candidate-education candidate-education-list-item" data-certification-item
                                 data-certification-index="{{ $loop->iteration }}"
-                                data-certification-certification="{{ $candidateCertification['certification'] }}"
-                                data-certification-institute="{{ $candidateCertification['institute'] }}"
-                                data-certification-location="{{ $candidateCertification['location'] }}"
-                                data-certification-duration="{{ $candidateCertification['duration'] }}">
+                                data-certification-certification="{{ $certName }}"
+                                data-certification-institute="{{ $certInstitute }}"
+                                data-certification-location="{{ $certLocation }}"
+                                data-certification-duration="{{ $certDuration }}">
                                 <div class="candidate-education-item__head">
                                     <h2>{{ __('messages.candidate_profile.professional_certification') }} {{ $candidateProfileNumber($loop->iteration) }}</h2>
                                     <div class="candidate-education-item__actions candidate-certification-edit-delete">
@@ -689,28 +694,79 @@
                                     <div class="candidate-education-detail-column">
                                         <div class="candidate-education-detail">
                                             <span>{{ __('messages.candidate_profile.certification') }}</span>
-                                            <strong data-certification-value="certification">{{ $candidateCertification['certification'] }}</strong>
+                                            <strong data-certification-value="certification">{{ $certName }}</strong>
                                         </div>
                                         <div class="candidate-education-detail">
                                             <span>{{ __('messages.candidate_profile.location') }}</span>
-                                            <strong data-certification-value="location">{{ $candidateCertification['location'] }}</strong>
+                                            <strong data-certification-value="location">{{ $certLocation ?: '---' }}</strong>
                                         </div>
                                     </div>
 
                                     <div class="candidate-education-detail-column">
                                         <div class="candidate-education-detail">
                                             <span>{{ __('messages.candidate_profile.institute') }}</span>
-                                            <strong data-certification-value="institute">{{ $candidateCertification['institute'] }}</strong>
+                                            <strong data-certification-value="institute">{{ $certInstitute }}</strong>
                                         </div>
                                         <div class="candidate-education-detail">
                                             <span>{{ __('messages.candidate_profile.duration') }}</span>
-                                            <strong data-certification-value="duration">{{ $candidateCertification['duration'] }}</strong>
+                                            <strong data-certification-value="duration">{{ $certDuration }}</strong>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         @endforeach
                     </div>
+
+                    <template id="candidateCertificationTemplate">
+                        <div class="candidate-education candidate-education-list-item" data-certification-item
+                            data-certification-index=""
+                            data-certification-certification=""
+                            data-certification-institute=""
+                            data-certification-location=""
+                            data-certification-duration="">
+                            <div class="candidate-education-item__head">
+                                <h2></h2>
+                                <div class="candidate-education-item__actions candidate-certification-edit-delete">
+                                    <a href="javascript:void(0)"
+                                        class="candidate-education-action candidate-education-action--edit"
+                                        data-certification-edit>
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                        <span>{{ __('messages.common.edit') }}</span>
+                                    </a>
+                                    <a href="javascript:void(0)"
+                                        class="candidate-education-action candidate-education-action--delete"
+                                        data-certification-delete>
+                                        <i class="fa-solid fa-trash-can"></i>
+                                        <span>{{ __('messages.common.delete') }}</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="candidate-education-detail-grid">
+                                <div class="candidate-education-detail-column">
+                                    <div class="candidate-education-detail">
+                                        <span>{{ __('messages.candidate_profile.certification') }}</span>
+                                        <strong data-certification-value="certification"></strong>
+                                    </div>
+                                    <div class="candidate-education-detail">
+                                        <span>{{ __('messages.candidate_profile.location') }}</span>
+                                        <strong data-certification-value="location"></strong>
+                                    </div>
+                                </div>
+
+                                <div class="candidate-education-detail-column">
+                                    <div class="candidate-education-detail">
+                                        <span>{{ __('messages.candidate_profile.institute') }}</span>
+                                        <strong data-certification-value="institute"></strong>
+                                    </div>
+                                    <div class="candidate-education-detail">
+                                        <span>{{ __('messages.candidate_profile.duration') }}</span>
+                                        <strong data-certification-value="duration"></strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
 
                     <div class="candidate-education-inline-form d-none" data-certification-form>
                         <h2 data-certification-form-title>{{ __('messages.candidate_profile.professional_certification') }} {{ $candidateProfileNumber(count($candidateCertificationItems) + 1) }}</h2>
@@ -1155,6 +1211,8 @@
                     }
                 };
 
+                const notFoundCertification = certificationPanel.querySelector('#notfoundCertification');
+
                 const reindexCertificationItems = function () {
                     const items = certificationList.querySelectorAll('[data-certification-item]');
                     items.forEach(function (item, idx) {
@@ -1165,6 +1223,10 @@
                             heading.textContent = getNumberedSectionTitle(window.candidateProfileCertificationLabel, newIndex);
                         }
                     });
+
+                    if (notFoundCertification) {
+                        notFoundCertification.classList.toggle('d-none', items.length > 0);
+                    }
                 };
 
                 certificationPanel.addEventListener('click', function (event) {
@@ -1232,12 +1294,16 @@
                     let item = certificationList.querySelector('[data-certification-index="' + index + '"]');
 
                     if (!item) {
+                        const template = document.getElementById('candidateCertificationTemplate');
                         const sourceItem = certificationList.querySelector('[data-certification-item]');
-                        if (!sourceItem) {
+                        if (sourceItem) {
+                            item = sourceItem.cloneNode(true);
+                        } else if (template) {
+                            item = template.content.firstElementChild.cloneNode(true);
+                        } else {
                             return;
                         }
 
-                        item = sourceItem.cloneNode(true);
                         item.dataset.certificationIndex = index;
                         item.querySelector('.candidate-education-item__head h2').textContent =
                             getNumberedSectionTitle(window.candidateProfileCertificationLabel, index);
@@ -1256,6 +1322,7 @@
                         item.querySelector('[data-certification-value="' + field + '"]').textContent = value;
                     });
 
+                    reindexCertificationItems();
                     closeCertificationForm();
                 });
 

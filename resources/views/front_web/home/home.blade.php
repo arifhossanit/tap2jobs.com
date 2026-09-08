@@ -552,7 +552,7 @@
 
     /* Quick Links */
     .bd-quick-links {
-        height: 100%;
+        height: auto;
         width: 263px;
         background: #209776;
         color: #fff;
@@ -581,6 +581,93 @@
         border-radius: 7px;
         padding: 1px 5px;
         font-size: 9px;
+    }
+
+    .bd-government-jobs {
+        background: #fffdeb;
+        border: 1px solid #ebe8cf;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(15, 27, 61, .08);
+        color: #30352f;
+        padding: 12px;
+        width: 100%;
+    }
+
+    .bd-government-jobs__title {
+        align-items: center;
+        color: #1262b0;
+        display: flex;
+        font-size: 15px;
+        font-weight: 700;
+        gap: 7px;
+        margin: 0 0 8px;
+        text-transform: uppercase;
+    }
+
+    .bd-government-jobs__slide {
+        min-height: 112px;
+    }
+
+    .bd-government-jobs__item {
+        display: block;
+        margin-bottom: 7px;
+    }
+
+    .bd-government-jobs__item strong {
+        color: #3b403a;
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1.25;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .bd-government-jobs__item span {
+        color: #74786f;
+        display: block;
+        font-size: 10px;
+        line-height: 1.2;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .bd-government-jobs__footer {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        margin-top: 4px;
+    }
+
+    .bd-government-jobs__all {
+        color: #168118;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .bd-government-jobs__controls {
+        align-items: center;
+        display: flex;
+        gap: 8px;
+    }
+
+    .bd-government-jobs__control {
+        background: transparent;
+        border: 0;
+        color: #168118;
+        font-size: 12px;
+        height: 22px;
+        padding: 0;
+        width: 18px;
+    }
+
+    .bd-government-jobs__empty {
+        color: #74786f;
+        font-size: 12px;
+        min-height: 80px;
     }
 
     /* Directory */
@@ -1226,7 +1313,8 @@
                 </div>
             </div>
             <!-- <aside class="bd-sidebar"></aside> -->
-            <aside class="bd-sidebar bd-quick-links">
+            <aside class="bd-sidebar">
+                <div class="bd-quick-links">
                 <h2>@lang('web.home_page.quick_links')</h2>
                 <div class="bd-quick-links-grid">
                     <a href="{{ route('front.company.lists') }}">Employer List ({{ $quickLinkCounts['employer_list'] ?? 0 }})</a>
@@ -1238,6 +1326,40 @@
                     <a href="{{ route('front.search.jobs', ['overseas' => 1]) }}">Overseas Jobs ({{ $quickLinkCounts['overseas'] ?? 0 }})</a>
                     <a href="{{ route('front.search.jobs', ['work_from_home' => 1]) }}">Work From Home ({{ $quickLinkCounts['work_from_home'] ?? 0 }})</a>
                     <a href="{{ route('front.search.jobs', ['is_fresher' => 1]) }}">Fresher Jobs ({{ $quickLinkCounts['fresher_jobs'] ?? 0 }})</a>
+                </div>
+                </div>
+                <div class="bd-government-jobs">
+                    <h2 class="bd-government-jobs__title">Government Jobs</h2>
+                    @if(($governmentJobs ?? collect())->isNotEmpty())
+                        <div id="governmentJobsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3500">
+                            <div class="carousel-inner">
+                                @foreach($governmentJobs->chunk(3) as $slideIndex => $jobSlide)
+                                    <div class="carousel-item {{ $slideIndex === 0 ? 'active' : '' }}">
+                                        <div class="bd-government-jobs__slide">
+                                            @foreach($jobSlide as $governmentJob)
+                                                <a class="bd-government-jobs__item" href="{{ route('front.government-jobs.show', $governmentJob) }}">
+                                                    <strong>{{ $governmentJob->title }}</strong>
+                                                    <span>{{ $governmentJob->organization_name }}</span>
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @else
+                        <div class="bd-government-jobs__empty">No government jobs available.</div>
+                    @endif
+                    <div class="bd-government-jobs__footer">
+                        <a class="bd-government-jobs__all" href="{{ route('front.government-jobs.index') }}">View All ({{ number_format($quickLinkCounts['government_jobs'] ?? 0) }})</a>
+                        @if(($governmentJobs ?? collect())->count() > 3)
+                            <div class="bd-government-jobs__controls">
+                                <button class="bd-government-jobs__control" type="button" data-government-carousel-pause aria-label="Pause"><i class="fa-solid fa-pause"></i></button>
+                                <button class="bd-government-jobs__control" type="button" data-bs-target="#governmentJobsCarousel" data-bs-slide="prev" aria-label="Previous"><i class="fa-solid fa-chevron-left"></i></button>
+                                <button class="bd-government-jobs__control" type="button" data-bs-target="#governmentJobsCarousel" data-bs-slide="next" aria-label="Next"><i class="fa-solid fa-chevron-right"></i></button>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </aside>
         </div>
@@ -1281,6 +1403,28 @@
                 });
             });
         });
+
+        var governmentCarouselElement = document.getElementById('governmentJobsCarousel');
+        var governmentPauseButton = document.querySelector('[data-government-carousel-pause]');
+
+        if (governmentCarouselElement && governmentPauseButton && typeof bootstrap !== 'undefined') {
+            var governmentCarousel = bootstrap.Carousel.getOrCreateInstance(governmentCarouselElement);
+            var isGovernmentCarouselPaused = false;
+
+            governmentPauseButton.addEventListener('click', function () {
+                isGovernmentCarouselPaused = !isGovernmentCarouselPaused;
+                if (isGovernmentCarouselPaused) {
+                    governmentCarousel.pause();
+                } else {
+                    governmentCarousel.cycle();
+                }
+
+                governmentPauseButton.setAttribute('aria-label', isGovernmentCarouselPaused ? 'Play' : 'Pause');
+                governmentPauseButton.innerHTML = isGovernmentCarouselPaused
+                    ? '<i class="fa-solid fa-play"></i>'
+                    : '<i class="fa-solid fa-pause"></i>';
+            });
+        }
     });
 </script>
 @endsection

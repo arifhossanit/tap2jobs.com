@@ -455,7 +455,7 @@ function loadCandidateCareerInformationData() {
         }
 
         const selectedText = $select.find('option:selected').text() || $select.find('option:first').text() || '';
-        const $menu = $customSelect.find('[data-education-custom-select-menu]');
+        const $menu = $customSelect.find('[data-education-custom-select-options]');
 
         $customSelect
             .toggleClass('is-disabled', $select.prop('disabled'))
@@ -495,7 +495,13 @@ function loadCandidateCareerInformationData() {
                             '<span data-education-custom-select-value></span>' +
                             '<i class="fa-solid fa-chevron-down"></i>' +
                         '</button>' +
-                        '<div class="candidate-education-custom-select__menu" data-education-custom-select-menu></div>' +
+                        '<div class="candidate-education-custom-select__menu" data-education-custom-select-menu>' +
+                            '<div class="candidate-education-custom-select__search-wrap">' +                                
+                                '<input type="search" class="candidate-education-custom-select__search" data-education-custom-select-search placeholder="Search..." autocomplete="off">' +
+                            '</div>' +
+                            '<div class="candidate-education-custom-select__options" data-education-custom-select-options></div>' +
+                            '<div class="candidate-education-custom-select__empty d-none" data-education-custom-select-empty>No results found.</div>' +
+                        '</div>' +
                     '</div>'
                 );
             }
@@ -658,8 +664,62 @@ function loadCandidateCareerInformationData() {
         refreshEducationCustomSelect($select);
         closeEducationCustomSelects($customSelect);
         $customSelect.toggleClass('is-open');
+        if ($customSelect.hasClass('is-open')) {
+            const $search = $customSelect.find('[data-education-custom-select-search]');
+            $search.val('');
+            filterEducationCustomSelect($customSelect, '');
+            window.setTimeout(function () { $search.trigger('focus'); }, 0);
+        }
     });
 
+    function filterEducationCustomSelect($customSelect, query) {
+        const normalizedQuery = String(query || '').trim().toLowerCase();
+        let visibleCount = 0;
+
+        $customSelect.find('[data-education-custom-select-option]').each(function () {
+            const $option = $(this);
+            const matches = !normalizedQuery || $option.text().toLowerCase().includes(normalizedQuery);
+            $option.toggleClass('d-none', !matches).removeClass('is-active');
+            if (matches && !$option.prop('disabled')) visibleCount += 1;
+        });
+
+        $customSelect.find('[data-education-custom-select-empty]').toggleClass('d-none', visibleCount > 0);
+    }
+
+    $(document).on('input', '[data-education-custom-select-search]', function (event) {
+        filterEducationCustomSelect($(event.currentTarget).closest('.candidate-education-custom-select'), event.currentTarget.value);
+    });
+
+    $(document).on('keydown', '[data-education-custom-select-search]', function (event) {
+        const $search = $(event.currentTarget);
+        const $customSelect = $search.closest('.candidate-education-custom-select');
+        const $options = $customSelect.find('[data-education-custom-select-option]:visible:not(:disabled)');
+
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            $customSelect.removeClass('is-open');
+            $customSelect.find('[data-education-custom-select-toggle]').trigger('focus');
+            return;
+        }
+
+        if (!['ArrowDown', 'ArrowUp', 'Enter'].includes(event.key)) return;
+        event.preventDefault();
+        event.stopPropagation();
+
+        let activeIndex = $options.index($options.filter('.is-active'));
+        if (event.key === 'ArrowDown') activeIndex = activeIndex < $options.length - 1 ? activeIndex + 1 : 0;
+        if (event.key === 'ArrowUp') activeIndex = activeIndex > 0 ? activeIndex - 1 : $options.length - 1;
+
+        if (event.key === 'Enter') {
+            const $activeOption = activeIndex >= 0 ? $options.eq(activeIndex) : $options.first();
+            if ($activeOption.length) $activeOption.trigger('click');
+            return;
+        }
+
+        $options.removeClass('is-active');
+        const $activeOption = $options.eq(activeIndex).addClass('is-active');
+        if ($activeOption.length) $activeOption[0].scrollIntoView({ block: 'nearest' });
+    });
     listenClick('[data-education-custom-select-option]', function (event) {
         const $option = $(event.currentTarget);
         const $customSelect = $option.closest('.candidate-education-custom-select');
@@ -943,11 +1003,24 @@ function loadCandidateCareerInformationData() {
         updateEducationOtherTitleLayout($form, customVal);
     }
 
-    function setEducationTitleOptions($form, levelType, selectedTitle) {
+    function setEducationTitleOptions($form, levelType, selectedTitle, hasLevel) {
         const $titleSelect = $form.find('[data-education-title-select]');
+        const placeholder = $titleSelect.data('placeholder') || 'Select your Exam/Degree Title';
+
+        if (!hasLevel) {
+            $titleSelect.empty();
+            $titleSelect.append($('<option></option>').attr('value', '').text(placeholder));
+            $titleSelect.val('');
+            $titleSelect.prop('disabled', true).prop('required', false);
+            updateEducationOtherTitleLayout($form, '');
+            refreshEducationCustomSelect($titleSelect);
+            return;
+        }
+
+        $titleSelect.prop('disabled', false).prop('required', true);
         const options = educationExamTitleOptions[levelType] || educationExamTitleOptions.default || [];
 
-        setEducationSelectOptions($titleSelect, options, $titleSelect.data('placeholder') || 'Exam/Degree Title', selectedTitle);
+        setEducationSelectOptions($titleSelect, options, placeholder, selectedTitle);
     }
 
     function getEducationMajorOptions(levelType) {
@@ -1092,7 +1165,7 @@ function loadCandidateCareerInformationData() {
         const showMajor = hasLevel ? (hasLevelMeta ? !!meta.show_major : !['psc', 'jsc'].includes(levelType)) : true;
         const showSummary = hasLevel ? (hasLevelMeta ? !!meta.show_summary_checkbox : ['diploma', 'bachelor', 'masters'].includes(levelType)) : false;
 
-        setEducationTitleOptions($form, levelType, selectedTitle);
+        setEducationTitleOptions($form, levelType, selectedTitle, hasLevel);
         setEducationMajorOptions($form, levelType, selectedMajor);
         setEducationFieldVisibility($form.find('[data-education-board-field]'), showBoard);
         setEducationFieldVisibility($form.find('[data-education-major-field]'), showMajor);

@@ -978,6 +978,7 @@ function loadCandidateGeneralData() {
                     width: "100%",
                     closeOnSelect: false,
                     placeholder: $(this).data("placeholder") || "",
+                    maximumSelectionLength: Number($(this).data("maximum-selection-length")) || 0,
                 });
             }
             renderPreferredSelectChips($(this));
@@ -1361,3 +1362,156 @@ window.refreshCandidateProfileSection = async function (section, panelId) {
         displayErrorMessage('Saved, but the displayed result could not be refreshed. Please refresh the page to see it.');
     }
 };
+// Shared validation for candidate profile forms, including dynamically refreshed panels.
+(function () {
+    let submitted = null;
+    const visible = element => !!element && element.getClientRects().length > 0;
+    const scopeFor = (form, button) => button?.closest('.candidate-profile-section__collapse') || form;
+    const isProfile = form => !!form && !!document.querySelector('.candidate-profile-menu') &&
+        (form.id === 'candidateProfileUpdate' || !!form.closest('.candidate-profile-section'));
+    const anchorFor = field => {
+        if (field._flatpickr?.altInput) return field._flatpickr.altInput;
+        if (field.matches('select')) {
+            const next = field.nextElementSibling;
+            if (next?.matches('.select2-container, .candidate-education-custom-select')) return next;
+        }
+        if (field.type === 'hidden' || field.classList.contains('d-none')) {
+            return field.parentElement.querySelector('.ql-editor, [contenteditable="true"]') || field;
+        }
+        return field;
+    };
+    const feedbacks = new WeakMap();
+    let feedbackId = 0;
+    const requiredMessage = () => document.documentElement.lang.startsWith('bn')
+        ? 'এই ঘরটি পূরণ করা আবশ্যক।' : 'This field is required.';
+    const clear = field => {
+        const feedback = feedbacks.get(field);
+        if (feedback) {
+            const descriptions = (field.getAttribute('aria-describedby') || '').split(/\s+/).filter(id => id && id !== feedback.id);
+            if (descriptions.length) field.setAttribute('aria-describedby', descriptions.join(' '));
+            else field.removeAttribute('aria-describedby');
+            feedback.remove();
+            feedbacks.delete(field);
+        }
+        field.classList.remove('is-invalid');
+        field.removeAttribute('aria-invalid');
+        anchorFor(field).classList.remove('candidate-profile-field-invalid');
+    };
+    const mark = (field, message) => {
+        let feedback = feedbacks.get(field);
+        if (!feedback) {
+            feedback = document.createElement('div');
+            feedback.id = 'candidate-field-error-' + (++feedbackId);
+            feedback.className = 'invalid-feedback d-block candidate-profile-field-feedback';
+            feedback.setAttribute('role', 'alert');
+            const anchor = anchorFor(field);
+            const container = anchor.closest('.input-group, .ql-container') || anchor;
+            container.insertAdjacentElement('afterend', feedback);
+            feedbacks.set(field, feedback);
+            field.setAttribute('aria-describedby', [field.getAttribute('aria-describedby'), feedback.id].filter(Boolean).join(' '));
+        }
+        feedback.textContent = message || (field.validity?.valueMissing || !String(field.value || '').trim()
+            ? requiredMessage() : field.validationMessage || requiredMessage());
+        field.classList.add('is-invalid');
+        field.setAttribute('aria-invalid', 'true');
+        anchorFor(field).classList.add('candidate-profile-field-invalid');
+    };
+    const focus = field => {
+        const anchor = anchorFor(field);
+        anchor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const target = anchor.matches('input, select, textarea, [contenteditable="true"]')
+            ? anchor : anchor.querySelector('input, button, [tabindex]') || field;
+        target.focus({ preventScroll: true });
+    };
+    const fieldsIn = scope => Array.from(scope.querySelectorAll('input, select, textarea'))
+        .filter(field => !field.disabled && !['submit', 'button', 'reset'].includes(field.type) && visible(anchorFor(field)));
+    const validate = scope => {
+        let first = null;
+        for (const field of fieldsIn(scope)) {
+            clear(field);
+            const anchor = anchorFor(field);
+            const wrapper = field.closest('.candidate-education-form-field, .candidate-address-field, .candidate-reference-field, .form-group, .mb-3, .mb-4');
+            const labelledRequired = wrapper?.querySelector('label.required, .form-label.required');
+            const required = field.required || !!labelledRequired;
+            const value = anchor.matches('[contenteditable="true"]') ? anchor.textContent.trim() : String(field.value || '').trim();
+            let empty = !value;
+            if (field.type === 'checkbox') empty = !field.checked;
+            if (field.type === 'radio') empty = !fieldsIn(scope).some(other => other.name === field.name && other.checked);
+            const invalid = (required && empty) || (field.willValidate && !field.validity.valid);
+            if (invalid) { mark(field, required && empty ? requiredMessage() : field.validationMessage); first ||= field; }
+        }
+        if (first) focus(first);
+        return !first;
+    };
+    document.addEventListener('click', function (event) {
+        const button = event.target.closest('button, input[type="submit"]');
+        if (!button || button.type !== 'submit' || !isProfile(button.form)) return;
+        const scope = scopeFor(button.form, button);
+        submitted = { form: button.form, scope };
+        if (!validate(scope)) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+        }
+    }, true);
+    document.addEventListener('submit', function (event) {
+        if (!isProfile(event.target)) return;
+        const scope = scopeFor(event.target, event.submitter);
+        submitted = { form: event.target, scope };
+        if (!validate(scope)) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+        }
+    }, true);
+    let invalidFocusPending = false;
+    document.addEventListener('invalid', function (event) {
+        if (!isProfile(event.target.form)) return;
+        event.preventDefault();
+        mark(event.target);
+        if (!invalidFocusPending) {
+            invalidFocusPending = true;
+            focus(event.target);
+            setTimeout(() => { invalidFocusPending = false; }, 0);
+        }
+    }, true);
+    const clearEdited = event => {
+        const target = event.target;
+        if (!target.closest?.('.candidate-profile-section')) return;
+        if (target.matches('input, select, textarea') && (!target.willValidate || target.validity.valid) && String(target.value || '').trim()) clear(target);
+        const editor = target.closest('.ql-editor');
+        if (editor?.textContent.trim()) {
+            editor.classList.remove('candidate-profile-field-invalid');
+            editor.parentElement.parentElement.querySelectorAll('[aria-invalid="true"]').forEach(clear);
+        }
+    };
+    document.addEventListener('input', clearEdited, true);
+    document.addEventListener('change', clearEdited, true);
+    const serverErrors = (data, context) => {
+        if (!context?.scope?.isConnected || !data?.errors) return;
+        let first = null;
+        for (const [name, messages] of Object.entries(data.errors)) {
+            const bracketName = name.replace(/\.([^.]+)/g, '[$1]');
+            const field = Array.from(context.scope.querySelectorAll('[name]')).find(input =>
+                input.name === name || input.name === bracketName || input.name === name + '[]');
+            if (field) { mark(field, Array.isArray(messages) ? messages[0] : messages); if (visible(anchorFor(field))) first ||= field; }
+        }
+        if (first) focus(first);
+    };
+    // Associate each request with its submitting form before asynchronous responses arrive.
+    const originalFetch = window.fetch;
+    window.fetch = function (input, options) {
+        const context = submitted;
+        const method = String(options?.method || input?.method || 'GET').toUpperCase();
+        return originalFetch.apply(this, arguments).then(response => {
+            if (method !== 'GET' && response.status === 422 && context) {
+                response.clone().json().then(data => serverErrors(data, context)).catch(() => {});
+            }
+            return response;
+        });
+    };
+    if (window.jQuery) {
+        const requests = new WeakMap();
+        jQuery(document).ajaxSend(function (event, xhr) { if (submitted) requests.set(xhr, submitted); });
+        jQuery(document).ajaxError(function (event, xhr) { if (xhr.status === 422) serverErrors(xhr.responseJSON, requests.get(xhr)); });
+        jQuery(document).on('change', '.candidate-profile-section select', function () { clearEdited({ target: this }); });
+    }
+})();

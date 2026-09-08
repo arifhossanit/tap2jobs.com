@@ -11,6 +11,7 @@ use App\Models\CandidateLink;
 use App\Models\CandidateReference;
 use App\Models\CandidateSkill;
 use App\Models\CandidateTraining;
+use App\Models\City;
 use App\Models\Country;
 use App\Models\FunctionalArea;
 use App\Models\OwnerShipType;
@@ -176,7 +177,7 @@ class ApplicationCvService
                 'id',
                 $candidate->preferred_special_skills ?? []
             )->pluck('name'),
-            'preferredLocations' => State::whereIn(
+            'preferredLocations' => City::whereIn(
                 'id',
                 $candidate->preferred_job_locations_inside ?? []
             )->pluck('name'),

@@ -267,6 +267,13 @@ class CandidateController extends AppBaseController
                     ->orderBy('sort_order')
                     ->orderByDesc('id')
                     ->get();
+                $data['candidateCertifications'] = Schema::hasTable('candidate_certifications')
+                    ? DB::table('candidate_certifications')
+                        ->where('candidate_id', $user->owner_id)
+                        ->orderBy('sort_order')
+                        ->orderBy('id')
+                        ->get()
+                    : collect();
             }
         }
 

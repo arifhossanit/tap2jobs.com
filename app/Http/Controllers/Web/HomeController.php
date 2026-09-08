@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Job;
 use App\Models\State;
 use App\Models\Company;
+use App\Models\GovernmentJob;
 use App\Models\JobType;
 use App\Models\Setting;
 use Carbon\Carbon;
@@ -74,10 +75,18 @@ class HomeController extends AppBaseController
             'part_time' => $partTimeType ? $partTimeType->id : '',
         ];
 
+        $data['governmentJobs'] = GovernmentJob::query()
+            ->where('is_published', true)
+            ->orderByDesc('published_at')
+            ->latest('id')
+            ->take(12)
+            ->get(['id', 'slug', 'title', 'organization_name']);
+
         $data['quickLinkCounts'] = [
             'employer_list' => Company::whereHas('user', function ($q) {
                 $q->where('is_active', 1);
             })->count(),
+            'government_jobs' => GovernmentJob::where('is_published', true)->count(),
             'new_jobs' => $openJobs(Job::query())
                 ->where('created_at', '>=', Carbon::now()->subDays(7))
                 ->count(),
