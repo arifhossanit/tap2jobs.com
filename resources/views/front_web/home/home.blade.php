@@ -872,7 +872,7 @@
     /* Laptop & Medium Displays (992px to 1199px) */
     @media (max-width: 1199px) {
         .bd-hero__inner {
-            padding: 32px 40px 28px;
+            padding: 32px 40px;
         }
 
         .bd-directory__layout {

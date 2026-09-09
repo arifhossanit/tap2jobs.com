@@ -158,7 +158,7 @@
 
         body.candidate-front-shell .candidate-profile-menu-shell {
             top: 0 !important;
-            z-index: 1100 !important;
+            z-index: 1060 !important;
             margin-top: 0 !important;
         }
 
