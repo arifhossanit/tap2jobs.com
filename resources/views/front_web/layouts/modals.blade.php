@@ -190,32 +190,10 @@
                 <p style="font-family: inherit; font-size: 14.5px; color: #64748b; line-height: 1.6; margin: 0;">${descText}</p>
             </div>
         `;
-        var modalContent = document.createElement('div');
-        modalContent.innerHTML = htmlContent;
-
-        if (typeof Swal !== 'undefined' && typeof Swal.fire === 'function') {
-            Swal.fire({
-                html: htmlContent,
-                showCancelButton: false,
-                confirmButtonText: confirmBtnText,
-                confirmButtonColor: '#209776',
-                customClass: {
-                    popup: 'not-eligible-swal-popup',
-                    confirmButton: 'not-eligible-confirm-btn'
-                }
-            });
-        } else if (typeof swal === 'function') {
-            swal({
-                title: "",
-                content: modalContent,
-                buttons: {
-                    confirm: confirmBtnText
-                },
-                icon: false
-            });
-        } else {
-            alert(titleText + "\n\n" + descText.replace(/<\/?[^>]+(>|$)/g, ""));
-        }
+        window.showTap2JobsModal(htmlContent, {
+            confirmText: confirmBtnText,
+            buttonClass: 'not-eligible-confirm-btn'
+        });
     };
 </script>
 

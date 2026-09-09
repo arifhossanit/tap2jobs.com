@@ -31,8 +31,8 @@ class CandidateProfileCompletionService
                     [filled($user?->last_name), 3],
                     [filled($user?->email), 4],
                     [filled($user?->phone), 4],
-                    [filled($user?->dob), 2],
-                    [filled($user?->gender), 1],
+                    [filled($user?->dob), 3],
+                    [filled($user?->gender), 2],
                     [filled($candidate->marital_status_id), 1],
                     [filled($candidate->father_name), 2],
                     [filled($candidate->mother_name), 2],
@@ -150,39 +150,57 @@ class CandidateProfileCompletionService
                 ]),
             ],
             'Skills' => [
-                'weight' => 12,
-                'score' => min(12, $skillCount * 4),
-                'missing' => $skillCount >= 3 ? [] : ['Add at least '.(3 - $skillCount).' more skill'.((3 - $skillCount) > 1 ? 's' : '')],
+                'weight' => 5,
+                'score' => $skillCount > 0 ? 5 : 0,
+                'missing' => $skillCount > 0 ? [] : ['Add skill'],
             ],
             'Education' => [
-                'weight' => 16,
-                'score' => CandidateEducation::query()->where('candidate_id', $candidate->id)->exists() ? 16 : 0,
+                'weight' => 20,
+                'score' => CandidateEducation::query()->where('candidate_id', $candidate->id)->exists() ? 20 : 0,
                 'missing' => CandidateEducation::query()->where('candidate_id', $candidate->id)->exists() ? [] : ['Add education'],
             ],
             'Training / certification' => [
-                'weight' => 7,
-                'score' => $this->hasTrainingOrCertification($candidate) ? 7 : 0,
-                'missing' => $this->hasTrainingOrCertification($candidate) ? [] : ['Add training or certification'],
+                'weight' => 5,
+                'score' => ($this->hasTraining($candidate) ? 3 : 0) + ($this->hasCertification($candidate) ? 2 : 0),
+                'missing' => array_values(array_filter([
+                    $this->hasTraining($candidate) ? null : 'Add training',
+                    $this->hasCertification($candidate) ? null : 'Add professional certification',
+                ])),
             ],
             'Experience' => [
-                'weight' => 12,
+                'weight' => 10,
                 'score' => CandidateExperience::query()->where('candidate_id', $candidate->id)->exists()
-                    || (int) $candidate->experience > 0 ? 12 : 0,
+                    || (int) $candidate->experience > 0 ? 10 : 0,
                 'missing' => CandidateExperience::query()->where('candidate_id', $candidate->id)->exists()
                     || (int) $candidate->experience > 0 ? [] : ['Add job experience or total experience'],
             ],
             'Other profile' => [
-                'weight' => 3,
-                'score' => $this->hasSupportingProfileInformation($candidate) ? 3 : 0,
-                'missing' => $this->hasSupportingProfileInformation($candidate) ? [] : ['Add language, link, reference, accomplishment, or extracurricular activity'],
+                'weight' => 5,
+                'score' => $this->supportingProfileScore($candidate),
+                'missing' => $this->supportingProfileMissing($candidate),
+            ],
+            'Accomplishment' => [
+                'weight' => 5,
+                'score' => $this->accomplishmentScore($candidate),
+                'missing' => $this->accomplishmentMissing($candidate),
             ],
         ];
 
-        $completed = collect($checks)
+        $tabs = [
+            'Personal details' => $this->combineChecks($checks, [
+                'Personal details', 'Address details', 'Career and application', 'Preferred area', 'Relevant information',
+            ]),
+            'Education' => $this->combineChecks($checks, ['Education', 'Training / certification']),
+            'Employment' => $this->combineChecks($checks, ['Experience']),
+            'Other information' => $this->combineChecks($checks, ['Skills', 'Other profile']),
+            'Accomplishment' => $this->combineChecks($checks, ['Accomplishment']),
+        ];
+
+        $completed = collect($tabs)
             ->filter(fn (array $check) => $check['score'] >= $check['weight'])
             ->count();
-        $total = count($checks);
-        $percentage = collect($checks)
+        $total = count($tabs);
+        $percentage = collect($tabs)
             ->sum('score');
 
         return [
@@ -190,7 +208,7 @@ class CandidateProfileCompletionService
             'completed' => $completed,
             'total' => $total,
             'color' => $this->color($percentage),
-            'breakdown' => collect($checks)
+            'breakdown' => collect($tabs)
                 ->map(fn (array $check, string $label) => [
                     'label' => $label,
                     'score' => $check['score'],
@@ -200,7 +218,7 @@ class CandidateProfileCompletionService
                 ])
                 ->values()
                 ->all(),
-            'missing' => collect($checks)
+            'missing' => collect($tabs)
                 ->filter(fn (array $check) => $check['score'] < $check['weight'])
                 ->flatMap(fn (array $check) => $check['missing'])
                 ->values()
@@ -224,27 +242,86 @@ class CandidateProfileCompletionService
             ->all();
     }
 
-    private function hasTrainingOrCertification(Candidate $candidate): bool
+    private function combineChecks(array $checks, array $labels): array
     {
-        if (CandidateTraining::query()->where('candidate_id', $candidate->id)->exists()) {
-            return true;
-        }
+        $selected = collect($labels)->map(fn (string $label) => $checks[$label]);
 
+        return [
+            'weight' => $selected->sum('weight'),
+            'score' => $selected->sum('score'),
+            'missing' => $selected->flatMap(fn (array $check) => $check['missing'])->values()->all(),
+        ];
+    }
+
+    private function hasTraining(Candidate $candidate): bool
+    {
+        return CandidateTraining::query()->where('candidate_id', $candidate->id)->exists();
+    }
+
+    private function hasCertification(Candidate $candidate): bool
+    {
         return Schema::hasTable('candidate_certifications')
             && DB::table('candidate_certifications')->where('candidate_id', $candidate->id)->exists();
     }
 
-    private function hasSupportingProfileInformation(Candidate $candidate): bool
+    private function supportingProfileStates(Candidate $candidate): array
     {
-        if (CandidateExtraCurricular::query()->where('candidate_id', $candidate->id)->exists()
-            || CandidateLink::query()->where('candidate_id', $candidate->id)->exists()
-            || CandidateReference::query()->where('candidate_id', $candidate->id)->exists()
-            || CandidateAccomplishment::query()->where('candidate_id', $candidate->id)->exists()) {
-            return true;
+        return [
+            [CandidateExtraCurricular::query()->where('candidate_id', $candidate->id)->exists(), 'Add extracurricular activity'],
+            [Schema::hasTable('candidate_language') && DB::table('candidate_language')->where('user_id', $candidate->user_id)->exists(), 'Add language proficiency'],
+            [CandidateLink::query()->where('candidate_id', $candidate->id)->exists(), 'Add link account'],
+            [CandidateReference::query()->where('candidate_id', $candidate->id)->exists(), 'Add reference'],
+        ];
+    }
+
+    private function supportingProfileScore(Candidate $candidate): int
+    {
+        $states = $this->supportingProfileStates($candidate);
+        $completed = collect($states)->filter(fn (array $item) => $item[0])->count();
+
+        return $completed + ($completed === count($states) ? 1 : 0);
+    }
+
+    private function supportingProfileMissing(Candidate $candidate): array
+    {
+        $states = $this->supportingProfileStates($candidate);
+        $missing = collect($states)->reject(fn (array $item) => $item[0])->pluck(1)->values()->all();
+
+        if ($missing !== []) {
+            $missing[] = 'Complete all Other Information sections for the final point';
         }
 
-        return Schema::hasTable('candidate_language')
-            && DB::table('candidate_language')->where('user_id', $candidate->user_id)->exists();
+        return $missing;
+    }
+
+    private function accomplishmentStates(Candidate $candidate): array
+    {
+        $types = CandidateAccomplishment::query()
+            ->where('candidate_id', $candidate->id)
+            ->pluck('type')
+            ->unique();
+
+        return [
+            [$types->contains(CandidateAccomplishment::TYPE_PORTFOLIO), 'Add portfolio'],
+            [$types->contains(CandidateAccomplishment::TYPE_PUBLICATION), 'Add publication'],
+            [$types->contains(CandidateAccomplishment::TYPE_AWARD), 'Add award'],
+            [$types->contains(CandidateAccomplishment::TYPE_PROJECT), 'Add project'],
+            [$types->contains(CandidateAccomplishment::TYPE_OTHER), 'Add other accomplishment'],
+        ];
+    }
+
+    private function accomplishmentScore(Candidate $candidate): int
+    {
+        return collect($this->accomplishmentStates($candidate))->filter(fn (array $item) => $item[0])->count();
+    }
+
+    private function accomplishmentMissing(Candidate $candidate): array
+    {
+        return collect($this->accomplishmentStates($candidate))
+            ->reject(fn (array $item) => $item[0])
+            ->pluck(1)
+            ->values()
+            ->all();
     }
 
     private function color(int $percentage): string

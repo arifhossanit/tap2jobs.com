@@ -29,13 +29,6 @@
         $candidateExtraCurricularItems = $data['candidateExtraCurriculars'] ?? collect();
         $candidateReferenceItems = $data['candidateReferences'] ?? collect();
         $profileReferenceOptions = $data['profileReferenceOptions'] ?? [];
-        $skillLearnOptions = $profileReferenceOptions['skill_learning_source'] ?? [
-            'Self' => 'Self',
-            'Job' => 'Job',
-            'Educational' => 'Educational',
-            'Professional Training' => 'Professional Training',
-            'NTVQF' => 'NTVQF',
-        ];
         $languageProficiencyOptions = $profileReferenceOptions['language_proficiency'] ?? [
             'High' => __('messages.candidate_profile.high'),
             'Medium' => __('messages.candidate_profile.medium'),
@@ -93,36 +86,12 @@
                             @forelse($candidateSkillItems as $candidateSkill)
                                 @php
                                     $skill = $candidateSkill->skill;
-                                    $sources = $candidateSkill->relationLoaded('sources')
-                                        ? $candidateSkill->sources->pluck('source')->filter()->values()
-                                        : collect();
-                                    $rawSourceText = $sources->count() ? $sources->implode(', ') : 'Professional Training';
-                                    $sourceMap = [
-                                        'Self' => __('messages.candidate_profile.self'),
-                                        'Job' => __('messages.candidate_profile.job'),
-                                        'Educational' => __('messages.candidate_profile.educational'),
-                                        'Professional Training' => __('messages.candidate_profile.professional_training'),
-                                        'NTVQF' => __('messages.candidate_profile.ntvqf'),
-                                    ];
-                                    $translatedSources = $sources->count()
-                                        ? $sources->map(fn($s) => $sourceMap[$s] ?? $s)->implode(', ')
-                                        : __('messages.candidate_profile.professional_training');
                                 @endphp
                                 @continue(! $skill)
                                 <div class="candidate-skill-item" data-skill-item data-skill-id="{{ $skill->id }}"
-                                     data-skill-name="{{ $skill->name }}" data-skill-sources="{{ $rawSourceText }}">
-                                    <div>
-                                        <strong>{{ $skill->name }}</strong>
-                                        <span>{{ $translatedSources }}</span>
-                                    </div>
-                                    <div class="candidate-skill-item__actions">
-                                        <button type="button" data-skill-edit>
-                                            <i class="fa-regular fa-pen-to-square"></i>
-                                        </button>
-                                        <button type="button" data-skill-delete>
-                                            <i class="fa-regular fa-trash-can"></i>
-                                        </button>
-                                    </div>
+                                     data-skill-name="{{ $skill->name }}">
+                                    <strong>{{ $skill->name }}</strong>
+                                    <button type="button" data-skill-delete aria-label="{{ __('messages.common.delete') }}">&times;</button>
                                 </div>
                             @empty
                                 <p class="candidate-skill-empty" data-skill-empty>---</p>
@@ -133,42 +102,14 @@
                             @csrf
                             <input type="hidden" name="first_name" value="{{ $user->first_name }}">
                             <input type="hidden" name="last_name" value="{{ $user->last_name }}">
-                            <input type="hidden" data-skill-editing-id>
-
                             <div class="candidate-skill-form__field">
                                 <label for="candidateSkillName">{{ __('messages.candidate_profile.skill') }} <span class="text-danger">*</span></label>
                                 <select class="form-control" id="candidateSkillName" data-skill-name-input
-                                        data-placeholder="{{ __('messages.candidate_profile.enter_skill') }}">
-                                    <option value=""></option>
+                                        data-placeholder="{{ __('messages.candidate_profile.enter_skill') }}" multiple>
                                     @foreach($data['skills'] ?? [] as $skillId => $skillName)
-                                        <option value="{{ $skillName }}" data-skill-id="{{ $skillId }}">{{ $skillName }}</option>
+                                        <option value="{{ $skillId }}" data-skill-id="{{ $skillId }}">{{ $skillName }}</option>
                                     @endforeach
                                 </select>
-                            </div>
-
-                            <div class="candidate-skill-form__field">
-                                <label>{{ __('messages.candidate_profile.how_did_you_learn_skill') }}</label>
-                                <div class="candidate-skill-source-list">
-                                    @php
-                                        $sourceKeyMap = [
-                                            'Self' => 'self',
-                                            'Job' => 'job',
-                                            'Educational' => 'educational',
-                                            'Professional Training' => 'professional_training',
-                                            'NTVQF' => 'ntvqf',
-                                        ];
-                                    @endphp
-                                    @foreach($skillLearnOptions as $source => $sourceLabel)
-                                        @php
-                                            $sourceKey = $sourceKeyMap[$source] ?? 'professional_training';
-                                        @endphp
-                                        <label class="candidate-skill-source">
-                                            <input type="checkbox" value="{{ $source }}" data-skill-source
-                                                   {{ $source === 'Professional Training' ? 'checked' : '' }}>
-                                            <span>{{ $sourceLabel ?: __('messages.candidate_profile.' . $sourceKey) }}</span>
-                                        </label>
-                                    @endforeach
-                                </div>
                             </div>
 
                             <div class="candidate-skill-form__actions candidate-profile-section-actions">
@@ -1453,15 +1394,9 @@
                     if (skillItems.length) {
                         formData.append('candidateSkillsUpdated', '1');
                     }
-                    skillItems.forEach(function (item, index) {
+                    skillItems.forEach(function (item) {
                         formData.append('candidateSkills[]', item.dataset.skillId || '');
                         formData.append('candidateSkillNames[]', item.dataset.skillName || '');
-                        String(item.dataset.skillSources || '')
-                            .split(', ')
-                            .filter(Boolean)
-                            .forEach(function (source) {
-                                formData.append('candidateSkillSources[' + index + '][]', source);
-                            });
                     });
                     formData.append('candidateLanguageUpdated', '1');
                     currentLanguageItems.forEach(function (item) {
@@ -2005,32 +1940,22 @@
                 const skillList = skillManager.querySelector('[data-skill-list]');
                 const skillForm = skillManager.querySelector('[data-skill-form]');
                 const skillNameInput = skillManager.querySelector('[data-skill-name-input]');
-                const skillEditingId = skillManager.querySelector('[data-skill-editing-id]');
-                const skillSources = skillManager.querySelectorAll('[data-skill-source]');
                 const skillEmpty = function () {
                     return skillManager.querySelector('[data-skill-empty]');
                 };
                 const skillOptions = {};
-                const skillSourceTranslations = {
-                    'Self': @json(__('messages.candidate_profile.self')),
-                    'Job': @json(__('messages.candidate_profile.job')),
-                    'Educational': @json(__('messages.candidate_profile.educational')),
-                    'Professional Training': @json(__('messages.candidate_profile.professional_training')),
-                    'NTVQF': @json(__('messages.candidate_profile.ntvqf')),
-                };
-                const defaultSourceTranslated = @json(__('messages.candidate_profile.professional_training'));
                 const $skillNameInput = $(skillNameInput);
 
                 const ensureSkillOption = function (name, id) {
                     if (!name) return;
                     const existingOption = Array.from(skillNameInput.options).find(function (option) {
-                        return option.value.toLowerCase() === String(name).toLowerCase();
+                        return option.text.trim().toLowerCase() === String(name).toLowerCase();
                     });
                     if (existingOption) {
                         existingOption.dataset.skillId = id || existingOption.dataset.skillId || '';
                         return;
                     }
-                    const option = new Option(name, name, false, false);
+                    const option = new Option(name, id || name, false, false);
                     option.dataset.skillId = id || '';
                     skillNameInput.add(option);
                 };
@@ -2038,6 +1963,7 @@
                 $skillNameInput.select2({
                     width: '100%',
                     placeholder: $skillNameInput.data('placeholder') || 'Select or add skill',
+                    closeOnSelect: false,
                     tags: true,
                     createTag: function (params) {
                         const term = $.trim(params.term);
@@ -2055,15 +1981,6 @@
                 });
 
 
-                const formatSourcesTranslated = function (sources) {
-                    if (!sources || !sources.length) {
-                        return defaultSourceTranslated;
-                    }
-                    return sources.map(function (s) {
-                        return skillSourceTranslations[s] || s;
-                    }).join(', ');
-                };
-
                 skillManager.querySelectorAll('[data-skill-option]').forEach(function (option) {
                     skillOptions[String(option.dataset.name || '').toLowerCase()] = {
                         id: option.dataset.id,
@@ -2071,60 +1988,29 @@
                     };
                 });
 
-                const selectedSources = function () {
-                    return Array.from(skillSources)
-                        .filter(function (source) {
-                            return source.checked;
-                        })
-                        .map(function (source) {
-                            return source.value;
-                        });
-                };
-
-                const setSelectedSources = function (sources) {
-                    const selected = sources.length ? sources : ['Professional Training'];
-                    skillSources.forEach(function (source) {
-                        source.checked = selected.includes(source.value);
-                    });
-                };
-
-                const makeSkillItem = function (id, name, sources) {
+                const makeSkillItem = function (id, name) {
                     const item = document.createElement('div');
                     item.className = 'candidate-skill-item';
                     item.dataset.skillItem = '';
                     item.dataset.skillId = id || '';
                     item.dataset.skillName = name;
-                    item.dataset.skillSources = sources.join(', ');
                     item.innerHTML = [
-                        '<div>',
                         '<strong></strong>',
-                        '<span></span>',
-                        '</div>',
-                        '<div class="candidate-skill-item__actions">',
-                        '<button type="button" data-skill-edit><i class="fa-regular fa-pen-to-square"></i></button>',
-                        '<button type="button" data-skill-delete><i class="fa-regular fa-trash-can"></i></button>',
-                        '</div>',
+                        '<button type="button" data-skill-delete aria-label="Delete">&times;</button>',
                     ].join('');
                     item.querySelector('strong').textContent = name;
-                    item.querySelector('span').textContent = formatSourcesTranslated(sources);
                     return item;
                 };
 
-                const openSkillForm = function (item) {
+                const openSkillForm = function () {
                     skillForm.classList.remove('d-none');
-                    const selectedName = item ? item.dataset.skillName : '';
-                    ensureSkillOption(selectedName, item ? item.dataset.skillId : '');
-                    $skillNameInput.val(selectedName || null).trigger('change');
-                    skillEditingId.value = item ? item.dataset.skillId : '';
-                    setSelectedSources(item ? String(item.dataset.skillSources || '').split(', ').filter(Boolean) : []);
+                    $skillNameInput.val(null).trigger('change');
                 };
 
                 const closeSkillForm = function () {
                     skillForm.classList.add('d-none');
                     skillForm.reset();
                     $skillNameInput.val(null).trigger('change');
-                    skillEditingId.value = '';
-                    setSelectedSources([]);
                 };
 
                 const syncSkills = function () {
@@ -2142,12 +2028,6 @@
                     skillItems.forEach(function (item, index) {
                         formData.append('candidateSkills[]', item.dataset.skillId || '');
                         formData.append('candidateSkillNames[]', item.dataset.skillName || '');
-                        String(item.dataset.skillSources || '')
-                            .split(', ')
-                            .filter(Boolean)
-                            .forEach(function (source) {
-                                formData.append('candidateSkillSources[' + index + '][]', source);
-                            });
                     });
 
                     fetch(skillManager.dataset.updateUrl, {
@@ -2175,7 +2055,6 @@
 
                             if (item) {
                                 item.dataset.skillId = savedItem.id || item.dataset.skillId || '';
-                                item.dataset.skillSources = (savedItem.sources || []).join(', ');
                             }
                             if (savedItem.name) {
                                 skillOptions[String(savedItem.name || '').toLowerCase()] = {
@@ -2200,16 +2079,11 @@
                     if (skillPanelBody && typeof bootstrap !== 'undefined') {
                         bootstrap.Collapse.getOrCreateInstance(skillPanelBody, { toggle: false }).show();
                     }
-                    openSkillForm(null);
+                    openSkillForm();
                 });
 
                 skillManager.addEventListener('click', function (event) {
-                    const editButton = event.target.closest('[data-skill-edit]');
                     const deleteButton = event.target.closest('[data-skill-delete]');
-
-                    if (editButton) {
-                        openSkillForm(editButton.closest('[data-skill-item]'));
-                    }
 
                     if (deleteButton) {
                         const item = deleteButton.closest('[data-skill-item]');
@@ -2245,31 +2119,27 @@
 
                 skillForm.addEventListener('submit', function (event) {
                     event.preventDefault();
-                    const enteredName = skillNameInput.value.trim();
-                    if (!enteredName) {
+                    const selectedOptions = Array.from(skillNameInput.selectedOptions);
+                    if (!selectedOptions.length) {
                         skillNameInput.focus();
                         return;
                     }
 
-                    const matchedSkill = skillOptions[enteredName.toLowerCase()] || {};
-                    const skillId = matchedSkill.id || skillEditingId.value || '';
-                    const skillName = matchedSkill.name || enteredName;
-                    const sources = selectedSources();
-                    const existingItem = skillEditingId.value
-                        ? skillList.querySelector('[data-skill-id="' + skillEditingId.value + '"]')
-                        : null;
-
                     skillEmpty()?.remove();
+                    selectedOptions.forEach(function (option) {
+                        const enteredName = option.text.trim();
+                        const matchedSkill = skillOptions[enteredName.toLowerCase()] || {};
+                        const skillId = matchedSkill.id || option.dataset.skillId || '';
+                        const skillName = matchedSkill.name || enteredName;
+                        const duplicate = Array.from(skillList.querySelectorAll('[data-skill-item]'))
+                            .some(function (item) {
+                                return String(item.dataset.skillName || '').toLowerCase() === skillName.toLowerCase();
+                            });
 
-                    if (existingItem) {
-                        existingItem.dataset.skillId = skillId;
-                        existingItem.dataset.skillName = skillName;
-                        existingItem.dataset.skillSources = sources.join(', ');
-                        existingItem.querySelector('strong').textContent = skillName;
-                        existingItem.querySelector('span').textContent = formatSourcesTranslated(sources);
-                    } else {
-                        skillList.appendChild(makeSkillItem(skillId, skillName, sources));
-                    }
+                        if (!duplicate) {
+                            skillList.appendChild(makeSkillItem(skillId, skillName));
+                        }
+                    });
 
                     closeSkillForm();
                     syncSkills();

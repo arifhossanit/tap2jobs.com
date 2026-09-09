@@ -1,6 +1,10 @@
 <div class="d-flex justify-content-center">
+    <a href="{{route('company.show', $row->id)}}" title="{{__('messages.common.view') }}"
+       class="btn px-2 text-info fs-3 {{ checkLanguageSession() == 'ar' ? 'pe-0' : 'ps-0' }}" data-bs-toggle="tooltip">
+        <i class="fa-solid fa-eye"></i>
+    </a>
     <a href="{{route('company.edit', $row->id)}}" title="{{__('messages.common.edit') }}"
-       class="btn px-2 text-primary fs-3 {{ checkLanguageSession() == 'ar' ? 'pe-0' : 'ps-0' }}" data-bs-toggle="tooltip">
+       class="btn px-2 text-primary fs-3" data-bs-toggle="tooltip">
         <i class="fa-solid fa-pen-to-square"></i>
     </a>
     <button type="button" title="{{__('messages.common.delete')}}" data-id="{{ $row->id }}"

@@ -227,16 +227,14 @@
                                 @endif
 
                             </div>
+                            @if ($job->compensation_and_other_benefits)
                             <div class="compensation-and-benefits mb-lg-5 mb-4">
                                 <h5 class="fs-18 text-secondary mb-4">Compensation and other benefits</h5>
-                                @if ($job->compensation_and_other_benefits)
-                                    <div class="compensation-and-benefits job-editor-content">
-                                        {!! $job->compensation_and_other_benefits !!}
-                                    </div>
-                                @else
-                                    <p class="fs-16 text-gray mb-5 pb-lg-4">{{ __('messages.n/a') }}</p>
-                                @endif
+                                <div class="compensation-and-benefits job-editor-content">
+                                    {!! $job->compensation_and_other_benefits !!}
+                                </div>
                             </div>
+                            @endif
                             <div class="skill-experience mb-lg-5 mb-4">
                                 <h5 class="fs-18 text-secondary mb-4">@lang('messages.front_job_details.skill_experience')</h5>
                                 @if (!empty($skills))

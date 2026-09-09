@@ -930,39 +930,6 @@ function loadCandidateGeneralData() {
         });
     }
 
-    function renderPreferredSelectChips($select) {
-        const target = $select.data("chip-target");
-        const $target = $(target);
-        if (!$target.length) {
-            return;
-        }
-
-        const $container = $select.next(".select2-container");
-        $container.find(".select2-selection__choice").remove();
-        $container
-            .find(
-                ".select2-selection__rendered > li:not(.select2-search--inline)",
-            )
-            .remove();
-        $container
-            .find(".select2-search__field")
-            .attr("placeholder", $select.data("placeholder") || "");
-
-        $target.empty();
-        $select.find("option:selected").each(function () {
-            const $option = $(this);
-            const $chip = $('<span class="candidate-preferred-chip"></span>');
-            $chip.text($option.text());
-            $('<button type="button" aria-label="Remove">&times;</button>')
-                .appendTo($chip)
-                .on("click", function () {
-                    $option.prop("selected", false);
-                    $select.trigger("change");
-                });
-            $target.append($chip);
-        });
-    }
-
     $(".candidate-preferred-checkbox")
         .each(function () {
             renderPreferredCheckboxChips($(this).data("chip-target"));
@@ -971,30 +938,35 @@ function loadCandidateGeneralData() {
             renderPreferredCheckboxChips($(this).data("chip-target"));
         });
 
-    $(".candidate-preferred-select")
-        .each(function () {
-            if (!$(this).hasClass("select2-hidden-accessible")) {
-                $(this).select2({
-                    width: "100%",
-                    closeOnSelect: false,
-                    placeholder: $(this).data("placeholder") || "",
-                    maximumSelectionLength: Number($(this).data("maximum-selection-length")) || 0,
-                });
-            }
-            renderPreferredSelectChips($(this));
-        })
-        .on("change", function () {
-            renderPreferredSelectChips($(this));
-        })
-        .on(
-            "select2:select select2:unselect select2:open select2:close",
-            function () {
-                const select = this;
-                setTimeout(function () {
-                    renderPreferredSelectChips($(select));
-                }, 0);
-            },
-        );
+    $("#preferredJobCategories, #preferredInsideDistricts").each(function () {
+        const $preferredSelect = $(this);
+        if ($preferredSelect.hasClass("select2-hidden-accessible")) {
+            $preferredSelect.select2("destroy");
+        }
+
+        $preferredSelect.select2({
+            width: "100%",
+            placeholder: $preferredSelect.data("placeholder") || "",
+            closeOnSelect: false,
+            maximumSelectionLength:
+                Number($preferredSelect.data("maximum-selection-length")) || 0,
+        });
+
+        $preferredSelect.on("select2:select", function () {
+            window.setTimeout(function () {
+                $preferredSelect
+                    .next(".select2-container")
+                    .find(".select2-search__field")
+                    .val("")
+                    .trigger("input")
+                    .trigger("keyup");
+                $(".select2-container--open .select2-search__field")
+                    .val("")
+                    .trigger("input")
+                    .trigger("keyup");
+            }, 0);
+        });
+    });
 
     $("#countryId").on("change", function () {
         $.ajax({

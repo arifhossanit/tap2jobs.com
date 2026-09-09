@@ -678,8 +678,7 @@
                             <p>{{ __('messages.candidate_profile.preferred_job_categories_help') }}</p>
                             <div>
                                 <div class="candidate-preferred-label">{{ __('messages.candidate_profile.job_category') }} <span>({{ __('messages.candidate_profile.max_3') }})</span></div>
-                                {{ Form::select('preferred_job_categories[]', $jobCategoryOptions->toArray(), $preferredJobCategories, ['class' => 'form-select candidate-preferred-select', 'id' => 'preferredJobCategories', 'multiple' => true, 'data-placeholder' => __('messages.candidate_profile.select_job_category'), 'data-chip-target' => '#jobCategoryChips', 'data-maximum-selection-length' => 3]) }}
-                                <div class="candidate-preferred-chips" id="jobCategoryChips"></div>
+                                {{ Form::select('preferred_job_categories[]', $jobCategoryOptions->toArray(), $preferredJobCategories, ['class' => 'form-select', 'id' => 'preferredJobCategories', 'multiple' => true, 'data-control' => 'select2', 'data-placeholder' => __('messages.candidate_profile.select_job_category'), 'data-maximum-selection-length' => 3]) }}
                             </div>
                         </div>
 
@@ -687,8 +686,7 @@
                             <h3>{{ __('messages.candidate_profile.preferred_job_location') }} <span class="required"></span></h3>
                             <p>{{ __('messages.candidate_profile.preferred_job_location_help') }}</p>
                             <div class="candidate-preferred-label">{{ __('messages.candidate_profile.inside_bangladesh_districts') }} <span>({{ __('messages.candidate_profile.max_15') }})</span></div>
-                            {{ Form::select('preferred_job_locations_inside[]', $districtOptions->toArray(), $preferredInside, ['class' => 'form-select candidate-preferred-select', 'id' => 'preferredInsideDistricts', 'multiple' => true, 'data-placeholder' => __('messages.candidate_profile.add_districts'), 'data-chip-target' => '#insideDistrictChips', 'data-maximum-selection-length' => 15]) }}
-                            <div class="candidate-preferred-chips" id="insideDistrictChips"></div>
+                            {{ Form::select('preferred_job_locations_inside[]', $districtOptions->toArray(), $preferredInside, ['class' => 'form-select', 'id' => 'preferredInsideDistricts', 'multiple' => true, 'data-control' => 'select2', 'data-placeholder' => __('messages.candidate_profile.add_districts'), 'data-maximum-selection-length' => 15]) }}
                         </div>
 
                         <div class="candidate-profile-section-actions">

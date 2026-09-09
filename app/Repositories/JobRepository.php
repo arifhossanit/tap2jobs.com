@@ -112,6 +112,7 @@ class JobRepository extends BaseRepository
         $data['careerLevels'] = CareerLevel::pluck('level_name', 'id');
         $data['jobShift'] = JobShift::pluck('shift', 'id');
         $data['currencies'] = SalaryCurrency::pluck('currency_name', 'id');
+        $data['default_job_currency_id'] = SalaryCurrency::where('currency_code', 'BDT')->value('id');
         $data['salaryPeriods'] = SalaryPeriod::pluck('period', 'id');
         $data['functionalArea'] = FunctionalArea::pluck('name', 'id');
         $data['preference'] = Job::NO_PREFERENCE;

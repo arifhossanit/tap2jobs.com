@@ -89,7 +89,7 @@
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('currency_id', __('messages.job.currency').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{ Form::select('currency_id', $data['currencies'], null,
+        {{ Form::select('currency_id', $data['currencies'], old('currency_id', $data['default_job_currency_id'] ?? null),
                 ['id'=>'currencyId','class' => 'form-select','placeholder' => __('messages.company.select_currency'),'data-control'=>'select2','required']) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
@@ -111,7 +111,7 @@
                     <div class="col-xl-2 col-md-4 col-sm-12 mb-5">
         {{ Form::label('country', __('messages.company.country').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{ Form::select('country_id', $data['countries'], $data['selected_country_id'] ?? $data['default_country_id'] ?? null, ['id'=>'countryId','class' => 'form-select','data-control'=>'select2','required']) }}
+        {{ Form::select('country_id', $data['countries'], old('country_id'), ['id'=>'countryId','class' => 'form-select','placeholder' => __('messages.company.select_country'),'data-control'=>'select2','required']) }}
     </div>
     <div class="col-xl-2 col-md-4 col-sm-12 mb-5">
         {{ Form::label('state', __('messages.company.state').':', ['class' => 'form-label']) }}

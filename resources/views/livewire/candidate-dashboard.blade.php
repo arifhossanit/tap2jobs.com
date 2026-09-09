@@ -3,13 +3,23 @@
     $candidateLocation = __('messages.candidate_dashboard.location_information');
     $completionPercentage = $profileCompletion['percentage'] ?? 0;
     $completionColor = $profileCompletion['color'] ?? '#209776';
-    $dashboardScoringBars = [
-        ['label' => __('messages.candidate_dashboard.completed_profile'), 'percent' => $completionPercentage],
-        ['label' => __('messages.candidate_dashboard.skill'), 'percent' => max(0, $completionPercentage - 12)],
-        ['label' => __('messages.candidate_dashboard.experience'), 'percent' => max(0, $completionPercentage - 24)],
-        ['label' => __('messages.candidate_dashboard.education'), 'percent' => max(0, $completionPercentage - 36)],
-        ['label' => __('messages.candidate_dashboard.location'), 'percent' => max(0, $completionPercentage - 48)],
+    $matchingCriteriaLabels = [
+        'skills' => 'Candidate skills',
+        'preferred_category' => 'Preferred job category',
+        'keywords' => 'Profile keywords',
+        'experience' => 'Experience',
+        'location' => 'Preferred/current location',
+        'education' => 'Education level',
+        'job_nature' => 'Job nature',
+        'salary' => 'Expected salary',
     ];
+    $maximumMatchingWeight = max(\App\Services\CandidateJobMatchService::SCORE_WEIGHTS);
+    $dashboardScoringBars = collect(\App\Services\CandidateJobMatchService::SCORE_WEIGHTS)
+        ->map(fn ($points, $key) => [
+            'label' => $matchingCriteriaLabels[$key],
+            'points' => $points,
+            'percent' => (int) round(($points / $maximumMatchingWeight) * 100),
+        ])->values()->all();
     $dashboardNumber = function ($value) {
         $value = (string) $value;
 
@@ -258,11 +268,11 @@
                                 @endphp
                                 <div class="candidate-profile-breakdown__row">
                                     <div class="candidate-profile-breakdown__top">
-                                        <span>{{ $scoringBar['label'] }}</span>
+                                        <span>{{ $scoringBar['label'] }}</span>                                    
                                     </div>
-                                    <div class="candidate-profile-breakdown__track">
+                                    {{-- <div class="candidate-profile-breakdown__track">
                                         <span style="width: {{ $barPercent }}%;"></span>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             @endforeach
                         </div>

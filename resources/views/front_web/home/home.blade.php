@@ -552,21 +552,23 @@
 
     /* Quick Links */
     .bd-quick-links {
+        box-shadow: 0 1px 3px rgba(15, 27, 61, .08);
         height: auto;
         width: 263px;
         background: #209776;
-        color: #fff;
+        color: #0a0a0a;
         padding: 16px 18px;
     }
 
     .bd-quick-links h2 {
         font-size: 16px;
+        font-weight: bold;
         line-height: 1.2 !important;
     }
 
     .bd-quick-links a {
         display: block;
-        color: #fff;
+        color: #1a1818;
         font-size: 12px;
     }
 
@@ -583,28 +585,47 @@
     }
 
     .bd-government-jobs {
-        background: #fffdeb;
         border: 1px solid #ebe8cf;
         border-radius: 4px;
         box-shadow: 0 1px 3px rgba(15, 27, 61, .08);
         color: #30352f;
-        padding: 12px;
+        padding: 14px 16px;
         width: 100%;
     }
 
     .bd-government-jobs__title {
         align-items: center;
-        color: #1262b0;
+        color: #0a0a0a;
         display: flex;
         font-size: 15px;
-        font-weight: 700;
+        font-weight: bold;
         gap: 7px;
-        margin: 0 0 8px;
-        text-transform: uppercase;
+        margin: 0;
     }
 
     .bd-government-jobs__slide {
         min-height: 112px;
+    }
+
+    #governmentJobsCarousel .carousel-item-next:not(.carousel-item-start) {
+        transform: translateY(-100%);
+    }
+
+    #governmentJobsCarousel .active.carousel-item-end {
+        transform: translateY(-100%);
+    }
+
+    #governmentJobsCarousel .carousel-item-prev:not(.carousel-item-end) {
+        transform: translateY(100%);
+    }
+
+    #governmentJobsCarousel .active.carousel-item-start {
+        transform: translateY(100%);
+    }
+
+    #governmentJobsCarousel .carousel-item-next.carousel-item-start,
+    #governmentJobsCarousel .carousel-item-prev.carousel-item-end {
+        transform: translateY(0);
     }
 
     .bd-government-jobs__item {
@@ -1313,7 +1334,7 @@
             </div>
             <!-- <aside class="bd-sidebar"></aside> -->
             <aside class="bd-sidebar">
-                <div class="bd-quick-links">
+                <div class="bd-quick-links bg-gradient">
                 <h2>@lang('web.home_page.quick_links')</h2>
                 <div class="bd-quick-links-grid">
                     <a href="{{ route('front.company.lists') }}">Employer List ({{ $quickLinkCounts['employer_list'] ?? 0 }})</a>
@@ -1327,10 +1348,10 @@
                     <a href="{{ route('front.search.jobs', ['is_fresher' => 1]) }}">Fresher Jobs ({{ $quickLinkCounts['fresher_jobs'] ?? 0 }})</a>
                 </div>
                 </div>
-                <div class="bd-government-jobs">
+                <div class="bd-government-jobs bg-gradient">
                     <h2 class="bd-government-jobs__title">Government Jobs</h2>
                     @if(($governmentJobs ?? collect())->isNotEmpty())
-                        <div id="governmentJobsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3500">
+                        <div id="governmentJobsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3500" data-bs-wrap="true" data-bs-keyboard="false" data-bs-touch="false">
                             <div class="carousel-inner">
                                 @foreach($governmentJobs->chunk(3) as $slideIndex => $jobSlide)
                                     <div class="carousel-item {{ $slideIndex === 0 ? 'active' : '' }}">
@@ -1351,13 +1372,12 @@
                     @endif
                     <div class="bd-government-jobs__footer">
                         <a class="bd-government-jobs__all" href="{{ route('front.government-jobs.index') }}">View All ({{ number_format($quickLinkCounts['government_jobs'] ?? 0) }})</a>
-                        @if(($governmentJobs ?? collect())->count() > 3)
+                        {{-- @if(($governmentJobs ?? collect())->count() > 3)
                             <div class="bd-government-jobs__controls">
                                 <button class="bd-government-jobs__control" type="button" data-government-carousel-pause aria-label="Pause"><i class="fa-solid fa-pause"></i></button>
-                                <button class="bd-government-jobs__control" type="button" data-bs-target="#governmentJobsCarousel" data-bs-slide="prev" aria-label="Previous"><i class="fa-solid fa-chevron-left"></i></button>
-                                <button class="bd-government-jobs__control" type="button" data-bs-target="#governmentJobsCarousel" data-bs-slide="next" aria-label="Next"><i class="fa-solid fa-chevron-right"></i></button>
+                                <button class="bd-government-jobs__control" type="button" data-bs-target="#governmentJobsCarousel" data-bs-slide="next" aria-label="Next"><i class="fa-solid fa-chevron-down"></i></button>
                             </div>
-                        @endif
+                        @endif --}}
                     </div>
                 </div>
             </aside>

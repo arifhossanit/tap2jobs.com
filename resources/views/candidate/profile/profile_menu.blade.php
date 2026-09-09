@@ -1,6 +1,6 @@
 @php
     $sectionName = $data['sectionName'] ?? 'personal-information';
-    $profileCompletion = $data['profileCompletion'] ?? ['percentage' => 0, 'completed' => 0, 'total' => 11, 'color' => '#f04438'];
+    $profileCompletion = $data['profileCompletion'] ?? ['percentage' => 0, 'completed' => 0, 'total' => 5, 'color' => '#f04438'];
     $completionPercentage = max(0, min(100, (int) ($profileCompletion['percentage'] ?? 0)));
     $completionTone = $completionPercentage <= 30 ? 'danger' : ($completionPercentage <= 60 ? 'warning' : 'success');
     $completionColor = ['danger' => '#f04438', 'warning' => '#f79009', 'success' => '#12b76a'][$completionTone];
@@ -74,7 +74,7 @@
                 <div class="candidate-profile-progress__remaining" tabindex="0"
                      aria-label="Incomplete profile items">
                     <div class="candidate-profile-progress__popover">
-                        <span>Complete these items</span>
+                        <span>Please complete these items</span>
                         <ul>
                             @foreach($missingProfileItems as $missingProfileItem)
                                 <li>{{ $missingProfileItem }}</li>
