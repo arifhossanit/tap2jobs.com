@@ -1337,6 +1337,43 @@ window.refreshCandidateProfileSection = async function (section, panelId) {
 // Shared validation for candidate profile forms, including dynamically refreshed panels.
 (function () {
     let submitted = null;
+    const suppressedValidationMessages = new Map();
+    const originalDisplayErrorMessage = window.displayErrorMessage;
+    const messageText = value => {
+        if (Array.isArray(value)) return messageText(value[0]);
+        if (value && typeof value === 'object') {
+            if (value.message) return messageText(value.message);
+            if (value.responseJSON) return messageText(value.responseJSON);
+            if (value.errors) {
+                const first = Object.values(value.errors)[0];
+                if (first) return messageText(first);
+            }
+        }
+        return typeof value === 'string' ? value.trim() : '';
+    };
+    const suppressValidationToast = message => {
+        const text = messageText(message);
+        if (text) suppressedValidationMessages.set(text, Date.now() + 3000);
+    };
+    const isSuppressedValidationToast = message => {
+        const text = messageText(message);
+        const expiresAt = suppressedValidationMessages.get(text);
+        if (!expiresAt) return false;
+        suppressedValidationMessages.delete(text);
+        return expiresAt >= Date.now();
+    };
+
+    // Every candidate-profile request can use the same response-message parser.
+    window.getCandidateProfileErrorMessage = function (error, fallback) {
+        return messageText(error) || messageText(fallback) ||
+            (typeof Lang !== 'undefined' ? Lang.get('js.error') : 'Something went wrong.');
+    };
+    if (typeof originalDisplayErrorMessage === 'function') {
+        window.displayErrorMessage = function (message) {
+            if (isSuppressedValidationToast(message)) return;
+            return originalDisplayErrorMessage(window.getCandidateProfileErrorMessage(message));
+        };
+    }
     const visible = element => !!element && element.getClientRects().length > 0;
     const scopeFor = (form, button) => button?.closest('.candidate-profile-section__collapse') || form;
     const isProfile = form => !!form && !!document.querySelector('.candidate-profile-menu') &&
@@ -1458,32 +1495,53 @@ window.refreshCandidateProfileSection = async function (section, panelId) {
     document.addEventListener('input', clearEdited, true);
     document.addEventListener('change', clearEdited, true);
     const serverErrors = (data, context) => {
-        if (!context?.scope?.isConnected || !data?.errors) return;
+        if (!context?.scope?.isConnected || !data?.errors) return false;
         let first = null;
+        let mapped = false;
         for (const [name, messages] of Object.entries(data.errors)) {
             const bracketName = name.replace(/\.([^.]+)/g, '[$1]');
             const field = Array.from(context.scope.querySelectorAll('[name]')).find(input =>
                 input.name === name || input.name === bracketName || input.name === name + '[]');
-            if (field) { mark(field, Array.isArray(messages) ? messages[0] : messages); if (visible(anchorFor(field))) first ||= field; }
+            if (field) {
+                const message = Array.isArray(messages) ? messages[0] : messages;
+                mark(field, message);
+                suppressValidationToast(message);
+                mapped = true;
+                if (visible(anchorFor(field))) first ||= field;
+            }
         }
-        if (first) focus(first);
+        if (mapped) {
+            // Laravel's generic validation message must not appear beside inline errors.
+            suppressValidationToast(data.message);
+            if (first) focus(first);
+        }
+        return mapped;
     };
     // Associate each request with its submitting form before asynchronous responses arrive.
     const originalFetch = window.fetch;
     window.fetch = function (input, options) {
         const context = submitted;
         const method = String(options?.method || input?.method || 'GET').toUpperCase();
-        return originalFetch.apply(this, arguments).then(response => {
+        return originalFetch.apply(this, arguments).then(async response => {
             if (method !== 'GET' && response.status === 422 && context) {
-                response.clone().json().then(data => serverErrors(data, context)).catch(() => {});
+                try {
+                    serverErrors(await response.clone().json(), context);
+                } catch (error) {
+                    // The request owner will display a server/network error if it is not JSON.
+                }
             }
             return response;
         });
     };
     if (window.jQuery) {
-        const requests = new WeakMap();
-        jQuery(document).ajaxSend(function (event, xhr) { if (submitted) requests.set(xhr, submitted); });
-        jQuery(document).ajaxError(function (event, xhr) { if (xhr.status === 422) serverErrors(xhr.responseJSON, requests.get(xhr)); });
+        jQuery.ajaxPrefilter(function (options) {
+            const context = submitted;
+            const originalError = options.error;
+            options.error = function (xhr) {
+                if (xhr.status === 422) serverErrors(xhr.responseJSON, context);
+                if (typeof originalError === 'function') return originalError.apply(this, arguments);
+            };
+        });
         jQuery(document).on('change', '.candidate-profile-section select', function () { clearEdited({ target: this }); });
     }
 })();

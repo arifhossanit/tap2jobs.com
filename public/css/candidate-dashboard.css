@@ -337,7 +337,7 @@ a.candidate-stat-card:hover {
 .candidate-profile-breakdown__top span {
   color: #111827;
   font-size: 15px;
-  font-weight: 800;
+  font-weight: 500;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
