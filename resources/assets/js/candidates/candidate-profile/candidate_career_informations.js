@@ -765,8 +765,13 @@ function loadCandidateCareerInformationData() {
         const educationLabel = window.candidateProfileEducationLabel || 'Education';
         $(formSelector).find('[data-education-form-title]').text(educationLabel + ' ' + getCandidateProfileNumber(number));
     }
-
     let activeEducationItem = null;
+
+    function syncEducationEmptyState() {
+        const hasEducation = $('.candidate-education-container .candidate-education').length > 0;
+        const isFormOpen = $('[data-education-add-form]:not(.d-none), [data-education-edit-form]:not(.d-none)').length > 0;
+        $('#notfoundEducation').toggleClass('d-none', hasEducation || isFormOpen);
+    }
 
     function restoreEducationActiveItem() {
         if (!activeEducationItem || !activeEducationItem.length) {
@@ -781,9 +786,10 @@ function loadCandidateCareerInformationData() {
     function closeEducationInlineForms() {
         restoreEducationActiveItem();
         $('[data-education-add-form], [data-education-edit-form]').addClass('d-none');
-        $('[data-education-add-form], [data-education-edit-form]').removeClass('candidate-training-form--add candidate-training-form--edit');
+        $('[data-education-add-form], [data-education-edit-form]').removeClass('candidate-training-form--add candidate-training-form--edit candidate-training-form--empty-add');
         $('[data-education-form-title]').removeClass('d-none');
         $('.candidate-education-container').removeClass('d-none');
+        syncEducationEmptyState();
     }
 
     function scrollToEducationInlineForm() {
@@ -808,6 +814,8 @@ function loadCandidateCareerInformationData() {
         $('[data-education-edit-form]').addClass('d-none');
         $('.candidate-education-container').after($('[data-education-add-form]'));
         $('[data-education-add-form]').addClass('candidate-training-form--add').removeClass('d-none');
+        $('[data-education-add-form]').toggleClass('candidate-training-form--empty-add', $('.candidate-education-container .candidate-education').length === 0);
+        syncEducationEmptyState();
         setEducationFormTitle('[data-education-add-form]', $('.candidate-education-container .candidate-education').length + 1);
         updateEducationFormLayout('#addNewEducationForm');
         initEducationQuillEditors();

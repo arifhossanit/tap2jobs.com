@@ -165,11 +165,11 @@
                                     <div class="candidate-activity-item__header">
                                         <h2>{{ __('messages.candidate_profile.extracurricular_activities') }} {{ $candidateProfileNumber($loop->iteration) }}</h2>
                                         <div class="candidate-reference-actions">
-                                            <button type="button" data-activity-edit>
-                                                <i class="fa-regular fa-pen-to-square"></i> {{ __('messages.candidate_profile.edit') }}
+                                <button type="button" data-activity-edit>
+                                    <i class="fa-regular fa-pen-to-square"></i> {{ __('messages.candidate_profile.edit') }}
                                             </button>
-                                            <button type="button" data-activity-delete>
-                                                <i class="fa-regular fa-trash-can"></i> {{ __('messages.candidate_profile.delete') }}
+                                <button type="button" data-activity-delete>
+                                    <i class="fa-regular fa-trash-can"></i> {{ __('messages.candidate_profile.delete') }}
                                             </button>
                                         </div>
                                     </div>
@@ -664,7 +664,10 @@
                 };
 
                 const setLinkFormMode = function (isEditing) {
+                    const isEmptyAdd = isEditing && !activeLinkItem && linkItems().length === 0;
                     linkForm.classList.toggle('d-none', !isEditing);
+                    linkForm.classList.toggle('candidate-profile-empty-add-form', isEmptyAdd);
+                    linkList.querySelector('[data-link-empty]')?.classList.toggle('d-none', linkItems().length > 0 || isEditing);
                     if (isEditing) {
                         linkPlatformInput.focus();
                     }
@@ -998,7 +1001,9 @@
                             title.textContent = referenceLabels.reference + ' ' + formatProfileNumber(index + 1);
                         }
                     });
-                    referenceEmpty()?.classList.toggle('d-none', items.length > 0);
+                    const isFormOpen = !referenceForm.classList.contains('d-none');
+                    referenceEmpty()?.classList.toggle('d-none', items.length > 0 || isFormOpen);
+                    referenceForm.classList.toggle('candidate-profile-empty-add-form', isFormOpen && items.length === 0);
                 };
 
                 const syncReferenceItem = function (item, values) {
@@ -1103,6 +1108,7 @@
                             referenceEmpty()?.after(referenceForm);
                         }
                     }
+                    renderReferenceNumbers();
                     referenceForm.querySelector('[data-reference-field-input="name"]')?.focus();
                 };
 
@@ -1286,7 +1292,10 @@
                         activeLanguageItem?.classList.remove('d-none');
                         activeLanguageItem = null;
                     }
+                    const isEmptyAdd = isEditing && !activeLanguageItem && languageItems().length === 0;
                     languageForm.classList.toggle('d-none', !isEditing);
+                    languageForm.classList.toggle('candidate-profile-empty-add-form', isEmptyAdd);
+                    languageEmpty?.classList.toggle('d-none', languageItems().length > 0 || isEditing);
                     if (isEditing) {
                         languageInput.focus();
                     }
@@ -1339,7 +1348,7 @@
                         });
                         languageChipList.classList.toggle('d-none', !items.length);
                     }
-                    languageEmpty?.classList.toggle('d-none', Boolean(items.length));
+                    languageEmpty?.classList.toggle('d-none', Boolean(items.length) || !languageForm.classList.contains('d-none'));
                     languageInlineAddAction?.classList.toggle('d-none', !items.length);
                     if (languageEditAction) {
                         languageEditAction.innerHTML = '<i class="fa-solid fa-plus"></i> ' + @json(__('messages.candidate_profile.add_language'));
@@ -1618,7 +1627,10 @@
                 activityForm.after(activityFormHome);
 
                 const setActivityFormMode = function (isEditing) {
+                    const isEmptyAdd = isEditing && !activeActivityItem && activityItems().length === 0;
                     activityForm.classList.toggle('d-none', !isEditing);
+                    activityForm.classList.toggle('candidate-profile-empty-add-form', isEmptyAdd);
+                    activityEmpty?.classList.toggle('d-none', activityItems().length > 0 || isEditing);
                     if (isEditing && activityQuill) {
                         setTimeout(function () {
                             activityQuill.focus();
@@ -1660,7 +1672,7 @@
                     });
 
                     activityList?.classList.toggle('d-none', !items.length);
-                    activityEmpty?.classList.toggle('d-none', items.length > 0);
+                    activityEmpty?.classList.toggle('d-none', items.length > 0 || !activityForm.classList.contains('d-none'));
                     if (activityFormTitle && !activeActivityItem) {
                         activityFormTitle.textContent = extracurricularTitle + ' ' + formatProfileNumber(items.length + 1);
                     }
@@ -2002,8 +2014,15 @@
                     return item;
                 };
 
+                const syncSkillEmptyState = function () {
+                    const hasSkills = !!skillList.querySelector('[data-skill-item]');
+                    const isFormOpen = !skillForm.classList.contains('d-none');
+                    skillEmpty()?.classList.toggle('d-none', hasSkills || isFormOpen);
+                    skillForm.classList.toggle('candidate-profile-empty-add-form', isFormOpen && !hasSkills);
+                };
                 const openSkillForm = function () {
                     skillForm.classList.remove('d-none');
+                    syncSkillEmptyState();
                     $skillNameInput.val(null).trigger('change');
                 };
 
@@ -2011,6 +2030,7 @@
                     skillForm.classList.add('d-none');
                     skillForm.reset();
                     $skillNameInput.val(null).trigger('change');
+                    syncSkillEmptyState();
                 };
 
                 const syncSkills = function () {

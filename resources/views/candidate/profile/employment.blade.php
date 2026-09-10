@@ -405,7 +405,18 @@
             };
             const addTrigger = root.querySelector('[data-employment-add-trigger]');
             const addFormWrap = root.querySelector('[data-employment-add-form-wrap]');
+            const experienceEmptyState = root.querySelector('#notfoundExperience');
             const employmentQuillEditors = [];
+
+            const syncExperienceEmptyState = function () {
+                if (!experienceEmptyState) {
+                    return;
+                }
+
+                const hasExperience = !!root.querySelector('.candidate-employment-list-item[data-id]');
+                const isAddFormOpen = !!addFormWrap && !addFormWrap.classList.contains('d-none');
+                experienceEmptyState.classList.toggle('d-none', hasExperience || isAddFormOpen);
+            };
 
             const initEmploymentQuillEditors = function () {
                 if (typeof Quill === 'undefined') {
@@ -511,6 +522,7 @@
                 if (addFormWrap) {
                     addFormWrap.classList.add('d-none');
                 }
+                syncExperienceEmptyState();
             };
 
             const scrollToProfileTarget = function (target) {
@@ -546,6 +558,7 @@
                     openEmploymentPanel('candidateExperiencePanelBody');
                     hideInlineForms();
                     addFormWrap.classList.remove('d-none');
+                    syncExperienceEmptyState();
                     scrollToProfileTarget(addFormWrap);
                 });
             }
@@ -911,6 +924,12 @@
                     const newRow = firstRow.cloneNode(true);
                     newRow.querySelectorAll('input').forEach(function (input) {
                         input.value = '';
+                        input.classList.remove('is-invalid');
+                        input.removeAttribute('aria-invalid');
+                        input.removeAttribute('aria-describedby');
+                    });
+                    newRow.querySelectorAll('.candidate-profile-field-feedback').forEach(function (feedback) {
+                        feedback.remove();
                     });
                     field.insertBefore(newRow, button);
                 });

@@ -10,7 +10,7 @@ class CandidateProfileValidationTest extends TestCase
     {
         $request = file_get_contents(app_path('Http/Requests/CandidateUpdatePersonalDetailsRequest.php'));
 
-        $this->assertStringContainsString("'dob' => 'nullable|date|before_or_equal:today'", $request);
+        $this->assertStringContainsString("'dob' => 'required|date|before_or_equal:today'", $request);
         $this->assertStringContainsString("'gender' => 'required|integer|in:0,1'", $request);
         $this->assertStringContainsString("'marital_status_id' => 'required|integer|exists:marital_status,id'", $request);
         $this->assertStringContainsString("'passport_issue_date' => 'nullable|date|before_or_equal:today'", $request);

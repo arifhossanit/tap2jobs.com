@@ -23,16 +23,20 @@
     </div>
     <div class="candidate-education-form-field">
         {{ Form::label('start_date', __('messages.candidate_profile.employment_period_start_date'), ['class' => 'form-label required']) }}
+        <div class="candidate-employment-date-field" data-profile-feedback-container>
         <div class="candidate-employment-date-input">
             <i class="fa-regular fa-calendar candidate-employment-date-icon"></i>
             {{ Form::text('start_date', $startDate, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.employment_period_start_date'), 'autocomplete' => 'off', 'data-employment-date' => 'start']) }}
         </div>
+        </div>
     </div>
     <div class="candidate-education-form-field">
         {{ Form::label('end_date', __('messages.candidate_profile.employment_period_end_date'), ['class' => 'form-label']) }}
+        <div class="candidate-employment-date-field" data-profile-feedback-container>
         <div class="candidate-employment-date-input">
             <i class="fa-regular fa-calendar candidate-employment-date-icon"></i>
             {{ Form::text('end_date', $endDate, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.employment_period_end_date'), 'autocomplete' => 'off', 'data-employment-date' => 'end', 'data-employment-end-date' => true]) }}
+        </div>
         </div>
         <label class="candidate-employment-working-check">
             {{ Form::checkbox('currently_working', '1', $isWorking, ['class' => 'form-check-input', 'data-employment-working' => true]) }}
@@ -56,11 +60,8 @@
         <p class="candidate-employment-field-help">{{ __('messages.candidate_profile.add_area_of_expertise_help') }}</p>
         @foreach ($expertiseRows as $expertise)
             <div class="candidate-employment-expertise-row" data-employment-expertise-row>
-                {{ Form::text('area_of_expertise[]', $expertise->name ?? null, ['class' => 'form-control candidate-employment-expertise-name']) }}
-                <div class="candidate-employment-month-field">
-                    {{ Form::number('expertise_duration[]', $expertise->duration_months ?? null, ['class' => 'form-control', 'min' => 0, 'data-employment-expertise-duration' => true]) }}
-                    <span>{{ __('messages.candidate_profile.month_s') }}</span>
-                </div>
+                <div class="candidate-employment-expertise-field candidate-employment-expertise-field--name" data-profile-feedback-container>                     {{ Form::text('area_of_expertise[]', $expertise->name ?? null, ['class' => 'form-control candidate-employment-expertise-name', 'required']) }}                 </div>
+                <div class="candidate-employment-expertise-field candidate-employment-expertise-field--duration" data-profile-feedback-container>                     <div class="candidate-employment-month-field">                         {{ Form::number('expertise_duration[]', $expertise->duration_months ?? null, ['class' => 'form-control', 'min' => 0, 'data-employment-expertise-duration' => true, 'data-profile-optional' => true]) }}                         <span>{{ __('messages.candidate_profile.month_s') }}</span>                     </div>                 </div>
                 <button type="button" class="candidate-employment-remove-expertise" aria-label="{{ __('messages.candidate_profile.remove_expertise') }}" data-employment-expertise-remove>
                     <i class="fa-regular fa-trash-can"></i>
                 </button>

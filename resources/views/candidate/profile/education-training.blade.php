@@ -933,6 +933,14 @@
             const trainingList = trainingPanel ? trainingPanel.querySelector('.candidate-training-container') : null;
             const trainingAdd = trainingPanel ? trainingPanel.querySelector('[data-panel-add-action]') : null;
             const trainingForm = root.querySelector('#' + 'candidateTrainingForm');
+            const notFoundTraining = trainingPanel ? trainingPanel.querySelector('#notfoundTraining') : null;
+
+            const syncTrainingEmptyState = function () {
+                if (!notFoundTraining || !trainingList) return;
+                const hasTraining = !!trainingList.querySelector('[data-training-item]');
+                const isFormOpen = !!trainingFormWrap && !trainingFormWrap.classList.contains('d-none');
+                notFoundTraining.classList.toggle('d-none', hasTraining || isFormOpen);
+            };
 
             if (trainingPanel && trainingFormWrap && trainingList && trainingForm) {
                 const trainingTitle = trainingFormWrap.querySelector('[data-training-form-title]');
@@ -962,9 +970,10 @@
 
                     trainingList.classList.remove('d-none');
                     trainingFormWrap.classList.add('d-none');
-                    trainingFormWrap.classList.remove('candidate-training-form--add', 'candidate-training-form--edit');
+                    trainingFormWrap.classList.remove('candidate-training-form--add', 'candidate-training-form--edit', 'candidate-training-form--empty-add');
                     trainingForm.reset();
                     trainingList.insertAdjacentElement('afterend', trainingFormWrap);
+                    syncTrainingEmptyState();
                 };
 
                 const scrollToTrainingForm = function () {
@@ -1013,7 +1022,9 @@
                         trainingList.insertAdjacentElement('afterend', trainingFormWrap);
                     }
 
+                    trainingFormWrap.classList.toggle('candidate-training-form--empty-add', !item && !trainingList.querySelector('[data-training-item]'));
                     trainingFormWrap.classList.remove('d-none');
+                    syncTrainingEmptyState();
                     if (shouldScroll) {
                         scrollToTrainingForm();
                     }
@@ -1110,6 +1121,14 @@
                     const certificationTitle = certificationFormWrap.querySelector('[data-certification-form-title]');
                     let activeCertificationItem = null;
                     let certificationDurationPicker = null;
+                    const notFoundCertification = certificationPanel.querySelector('#notfoundCertification');
+
+                    const syncCertificationEmptyState = function () {
+                        if (!notFoundCertification) return;
+                        const hasCertification = !!certificationList.querySelector('[data-certification-item]');
+                        const isFormOpen = !certificationFormWrap.classList.contains('d-none');
+                        notFoundCertification.classList.toggle('d-none', hasCertification || isFormOpen);
+                    };
                     const fields = {
                         index: certificationForm.querySelector('[data-certification-field="index"]'),
                         certification: certificationForm.querySelector('[data-certification-field="certification"]'),
@@ -1149,12 +1168,13 @@
 
                     certificationList.classList.remove('d-none');
                     certificationFormWrap.classList.add('d-none');
-                    certificationFormWrap.classList.remove('candidate-training-form--add', 'candidate-training-form--edit');
+                    certificationFormWrap.classList.remove('candidate-training-form--add', 'candidate-training-form--edit', 'candidate-training-form--empty-add');
                     if (certificationFooterAction) {
                         certificationFooterAction.classList.remove('d-none');
                     }
                     certificationForm.reset();
                     certificationList.insertAdjacentElement('afterend', certificationFormWrap);
+                    syncCertificationEmptyState();
                 };
 
                 const scrollToCertificationForm = function () {
@@ -1205,13 +1225,13 @@
                     if (certificationFooterAction) {
                         certificationFooterAction.classList.add('d-none');
                     }
+                    certificationFormWrap.classList.toggle('candidate-training-form--empty-add', !item && !certificationList.querySelector('[data-certification-item]'));
                     certificationFormWrap.classList.remove('d-none');
+                    syncCertificationEmptyState();
                     if (shouldScroll) {
                         scrollToCertificationForm();
                     }
                 };
-
-                const notFoundCertification = certificationPanel.querySelector('#notfoundCertification');
 
                 const reindexCertificationItems = function () {
                     const items = certificationList.querySelectorAll('[data-certification-item]');
@@ -1224,9 +1244,7 @@
                         }
                     });
 
-                    if (notFoundCertification) {
-                        notFoundCertification.classList.toggle('d-none', items.length > 0);
-                    }
+                    syncCertificationEmptyState();
                 };
 
                 certificationPanel.addEventListener('click', function (event) {

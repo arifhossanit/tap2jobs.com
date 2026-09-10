@@ -4075,6 +4075,10 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
   padding-top: 22px;
 }
 
+.candidate-skill-list:has(> [data-skill-item]) + .candidate-skill-form:not(.d-none) {
+  margin-top: 24px;
+}
+
 .candidate-skill-form__field {
   margin-bottom: 24px;
 }
@@ -4283,9 +4287,6 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 
 .candidate-activity-form__actions {
   margin-top: 0;
-}
-.candidate-activity-form__actions .candidate-skill-save {
-  min-width: 76px;
 }
 
 .candidate-language-form-grid {
@@ -5200,6 +5201,13 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
   margin-bottom: 24px;
 }
 
+.candidate-employment-date-field {
+  width: 100%;
+}
+.candidate-employment-date-field .candidate-profile-field-feedback {
+  margin-top: 5px;
+}
+
 .candidate-employment-date-input {
   align-items: center;
   display: flex;
@@ -5252,14 +5260,32 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 }
 
 .candidate-employment-expertise-row {
-  align-items: center;
+  align-items: flex-start;
   display: flex;
   gap: 10px;
   margin-bottom: 12px;
 }
 
+.candidate-employment-expertise-field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.candidate-employment-expertise-field .candidate-profile-field-feedback {
+  margin-top: 5px;
+}
+
+.candidate-employment-expertise-field--name {
+  flex: 0 1 226px;
+}
+
+.candidate-employment-expertise-field--duration {
+  flex: 0 0 auto;
+}
+
 .candidate-employment-expertise-name {
-  max-width: 226px;
+  max-width: none;
+  width: 100%;
 }
 
 .candidate-employment-month-field {
@@ -5522,6 +5548,18 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
   border-top: 1px solid #dfe3ea;
   margin-top: 26px;
   padding-top: 26px;
+}
+
+.candidate-training-form--empty-add {
+  border-top: 0;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.candidate-profile-empty-add-form {
+  border-top: 0 !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
 }
 
 .candidate-training-form--edit {
@@ -6876,6 +6914,7 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 .candidate-activity-summary p {
   font-size: 15px;
   line-height: 1.45;
+  margin-bottom: 24px;
 }
 
 .candidate-profile-section .candidate-profile-field-invalid:not(.select2-container):not(.candidate-education-custom-select),

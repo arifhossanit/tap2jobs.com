@@ -550,14 +550,13 @@
         box-shadow: 0 4px 10px rgba(25, 103, 210, 0.3);
     }
 
-    /* Quick Links */
     .bd-quick-links {
         box-shadow: 0 1px 3px rgba(15, 27, 61, .08);
         height: auto;
         width: 263px;
         color: #0a0a0a;
         padding: 16px 18px;
-        background: #e9f4ff;
+        background: #ffffff;
         border-radius: 8px;
         border: 1px solid #d6dce3;
         box-shadow: 0 8px 20px rgba(24, 38, 60, .10);
@@ -594,11 +593,11 @@
 
     .bd-government-jobs {
         border: 1px solid #d6dce3;
-        background: #e9f4ff;
+        background: #ffffff;
         border-radius: 8px;
         box-shadow: 0 1px 3px rgba(15, 27, 61, .08);
         color: #30352f;
-        padding: 14px 16px;
+        padding: 16px 18px;
         width: 100%;
         box-shadow: 0 8px 20px rgba(24, 38, 60, .10);
     }
@@ -607,10 +606,11 @@
         align-items: center;
         color: #0a0a0a;
         display: flex;
-        font-size: 15px;
+        font-size: 16px;
         font-weight: bold;
         gap: 7px;
-        margin: 0;
+        margin: 0 0 8px 0;
+        line-height: 1.2 !important;
     }
 
     .bd-government-jobs__slide {
@@ -640,7 +640,8 @@
 
     .bd-government-jobs__item {
         display: block;
-        margin-bottom: 7px;
+        margin-bottom: 0;
+        padding: 0;
     }
 
     .bd-government-jobs__item strong {
@@ -648,7 +649,7 @@
         display: block;
         font-size: 12px;
         font-weight: 500;
-        line-height: 1.25;
+        line-height: normal;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -658,7 +659,7 @@
         color: #74786f;
         display: block;
         font-size: 10px;
-        line-height: 1.2;
+        line-height: normal;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -713,10 +714,10 @@
     }
 
     .bd-category-card {
-        background: #f3f9ff;
+        background: #ffffff;
         border: 1px solid #d6dce3;
         border-radius: 8px;
-        padding: 0 var(--bd-card-padding) 14px;
+        padding: 16px 18px;
         box-shadow: 0 8px 20px rgba(24, 38, 60, .10);
         min-width: 0;
         overflow: hidden;
@@ -726,10 +727,12 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 14px 4px 10px;
+        padding: 0;
+        margin-bottom: 8px;
         color: #0a0a0a;
         font-weight: bold;
         font-size: 16px;
+        line-height: 1.2 !important;
     }
 
     .bd-tabs {
@@ -760,7 +763,7 @@
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         column-gap: 28px;
-        row-gap: 2px;
+        row-gap: 0;
     }
 
     .bd-category-grid > div {
@@ -772,11 +775,10 @@
         font-size: 14px;
         display: flex;
         align-items: center;
-        padding: 7px 0;
+        padding: 0;
         white-space: normal;
         word-break: break-word;
         overflow-wrap: anywhere;
-        line-height: 1.4;
     }
 
     .bd-category-grid a::before {
@@ -803,9 +805,40 @@
         font-weight: bold;
     }
 
+    .bd-category-more {
+        display: none;
+    }
+
     @media (max-width: 991.98px) {
         .bd-category-grid a.bd-category-link--mobile-extra {
             display: none;
+        }
+
+        .bd-directory-panel--expanded .bd-category-grid a.bd-category-link--mobile-extra {
+            display: flex;
+        }
+
+        .bd-category-more {
+            align-items: center;
+            background: #ffffff;
+            border: 1px solid #cfd4da;
+            border-radius: 3px;
+            box-shadow: 0 2px 4px rgba(15, 23, 42, 0.16);
+            cursor: pointer;
+            display: flex;
+            float: none;
+            justify-content: center;
+            margin-top: 10px;
+            min-height: 38px;
+            padding: 7px 12px;
+            width: 100%;
+        }
+
+        .bd-category-more:hover,
+        .bd-category-more:focus {
+            background: #ffffff;
+            border-color: #b8c0c9;
+            box-shadow: 0 2px 5px rgba(15, 23, 42, 0.2);
         }
     }
 
@@ -1017,7 +1050,7 @@
         .bd-quick-links {
             display: block !important;
             width: 100%;
-            border-radius: 4px;
+            border-radius: 8px;
             padding: 20px;
         }
 
@@ -1205,11 +1238,6 @@
             gap: 8px;
         }
 
-        /* Hide Quick Links on mobile */
-        .bd-quick-links {
-            display: none !important;
-        }
-
         .bd-quick-links-grid {
             grid-template-columns: 1fr;
         }
@@ -1333,7 +1361,13 @@
                         </div>
                         @endforeach
                     </div>
-                    <a class="bd-more" href="{{ route('front.categories') }}">@lang('web.home_page.more')&nbsp; +</a>
+                    @if($visibleCategories->count() > $mobileCategoryLimit)
+                        <button type="button" class="bd-more bd-category-more" data-category-more aria-expanded="false"
+                                data-more-label="{{ __('web.home_page.more') }}" data-less-label="{{ __('web.home_page.less') }}">
+                            <span data-category-more-label>@lang('web.home_page.more')</span>&nbsp;
+                            <span data-category-more-symbol>+</span>
+                        </button>
+                    @endif
                 </div>
                 <div class="bd-directory-panel" data-bd-panel="type" hidden>
                     <div class="bd-category-grid">
@@ -1345,7 +1379,7 @@
                         </div>
                         @endforeach
                     </div>
-                    <a class="bd-more" href="{{ route('front.search.jobs') }}">@lang('web.home_page.more')&nbsp; +</a>
+                    {{-- <a class="bd-more" href="{{ route('front.search.jobs') }}">@lang('web.home_page.more')&nbsp; +</a> --}}
                 </div>
             </div>
             <!-- <aside class="bd-sidebar"></aside> -->
@@ -1418,6 +1452,22 @@
 
         var tabs = card.querySelectorAll('[data-bd-tab]');
         var panels = card.querySelectorAll('[data-bd-panel]');
+        var categoryPanel = card.querySelector('[data-bd-panel="category"]');
+        var categoryMoreButton = card.querySelector('[data-category-more]');
+
+        if (categoryPanel && categoryMoreButton) {
+            categoryMoreButton.addEventListener('click', function () {
+                var isExpanded = categoryPanel.classList.toggle('bd-directory-panel--expanded');
+                var label = categoryMoreButton.querySelector('[data-category-more-label]');
+                var symbol = categoryMoreButton.querySelector('[data-category-more-symbol]');
+
+                categoryMoreButton.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+                label.textContent = isExpanded
+                    ? categoryMoreButton.dataset.lessLabel
+                    : categoryMoreButton.dataset.moreLabel;
+                symbol.textContent = isExpanded ? '−' : '+';
+            });
+        }
 
         tabs.forEach(function (tab) {
             tab.addEventListener('click', function () {

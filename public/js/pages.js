@@ -4013,8 +4013,11 @@ window.refreshCandidateProfileSection = /*#__PURE__*/function () {
       feedback.className = 'invalid-feedback d-block candidate-profile-field-feedback';
       feedback.setAttribute('role', 'alert');
       var anchor = anchorFor(field);
-      var container = anchor.closest('.input-group, .ql-container') || anchor;
-      container.insertAdjacentElement('afterend', feedback);
+      var feedbackContainer = anchor.closest('[data-profile-feedback-container]');
+      if (feedbackContainer) feedbackContainer.appendChild(feedback);else {
+        var container = anchor.closest('.input-group, .ql-container') || anchor;
+        container.insertAdjacentElement('afterend', feedback);
+      }
       feedbacks.set(field, feedback);
       field.setAttribute('aria-describedby', [field.getAttribute('aria-describedby'), feedback.id].filter(Boolean).join(' '));
     }
@@ -4050,7 +4053,7 @@ window.refreshCandidateProfileSection = /*#__PURE__*/function () {
         var anchor = anchorFor(field);
         var wrapper = field.closest('.candidate-education-form-field, .candidate-address-field, .candidate-reference-field, .form-group, .mb-3, .mb-4');
         var labelledRequired = wrapper === null || wrapper === void 0 ? void 0 : wrapper.querySelector('label.required, .form-label.required');
-        var required = field.required || !!labelledRequired;
+        var required = !field.hasAttribute('data-profile-optional') && (field.required || !!labelledRequired);
         var value = anchor.matches('[contenteditable="true"]') ? anchor.textContent.trim() : String(field.value || '').trim();
         var empty = !value;
         if (field.type === 'checkbox') empty = !field.checked;
@@ -5004,6 +5007,11 @@ function loadCandidateCareerInformationData() {
     $(formSelector).find('[data-education-form-title]').text(educationLabel + ' ' + getCandidateProfileNumber(number));
   }
   var activeEducationItem = null;
+  function syncEducationEmptyState() {
+    var hasEducation = $('.candidate-education-container .candidate-education').length > 0;
+    var isFormOpen = $('[data-education-add-form]:not(.d-none), [data-education-edit-form]:not(.d-none)').length > 0;
+    $('#notfoundEducation').toggleClass('d-none', hasEducation || isFormOpen);
+  }
   function restoreEducationActiveItem() {
     if (!activeEducationItem || !activeEducationItem.length) {
       return;
@@ -5015,9 +5023,10 @@ function loadCandidateCareerInformationData() {
   function closeEducationInlineForms() {
     restoreEducationActiveItem();
     $('[data-education-add-form], [data-education-edit-form]').addClass('d-none');
-    $('[data-education-add-form], [data-education-edit-form]').removeClass('candidate-training-form--add candidate-training-form--edit');
+    $('[data-education-add-form], [data-education-edit-form]').removeClass('candidate-training-form--add candidate-training-form--edit candidate-training-form--empty-add');
     $('[data-education-form-title]').removeClass('d-none');
     $('.candidate-education-container').removeClass('d-none');
+    syncEducationEmptyState();
   }
   function scrollToEducationInlineForm() {
     var form = document.querySelector('[data-education-add-form]') || document.querySelector('[data-education-edit-form]:not(.d-none)');
@@ -5040,6 +5049,8 @@ function loadCandidateCareerInformationData() {
     $('[data-education-edit-form]').addClass('d-none');
     $('.candidate-education-container').after($('[data-education-add-form]'));
     $('[data-education-add-form]').addClass('candidate-training-form--add').removeClass('d-none');
+    $('[data-education-add-form]').toggleClass('candidate-training-form--empty-add', $('.candidate-education-container .candidate-education').length === 0);
+    syncEducationEmptyState();
     setEducationFormTitle('[data-education-add-form]', $('.candidate-education-container .candidate-education').length + 1);
     updateEducationFormLayout('#addNewEducationForm');
     initEducationQuillEditors();

@@ -1451,8 +1451,12 @@ window.refreshCandidateProfileSection = async function (section, panelId) {
             feedback.className = 'invalid-feedback d-block candidate-profile-field-feedback';
             feedback.setAttribute('role', 'alert');
             const anchor = anchorFor(field);
-            const container = anchor.closest('.input-group, .ql-container') || anchor;
-            container.insertAdjacentElement('afterend', feedback);
+            const feedbackContainer = anchor.closest('[data-profile-feedback-container]');
+            if (feedbackContainer) feedbackContainer.appendChild(feedback);
+            else {
+                const container = anchor.closest('.input-group, .ql-container') || anchor;
+                container.insertAdjacentElement('afterend', feedback);
+            }
             feedbacks.set(field, feedback);
             field.setAttribute('aria-describedby', [field.getAttribute('aria-describedby'), feedback.id].filter(Boolean).join(' '));
         }
@@ -1478,7 +1482,7 @@ window.refreshCandidateProfileSection = async function (section, panelId) {
             const anchor = anchorFor(field);
             const wrapper = field.closest('.candidate-education-form-field, .candidate-address-field, .candidate-reference-field, .form-group, .mb-3, .mb-4');
             const labelledRequired = wrapper?.querySelector('label.required, .form-label.required');
-            const required = field.required || !!labelledRequired;
+            const required = !field.hasAttribute('data-profile-optional') && (field.required || !!labelledRequired);
             const value = anchor.matches('[contenteditable="true"]') ? anchor.textContent.trim() : String(field.value || '').trim();
             let empty = !value;
             if (field.type === 'checkbox') empty = !field.checked;

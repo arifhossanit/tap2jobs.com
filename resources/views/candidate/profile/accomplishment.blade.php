@@ -934,7 +934,7 @@
                             title.textContent = (index + 1) + '. ' + (item.dataset.portfolioTitle || '---');
                         }
                     });
-                    portfolioEmpty()?.classList.toggle('d-none', items.length > 0);
+                    portfolioEmpty()?.classList.toggle('d-none', items.length > 0 || !portfolioForm.classList.contains('d-none'));
                 };
 
                 const refreshPortfolioAddActions = function () {
@@ -1001,6 +1001,7 @@
 
                 const closePortfolioForm = function () {
                     portfolioForm.classList.add('d-none');
+                    portfolioForm.classList.remove('candidate-profile-empty-add-form');
                     if (portfolioEditingId) {
                         portfolioEditingId.value = '';
                     }
@@ -1046,6 +1047,9 @@
                     }
                     setPortfolioFormValues(item);
                     portfolioForm.classList.remove('d-none');
+                    const isEmptyAdd = !item && portfolioItems().length === 0;
+                    portfolioForm.classList.toggle('candidate-profile-empty-add-form', isEmptyAdd);
+                    portfolioEmpty()?.classList.toggle('d-none', portfolioItems().length > 0 || isEmptyAdd);
                     if (portfolioFormTitle) {
                         portfolioFormTitle.textContent = portfolioLabels.portfolio;
                     }
@@ -1317,7 +1321,7 @@
                             title.textContent = (index + 1) + '. ' + (item.dataset.publicationTitle || '---');
                         }
                     });
-                    publicationEmpty()?.classList.toggle('d-none', items.length > 0);
+                    publicationEmpty()?.classList.toggle('d-none', items.length > 0 || !publicationForm.classList.contains('d-none'));
                 };
 
                 const refreshPublicationAddActions = function () {
@@ -1392,6 +1396,7 @@
 
                 const closePublicationForm = function () {
                     publicationForm.classList.add('d-none');
+                    publicationForm.classList.remove('candidate-profile-empty-add-form');
                     publicationForm.querySelectorAll('.is-invalid').forEach(function (element) {
                         element.classList.remove('is-invalid');
                     });
@@ -1442,6 +1447,9 @@
                     }
                     setPublicationFormValues(item);
                     publicationForm.classList.remove('d-none');
+                    const isEmptyAdd = !item && publicationItems().length === 0;
+                    publicationForm.classList.toggle('candidate-profile-empty-add-form', isEmptyAdd);
+                    publicationEmpty()?.classList.toggle('d-none', publicationItems().length > 0 || isEmptyAdd);
                     if (publicationFormTitle) {
                         publicationFormTitle.textContent = publicationLabels.publication;
                     }
@@ -1720,11 +1728,11 @@
                             title.textContent = (index + 1) + '. ' + (item.dataset.awardTitle || '---');
                         }
                     });
-                    awardEmpty()?.classList.toggle('d-none', items.length > 0);
+                    awardEmpty()?.classList.toggle('d-none', items.length > 0 || !awardForm.classList.contains('d-none'));
                 };
 
                 const refreshAwardEmpty = function () {
-                    awardEmpty()?.classList.toggle('d-none', Boolean(awardItems().length));
+                    awardEmpty()?.classList.toggle('d-none', Boolean(awardItems().length) || !awardForm.classList.contains('d-none'));
                 };
 
                 const refreshAwardAddActions = function () {
@@ -1799,6 +1807,7 @@
 
                 const closeAwardForm = function () {
                     awardForm.classList.add('d-none');
+                    awardForm.classList.remove('candidate-profile-empty-add-form');
                     awardForm.querySelectorAll('.is-invalid').forEach(function (element) {
                         element.classList.remove('is-invalid');
                     });
@@ -1844,6 +1853,9 @@
                     }
                     setAwardFormValues(item);
                     awardForm.classList.remove('d-none');
+                    const isEmptyAdd = !item && awardItems().length === 0;
+                    awardForm.classList.toggle('candidate-profile-empty-add-form', isEmptyAdd);
+                    awardEmpty()?.classList.toggle('d-none', awardItems().length > 0 || isEmptyAdd);
                     if (awardSubmit) {
                         awardSubmit.textContent = item ? awardLabels.update : awardLabels.save;
                     }
@@ -2113,11 +2125,11 @@
                             title.textContent = (index + 1) + '. ' + (item.dataset.projectTitle || '---');
                         }
                     });
-                    projectEmpty()?.classList.toggle('d-none', items.length > 0);
+                    projectEmpty()?.classList.toggle('d-none', items.length > 0 || !projectForm.classList.contains('d-none'));
                 };
 
                 const refreshProjectEmpty = function () {
-                    projectEmpty()?.classList.toggle('d-none', Boolean(projectItems().length));
+                    projectEmpty()?.classList.toggle('d-none', Boolean(projectItems().length) || !projectForm.classList.contains('d-none'));
                 };
 
                 const refreshProjectAddActions = function () {
@@ -2198,6 +2210,7 @@
                         return;
                     }
                     projectForm.classList.add('d-none');
+                    projectForm.classList.remove('candidate-profile-empty-add-form');
                     projectForm.querySelectorAll('.is-invalid').forEach(function (element) {
                         element.classList.remove('is-invalid');
                     });
@@ -2246,6 +2259,9 @@
                     }
                     setProjectFormValues(item);
                     projectForm.classList.remove('d-none');
+                    const isEmptyAdd = !item && projectItems().length === 0;
+                    projectForm.classList.toggle('candidate-profile-empty-add-form', isEmptyAdd);
+                    projectEmpty()?.classList.toggle('d-none', projectItems().length > 0 || isEmptyAdd);
                     if (projectSubmit) {
                         projectSubmit.textContent = item ? projectLabels.update : projectLabels.save;
                     }
@@ -2517,11 +2533,11 @@
                             title.textContent = (index + 1) + '. ' + (item.dataset.otherTitle || '---');
                         }
                     });
-                    otherEmpty()?.classList.toggle('d-none', items.length > 0);
+                    otherEmpty()?.classList.toggle('d-none', items.length > 0 || !otherForm.classList.contains('d-none'));
                 };
 
                 const refreshOtherEmpty = function () {
-                    otherEmpty()?.classList.toggle('d-none', Boolean(otherItems().length));
+                    otherEmpty()?.classList.toggle('d-none', Boolean(otherItems().length) || !otherForm.classList.contains('d-none'));
                 };
 
                 const refreshOtherAddActions = function () {
@@ -2596,6 +2612,7 @@
 
                 const closeOtherForm = function () {
                     otherForm.classList.add('d-none');
+                    otherForm.classList.remove('candidate-profile-empty-add-form');
                     otherForm.querySelectorAll('.is-invalid').forEach(function (element) {
                         element.classList.remove('is-invalid');
                     });
@@ -2644,6 +2661,9 @@
                     }
                     setOtherFormValues(item);
                     otherForm.classList.remove('d-none');
+                    const isEmptyAdd = !item && otherItems().length === 0;
+                    otherForm.classList.toggle('candidate-profile-empty-add-form', isEmptyAdd);
+                    otherEmpty()?.classList.toggle('d-none', otherItems().length > 0 || isEmptyAdd);
                     if (otherSubmit) {
                         otherSubmit.textContent = item ? otherLabels.update : otherLabels.save;
                     }

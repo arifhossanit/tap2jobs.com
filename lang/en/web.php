@@ -414,5 +414,6 @@ return [
         'type' => 'Type',
         'industry' => 'Industry',
         'more' => 'More',
+        'less' => 'Less',
     ],
 ];

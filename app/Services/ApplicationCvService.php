@@ -31,6 +31,8 @@ class ApplicationCvService
 
     public const APPLICATION_CV_PROPERTY = 'is_application_cv';
 
+    private const TEMPLATE_VERSION = 2;
+
     public function ensure(Candidate $candidate, bool $force = false): Media
     {
         $candidate->loadMissing('user');
@@ -40,7 +42,9 @@ class ApplicationCvService
             fn (Media $media) => (bool) $media->getCustomProperty(self::APPLICATION_CV_PROPERTY, false)
         );
 
-        if (! $force && $applicationCv && Storage::disk($applicationCv->disk)->exists($applicationCv->getPathRelativeToRoot())) {
+        $isCurrentTemplate = (int) $applicationCv?->getCustomProperty('template_version', 0) === self::TEMPLATE_VERSION;
+
+        if (! $force && $applicationCv && $isCurrentTemplate && Storage::disk($applicationCv->disk)->exists($applicationCv->getPathRelativeToRoot())) {
             return $applicationCv;
         }
 
@@ -54,6 +58,7 @@ class ApplicationCvService
             $applicationCv->mime_type = 'application/pdf';
             $applicationCv->setCustomProperty('title', self::TITLE);
             $applicationCv->setCustomProperty('generated_at', now()->toIso8601String());
+            $applicationCv->setCustomProperty('template_version', self::TEMPLATE_VERSION);
             $applicationCv->save();
         } else {
             $applicationCv = $candidate
@@ -64,6 +69,7 @@ class ApplicationCvService
                     self::APPLICATION_CV_PROPERTY => true,
                     'is_default' => false,
                     'generated_at' => now()->toIso8601String(),
+                    'template_version' => self::TEMPLATE_VERSION,
                 ])
                 ->toMediaCollection(Candidate::RESUME_PATH, config('app.resume_disk'));
 
