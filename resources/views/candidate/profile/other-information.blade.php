@@ -94,7 +94,7 @@
                                     <button type="button" data-skill-delete aria-label="{{ __('messages.common.delete') }}">&times;</button>
                                 </div>
                             @empty
-                                <p class="candidate-skill-empty" data-skill-empty>---</p>
+                                <p class="candidate-profile-empty candidate-skill-empty" data-skill-empty>{{ __('messages.candidate_profile.skill_not_found') }}</p>
                             @endforelse
                         </div>
 
@@ -177,7 +177,7 @@
                                 </div>
                             @endforeach
                         </div>
-                        <p class="candidate-skill-empty candidate-activity-empty {{ $candidateExtraCurricularItems->count() ? 'd-none' : '' }}" data-activity-empty>---</p>
+                        <p class="candidate-profile-empty candidate-skill-empty candidate-activity-empty {{ $candidateExtraCurricularItems->count() ? 'd-none' : '' }}" data-activity-empty>{{ __('messages.candidate_profile.extracurricular_not_found') }}</p>
                     </div>
                     <form class="candidate-activity-form d-none" data-activity-form
                           data-store-url="{{ route('candidate-profile.extracurricular-activities.store') }}">
@@ -273,7 +273,7 @@
                         {{-- <button type="button" class="candidate-language-inline-add {{ count($candidateLanguageNames) ? '' : 'd-none' }}" data-language-inline-add>
                             <i class="fa-solid fa-plus"></i> Add Language
                         </button> --}}
-                        <p class="candidate-skill-empty candidate-language-empty {{ count($candidateLanguageNames) ? 'd-none' : '' }}" data-language-empty>---</p>
+                        <p class="candidate-profile-empty candidate-skill-empty candidate-language-empty {{ count($candidateLanguageNames) ? 'd-none' : '' }}" data-language-empty>{{ __('messages.candidate_profile.language_not_found') }}</p>
                     </div>
 
                     <form class="candidate-language-form d-none" data-language-form
@@ -409,7 +409,7 @@
                                     </span>
                                 </div>
                             @empty
-                                <p class="candidate-skill-empty" data-link-empty>---</p>
+                                <p class="candidate-profile-empty candidate-skill-empty" data-link-empty>{{ __('messages.candidate_profile.link_not_found') }}</p>
                             @endforelse
                         </div>
 
@@ -596,7 +596,7 @@
                                 </div>
                             </div>
                         @empty
-                            <p class="candidate-skill-empty candidate-reference-empty" data-reference-empty>---</p>
+                            <p class="candidate-profile-empty candidate-skill-empty candidate-reference-empty" data-reference-empty>{{ __('messages.candidate_profile.reference_not_found') }}</p>
                         @endforelse
                     </div>
                 </div>
@@ -829,7 +829,7 @@
                                 item.remove();
                                 if (!linkItems().length) {
                                     closeLinkForm();
-                                    linkList.innerHTML = '<p class="candidate-skill-empty" data-link-empty>---</p>';
+                                    linkList.innerHTML = '<p class="candidate-profile-empty candidate-skill-empty" data-link-empty>' + @json(__('messages.candidate_profile.link_not_found')) + '</p>';
                                 }
                                 refreshLinkAddAction();
                                 if (response && response.message && typeof displaySuccessMessage === 'function') {
@@ -1166,9 +1166,9 @@
                                     closeReferenceForm();
                                     if (!referenceEmpty()) {
                                         const empty = document.createElement('p');
-                                        empty.className = 'candidate-skill-empty candidate-reference-empty';
+                                        empty.className = 'candidate-profile-empty candidate-skill-empty candidate-reference-empty';
                                         empty.dataset.referenceEmpty = '';
-                                        empty.textContent = '---';
+                                        empty.textContent = @json(__('messages.candidate_profile.reference_not_found'));
                                         referenceList.appendChild(empty);
                                     }
                                 }
@@ -2108,7 +2108,7 @@
 
                             item.remove();
                             if (!skillList.querySelector('[data-skill-item]')) {
-                                skillList.innerHTML = '<p class="candidate-skill-empty" data-skill-empty>---</p>';
+                                skillList.innerHTML = '<p class="candidate-profile-empty candidate-skill-empty" data-skill-empty>' + @json(__('messages.candidate_profile.skill_not_found')) + '</p>';
                             }
                             syncSkills();
                         });

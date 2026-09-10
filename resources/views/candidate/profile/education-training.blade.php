@@ -366,7 +366,7 @@
 
                 <div class="candidate-education-container">
                     <div class="{{ $data['candidateEducations']->count() ? 'd-none' : '' }}" id="notfoundEducation">
-                        <h5 class="candidate-education-empty">
+                        <h5 class="candidate-profile-empty candidate-education-empty">
                             {{ __('messages.candidate.education_not_found') }}
                         </h5>
                     </div>
@@ -507,7 +507,7 @@
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <div class="candidate-training-container">
                         <div class="{{ $candidateTrainings->count() ? 'd-none' : '' }}" id="notfoundTraining">
-                            <h5 class="candidate-education-empty">
+                            <h5 class="candidate-profile-empty candidate-education-empty">
                                 {{ __('messages.candidate_profile.training_not_found') }}
                             </h5>
                         </div>
@@ -647,7 +647,7 @@
                 <div class="candidate-profile-section__body candidate-education-panel__body">
                     <div class="candidate-certification-container">
                         <div class="{{ count($candidateCertificationItems) ? 'd-none' : '' }}" id="notfoundCertification">
-                            <h5 class="candidate-education-empty">
+                            <h5 class="candidate-profile-empty candidate-education-empty">
                                 {{ __('messages.candidate_profile.certification_not_found') }}
                             </h5>
                         </div>

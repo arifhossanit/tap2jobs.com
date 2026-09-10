@@ -87,7 +87,7 @@
                     {{ Form::hidden(null, __('messages.candidate_profile.present'), ['id' => 'candidatePresentMsg']) }}
                     <div class="candidate-employment-container">
                         <div class="{{ $candidateExperiences->count() ? 'd-none' : '' }}" id="notfoundExperience">
-                            <h5 class="candidate-education-empty">
+                            <h5 class="candidate-profile-empty candidate-education-empty">
                                 {{ __('messages.candidate.experience_not_found') }}
                             </h5>
                         </div>
@@ -212,7 +212,7 @@
             <div id="candidateRetiredArmyEmploymentPanelBody" class="collapse candidate-profile-section__collapse"
                  data-bs-parent="#candidateEmploymentAccordion">
                 <div class="candidate-profile-section__body candidate-education-panel__body">
-                    <p class="candidate-skill-empty candidate-retired-army-empty {{ $hasRetiredArmyEmployment ? 'd-none' : '' }}" data-retired-army-empty>---</p>
+                    <p class="candidate-profile-empty candidate-skill-empty candidate-retired-army-empty {{ $hasRetiredArmyEmployment ? 'd-none' : '' }}" data-retired-army-empty>{{ __('messages.candidate_profile.retired_army_not_found') }}</p>
 
                     <div class="candidate-education candidate-education-list-item candidate-employment-list-item {{ $hasRetiredArmyEmployment ? '' : 'd-none' }}" data-retired-army-item>
                         <div class="candidate-retired-army-summary" data-retired-army-summary>

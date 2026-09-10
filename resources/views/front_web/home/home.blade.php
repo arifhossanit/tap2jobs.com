@@ -555,9 +555,17 @@
         box-shadow: 0 1px 3px rgba(15, 27, 61, .08);
         height: auto;
         width: 263px;
-        background: #209776;
         color: #0a0a0a;
         padding: 16px 18px;
+        background: #e9f4ff;
+        border-radius: 8px;
+        border: 1px solid #d6dce3;
+        box-shadow: 0 8px 20px rgba(24, 38, 60, .10);
+    }
+
+    .bd-quick-links a:hover {
+        color: black;
+        transform: translateY(-1px);
     }
 
     .bd-quick-links h2 {
@@ -585,12 +593,14 @@
     }
 
     .bd-government-jobs {
-        border: 1px solid #ebe8cf;
-        border-radius: 4px;
+        border: 1px solid #d6dce3;
+        background: #e9f4ff;
+        border-radius: 8px;
         box-shadow: 0 1px 3px rgba(15, 27, 61, .08);
         color: #30352f;
         padding: 14px 16px;
         width: 100%;
+        box-shadow: 0 8px 20px rgba(24, 38, 60, .10);
     }
 
     .bd-government-jobs__title {
@@ -703,11 +713,11 @@
     }
 
     .bd-category-card {
-        background: #fff;
+        background: #f3f9ff;
         border: 1px solid #d6dce3;
-        border-radius: 4px;
+        border-radius: 8px;
         padding: 0 var(--bd-card-padding) 14px;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+        box-shadow: 0 8px 20px rgba(24, 38, 60, .10);
         min-width: 0;
         overflow: hidden;
     }
@@ -779,6 +789,11 @@
         margin-right: 7px;
         transform: translateY(-1px);
         flex-shrink: 0;
+    }
+
+    .bd-category-grid a:hover {
+        color: black;
+        transform: translateY(-1px);
     }
 
     .bd-more {
@@ -1335,7 +1350,7 @@
             </div>
             <!-- <aside class="bd-sidebar"></aside> -->
             <aside class="bd-sidebar">
-                <div class="bd-quick-links bg-gradient">
+                <div class="bd-quick-links ">
                 <h2>@lang('web.home_page.quick_links')</h2>
                 <div class="bd-quick-links-grid">
                     <a href="{{ route('front.company.lists') }}">Employer List ({{ $quickLinkCounts['employer_list'] ?? 0 }})</a>
@@ -1349,7 +1364,7 @@
                     <a href="{{ route('front.search.jobs', ['is_fresher' => 1]) }}">Fresher Jobs ({{ $quickLinkCounts['fresher_jobs'] ?? 0 }})</a>
                 </div>
                 </div>
-                <div class="bd-government-jobs bg-gradient">
+                <div class="bd-government-jobs">
                     <h2 class="bd-government-jobs__title">Government Jobs</h2>
                     @if(($governmentJobs ?? collect())->isNotEmpty())
                         <div id="governmentJobsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3500" data-bs-wrap="true" data-bs-keyboard="false" data-bs-touch="false">

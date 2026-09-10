@@ -103,7 +103,7 @@
                                 </div>
                             </div>
                         @empty
-                            <p class="candidate-skill-empty candidate-portfolio-empty" data-portfolio-empty>---</p>
+                            <p class="candidate-profile-empty candidate-skill-empty candidate-portfolio-empty" data-portfolio-empty>{{ __('messages.candidate_profile.portfolio_not_found') }}</p>
                         @endforelse
 
                         {{-- <button type="button" class="candidate-portfolio-add-outline" data-portfolio-add-action>
@@ -226,7 +226,7 @@
                                 </div>
                             </div>
                         @empty
-                            <p class="candidate-skill-empty candidate-publication-empty" data-publication-empty>---</p>
+                            <p class="candidate-profile-empty candidate-skill-empty candidate-publication-empty" data-publication-empty>{{ __('messages.candidate_profile.publication_not_found') }}</p>
                         @endforelse
 
                         {{-- <button type="button" class="candidate-publication-add-outline" data-publication-add-action>
@@ -349,7 +349,7 @@
                                 </div>
                             </div>
                         @empty
-                            <p class="candidate-skill-empty candidate-publication-empty" data-award-empty>---</p>
+                            <p class="candidate-profile-empty candidate-skill-empty candidate-publication-empty" data-award-empty>{{ __('messages.candidate_profile.award_not_found') }}</p>
                         @endforelse
 
                         {{-- <button type="button" class="candidate-publication-add-outline" data-award-add-action>
@@ -468,7 +468,7 @@
                                 </div>
                             </div>
                         @empty
-                            <div class="candidate-project-empty" data-project-empty>---</div>
+                            <div class="candidate-profile-empty candidate-project-empty" data-project-empty>{{ __('messages.candidate_profile.project_not_found') }}</div>
                         @endforelse
 
                         {{-- <button type="button" class="candidate-project-add-outline" data-project-add-action>
@@ -588,7 +588,7 @@
                                 </div>
                             </div>
                         @empty
-                            <div class="candidate-other-empty" data-other-empty>---</div>
+                            <div class="candidate-profile-empty candidate-other-empty" data-other-empty>{{ __('messages.candidate_profile.other_accomplishment_not_found') }}</div>
                         @endforelse
 
                         {{-- <button type="button" class="candidate-other-add-outline" data-other-add-action>
@@ -1131,9 +1131,9 @@
                                 item.remove();
                                 if (!portfolioItems().length && !portfolioEmpty()) {
                                     const empty = document.createElement('p');
-                                    empty.className = 'candidate-skill-empty candidate-portfolio-empty';
+                                    empty.className = 'candidate-profile-empty candidate-skill-empty candidate-portfolio-empty';
                                     empty.dataset.portfolioEmpty = '';
-                                    empty.textContent = '---';
+                                    empty.textContent = @json(__('messages.candidate_profile.portfolio_not_found'));
                                     portfolioList.insertBefore(empty, portfolioList.querySelector('.candidate-portfolio-add-outline') || null);
                                 }
                                 renderPortfolioNumbers();
@@ -1527,9 +1527,9 @@
                                 item.remove();
                                 if (!publicationItems().length && !publicationEmpty()) {
                                     const empty = document.createElement('p');
-                                    empty.className = 'candidate-skill-empty candidate-publication-empty';
+                                    empty.className = 'candidate-profile-empty candidate-skill-empty candidate-publication-empty';
                                     empty.dataset.publicationEmpty = '';
-                                    empty.textContent = '---';
+                                    empty.textContent = @json(__('messages.candidate_profile.publication_not_found'));
                                     publicationList.insertBefore(empty, publicationList.querySelector('.candidate-publication-add-outline') || null);
                                 }
                                 renderPublicationNumbers();
@@ -1925,9 +1925,9 @@
                                 item.remove();
                                 if (!awardItems().length && !awardEmpty()) {
                                     const empty = document.createElement('p');
-                                    empty.className = 'candidate-skill-empty candidate-publication-empty';
+                                    empty.className = 'candidate-profile-empty candidate-skill-empty candidate-publication-empty';
                                     empty.dataset.awardEmpty = '';
-                                    empty.textContent = '---';
+                                    empty.textContent = @json(__('messages.candidate_profile.award_not_found'));
                                     awardList.insertBefore(empty, awardList.querySelector('.candidate-publication-add-outline') || null);
                                 }
                                 renderAwardNumbers();
@@ -2329,9 +2329,9 @@
                                 item.remove();
                                 if (!projectItems().length && !projectEmpty()) {
                                     const empty = document.createElement('p');
-                                    empty.className = 'candidate-skill-empty candidate-publication-empty';
+                                    empty.className = 'candidate-profile-empty candidate-project-empty';
                                     empty.dataset.projectEmpty = '';
-                                    empty.textContent = '---';
+                                    empty.textContent = @json(__('messages.candidate_profile.project_not_found'));
                                     projectList.insertBefore(empty, projectList.querySelector('.candidate-project-add-outline') || null);
                                 }
                                 renderProjectNumbers();
@@ -2725,9 +2725,9 @@
                                 item.remove();
                                 if (!otherItems().length && !otherEmpty()) {
                                     const empty = document.createElement('p');
-                                    empty.className = 'candidate-other-empty';
+                                    empty.className = 'candidate-profile-empty candidate-other-empty';
                                     empty.dataset.otherEmpty = '';
-                                    empty.textContent = '---';
+                                    empty.textContent = @json(__('messages.candidate_profile.other_accomplishment_not_found'));
                                     otherList.insertBefore(empty, otherList.querySelector('.candidate-other-add-outline') || null);
                                 }
                                 renderOtherNumbers();

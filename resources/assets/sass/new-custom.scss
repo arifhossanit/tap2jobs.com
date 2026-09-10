@@ -5895,6 +5895,28 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
     }
 }
 
+.candidate-profile-empty {
+    color: #667085;
+    font-size: 15px;
+    font-weight: 500;
+    grid-column: 1 / -1;
+    margin: 0;
+    text-align: center;
+}
+// Keep the empty-message-to-form transition identical across profile sections.
+.candidate-skill-list:has(> .candidate-profile-empty:not(.d-none)) + .candidate-skill-form:not(.d-none),
+.candidate-activity-summary:has(> .candidate-profile-empty:not(.d-none)) + .candidate-activity-form:not(.d-none),
+.candidate-other-summary:has(> .candidate-language-empty:not(.d-none)) + .candidate-language-form:not(.d-none),
+.candidate-link-list:has(> .candidate-profile-empty:not(.d-none)) + .candidate-link-form:not(.d-none),
+.candidate-profile-empty:not(.d-none) + .candidate-portfolio-form:not(.d-none),
+.candidate-profile-empty:not(.d-none) + .candidate-publication-form:not(.d-none),
+.candidate-profile-empty:not(.d-none) + .candidate-project-form:not(.d-none),
+.candidate-profile-empty:not(.d-none) + .candidate-other-form:not(.d-none) {
+    border-top: 1px solid #dfe3ea;
+    margin-top: 24px;
+    padding-top: 24px;
+}
+
 .candidate-education-empty {
     color: #667085;
     font-size: 15px;

@@ -20,5 +20,7 @@
             <iframe src="{{ route('candidate.resumes.preview', $resume->id) }}"
                     title="{{ __('messages.candidate_profile.resume') }}"></iframe>
         </div>
+    @else
+        <p class="candidate-profile-empty">{{ __('messages.candidate.resume_not_found') }}</p>
     @endif
 @endsection
