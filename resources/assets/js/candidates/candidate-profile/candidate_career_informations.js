@@ -1113,7 +1113,6 @@ function loadCandidateCareerInformationData() {
         setEducationFieldVisibility($form.find('[data-education-cgpa-field]'), showGrade);
         setEducationFieldVisibility($form.find('[data-education-scale-field]'), showGrade);
 
-        $form.find('[name="marks_percentage"]').prop('required', showMarks);
         $form.find('[name="cgpa"]').prop('required', showGrade);
         $form.find('[name="scale"]').prop('required', showGrade);
         $form.find('[data-education-year-label]').text(passingLabel);

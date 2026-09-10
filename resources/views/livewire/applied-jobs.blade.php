@@ -68,13 +68,13 @@
                                            </button>
                                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border border-gray-300 min-width-50"
                                                aria-labelledby="dropdownMenuButton{{ $appliedJob->id }}">
-                                               <li>
+                                               {{-- <li>
                                                    <a class="dropdown-item apply-job-note py-2"
                                                       href="javascript:void(0)"
                                                       data-id="{{ $appliedJob->id }}">
                                                        <i class="fa-regular fa-eye me-2 text-primary"></i>{{ __('messages.common.view') }}
                                                    </a>
-                                               </li>
+                                               </li> --}}
                                                @if(\App\Models\JobApplicationSchedule::whereJobApplicationId($appliedJob->id)->exists() && !($appliedJob->status == \App\Models\JobApplication::REJECTED) && !($appliedJob->status == \App\Models\JobApplication::STATUS_APPLIED) && !($appliedJob->status == \App\Models\JobApplication::COMPLETE))
                                                    <li>
                                                        <a class="dropdown-item schedule-slot-book py-2" href="javascript:void(0)" data-id="{{ $appliedJob->id }}">
@@ -82,7 +82,6 @@
                                                        </a>
                                                    </li>
                                                @endif
-                                               <li><hr class="dropdown-divider my-1"></li>
                                                <li>
                                                    <a class="dropdown-item delete-btn remove-applied-jobs text-danger py-2" href="javascript:void(0)" data-id="{{ $appliedJob->id }}">
                                                        <i class="fa-regular fa-trash-can me-2 text-danger"></i>{{ __('messages.common.delete') }}

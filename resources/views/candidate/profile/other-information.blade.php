@@ -503,9 +503,9 @@
                                     </select>
                                 </div>
                                 <div class="candidate-skill-form__field">
-                                    <label for="candidateReferenceMobile">{{ __('messages.candidate_profile.mobile') }}</label>
+                                    <label for="candidateReferenceMobile">{{ __('messages.candidate_profile.mobile') }} <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="candidateReferenceMobile"
-                                           name="mobile" data-reference-field-input="mobile" placeholder="{{ __('messages.candidate_profile.enter_mobile') }}">
+                                           name="mobile" data-reference-field-input="mobile" placeholder="{{ __('messages.candidate_profile.enter_mobile') }}" required>
                                 </div>
                                 <div class="candidate-skill-form__field">
                                     <label for="candidateReferenceOfficePhone">{{ __('messages.candidate_profile.phone_office') }}</label>

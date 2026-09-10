@@ -27,11 +27,11 @@ class CandidateUpdatePreferredAreaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'preferred_job_categories' => 'nullable|array|max:3',
+            'preferred_job_categories' => 'nullable|array|max:6',
             'preferred_job_categories.*' => 'integer|exists:job_categories,id',
-            'preferred_functional_categories' => 'nullable|array|max:3',
+            'preferred_functional_categories' => 'nullable|array|max:6',
             'preferred_functional_categories.*' => 'integer',
-            'preferred_job_locations_inside' => 'nullable|array|max:15',
+            'preferred_job_locations_inside' => 'nullable|array|max:10',
             'preferred_job_locations_inside.*' => 'integer|exists:cities,id',
         ];
     }

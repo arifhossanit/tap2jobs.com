@@ -158,8 +158,8 @@
                     <div>
                         <h2>{{ __('messages.candidate_dashboard.matching_jobs') }}</h2>
                     </div>
-                    <a href="{{ route('front.search.jobs', ['matching' => 1]) }}" target="_blank" class="candidate-dashboard-link">
-                        {{ __('messages.candidate_dashboard.view_more_jobs') }} <i class="fa-solid fa-arrow-right"></i>
+                    <a href="{{ route('front.search.jobs') }}" target="_blank" class="candidate-dashboard-link">
+                        {{ __('messages.candidate_dashboard.view_all_jobs') }} <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>
 
@@ -217,6 +217,9 @@
                             </article>
                         @endforeach
                     </div>
+                    <div class="candidate-dashboard-matching-pagination">
+                        {{ $matchingJobs->links() }}
+                    </div>
                 @else
                     <div class="candidate-match-empty">
                         <i class="fa-solid fa-briefcase"></i>
@@ -243,14 +246,14 @@
                             <span><i class="fa-solid fa-clock"></i>{{ __('messages.candidate_dashboard.drafts') }}</span>
                             <strong>{{ $dashboardCount($applicationStats['drafts'] ?? 0) }}</strong>
                         </a>
-                        <a href="{{ route('candidate.applied.job', ['status' => \App\Models\JobApplication::COMPLETE]) }}">
+                        {{-- <a href="{{ route('candidate.applied.job', ['status' => \App\Models\JobApplication::COMPLETE]) }}">
                             <span><i class="fa-solid fa-star"></i>{{ __('messages.candidate_dashboard.hired') }}</span>
                             <strong>{{ $dashboardCount($applicationStats['hired'] ?? 0) }}</strong>
-                        </a>
-                        <a href="{{ route('favourite.companies') }}">
+                        </a> --}}
+                        {{-- <a href="{{ route('favourite.companies') }}">
                             <span><i class="fa-solid fa-users"></i>{{ __('messages.candidate_dashboard.followings') }}</span>
                             <strong>{{ $dashboardCount($followings) }}</strong>
-                        </a>
+                        </a> --}}
                     </div>
                 </aside>
 

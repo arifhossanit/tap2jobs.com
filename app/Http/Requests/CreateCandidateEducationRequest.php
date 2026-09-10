@@ -50,7 +50,7 @@ class CreateCandidateEducationRequest extends FormRequest
         $degreeLevelId = $this->input('degree_level_id');
         $rules['foreign_university_country'] = 'required_if:foreign_institute,1|nullable|max:120';
         $rules['result'] = ['required', 'max:150', Rule::in(ProfileReferenceOption::values(ProfileReferenceOption::TYPE_EDUCATION_RESULT))];
-        $rules['marks_percentage'] = 'required_if:result,First Division/Class,Second Division/Class,Third Division/Class|nullable|numeric|min:0|max:100';
+        $rules['marks_percentage'] = 'nullable|integer|min:0';
         $rules['cgpa'] = 'required_if:result,Grade|nullable|numeric|min:0|max:100';
         $rules['cgpa'] .= '|lte:scale';
         $rules['scale'] = 'required_if:result,Grade|nullable|integer|min:1|max:100';

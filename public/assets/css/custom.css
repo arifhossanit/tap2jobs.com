@@ -2293,7 +2293,6 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 .candidate-profile-section {
   background: #fff;
   border: 1px solid #dfe3ea;
-  border-radius: 8px;
   margin-bottom: 16px;
   overflow: visible;
   position: relative;
@@ -6127,26 +6126,26 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
     gap: 16px;
     grid-template-columns: 1fr;
   }
-  .candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form {
+  .candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form:not(.d-none) {
     display: grid !important;
     gap: 16px;
     grid-template-columns: minmax(0, 1fr) !important;
   }
-  .candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form > [class*=col-] {
+  .candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form:not(.d-none) > [class*=col-] {
     max-width: 100% !important;
     min-width: 0;
     width: 100% !important;
   }
-  .candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form .form-label {
+  .candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form:not(.d-none) .form-label {
     display: inline-block;
     line-height: 1.35;
     margin-bottom: 8px;
     max-width: 100%;
     white-space: normal;
   }
-  .candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form .form-control,
-  .candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form .form-select,
-  .candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form .iti {
+  .candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form:not(.d-none) .form-control,
+  .candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form:not(.d-none) .form-select,
+  .candidate-profile-accordion .candidate-profile-section .row.candidate-personal-form:not(.d-none) .iti {
     max-width: 100%;
     min-width: 0;
     width: 100% !important;
@@ -6469,6 +6468,12 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 .select2-container--bootstrap-5 .select2-dropdown .select2-results__options .select2-results__option.select2-results__option--highlighted {
   background-color: #1d4ed8 !important;
   color: #ffffff !important;
+}
+
+/* Candidate Preferred Area: keep hover distinct from the blue selected state. */
+.candidate-preferred-select-dropdown .select2-results__option--highlighted[aria-selected] {
+  background-color: #e8f4ff !important;
+  color: #17466f !important;
 }
 
 /* Candidate CV Privacy Section Styling */
@@ -6851,7 +6856,7 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
   line-height: 1.45;
 }
 
-.candidate-profile-section .candidate-profile-field-invalid,
+.candidate-profile-section .candidate-profile-field-invalid:not(.select2-container):not(.candidate-education-custom-select),
 .candidate-profile-section .candidate-profile-field-invalid .select2-selection,
 .candidate-profile-section .candidate-profile-field-invalid [data-education-custom-select-toggle] {
   border: 1px solid #f04438 !important;

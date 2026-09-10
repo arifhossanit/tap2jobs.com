@@ -6,16 +6,19 @@ use App\Models\Candidate;
 use App\Models\JobApplication;
 use App\Services\CandidateJobMatchService;
 use App\Services\CandidateProfileCompletionService;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class CandidateDashboard extends Component
 {
+    use WithPagination;
+
     public $user;
     public $candidate;
     public $resumes;
     public $followings;
-    public $matchingJobs;
     public $profileCompletion;
     public $applicationStats;
 
@@ -45,9 +48,6 @@ class CandidateDashboard extends Component
                     ->count(),
             ]
             : ['total' => 0, 'applied' => 0, 'ongoing' => 0, 'hired' => 0, 'drafts' => 0];
-        $this->matchingJobs = $this->candidate
-            ? app(CandidateJobMatchService::class)->topMatches($this->candidate)
-            : collect();
         $this->profileCompletion = $this->candidate
             ? app(CandidateProfileCompletionService::class)->calculate($this->candidate)
             : ['percentage' => 0, 'completed' => 0, 'total' => 11, 'color' => '#f04438'];
@@ -60,6 +60,27 @@ class CandidateDashboard extends Component
 
     public function render()
     {
-        return view('livewire.candidate-dashboard');
+        $allMatchingJobs = $this->candidate
+            ? app(CandidateJobMatchService::class)->topMatches($this->candidate, null)
+            : collect();
+        $allMatchingJobs = $allMatchingJobs
+            ->filter(fn ($job) => (int) ($job->match_score ?? 0) >= 40)
+            ->values();
+        $perPage = 8;
+        $page = $this->getPage();
+        $matchingJobs = new LengthAwarePaginator(
+            $allMatchingJobs->forPage($page, $perPage)->values(),
+            $allMatchingJobs->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'pageName' => 'page']
+        );
+
+        return view('livewire.candidate-dashboard', compact('matchingJobs'));
+    }
+
+    public function paginationView(): string
+    {
+        return 'livewire.custom-pagination-jobs';
     }
 }

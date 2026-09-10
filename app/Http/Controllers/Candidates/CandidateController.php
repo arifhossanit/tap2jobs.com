@@ -215,7 +215,7 @@ class CandidateController extends AppBaseController
             }
             if ($sectionName == 'education-training' || $sectionName == 'other-information') {
                 $data['candidateEducations'] = CandidateEducation::with('degreeLevel')->where('candidate_id',
-                    $user->owner_id)->orderByDesc('id')->get();
+                    $user->owner_id)->orderByDesc('year')->orderByDesc('id')->get();
                 foreach ($data['candidateEducations'] as $education) {
                     $education->country = getCountryName($education->country_id);
                 }
@@ -264,7 +264,7 @@ class CandidateController extends AppBaseController
                     $data['educationBoardOptions'] = collect();
                 }
                 $data['candidateTrainings'] = CandidateTraining::where('candidate_id', $user->owner_id)
-                    ->orderBy('sort_order')
+                    ->orderByDesc('year')
                     ->orderByDesc('id')
                     ->get();
                 $data['candidateCertifications'] = Schema::hasTable('candidate_certifications')
@@ -1075,7 +1075,7 @@ class CandidateController extends AppBaseController
             $experience->country = getCountryName($experience->country_id);
         }
         $data['candidateEducations'] = CandidateEducation::with('degreeLevel')->where('candidate_id',
-            $user->owner_id)->orderByDesc('id')->get();
+            $user->owner_id)->orderByDesc('year')->orderByDesc('id')->get();
         foreach ($data['candidateEducations'] as $education) {
             $education->country = getCountryName($education->country_id);
         }

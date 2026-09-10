@@ -241,8 +241,8 @@
                             {{ Form::select('result', $educationResultOptions, null, ['class' => 'form-select', 'required', 'placeholder' => 'Enter your Result', 'data-education-result-select' => true]) }}
                         </div>
                         <div class="candidate-education-form-field" data-education-marks-field>
-                            {{ Form::label('marks_percentage', 'Marks(%)', ['class' => 'form-label required']) }}
-                            {{ Form::text('marks_percentage', null, ['class' => 'form-control', 'placeholder' => 'Enter your Marks(%)', 'inputmode' => 'decimal', 'data-education-decimal-input' => true]) }}
+                            {{ Form::label('marks_percentage', 'Marks', ['class' => 'form-label']) }}
+                            {{ Form::text('marks_percentage', null, ['class' => 'form-control', 'placeholder' => 'Enter your Marks', 'inputmode' => 'numeric', 'data-education-integer-input' => true]) }}
                         </div>
                         <div class="candidate-education-form-field" data-education-cgpa-field>
                             {{ Form::label('cgpa', __('messages.candidate_profile.cgpa'), ['class' => 'form-label required']) }}
@@ -329,8 +329,8 @@
                             {{ Form::select('result', $educationResultOptions, null, ['class' => 'form-select', 'required', 'id' => 'editResult', 'placeholder' => 'Enter your Result', 'data-education-result-select' => true]) }}
                         </div>
                         <div class="candidate-education-form-field" data-education-marks-field>
-                            {{ Form::label('marks_percentage', 'Marks(%)', ['class' => 'form-label required']) }}
-                            {{ Form::text('marks_percentage', null, ['class' => 'form-control', 'placeholder' => 'Enter your Marks(%)', 'inputmode' => 'decimal', 'data-education-decimal-input' => true]) }}
+                            {{ Form::label('marks_percentage', 'Marks', ['class' => 'form-label']) }}
+                            {{ Form::text('marks_percentage', null, ['class' => 'form-control', 'placeholder' => 'Enter your Marks', 'inputmode' => 'numeric', 'data-education-integer-input' => true]) }}
                         </div>
                         <div class="candidate-education-form-field" data-education-cgpa-field>
                             {{ Form::label('cgpa', __('messages.candidate_profile.cgpa'), ['class' => 'form-label required']) }}
@@ -422,7 +422,7 @@
                                     @endif
                                     @if(filled($candidateEducation->marks_percentage))
                                         <div class="candidate-education-detail">
-                                            <span>Marks(%)</span>
+                                            <span>Marks</span>
                                             <strong>{{ $candidateEducation->marks_percentage }}</strong>
                                         </div>
                                     @endif
@@ -590,8 +590,8 @@
                                 {{ Form::text('title', null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_training_title'), 'data-training-field' => 'title']) }}
                             </div>
                             <div class="candidate-education-form-field">
-                                {{ Form::label('country', __('messages.company.country'), ['class' => 'form-label required']) }}
-                                {{ Form::text('country', null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_country'), 'data-training-field' => 'country']) }}
+                                {{ Form::label('country', __('messages.candidate_profile.training_country'), ['class' => 'form-label required']) }}
+                                {{ Form::text('country', null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_country_name'), 'data-training-field' => 'country']) }}
                             </div>
                             <div class="candidate-education-form-field">
                                 {{ Form::label('topics', __('messages.candidate_profile.topics_covered'), ['class' => 'form-label']) }}
@@ -602,15 +602,15 @@
                                 {{ Form::selectRange('year', date('Y'), 2000, null, ['class' => 'form-select', 'required', 'placeholder' => __('messages.candidate_profile.enter_training_year'), 'data-training-field' => 'year']) }}
                             </div>
                             <div class="candidate-education-form-field">
-                                {{ Form::label('institute', __('messages.candidate_profile.institute'), ['class' => 'form-label required']) }}
-                                {{ Form::text('institute', null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_institute_name'), 'data-training-field' => 'institute']) }}
+                                {{ Form::label('institute', __('messages.candidate_profile.training_institute'), ['class' => 'form-label required']) }}
+                                {{ Form::text('institute', null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_training_institute'), 'data-training-field' => 'institute']) }}
                             </div>
                             <div class="candidate-education-form-field">
                                 {{ Form::label('duration', __('messages.candidate_profile.duration'), ['class' => 'form-label required']) }}
                                 {{ Form::text('duration', null, ['class' => 'form-control', 'required', 'placeholder' => __('messages.candidate_profile.enter_duration'), 'data-training-field' => 'duration']) }}
                             </div>
                             <div class="candidate-education-form-field candidate-education-form-field--full">
-                                {{ Form::label('location', __('messages.candidate_profile.location'), ['class' => 'form-label']) }}
+                                {{ Form::label('location', __('messages.candidate_profile.training_location'), ['class' => 'form-label']) }}
                                 {{ Form::text('location', null, ['class' => 'form-control', 'placeholder' => __('messages.candidate_profile.enter_location'), 'data-training-field' => 'location']) }}
                             </div>
                         </div>

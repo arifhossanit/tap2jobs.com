@@ -26,7 +26,7 @@ class CandidateJobMatchService
 
     private array $candidateExperienceMonthsCache = [];
 
-    public function topMatches(Candidate $candidate, int $limit = 8): Collection
+    public function topMatches(Candidate $candidate, ?int $limit = 8): Collection
     {
         $candidateSkillIds = $this->candidateSkillIds($candidate);
         $preferredCategoryIds = $this->ids($candidate->preferred_job_categories ?? []);
@@ -42,15 +42,17 @@ class CandidateJobMatchService
             ->where('status', '!=', JobApplication::STATUS_DRAFT)
             ->pluck('job_id');
 
-        $jobs = Job::query()
+        $jobsQuery = Job::query()
             ->with(['company', 'jobsSkill', 'jobCategory', 'jobCategories', 'city', 'state', 'country', 'locations'])
             ->where('status', Job::STATUS_OPEN)
             ->where('is_suspended', Job::NOT_SUSPENDED)
             ->whereDate('job_expiry_date', '>=', now()->toDateString())
             ->when($appliedJobIds->isNotEmpty(), fn ($query) => $query->whereNotIn('id', $appliedJobIds))
-            ->latest()
-            ->limit(180)
-            ->get();
+            ->latest();
+
+        $jobs = $limit === null
+            ? $jobsQuery->get()
+            : $jobsQuery->limit(180)->get();
 
         $matches = $jobs
             ->map(function (Job $job) use ($candidate, $candidateSkillIds, $preferredCategoryIds, $preferredLocationIds, $candidateKeywords) {
@@ -59,7 +61,9 @@ class CandidateJobMatchService
             ->sortByDesc(fn (Job $job) => [$job->match_score, optional($job->created_at)->timestamp ?? 0])
             ->values();
 
-        return $matches->filter(fn (Job $job) => $job->match_score > 0)->take($limit)->values();
+        $matches = $matches->filter(fn (Job $job) => $job->match_score > 0);
+
+        return $limit === null ? $matches->values() : $matches->take($limit)->values();
     }
 
     private function scoreJob(

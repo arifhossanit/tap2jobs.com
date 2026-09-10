@@ -364,6 +364,68 @@ a.candidate-stat-card:hover {
     grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.candidate-dashboard-matching-pagination .find-jobs-pagination-nav {
+    display: flex;
+    justify-content: center;
+    margin-top: 8px;
+    overflow-x: auto;
+    padding: 10px 12px 2px;
+    width: 100%;
+}
+
+.candidate-dashboard-matching-pagination .find-jobs-pagination {
+    align-items: center;
+    display: flex;
+    gap: 7px;
+    justify-content: center;
+    margin: 0;
+    min-width: max-content;
+    padding: 0;
+}
+
+.candidate-dashboard-matching-pagination .page-item {
+    padding: 0;
+}
+
+.candidate-dashboard-matching-pagination .page-link {
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #d9e2ec;
+    border-radius: 7px !important;
+    box-shadow: none !important;
+    color: #526174 !important;
+    display: inline-flex;
+    font-size: 14px;
+    font-weight: 500;
+    height: 40px;
+    justify-content: center;
+    line-height: 1;
+    margin: 0;
+    min-width: 40px;
+    padding: 0;
+    touch-action: manipulation;
+    width: 40px;
+}
+
+.candidate-dashboard-matching-pagination button.page-link:hover,
+.candidate-dashboard-matching-pagination button.page-link:focus-visible,
+.candidate-dashboard-matching-pagination .page-item.active .page-link {
+    background: #209776;
+    border-color: #209776;
+    color: #ffffff !important;
+}
+
+.candidate-dashboard-matching-pagination .page-item.disabled .page-link {
+    background: #f5f7fa;
+    border-color: #e6ebf1;
+    color: #a2adba !important;
+    opacity: 1;
+}
+
+.candidate-dashboard-matching-pagination .find-jobs-pagination__ellipsis .page-link {
+    background: transparent !important;
+    border-color: transparent !important;
+}
 .candidate-match-card {
     background: #ffffff;
     border: 1px solid #e7edf5;

@@ -142,7 +142,7 @@ class ApplicationCvService
             'profilePhoto' => $this->profilePhotoDataUri($candidate->user),
             'educations' => CandidateEducation::with('degreeLevel')
                 ->where('candidate_id', $candidateId)
-                ->orderBy('sort_order')
+                ->orderByDesc('year')
                 ->orderByDesc('id')
                 ->get(),
             'experiences' => CandidateExperience::with('expertises')
@@ -151,7 +151,7 @@ class ApplicationCvService
                 ->orderByDesc('id')
                 ->get(),
             'trainings' => CandidateTraining::where('candidate_id', $candidateId)
-                ->orderBy('sort_order')
+                ->orderByDesc('year')
                 ->orderByDesc('id')
                 ->get(),
             'skills' => CandidateSkill::with('skill')

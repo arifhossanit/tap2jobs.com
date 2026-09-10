@@ -3185,8 +3185,6 @@ function loadCandidateGeneralData() {
     }
     $("#countryId").val("");
   };
-  $("#permanentSameAsPresent").prop("checked", false);
-  $("#permanentAddressSelected").val("1");
   var permanentAddressTypeChosen = $(".candidate-address-form").data("has-permanent-details") == 1;
   var togglePermanentAddress = function togglePermanentAddress() {
     var sameAsPresent = $("#permanentSameAsPresent").is(":checked");
@@ -3561,6 +3559,36 @@ function loadCandidateGeneralData() {
   }).on("change", function () {
     renderPreferredCheckboxChips($(this).data("chip-target"));
   });
+  var normalizePreferredSelectText = function normalizePreferredSelectText(text) {
+    return $.trim(text || "").toLowerCase();
+  };
+  var preferredSelectMatcher = function preferredSelectMatcher(params, data) {
+    var term = normalizePreferredSelectText(params.term);
+    if (!term) {
+      return data;
+    }
+    var text = normalizePreferredSelectText(data.text);
+    if (!text || !text.includes(term)) {
+      return null;
+    }
+    var words = text.split(/[\s\-\/]+/).filter(Boolean);
+    var matchedData = $.extend(true, {}, data);
+    matchedData.matchPriority = text.startsWith(term) ? 0 : words.some(function (word) {
+      return word.startsWith(term);
+    }) ? 1 : 2;
+    return matchedData;
+  };
+  var preferredSelectSorter = function preferredSelectSorter(data) {
+    if (!data.some(function (item) {
+      return item.matchPriority !== undefined;
+    })) {
+      return data;
+    }
+    return data.sort(function (first, second) {
+      var priorityDifference = (first.matchPriority || 0) - (second.matchPriority || 0);
+      return priorityDifference || normalizePreferredSelectText(first.text).localeCompare(normalizePreferredSelectText(second.text));
+    });
+  };
   $("#preferredJobCategories, #preferredInsideDistricts").each(function () {
     var $preferredSelect = $(this);
     if ($preferredSelect.hasClass("select2-hidden-accessible")) {
@@ -3570,6 +3598,9 @@ function loadCandidateGeneralData() {
       width: "100%",
       placeholder: $preferredSelect.data("placeholder") || "",
       closeOnSelect: false,
+      dropdownCssClass: "candidate-preferred-select-dropdown",
+      matcher: preferredSelectMatcher,
+      sorter: preferredSelectSorter,
       maximumSelectionLength: Number($preferredSelect.data("maximum-selection-length")) || 0
     });
     $preferredSelect.on("select2:select", function () {
@@ -5243,7 +5274,6 @@ function loadCandidateCareerInformationData() {
     setEducationFieldVisibility($form.find('[data-education-marks-field]'), showMarks);
     setEducationFieldVisibility($form.find('[data-education-cgpa-field]'), showGrade);
     setEducationFieldVisibility($form.find('[data-education-scale-field]'), showGrade);
-    $form.find('[name="marks_percentage"]').prop('required', showMarks);
     $form.find('[name="cgpa"]').prop('required', showGrade);
     $form.find('[name="scale"]').prop('required', showGrade);
     $form.find('[data-education-year-label]').text(passingLabel);

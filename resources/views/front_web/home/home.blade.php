@@ -717,7 +717,8 @@
         align-items: center;
         justify-content: space-between;
         padding: 14px 4px 10px;
-        color: #265997;
+        color: #0a0a0a;
+        font-weight: bold;
         font-size: 16px;
     }
 

@@ -1436,7 +1436,7 @@ class CandidateRepository extends BaseRepository
             $experience->country_name = getCountryName($experience->country_id);
         }
         $data['candidateEducations'] = CandidateEducation::with('degreeLevel')->where('candidate_id',
-            $candidate)->get();
+            $candidate)->orderByDesc('year')->orderByDesc('id')->get();
         foreach ($data['candidateEducations'] as $education) {
             $education->country_name = getCountryName($education->country_id);
         }

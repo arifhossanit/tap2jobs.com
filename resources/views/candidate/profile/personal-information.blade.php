@@ -283,9 +283,9 @@
                         };
                         $bangladeshId = \App\Models\Country::where('short_code', 'BD')->orWhere('name', 'Bangladesh')->value('id');
                         $presentAddressType = $candidate->present_address_type ?? (($bangladeshId && (int) $user->country_id === (int) $bangladeshId) ? 'inside' : 'inside');
-                        $permanentSameAsPresent = false;
+                        $permanentSameAsPresent = (bool) ($candidate->permanent_same_as_present ?? false);
                         $permanentAddressType = $candidate->permanent_address_type ?? 'inside';
-                        $districtList = $data['districts'] ?? ($states ?? []);
+                        $divisionList = $states ?? [];
                         $presentThanas = ! empty($user->city_id) ? getThanas($user->city_id) : [];
                         $permanentStates = ! empty($candidate->permanent_country_id) ? getStates($candidate->permanent_country_id) : ($bangladeshId ? getStates($bangladeshId) : []);
                         $permanentCities = ! empty($candidate->permanent_state_id) ? getCities($candidate->permanent_state_id) : [];
@@ -350,22 +350,22 @@
                         <div class="candidate-address-grid">
                             <div class="candidate-address-field candidate-address-country-field {{ $presentAddressType === 'outside' ? '' : 'd-none' }}">
                                 {{ Form::label('present_country_name', 'Country', ['class' => 'form-label required']) }}
-                                {{ Form::text('present_country_name', $candidate->present_country_name ?? null, ['class' => 'form-control', 'id' => 'presentCountryName', 'placeholder' => 'Enter your Country']) }}
+                                {{ Form::text('present_country_name', $candidate->present_country_name ?? null, ['class' => 'form-control', 'id' => 'presentCountryName', 'placeholder' => 'Enter Country Name']) }}
                             </div>
                             <div class="candidate-address-field candidate-present-district-field {{ $presentAddressType === 'outside' ? 'd-none' : '' }}">
                                 {{ Form::label('state_id', 'Division', ['class' => 'form-label required']) }}
-                                {{ Form::select('state_id', $districtList, $user->state_id ?? null, ['id' => 'stateId', 'class' => 'form-select', 'placeholder' => 'Select your Division']) }}
+                                {{ Form::select('state_id', $divisionList, $user->state_id ?? null, ['id' => 'stateId', 'class' => 'form-select', 'placeholder' => 'Select your Division']) }}
                             </div>
                             <div class="candidate-address-field candidate-present-district-field {{ $presentAddressType === 'outside' ? 'd-none' : '' }}">
-                                {{ Form::label('city_id', 'District', ['class' => 'form-label']) }}
+                                {{ Form::label('city_id', 'District', ['class' => 'form-label required']) }}
                                 {{ Form::select('city_id', $cities ?? [], $user->city_id ?? null, ['id' => 'cityId', 'class' => 'form-select', 'placeholder' => 'Select your District']) }}
                             </div>
                             <div class="candidate-address-field candidate-present-district-field {{ $presentAddressType === 'outside' ? 'd-none' : '' }}">
-                                {{ Form::label('thana_id', 'Thana', ['class' => 'form-label']) }}
+                                {{ Form::label('thana_id', 'Thana', ['class' => 'form-label required']) }}
                                 {{ Form::select('thana_id', $presentThanas ?? [], $user->thana_id ?? null, ['id' => 'thanaId', 'class' => 'form-select', 'placeholder' => 'Select Thana']) }}
                             </div>
                             <div class="candidate-address-field candidate-present-state-text-field {{ $presentAddressType === 'outside' ? '' : 'd-none' }}">
-                                {{ Form::label('present_state_division', 'State/Division', ['class' => 'form-label']) }}
+                                {{ Form::label('present_state_division', 'State/Division', ['class' => 'form-label required']) }}
                                 {{ Form::text('present_state_division', $candidate->present_state_division ?? null, ['class' => 'form-control', 'placeholder' => 'Enter your State/Division']) }}
                             </div>
                             <div class="candidate-address-field candidate-present-thana-po-field {{ $presentAddressType === 'outside' ? 'd-none' : '' }}">
@@ -401,31 +401,31 @@
                         <div class="candidate-permanent-address-fields {{ $permanentSameAsPresent || ! $hasPermanentDetails ? 'd-none' : '' }}">
                             <div class="candidate-address-grid">
                                 <div class="candidate-address-field candidate-permanent-country-field d-none">
-                                    {{ Form::label('permanent_country_id', 'Country', ['class' => 'form-label']) }}
+                                    {{ Form::label('permanent_country_id', 'Country', ['class' => 'form-label required']) }}
                                     {{ Form::select('permanent_country_id', $data['countries'], $candidate->permanent_country_id ?? $bangladeshId, ['class' => 'form-select', 'id' => 'permanentCountryId', 'placeholder' => __('messages.company.select_country')]) }}
                                 </div>
                                 <div class="candidate-address-field candidate-permanent-district-field {{ $permanentAddressType === 'outside' ? 'd-none' : '' }}">
-                                    {{ Form::label('permanent_state_id', 'Division', ['class' => 'form-label']) }}
+                                    {{ Form::label('permanent_state_id', 'Division', ['class' => 'form-label required']) }}
                                     {{ Form::select('permanent_state_id', $permanentStates, $candidate->permanent_state_id ?? null, ['id' => 'permanentStateId', 'class' => 'form-select', 'placeholder' => 'Select your Division']) }}
                                 </div>
                                 <div class="candidate-address-field candidate-permanent-district-field {{ $permanentAddressType === 'outside' ? 'd-none' : '' }}">
-                                    {{ Form::label('permanent_city_id', 'District', ['class' => 'form-label']) }}
+                                    {{ Form::label('permanent_city_id', 'District', ['class' => 'form-label required']) }}
                                     {{ Form::select('permanent_city_id', $permanentCities, $candidate->permanent_city_id ?? null, ['id' => 'permanentCityId', 'class' => 'form-select', 'placeholder' => 'Select your District']) }}
                                 </div>
                                 <div class="candidate-address-field candidate-permanent-district-field {{ $permanentAddressType === 'outside' ? 'd-none' : '' }}">
-                                    {{ Form::label('permanent_thana_id', 'Thana', ['class' => 'form-label']) }}
+                                    {{ Form::label('permanent_thana_id', 'Thana', ['class' => 'form-label required']) }}
                                     {{ Form::select('permanent_thana_id', $permanentThanas, $candidate->permanent_thana_id ?? null, ['id' => 'permanentThanaId', 'class' => 'form-select', 'placeholder' => 'Select Thana']) }}
                                 </div>
                                 <div class="candidate-address-field candidate-permanent-state-text-field {{ $permanentAddressType === 'outside' ? '' : 'd-none' }}">
-                                    {{ Form::label('permanent_state_division', 'State/Division', ['class' => 'form-label']) }}
+                                    {{ Form::label('permanent_state_division', 'State/Division', ['class' => 'form-label required']) }}
                                     {{ Form::text('permanent_state_division', $candidate->permanent_state_division ?? null, ['class' => 'form-control', 'placeholder' => 'Enter your State/Division']) }}
                                 </div>
                                 <div class="candidate-address-field candidate-permanent-thana-po-field {{ $permanentAddressType === 'outside' ? 'd-none' : '' }}">
-                                    {{ Form::label('permanent_post_office', 'Post Office', ['class' => 'form-label']) }}
+                                    {{ Form::label('permanent_post_office', 'Post Office', ['class' => 'form-label required']) }}
                                     {{ Form::text('permanent_post_office', $candidate->permanent_post_office ?? null, ['class' => 'form-control', 'placeholder' => 'Enter your Post Office']) }}
                                 </div>
                                 <div class="candidate-address-field candidate-address-field--full">
-                                    {{ Form::label('permanent_address', 'House No/Road/Village', ['class' => 'form-label']) }}
+                                    {{ Form::label('permanent_address', 'House No/Road/Village', ['class' => 'form-label required']) }}
                                     {{ Form::textarea('permanent_address', $candidate->permanent_address ?? null, ['class' => 'form-control candidate-address-textarea', 'rows' => 3, 'placeholder' => 'Enter your House No/Road/Village']) }}
                                 </div>
                             </div>
@@ -677,16 +677,16 @@
                             <h3>{{ __('messages.candidate_profile.preferred_job_categories') }}<span class="required"></span></h3>
                             <p>{{ __('messages.candidate_profile.preferred_job_categories_help') }}</p>
                             <div>
-                                <div class="candidate-preferred-label">{{ __('messages.candidate_profile.job_category') }} <span>({{ __('messages.candidate_profile.max_3') }})</span></div>
-                                {{ Form::select('preferred_job_categories[]', $jobCategoryOptions->toArray(), $preferredJobCategories, ['class' => 'form-select', 'id' => 'preferredJobCategories', 'multiple' => true, 'data-control' => 'select2', 'data-placeholder' => __('messages.candidate_profile.select_job_category'), 'data-maximum-selection-length' => 3]) }}
+                                <div class="candidate-preferred-label">{{ __('messages.candidate_profile.job_category') }} <span>({{ __('messages.candidate_profile.max_6') }})</span></div>
+                                {{ Form::select('preferred_job_categories[]', $jobCategoryOptions->toArray(), $preferredJobCategories, ['class' => 'form-select', 'id' => 'preferredJobCategories', 'multiple' => true, 'data-control' => 'select2', 'data-placeholder' => __('messages.candidate_profile.select_job_category'), 'data-maximum-selection-length' => 6]) }}
                             </div>
                         </div>
 
                         <div class="candidate-preferred-block">
                             <h3>{{ __('messages.candidate_profile.preferred_job_location') }} <span class="required"></span></h3>
                             <p>{{ __('messages.candidate_profile.preferred_job_location_help') }}</p>
-                            <div class="candidate-preferred-label">{{ __('messages.candidate_profile.inside_bangladesh_districts') }} <span>({{ __('messages.candidate_profile.max_15') }})</span></div>
-                            {{ Form::select('preferred_job_locations_inside[]', $districtOptions->toArray(), $preferredInside, ['class' => 'form-select', 'id' => 'preferredInsideDistricts', 'multiple' => true, 'data-control' => 'select2', 'data-placeholder' => __('messages.candidate_profile.add_districts'), 'data-maximum-selection-length' => 15]) }}
+                            <div class="candidate-preferred-label">{{ __('messages.candidate_profile.inside_bangladesh_districts') }} <span>({{ __('messages.candidate_profile.max_10') }})</span></div>
+                            {{ Form::select('preferred_job_locations_inside[]', $districtOptions->toArray(), $preferredInside, ['class' => 'form-select', 'id' => 'preferredInsideDistricts', 'multiple' => true, 'data-control' => 'select2', 'data-placeholder' => __('messages.candidate_profile.add_districts'), 'data-maximum-selection-length' => 10]) }}
                         </div>
 
                         <div class="candidate-profile-section-actions">

@@ -13,9 +13,11 @@
         .header { border-bottom: 1.4px solid #363636; margin-bottom: 13px; padding: 3px 7px 13px; }
         .header-info { padding-right: 18px; vertical-align: top; }
         .header-photo-cell { text-align: right; vertical-align: top; width: 116px; }
-        .candidate-name { color: #3c3198; font-size: 16px; font-weight: 700; line-height: 1.2; margin: 4px 0 7px; }
-        .contact-row { margin: 0 0 5px; word-break: break-word; }
-        .contact-icon { height: 11px; margin-right: 7px; vertical-align: -1px; width: 11px; }
+        .candidate-name { color: #000; font-size: 16px; font-weight: 700; line-height: 1.2; margin: 4px 0 7px; }
+        .contact-table { width: auto; }
+        .contact-table td { vertical-align: middle; word-break: break-word; }
+        .contact-icon-cell { line-height: 0; padding-right: 7px !important; width: 18px; }
+        .contact-icon { display: block; height: 11px; width: 11px; }
         .profile-photo { border: 2px solid #dedede; border-radius: 5px; height: 116px; object-fit: cover; padding: 2px; width: 96px; }
         .section { margin: 0 0 12px; }
         .section-title { background: #e5e5e5; color: #5b5b5b; font-size: 11.5px; font-weight: 700; margin-bottom: 9px; padding: 4px 5px; page-break-after: avoid; }
@@ -37,9 +39,7 @@
         .detail-table td { padding: 2px 0; vertical-align: top; }
         .detail-label { width: 175px; }
         .detail-colon { text-align: center; width: 18px; }
-        .skill-table td:first-child { text-align: left; width: 36%; }
-        .skill-list { margin: 0; padding-left: 17px; }
-        .skill-list li { margin-bottom: 6px; }
+        .skill-line { padding: 0 5px; }
         .accomplishment-group { margin: 0 6px 10px; page-break-inside: avoid; }
         .accomplishment-group-title { font-weight: 400; margin-bottom: 3px; text-transform: capitalize; }
         .accomplishment-item { margin-bottom: 7px; }
@@ -146,35 +146,35 @@
     <td class="header-info">
         <h1 class="candidate-name">{{ $user->full_name }}</h1>
 
-        @if($contactAddress)
-            <p class="contact-row">
-                <img class="contact-icon" src="{{ $contactIcons['location'] }}" alt="">
-                {{ $contactAddress }}
-            </p>
-        @endif
+        <table class="contact-table">
+            @if($contactAddress)
+                <tr>
+                    <td class="contact-icon-cell"><img class="contact-icon" src="{{ $contactIcons['location'] }}" alt=""></td>
+                    <td>{{ $contactAddress }}</td>
+                </tr>
+            @endif
 
-        @if($phoneNumbers)
-            <p class="contact-row">
-                <img class="contact-icon" src="{{ $contactIcons['phone'] }}" alt="">
-                {{ $phoneNumbers }}
-            </p>
-        @endif
+            @if($phoneNumbers)
+                <tr>
+                    <td class="contact-icon-cell"><img class="contact-icon" src="{{ $contactIcons['phone'] }}" alt=""></td>
+                    <td>{{ $phoneNumbers }}</td>
+                </tr>
+            @endif
 
-        @if($emails)
-            <p class="contact-row">
-                <img class="contact-icon" src="{{ $contactIcons['email'] }}" alt="">
-                {{ $emails }}
-            </p>
-        @endif
+            @if($emails)
+                <tr>
+                    <td class="contact-icon-cell"><img class="contact-icon" src="{{ $contactIcons['email'] }}" alt=""></td>
+                    <td>{{ $emails }}</td>
+                </tr>
+            @endif
 
-        @foreach($links as $link)
-            <p class="contact-row">
-                <img class="contact-icon" src="{{ $contactIcons['link'] }}" alt="">
-                <a class="link" href="{{ $link->url }}">
-                    {{ $link->url }}
-                </a>
-            </p>
-        @endforeach
+            @foreach($links as $link)
+                <tr>
+                    <td class="contact-icon-cell"><img class="contact-icon" src="{{ $contactIcons['link'] }}" alt=""></td>
+                    <td><a class="link" href="{{ $link->url }}">{{ $link->url }}</a></td>
+                </tr>
+            @endforeach
+        </table>
     </td>
 
     <td class="header-photo-cell">
@@ -288,10 +288,7 @@
 @if($skills->isNotEmpty())
     <section class="section">
         <h2 class="section-title">Skill</h2>
-        <table class="data-table skill-table">
-            <thead><tr><th>Fields of Skill</th><th>Description</th></tr></thead>
-            <tbody><tr><td><ul class="skill-list">@foreach($skills as $candidateSkill)@if($candidateSkill->skill)<li>{{ $candidateSkill->skill->name }}</li>@endif @endforeach</ul></td><td></td></tr></tbody>
-        </table>
+        <p class="skill-line">{{ $skills->pluck('skill.name')->filter()->implode(', ') }}</p>
     </section>
 @endif
 

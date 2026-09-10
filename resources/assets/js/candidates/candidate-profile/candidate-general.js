@@ -365,8 +365,6 @@ function loadCandidateGeneralData() {
         $("#countryId").val("");
     };
 
-    $("#permanentSameAsPresent").prop("checked", false);
-    $("#permanentAddressSelected").val("1");
 
     let permanentAddressTypeChosen =
         $(".candidate-address-form").data("has-permanent-details") == 1;
@@ -938,6 +936,42 @@ function loadCandidateGeneralData() {
             renderPreferredCheckboxChips($(this).data("chip-target"));
         });
 
+    const normalizePreferredSelectText = function (text) {
+        return $.trim(text || "").toLowerCase();
+    };
+    const preferredSelectMatcher = function (params, data) {
+        const term = normalizePreferredSelectText(params.term);
+        if (!term) {
+            return data;
+        }
+
+        const text = normalizePreferredSelectText(data.text);
+        if (!text || !text.includes(term)) {
+            return null;
+        }
+
+        const words = text.split(/[\s\-\/]+/).filter(Boolean);
+        const matchedData = $.extend(true, {}, data);
+        matchedData.matchPriority = text.startsWith(term)
+            ? 0
+            : words.some(function (word) { return word.startsWith(term); })
+                ? 1
+                : 2;
+
+        return matchedData;
+    };
+    const preferredSelectSorter = function (data) {
+        if (!data.some(function (item) { return item.matchPriority !== undefined; })) {
+            return data;
+        }
+
+        return data.sort(function (first, second) {
+            const priorityDifference =
+                (first.matchPriority || 0) - (second.matchPriority || 0);
+            return priorityDifference || normalizePreferredSelectText(first.text)
+                .localeCompare(normalizePreferredSelectText(second.text));
+        });
+    };
     $("#preferredJobCategories, #preferredInsideDistricts").each(function () {
         const $preferredSelect = $(this);
         if ($preferredSelect.hasClass("select2-hidden-accessible")) {
@@ -948,6 +982,9 @@ function loadCandidateGeneralData() {
             width: "100%",
             placeholder: $preferredSelect.data("placeholder") || "",
             closeOnSelect: false,
+            dropdownCssClass: "candidate-preferred-select-dropdown",
+            matcher: preferredSelectMatcher,
+            sorter: preferredSelectSorter,
             maximumSelectionLength:
                 Number($preferredSelect.data("maximum-selection-length")) || 0,
         });
