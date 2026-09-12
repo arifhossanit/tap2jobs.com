@@ -247,44 +247,66 @@ window.manageAjaxErrors = function(data) {
             ? arguments[1]
             : "editValidationErrorsBox";
     if (data.status == 404) {
-        toastr.error({
-            title: "Error!",
-            message: data.responseJSON.message,
-            position: "topRight"
-        });
+        displayErrorMessage(data.responseJSON.message);
     } else {
         printErrorMessage("#" + errorDivId, data);
     }
 };
 
-var isRTL = lancode == "ar" ? true : false;
-if(isRTL){
-    toastr.options = {
-        rtl: true,
-        positionClass: "toast-top-left",
+window.displayAlertMessage = function(level, message, title) {
+    const normalizedLevel = level === 'danger' ? 'error' : level;
+    const isBn = typeof lancode !== 'undefined' && lancode === 'bn';
+    const defaultTitles = {
+        success: isBn ? 'সফল' : 'Successful',
+        error: isBn ? 'ত্রুটি' : 'Error',
+        warning: isBn ? 'সতর্কতা' : 'Warning',
+        info: isBn ? 'তথ্য' : 'Information'
     };
-}else{
-    toastr.options = {
-        positionClass: "toast-top-right",
-    };
-}
+    const icon = ['success', 'error', 'warning', 'info'].includes(normalizedLevel)
+        ? normalizedLevel
+        : 'info';
+    const alertTitle = title || defaultTitles[icon];
+    const alertMessage = message == null ? '' : String(message);
+    const translatedOk = typeof Lang !== 'undefined' ? Lang.get('js.ok') : 'js.ok';
+    const confirmText = translatedOk !== 'js.ok' ? translatedOk : (isBn ? 'ঠিক আছে' : 'OK');
+
+    if (typeof window.swal === 'function') {
+        return window.swal({
+            icon: icon,
+            title: alertTitle,
+            text: alertMessage,
+            button: confirmText
+        });
+    }
+
+    if (typeof window.Swal !== 'undefined' && typeof window.Swal.fire === 'function') {
+        return window.Swal.fire({
+            icon: icon,
+            title: alertTitle,
+            text: alertMessage,
+            confirmButtonText: confirmText
+        });
+    }
+
+    window.alert([alertTitle, alertMessage].filter(Boolean).join('\n'));
+    return Promise.resolve();
+};
 
 window.displaySuccessMessage = function(message) {
-    let successTitle = Lang.get("js.success");
-    if (successTitle === "js.success") {
-        successTitle = typeof lancode !== 'undefined' && lancode === 'bn' ? 'সফল' : 'Successful';
-    }
-    toastr.success(message, successTitle);
+    return window.displayAlertMessage('success', message);
 };
 
 window.displayErrorMessage = function(message) {
-    let errorTitle = Lang.get("js.error");
-    if (errorTitle === "js.error") {
-        errorTitle = typeof lancode !== 'undefined' && lancode === 'bn' ? 'ত্রুটি' : 'Error';
-    }
-    toastr.error(message, errorTitle);
+    return window.displayAlertMessage('error', message);
 };
 
+window.displayWarningMessage = function(message) {
+    return window.displayAlertMessage('warning', message);
+};
+
+window.displayInfoMessage = function(message) {
+    return window.displayAlertMessage('info', message);
+};
 window.displayDeleteSuccessMessage = function(message) {
     swal({
         icon: "success",

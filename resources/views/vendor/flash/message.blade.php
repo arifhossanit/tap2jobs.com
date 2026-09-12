@@ -1,21 +1,34 @@
-@foreach (session('flash_notification', collect())->toArray() as $message)
-    @if ($message['overlay'])
-        @include('flash::modal', [
-            'modalClass' => 'flash-modal',
-            'title'      => $message['title'],
-            'body'       => $message['message']
-        ])
-    @else
-        <div class="alert alert-{{ $message['level'] }} {{ $message['important'] ? 'alert-important' : '' }} custom-message bg-{{ $message['level'] }} border border-{{ $message['level'] }}">
-            <div class="d-flex text-white align-items-center">
-                <i class="fa-solid  fa-face-smile {{ checkLanguageSession() == 'ar' ? 'ms-4' : 'me-4' }}"></i>
-                <div>
-                    <span class="text-white">{{ $message['message'] }}</span>
-                </div>
-            </div>
-        </div>
+@php
+    $flashMessages = session('flash_notification', collect())->map(function ($message) {
+        return [
+            'level' => $message['level'] ?? 'info',
+            'message' => $message['message'] ?? '',
+            'title' => $message['title'] ?? null,
+        ];
+    })->values();
+    session()->forget('flash_notification');
+@endphp
 
-    @endif
-@endforeach
+@if ($flashMessages->isNotEmpty())
+    <script>
+        (function () {
+            const messages = @json($flashMessages);
 
-{{ session()->forget('flash_notification') }}
+            function showFlashMessages() {
+                if (typeof window.displayAlertMessage !== 'function') return;
+
+                messages.reduce(function (queue, notification) {
+                    return queue.then(function () {
+                        return window.displayAlertMessage(notification.level, notification.message, notification.title);
+                    });
+                }, Promise.resolve());
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', showFlashMessages, { once: true });
+            } else {
+                showFlashMessages();
+            }
+        })();
+    </script>
+@endif

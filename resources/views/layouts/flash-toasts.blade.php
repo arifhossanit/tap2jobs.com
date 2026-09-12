@@ -1,53 +1,33 @@
 @php
-    $flashNotifications = session('flash_notification', collect())->toArray();
+    $flashNotifications = session('flash_notification', collect())->map(function ($message) {
+        return [
+            'level' => $message['level'] ?? 'info',
+            'message' => $message['message'] ?? '',
+            'title' => $message['title'] ?? null,
+        ];
+    })->values();
     session()->forget('flash_notification');
 @endphp
 
-@if(count($flashNotifications))
+@if ($flashNotifications->isNotEmpty())
     <script>
         (function () {
-            const notify = function (level, message) {
-                if (level === 'success' && typeof displaySuccessMessage === 'function') {
-                    displaySuccessMessage(message);
-                    return;
-                }
+            const notifications = @json($flashNotifications);
 
-                if (['danger', 'error'].includes(level) && typeof displayErrorMessage === 'function') {
-                    displayErrorMessage(message);
-                    return;
-                }
+            function showFlashAlerts() {
+                if (typeof window.displayAlertMessage !== 'function') return;
 
-                if (typeof toastr !== 'undefined') {
-                    if (level === 'success') {
-                        toastr.success(message);
-                    } else if (['danger', 'error'].includes(level)) {
-                        toastr.error(message);
-                    } else if (level === 'warning') {
-                        toastr.warning(message);
-                    } else {
-                        toastr.info(message);
-                    }
-                }
-            };
-
-            const showFlashToasts = function () {
-                @foreach($flashNotifications as $message)
-                    @if($message['level'] === 'success')
-                        if (typeof displaySuccessMessage === 'function') {
-                            displaySuccessMessage(@json($message['message']));
-                        } else {
-                            notify(@json($message['level']), @json($message['message']));
-                        }
-                    @else
-                        notify(@json($message['level']), @json($message['message']));
-                    @endif
-                @endforeach
-            };
+                notifications.reduce(function (queue, notification) {
+                    return queue.then(function () {
+                        return window.displayAlertMessage(notification.level, notification.message, notification.title);
+                    });
+                }, Promise.resolve());
+            }
 
             if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', showFlashToasts, { once: true });
+                document.addEventListener('DOMContentLoaded', showFlashAlerts, { once: true });
             } else {
-                showFlashToasts();
+                showFlashAlerts();
             }
         })();
     </script>

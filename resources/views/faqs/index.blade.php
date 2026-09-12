@@ -383,8 +383,8 @@
             function notifySuccess(message) {
                 if (typeof displaySuccessMessage === 'function') {
                     displaySuccessMessage(message);
-                } else if (typeof toastr !== 'undefined') {
-                    toastr.success(message);
+                } else if (typeof swal === 'function') {
+                    swal({ icon: 'success', title: 'Successful', text: message });
                 }
             }
 
@@ -398,8 +398,8 @@
             function notifyError(message) {
                 if (typeof displayErrorMessage === 'function') {
                     displayErrorMessage(message);
-                } else if (typeof toastr !== 'undefined') {
-                    toastr.error(message);
+                } else if (typeof swal === 'function') {
+                    swal({ icon: 'error', title: 'Error', text: message });
                 }
             }
 
