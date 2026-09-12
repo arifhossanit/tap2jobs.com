@@ -1,7 +1,7 @@
 
 listen('click', '.admin-login', function () {
-    $('#formInputEmail').val('admin@gmail.com');
-    $('#formInputPassword').val(123456);
+    $('#formInputEmail').val('info@tap2jobs.com');
+    $('#formInputPassword').val(564564564812);
 });
 
 // hide/show password JS code
