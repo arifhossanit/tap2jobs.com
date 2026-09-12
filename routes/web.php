@@ -85,6 +85,8 @@ Route::middleware('setLanguage')->group(
         Route::get('admin/login', [\App\Http\Controllers\Auth\LoginController::class, 'showAdminLoginForm'])->name(
             'admin.login'
         );
+        Route::get('users/login', [\App\Http\Controllers\Auth\Front\LoginController::class, 'showLoginForm'])
+            ->name('front.user.login');
         Route::post('users/login', [\App\Http\Controllers\Auth\Front\LoginController::class, 'login'])->name(
             'front.login'
         )->middleware(['throttle:5,1', 'verified.user']);

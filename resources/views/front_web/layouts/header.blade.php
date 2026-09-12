@@ -40,9 +40,9 @@
                                 @if($notifications && $notifications->isNotEmpty())
                                     @foreach($notifications as $notification)
                                         <div class="dropdown-item border-bottom py-2 px-3 text-wrap d-flex align-items-start gap-2 read-notification-item" data-id="{{ $notification->id }}" data-url="{{ getNotificationUrl($notification) }}" style="cursor: pointer; transition: background 0.2s ease, opacity 0.2s ease;">
-                                            <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center mt-1" style="width: 28px; height: 28px; flex-shrink: 0;">
+                                            {{-- <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center mt-1" style="width: 28px; height: 28px; flex-shrink: 0;">
                                                 <i class="{{ getNotificationIcon($notification->type) }}" style="font-size: 0.75rem;"></i>
-                                            </div>
+                                            </div> --}}
                                             <div class="w-100">
                                                 <p class="mb-1 fw-semibold text-dark lh-sm" style="font-size: 0.8125rem;">{{ $notification->title }}</p>
                                                 <span class="text-muted" style="font-size: 0.725rem;"><i class="fa-regular fa-clock me-1"></i>{{ $notification->created_at->diffForHumans() }}</span>
@@ -110,22 +110,9 @@
                             <li class="nav-item front-auth-actions d-flex align-items-center gap-xl-4 gap-3 mt-lg-0 mt-2 ms-xl-3 ms-lg-2">
                                 <ul class="navbar-nav d-flex flex-row align-items-center py-2 py-lg-0">
                                     <li class="nav-item login_btn">
-                                        <a href="{{ route('front.candidate.login') }}"
+                                        <a href="{{ route('front.user.login') }}"
                                             class="nav-link btn btn-secondary btn-secondary-login {{ getFrontSelectLanguage() == 'ar' ? 'ms-2' : 'me-2' }} mb-3 mb-lg-0 nav-link">{{ __('web.login') }}</a>
-                                        <ul class="nav submenu">
-                                            <li class="nav-item mb-3 mt-2">
-                                                <a href="{{ route('front.candidate.login') }}"
-                                                    class="nav-link text-gray d-flex align-items-center {{ request()->routeIs('front.candidate.login') ? ' active' : '' }}">
-                                                    {{ __('messages.notification_settings.candidate') }}
-                                                </a>
-                                            </li>
-                                            <li class="nav-item mb-3">
-                                                <a href="{{ route('front.employee.login') }}"
-                                                    class="nav-link text-gray d-flex align-items-center {{ request()->routeIs('front.employee.login') ? ' active' : '' }}">
-                                                    {{ __('messages.company.employer') }}
-                                                </a>
-                                            </li>
-                                        </ul>
+
                                     </li>
                                     <li class="nav-item register_btn">
                                         <a href="{{ route('candidate.register') }}"
@@ -174,9 +161,9 @@
                                                      @if($notifications && $notifications->isNotEmpty())
                                                          @foreach($notifications as $notification)
                                                              <div class="dropdown-item border-bottom py-2 px-3 text-wrap d-flex align-items-start gap-2 read-notification-item" data-id="{{ $notification->id }}" data-url="{{ getNotificationUrl($notification) }}" style="cursor: pointer; transition: background 0.2s ease, opacity 0.2s ease;">
-                                                                 <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center mt-1" style="width: 28px; height: 28px; flex-shrink: 0;">
+                                                                 {{-- <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center mt-1" style="width: 28px; height: 28px; flex-shrink: 0;">
                                                                      <i class="{{ getNotificationIcon($notification->type) }}" style="font-size: 0.75rem;"></i>
-                                                                 </div>
+                                                                 </div> --}}
                                                                  <div class="w-100">
                                                                      <p class="mb-1 fw-semibold text-dark lh-sm" style="font-size: 0.8125rem;">{{ $notification->title }}</p>
                                                                      <span class="text-muted" style="font-size: 0.725rem;"><i class="fa-regular fa-clock me-1"></i>{{ $notification->created_at->diffForHumans() }}</span>

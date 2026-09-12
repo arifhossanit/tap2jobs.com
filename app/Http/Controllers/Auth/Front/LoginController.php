@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Auth\Front;
 
 use App\Http\Controllers\Controller;
-use App\Models\Candidate;
-use App\Models\Company;
 use App\Providers\RouteServiceProvider;
 use Auth;
 use Illuminate\Contracts\View\Factory;
@@ -64,11 +62,21 @@ class LoginController extends Controller
     /**
      * @return Factory|View
      */
+    public function showLoginForm(): View
+    {
+        storeIntendedUrlFromPrevious();
+
+        return view('front_web.auth.login');
+    }
+
+    /**
+     * @return Factory|View
+     */
     protected function employeeLogin()
     {
         storeIntendedUrlFromPrevious();
 
-        return view('front_web.auth.employer_login');
+        return view('front_web.auth.login');
     }
 
     /**
@@ -78,30 +86,25 @@ class LoginController extends Controller
     {
         storeIntendedUrlFromPrevious();
 
-        return view('front_web.auth.candidate_login');
+        return view('front_web.auth.login');
     }
 
     protected function sendLoginResponse(Request $request): RedirectResponse
     {
-        $type = $request->get('type');
         $request->session()->regenerate();
 
         $this->clearLoginAttempts($request);
 
-        if (Auth::user()->hasRole('Employer') && $type == Company::COMPANY_LOGIN_TYPE) {
-            $request->session()->forget('url.intended');
+        if (Auth::user()->hasRole('Employer')) {
             $this->redirectTo = RouteServiceProvider::EMPLOYER_HOME;
+        } elseif (Auth::user()->hasRole('Candidate')) {
+            $this->redirectTo = RouteServiceProvider::CANDIDATE_HOME;
         } else {
-            if (Auth::user()->hasRole('Candidate') && $type == Candidate::CANDIDATE_LOGIN_TYPE) {
-                $this->redirectTo = RouteServiceProvider::CANDIDATE_HOME;
-            } else {
-                Auth::logout();
-                $section = ($type == Company::COMPANY_LOGIN_TYPE) ? 'users/employee-login' : 'users/candidate-login';
+            Auth::logout();
 
-                return redirect('/'.$section)->withInput()->withErrors([
-                    'error' => __('auth.failed'),
-                ]);
-            }
+            return redirect()->route('front.user.login')->withInput()->withErrors([
+                'error' => __('auth.failed'),
+            ]);
         }
 
         $redirectUrl = resolveIntendedRedirectUrl($this->redirectPath(), Auth::user());
