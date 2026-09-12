@@ -21,7 +21,10 @@ class CheckUserIsVerified
                            return redirect()->back()->withErrors(__('messages.flash.account_not_active'));
                   } elseif (Auth::check() && !$user->email_verified_at) {
                            Auth::logout();
-                           return redirect()->back()->withErrors(__('messages.flash.verify_email'));
+                           return redirect()->back()->with(
+                                    'verification_required_message',
+                                    __('messages.flash.verify_email')
+                           );
                   }
 
                   return $response;

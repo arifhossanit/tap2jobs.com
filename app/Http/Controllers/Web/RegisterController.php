@@ -11,7 +11,6 @@ use App\Models\Industry;
 use App\Models\IndustryType;
 use App\Models\User;
 use App\Repositories\WebRegisterRepository;
-use Flash;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -124,13 +123,13 @@ class RegisterController extends AppBaseController
             session()->forget('url.intended');
             $redirectUrl = route('employer.dashboard');
             $suppressFlashMessage = false;
+            session()->flash(
+                'registration_verification_message',
+                __('messages.flash.register_success_mail_active')
+            );
         }
 
         $userType = ($input['type'] == 1) ? __('messages.notification_settings.candidate') : __('messages.company.employer');
-        if (! $suppressFlashMessage) {
-            Flash::success(__('messages.flash.register_success_mail_active'));
-        }
-
         return $this->sendResponse(
             [
                 'redirectUrl' => $redirectUrl,

@@ -372,6 +372,58 @@
     </script>
 @endif
 
+@if (session()->has('registration_verification_message'))
+    <script>
+        (function () {
+            function showRegistrationVerificationAlert() {
+                if (typeof window.swal !== 'function') {
+                    return;
+                }
+
+                window.swal({
+                    icon: 'success',
+                    title: @json(__('messages.common.success')),
+                    text: @json(session('registration_verification_message')),
+                    button: @json(__('messages.common.ok')),
+                    closeOnClickOutside: false,
+                    closeOnEsc: false
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', showRegistrationVerificationAlert);
+            } else {
+                showRegistrationVerificationAlert();
+            }
+        })();
+    </script>
+@endif
+@if (session()->has('verification_required_message'))
+    <script>
+        (function () {
+            function showVerificationRequiredAlert() {
+                if (typeof window.swal !== 'function') {
+                    return;
+                }
+
+                window.swal({
+                    icon: 'warning',
+                    title: @json(session('verification_required_message')),
+                    button: @json(__('messages.common.ok')),
+                    closeOnClickOutside: false,
+                    closeOnEsc: false
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', showVerificationRequiredAlert);
+            } else {
+                showVerificationRequiredAlert();
+            }
+        })();
+    </script>
+@endif
+
 @if (session()->has('not_eligible_error'))
     <script>
         document.addEventListener('DOMContentLoaded', function () {
