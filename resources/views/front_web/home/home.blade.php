@@ -774,7 +774,7 @@
         color: #4e4e4e;
         font-size: 14px;
         display: flex;
-        align-items: center;
+        align-items: baseline;
         padding: 5px 0;
         white-space: normal;
         word-break: break-word;
