@@ -704,6 +704,7 @@
     /* Directory */
     .bd-directory {
         padding: var(--bd-section-gap);
+        background: #f8fafc;
     }
 
     .bd-directory__layout {
