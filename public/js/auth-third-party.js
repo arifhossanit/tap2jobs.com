@@ -185,7 +185,7 @@ window.IOInitSidebar = function () {
 
 
 listen('click', '.admin-login', function () {
-    $('#formInputEmail').val('admin@infyjobs.com');
+    $('#formInputEmail').val('admin@gmail.com');
     $('#formInputPassword').val(123456);
 });
 

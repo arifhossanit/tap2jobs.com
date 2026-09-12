@@ -54615,7 +54615,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `email`, `phone`, `email_verified_at`, `password`, `dob`, `gender`, `country_id`, `state_id`, `city_id`, `is_active`, `is_verified`, `owner_id`, `owner_type`, `language`, `profile_views`, `remember_token`, `theme_mode`, `created_at`, `updated_at`, `facebook_url`, `twitter_url`, `linkedin_url`, `google_plus_url`, `pinterest_url`, `is_default`, `stripe_id`, `region_code`) VALUES
-(1, 'Super', 'Admin', 'admin@infyjobs.com', '7878454512', '2025-01-03 06:59:27', '$2y$10$LfPFTl.N3nbasdUUcLz0.umrMRmCLBTzLL0p7CwOf5uFd/k.AAJrG', NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, NULL, 'en', 0, NULL, '0', '2025-01-03 06:59:27', '2025-01-03 06:59:27', NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL);
+(1, 'Super', 'Admin', 'admin@gmail.com', '7878454512', '2025-01-03 06:59:27', '$2y$10$LfPFTl.N3nbasdUUcLz0.umrMRmCLBTzLL0p7CwOf5uFd/k.AAJrG', NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, NULL, 'en', 0, NULL, '0', '2025-01-03 06:59:27', '2025-01-03 06:59:27', NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL);
 
 --
 -- Indexes for dumped tables

@@ -8,7 +8,7 @@ function loadAutoFieldsData() {
     };
 }
     listenClick('.admin-login', function () {
-        changeCredentials('admin@infyjobs.com', '123456');
+        changeCredentials('admin@gmail.com', '123456');
     });
     listenClick('.candidate-login', function () {
         changeCredentials('candidate@gmail.com', '123456');

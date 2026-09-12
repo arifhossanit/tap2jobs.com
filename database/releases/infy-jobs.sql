@@ -54464,7 +54464,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `email`, `phone`, `email_verified_at`, `password`, `dob`, `gender`, `country_id`, `state_id`, `city_id`, `is_active`, `is_verified`, `owner_id`, `owner_type`, `language`, `profile_views`, `remember_token`, `created_at`, `updated_at`, `facebook_url`, `twitter_url`, `linkedin_url`, `google_plus_url`, `pinterest_url`, `stripe_id`, `region_code`) VALUES
-(1, 'Super', 'Admin', 'admin@infyjobs.com', '7878454512', '2021-12-18 02:00:51', '$2y$10$HDrtk19hF0aVL4DSyjvT6u2uaCpSUvvAy3STKrZXjpqLk5m1nF5HK', NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, NULL, 'en', 0, NULL, '2021-12-18 02:00:52', '2021-12-18 02:00:52', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(1, 'Super', 'Admin', 'admin@gmail.com', '7878454512', '2021-12-18 02:00:51', '$2y$10$HDrtk19hF0aVL4DSyjvT6u2uaCpSUvvAy3STKrZXjpqLk5m1nF5HK', NULL, NULL, NULL, NULL, NULL, 1, 1, NULL, NULL, 'en', 0, NULL, '2021-12-18 02:00:52', '2021-12-18 02:00:52', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 --
 -- Indexes for dumped tables
