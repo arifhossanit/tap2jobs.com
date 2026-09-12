@@ -3202,7 +3202,7 @@ function loadCandidateGeneralData() {
       $("#permanentCountryId").val(bangladeshId).trigger("change.select2");
     }
   };
-  togglePresentAddressMode(false);
+  togglePresentAddressMode($("#stateId option").length <= 1);
   togglePermanentAddress();
   $('input[name="present_address_type"]').on("change", function () {
     togglePresentAddressMode(true);

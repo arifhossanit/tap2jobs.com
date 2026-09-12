@@ -151,6 +151,7 @@ class CandidateRepository extends BaseRepository
             $candidate = Candidate::create([
                 'user_id' => $user->id,
                 'unique_id' => $this->getUniqueCandidateId(),
+                'permanent_same_as_present' => false,
             ]);
 
             $user->update([
@@ -188,7 +189,10 @@ class CandidateRepository extends BaseRepository
 
             $candidate = Candidate::create(
                 array_merge(array_filter(Arr::only($input, (new Candidate())->getFillable())),
-                    ['user_id' => $user->id])
+                    [
+                        'user_id' => $user->id,
+                        'permanent_same_as_present' => false,
+                    ])
             );
             $candidate->update(['immediate_available' => $input['immediate_available']]);
 

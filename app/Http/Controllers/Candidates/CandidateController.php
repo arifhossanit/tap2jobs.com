@@ -33,6 +33,7 @@ use App\Models\CandidateReference;
 use App\Models\CandidateRetiredArmyEmployment;
 use App\Models\CandidateSkill;
 use App\Models\CandidateTraining;
+use App\Models\Country;
 use App\Models\EducationBoard;
 use App\Models\EducationDegreeTitle;
 use App\Models\EducationMajorGroup;
@@ -100,10 +101,13 @@ class CandidateController extends AppBaseController
             ? app(CandidateProfileCompletionService::class)->calculate($user->candidate)
             : ['percentage' => 0, 'completed' => 0, 'total' => 5, 'color' => '#f04438'];
         $countries = getCountries();
-        $states = $cities = null;
-        if (! empty($user->country_id)) {
-            $states = getStates($user->country_id);
-        }
+        $bangladeshId = Country::query()
+            ->where('short_code', 'BD')
+            ->orWhere('name', 'Bangladesh')
+            ->value('id');
+        $presentCountryId = $user->country_id ?: $bangladeshId;
+        $states = $presentCountryId ? getStates($presentCountryId) : [];
+        $cities = [];
         if (! empty($user->state_id)) {
             $cities = getCities($user->state_id);
         }
@@ -158,9 +162,7 @@ class CandidateController extends AppBaseController
         abort_unless(in_array($sectionName, $allowedSections, true), 404);
         $data['sectionName'] = $sectionName;
         if ($sectionName == 'personal-information') {
-            if (! empty($user->country_id)) {
-                $states = getStates($user->country_id);
-            }
+            $states = $presentCountryId ? getStates($presentCountryId) : [];
             if (! empty($user->state_id)) {
                 $cities = getCities($user->state_id);
             }

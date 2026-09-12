@@ -775,7 +775,7 @@
         font-size: 14px;
         display: flex;
         align-items: center;
-        padding: 0;
+        padding: 5px 0;
         white-space: normal;
         word-break: break-word;
         overflow-wrap: anywhere;

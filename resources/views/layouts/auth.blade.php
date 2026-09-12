@@ -83,6 +83,7 @@
 </div>
 
 <script src="{{ mix('js/auth-third-party.js') }}"></script>
+<script src="{{ asset('messages.js') }}"></script>
 <script data-turbo-eval="false">
     let defaultCountryCodeValue = "{{ getSettingValue('default_country_code') }}";
     let currentFrontLang = "{{ session()->get('languageName') ?? 'en' }}";

@@ -157,10 +157,7 @@
                 <div class="candidate-dashboard-panel__header candidate-dashboard-panel__header--matching">
                     <div>
                         <h2>{{ __('messages.candidate_dashboard.matching_jobs') }}</h2>
-                    </div>
-                    <a href="{{ route('front.search.jobs') }}" target="_blank" class="candidate-dashboard-link">
-                        {{ __('messages.candidate_dashboard.view_all_jobs') }} <i class="fa-solid fa-arrow-right"></i>
-                    </a>
+                    </div>                    
                 </div>
 
                 @if($matchingJobs->isNotEmpty())

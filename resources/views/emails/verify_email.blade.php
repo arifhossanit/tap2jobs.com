@@ -80,7 +80,7 @@
                                         $logoSrc = $logo_data_uri;
                                     }
                                 @endphp
-                                <img style="text-align: center;" src="{{ $logoSrc }}"
+                                <img width="100" style="display: block; width: 100px; max-width: 100px; height: auto; margin: 10px auto 20px; text-align: center;" src="{{ $logoSrc }}"
                                     alt="company logo" class="img-fluid main-logo">
                             </td>
                         </tr>

@@ -66,7 +66,7 @@
                 <table width="100%">
                     <tr>
                         <td>
-                            <img style="text-align: center;" src='{{ getLogoUrl() }}'
+                            <img width="100" style="display: block; width: 100px; max-width: 100px; height: auto; margin: 10px auto 20px; text-align: center;" src='{{ getLogoUrl() }}'
                                  alt="company logo"
                                  class="img-fluid main-logo">
                         </td>

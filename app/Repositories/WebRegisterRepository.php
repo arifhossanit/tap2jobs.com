@@ -77,6 +77,7 @@ class WebRegisterRepository
                 $candidate = Candidate::create([
                     'user_id' => $user->id,
                     'unique_id' => $candidateRepo->getUniqueCandidateId(),
+                    'permanent_same_as_present' => false,
                 ]);
                 $user->update(['owner_id' => $candidate->id, 'owner_type' => Candidate::class]);
                 (int) NotificationSetting::where('key', 'NEW_CANDIDATE_REGISTERED')->value('value') === 1 ?

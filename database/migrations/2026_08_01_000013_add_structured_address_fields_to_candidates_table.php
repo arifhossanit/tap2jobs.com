@@ -16,7 +16,7 @@ return new class extends Migration
                 $table->string('present_post_office')->nullable()->after('present_address_type');
             }
             if (! Schema::hasColumn('candidates', 'permanent_same_as_present')) {
-                $table->boolean('permanent_same_as_present')->default(true)->after('present_post_office');
+                $table->boolean('permanent_same_as_present')->default(false)->after('present_post_office');
             }
             if (! Schema::hasColumn('candidates', 'permanent_address_type')) {
                 $table->string('permanent_address_type', 30)->nullable()->after('permanent_same_as_present');

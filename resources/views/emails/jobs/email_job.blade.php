@@ -40,7 +40,7 @@
                 <table width="100%">
                     <tr>
                         <td>
-                            <img style="text-align: center;" src="{{ ! empty($data['logo_path']) && isset($message) ? $message->embed($data['logo_path']) : getLogoUrl() }}"
+                            <img width="100" style="display: block; width: 100px; max-width: 100px; height: auto; margin: 10px auto 20px; text-align: center;" src="{{ ! empty($data['logo_path']) && isset($message) ? $message->embed($data['logo_path']) : getLogoUrl() }}"
                                  alt="company logo"
                                  class="img-fluid main-logo">
                         </td>
