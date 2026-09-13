@@ -6,6 +6,18 @@
 {{--    <link href="{{asset('front_web/scss/blog-details.css')}}" rel="stylesheet" type="text/css"> --}}
 {{-- @endsection --}}
 @section('content')
+    <style>
+        .visit-link,
+        .visit-link a {
+            color: #0f6dfa;
+            transition: color 0.2s ease;
+        }
+
+        .visit-link:hover,
+        .visit-link:hover a {
+            color: #0d6efd;
+        }
+    </style>
     <div class="Blog Detail-page">
         <!-- start hero section -->
         <section class="hero-section position-relative bg-gradient pt-15 pb-40">
@@ -65,6 +77,9 @@
                                         @lang('web.web_blog.comments')</p>
                                 </div>
                             </div>
+                            <p class="fs-16 mb-3 visit-link">
+                                <strong>Visit:&nbsp;</strong><a href="https://www.tap2jobs.com/" target="_blank" rel="noopener noreferrer"><strong>www.tap2jobs.com</strong></a>
+                            </p>
                             @role('Candidate')
                                 <div class="designer-details d-flex flex-wrap pb-3">
                                     <a href="{{ $url['facebook'] }}" title="@lang('web.web_jobs.facebook')" target="_blank"
@@ -119,6 +134,9 @@
                                     {!! html_entity_decode($blog->description) !!}
                                 </p>
                             </div>
+                        <p class="fs-16 mb-3 visit-link">
+                            <strong>Visit:&nbsp;</strong><a href="https://www.tap2jobs.com/" target="_blank" rel="noopener noreferrer"><strong>www.tap2jobs.com</strong></a>
+                        </p>
                         <div class="blog-share d-sm-flex justify-content-between align-items-center bg-light py-4 px-3 mb-40 br-10">
                             <div class="d-flex mb-sm-0 mb-3 align-items-center">
                                 <h5 class="fs-18 text-secondary mb-0 {{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }}">
