@@ -1371,6 +1371,11 @@ if (! function_exists('storeIntendedUrlFromPrevious')) {
             }
         }
 
+        // Ignore home page so users are redirected to their dashboard instead of home page
+        if ($parsedPath === '' || $parsedPath === '/') {
+            return;
+        }
+
         session(['url.intended' => $previousUrl]);
     }
 }
