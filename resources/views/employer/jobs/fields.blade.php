@@ -28,27 +28,18 @@
     <div class="col-xl-12 col-md-12 col-sm-12 mb-5">
         {{ Form::label('description', 'Requirements:', ['class' => 'form-label']) }}
         <span class="required"></span>
-        <div class="job-rich-editor-shell">
-            <div id="details" aria-required="true" class="job-rich-editor"></div>
-            <div class="job-rich-editor-resize-handle" role="separator" aria-orientation="horizontal" title="Resize editor"></div>
-        </div>
+        <x-text-editor id="details" aria-required="true" />
         {{ Form::hidden('description', old('description'), ['id' => 'job_desc', 'required']) }}
     </div>
     <div class="col-xl-12 col-md-6 col-sm-12 mb-5">
         {{ Form::label('key_responsibilities', __('messages.job.key_responsibilities').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        <div class="job-rich-editor-shell">
-            <div id="response" aria-required="true" class="job-rich-editor"></div>
-            <div class="job-rich-editor-resize-handle" role="separator" aria-orientation="horizontal" title="Resize editor"></div>
-        </div>
+        <x-text-editor id="response" aria-required="true" />
         {{ Form::hidden('key_responsibilities', old('key_responsibilities'), ['id' => 'key_responsibilities', 'required']) }}
     </div>
     <div class="col-xl-12 col-md-6 col-sm-12 mb-5">
         {{ Form::label('compensation_and_other_benefits', 'Compensation and other benefits:', ['class' => 'form-label']) }}
-        <div class="job-rich-editor-shell">
-            <div id="compensationAndBenefits" class="job-rich-editor"></div>
-            <div class="job-rich-editor-resize-handle" role="separator" aria-orientation="horizontal" title="Resize editor"></div>
-        </div>
+        <x-text-editor id="compensationAndBenefits" />
         {{ Form::hidden('compensation_and_other_benefits', old('compensation_and_other_benefits'), ['id' => 'compensation_and_other_benefits']) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">

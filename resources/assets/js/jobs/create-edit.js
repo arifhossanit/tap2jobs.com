@@ -178,7 +178,7 @@ function loadEmployeeCreateEditData() {
         return;
     }
     if ($("#editDetails").length) {
-        window.editJobDescription = new Quill("#editDetails", {
+        window.editJobDescription = new AppTextEditor("#editDetails", {
             modules: {
                 toolbar: [
                     ["bold", "italic", "underline", "strike"],
@@ -196,7 +196,7 @@ function loadEmployeeCreateEditData() {
         });
         if ($("#editResponse").length) {
             // Initialize Quill editor for key responsibilities
-            window.editResponse = new Quill("#editResponse", {
+            window.editResponse = new AppTextEditor("#editResponse", {
                 modules: {
                     toolbar: [
                         ["bold", "italic", "underline", "strike"],
@@ -216,7 +216,7 @@ function loadEmployeeCreateEditData() {
             });
 
             if ($("#editCompensationAndBenefits").length) {
-                window.editCompensationAndBenefits = new Quill("#editCompensationAndBenefits", {
+                window.editCompensationAndBenefits = new AppTextEditor("#editCompensationAndBenefits", {
                     modules: {
                         toolbar: [
                             ["bold", "italic", "underline", "strike"],
@@ -235,17 +235,14 @@ function loadEmployeeCreateEditData() {
             }
             setQuillHtml(editJobDescription, "#editJobDescription");
             setQuillHtml(editResponse, "#edit_responsibilities");
-            rememberJobEditorHeight("#editDetails", "tap2jobs:admin-job-editor:description-height");
-            rememberJobEditorHeight("#editResponse", "tap2jobs:admin-job-editor:responsibilities-height");
             if (window.editCompensationAndBenefits) {
                 setQuillHtml(editCompensationAndBenefits, "#edit_compensation_and_other_benefits");
-                rememberJobEditorHeight("#editCompensationAndBenefits", "tap2jobs:admin-job-editor:compensation-benefits-height");
             }
         }
     }
 
     if ($("#details").length) {
-        window.details = new Quill("#details", {
+        window.details = new AppTextEditor("#details", {
             modules: {
                 toolbar: [
                     ["bold", "italic", "underline", "strike"],
@@ -262,7 +259,7 @@ function loadEmployeeCreateEditData() {
             theme: "snow"
         });
         if ($("#response").length) {
-            window.response = new Quill("#response", {
+            window.response = new AppTextEditor("#response", {
                 modules: {
                     toolbar: [
                         ["bold", "italic", "underline", "strike"],
@@ -282,7 +279,7 @@ function loadEmployeeCreateEditData() {
             });
 
             if ($("#compensationAndBenefits").length) {
-                window.compensationAndBenefits = new Quill("#compensationAndBenefits", {
+                window.compensationAndBenefits = new AppTextEditor("#compensationAndBenefits", {
                     modules: {
                         toolbar: [
                             ["bold", "italic", "underline", "strike"],
@@ -301,11 +298,8 @@ function loadEmployeeCreateEditData() {
             }
             details.root.innerHTML = $("#job_desc").val() || "";
             response.root.innerHTML = $("#key_responsibilities").val() || "";
-            rememberJobEditorHeight("#details", "tap2jobs:admin-job-editor:description-height");
-            rememberJobEditorHeight("#response", "tap2jobs:admin-job-editor:responsibilities-height");
             if (window.compensationAndBenefits) {
                 setQuillHtml(compensationAndBenefits, "#compensation_and_other_benefits");
-                rememberJobEditorHeight("#compensationAndBenefits", "tap2jobs:admin-job-editor:compensation-benefits-height");
             }
         }
     }
@@ -901,7 +895,7 @@ function loadEmployeeCreateEditData() {
     //     });
     // });
     if ($("#addJobTypeDescriptionQuillData").length) {
-        window.jobTypeDescription = new Quill(
+        window.jobTypeDescription = new AppTextEditor(
             "#addJobTypeDescriptionQuillData",
             {
                 modules: {
@@ -921,7 +915,7 @@ function loadEmployeeCreateEditData() {
     }
 
     if ($("#addJobCategoryDescriptionQuillData").length) {
-        window.jobCategoryDescription = new Quill(
+        window.jobCategoryDescription = new AppTextEditor(
             "#addJobCategoryDescriptionQuillData",
             {
                 modules: {
@@ -959,7 +953,7 @@ function loadEmployeeCreateEditData() {
             // $('#skillDescription').summernote('code', '');
         });
 
-        window.skillDescription = new Quill("#addSkillDescriptionQuillData", {
+        window.skillDescription = new AppTextEditor("#addSkillDescriptionQuillData", {
             modules: {
                 toolbar: [["bold", "italic", "underline", "strike"], ["clean"]],
                 keyboard: {
@@ -994,7 +988,7 @@ function loadEmployeeCreateEditData() {
     }
 
     if ($("#addJobTagDescriptionQuillData").length) {
-        window.jobTagDescription = new Quill("#addJobTagDescriptionQuillData", {
+        window.jobTagDescription = new AppTextEditor("#addJobTagDescriptionQuillData", {
             modules: {
                 toolbar: [["bold", "italic", "underline", "strike"], ["clean"]],
                 keyboard: {
@@ -1020,7 +1014,7 @@ function loadEmployeeCreateEditData() {
     });
 
     if ($("#addJobShiftDescriptionQuillData").length) {
-        window.jobShiftDescription = new Quill(
+        window.jobShiftDescription = new AppTextEditor(
             "#addJobShiftDescriptionQuillData",
             {
                 modules: {
@@ -1039,7 +1033,7 @@ function loadEmployeeCreateEditData() {
         );
     }
     if ($("#createSalaryPeriodModal").length) {
-        window.salaryPeriodDescription = new Quill(
+        window.salaryPeriodDescription = new AppTextEditor(
             "#addSalaryPeriodDescriptionQuillData",
             {
                 modules: {
@@ -1889,78 +1883,6 @@ function setQuillHtml(editor, selectorOrHtml) {
     }
 }
 
-function rememberJobEditorHeight(selector, storageKey) {
-    const editor = document.querySelector(selector);
-    const editorShell = editor ? editor.closest(".job-rich-editor-shell") : null;
-
-    if (!editorShell) {
-        return;
-    }
-
-    const minHeight = 200;
-    const maxHeight = 600;
-    const savedHeight = Number(localStorage.getItem(storageKey));
-
-    if (savedHeight >= minHeight && savedHeight <= maxHeight) {
-        editorShell.style.height = `${savedHeight}px`;
-    }
-
-    const resizeHandle = editorShell.querySelector(".job-rich-editor-resize-handle");
-
-    if (resizeHandle && !editorShell.dataset.jobEditorResizeReady) {
-        editorShell.dataset.jobEditorResizeReady = "true";
-
-        resizeHandle.addEventListener("pointerdown", event => {
-            event.preventDefault();
-
-            const startY = event.clientY;
-            const startHeight = editorShell.getBoundingClientRect().height;
-
-            const resizeEditor = moveEvent => {
-                const nextHeight = Math.min(
-                    maxHeight,
-                    Math.max(minHeight, startHeight + moveEvent.clientY - startY)
-                );
-
-                editorShell.style.height = `${Math.round(nextHeight)}px`;
-            };
-
-            const stopResize = () => {
-                localStorage.setItem(
-                    storageKey,
-                    Math.round(editorShell.getBoundingClientRect().height)
-                );
-                document.removeEventListener("pointermove", resizeEditor);
-                document.removeEventListener("pointerup", stopResize);
-                document.body.classList.remove("job-editor-resizing");
-            };
-
-            document.body.classList.add("job-editor-resizing");
-            document.addEventListener("pointermove", resizeEditor);
-            document.addEventListener("pointerup", stopResize);
-        });
-    }
-
-    if (!window.ResizeObserver) {
-        return;
-    }
-
-    let lastSavedHeight = savedHeight || Math.round(editorShell.getBoundingClientRect().height);
-    const resizeObserver = new ResizeObserver(entries => {
-        const currentHeight = Math.round(entries[0].contentRect.height);
-
-        if (
-            currentHeight >= minHeight &&
-            currentHeight <= maxHeight &&
-            Math.abs(currentHeight - lastSavedHeight) > 2
-        ) {
-            localStorage.setItem(storageKey, currentHeight);
-            lastSavedHeight = currentHeight;
-        }
-    });
-
-    resizeObserver.observe(editorShell);
-}
 
 listenClick("#jobsSaveBtn, #saveDraft", function(e) {
     e.preventDefault();

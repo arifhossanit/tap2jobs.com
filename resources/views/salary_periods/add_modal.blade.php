@@ -22,7 +22,7 @@
                 <div class=" mb-5">
                     {{ Form::label('description',__('messages.salary_period.description').(':'),['class' => 'form-label']) }}
                     <span class="required"></span>
-                    <div id="addSalaryPeriodDescriptionQuillData"></div>
+                    <x-text-editor id="addSalaryPeriodDescriptionQuillData" />
                     {{ Form::hidden('description', null, ['id' => 'salary_period_desc']) }}
                 </div>
 

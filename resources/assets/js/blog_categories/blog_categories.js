@@ -6,7 +6,7 @@ function loadBlogCategoryData() {
         return;
     }
     if ($('#addBlogCategoryDescriptionQuillData').length) {
-        window.addBlogCategoryDescriptionQuill = new Quill(
+        window.addBlogCategoryDescriptionQuill = new AppTextEditor(
             '#addBlogCategoryDescriptionQuillData', {
                 modules: {
                     toolbar: [
@@ -24,7 +24,7 @@ function loadBlogCategoryData() {
             });
     }
     if ($('#editBlogCategoryDescriptionQuillData').length) {
-        window.editBlogCategoryDescriptionQuill = new Quill(
+        window.editBlogCategoryDescriptionQuill = new AppTextEditor(
             '#editBlogCategoryDescriptionQuillData', {
                 modules: {
                     toolbar: [

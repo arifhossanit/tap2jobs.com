@@ -5,7 +5,7 @@ function loadSkillData() {
         return;
     }
     if ($('#addSkillDescriptionQuillData').length) {
-        window.addSkillDescriptionQuill = new Quill(
+        window.addSkillDescriptionQuill = new AppTextEditor(
             '#addSkillDescriptionQuillData', {
                 modules: {
                     toolbar: [
@@ -23,7 +23,7 @@ function loadSkillData() {
             });
     }
     if ($('#editSkillDescriptionQuillData').length) {
-        window.editSkillDescriptionQuill = new Quill(
+        window.editSkillDescriptionQuill = new AppTextEditor(
             '#editSkillDescriptionQuillData', {
                 modules: {
                     toolbar: [

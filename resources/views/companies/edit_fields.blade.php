@@ -127,7 +127,7 @@
         {{ Form::label('details', __('messages.company.employer_details').':', ['class' => 'form-label']) }}
         <span class="required"></span>
         {{--        {{ Form::textarea('details', null, ['class' => 'form-control' , 'id' => 'editDetails','rows'=>'5']) }}--}}
-        <div id="editAdminEmployerDescriptionQuillData"></div>
+        <x-text-editor id="editAdminEmployerDescriptionQuillData" />
         {{ Form::hidden('details', old('details', $company->details), ['id' => 'editAdminEmployerDetail']) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">

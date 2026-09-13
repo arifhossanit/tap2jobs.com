@@ -51,7 +51,9 @@
     <script data-turbo-eval="false">
         let lang = "{{ checkLanguageSession() ?? 'en' }}"
     </script>
-    <script src="{{ mix('js/pages.js') }}"></script>
+    @stack('scripts')
+    <script src="{{ asset('tinymce/tinymce.min.js') }}"></script>
+<script src="{{ mix('js/pages.js') }}"></script>
 
     @if (checkLanguageSession() == 'ar')
         <style>

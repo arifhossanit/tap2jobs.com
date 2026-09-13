@@ -6,7 +6,7 @@ function loadJobShiftData() {
     }
 
     if ($('#addJobShiftDescriptionQuillData').length) {
-        window.addJobShiftDescriptionQuill = new Quill(
+        window.addJobShiftDescriptionQuill = new AppTextEditor(
             '#addJobShiftDescriptionQuillData', {
                 modules: {
                     toolbar: [
@@ -24,7 +24,7 @@ function loadJobShiftData() {
             });
     }
     if ($('#editJobShiftDescriptionQuillData').length) {
-        window.editJobShiftDescriptionQuill = new Quill(
+        window.editJobShiftDescriptionQuill = new AppTextEditor(
             '#editJobShiftDescriptionQuillData', {
                 modules: {
                     toolbar: [

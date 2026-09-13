@@ -30,7 +30,7 @@ function loadCandidateGeneralData() {
     const relevantQuillEditors = [];
 
     function initRelevantQuillEditors() {
-        if (typeof Quill === "undefined") {
+        if (typeof AppTextEditor === "undefined") {
             return;
         }
 
@@ -44,7 +44,7 @@ function loadCandidateGeneralData() {
                 const input = element
                     .closest(".candidate-relevant-editor")
                     .querySelector("[data-relevant-quill-input]");
-                const quill = new Quill(element, {
+                const quill = new AppTextEditor(element, {
                     modules: {
                         toolbar: [["bold", "italic"], [{ list: "bullet" }]],
                         keyboard: {

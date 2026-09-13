@@ -5,7 +5,7 @@ function loadMaritalStatusData() {
         return;
     }
     if ($('#addMartialDescriptionQuillData').length) {
-        window.addMartialDescriptionQuill = new Quill(
+        window.addMartialDescriptionQuill = new AppTextEditor(
             '#addMartialDescriptionQuillData', {
                 modules: {
                     toolbar: [
@@ -24,7 +24,7 @@ function loadMaritalStatusData() {
     }
 
     if($('#editMartialDescriptionQuillData').length) {
-        window.editMartialDescriptionQuill = new Quill(
+        window.editMartialDescriptionQuill = new AppTextEditor(
             '#editMartialDescriptionQuillData', {
                 modules: {
                     toolbar: [

@@ -4,7 +4,7 @@
         {{ Form::label('privacy_policy', __('messages.setting.privacy_policy').':', ['class' => 'form-label']) }}
         <span class="required"></span>
         {{--        {{ Form::textarea('privacy_policy', $privacyPolicy['privacy_policy'], ['class' => 'form-control h-75', 'id' => 'descriptionPolicy']) }}--}}
-        <div id="addPrivacyPolicyDescriptionQuillData"></div>
+        <x-text-editor id="addPrivacyPolicyDescriptionQuillData" />
         {{ Form::hidden('privacy_policy', null, ['id' => 'privacyData']) }}
         <br>
     </div>
@@ -14,7 +14,7 @@
         {{ Form::label('terms_conditions', __('messages.setting.terms_conditions').':', ['class' => 'form-label']) }}
         <span class="required"></span>
         {{--        {{ Form::textarea('terms_conditions', $privacyPolicy['terms_conditions'], ['class' => 'form-control h-75', 'id' => 'descriptionTerms']) }}--}}
-        <div id="addTermConditionDescriptionQuillData"></div>
+        <x-text-editor id="addTermConditionDescriptionQuillData" />
         {{ Form::hidden('terms_conditions', null, ['id' => 'termData']) }}
     </div>
 </div>

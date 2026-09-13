@@ -48,7 +48,7 @@
                     <div class="col-sm-12 mb-5">
                         {{ Form::label('description', __('messages.testimonial.description').':', ['class' => 'form-label']) }}
                         <span class="required"></span>
-                        <div id="addTestimonialDescriptionQuillData"></div>
+                        <x-text-editor id="addTestimonialDescriptionQuillData" />
                         {{ Form::hidden('description', null, ['id' => 'testimonial_desc']) }}
                     </div>
                 </div>

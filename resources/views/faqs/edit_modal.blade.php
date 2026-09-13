@@ -32,13 +32,13 @@
                 <div class="mb-5">
                     {{ Form::label('description_en', __('messages.faq.description').' (English):', ['class' => 'form-label']) }}
                     <span class="required"></span>
-                    <div id="editFaqDescriptionEnQuillData"></div>
+                    <x-text-editor id="editFaqDescriptionEnQuillData" />
                     {{ Form::hidden('description_en', null, ['id' => 'edit_faqs_desc_en']) }}
                 </div>
                 <div class="mb-5">
                     {{ Form::label('description_bn', __('messages.faq.description').' (বাংলা):', ['class' => 'form-label']) }}
                     <span class="required"></span>
-                    <div id="editFaqDescriptionBnQuillData"></div>
+                    <x-text-editor id="editFaqDescriptionBnQuillData" />
                     {{ Form::hidden('description_bn', null, ['id' => 'edit_faqs_desc_bn']) }}
                 </div>
             </div>

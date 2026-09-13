@@ -22,7 +22,7 @@
                 <div class="mb-5">
                     {{ Form::label('description', __('messages.post_category.description').(':'),['class' => 'form-label']) }}
                     <span class="required"></span>
-                    <div id="addBlogCategoryDescriptionQuillData"></div>
+                    <x-text-editor id="addBlogCategoryDescriptionQuillData" />
                     {{ Form::hidden('description', null, ['id' => 'post_category_desc']) }}
                 </div>
             </div>

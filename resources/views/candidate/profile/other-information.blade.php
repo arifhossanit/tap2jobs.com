@@ -1769,8 +1769,8 @@
                     activityCounter.textContent = Math.min(length, 500) + '/500';
                 };
 
-                if (typeof Quill !== 'undefined' && activityEditor) {
-                    activityQuill = new Quill(activityEditor, {
+                if (typeof AppTextEditor !== 'undefined' && activityEditor) {
+                    activityQuill = new AppTextEditor(activityEditor, {
                         theme: 'snow',
                         placeholder: activityEditor.dataset.placeholder || '',
                         modules: {

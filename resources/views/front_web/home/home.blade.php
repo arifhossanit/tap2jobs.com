@@ -1264,7 +1264,7 @@
     <section class="bd-hero">
         <div class="bd-hero__inner text-center">
             <h1>@lang('web.home_page.find_the_right_job')</h1>
-            <div class="bd-stats">
+            {{-- <div class="bd-stats">
                 <div class="bd-stat">
                     <div class="bd-stat__icon">
                         <i class="fa-solid fa-wave-square"></i>
@@ -1289,7 +1289,7 @@
                     </div>
                     <span>@lang('web.home_page.new_jobs')<b>{{ number_format($quickLinkCounts['new_jobs'] ?? 0) }}</b></span>
                 </div>
-            </div>
+            </div> --}}
             <!-- <form class="bd-search" action="{{ route('front.search.jobs') }}" method="get">
                 <input type="text" name="keywords" placeholder="Job title, company or keywords">
                 <input type="text" name="location" placeholder="Location">
@@ -1388,8 +1388,8 @@
                 <div class="bd-quick-links ">
                 <h2>@lang('web.home_page.quick_links')</h2>
                 <div class="bd-quick-links-grid">
-                    <a href="{{ route('front.company.lists') }}">Employer List ({{ $quickLinkCounts['employer_list'] ?? 0 }})</a>
-                    <a href="{{ route('front.search.jobs', ['filter' => 'new']) }}">New Jobs ({{ $quickLinkCounts['new_jobs'] ?? 0 }})</a>
+                    {{-- <a href="{{ route('front.company.lists') }}">Employer List ({{ $quickLinkCounts['employer_list'] ?? 0 }})</a>
+                    <a href="{{ route('front.search.jobs', ['filter' => 'new']) }}">New Jobs ({{ $quickLinkCounts['new_jobs'] ?? 0 }})</a> --}}
                     <a href="{{ route('front.search.jobs', ['filter' => 'deadline_tomorrow']) }}">Deadline Tomorrow ({{ $quickLinkCounts['deadline_tomorrow'] ?? 0 }})</a>
                     <a href="{{ route('front.search.jobs', ['job_type' => $quickJobTypeIds['internship'] ?? '']) }}">Internship Opportunity ({{ $quickLinkCounts['internship'] ?? 0 }})</a>
                     <a href="{{ route('front.search.jobs', ['job_type' => $quickJobTypeIds['contractual'] ?? '']) }}">Contractual Jobs ({{ $quickLinkCounts['contractual'] ?? 0 }})</a>

@@ -46,7 +46,7 @@
                         {{--                        {{ Form::label('description', __('messages.image_slider.description').':') }}--}}
                         {{--                        {{ Form::textarea('description', null, ['class' => 'form-control', 'id' => 'description']) }}--}}
                         {{ Form::label('description', __('messages.image_slider.description').':',['class' => 'form-label']) }}
-                        <div id="addImageSliderDescriptionQuillData"></div>
+                        <x-text-editor id="addImageSliderDescriptionQuillData" />
                         {{ Form::hidden('description', null, ['id' => 'descriptionData']) }}
                     </div>
                     <div class="col-sm-4 mb-0 pt-1 mt-5">

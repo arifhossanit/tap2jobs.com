@@ -43,7 +43,6 @@
         "jsrender": "1.2.0",
         "moment": "2.30.1",
         "popper.js": "^1.16.1",
-        "quill": "^2.0.2",
         "select2": "4.1.0",
         "slick": "^1.12.2",
         "slick-carousel": "^1.8.1",
@@ -51,6 +50,7 @@
         "sweetalert": "^1.1.3",
         "sweetalert2": "11.26.25",
         "timepicker": "1.14.1",
+        "tinymce": "^7.9.1",
         "toastr": "^2.1.4",
         "webpack": "^5.109.2"
     }

@@ -22,7 +22,7 @@
                 </div>
                 <div class="mb-5">
                     {{ Form::label('description', __('messages.skill.description').':',['class' => 'form-label']) }}
-                    <div id="editSkillDescriptionQuillData"></div>
+                    <x-text-editor id="editSkillDescriptionQuillData" />
                     {{ Form::hidden('description', null, ['id' => 'edit_skill_desc']) }}
                 </div>
             </div>

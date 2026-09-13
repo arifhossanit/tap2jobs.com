@@ -5,7 +5,7 @@ function loadIndustriesData() {
         return;
     }
     if ($('#addIndustryDescriptionQuillData').length) {
-        window.addIndustryDescriptionQuill = new Quill(
+        window.addIndustryDescriptionQuill = new AppTextEditor(
             '#addIndustryDescriptionQuillData', {
                 modules: {
                     toolbar: [
@@ -23,7 +23,7 @@ function loadIndustriesData() {
             });
     }
     if ($('#editIndustryDescriptionQuillData').length) {
-        window.editIndustryDescriptionQuill = new Quill(
+        window.editIndustryDescriptionQuill = new AppTextEditor(
             '#editIndustryDescriptionQuillData', {
                 modules: {
                     toolbar: [

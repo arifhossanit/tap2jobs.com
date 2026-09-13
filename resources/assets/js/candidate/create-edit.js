@@ -51,7 +51,7 @@ function loadCandidateCreateEditData () {
 
 
     if ($('#addMartialDescriptionQuillData').length) {
-        window.martialDescription = new Quill(
+        window.martialDescription = new AppTextEditor(
             '#addMartialDescriptionQuillData', {
                 modules: {
                     toolbar: [
@@ -70,7 +70,7 @@ function loadCandidateCreateEditData () {
     }
 
     if ($('#editMartialDescriptionQuillData').length) {
-        window.martialDescription = new Quill(
+        window.martialDescription = new AppTextEditor(
             '#editMartialDescriptionQuillData', {
                 modules: {
                     toolbar: [
@@ -89,7 +89,7 @@ function loadCandidateCreateEditData () {
     }
 
     if ($('#addSkillDescriptionQuillData').length) {
-        window.skillDescription = new Quill('#addSkillDescriptionQuillData', {
+        window.skillDescription = new AppTextEditor('#addSkillDescriptionQuillData', {
             modules: {
                 toolbar: [
                     ['bold', 'italic', 'underline', 'strike'],
@@ -106,7 +106,7 @@ function loadCandidateCreateEditData () {
     }
 
     if ($('#addIndustryDescriptionQuillData').length) {
-        window.industryDescription = new Quill('#addIndustryDescriptionQuillData',
+        window.industryDescription = new AppTextEditor('#addIndustryDescriptionQuillData',
             {
                 modules: {
                     toolbar: [

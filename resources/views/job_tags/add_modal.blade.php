@@ -18,7 +18,7 @@
                 </div>
                 <div class="form-group col-sm-12 mb-5">
                     {{ Form::label('description', __('messages.job_tag.description').(':'),['class' => 'form-label']) }}
-                    <div id="addJobTagDescriptionQuillData"></div>
+                    <x-text-editor id="addJobTagDescriptionQuillData" />
                     {{ Form::hidden('description', null, ['id' => 'job_tag_desc']) }}
                 </div>
             </div>

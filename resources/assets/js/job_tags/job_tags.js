@@ -6,7 +6,7 @@ function loadJobtageData() {
     }
 
     if ($('#addJobTagDescriptionQuillData').length) {
-        window.addJobTagDescriptionQuill = new Quill(
+        window.addJobTagDescriptionQuill = new AppTextEditor(
             '#addJobTagDescriptionQuillData', {
                 modules: {
                     toolbar: [
@@ -24,7 +24,7 @@ function loadJobtageData() {
             });
     }
     if ($('#editJobTagDescriptionQuillData').length) {
-        window.editJobTagDescriptionQuill = new Quill(
+        window.editJobTagDescriptionQuill = new AppTextEditor(
             '#editJobTagDescriptionQuillData', {
                 modules: {
                     toolbar: [

@@ -5,7 +5,7 @@ function loadJobTypeData() {
         return;
     }
     if ($('#addJobTypeDescriptionQuillData').length) {
-        window.addJobTypeDescriptionQuill = new Quill(
+        window.addJobTypeDescriptionQuill = new AppTextEditor(
             '#addJobTypeDescriptionQuillData', {
                 modules: {
                     toolbar: [
@@ -23,7 +23,7 @@ function loadJobTypeData() {
             });
     }
     if ($('#editJobTypeDescriptionQuillData').length) {
-        window.editJobTypeDescriptionQuill = new Quill(
+        window.editJobTypeDescriptionQuill = new AppTextEditor(
             '#editJobTypeDescriptionQuillData', {
                 modules: {
                     toolbar: [

@@ -39,10 +39,7 @@
     </div>
     <div class="col-xl-12 col-md-6 col-sm-12 mb-5">
         {{ Form::label('compensation_and_other_benefits', 'Compensation and other benefits:', ['class' => 'form-label']) }}
-        <div class="job-rich-editor-shell">
-            <div id="editCompensationAndBenefits" class="job-rich-editor"></div>
-            <div class="job-rich-editor-resize-handle" role="separator" aria-orientation="horizontal" title="Resize editor"></div>
-        </div>
+        <x-text-editor id="editCompensationAndBenefits" />
         {{ Form::hidden('compensation_and_other_benefits', old('compensation_and_other_benefits', $job->compensation_and_other_benefits), ['id' => 'edit_compensation_and_other_benefits']) }}
      </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">

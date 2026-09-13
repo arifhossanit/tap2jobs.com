@@ -23,7 +23,7 @@
                     {{ Form::label('description', __('messages.industry.description').(':'), ['class' => 'form-label']) }}
                     <span class="required"></span>
                     {{--                        {{ Form::textarea('description', null, ['class' => 'form-control form-control-solid','required', 'id'=>'description']) }}--}}
-                    <div id="addIndustryDescriptionQuillData"></div>
+                    <x-text-editor id="addIndustryDescriptionQuillData" />
                     {{ Form::hidden('description', null, ['id' => 'industry_desc']) }}
                 </div>
             </div>

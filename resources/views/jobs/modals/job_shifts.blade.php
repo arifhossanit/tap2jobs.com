@@ -22,7 +22,7 @@
                 <div class="mb-5">
                     {{ Form::label('description',__('messages.job_shift.description').(':'),['class' => 'form-label']) }}
                     <span class="required"></span>
-                    <div id="addJobShiftDescriptionQuillData"></div>
+                    <x-text-editor id="addJobShiftDescriptionQuillData" />
                     {{ Form::hidden('description', null, ['id' => 'job_shift_desc']) }}
                 </div>
             </div>

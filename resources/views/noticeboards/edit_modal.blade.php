@@ -23,7 +23,7 @@
                 <div class="mb-5">
                     {{ Form::label('description',__('messages.noticeboard.description').(':'),['class' => 'form-label']) }}
                     <span class="required"></span>
-                    <div id="editNoticeboardDescriptionQuillData"></div>
+                    <x-text-editor id="editNoticeboardDescriptionQuillData" />
                     {{ Form::hidden('description', null, ['id' => 'editBoardDescription']) }}
                 </div>
                 <div class="mb-5">

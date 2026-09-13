@@ -31,10 +31,3 @@
         </div>
     </div>
 @endsection
-@push('scripts')
-    <script>
-        let blogDescription = '{{$post->description}}';
-    </script>
-{{--    <script src="{{mix('assets/js/blogs/create-edit.js')}}"></script>--}}
-@endpush
-

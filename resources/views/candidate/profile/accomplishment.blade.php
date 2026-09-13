@@ -1155,8 +1155,8 @@
                     }
                 });
 
-                if (typeof Quill !== 'undefined' && portfolioDescriptionEditor) {
-                    portfolioQuill = new Quill(portfolioDescriptionEditor, {
+                if (typeof AppTextEditor !== 'undefined' && portfolioDescriptionEditor) {
+                    portfolioQuill = new AppTextEditor(portfolioDescriptionEditor, {
                         theme: 'snow',
                         placeholder: portfolioDescriptionEditor.dataset.placeholder || '',
                         modules: {
@@ -1555,8 +1555,8 @@
                     }
                 });
 
-                if (typeof Quill !== 'undefined' && publicationDescriptionEditor) {
-                    publicationQuill = new Quill(publicationDescriptionEditor, {
+                if (typeof AppTextEditor !== 'undefined' && publicationDescriptionEditor) {
+                    publicationQuill = new AppTextEditor(publicationDescriptionEditor, {
                         theme: 'snow',
                         placeholder: publicationDescriptionEditor.dataset.placeholder || '',
                         modules: {
@@ -1957,8 +1957,8 @@
                     }
                 });
 
-                if (typeof Quill !== 'undefined' && awardDescriptionEditor) {
-                    awardQuill = new Quill(awardDescriptionEditor, {
+                if (typeof AppTextEditor !== 'undefined' && awardDescriptionEditor) {
+                    awardQuill = new AppTextEditor(awardDescriptionEditor, {
                         theme: 'snow',
                         placeholder: awardDescriptionEditor.dataset.placeholder || '',
                         modules: {
@@ -2365,8 +2365,8 @@
                     }
                 });
 
-                if (typeof Quill !== 'undefined' && projectDescriptionEditor) {
-                    projectQuill = new Quill(projectDescriptionEditor, {
+                if (typeof AppTextEditor !== 'undefined' && projectDescriptionEditor) {
+                    projectQuill = new AppTextEditor(projectDescriptionEditor, {
                         theme: 'snow',
                         placeholder: projectDescriptionEditor.dataset.placeholder || '',
                         modules: {
@@ -2765,8 +2765,8 @@
                     }
                 });
 
-                if (typeof Quill !== 'undefined' && otherDescriptionEditor) {
-                    otherQuill = new Quill(otherDescriptionEditor, {
+                if (typeof AppTextEditor !== 'undefined' && otherDescriptionEditor) {
+                    otherQuill = new AppTextEditor(otherDescriptionEditor, {
                         theme: 'snow',
                         placeholder: otherDescriptionEditor.dataset.placeholder || '',
                         modules: {

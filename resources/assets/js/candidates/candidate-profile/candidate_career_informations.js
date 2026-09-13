@@ -829,7 +829,7 @@ function loadCandidateCareerInformationData() {
     const educationQuillEditors = [];
 
     function initEducationQuillEditors() {
-        if (typeof Quill === 'undefined') {
+        if (typeof AppTextEditor === 'undefined') {
             return;
         }
 
@@ -839,7 +839,7 @@ function loadCandidateCareerInformationData() {
             }
 
             const input = element.closest('.candidate-education-editor').querySelector('[data-quill-input]');
-            const quill = new Quill(element, {
+            const quill = new AppTextEditor(element, {
                 modules: {
                     toolbar: [
                         ['bold', 'italic'],

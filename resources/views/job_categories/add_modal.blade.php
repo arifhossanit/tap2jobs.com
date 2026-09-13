@@ -20,7 +20,7 @@
                     {{ Form::label('description',__('messages.job_category.description').':', ['class' =>'form-label']) }}
                     <span class="required"></span>
                     {{--                        {{ Form::textarea('description', null, ['class' => 'form-control','id' => 'jobCategoryDescription', 'rows' => '5']) }}--}}
-                    <div id="addJobCategoryDescriptionQuillData" class="job-category-description"></div>
+                    <x-text-editor id="addJobCategoryDescriptionQuillData" />
                     {{ Form::hidden('description', null, ['id' => 'jobCategoryDescriptionValue']) }}
                 </div>
                 <div class="col-xl-6 col-md-6 col-sm-12 mb-5" io-image-input="true">

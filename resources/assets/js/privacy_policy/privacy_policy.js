@@ -18,7 +18,7 @@ function loadPrivacyPolicy() {
     //     ],
     // });
 
-    window.addTermConditionDescriptionQuill = new Quill('#addTermConditionDescriptionQuillData', {
+    window.addTermConditionDescriptionQuill = new AppTextEditor('#addTermConditionDescriptionQuillData', {
         modules: {
             toolbar: [
                 ['bold', 'italic', 'underline', 'strike'],
@@ -39,7 +39,7 @@ function loadPrivacyPolicy() {
         }
     });
 
-    window.addPrivacyPolicyDescriptionQuill = new Quill('#addPrivacyPolicyDescriptionQuillData', {
+    window.addPrivacyPolicyDescriptionQuill = new AppTextEditor('#addPrivacyPolicyDescriptionQuillData', {
         modules: {
             toolbar: [
                 ['bold', 'italic', 'underline', 'strike'],

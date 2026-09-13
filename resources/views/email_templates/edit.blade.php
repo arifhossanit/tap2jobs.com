@@ -37,7 +37,7 @@
                                     {{ Form::label('body', __('messages.email_template.body').(':'),['class' => 'form-label']) }}
                                     <span class="required"></span>
                                     {{ Form::hidden('body', null, ['id' => 'editTemplateDescription']) }}
-                                    <div id="emailTemplateEditBodyQuillData"> {!! $emailTemplate->body??null !!} </div>
+                                    <x-text-editor id="emailTemplateEditBodyQuillData" :value="$emailTemplate->body ?? ''" />
                                 </div>
                                 <div class="col-sm-12 mb-5">
                                     {{ Form::label('variables',__('messages.email_template.short_code').(':'), ['class' => 'form-label']) }}

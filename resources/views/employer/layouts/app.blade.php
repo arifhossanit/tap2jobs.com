@@ -120,6 +120,7 @@
 </script>
 <script src="https://js.stripe.com/v3/"></script>
 <script src="{{ mix('js/third-party.js') }}"></script>
+<script src="{{ asset('tinymce/tinymce.min.js') }}"></script>
 <script src="{{ mix('js/pages.js') }}"></script>
 <body class="employer-shell overflow-x-hidden">
 <div class="d-flex flex-column flex-root">

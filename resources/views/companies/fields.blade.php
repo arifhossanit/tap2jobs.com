@@ -121,7 +121,7 @@
     <div class="col-xl-12 col-md-12 col-sm-12 mb-5">
         {{ Form::label('details', __('messages.company.employer_details').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        <div id="addAdminEmployerDescriptionQuillData"></div>
+        <x-text-editor id="addAdminEmployerDescriptionQuillData" />
         {{ Form::hidden('details', old('details'), ['id' => 'company_desc']) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">

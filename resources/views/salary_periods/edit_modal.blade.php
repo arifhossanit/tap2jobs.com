@@ -25,7 +25,7 @@
                     {{ Form::label('description',__('messages.salary_period.description').(':'),['class' => 'form-label']) }}
                     <span class="required"></span>
                     {{--                        {{ Form::textarea('description', '', ['class' => 'form-control form-control-solid', 'rows' => 5, 'id' => 'editDescription']) }}--}}
-                    <div id="editSalaryPeriodDescriptionQuillData"></div>
+                    <x-text-editor id="editSalaryPeriodDescriptionQuillData" />
                     {{ Form::hidden('description', null, ['id' => 'edit_salary_period_desc']) }}
                 </div>
 

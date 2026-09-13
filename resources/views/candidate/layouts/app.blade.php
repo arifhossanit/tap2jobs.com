@@ -390,6 +390,7 @@
     let lancode = "{{ checkLanguageSession() }}";
 </script>
 <script src="{{ mix('js/third-party.js') }}"></script>
+<script src="{{ asset('tinymce/tinymce.min.js') }}"></script>
 <script src="{{ mix('js/pages.js') }}"></script>
 
 <body class="candidate-front-shell overflow-x-hidden {{ $lang == 'pt' || $lang == 'fr' || $lang == 'es' ? 'languages' : '' }}">

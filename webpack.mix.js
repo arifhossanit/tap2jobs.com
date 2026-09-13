@@ -29,8 +29,6 @@ mix.styles([
     'node_modules/intl-tel-input/build/css/intlTelInput.css',
 
     'node_modules/timepicker/jquery.timepicker.min.css',
-    'node_modules/quill/dist/quill.snow.css',
-    'node_modules/quill/dist/quill.bubble.css',
 ], 'public/assets/css/third-party.css')
 
 // light theme css
@@ -56,6 +54,7 @@ mix.sass('resources/assets/sass/custom-auth.scss',
 
 mix.copyDirectory('node_modules/intl-tel-input/build/img',
     'public/assets/img')
+mix.copyDirectory('node_modules/tinymce', 'public/tinymce')
 mix.copyDirectory('resources/assets/img', 'public/assets/img')
 mix.copyDirectory('resources/theme/images', 'public/images')
 mix.copyDirectory('resources/theme/webfonts', 'public/assets/webfonts')
@@ -66,6 +65,7 @@ mix.js([
     // 'resources/assets/js/turbo.js',
     'resources/assets/js/custom/helpers.js',
     'resources/assets/js/custom/custom.js',
+    'resources/assets/js/custom/app-text-editor.js',
     'resources/assets/js/pending_jobs/pending_jobs.js',
     'resources/assets/js/job_categories/job_categories.js',
     'resources/assets/js/settings/settings.js',
@@ -165,7 +165,6 @@ mix.scripts([
     'node_modules/intl-tel-input/build/js/intlTelInput.js',
     'node_modules/intl-tel-input/build/js/utils.js',
     'node_modules/autonumeric/dist/autoNumeric.min.js',
-    'node_modules/quill/dist/quill.js',
     'public/messages.js',
     'resources/assets/js/html2pdf.bundle.min.js',
 ], 'public/js/third-party.js').version()

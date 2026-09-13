@@ -8,7 +8,7 @@ function loadEmailTemplatesData () {
     $('.note-modal .form-group label').
         append(' <span class="text-danger">*</span>');
 
-    let emailTemplateEditBodyQuill = new Quill(
+    let emailTemplateEditBodyQuill = new AppTextEditor(
         '#emailTemplateEditBodyQuillData', {
             modules: {
                 toolbar: [

@@ -44,7 +44,7 @@ function loadCreateEditCompanyData() {
 
 
     if ($('#editEmployeeDetails').length) {
-        window.editEmployeeDetail = new Quill('#editEmployeeDetails', {
+        window.editEmployeeDetail = new AppTextEditor('#editEmployeeDetails', {
             modules: {
                 toolbar: [
                     ['bold', 'italic', 'underline', 'strike'],
@@ -66,7 +66,7 @@ function loadCreateEditCompanyData() {
 
     if (isEdit) {
         if ($('#editAdminEmployerDescriptionQuillData').length) {
-            window.editAdminEmployerDescriptionQuill = new Quill(
+            window.editAdminEmployerDescriptionQuill = new AppTextEditor(
                 '#editAdminEmployerDescriptionQuillData', {
                     modules: {
                         toolbar: [
@@ -89,7 +89,7 @@ function loadCreateEditCompanyData() {
 
 
     if ($('#addAdminEmployerDescriptionQuillData').length) {
-        window.addAdminEmployerDescriptionQuill = new Quill(
+        window.addAdminEmployerDescriptionQuill = new AppTextEditor(
             '#addAdminEmployerDescriptionQuillData', {
                 modules: {
                     toolbar: [
@@ -110,7 +110,7 @@ function loadCreateEditCompanyData() {
 
 
     if ($('#addIndustryDescriptionQuillData').length) {
-        window.industry = new Quill('#addIndustryDescriptionQuillData', {
+        window.industry = new AppTextEditor('#addIndustryDescriptionQuillData', {
             placeholder: Lang.get('js.enter_industry_details'),
             modules: {
                 toolbar: [
@@ -129,7 +129,7 @@ function loadCreateEditCompanyData() {
 
 
     if($('#ownershipDescription').length){
-        window.ownership = new Quill('#ownershipDescription', {
+        window.ownership = new AppTextEditor('#ownershipDescription', {
             placeholder: Lang.get('js.enter_ownership_details'),
             modules: {
                 toolbar: [

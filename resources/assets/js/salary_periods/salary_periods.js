@@ -6,7 +6,7 @@ function loadSalaryPeriodData() {
     }
 
     if ($('#addSalaryPeriodDescriptionQuillData').length) {
-        window.addSalaryPeriodDescriptionQuill = new Quill(
+        window.addSalaryPeriodDescriptionQuill = new AppTextEditor(
             '#addSalaryPeriodDescriptionQuillData', {
             modules: {
                 toolbar: [
@@ -25,7 +25,7 @@ function loadSalaryPeriodData() {
     }
 
     if ($('#editSalaryPeriodDescriptionQuillData').length) {
-        window.editSalaryPeriodDescriptionQuill = new Quill(
+        window.editSalaryPeriodDescriptionQuill = new AppTextEditor(
             '#editSalaryPeriodDescriptionQuillData', {
             modules: {
                 toolbar: [

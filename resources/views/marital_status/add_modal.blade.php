@@ -22,7 +22,7 @@
                 <div class="mb-5">
                     {{ Form::label('description', __('messages.marital_status.description').(':'),['class' => 'form-label']) }}
                     <span class="required"></span>
-                    <div id="addMartialDescriptionQuillData"></div>
+                    <x-text-editor id="addMartialDescriptionQuillData" />
                     {{ Form::hidden('description', null, ['id' => 'marital_desc']) }}
                 </div>
             </div>

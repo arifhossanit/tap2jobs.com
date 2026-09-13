@@ -419,7 +419,7 @@
             };
 
             const initEmploymentQuillEditors = function () {
-                if (typeof Quill === 'undefined') {
+                if (typeof AppTextEditor === 'undefined') {
                     root.querySelectorAll('[data-employment-quill-input]').forEach(function (input) {
                         input.classList.remove('d-none');
                     });
@@ -437,7 +437,7 @@
                         return;
                     }
 
-                    const quill = new Quill(element, {
+                    const quill = new AppTextEditor(element, {
                         modules: {
                             toolbar: [
                                 ['bold', 'italic'],

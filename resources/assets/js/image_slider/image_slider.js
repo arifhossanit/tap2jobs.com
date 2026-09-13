@@ -17,7 +17,7 @@ function loadImageSliderData () {
     let imageSizeMessage = $('#imageSizeMessage').val();
     let imageExtensionMessage = $('#imageExtensionMessage').val();
 
-    window.addImageSliderDescriptionQuill = new Quill(
+    window.addImageSliderDescriptionQuill = new AppTextEditor(
         '#addImageSliderDescriptionQuillData', {
             modules: {
                 toolbar: [
@@ -40,7 +40,7 @@ function loadImageSliderData () {
         }
     });
 
-    window.editImageSliderDescriptionQuill = new Quill('#editImageSliderDescriptionQuillData', {
+    window.editImageSliderDescriptionQuill = new AppTextEditor('#editImageSliderDescriptionQuillData', {
         modules: {
             toolbar: [
                 ['bold', 'italic', 'underline', 'strike'],

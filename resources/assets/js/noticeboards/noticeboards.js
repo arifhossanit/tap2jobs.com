@@ -7,7 +7,7 @@ function loadNoticeboardData () {
     }
 
     if ($('#addNoticeboardDescriptionQuillData').length) {
-        window.addNoticeboardDescriptionQuill = new Quill(
+        window.addNoticeboardDescriptionQuill = new AppTextEditor(
             '#addNoticeboardDescriptionQuillData', {
                 modules: {
                     toolbar: [
@@ -34,7 +34,7 @@ function loadNoticeboardData () {
             });
     }
     if ($('#editNoticeboardDescriptionQuillData').length) {
-        window.editNoticeboardDescriptionQuill = new Quill(
+        window.editNoticeboardDescriptionQuill = new AppTextEditor(
             '#editNoticeboardDescriptionQuillData', {
                 modules: {
                     toolbar: [

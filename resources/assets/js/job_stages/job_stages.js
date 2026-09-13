@@ -5,7 +5,7 @@ function loadJobStagesData() {
         return;
     }
     if ($('#jobStageDescription').length) {
-        window.employerJobStageQuill = new Quill('#jobStageDescription', {
+        window.employerJobStageQuill = new AppTextEditor('#jobStageDescription', {
             modules: {
                 toolbar: [
                     ['bold', 'italic', 'underline', 'strike'],
@@ -22,7 +22,7 @@ function loadJobStagesData() {
         });
     }
     if ($('#editStageDescription').length) {
-        window.editEmployerJobStageQuill = new Quill('#editStageDescription', {
+        window.editEmployerJobStageQuill = new AppTextEditor('#editStageDescription', {
             modules: {
                 toolbar: [
                     ['bold', 'italic', 'underline', 'strike'],

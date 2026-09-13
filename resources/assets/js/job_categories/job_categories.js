@@ -18,7 +18,7 @@ function loadJobCategoryData() {
     var defaultDocumentImageUrl = $('#defaultDocumentImageUrl').val();
 
     if ($('#addJobCategoryDescriptionQuillData').length) {
-        window.addJobCategoryDescriptionQuill = new Quill(
+        window.addJobCategoryDescriptionQuill = new AppTextEditor(
             '#addJobCategoryDescriptionQuillData', {
                 modules: {
                     toolbar: [
@@ -37,7 +37,7 @@ function loadJobCategoryData() {
     }
 
     if($('#editJobCategoryDescriptionQuillData').length) {
-        window.editJobCategoryDescriptionQuill = new Quill(
+        window.editJobCategoryDescriptionQuill = new AppTextEditor(
             '#editJobCategoryDescriptionQuillData', {
                 modules: {
                     toolbar: [

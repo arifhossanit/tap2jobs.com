@@ -42,27 +42,18 @@
     <div class="col-xl-12 col-md-12 col-sm-12 mb-5">
         {{ Form::label('description', 'Requirements:', ['class' => 'form-label']) }}
         <span class="required"></span>
-        <div class="job-rich-editor-shell">
-            <div id="editDetails" class="job-rich-editor" aria-required="true"></div>
-            <div class="job-rich-editor-resize-handle" role="separator" aria-orientation="horizontal" title="Resize editor"></div>
-        </div>
+        <x-text-editor id="editDetails" aria-required="true" />
         {{ Form::hidden('description', old('description', $job->description), ['id' => 'editJobDescription', 'required']) }}
     </div>
     <div class="col-xl-12 col-md-6 col-sm-12 mb-5">
         {{ Form::label('key_responsibilities', __('messages.job.key_responsibilities').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        <div class="job-rich-editor-shell">
-            <div id="editResponse" class="job-rich-editor" aria-required="true"></div>
-            <div class="job-rich-editor-resize-handle" role="separator" aria-orientation="horizontal" title="Resize editor"></div>
-        </div>
+        <x-text-editor id="editResponse" aria-required="true" />
         {{ Form::hidden('key_responsibilities', old('key_responsibilities', $job->key_responsibilities), ['id' => 'edit_responsibilities', 'required']) }}
     </div>
     <div class="col-xl-12 col-md-6 col-sm-12 mb-5">
         {{ Form::label('compensation_and_other_benefits', 'Compensation and other benefits:', ['class' => 'form-label']) }}
-        <div class="job-rich-editor-shell">
-            <div id="editCompensationAndBenefits" class="job-rich-editor"></div>
-            <div class="job-rich-editor-resize-handle" role="separator" aria-orientation="horizontal" title="Resize editor"></div>
-        </div>
+        <x-text-editor id="editCompensationAndBenefits" />
         {{ Form::hidden('compensation_and_other_benefits', old('compensation_and_other_benefits', $job->compensation_and_other_benefits), ['id' => 'edit_compensation_and_other_benefits']) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">

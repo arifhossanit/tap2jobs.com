@@ -23,7 +23,7 @@
                 <div class="mb-5">
                     {{ Form::label('description', __('messages.job_type.description').(':'),['class' => 'form-label']) }}
                     <span class="required"></span>
-                    <div id="editJobTypeDescriptionQuillData"></div>
+                    <x-text-editor id="editJobTypeDescriptionQuillData" />
                     {{ Form::hidden('description', null, ['id' => 'edit_job_type_desc']) }}
                 </div>
 

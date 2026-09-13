@@ -162,7 +162,7 @@ function loadSettingsData() {
             $('#enableCookieText').text(enableCookie);
     });
     if ($('#aboutUs').length) {
-        window.aboutUsQuill = new Quill('#aboutUs', {
+        window.aboutUsQuill = new AppTextEditor('#aboutUs', {
             modules: {
                 toolbar: [
                     ['bold', 'italic', 'underline', 'strike'],

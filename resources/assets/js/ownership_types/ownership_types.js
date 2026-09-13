@@ -7,7 +7,7 @@ function loadOwnershipTypesData() {
     }
 
     if ($('#ownershipDescription').length) {
-        window.ownershipDescriptionQuill = new Quill('#ownershipDescription', {
+        window.ownershipDescriptionQuill = new AppTextEditor('#ownershipDescription', {
             modules: {
                 toolbar: [
                     ['bold', 'italic', 'underline', 'strike'],
@@ -25,7 +25,7 @@ function loadOwnershipTypesData() {
     }
 
     if($('#editOwnershipDescription').length) {
-        window.editOwnershipDescriptionQuill = new Quill(
+        window.editOwnershipDescriptionQuill = new AppTextEditor(
             '#editOwnershipDescription', {
                 modules: {
                     toolbar: [

@@ -7,7 +7,7 @@ function loadTestimonialData() {
         !$('#editTestimonialDescriptionQuillData').length) {
         return;
     }
-    window.addTestimonialDescriptionQuill = new Quill(
+    window.addTestimonialDescriptionQuill = new AppTextEditor(
         '#addTestimonialDescriptionQuillData', {
             modules: {
                 toolbar: [
@@ -24,7 +24,7 @@ function loadTestimonialData() {
             theme: 'snow',
             });
 
-    window.editTestimonialDescriptionQuill = new Quill(
+    window.editTestimonialDescriptionQuill = new AppTextEditor(
         '#editTestimonialDescriptionQuillData', {
             modules: {
                 toolbar: [

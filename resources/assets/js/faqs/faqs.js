@@ -5,7 +5,7 @@ function createFaqQuill(selector) {
         return null;
     }
 
-    return new Quill(selector, {
+    return new AppTextEditor(selector, {
         modules: {
             toolbar: [
                 ['bold', 'italic', 'underline', 'strike'],
