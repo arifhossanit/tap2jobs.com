@@ -80,7 +80,11 @@ class SettingRepository extends BaseRepository
     public function updateSetting(array $input): bool
     {
 
-        $input['cookie_consent_enabled'] = empty($input['cookie_consent_enabled']) ?  false : true;
+        $sectionName = $input['sectionName'] ?? null;
+
+        if ($sectionName == 'env_setting') {
+            $input['cookie_consent_enabled'] = ! empty($input['cookie_consent_enabled']);
+        }
 
         $envSettingInputArray = Arr::only($input, [
             'facebook_app_id', 'facebook_app_secret', 'facebook_redirect','pusher_app_id', 'pusher_app_key','pusher_app_secret', 'pusher_app_cluster', 'stripe_key', 'stripe_secret', 'stripe_webhook_key', 'paypal_client_id', 'paypal_secret','paystack_key','paystack_secret','paystack_payment_url', 'linkedin_client_id', 'linkedin_client_secret', 'google_client_id', 'google_client_secret', 'google_redirect','cookie_consent_enabled'
@@ -104,9 +108,9 @@ class SettingRepository extends BaseRepository
         }
 
         // $env = new DotenvEditor();
-        $inputArr = Arr::except($input, ['_token']);
+        $inputArr = Arr::except($input, ['_token', 'sectionName']);
 
-        if ($inputArr['sectionName'] == 'env_setting') {
+        if ($sectionName == 'env_setting') {
             // $env->setAutoBackup(true);
 
             $envSetting = EnvSetting::pluck('value', 'key')->toArray();
@@ -137,13 +141,12 @@ class SettingRepository extends BaseRepository
             // }
         }
 
-        if ($inputArr['sectionName'] == 'social_settings') {
+        if ($sectionName == 'social_settings') {
             $inputArr['facebook_url'] = (empty($inputArr['facebook_url'])) ? '' : $inputArr['facebook_url'];
-            $inputArr['twitter_url'] = (empty($inputArr['twitter_url'])) ? '' : $inputArr['twitter_url'];
-            $inputArr['google_plus_url'] = (empty($inputArr['google_plus_url'])) ? '' : $inputArr['google_plus_url'];
+            $inputArr['instagram_url'] = (empty($inputArr['instagram_url'])) ? '' : $inputArr['instagram_url'];
             $inputArr['linkedIn_url'] = (empty($inputArr['linkedIn_url'])) ? '' : $inputArr['linkedIn_url'];
         }
-        if ($inputArr['sectionName'] == 'general') {
+        if ($sectionName == 'general') {
             $inputArr['enable_google_recaptcha'] = (! isset($inputArr['enable_google_recaptcha'])) ? false : $inputArr['enable_google_recaptcha'];
             $inputArr['job_approved'] = (! isset($inputArr['job_approved'])) ? 0 : 1;
             $inputArr['default_country_id'] = $inputArr['default_country_id'] ?? '';

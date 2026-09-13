@@ -164,14 +164,9 @@
                                     <i class="fa-brands fa-facebook-f d-flex align-items-center justify-content-center"></i>
                                 </a>
                             @endif
-                            @if (!empty($settings['instagram_url']) || !empty($settings['twitter_url']))
-                                <a href="{{ $settings['instagram_url'] ?? $settings['twitter_url'] }}" target="_blank" class="mx-2">
+                            @if (!empty($settings['instagram_url']))
+                                <a href="{{ $settings['instagram_url'] }}" target="_blank" rel="noopener noreferrer" class="mx-2">
                                     <i class="fa-brands fa-instagram d-flex align-items-center justify-content-center"></i>
-                                </a>
-                            @endif
-                            @if (!empty($settings['google_plus_url']))
-                                <a href="{{ $settings['google_plus_url'] }}" target="_blank" class="mx-2">
-                                    <i class="fa-brands fa-google d-flex align-items-center justify-content-center"></i>
                                 </a>
                             @endif
                             @if (!empty($settings['linkedIn_url']))

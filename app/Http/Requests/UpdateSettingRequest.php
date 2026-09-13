@@ -72,6 +72,12 @@ class UpdateSettingRequest extends FormRequest
             $rules['default_country_id'] = 'nullable|exists:countries,id';
         }
 
+        if ($this->input('sectionName') == 'social_settings') {
+            $rules['facebook_url'] = ['nullable', 'url', 'regex:~^https?://(?:www\.)?facebook\.com(?:/|$)~i'];
+            $rules['instagram_url'] = ['nullable', 'url', 'regex:~^https?://(?:www\.)?instagram\.com(?:/|$)~i'];
+            $rules['linkedIn_url'] = ['nullable', 'url', 'regex:~^https?://(?:[a-z]{2,3}\.)?linkedin\.com(?:/|$)~i'];
+        }
+
         return $rules;
     }
 }

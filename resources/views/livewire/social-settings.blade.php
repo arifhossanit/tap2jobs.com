@@ -11,21 +11,12 @@
             </div>
         </div>
         <div class="col-sm-6 mt-5">
-            {{ Form::label('twitter_url', 'Instagram URL:', ['class' => 'form-label']) }}
+            {{ Form::label('instagram_url', 'Instagram URL:', ['class' => 'form-label']) }}
             <div class="input-group">
                 <div class="input-group-text border-0">
                     <i class="fab fa-instagram instagram-fa-icon text-danger"></i>
                 </div>
-                {{ Form::text('twitter_url', $setting['twitter_url'], ['class' => 'form-control', 'id' => 'twitterUrl', 'placeholder' => 'Instagram URL']) }}
-            </div>
-        </div>
-        <div class="col-sm-6 mt-5">
-            {{ Form::label('google_plus_url', __('messages.setting.google_plus_url') . ':', ['class' => 'form-label']) }}
-            <div class="input-group">
-                <div class="input-group-text border-0">
-                    <i class="fab fa-google-plus-g google-plus-fa-icon text-danger"></i>
-                </div>
-                {{ Form::text('google_plus_url', $setting['google_plus_url'], ['class' => 'form-control', 'id' => 'googlePlusUrl', 'placeholder' => __('messages.setting.google_plus_url')]) }}
+                {{ Form::text('instagram_url', $setting['instagram_url'] ?? '', ['class' => 'form-control', 'id' => 'instagramUrl', 'placeholder' => 'https://www.instagram.com/username']) }}
             </div>
         </div>
         <div class="col-sm-6 mt-5">

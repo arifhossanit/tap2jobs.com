@@ -74,10 +74,7 @@ function loadSettingsData() {
     $('#facebookUrl').keyup(function () {
         this.value = this.value.toLowerCase();
     });
-    $('#twitterUrl').keyup(function () {
-        this.value = this.value.toLowerCase();
-    });
-    $('#googleUrl').keyup(function () {
+    $('#instagramUrl').keyup(function () {
         this.value = this.value.toLowerCase();
     });
     $('#linkedInUrl').keyup(function () {
@@ -225,16 +222,13 @@ listenSubmit('#editSocialSettingForm', function () {
     $('#editSocialSettingForm').find('input:text:visible:first').focus();
 
     let facebookUrl = $('#facebookUrl').val();
-    let twitterUrl = $('#twitterUrl').val();
-    let googlePlusUrl = $('#googlePlusUrl').val();
+    let instagramUrl = $('#instagramUrl').val();
     let linkedInUrl = $('#linkedInUrl').val();
 
     let facebookExp = new RegExp(
         /^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)facebook.[a-z]{2,3}\/?.*/i);
-    let twitterExp = new RegExp(
-        /^(https?:\/\/)?((m{1}\.)?)?((w{2,3}\.)?)twitter\.[a-z]{2,3}\/?.*/i);
-    let googlePlusExp = new RegExp(
-        /^(https?:\/\/)?(plus\.)?(google\.[a-z]{2,3})\/?(([a-zA-Z 0-9._])?).*/i);
+    let instagramExp = new RegExp(
+        /^https?:\/\/(www\.)?instagram\.com(?:\/|$).*/i);
     let linkedInExp = new RegExp(
         /^(https?:\/\/)?((w{2,3}\.)?)linkedin\.[a-z]{2,3}\/?.*/i);
 
@@ -244,20 +238,12 @@ listenSubmit('#editSocialSettingForm', function () {
         displayErrorMessage(Lang.get('js.valid_facebook_url'));
         return false;
     }
-    let twitterCheck = (twitterUrl == '' ? true : (twitterUrl.match(
-        twitterExp)
+    let instagramCheck = (instagramUrl == '' ? true : (instagramUrl.match(
+        instagramExp)
         ? true
         : false));
-    if (!twitterCheck) {
-        displayErrorMessage(Lang.get('js.valid_twitter_url'));
-        return false;
-    }
-    let googlePlusCheck = (googlePlusUrl == ''
-        ? true
-        : (googlePlusUrl.match(
-            googlePlusExp) ? true : false));
-    if (!googlePlusCheck) {
-        displayErrorMessage(Lang.get('js.valid_google_plus_url'));
+    if (!instagramCheck) {
+        displayErrorMessage('Please enter a valid Instagram URL.');
         return false;
     }
     let linkedInCheck = (linkedInUrl == '' ? true : (linkedInUrl.match(

@@ -346,7 +346,7 @@ return [
         'facebook_url' => 'Facebook URL',
         'twitter_url' => 'Twitter URL',
         'google_plus_url' => 'Google Plus URL',
-        'linkedIn_url' => 'URL de LinkedIn',
+        'linkedIn_url' => 'LinkedIn URL',
         'general' => 'General',
         'front_settings' => 'Front Settings',
         'notification_settings' => 'Notification Settings',
