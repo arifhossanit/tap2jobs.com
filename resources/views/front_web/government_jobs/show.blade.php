@@ -2,7 +2,7 @@
 @section('title', $governmentJob->title)
 @section('content')
     <section class="py-5 bg-light">
-        <div class="container-fluid">
+        <div class="container-fluid px-0">
             @php
                 $leftAds = getActiveAdsByPosition(
                     \App\Models\Ad::POSITION_REGISTER_LEFT,
@@ -12,20 +12,12 @@
                     \App\Models\Ad::POSITION_REGISTER_RIGHT,
                     \App\Models\Ad::PAGE_GOVERNMENT_JOB_DETAILS
                 );
-                $hasSideAds = $leftAds->isNotEmpty() || $rightAds->isNotEmpty();
             @endphp
 
-            <div class="row g-4 align-items-start justify-content-center front-auth-ad-layout">
-                @if ($hasSideAds)
-                    <aside class="col-xl-3 col-lg-3 d-none d-lg-block mb-4 text-start front-auth-side-ads front-auth-side-ads--left">
-                        <div>
-                            @include('front_web.common.register_side_ad', ['ads' => $leftAds])
-                        </div>
-                    </aside>
-                    <div class="col-xl-6 col-lg-6">
-                @else
-                    <div class="col-xl-10 col-lg-10 mx-auto">
-                @endif
+            <x-front.side-ad-layout :left-ads="$leftAds" :right-ads="$rightAds">
+                <div class="container px-0">
+                <div class="row justify-content-center">
+                    <div class="col-xl-12 col-lg-12">
                     <article class="bg-white border rounded shadow-sm p-3 p-md-4">
                         <div class="d-flex flex-wrap gap-3 justify-content-between align-items-center border-bottom pb-3 mb-4">
                             <a href="{{ route('front.government-jobs.index') }}" class="text-decoration-none">
@@ -76,28 +68,9 @@
                     </article>
                 </div>
 
-                @if ($hasSideAds)
-                    <aside class="col-xl-3 col-lg-3 d-none d-lg-block mb-4 text-end front-auth-side-ads front-auth-side-ads--right">
-                        <div>
-                            @include('front_web.common.register_side_ad', ['ads' => $rightAds])
-                        </div>
-                    </aside>
-                    <div class="col-12 d-lg-none mt-4">
-                        <div class="row">
-                            @if ($leftAds->isNotEmpty())
-                                <div class="col-sm-6 mb-3">
-                                    @include('front_web.common.register_side_ad', ['ads' => $leftAds])
-                                </div>
-                            @endif
-                            @if ($rightAds->isNotEmpty())
-                                <div class="col-sm-6 mb-3">
-                                    @include('front_web.common.register_side_ad', ['ads' => $rightAds])
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                @endif
-            </div>
+                </div>
+                </div>
+            </x-front.side-ad-layout>
         </div>
     </section>
 @endsection

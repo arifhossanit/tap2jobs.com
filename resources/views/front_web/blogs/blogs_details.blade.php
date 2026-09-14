@@ -49,14 +49,15 @@
 
         <!-- start-blog-details-section -->
         <section class="blog-detail-section py-60">
-            <div class="container">
-                <div class="row">
-                    @php
-                        $leftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT, \App\Models\Ad::PAGE_BLOG_DETAILS);
-                        $rightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT, \App\Models\Ad::PAGE_BLOG_DETAILS);
-                    @endphp                   
+            @php
+                $leftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT, \App\Models\Ad::PAGE_BLOG_DETAILS);
+                $rightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT, \App\Models\Ad::PAGE_BLOG_DETAILS);
+            @endphp
+            <x-front.side-ad-layout :left-ads="$leftAds" :right-ads="$rightAds">
+            <div class="container px-0">
+                <div class="row justify-content-center">
 
-                    <div class="col-lg-8 blog-detail-content">
+                    <div class="col-lg-12 blog-detail-content">
                         <div class="blog-detail">
                             <h5 class="fs-4 mb-3 text-secondary">
                                 {{ html_entity_decode($blog->title) }}
@@ -323,16 +324,9 @@
                     </div>{{-- /.blog-detail --}}
                     </div>{{-- /.blog-detail-content --}}
 
-                    <div class="col-lg-4 blog-detail-right-ads">
-                        @if ($leftAds->count() > 0)
-                            @include('front_web.common.register_side_ad', ['ads' => $leftAds])
-                        @endif
-                        @if ($rightAds->count() > 0)
-                            @include('front_web.common.register_side_ad', ['ads' => $rightAds])
-                        @endif
-                    </div>
                 </div>
             </div>
+            </x-front.side-ad-layout>
         </section>
         <!-- end-blog-details-section -->
         @include('front_web.blogs.templates.templates')
