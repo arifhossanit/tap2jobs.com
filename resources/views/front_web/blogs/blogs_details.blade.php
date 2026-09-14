@@ -80,7 +80,7 @@
                             <p class="fs-16 mb-3 visit-link">
                                 <strong>Visit:&nbsp;</strong><a href="https://www.tap2jobs.com/" target="_blank" rel="noopener noreferrer"><strong>www.tap2jobs.com</strong></a>
                             </p>
-                            @role('Candidate')
+                            {{-- @role('Candidate')
                                 <div class="designer-details d-flex flex-wrap pb-3">
                                     <a href="{{ $url['facebook'] }}" title="@lang('web.web_jobs.facebook')" target="_blank"
                                         class="d-flex me-2">
@@ -112,7 +112,7 @@
                                         </div>
                                     </a>
                                 </div>
-                            @endrole
+                            @endrole --}}
                             <div class="blog-img mb-40">
                                 <img
                                     src="{{ !empty($blog->blog_image_url) ? $blog->blog_image_url : asset('web/img/blog_default_image.jpg') }}">

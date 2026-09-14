@@ -13443,18 +13443,13 @@ html[dir='rtl'] .register-page .input-password-hide {
 }
 
 .find-jobs-filter {
-    position: sticky;
-    top: 20px;
-    max-height: calc(100vh - 40px);
+    position: static;
     padding: 28px;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: visible;
     border: 1px solid #dce6f0;
-    border-radius: 12px;
+    border-radius: 7px;
     background: #fff;
     box-shadow: 0 8px 28px rgba(31, 55, 83, 0.07);
-    scrollbar-color: #b9c7d7 transparent;
-    scrollbar-width: thin;
 }
 
 .find-jobs-filter__header {
@@ -13473,14 +13468,14 @@ html[dir='rtl'] .register-page .input-password-hide {
     gap: 10px;
     margin: 0;
     color: #17243b;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
     line-height: 1.3;
 }
 
 .find-jobs-filter__header h2 i {
     color: #209776;
-    font-size: 17px;
+    font-size: 15px;
 }
 
 .find-jobs-filter__header .reset-filter {
@@ -13490,7 +13485,7 @@ html[dir='rtl'] .register-page .input-password-hide {
     border-radius: 7px;
     color: #209776;
     background: #eef5ff;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     line-height: 1.2;
     white-space: nowrap;
@@ -13515,7 +13510,7 @@ html[dir='rtl'] .register-page .input-password-hide {
     display: block;
     margin-bottom: 10px;
     color: #27364d;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     line-height: 1.4;
 }
@@ -13529,7 +13524,7 @@ html[dir='rtl'] .register-page .input-password-hide {
     border-radius: 8px !important;
     color: #5f6d80;
     background-color: #fff;
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .find-jobs-filter .form-control,
@@ -13580,7 +13575,7 @@ html[dir='rtl'] .register-page .input-password-hide {
     border: 0;
     color: #27364d;
     background: transparent;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     text-align: left;
 }
@@ -13620,6 +13615,7 @@ html[dir='rtl'] .register-page .input-password-hide {
     width: 100%;
     margin: 0 !important;
     color: #536176 !important;
+    font-size: 13px;
     line-height: 1.35;
     cursor: pointer;
 }
@@ -13634,7 +13630,7 @@ html[dir='rtl'] .register-page .input-password-hide {
     border-radius: 11px;
     color: #209776;
     background: #eaf3ff;
-    font-size: 11px;
+    font-size: 10px;
 }
 
 .find-jobs-filter__type-option .form-check {
@@ -13765,11 +13761,11 @@ html[dir="rtl"]
         min-height: 48px;
         padding: 0 16px;
         border: 1px solid #d7e4f0;
-        border-radius: 10px;
+        border-radius: 7px;
         color: #17243b;
         background: #fff;
         box-shadow: 0 8px 24px rgba(31, 55, 83, 0.08);
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 600;
     }
 
