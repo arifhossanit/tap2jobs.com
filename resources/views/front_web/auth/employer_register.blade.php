@@ -4,43 +4,6 @@
     {{ __('web.register') }}
 @endsection
 
-@section('page_css')
-<style>
-/* Employer Register Form Validation Red Focus & Border Highlight */
-#addEmployerNewForm .form-control.is-invalid,
-#addEmployerNewForm .form-select.is-invalid,
-#addEmployerNewForm .employer-user-information-input .form-control.is-invalid,
-#addEmployerNewForm .employer-company-information-control.is-invalid,
-#addEmployerNewForm .employer-contact-information-control.is-invalid,
-#addEmployerNewForm .is-invalid {
-    border-color: #dc3545 !important;
-}
-
-#addEmployerNewForm .form-control.is-invalid:focus,
-#addEmployerNewForm .form-select.is-invalid:focus,
-#addEmployerNewForm .employer-user-information-input .form-control.is-invalid:focus,
-#addEmployerNewForm .employer-company-information-control.is-invalid:focus,
-#addEmployerNewForm .employer-contact-information-control.is-invalid:focus,
-#addEmployerNewForm .form-control.is-invalid:focus-visible,
-#addEmployerNewForm .is-invalid:focus {
-    border-color: #dc3545 !important;
-    box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.25) !important;
-    outline: none !important;
-}
-
-#addEmployerNewForm .employer-company-employee-options.is-invalid {
-    border: 1.5px solid #dc3545 !important;
-    box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.25) !important;
-    border-radius: 8px;
-}
-
-#addEmployerNewForm .employer-company-industry-options.is-invalid {
-    border: 1.5px solid #dc3545 !important;
-    box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.25) !important;
-}
-</style>
-@endsection
-
 @section('content')
     <div class="register-page">
         <section class="hero-section position-relative bg-gradient pt-15 pb-40">
@@ -65,23 +28,10 @@
             </div>
         </section>
 
-        <!-- start candidate login section -->
-        <section class="py-60" >
-            <div class="container-fluid">
-                @php
-                    $registerLeftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT, \App\Models\Ad::PAGE_EMPLOYER_REGISTER);
-                    $registerRightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT, \App\Models\Ad::PAGE_EMPLOYER_REGISTER);
-                    $hasRegisterSideAds = $registerLeftAds->isNotEmpty() || $registerRightAds->isNotEmpty();
-                @endphp
-                <div class="row align-items-start justify-content-center front-auth-ad-layout">
-                    @if ($hasRegisterSideAds)
-                        <div class="col-xl-3 col-lg-3 d-none d-lg-block mb-4 text-start front-auth-side-ads front-auth-side-ads--left">
-                            @include('front_web.common.register_side_ad', ['ads' => $registerLeftAds])
-                        </div>
-                        <div class="col-xl-6 col-lg-6 front-auth-form-col">
-                    @else
-                        <div class="col-xl-6 col-lg-6 mx-auto">
-                    @endif
+        <section class="employer-register-content">
+            <div class="container">
+                <div class="row">
+                    <div class="mx-auto">
                         @include('flash::message')
 
                         <form method="POST" action="{{ route('front.save.register') }}" id="addEmployerNewForm"
@@ -105,7 +55,7 @@
                                     </div>
                                 </div> --}}
 
-                                <div id="employerValidationErrBox" class="col-12">
+                                <div id="employerValidationErrBox">
                                     @include('layouts.errors')
                                 </div>
 
@@ -117,7 +67,7 @@
                                         </h2>
 
                                         <div class="row g-4">
-                                            {{-- <div class="col-md-4">
+                                            <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="employerUsername" class="employer-user-information-label">
                                                         {{ __('messages.employer_register.username') }} <span class="text-danger">*</span>
@@ -131,18 +81,6 @@
                                                     <div class="employer-live-validation-message" id="employerUsernameFeedback"
                                                          aria-live="polite"></div>
                                                 </div>
-                                            </div> --}}
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="employerEmail" class="employer-contact-information-label">
-                                                        {{ __('messages.employer_register.contact_person_email') }} <span class="text-danger">*</span>
-                                                    </label>
-                                                    <input type="email" name="email" id="employerEmail"
-                                                           class="form-control employer-contact-information-control"
-                                                           value="{{ old('email') }}" maxlength="170"
-                                                           placeholder="{{ __('messages.employer_register.contact_person_email_placeholder') }}"
-                                                           autocomplete="email" autofocus required>
-                                                </div>
                                             </div>
 
                                             <div class="col-md-4">
@@ -153,14 +91,9 @@
                                                     <div class="employer-user-information-input">
                                                         <i class="fa-solid fa-key"></i>
                                                         <input type="password" name="password" id="employerPassword"
-                                                               class="form-control employer-register-password-input" minlength="6" maxlength="20"
+                                                               class="form-control" minlength="6" maxlength="20"
                                                                placeholder="{{ __('messages.employer_register.password_placeholder') }}" required
                                                                onkeypress="return avoidSpace(event)">
-                                                        <button type="button" class="employer-register-password-toggle"
-                                                                data-password-toggle="employerPassword"
-                                                                aria-label="Show password" aria-pressed="false">
-                                                            <i class="fas fa-eye-slash"></i>
-                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -173,14 +106,9 @@
                                                     <div class="employer-user-information-input">
                                                         <i class="fa-solid fa-key"></i>
                                                         <input type="password" name="password_confirmation"
-                                                               id="employerConfirmPassword" class="form-control employer-register-password-input"
+                                                               id="employerConfirmPassword" class="form-control"
                                                                minlength="6" maxlength="20" placeholder="{{ __('messages.employer_register.confirm_password_placeholder') }}"
                                                                required onkeypress="return avoidSpace(event)">
-                                                        <button type="button" class="employer-register-password-toggle"
-                                                                data-password-toggle="employerConfirmPassword"
-                                                                aria-label="Show password" aria-pressed="false">
-                                                            <i class="fas fa-eye-slash"></i>
-                                                        </button>
                                                     </div>
                                                     <div class="employer-live-validation-message" id="employerConfirmPasswordFeedback"
                                                          aria-live="polite"></div>
@@ -241,7 +169,7 @@
                                                             {{ __('messages.employer_register.number_of_employees') }} <span class="text-danger">*</span>
                                                         </label>
                                                         <div class="employer-company-employee-options">
-                                                            @foreach ($companySizes as $employeeRange)
+                                                            @foreach (['1-25', '26-50', '51-100', '101-500', '501-1000', '1000+'] as $employeeRange)
                                                                 <label for="employeeRange{{ $loop->index }}">
                                                                     <input type="radio" name="employee_range"
                                                                            id="employeeRange{{ $loop->index }}"
@@ -261,7 +189,7 @@
                                                             {{ __('messages.employer_register.company_address') }} <span class="text-danger">*</span>
                                                         </label>
                                                         <div class="row g-3">
-                                                            <div class="col-md-3">
+                                                            <div class="col-md-4">
                                                                 <div class="employer-company-country-select">
                                                                     <span class="employer-register-bd-flag employer-company-bd-flag"
                                                                           aria-hidden="true"></span>
@@ -277,10 +205,10 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-3">
+                                                            <div class="col-md-4">
                                                                 <select name="state_id" id="registerStateId"
                                                                         class="form-select employer-company-information-control" required>
-                                                                    <option value="">{{ __('messages.company.select_state') }}</option>
+                                                                    <option value="">{{ __('messages.employer_register.select_district') }}</option>
                                                                     @foreach ($states as $stateId => $stateName)
                                                                         <option value="{{ $stateId }}"
                                                                             {{ (int) old('state_id') === (int) $stateId ? 'selected' : '' }}>
@@ -289,30 +217,11 @@
                                                                     @endforeach
                                                                 </select>
                                                             </div>
-                                                            <div class="col-md-3">
+                                                            <div class="col-md-4">
                                                                 <select name="city_id" id="registerCityId"
                                                                         class="form-select employer-company-information-control"
-                                                                        data-old-city-id="{{ old('city_id') }}" required {{ empty($cities) ? 'disabled' : '' }}>
-                                                                    <option value="">{{ __('messages.company.select_city') }}</option>
-                                                                    @foreach ($cities as $cityId => $cityName)
-                                                                        <option value="{{ $cityId }}"
-                                                                            {{ (int) old('city_id') === (int) $cityId ? 'selected' : '' }}>
-                                                                            {{ $cityName }}
-                                                                        </option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                                <select name="thana_id" id="registerThanaId"
-                                                                        class="form-select employer-company-information-control"
-                                                                        data-old-thana-id="{{ old('thana_id') }}" {{ empty($thanas) ? 'disabled' : '' }}>
-                                                                    <option value="">{{ __('messages.company.select_thana') }}</option>
-                                                                    @foreach ($thanas as $thanaId => $thanaName)
-                                                                        <option value="{{ $thanaId }}"
-                                                                            {{ (int) old('thana_id') === (int) $thanaId ? 'selected' : '' }}>
-                                                                            {{ $thanaName }}
-                                                                        </option>
-                                                                    @endforeach
+                                                                        data-old-city-id="{{ old('city_id') }}" required disabled>
+                                                                    <option value="">{{ __('messages.employer_register.select_thana') }}</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -332,26 +241,44 @@
                                                               maxlength="1000" rows="3"
                                                               placeholder="{{ __('messages.employer_register.company_address_bn_placeholder') }}">{{ old('company_address_bn') }}</textarea>
                                                 </div>
+
+                                                <div class="col-12">
+                                                    <div class="employer-register-industry-type-row">
+                                                        <div class="employer-register-industry-type-select">
+                                                            <label for="registerIndustryType" class="employer-company-information-label">
+                                                                {{ __('messages.employer_register.industry_type') }} <span class="text-danger">*</span>
+                                                            </label>
+                                                            <select id="registerIndustryType"
+                                                                    class="form-select employer-company-information-control">
+                                                                <option value="all" selected>{{ __('messages.employer_register.all') }}</option>
+                                                                @foreach ($industryTypes as $industryTypeId => $industryTypeName)
+                                                                    <option value="{{ $industryTypeId }}">{{ $industryTypeName }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                        <button type="button" class="employer-register-add-industry-trigger"
+                                                                id="registerAddIndustryTrigger" data-bs-toggle="modal"
+                                                                data-bs-target="#registerAddIndustryModal">
+                                                            <i class="fa-solid fa-plus"></i>
+                                                            <span>{{ __('messages.employer_register.add_new_industry') }}</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+
                                                 <div class="col-12">
                                                     <div class="employer-company-industry-picker">
-                                                        <div class="employer-company-industry-search-row">
-                                                            <div class="employer-company-industry-search">
-                                                                <input type="search" id="registerIndustrySearch"
-                                                                       class="form-control employer-company-information-control"
-                                                                       placeholder="{{ __('messages.employer_register.search_industry') }}">
-                                                                <i class="fa-solid fa-magnifying-glass"></i>
-                                                            </div>
-                                                            <button type="button" class="employer-register-add-industry-trigger"
-                                                                    id="registerAddIndustryTrigger">
-                                                                <i class="fa-solid fa-plus"></i>
-                                                                <span>{{ __('messages.employer_register.add_new_industry') }}</span>
-                                                            </button>
+                                                        <div class="employer-company-industry-search">
+                                                            <input type="search" id="registerIndustrySearch"
+                                                                   class="form-control employer-company-information-control"
+                                                                   placeholder="{{ __('messages.employer_register.search_industry') }}">
+                                                            <i class="fa-solid fa-magnifying-glass"></i>
                                                         </div>
 
                                                         <div class="employer-register-industry-options employer-company-industry-options"
                                                              id="registerIndustryOptions">
                                                             @foreach ($industryRecords as $industry)
-                                                                <label data-industry-name="{{ strtolower($industry->name) }}">
+                                                                <label data-industry-name="{{ strtolower($industry->name) }}"
+                                                                       data-industry-type-id="{{ $industry->industry_type_id }}">
                                                                     <input type="checkbox" name="industry_ids[]"
                                                                            value="{{ $industry->id }}"
                                                                         {{ collect(old('industry_ids', []))->contains((string) $industry->id) ? 'checked' : '' }}>
@@ -366,6 +293,7 @@
                                                                 id="registerIndustryMore">{{ __('messages.employer_register.see_more') }}</button>
                                                     </div>
                                                 </div>
+
                                                 <div class="col-12">
                                                     <div class="employer-register-industry-tags" id="registerIndustryTags"></div>
                                                     <div id="registerCustomIndustryInputs"></div>
@@ -428,7 +356,7 @@
                                         </h2>
 
                                         <div class="row g-4">
-                                            <div class="col-md-12">
+                                            <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="registerContactName" class="employer-contact-information-label">
                                                         {{ __('messages.employer_register.contact_person_name') }} <span class="text-danger">*</span>
@@ -451,7 +379,19 @@
                                                            value="{{ old('contact_person_designation') }}" maxlength="180"
                                                            placeholder="{{ __('messages.employer_register.contact_person_designation_placeholder') }}" required>
                                                 </div>
-                                            </div>                                            
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="employerEmail" class="employer-contact-information-label">
+                                                        {{ __('messages.employer_register.contact_person_email') }} <span class="text-danger">*</span>
+                                                    </label>
+                                                    <input type="email" name="email" id="employerEmail"
+                                                           class="form-control employer-contact-information-control"
+                                                           value="{{ old('email') }}" maxlength="170"
+                                                           placeholder="{{ __('messages.employer_register.contact_person_email_placeholder') }}" required>
+                                                </div>
+                                            </div>
 
                                             <div class="col-md-6">
                                                 <div class="form-group employer-register-phone-field employer-contact-phone-field">
@@ -460,8 +400,8 @@
                                                     </label>
                                                     <input type="tel" name="phone" id="employerRegisterPhone"
                                                            class="form-control employer-contact-information-control"
-                                                           value="{{ old('phone') }}" maxlength="11"
-                                                           inputmode="numeric" pattern="[0-9]{1,11}"
+                                                           value="{{ old('phone') }}" minlength="4" maxlength="15"
+                                                           inputmode="numeric" pattern="[0-9]{4,15}"
                                                            placeholder="{{ __('messages.employer_register.enter_mobile_number') }}" required>
                                                     <input type="hidden" name="region_code" id="employerRegisterRegionCode"
                                                            value="{{ old('region_code', '880') }}">
@@ -606,7 +546,7 @@
                                 </div>
                             @endif
 
-                            <div class="col-12 d-grid my-4">
+                            <div class="col-3 d-grid my-4">
                                 <button type="submit" class="btn btn-secondary btn-secondary-login" id="btnEmployerSave"
                                         data-loading-text="<span class='spinner-border spinner-border-sm'></span> {{ __('messages.common.process') }}">
                                     {{ __('web.register_menu.create_account') }}
@@ -650,59 +590,47 @@
                                     @endif
                                 </div>
                             </div>
-                            </div>
                         </form>
 
-                        <div class="modal fade employer-register-industry-modal" id="registerAddIndustryModal"
+                        <div class="modal fade employer-register-add-industry-modal" id="registerAddIndustryModal"
                              tabindex="-1" aria-labelledby="registerAddIndustryModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered employer-register-industry-modal__dialog">
-                                <div class="modal-content employer-register-industry-modal__content">
-                                    <div class="modal-header employer-register-industry-modal__header">
-                                        <div class="employer-register-industry-modal__heading">
-                                            <span class="employer-register-industry-modal__icon">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <div class="employer-register-add-industry-modal-heading">
+                                            <span class="employer-register-add-industry-modal-icon">
                                                 <i class="fa-solid fa-plus"></i>
                                             </span>
                                             <div>
-                                                <h2 class="modal-title employer-register-industry-modal__title" id="registerAddIndustryModalLabel">{{ __('messages.employer_register.add_new_industry_title') }}</h2>
+                                                <h2 class="modal-title" id="registerAddIndustryModalLabel">{{ __('messages.employer_register.add_new_industry_title') }}</h2>
+                                                <p>{{ __('messages.employer_register.specify_industry') }}</p>
                                             </div>
                                         </div>
-                                        <button type="button" class="btn-close employer-register-industry-modal__close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <div class="modal-body employer-register-industry-modal__body">
-                                        <div class="alert alert-danger d-none employer-register-industry-modal__error" id="registerIndustryModalError"></div>
-                                        <div class="employer-register-industry-modal__field">
-                                            <label for="registerModalIndustryName" class="form-label employer-register-industry-modal__label">{{ __('messages.employer_register.your_industry_name') }}</label>
-                                            <input type="text" class="form-control employer-register-industry-modal__control" id="registerModalIndustryName"
+                                    <div class="modal-body">
+                                        <div class="alert alert-danger d-none" id="registerIndustryModalError"></div>
+                                        <div class="mb-4">
+                                            <label for="registerModalIndustryType" class="form-label">{{ __('messages.employer_register.industry_type') }}</label>
+                                            <select class="form-select" id="registerModalIndustryType">
+                                                @foreach ($industryTypes as $industryTypeId => $industryTypeName)
+                                                    <option value="{{ $industryTypeId }}">{{ $industryTypeName }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label for="registerModalIndustryName" class="form-label">{{ __('messages.employer_register.your_industry_name') }}</label>
+                                            <input type="text" class="form-control" id="registerModalIndustryName"
                                                    maxlength="150" placeholder="{{ __('messages.employer_register.type_industry_name') }}">
                                         </div>
                                     </div>
-                                    <div class="modal-footer employer-register-industry-modal__footer">
-                                        <button type="button" class="btn btn-light employer-register-industry-modal__cancel me-2" data-bs-dismiss="modal">{{ __('messages.common.cancel') }}</button>
-                                        <button type="button" class="btn btn-primary employer-register-industry-modal__submit" id="registerAddIndustryButton">{{ __('messages.employer_register.add') }}</button>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-success" id="registerAddIndustryButton">{{ __('messages.employer_register.add') }}</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    @if ($hasRegisterSideAds)
-                        <div class="col-xl-3 col-lg-3 d-none d-lg-block mb-4 text-end front-auth-side-ads front-auth-side-ads--right">
-                            @include('front_web.common.register_side_ad', ['ads' => $registerRightAds])
-                        </div>
-                        <div class="col-12 d-lg-none mt-4">
-                            <div class="row">
-                                @if ($registerLeftAds->isNotEmpty())
-                                    <div class="col-sm-6 mb-3">
-                                        @include('front_web.common.register_side_ad', ['ads' => $registerLeftAds])
-                                    </div>
-                                @endif
-                                @if ($registerRightAds->isNotEmpty())
-                                    <div class="col-sm-6 mb-3">
-                                        @include('front_web.common.register_side_ad', ['ads' => $registerRightAds])
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    @endif
                 </div>
             </div>
         </section>

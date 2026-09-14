@@ -37,13 +37,17 @@
             <div class="col-12 mb-5">
                 <div class="employer-account-field-heading required-heading">{{ __('messages.employer_account.number_of_employees') }}</div>
                 @php
+                    $employeeSizeOrder = ['1-25', '26-50', '51-100', '101-500', '501-1000', '1000+'];
                     $legacySize = $data['companySize'][$company->company_size_id] ?? null;
-                    $selectedEmployeeRange = in_array($company->employee_range, $data['companySize']->values()->all(), true)
-                        ? $company->employee_range
-                        : $legacySize;
+                    $selectedEmployeeRange = $company->employee_range ?? match ($legacySize) {
+                        '5-10', '11-20' => '1-25',
+                        '21-50' => '26-50',
+                        '51-100' => '51-100',
+                        default => null,
+                    };
                 @endphp
                 <div class="employer-company-size-options">
-                    @foreach ($data['companySize'] as $sizeLabel)
+                    @foreach ($employeeSizeOrder as $sizeLabel)
                         <label class="employer-choice-card">
                             {{ Form::radio('employee_range', $sizeLabel, $selectedEmployeeRange === $sizeLabel, ['required']) }}
                             <span>{{ $sizeLabel }}</span>
@@ -54,17 +58,14 @@
             <div class="col-12">
                 <div class="employer-account-field-heading required-heading">{{ __('messages.employer_account.company_address') }}</div>
             </div>
-            <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
+            <div class="col-xl-4 col-md-6 col-sm-12 mb-5">
                 {{ Form::select('country_id', $data['countries'], null, ['id' => 'countryId', 'class' => 'form-select', 'data-control' => 'select2', 'placeholder' => __('messages.company.select_country'), 'required']) }}
             </div>
-            <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
+            <div class="col-xl-4 col-md-6 col-sm-12 mb-5">
                 {{ Form::select('state_id', isset($states) && $states != null ? $states : [], null, ['id' => 'stateId', 'class' => 'form-select', 'data-control' => 'select2', 'placeholder' => __('messages.company.select_state'), 'required']) }}
             </div>
-            <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
+            <div class="col-xl-4 col-md-6 col-sm-12 mb-5">
                 {{ Form::select('city_id', isset($cities) && $cities != null ? $cities : [], null, ['id' => 'cityId', 'class' => 'form-select', 'data-control' => 'select2', 'placeholder' => __('messages.company.select_city'), 'required']) }}
-            </div>
-            <div class="col-xl-3 col-md-6 col-sm-12 mb-5">
-                {{ Form::select('thana_id', isset($thanas) && $thanas != null ? $thanas : [], old('thana_id', $company->user->thana_id ?? null), ['id' => 'thanaId', 'class' => 'form-select', 'data-control' => 'select2', 'placeholder' => __('messages.company.select_thana')]) }}
             </div>
             <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
                 {{ Form::textarea('location', old('location', $company->location ?: $company->company_summary), ['class' => 'form-control employer-company-summary', 'rows' => 3, 'maxlength' => 255, 'required', 'placeholder' => __('messages.employer_register.company_address_en_placeholder')]) }}
@@ -77,9 +78,15 @@
                     ->filter()
                     ->map(fn ($id) => (int) $id)
                     ->values();
+                $industryTypeOptions = ['all' => __('messages.employer_account.all')] + $data['industryTypes']->toArray();
             @endphp
             <div class="col-12 mb-5">
                 <div class="employer-industry-type-row">
+                    <div class="employer-industry-type-select">
+                        {{ Form::label('industry_filter', __('messages.employer_account.industry_type'), ['class' => 'form-label']) }}
+                        <span class="required"></span>
+                        {{ Form::select('industry_filter', $industryTypeOptions, 'all', ['class' => 'form-select', 'id' => 'employerIndustryType']) }}
+                    </div>
                     <button type="button" class="employer-add-industry-trigger" id="employerAddIndustryTrigger"
                             data-bs-toggle="modal" data-bs-target="#employerAddIndustryModal">
                         <i class="fa-solid fa-plus"></i>
@@ -98,7 +105,8 @@
                     <div class="employer-industry-options" id="employerIndustryOptions">
                         @foreach ($data['industryRecords'] as $industryOption)
                             <label class="employer-industry-option"
-                                   data-industry-name="{{ strtolower($industryOption->name) }}">
+                                   data-industry-name="{{ strtolower($industryOption->name) }}"
+                                   data-industry-type-id="{{ $industryOption->industry_type_id }}">
                                 <input type="checkbox" name="industry_ids[]" value="{{ $industryOption->id }}"
                                        {{ $selectedIndustryIds->contains((int) $industryOption->id) ? 'checked' : '' }}>
                                 <span>{{ $industryOption->name }}</span>
@@ -158,7 +166,7 @@
                     {{ __('messages.employer_account.contact_person_name') }} <span class="text-danger">*</span>
                 </label>
                 <input type="text" name="contact_person_name" id="employerContactPerson"
-                       class="form-control employer-contact-readonly" maxlength="180" required readonly
+                       class="form-control" maxlength="180" required
                        value="{{ old('contact_person_name', $company->contact_person_name ?: $user->full_name) }}"
                        placeholder="{{ __('messages.employer_register.contact_person_name_placeholder') }}">
             </div>
@@ -180,7 +188,7 @@
                 <label for="phoneNumber" class="form-label">
                     {{ __('messages.employer_account.contact_person_mobile') }} <span class="text-danger">*</span>
                 </label>
-                {{ Form::tel('phone', null, ['class' => 'form-control employer-contact-readonly', 'required', 'readonly', 'id' => 'phoneNumber', 'maxlength' => 11, 'inputmode' => 'numeric', 'pattern' => '[0-9]{1,11}', 'oninput' => "this.value = this.value.replace(/\\D/g, '').slice(0, 11)"]) }}
+                {{ Form::tel('phone', null, ['class' => 'form-control employer-contact-readonly', 'required', 'readonly', 'id' => 'phoneNumber', 'minlength' => 4, 'maxlength' => 15, 'inputmode' => 'numeric', 'pattern' => '[0-9]{4,15}', 'oninput' => "this.value = this.value.replace(/\\D/g, '')"]) }}
                 {{ Form::hidden('region_code', null, ['id' => 'prefix_code']) }}
                 <span id="valid-msg" class="d-none text-success d-block fw-400 fs-small mt-2">{{ __('messages.phone.valid_number') }}</span>
                 <span id="error-msg" class="d-none text-danger d-block fw-400 fs-small mt-2"></span>
@@ -209,7 +217,7 @@
             <div class="col-md-6 col-sm-12 employer-billing-mobile">
                 <label for="billingPhoneNumber" class="form-label">{{ __('messages.employer_account.billing_contact_number') }}<span class="text-danger">*</span></label>
                 <input type="tel" name="billing_phone" id="billingPhoneNumber" class="form-control" required
-                       maxlength="11" inputmode="numeric" pattern="[0-9]{1,11}"
+                       minlength="4" maxlength="15" inputmode="numeric" pattern="[0-9]{4,15}"
                        value="{{ old('billing_phone', $company->billing_phone ?: $user->phone) }}">
                 {{ Form::hidden('billing_region_code', $company->billing_region_code ?: $user->region_code ?: '880', ['id' => 'billingPrefixCode']) }}
                 <span id="billing-phone-error" class="d-none text-danger d-block fw-400 fs-small mt-2"></span>

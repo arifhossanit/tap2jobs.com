@@ -21,17 +21,18 @@ class WebRegisterRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'privacyPolicy' => 'required',
             'type' => 'required|in:1,2',
+            'password' => 'required|confirmed|min:6|max:20',
+            'privacyPolicy' => 'accepted',
         ];
 
         if ((int) $this->input('type') === 2) {
-            $rules = array_merge($rules, [
-                'username' => ['nullable', 'string', 'max:100', 'regex:/^[\p{L}\p{M}\p{N}._-]+$/u', 'unique:users,username'],
+            $rules += [
+                'username' => ['required', 'string', 'max:100', 'regex:/^[\p{L}\p{M}\p{N}._-]+$/u', 'unique:users,username'],
                 'company_name' => 'required|string|max:180',
                 'company_name_bn' => 'nullable|string|max:180',
                 'established_in' => 'required|integer|min:1800|max:'.date('Y'),
-                'employee_range' => 'required|exists:company_sizes,size',
+                'employee_range' => 'required|in:1-25,26-50,51-100,101-500,501-1000,1000+',
                 'country_id' => 'required|integer|exists:countries,id',
                 'state_id' => [
                     'required',
@@ -43,18 +44,6 @@ class WebRegisterRequest extends FormRequest
                     'integer',
                     Rule::exists('cities', 'id')->where(fn ($query) => $query->where('state_id', $this->input('state_id'))),
                 ],
-                'city_village_id' => [
-                    'nullable',
-                    'integer',
-                    Rule::exists('city_villages', 'id')->where(fn ($query) => $query->where('city_id', $this->input('city_id'))),
-                ],
-                'thana_id' => [
-                    'nullable',
-                    'integer',
-                    Rule::exists('thanas', 'id')->where(fn ($query) => $this->filled('city_village_id')
-                        ? $query->where('city_village_id', $this->input('city_village_id'))
-                        : $query->where('city_id', $this->input('city_id'))),
-                ],
                 'company_address' => 'required|string|max:255',
                 'company_address_bn' => 'nullable|string|max:1000',
                 'industry_ids' => 'required_without:custom_industries|array',
@@ -63,7 +52,7 @@ class WebRegisterRequest extends FormRequest
                     Rule::exists('industries', 'id')->where(fn ($query) => $query->whereNull('created_by')),
                 ],
                 'custom_industries' => 'required_without:industry_ids|array|max:10',
-                'custom_industries.*.industry_type_id' => 'nullable|integer|exists:industry_types,id',
+                'custom_industries.*.industry_type_id' => 'required|integer|exists:industry_types,id',
                 'custom_industries.*.name' => [
                     'required',
                     'string',
@@ -78,23 +67,18 @@ class WebRegisterRequest extends FormRequest
                 'contact_person_name' => 'required|string|max:180',
                 'contact_person_designation' => 'required|string|max:180',
                 'email' => 'required|email:filter|max:170|unique:users,email',
-                'phone' => ['required', 'string', 'regex:/^\d{1,11}$/'],
+                'phone' => ['required', 'string', 'regex:/^\d{4,15}$/'],
                 'region_code' => ['required', 'string', 'regex:/^\d{1,4}$/'],
-                'password' => 'required|same:password_confirmation|min:6',
                 'has_disability_facilities' => 'nullable|boolean',
                 'disability_inclusion_policy' => 'required_if:has_disability_facilities,1|nullable|boolean',
                 'disability_inclusion_support' => 'required_if:disability_inclusion_policy,0|nullable|boolean',
                 'disability_inclusion_training' => 'required_if:has_disability_facilities,1|nullable|boolean',
                 'disability_facilities' => 'nullable|array',
                 'disability_facilities.*' => 'string|in:accessible_documentation,accessible_washrooms,adapted_transport,assistive_software,flexible_shifts,work_from_home,ramps_lifts,reasonable_accommodation,warning_indicators,workstation_adaptations',
-            ]);
+            ];
         } else {
-            $rules = array_merge($rules, [
-                'first_name' => 'required|string|max:180',
-                'email' => 'required|email:filter|max:170|unique:users,email',
-                'phone' => ['required', 'string', 'regex:/^\d{1,11}$/', 'unique:users,phone'],
-                'password' => 'required|same:password_confirmation|min:6',
-            ]);
+            $rules['first_name'] = 'required|string|max:180';
+            $rules['email'] = 'required|email:filter|max:170|unique:users,email';
         }
 
         if (getSettingValue('enable_google_recaptcha')) {
@@ -107,10 +91,6 @@ class WebRegisterRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         if ((int) $this->input('type') !== 2) {
-            $this->merge([
-                'phone' => filled($this->input('phone')) ? preg_replace('/\D+/', '', (string) $this->input('phone')) : null,
-            ]);
-
             return;
         }
 
@@ -137,7 +117,6 @@ class WebRegisterRequest extends FormRequest
         $regionCode = preg_replace('/\D+/', '', (string) $this->input('region_code'));
 
         $this->merge([
-            'first_name' => $this->input('company_name'),
             'industry_ids' => $industryIds,
             'custom_industries' => $customIndustries,
             'has_disability_facilities' => $hasDisabilityFacilities,

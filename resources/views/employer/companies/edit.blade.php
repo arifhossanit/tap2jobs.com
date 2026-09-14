@@ -1,6 +1,7 @@
 @extends('employer.layouts.app')
 @section('title')
     {{ __('messages.company.edit_company') }}
+    {{ __('messages.company.edit_company') }}
 @endsection
 @push('css')
     {{--    <link href="{{ asset('assets/css/summernote.min.css') }}" rel="stylesheet" type="text/css"/> --}}
@@ -154,6 +155,14 @@
                             </div>
                             <div class="modal-body">
                                 <div class="alert alert-danger d-none" id="employerIndustryModalError"></div>
+                                <div class="mb-5">
+                                    <label for="employerModalIndustryType" class="form-label">{{ __('messages.employer_account.industry_type') }}</label>
+                                    <select class="form-select" id="employerModalIndustryType">
+                                        @foreach ($data['industryTypes'] as $industryTypeId => $industryTypeName)
+                                            <option value="{{ $industryTypeId }}">{{ $industryTypeName }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 <div>
                                     <label for="employerModalIndustryName" class="form-label">{{ __('messages.employer_account.your_industry_name') }}</label>
                                     <input type="text" class="form-control" id="employerModalIndustryName"
@@ -237,49 +246,9 @@
                 });
             });
 
-
         function setActiveAccountSection(sectionId) {
             document.querySelectorAll('.employer-account-section-link').forEach(function (link) {
                 link.classList.toggle('active', link.dataset.accountSection === sectionId);
-            });
-        }
-
-        const employerAccountSectionHashes = {
-            companyDetailsPanel: '#company-details',
-            contactDetailsPanel: '#contact-details',
-            billingAddressPanel: '#billing-address'
-        };
-
-        function syncEmployerAccountScrollOffset() {
-            const header = document.querySelector('.header, .navbar, .app-header');
-            const headerHeight = header ? Math.ceil(header.getBoundingClientRect().height) : 0;
-            const offset = Math.max(headerHeight + 18, 82);
-
-            document.documentElement.style.setProperty('--employer-account-scroll-offset', offset + 'px');
-
-            return offset;
-        }
-
-        function getEmployerAccountScrollOffset() {
-            const offset = window.getComputedStyle(document.documentElement)
-                .getPropertyValue('--employer-account-scroll-offset');
-
-            return parseInt(offset, 10) || syncEmployerAccountScrollOffset();
-        }
-
-        function updateEmployerAccountHash(hash) {
-            if (!hash) {
-                return;
-            }
-
-            const nextUrl = window.location.pathname + window.location.search + hash;
-            window.history.replaceState(null, '', nextUrl);
-        }
-
-        function scrollToEmployerAccountPanel(panel) {
-            window.scrollTo({
-                top: panel.getBoundingClientRect().top + window.pageYOffset - getEmployerAccountScrollOffset(),
-                behavior: 'smooth'
             });
         }
 
@@ -337,7 +306,6 @@
                 return;
             }
 
-
             const toggle = event.target.closest('.employer-account-nav-toggle');
 
             if (toggle) {
@@ -368,7 +336,6 @@
                 return;
             }
 
-
             if (!sectionLink) {
                 return;
             }
@@ -390,8 +357,8 @@
                 profileSubnav.classList.remove('is-collapsed');
             }
 
-            updateEmployerAccountHash(employerAccountSectionHashes[targetPanel.id]);
-            scrollToEmployerAccountPanel(targetPanel);
+            const targetPosition = targetPanel.getBoundingClientRect().top + window.pageYOffset - 82;
+            window.scrollTo({ top: targetPosition, behavior: 'smooth' });
         });
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -406,12 +373,10 @@
                     return;
                 }
 
-
                 let currentPanel = accountPanels[0];
-                const activeThreshold = getEmployerAccountScrollOffset() + 8;
 
                 accountPanels.forEach(function (panel) {
-                    if (panel.getBoundingClientRect().top <= activeThreshold) {
+                    if (panel.getBoundingClientRect().top <= 140) {
                         currentPanel = panel;
                     }
                 });
@@ -420,8 +385,6 @@
             };
 
             window.addEventListener('scroll', updateActiveSection, { passive: true });
-            window.addEventListener('resize', syncEmployerAccountScrollOffset, { passive: true });
-            syncEmployerAccountScrollOffset();
             updateActiveSection();
 
             const applyAccountHash = function () {
@@ -440,29 +403,35 @@
             window.addEventListener('hashchange', applyAccountHash);
             applyAccountHash();
 
-
             const primaryIndustryInput = document.getElementById('primaryIndustryId');
+            const industryType = document.getElementById('employerIndustryType');
             const industryOptions = document.getElementById('employerIndustryOptions');
             const industrySearch = document.getElementById('employerIndustrySearch');
             const industryMore = document.getElementById('employerIndustryMore');
             const industryTags = document.getElementById('employerIndustryTags');
             const industryEmpty = document.getElementById('employerIndustryEmpty');
             const addIndustryTrigger = document.getElementById('employerAddIndustryTrigger');
+            const modalIndustryType = document.getElementById('employerModalIndustryType');
             const modalIndustryName = document.getElementById('employerModalIndustryName');
             const modalIndustryError = document.getElementById('employerIndustryModalError');
             const addIndustryButton = document.getElementById('employerAddIndustryButton');
 
             const refreshIndustryOptions = function (resetExpansion) {
-                if (!industryOptions) { return; }
+                if (!industryOptions || !industryType) {
+                    return;
+                }
 
                 if (resetExpansion) {
                     industryOptions.classList.remove('is-expanded');
                 }
+
+                const selectedType = industryType.value;
                 const query = industrySearch ? industrySearch.value.trim().toLowerCase() : '';
                 let matchedCount = 0;
 
                 industryOptions.querySelectorAll('.employer-industry-option').forEach(function (option) {
-                    const isMatch = (!query || option.dataset.industryName.includes(query));
+                    const isMatch = (selectedType === 'all' || option.dataset.industryTypeId === selectedType) &&
+                        (!query || option.dataset.industryName.includes(query));
 
                     option.classList.toggle('is-filtered-out', !isMatch);
                     option.classList.remove('is-extra');
@@ -521,6 +490,15 @@
                 });
             }
 
+            if (industryType) {
+                industryType.addEventListener('change', function () {
+                    if (industrySearch) {
+                        industrySearch.value = '';
+                    }
+                    refreshIndustryOptions(true);
+                });
+            }
+
             if (industryMore && industryOptions) {
                 industryMore.addEventListener('click', function () {
                     const isExpanded = industryOptions.classList.toggle('is-expanded');
@@ -542,8 +520,14 @@
                     }
                 });
             }
-            if (addIndustryTrigger && modalIndustryName && modalIndustryError) {
+
+            if (addIndustryTrigger && modalIndustryType) {
                 addIndustryTrigger.addEventListener('click', function () {
+                    const selectedType = industryType ? industryType.value : '';
+                    const selectedTypeExists = Array.from(modalIndustryType.options).some(function (option) {
+                        return option.value === selectedType;
+                    });
+                    modalIndustryType.value = selectedTypeExists ? selectedType : modalIndustryType.options[0].value;
                     modalIndustryName.value = '';
                     modalIndustryError.classList.add('d-none');
                     modalIndustryError.textContent = '';
@@ -582,6 +566,7 @@
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                         },
                         body: JSON.stringify({
+                            industry_type_id: modalIndustryType.value,
                             name: industryName
                         })
                     });
@@ -598,6 +583,7 @@
                     const option = document.createElement('label');
                     option.className = 'employer-industry-option';
                     option.dataset.industryName = industry.name.toLowerCase();
+                    option.dataset.industryTypeId = String(industry.industry_type_id);
 
                     const checkbox = document.createElement('input');
                     checkbox.type = 'checkbox';
@@ -609,6 +595,8 @@
                     labelText.textContent = industry.name;
                     option.append(checkbox, labelText);
                     industryOptions.append(option);
+
+                    industryType.value = String(industry.industry_type_id);
                     industrySearch.value = '';
                     updateIndustryPicker();
                     refreshIndustryOptions(true);
@@ -643,7 +631,6 @@
 
             const editContactButton = document.getElementById('employerEditContactPersonButton');
             const editableContactFields = [
-                document.getElementById('employerContactPerson'),
                 document.getElementById('employerContactDesignation'),
                 document.getElementById('email'),
                 document.getElementById('phoneNumber')
@@ -670,7 +657,7 @@
             const contactPhoneInput = document.getElementById('phoneNumber');
             const normalizePhoneDigits = function (input) {
                 if (input) {
-                    input.value = input.value.replace(/\D/g, '').slice(0, 11);
+                    input.value = input.value.replace(/\D/g, '');
                 }
             };
 

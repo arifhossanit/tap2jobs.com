@@ -1,22 +1,18 @@
-@php
-    $notifications = getNotification(\App\Models\Notification::EMPLOYER);
-    $notificationCount = $notifications->count();
-    $loggedInEmployer = getLoggedInUser();
-    $employerHeaderName = $loggedInEmployer->company?->contact_person_name ?: $loggedInEmployer->full_name;
-@endphp
-<header class='employer-dashboard-header container-fluid container-xxl d-flex align-items-stretch justify-content-between'>
+@php($notifications = getNotification(\App\Models\Notification::EMPLOYER))
+@php($notificationCount = $notifications->count())
+<header class='container-fluid container-xxl d-flex align-items-stretch justify-content-between'>
     <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
         <a href="{{ route('front.home') }}"  target="_blank"
-           class="text-decoration-none horizontal-sidebar-logo d-flex align-items-center">
-            <div class="image {{ checkLanguageSession() == 'ar' ? 'ms-3' : 'me-3' }}">
+           class="text-decoration-none horizontal-sidebar-logo d-flex align-items-center {{ checkLanguageSession() == 'ar' ? 'ps-xl-8' : 'pe-xl-8' }}">
+            <div class="image image-mini {{ checkLanguageSession() == 'ar' ? 'ms-3' : 'me-3' }}">
                 <img src="{{getLogoUrl()}}"
-                     class="img-fluid new-logo-image" alt="profile image" style="width: auto; max-width: 100%; max-height: 45px; object-fit: contain;">
+                     class="img-fluid" alt="profile image">
             </div>
-            <!-- <span class="text-gray-900 fs-4 d-none d-sm-block"> {{ getAppName() }}</span> -->
+            <span class="text-gray-900 fs-4 d-none d-sm-block"> {{ getAppName() }}</span>
         </a>
     </div>
     <div class="d-flex align-items-stretch justify-content-xl-between justify-content-end flex-grow-1">
-        <nav class="navbar navbar-expand-xl navbar-light horizontal-sidebar d-xl-flex d-block align-items-stretch py-3 py-xl-0 flex-grow-1"
+        <nav class="navbar navbar-expand-xl navbar-light horizontal-sidebar d-xl-flex d-block align-items-stretch py-3 py-xl-0"
              id="nav-header">
             @include('employer.layouts.sidebar')
         </nav>
@@ -24,10 +20,9 @@
             <li class="px-xxl-3 px-2 d-flex align-items-stretch">
                 <div class="dropdown d-flex align-items-stretch">
                     <button type="button"
-                            class="btn dropdown-toggle employer-language-toggle px-0 text-gray-600 d-flex align-items-center"
+                            class="btn dropdown-toggle px-0 text-gray-600 d-flex align-items-center"
                             id="employerLanguageDropdown"
                             data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-solid fa-globe {{ checkLanguageSession() == 'ar' ? 'ms-1' : 'me-1' }}"></i>
                         {{ getCurrentLanguageName() }}
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end border-0 shadow p-2"
@@ -51,11 +46,11 @@
                     </ul>
                 </div>
             </li>
-            {{-- <li class="px-xxl-3 px-2 d-flex align-items-stretch">
+            <li class="px-xxl-3 px-2 d-flex align-items-stretch">
                 <a href="{{ route('theme.mode') }}" class="d-flex align-items-center" >
                     <i class="fas user-check-icon {{ getLoggedInUser()->theme_mode ? 'fa-sun' : 'fa-moon' }} fs-2"></i>
                 </a>
-            </li> --}}
+            </li>
             <li class="px-xxl-3 px-2 d-flex align-items-stretch">
                 <div class="dropdown custom-dropdown d-flex align-items-stretch">
                     <button class="btn dropdown-toggle hide-arrow p-0 d-flex align-items-center"
@@ -63,24 +58,25 @@
                             data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="position-relative">
                             <i class="fa-solid fa-bell text-primary fs-2"></i>
-                            <span class="position-absolute notification-count top-0 start-100 translate-middle badge badge-circle bg-danger {{ $notificationCount == 0 ? 'd-none' : '' }}" id="employerNotificationCount">
-                                {{ $notificationCount }}
-                                <span class="visually-hidden">{{ __('messages.unread_messages') }}</span>
-                            </span>
+                            @if($notificationCount > 0)
+                                <span class="position-absolute notification-count top-0 start-100 translate-middle badge badge-circle bg-danger" id="counter">
+                                    {{ $notificationCount }}
+                                    <span class="visually-hidden">{{ __('messages.unread_messages') }}</span>
+                                </span>
+                            @endif
                         </div>
                     </button>
-                    <div class="dropdown-menu dropdown-menu-end py-0" aria-labelledby="employerNotificationDropdown" style="min-width: 320px;">
+                    <div class="dropdown-menu py-0" aria-labelledby="employerNotificationDropdown">
                         <div class="{{ checkLanguageSession() == 'ar' ? 'text-end' : 'text-start' }} border-bottom py-4 px-7">
                             <h3 class="text-gray-900 mb-0">{{__('messages.notification.notifications')}}</h3>
                         </div>
-                        <div class="employer-notification-list" style="max-height: 390px; overflow-y: auto; overflow-x: hidden;">
-                            @if($notifications->isNotEmpty())
+                        <div class="px-7 mt-5 inner-scroll height-270">
+                            @if($notificationCount > 0)
                                 @foreach($notifications as $notification)
-                                    <div class="employer-notification-item {{ $notification->read_at ? 'employer-notification-read' : 'employer-notification-unread' }} d-flex position-relative border-bottom p-3 rounded employerReadNotification cursor-pointer"
-                                         data-id="{{ $notification->id }}" data-url="{{ getNotificationUrl($notification) }}" data-read="{{ $notification->read_at ? '1' : '0' }}"
-                                         style="background: {{ $notification->read_at ? 'transparent' : 'rgba(101, 113, 255, 0.08)' }}; opacity: {{ $notification->read_at ? '0.7' : '1' }};">
-                                        <span class="{{ checkLanguageSession() == 'ar' ? 'ms-5' : 'me-5' }} text-primary fs-2 icon-label">
-                                            <i class="{{ getNotificationIcon($notification->type) }}"></i></span>
+                                    <div class="d-flex position-relative mb-5 readNotification cursor-pointer"
+                                         data-id="{{ $notification->id }}" id="readNotification">
+                                                            <span class="{{ checkLanguageSession() == 'ar' ? 'ms-5' : 'me-5' }} text-primary fs-2 icon-label">
+                                                                <i class="{{ getNotificationIcon($notification->type) }}"></i></span>
                                         <div>
                                             <h5 class="text-gray-900 fs-6 mb-2">{{$notification->title}}</h5>
                                             <h6 class="text-gray-600 fs-small fw-light mb-0">
@@ -88,13 +84,22 @@
                                         </div>
                                     </div>
                                 @endforeach
-                            @else
-                                <div class="employer-notification-empty d-flex flex-column align-items-center justify-content-center text-center py-8" data-height="400">
-                                    <i class="fa-regular fa-bell-slash text-gray-500 fs-1 mb-3"></i>
-                                    <p class="fs-6 fw-semibold text-gray-700 mb-0">No notification found</p>
+                                @else
+                                    <div class="empty-state fs-6 text-gray-800 fw-bold text-center mt-5" data-height="400">
+                                        <p>{{ __('messages.notification.empty_notifications') }}</p>
+                                    </div>
+                                @endif
+                                <div class="empty-state fs-6 text-gray-800 fw-bold text-center mt-5 d-none"
+                                     data-height="400">
+                                    <p>{{ __('messages.notification.empty_notifications') }}</p>
                                 </div>
-                            @endif
                         </div>
+                        @if($notificationCount > 0)
+                            <div class="text-center border-top p-4">
+                                <h5 class="text-primary mb-0 fs-5 cursor-pointer"
+                                    id="readAllNotification">{{ __('messages.notification.mark_all_as_read') }}</h5>
+                            </div>
+                        @endif
                     </div>
 
                 </div>
@@ -106,22 +111,22 @@
                             id="employerUserDropdown" data-bs-auto-close="outside"
                             data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="image image-circle image-mini d-flex align-items-center {{ checkLanguageSession() == 'ar' ? 'ms-sm-3' : 'me-sm-3' }}">
-                            <img src="{{ $loggedInEmployer->avatar }}"
-                                 class="img-fluid" alt="{{ $employerHeaderName }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;">
+                            <img src="{{ getLoggedInUser()->avatar }}"
+                                 class="img-fluid" alt="profile image">
                         </div>
+                        {{\Illuminate\Support\Facades\Auth::user()->full_name}}
+                        {{--                        <i class="fa-solid fa-angle-down ms-2"></i>--}}
                     </button>
-                    <div class="dropdown-menu border p-4 pb-4 employer-user-dropdown-menu" aria-labelledby="employerUserDropdown"
-                         data-bs-auto-close="outside" style="width: 250px; max-width: 250px;">
-                        <div class="d-flex align-items-center border-bottom pb-4 mb-3 text-start">
-                            <div class="image image-circle image-tiny me-3 flex-shrink-0 mb-0" style="width: 44px; height: 44px;">
-                                <img src="{{ $loggedInEmployer->avatar }}" class="img-fluid" alt="{{ $employerHeaderName }}" style="width: 44px; height: 44px; object-fit: cover; border-radius: 50%;">
+                    <div class="dropdown-menu p-4 pb-4" aria-labelledby="employerUserDropdown"
+                         data-bs-auto-close="outside">
+                        <div class="text-center border-bottom pb-5 ">
+                            <div class="image image-circle image-tiny mb-5">
+                                <img src="{{ getLoggedInUser()->avatar }}" class="img-fluid" alt="profile image">
                             </div>
-                            <div class="overflow-hidden ms-1 flex-grow-1" style="min-width: 0;">
-                                <h3 class="text-gray-900 fs-6 fw-bold mb-0 text-truncate">{{ $employerHeaderName }}</h3>
-                                <h4 class="mb-0 fw-400 fs-7 text-muted text-truncate">{{ $loggedInEmployer->email }}</h4>
-                            </div>
+                            <h3 class="text-gray-900">{{\Illuminate\Support\Facades\Auth::user()->full_name}}</h3>
+                            <h4 class="mb-0 fw-400 fs-6">{{\Illuminate\Support\Facades\Auth::user()->email}}</h4>
                         </div>
-                        <ul class="pe-0">
+                        <ul class="pt-4 pe-0">
                             <li>
                                 <a href="{{ route('company.edit.form', \Illuminate\Support\Facades\Auth::user()->owner_id) }}#company-details" class="dropdown-item text-gray-900 {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}">
                                      <span class="dropdown-icon {{ checkLanguageSession() == 'ar' ? 'ms-4' : 'me-4' }} text-gray-600">
@@ -151,7 +156,6 @@
                     </div>
                 </div>
             </li>
-
 
             <li class="d-flex align-items-center">
                 <button type="button" class="btn px-0 horizontal-menubar d-block d-xl-none text-gray-600">
