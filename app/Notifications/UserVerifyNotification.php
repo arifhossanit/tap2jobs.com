@@ -61,7 +61,7 @@ class UserVerifyNotification extends VerifyEmail implements ShouldQueue
         $data['logo_data_uri'] = $this->pathToDataUri($data['logo_path']);
 
         return (new MailMessage)
-            ->subject($templateBody->subject)
+            ->subject(str_replace($keyVariable, $value, $templateBody->subject))
             ->view('emails.verify_email', $data);
     }
 

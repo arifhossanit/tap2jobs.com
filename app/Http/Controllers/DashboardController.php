@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AdminDashboardChartRequest;
 use App\Models\Job;
 use App\Repositories\DashboardRepository;
 use Illuminate\Contracts\Foundation\Application;
@@ -30,9 +31,9 @@ class DashboardController extends AppBaseController
         return view('dashboard.index');
     }
 
-    public function dashboardChartData(Request $request): JsonResponse
+    public function dashboardChartData(AdminDashboardChartRequest $request): JsonResponse
     {
-        $input = $request->all();
+        $input = $request->validated();
         $data['weeklyChartData'] = $this->dashboardRepository->getWeeklyChartData($input);
         $data['postStatisticsChartData'] = $this->dashboardRepository->getPostStatisticsChartData($input);
 

@@ -107,6 +107,11 @@ class SettingRepository extends BaseRepository
             $envSetting->update(['value' => $value]);
         }
 
+        // Environment credentials belong only in env_settings, never in the public settings store.
+        if ($sectionName === 'env_setting') {
+            return true;
+        }
+
         // $env = new DotenvEditor();
         $inputArr = Arr::except($input, ['_token', 'sectionName']);
 

@@ -18,10 +18,12 @@
                     <a class="nav-link text-active-primary me-6 {{ (isset($sectionName) && $sectionName == 'about_us') ? 'text-primary' : ''}}"
                        href="{{ route('settings.index', ['section' => 'about_us']) }}"> {{ __('messages.about_us') }}</a>
                 </li>
+                {{--
                 <li class="nav-item">
                     <a class="nav-link text-active-primary me-6 {{ (isset($sectionName) && $sectionName == 'env_setting') ? 'text-primary' : ''}}"
                        href="{{ route('settings.index', ['section' => 'env_setting']) }}"> {{ __('messages.env') }}</a>
                 </li>
+                --}}
             </ul>
         </div>
     </div>

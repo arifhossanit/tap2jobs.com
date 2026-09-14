@@ -28,7 +28,7 @@ class NewsLetterMail extends Mailable
      */
     public function build(): self
     {
-        return $this->subject($this->data['input']['title'])->markdown('emails.news_letter.news_letter')->with('body',
+        return $this->subject($this->data['subject'] ?? $this->data['input']['title'])->markdown('emails.news_letter.news_letter')->with('body',
             $this->data['body']);
     }
 }

@@ -43,13 +43,19 @@ class PasswordReset extends Notification
     {
         /** @var EmailTemplate $templateBody */
         $templateBody = EmailTemplate::whereTemplateName('Password Reset Email')->first();
-        $keyVariable = ['{{reset_url}}', '{{from_name}}'];
-        $value = [url('password/reset', $this->token), config('app.name')];
+        if (! $templateBody) {
+            return (new MailMessage)
+                ->subject('Reset Password Notification')
+                ->line('You are receiving this email because we received a password reset request for your account.')
+                ->action('Reset Password', url('password/reset', $this->token));
+        }
+        $keyVariable = ['{{reset_url}}', '{{from_name}}', '{{reset_expire_minutes}}'];
+        $value = [url('password/reset', $this->token), config('app.name'), config('auth.passwords.users.expire', 60)];
         $body = str_replace($keyVariable, $value, $templateBody->body);
         $data['body'] = $body;
 
         return (new MailMessage)
-            ->subject($templateBody->subject)
+            ->subject(str_replace($keyVariable, $value, $templateBody->subject))
             ->view('emails.password_reset_email', $data);
     }
 }

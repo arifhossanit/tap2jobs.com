@@ -70,6 +70,7 @@ class JobNotificationRepository
                 $body = str_replace($keyVariable, $value, $templateBody->body);
                 $data['footer'] = \Str::after($body, '{{jobs}}');
                 $data['body'] = \Str::before($body, '{{jobs}}');
+                $data['subject'] = str_replace($keyVariable, $value, $templateBody->subject);
                 $data['jobs'] = $jobs;
 
                 Mail::to($candidate->user->email)->later(now()->addSeconds($delay), new JobNotification($data));

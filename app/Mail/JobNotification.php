@@ -33,7 +33,7 @@ class JobNotification extends Mailable implements ShouldQueue
         $this->data['company_logo_data_uris'] = array_map([$this, 'pathToDataUri'], $this->data['company_logo_paths']);
 
         return $this->from(config('mail.from.address'))
-            ->subject('New Job Notification')->markdown('emails.jobs.notification');
+            ->subject($this->data['subject'] ?? 'New Job Notification')->markdown('emails.jobs.notification');
     }
 
     private function resolveCompanyLogoPaths(): array

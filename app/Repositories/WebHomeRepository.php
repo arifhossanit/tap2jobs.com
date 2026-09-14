@@ -229,6 +229,7 @@ class WebHomeRepository
         $body = str_replace($keyVariable, $value, $templateBody->body ?? '');
         $data['inquiry'] = $inquiry;
         $data['body'] = $body;
+        $data['subject'] = $templateBody ? str_replace($keyVariable, $value, $templateBody->subject) : $inquiry->subject;
         $fromAddress = config('mail.from.address');
 
         try {
@@ -238,7 +239,7 @@ class WebHomeRepository
                     'data' => $data,
                 ],
                 callback: function (Message $message) use ($input, $data, $fromAddress) {
-                    $message->to($input['email'])->from($fromAddress)->subject($data['inquiry']->subject);
+                    $message->to($input['email'])->from($fromAddress)->subject($data['subject']);
                 }
             );
         } catch (\Throwable $exception) {

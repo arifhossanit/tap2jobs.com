@@ -8,6 +8,7 @@ use App\Models\FavouriteCompany;
 use App\Models\Job;
 use App\Models\JobApplication;
 use App\Models\Post;
+use App\Models\SalaryCurrency;
 use App\Models\Subscription;
 use App\Models\Transaction;
 use App\Models\User;
@@ -36,43 +37,71 @@ class DashboardRepository
         $data['totalCandidates'] = User::whereOwnerType(Candidate::class)->whereIsActive(User::ACTIVE)->count();
         $data['totalEmployers'] = User::whereOwnerType(Company::class)->whereIsActive(User::ACTIVE)->count();
         $data['totalActiveJobs'] = Job::whereDate('job_expiry_date', '>=', Carbon::now())->whereStatus(Job::STATUS_OPEN)->where('is_suspended', Job::NOT_SUSPENDED)->count();
-        $data['totalVerifiedUsers'] = User::whereNotNull('is_verified')->count();
-        $data['todayJobs'] = Job::whereDate('created_at',
-            Carbon::today())->count();
+        $data['totalVerifiedUsers'] = User::where('is_verified', true)->count();
+        $data['todayJobs'] = Job::whereDate('created_at', Carbon::today())->count();
         $data['featuredJobs'] = Job::has('activeFeatured')->where('job_expiry_date', '>=', Carbon::now())->count();
         $data['featuredEmployers'] = Company::has('activeFeatured')->count();
-        $data['featuredJobsIncomes'] = Transaction::whereOwnerType(Job::class)->sum('amount');
-        $data['featuredCompanysIncomes'] = Transaction::whereOwnerType(Company::class)->sum('amount');
-        $data['subscriptionIncomes'] = Transaction::whereOwnerType(Subscription::class)->sum('amount');
+        $data['featuredJobsIncomes'] = $this->getApprovedIncomeBreakdown(Job::class);
+        $data['featuredCompanysIncomes'] = $this->getApprovedIncomeBreakdown(Company::class);
+        $data['subscriptionIncomes'] = $this->getApprovedIncomeBreakdown(Subscription::class);
 
         return $data;
     }
 
-    public function getWeeklyChartData($input): array
+    private function getApprovedIncomeBreakdown(string $ownerType): string
+    {
+        $totals = Transaction::query()
+            ->leftJoin('salary_currencies', 'salary_currencies.id', '=', 'transactions.plan_currency_id')
+            ->where('transactions.owner_type', $ownerType)
+            ->where('transactions.is_approved', Transaction::APPROVED)
+            ->selectRaw('salary_currencies.currency_code, SUM(transactions.amount) as total')
+            ->groupBy('transactions.plan_currency_id', 'salary_currencies.currency_code')
+            ->get();
+
+        if ($totals->isEmpty()) {
+            $defaultCurrency = SalaryCurrency::where('is_default', true)->value('currency_code') ?? 'USD';
+
+            return numberFormatShort(0).' '.$defaultCurrency;
+        }
+
+        return $totals->map(function ($income): string {
+            return numberFormatShort((float) $income->total).' '.($income->currency_code ?? 'N/A');
+        })->implode(' / ');
+    }
+    public function getWeeklyChartData(array $input): array
     {
         try {
-            $startDate = isset($input['start_date']) ? Carbon::parse($input['start_date']) : '';
-            $endDate = isset($input['end_date']) ? Carbon::parse($input['end_date']) : '';
-            $data = [];
-            $employer = Company::whereHas('user', function (Builder $query) {
-                $query->where('is_active', 1);
-            })->addSelect([\DB::raw('DAY(created_at) as day,created_at')])
-                ->addSelect([\DB::raw('Month(created_at) as month,created_at')])
-                ->addSelect([\DB::raw('YEAR(created_at) as year,created_at')])
-                ->orderBy('created_at')
-                ->get();
-            $candidate = Candidate::whereHas('user', function (Builder $query) {
-                $query->where('is_active', 1);
-            })->addSelect([\DB::raw('DAY(created_at) as day,created_at')])
-                ->addSelect([\DB::raw('Month(created_at) as month,created_at')])
-                ->addSelect([\DB::raw('YEAR(created_at) as year,created_at')])
-                ->orderBy('created_at')
-                ->get();
-            $period = CarbonPeriod::create($startDate, $endDate);
+            $startDate = Carbon::parse($input['start_date'])->startOfDay();
+            $endDate = Carbon::parse($input['end_date'])->endOfDay();
 
-            foreach ($period as $date) {
-                $data['totalEmployerCount'][] = $employer->where('day', $date->format('d'))->where('month', $date->format('m'))->count();
-                $data['totalCandidateCount'][] = $candidate->where('day', $date->format('d'))->where('month', $date->format('m'))->count();
+            $employers = Company::query()
+                ->whereHas('user', function (Builder $query) {
+                    $query->where('is_active', User::ACTIVE);
+                })
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
+                ->groupBy('date')
+                ->pluck('total', 'date');
+
+            $candidates = Candidate::query()
+                ->whereHas('user', function (Builder $query) {
+                    $query->where('is_active', User::ACTIVE);
+                })
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
+                ->groupBy('date')
+                ->pluck('total', 'date');
+
+            $data = [
+                'totalEmployerCount' => [],
+                'totalCandidateCount' => [],
+                'weeklyLabels' => [],
+            ];
+
+            foreach (CarbonPeriod::create($startDate->copy()->startOfDay(), $endDate->copy()->startOfDay()) as $date) {
+                $dateKey = $date->format('Y-m-d');
+                $data['totalEmployerCount'][] = (int) ($employers[$dateKey] ?? 0);
+                $data['totalCandidateCount'][] = (int) ($candidates[$dateKey] ?? 0);
                 $data['weeklyLabels'][] = $date->format('d-m-y');
             }
 
@@ -81,23 +110,26 @@ class DashboardRepository
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
     }
-
-    public function getPostStatisticsChartData($input): array
+    public function getPostStatisticsChartData(array $input): array
     {
         try {
-            $startDate = isset($input['start_date']) ? Carbon::parse($input['start_date']) : '';
-            $endDate = isset($input['end_date']) ? Carbon::parse($input['end_date']) : '';
-            $data = [];
-            $posts = Post::addSelect([\DB::raw('DAY(created_at) as day,created_at')])
-                ->addSelect([\DB::raw('Month(created_at) as month,created_at')])
-                ->addSelect([\DB::raw('YEAR(created_at) as year,created_at')])
-                ->orderBy('created_at')
-                ->get();
+            $startDate = Carbon::parse($input['start_date'])->startOfDay();
+            $endDate = Carbon::parse($input['end_date'])->endOfDay();
 
-            $period = CarbonPeriod::create($startDate, $endDate);
+            $posts = Post::query()
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
+                ->groupBy('date')
+                ->pluck('total', 'date');
 
-            foreach ($period as $date) {
-                $data['totalPostCount'][] = $posts->where('day', $date->format('d'))->where('month', $date->format('m'))->where('year', $date->format('Y'))->count();
+            $data = [
+                'totalPostCount' => [],
+                'weeklyPostLabels' => [],
+            ];
+
+            foreach (CarbonPeriod::create($startDate->copy()->startOfDay(), $endDate->copy()->startOfDay()) as $date) {
+                $dateKey = $date->format('Y-m-d');
+                $data['totalPostCount'][] = (int) ($posts[$dateKey] ?? 0);
                 $data['weeklyPostLabels'][] = $date->format('d-m-y');
             }
 
@@ -106,13 +138,12 @@ class DashboardRepository
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
     }
-
     /**
      * @return mixed
      */
     public function getRegisteredCandidatesData()
     {
-        return Candidate::whereHas('user', function ($q) {
+        return Candidate::with('user')->whereHas('user', function ($q) {
             $q->where('is_active', '=', 1);
         })->orderByDesc('created_at')->limit(5)->get();
     }
@@ -122,7 +153,7 @@ class DashboardRepository
      */
     public function getRegisteredEmployersData()
     {
-        return Company::with('activeFeatured')->whereHas('user', function ($q) {
+        return Company::with(['user', 'activeFeatured'])->whereHas('user', function ($q) {
             $q->where('is_active', '=', 1);
         })->orderByDesc('created_at')->limit(5)->get();
     }
@@ -132,7 +163,7 @@ class DashboardRepository
      */
     public function getRecentJobsData()
     {
-        return Job::with(['company', 'jobCategory', 'jobCategories', 'jobType', 'jobShift', 'activeFeatured'])->orderBy('created_at',
+        return Job::with(['company.user', 'jobCategory', 'jobType', 'jobShift', 'activeFeatured'])->orderBy('created_at',
             'desc')->limit(5)->get();
     }
 

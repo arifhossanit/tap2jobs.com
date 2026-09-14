@@ -28,6 +28,6 @@ class EmailToCandidate extends Mailable
     public function build(): self
     {
         return $this->from(config('mail.from.address'))
-            ->subject('New Job Alert')->markdown('emails.jobs.email_candidate');
+            ->subject($this->data['subject'] ?? 'New Job Alert')->markdown('emails.jobs.email_candidate');
     }
 }

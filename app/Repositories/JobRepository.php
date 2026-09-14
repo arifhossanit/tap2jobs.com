@@ -507,11 +507,15 @@ class JobRepository extends BaseRepository
             /** @var EmailJob $emailJob */
             $emailJob = EmailJob::create($input);
             /** @var EmailTemplate $templateBody */
-            $templateBody = EmailTemplate::whereTemplateName('Email Job To Friend')->first()['body'];
+            $templateBody = EmailTemplate::whereTemplateName('Email Job To Friend')->first();
+            if (! $templateBody) {
+                throw new UnprocessableEntityHttpException(__('messages.common.something_went_wrong'));
+            }
             $keyVariable = ['{{friend_name}}', '{{job_url}}', '{{from_name}}'];
             $value = [$emailJob->friend_name, $emailJob->job_url, config('app.name')];
-            $body = str_replace($keyVariable, $value, $templateBody);
+            $body = str_replace($keyVariable, $value, $templateBody->body);
             $data['body'] = $body;
+            $data['subject'] = str_replace($keyVariable, $value, $templateBody->subject);
             Mail::to($input['friend_email'])->queue(new EmailJobToFriend($data));
 
             DB::commit();

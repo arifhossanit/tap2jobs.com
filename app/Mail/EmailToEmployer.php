@@ -27,6 +27,6 @@ class EmailToEmployer extends Mailable implements ShouldQueue
     public function build(): self
     {
         return $this->from(config('mail.from.address'))
-            ->subject('Job Applied by Candidate')->markdown('emails.jobs.email_employer');
+            ->subject($this->data['subject'] ?? 'Job Applied by Candidate')->markdown('emails.jobs.email_employer');
     }
 }

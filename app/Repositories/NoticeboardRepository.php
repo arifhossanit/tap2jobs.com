@@ -46,6 +46,10 @@ class NoticeboardRepository extends BaseRepository
         $newsLetterEmails = NewsLetter::pluck('email')->toArray();
 
         $templateBody = EmailTemplate::whereTemplateName('News Letter')->first();
+        if (! $templateBody) {
+            throw new UnprocessableEntityHttpException(__('messages.common.something_went_wrong'));
+        }
+
         foreach ($newsLetterEmails as $key => $newsLetterEmail) {
             try {
                 $keyVariable = ['{{description}}', '{{from_name}}'];
@@ -53,6 +57,7 @@ class NoticeboardRepository extends BaseRepository
                 $body = str_replace($keyVariable, $value, $templateBody->body);
                 $data['input'] = $input;
                 $data['body'] = $body;
+                $data['subject'] = str_replace($keyVariable, $value, $templateBody->subject ?: $input['title']);
                 Mail::to($newsLetterEmail)->send(new NewsLetterMail($data));
             } catch (Exception $e) {
                 throw new UnprocessableEntityHttpException($e->getMessage());

@@ -26,7 +26,7 @@ class EmailTemplateSeeder extends Seeder
                             <strong style="display: block; margin-top: 15px;" class="text-blue-color">Regards, <br/>
                                 {{from_name}}
                             </strong>',
-                'variables' => '{{candidate_name}}, {{app_url}}, {{from_name}}',
+                'variables' => '{{candidate_name}}, {{app_url}}, {{from_name}}, {{date}}, {{jobs}}',
             ],
             [
                 'template_name' => 'Contact Us',
@@ -37,7 +37,6 @@ class EmailTemplateSeeder extends Seeder
                             <br/><br>
                             Thanks for contacting us.
                             <br/><br>
-                            Quaerat facere dicta<br/><br>
                             Apart from the email, you can also contact me on my cell : {{phone_no}}<br><br>
                             <strong style="display: block; margin-top: 15px;" class="text-blue-color">Regards, <br/>
                                 {{from_name}}
@@ -46,7 +45,7 @@ class EmailTemplateSeeder extends Seeder
             ],
             [
                 'template_name' => 'News Letter',
-                'subject' => '',
+                'subject' => 'New Notice from {{from_name}}',
                 'body' => '<strong style="text-align: left;" class="text-blue-color">
                                 Hello Dear,
                             </strong>
@@ -65,7 +64,7 @@ class EmailTemplateSeeder extends Seeder
                                 Hi {{friend_name}},
                             </strong>
                             <br/><br>
-                            I have send you the below job link in which you can find the relevant details for the same.
+                            I have sent you the job link below, where you can find the relevant details.
                             <br/><br>
                                 Link : <a href="{{job_url}}" target="_blank">{{job_url}}</a>
                             <br><br>
@@ -78,7 +77,7 @@ class EmailTemplateSeeder extends Seeder
                 'template_name' => 'Job Alert',
                 'subject' => 'New Job Alert',
                 'body' => '<strong style="text-align: left;" class="text-blue-color">
-                               Hi {{job_name}},
+                               Hi {{candidate_name}},
                             </strong>
                             <br/><br>
                             <h2>Job Title: {{job_title}}</h2>
@@ -89,7 +88,7 @@ class EmailTemplateSeeder extends Seeder
                             <strong style="display: block; margin-top: 15px;" class="text-blue-color">Thanks, <br/>
                                 {{from_name}}
                             </strong>',
-                'variables' => '{{job_name}},{{job_url}}, {{job_title}}, {{from_name}}',
+                'variables' => '{{candidate_name}},{{job_url}}, {{job_title}}, {{from_name}}',
             ],
             [
                 'template_name' => 'Candidate Job Applied',
@@ -101,7 +100,7 @@ class EmailTemplateSeeder extends Seeder
                             <h2>Someone just applied for job : {{job_title}}</h2>
                             <br/><br>
                             My name is {{candidate_name}}<br><br>
-                            I have go through with your job details and thereby i have applied for the same. Please kindly contact me if i found suitable based on your needs.<br><br><br>
+                            I reviewed the job details and have applied for this position. Please contact me if my profile matches your requirements.<br><br><br>
                             <a href="{{candidate_details_url}}" target="_blank" style="display: table; margin: 0 auto;">View Candidate Profile</a>
                             <br><br>
                             <strong style="display: block; margin-top: 15px;" class="text-blue-color">Regards, <br/>
@@ -137,13 +136,13 @@ class EmailTemplateSeeder extends Seeder
                             <br/><br><br>
                             <a href="{{reset_url}}" style="display: table; margin: 0 auto;">Reset Password</a>
                             <br><br>
-                            This password reset link will expire in 60 minutes.<br><br>
+                            This password reset link will expire in {{reset_expire_minutes}} minutes.<br><br>
                             If you did not request a password reset, no further action is required.<br><br>
                             <strong style="display: block; margin-top: 15px;" class="text-blue-color">Regards, <br/>
                                 {{from_name}}
                             </strong>
                             ',
-                'variables' => '{{reset_url}},{{from_name}}',
+                'variables' => '{{reset_url}},{{from_name}},{{reset_expire_minutes}}',
             ],
         ];
 
