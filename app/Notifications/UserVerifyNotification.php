@@ -53,8 +53,10 @@ class UserVerifyNotification extends VerifyEmail implements ShouldQueue
                 ->action('Verify Email Address', $url);
         }
 
+        $recipientName = $user->company?->contact_person_name ?: $user->full_name;
+
         $keyVariable = ['{{user_name}}', '{{verify_url}}', '{{from_name}}'];
-        $value = [$user->full_name, $url, config('app.name')];
+        $value = [$recipientName, $url, config('app.name')];
         $body = str_replace($keyVariable, $value, $templateBody->body);
         $data['body'] = $body;
         $data['logo_path'] = $this->resolveLogoPath();

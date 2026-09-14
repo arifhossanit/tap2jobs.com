@@ -420,7 +420,17 @@ if (! function_exists('setPayStackApiKey')) {
 if (! function_exists('preparePhoneNumber')) {
     function preparePhoneNumber($phone, $regionCode)
     {
-        return (! empty($phone)) ? '+'.$regionCode.$phone : null;
+        if (empty($phone)) {
+            return null;
+        }
+
+        if (! filled($regionCode)) {
+            return $phone;
+        }
+
+        $nationalNumber = preg_replace('/^0/', '', (string) $phone);
+
+        return '+'.$regionCode.$nationalNumber;
     }
 }
 
@@ -685,12 +695,6 @@ if (! function_exists('getNotificationUrl')) {
         }
 
         if ($notification->notification_for == \App\Models\Notification::CANDIDATE) {
-            $jobApplicationId = data_get($notification->meta, 'job_application_id');
-
-            if ($jobApplicationId && \Illuminate\Support\Facades\Route::has('candidate.applied.job.show')) {
-                return route('candidate.applied.job.show', ['jobApplication' => $jobApplicationId]);
-            }
-
             return route('candidate.applied.job');
         } elseif ($notification->notification_for == \App\Models\Notification::EMPLOYER) {
             $jobId = data_get($notification->meta, 'job_id');

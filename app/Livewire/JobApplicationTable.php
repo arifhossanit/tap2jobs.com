@@ -6,13 +6,20 @@ use App\Models\JobApplication;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\Views\Column;
-use Rappasoft\LaravelLivewireTables\Views\Filters\SelectFilter;
 
 class JobApplicationTable extends LivewireTableComponent
 {
     protected $model = JobApplication::class;
 
     public $showButtonOnHeader = true;
+
+    public $showFilterOnHeader = true;
+
+    public array $filterComponents = ['employer.job_applications.table_components.filter', '', ''];
+
+    public string $applicationList = 'active';
+
+    public string $statusFilter = '';
 
     public $buttonComponent = 'employer.job_applications.table_components.edit_button';
 
@@ -98,26 +105,40 @@ class JobApplicationTable extends LivewireTableComponent
             ->where('status', '!=', JobApplication::STATUS_DRAFT)
             ->select('job_applications.*');
 
+        if ($this->applicationList === 'archived') {
+            $query->whereNotNull('archived_at');
+        } elseif ($this->applicationList === 'active') {
+            $query->whereNull('archived_at');
+        }
+
+        if ($this->statusFilter !== '') {
+            $query->where('status', $this->statusFilter);
+        }
+
         return $query;
     }
 
     public function filters(): array
     {
-        return [
-            SelectFilter::make(__('messages.common.status'))
-                ->options([
-                    '' => __('messages.filter_name.select_status'),
-                    //                    0 => __('messages.filter_name.drafted'),
-                    1 => __('messages.common.applied'),
-                    2 => __('messages.common.declined'),
-                    3 => __('messages.common.hired'),
-                    4 => __('messages.common.ongoing'),
-                ])
-                ->filter(
-                    function (Builder $builder, string $value) {
-                        $builder->where('status', '=', $value);
-                    }
-                ),
-        ];
+        return [];
+    }
+
+    public function changeApplicationListFilter(string $value): void
+    {
+        $this->applicationList = in_array($value, ['active', 'archived', 'all'], true) ? $value : 'active';
+        $this->resetPage();
+    }
+
+    public function changeApplicationStatusFilter(string $value): void
+    {
+        $this->statusFilter = in_array($value, ['', '1', '2', '3', '4'], true) ? $value : '';
+        $this->resetPage();
+    }
+
+    public function resetApplicationFilters(): void
+    {
+        $this->applicationList = 'active';
+        $this->statusFilter = '';
+        $this->resetPage();
     }
 }

@@ -92,10 +92,10 @@ listenClick('.job-application-action-delete', function (event) {
     let jobApplicationId = $(this).attr('data-id');
     let jobId = $('#dataJobId').val();
     swal({
-        title: Lang.get('js.delete') + ' !',
-        text: Lang.get('js.are_you_sure') + ' "' + Lang.get('js.job_application') + '" ?',
+        title: $('#removeApplicationTitle').val() + ' !',
+        text: $('#removeApplicationConfirmation').val(),
         buttons: {
-            confirm:Lang.get('js.yes_delete'),
+            confirm:Lang.get('js.yes'),
             cancel: Lang.get('js.no_cancel'),
         },
         reverseButtons: true,
@@ -117,8 +117,8 @@ listenClick('.job-application-action-delete', function (event) {
                     }
                     swal({
                         icon: 'success',
-                        title: Lang.get('messages.common.deleted') + ' !',
-                        text: Lang.get('js.job_application') +' '+ Lang.get('js.has_been_deleted'),
+                        title: $('#removeApplicationSuccessTitle').val() + ' !',
+                        text: obj.message,
                         buttons: {
                             confirm:Lang.get('js.ok'),
                         },
@@ -143,6 +143,25 @@ listenClick('.job-application-action-delete', function (event) {
                 },
             });
         }
+    });
+});
+
+listenClick('.job-application-action-restore', function () {
+    let jobApplicationId = $(this).data('id');
+
+    $.ajax({
+        url: route('job.application.restore', jobApplicationId),
+        type: 'PATCH',
+        success: function (result) {
+            if (result.success) {
+                displaySuccessMessage(result.message);
+                Livewire.dispatch('refreshDatatable');
+                Livewire.dispatch('resetPage');
+            }
+        },
+        error: function (result) {
+            displayErrorMessage(result.responseJSON.message);
+        },
     });
 });
 
@@ -176,7 +195,8 @@ function changeJobApplicationStatus (jobApplicationId, applicationStatus, jobId)
         cache: false,
         success: function (result) {
             if (result.success) {
-                  Livewire.dispatch('refreshDatatable');
+                displaySuccessMessage(result.message);
+                Livewire.dispatch('refreshDatatable');
             }
         },
         error: function error (result) {

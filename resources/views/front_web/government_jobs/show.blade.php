@@ -18,7 +18,7 @@
             <div class="row g-4 align-items-start justify-content-center front-auth-ad-layout">
                 @if ($hasSideAds)
                     <aside class="col-xl-3 col-lg-3 d-none d-lg-block mb-4 text-start front-auth-side-ads front-auth-side-ads--left">
-                        <div class="sticky-top" style="top: 20px;">
+                        <div>
                             @include('front_web.common.register_side_ad', ['ads' => $leftAds])
                         </div>
                     </aside>
@@ -78,7 +78,7 @@
 
                 @if ($hasSideAds)
                     <aside class="col-xl-3 col-lg-3 d-none d-lg-block mb-4 text-end front-auth-side-ads front-auth-side-ads--right">
-                        <div class="sticky-top" style="top: 20px;">
+                        <div>
                             @include('front_web.common.register_side_ad', ['ads' => $rightAds])
                         </div>
                     </aside>

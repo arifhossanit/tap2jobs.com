@@ -66,7 +66,15 @@
                 <table width="100%">
                     <tr>
                         <td>
-                            <img width="100" style="display: block; width: 100px; max-width: 100px; height: auto; margin: 10px auto 20px; text-align: center;" src='{{ getLogoUrl() }}'
+                            @php
+                                $logoSrc = getLogoUrl();
+                                if (! empty($data['logo_path']) && isset($message)) {
+                                    $logoSrc = $message->embed($data['logo_path']);
+                                } elseif (! empty($data['logo_data_uri'])) {
+                                    $logoSrc = $data['logo_data_uri'];
+                                }
+                            @endphp
+                            <img width="100" style="display: block; width: 100px; max-width: 100px; height: auto; margin: 10px auto 20px; text-align: center;" src="{{ $logoSrc }}"
                                  alt="company logo"
                                  class="img-fluid main-logo">
                         </td>

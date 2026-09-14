@@ -86,9 +86,17 @@ class JobApplicationController extends AppBaseController
             return $this->sendError(__('messages.common.seems_message'));
         }
 
-        $this->jobApplicationRepository->delete($jobApplication->id);
+        $jobApplication->update(['archived_at' => now()]);
 
-        return $this->sendSuccess(__('messages.flash.job_application_delete'));
+        return $this->sendSuccess(__('messages.flash.job_application_archive'));
+    }
+
+    public function restore(JobApplication $jobApplication): JsonResponse
+    {
+        $jobApplication = $this->ownedApplication($jobApplication->id);
+        $jobApplication->update(['archived_at' => null]);
+
+        return $this->sendSuccess(__('messages.flash.job_application_restore'));
     }
 
     /**
@@ -134,7 +142,7 @@ class JobApplicationController extends AppBaseController
                     ]);
                 }
             } elseif ($status == JobApplication::COMPLETE) {
-                $statusText = 'Selected / Hired';
+                $statusText = 'Selected';
                 $messageBody = "Congratulations! You have been selected for the position of \"{$jobTitle}\".";
                 if (NotificationSetting::where('key', 'CANDIDATE_SELECTED_FOR_JOB')->first()?->value == 1) {
                     addNotification([
@@ -174,6 +182,7 @@ class JobApplicationController extends AppBaseController
                         'company_name' => $companyName,
                         'status_text' => $statusText,
                         'message_body' => $messageBody,
+                        'action_url' => route('candidate.applied.job'),
                         'subject' => "Application {$statusText} for {$jobTitle}",
                     ]));
                 } catch (\Exception $e) {
@@ -184,7 +193,7 @@ class JobApplicationController extends AppBaseController
             return $this->sendSuccess(__('messages.flash.status_change'));
         }
 
-        return $this->sendError(JobApplication::STATUS[$jobApplication->status].' job cannot be '.JobApplication::STATUS[$status]);
+        return $this->sendError(__('messages.common.seems_message'));
     }
 
     /**

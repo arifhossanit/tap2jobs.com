@@ -874,6 +874,8 @@ Route::middleware('auth', 'role:Employer', 'xss', 'verified.user')->prefix('empl
                   'job-applications/{jobApplication}',
                   [JobApplicationController::class, 'destroy']
          )->name('job.application.destroy');
+         Route::patch('job-applications/{jobApplication}/restore', [JobApplicationController::class, 'restore'])
+                  ->name('job.application.restore');
          Route::get('resume-download/{jobApplication}', [JobApplicationController::class, 'downloadMedia'])
                   ->name('employer.resume.download');
          //    Route::post('job-applications/get-job-stage/{Id}', [JobApplicationController::class, 'getJobStage'])->name('get.job.stage');

@@ -71,7 +71,7 @@
                     </div>
                     @if ($rightAds->isNotEmpty())
                         <div class="col-lg-3 col-12 find-jobs-right-ads-column">
-                            <div class="find-jobs-right-ads sticky-top" style="top: 20px;">
+                            <div class="find-jobs-right-ads">
                                 @include('front_web.common.register_side_ad', ['ads' => $rightAds])
                             </div>
                         </div>

@@ -10,7 +10,7 @@
             </div>
             {{ Form::open(['id'=>'addJobStageForm']) }}
             <div class="modal-body">
-                <div class="alert alert-danger hide d-none" id="maritalStatusValidationErrorsBox"></div>
+                <div class="alert alert-danger hide d-none" id="jobStageValidationErrorsBox"></div>
                 <div class="row">
                     <div class="col-sm-12 mb-5">
                         {{ Form::label('name',__('messages.job_tag.name').(':'), ['class' => 'form-label']) }}
@@ -19,9 +19,8 @@
                     </div>
                     <div class="col-sm-12 mb-5">
                         {{ Form::label('description', __('messages.marital_status.description').(':'),['class' => 'form-label']) }}
-                        <span class="required"></span>
-                        <div id="jobStageDescription"></div>
-                        {{ Form::hidden('description', null, ['id' => 'job_stage_desc']) }}
+                        <textarea name="description" id="jobStageDescription" class="form-control" rows="4"
+                                  placeholder="{{ __('messages.job_tag.description') }}"></textarea>
                     </div>
                 </div>
             </div>
