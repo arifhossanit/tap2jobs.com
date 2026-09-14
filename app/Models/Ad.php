@@ -63,11 +63,9 @@ class Ad extends Model implements HasMedia
         self::PAGE_EMPLOYER_REGISTER => 'employer_register',
         self::PAGE_CANDIDATE_LOGIN => 'candidate_login',
         self::PAGE_EMPLOYER_LOGIN => 'employer_login',
-        self::PAGE_HOME => 'home',
         self::PAGE_BLOG => 'blog',
         self::PAGE_BLOG_DETAILS => 'blog_details',
         self::PAGE_JOBS => 'jobs',
-        self::PAGE_JOB_DETAILS => 'job_details',
         self::PAGE_GOVERNMENT_JOB_DETAILS => 'government_job_details',
     ];
 
@@ -98,6 +96,7 @@ class Ad extends Model implements HasMedia
             self::PAGE_EMPLOYER_REGISTER,
             self::PAGE_CANDIDATE_LOGIN,
             self::PAGE_EMPLOYER_LOGIN,
+            self::PAGE_BLOG,
             self::PAGE_BLOG_DETAILS,
             self::PAGE_JOBS,
             self::PAGE_GOVERNMENT_JOB_DETAILS,

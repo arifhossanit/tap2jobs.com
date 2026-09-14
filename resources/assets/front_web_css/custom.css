@@ -3255,12 +3255,14 @@ html[dir='rtl'] .register-page .input-password-hide {
 }
 
 @media (min-width: 992px) {
-    .login-page .front-auth-side-ads,
     .register-page .front-auth-side-ads {
         align-self: flex-start;
-        position: sticky;
-        top: 24px;
-        z-index: 1;
+        position: static;
+    }
+
+    .login-page .front-auth-side-ads {
+        align-self: flex-start;
+        position: static;
     }
 
     .login-page .front-auth-side-ads--left,
@@ -3327,9 +3329,126 @@ html[dir='rtl'] .register-page .input-password-hide {
 }
 
 .find-jobs-right-ads {
-    position: sticky;
-    top: 20px;
-    z-index: 2;
+    position: static;
+}
+
+@media (min-width: 1900px) {
+    .login-page .front-auth-ad-layout,
+    .register-page .front-auth-ad-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 310px) minmax(0, 900px) minmax(0, 310px);
+        gap: 24px;
+        width: 100%;
+        margin: 0;
+        justify-content: center;
+    }
+
+    .login-page .front-auth-side-ads--left,
+    .register-page .front-auth-side-ads--left {
+        grid-column: 1;
+    }
+
+    .register-page .front-auth-form-col {
+        grid-column: 2;
+        width: 100%;
+        justify-self: center;
+    }
+
+    .login-page .front-auth-form-col {
+        grid-column: 2;
+        width: 100%;
+        max-width: 660px;
+        justify-self: center;
+    }
+
+    .login-page .front-auth-side-ads--right,
+    .register-page .front-auth-side-ads--right {
+        grid-column: 3;
+    }
+
+    .login-page .front-auth-side-ads,
+    .register-page .front-auth-side-ads {
+        width: 100%;
+        min-width: 0;
+        max-width: 310px;
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+.front-side-ad-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 310px) minmax(0, 900px) minmax(0, 310px);
+    gap: 24px;
+    width: 100%;
+    padding: 0 24px;
+    justify-content: center;
+}
+
+.front-side-ad-layout--empty {
+    display: block;
+}
+
+.front-side-ad-layout__main {
+    min-width: 0;
+}
+
+.front-side-ad-layout__aside {
+    min-width: 0;
+    width: 100%;
+    max-width: 310px;
+}
+
+.front-side-ad-layout__aside--left {
+    grid-column: 1;
+}
+
+.front-side-ad-layout__main {
+    grid-column: 2;
+}
+
+.front-side-ad-layout__aside--right {
+    grid-column: 3;
+}
+
+.front-side-ad-layout__mobile {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 24px;
+}
+
+@media (max-width: 1899.98px) {
+    .front-side-ad-layout {
+        display: block;
+        padding: 0 12px;
+    }
+
+    .front-side-ad-layout__aside {
+        display: none !important;
+    }
+
+    .front-side-ad-layout__mobile {
+        display: grid !important;
+    }
+}
+
+@media (min-width: 1900px) {
+    .front-side-ad-layout__aside {
+        min-width: 0;
+        max-width: 310px;
+    }
+
+    .front-side-ad-layout__mobile {
+        display: none !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .front-side-ad-layout__mobile {
+        grid-template-columns: 1fr;
+    }
 }
 
 .find-jobs-right-ads .register-side-ad {

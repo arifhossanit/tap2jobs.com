@@ -140,7 +140,8 @@ class JobApplicationRepository extends BaseRepository
                     ->lockForUpdate()
                     ->first();
 
-                if ($jobApplication?->status === JobApplication::STATUS_APPLIED) {
+                if ($jobApplication && $input['application_type'] === 'apply'
+                    && $jobApplication->status !== JobApplication::STATUS_DRAFT) {
                     throw new UnprocessableEntityHttpException(__('messages.flash.job_already_applied'));
                 }
 

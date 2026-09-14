@@ -8,14 +8,12 @@ use Livewire\Component;
 class AdminDashboardTable extends Component
 {
 
-    public $dashboardData;
     public $registerCandidatesData;
     public $registerEmployersData;
     public $recentJobsData;
 
     public function mount(DashboardRepository $dashboardRepository)
     {
-        $this->dashboardData = $dashboardRepository->getDashboardAssociatedData();
         $this->registerCandidatesData = $dashboardRepository->getRegisteredCandidatesData();
         $this->registerEmployersData = $dashboardRepository->getRegisteredEmployersData();
         $this->recentJobsData = $dashboardRepository->getRecentJobsData();

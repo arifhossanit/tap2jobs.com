@@ -33,7 +33,12 @@
         <!-- end hero section -->
         <!-- start blog-section -->
         <section class="mani-blog recent-blog-section py-60">
-            <div class="container">
+            @php
+                $leftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT, \App\Models\Ad::PAGE_BLOG);
+                $rightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT, \App\Models\Ad::PAGE_BLOG);
+            @endphp
+            <x-front.side-ad-layout :left-ads="$leftAds" :right-ads="$rightAds">
+            <div class="container px-0">
                 <div class="row">
                     <div class="col-lg-8">
                         <div class="blog-card">
@@ -84,6 +89,7 @@
                     @include('front_web.blogs.blog-sidebar')
                 </div>
             </div>
+            </x-front.side-ad-layout>
         </section>
         <!-- end blog-section -->
     </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CompaniesExport;
 use App\Http\Requests\CreateCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Company;
@@ -13,19 +14,27 @@ use App\Models\NotificationSetting;
 use App\Models\ReportedToCompany;
 use App\Models\State;
 use App\Models\Transaction;
+use App\Notifications\UserVerifyNotification;
 use App\Repositories\CompanyRepository;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 use Laracasts\Flash\Flash;
+use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
 class CompanyController extends AppBaseController
@@ -61,8 +70,45 @@ class CompanyController extends AppBaseController
         $data = $this->companyRepository->prepareData();
         $countries = Country::pluck('name', 'id');
         $states = State::toBase()->pluck('name', 'id');
+        $state = old('country_id') ? getStates(old('country_id')) : [];
+        $cities = old('state_id') ? getCities(old('state_id')) : [];
+        $thanas = old('city_id') ? getThanas(old('city_id')) : [];
 
-        return view('companies.create', compact('countries', 'states'))->with('data', $data);
+        return view('companies.create', compact('countries', 'states', 'state', 'cities', 'thanas'))->with('data', $data);
+    }
+
+    public function export(Request $request, string $format): BinaryFileResponse|StreamedResponse|Response
+    {
+        $companies = $this->companyExportQuery($request)->get();
+        $fileName = 'employers-'.time();
+
+        if ($format === 'excel') {
+            return Excel::download(new CompaniesExport($companies), $fileName.'.xlsx');
+        }
+
+        if ($format === 'pdf') {
+            return Pdf::loadView('exports.companies_pdf', compact('companies'))
+                ->setPaper('a4', 'landscape')
+                ->download($fileName.'.pdf');
+        }
+
+        return response()->streamDownload(function () use ($companies) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, $this->companyExportHeadings());
+
+            foreach ($companies as $company) {
+                fputcsv($handle, $this->companyExportRow($company));
+            }
+
+            fclose($handle);
+        }, $fileName.'.csv', ['Content-Type' => 'text/csv']);
+    }
+
+    public function print(Request $request): View
+    {
+        $companies = $this->companyExportQuery($request)->get();
+
+        return view('exports.companies_print', compact('companies'));
     }
 
     /**
@@ -75,7 +121,8 @@ class CompanyController extends AppBaseController
     public function store(CreateCompanyRequest $request): RedirectResponse
     {
         $input = $request->all();
-        $input['is_active'] = (isset($input['is_active'])) ? 1 : 0;
+        $input['is_active'] = $request->boolean('is_active') ? 1 : 0;
+        $input['location2'] = null;
 
         $company = $this->companyRepository->store($input);
 
@@ -107,14 +154,18 @@ class CompanyController extends AppBaseController
         $countries = Country::pluck('name', 'id');
         $states = State::toBase()->pluck('name', 'id');
         $state = $cities = null;
-        if (isset($user->country_id)) {
-            $state = getStates($user->country_id);
+        $selectedCountryId = old('country_id', $user->country_id);
+        $selectedStateId = old('state_id', $user->state_id);
+        $selectedCityId = old('city_id', $user->city_id);
+        if (isset($selectedCountryId)) {
+            $state = getStates($selectedCountryId);
         }
-        if (isset($user->state_id)) {
-            $cities = getCities($user->state_id);
+        if (isset($selectedStateId)) {
+            $cities = getCities($selectedStateId);
         }
+        $thanas = isset($selectedCityId) ? getThanas($selectedCityId) : null;
 
-        return view('companies.edit', compact('data', 'company', 'cities', 'state', 'user', 'countries', 'states'));
+        return view('companies.edit', compact('data', 'company', 'cities', 'state', 'thanas', 'user', 'countries', 'states'));
     }
 
     /**
@@ -125,7 +176,8 @@ class CompanyController extends AppBaseController
     public function update(Company $company, UpdateCompanyRequest $request): RedirectResponse
     {
         $input = $request->all();
-        $input['is_active'] = (isset($input['is_active'])) ? 1 : 0;
+        $input['is_active'] = $request->boolean('is_active') ? 1 : 0;
+        $input['location2'] = null;
 
         $company = $this->companyRepository->update($input, $company);
 
@@ -162,7 +214,7 @@ class CompanyController extends AppBaseController
         $company->user->update(['is_active' => ! $isActive]);
 
         if ($company) {
-            if (Auth::user()->hasRole('Admin')) {
+            if (Auth::check() && ! Auth::user()->hasRole('Employer')) {
                 $company->last_change = Auth::user()->id;
                 $company->save();
             }
@@ -207,12 +259,15 @@ class CompanyController extends AppBaseController
             throw new ModelNotFoundException;
         }
         $data = $this->companyRepository->prepareData();
-        $states = $cities = null;
+        $states = $cities = $thanas = null;
         if (isset($user->country_id)) {
             $states = getStates($user->country_id);
         }
         if (isset($user->state_id)) {
             $cities = getCities($user->state_id);
+        }
+        if (isset($user->city_id)) {
+            $thanas = getThanas($user->city_id);
         }
         $isFeaturedEnable = FrontSetting::where('key', 'featured_companies_enable')->first()->value;
         $maxFeaturedJob = FrontSetting::where('key', 'featured_companies_quota')->first()->value;
@@ -220,7 +275,7 @@ class CompanyController extends AppBaseController
         $isFeaturedAvilabal = ($totalFeaturedJob >= $maxFeaturedJob) ? false : true;
 
         return view('employer.companies.edit',
-            compact('data', 'company', 'cities', 'states', 'user', 'isFeaturedEnable', 'isFeaturedAvilabal'));
+            compact('data', 'company', 'cities', 'states', 'thanas', 'user', 'isFeaturedEnable', 'isFeaturedAvilabal'));
     }
 
     /**
@@ -231,6 +286,9 @@ class CompanyController extends AppBaseController
     public function updateCompany(Company $company, UpdateCompanyRequest $request): JsonResponse|RedirectResponse
     {
         $input = $request->validated();
+        if ($request->hasFile('image')) {
+            $input['image'] = $request->file('image');
+        }
 
         $company = $this->companyRepository->update($input, $company);
         $message = __('messages.flash.employer_update');
@@ -326,6 +384,19 @@ class CompanyController extends AppBaseController
                         $user->first_name.' '.$user->last_name.' mark Company as Featured.',
                     ]) : false;
             }
+
+            $adminFeaturedSetting = NotificationSetting::where('key', 'MARK_COMPANY_FEATURED_ADMIN')
+                ->where('type', 'admin')
+                ->first();
+
+            if ($user->hasRole('Employer') && (int) ($adminFeaturedSetting?->value ?? 0) === 1) {
+                addNotification([
+                    Notification::MARK_COMPANY_FEATURED_ADMIN,
+                    \App\Models\User::role('Admin')->value('id') ?? 1,
+                    Notification::ADMIN,
+                    $company->company_name.' is featured',
+                ]);
+            }
             $transaction = [
                 'owner_id' => $companyId,
                 'owner_type' => Company::class,
@@ -336,7 +407,7 @@ class CompanyController extends AppBaseController
 
             $company = Company::findOrFail($companyId);
             if ($company) {
-                if (Auth::user()->hasRole('Admin')) {
+                if (Auth::check() && ! Auth::user()->hasRole('Employer')) {
                     $company->last_change = Auth::user()->id;
                     $company->save();
                 }
@@ -359,7 +430,7 @@ class CompanyController extends AppBaseController
 
         $company = Company::findOrFail($companyId);
         if ($company) {
-            if (Auth::user()->hasRole('Admin')) {
+            if (Auth::check() && ! Auth::user()->hasRole('Employer')) {
                 $company->last_change = Auth::user()->id;
                 $company->save();
             }
@@ -374,7 +445,7 @@ class CompanyController extends AppBaseController
     public function changeIsEmailVerified(Company $company)
     {
         $company->user->update(['email_verified_at' => Carbon::now()]);
-        if (Auth::user()->hasRole('Admin')) {
+        if (Auth::check() && ! Auth::user()->hasRole('Employer')) {
             $company->last_change = Auth::user()->id;
             $company->save();
         }
@@ -385,14 +456,95 @@ class CompanyController extends AppBaseController
     /**
      * @return mixed
      */
+    public function changeIsEmailUnverified(Company $company)
+    {
+        $company->user->update(['email_verified_at' => null]);
+        if (Auth::check() && ! Auth::user()->hasRole('Employer')) {
+            $company->last_change = Auth::user()->id;
+            $company->save();
+        }
+
+        return $this->sendSuccess('Employer email marked as unverified successfully.');
+    }
+
+    /**
+     * @return mixed
+     */
     public function resendEmailVerification(Company $company)
     {
-        $company->user->sendEmailVerificationNotification();
-        if (Auth::user()->hasRole('Admin')) {
+        $company->user->notify(new UserVerifyNotification($company->user));
+        if (Auth::check() && ! Auth::user()->hasRole('Employer')) {
             $company->last_change = Auth::user()->id;
             $company->save();
         }
 
         return $this->sendSuccess(__('messages.flash.verification_mail'));
+    }
+
+    private function companyExportQuery(Request $request): Builder
+    {
+        $query = Company::query()
+            ->with(['user', 'featured', 'admin', 'industry', 'companySize'])
+            ->latest();
+
+        if ($request->filled('featured') && (int) $request->get('featured') !== Company::ALL) {
+            if ((int) $request->get('featured') === Company::ISACTIVE) {
+                $query->whereHas('featured');
+            } else {
+                $query->doesntHave('featured');
+            }
+        }
+
+        if ($request->filled('status') && (int) $request->get('status') !== Company::ALL) {
+            $query->whereHas('user', function (Builder $userQuery) use ($request) {
+                $userQuery->where('is_active', (int) $request->get('status') === Company::ISACTIVE ? 1 : 0);
+            });
+        }
+
+        if ($request->filled('created_by') && Schema::hasColumn('companies', 'created_by')) {
+            $query->where('companies.created_by', $request->get('created_by'));
+        }
+
+        return $query->select('companies.*');
+    }
+
+    private function companyExportHeadings(): array
+    {
+        return [
+            'Company Name',
+            'Employer Name',
+            'Email',
+            'Phone',
+            'Featured',
+            'Email Verified',
+            'Status',
+            'Created By',
+            'Last Change By',
+            'Industry',
+            'Company Size',
+            'Website',
+            'Location',
+            'Created At',
+        ];
+    }
+
+    private function companyExportRow(Company $company): array
+    {
+        return [
+            $company->company_name ?: 'N/A',
+            $company->contact_person_name ?: ($company->user?->full_name ?: 'N/A'),
+            $company->user?->email ?: 'N/A',
+            $company->user?->phone ?: 'N/A',
+            $company->featured ? __('messages.common.yes') : __('messages.common.no'),
+            $company->user?->email_verified_at ? __('messages.common.yes') : __('messages.common.no'),
+            $company->user?->is_active ? __('messages.common.active') : __('messages.common.de_active'),
+            $company->created_by_label,
+            $company->admin?->full_name ?: 'N/A',
+            $company->industry?->name ?: 'N/A',
+            $company->companySize?->size ?: 'N/A',
+            $company->website ?: 'N/A',
+            $company->location ?: 'N/A',
+            $company->created_at?->format('d M Y h:i A') ?: 'N/A',
+        ];
     }
 }

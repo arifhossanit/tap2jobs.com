@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
     <style type="text/css">
+        body { font-family: Poppins, Arial, sans-serif; }
         /*Start Jobs lists */
         .media {
             border-bottom: 1px solid #f9f9f9;
@@ -60,7 +61,7 @@
         }
 
         .text-blue-color {
-            color: #009ef7;
+            color: #209776;
         }
 
         .company-name {
@@ -69,7 +70,7 @@
             padding: 0 !important;
             margin-top: -5px !important;
             min-width: unset !important;
-            color: #009ef7 !important;
+            color: #209776 !important;
         }
     </style>
 </head>
@@ -120,7 +121,7 @@
                                         <a class="media-title mb-1"
                                            href="{{ route('front.job.details', $job->job_id) }}">{{ $job->job_title }}</a>
                                         <div class="text-time">{{ $job->created_at->diffForHumans() }}</div>
-                                        <div class="media-description text-muted">{!! html_entity_decode($job->description) !!}</div>
+                                        <div class="media-description text-muted">{{ strip_tags(html_entity_decode($job->description)) }}</div>
                                         <div class="media-links">
                                             <span>Expiry Date: {{ \Carbon\Carbon::parse($job->job_expiry_date)->translatedFormat('d-m-Y') }}</span>
                                         </div>

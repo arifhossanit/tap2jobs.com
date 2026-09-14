@@ -29,7 +29,7 @@ class EmailJobToFriend extends Mailable implements ShouldQueue
         $this->data['logo_path'] = $this->resolveLogoPath();
 
         return $this->from(config('mail.from.address'))
-            ->subject('New Job Details')
+            ->subject($this->data['subject'] ?? 'New Job Details')
             ->markdown('emails.jobs.email_job');
     }
 

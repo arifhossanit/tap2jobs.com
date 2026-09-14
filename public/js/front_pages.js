@@ -772,7 +772,7 @@ function loadAutoFieldsData() {
   };
 }
 listenClick('.admin-login', function () {
-  changeCredentials('admin@infyjobs.com', '123456');
+  changeCredentials('admin@gmail.com', '123456');
 });
 listenClick('.candidate-login', function () {
   changeCredentials('candidate@gmail.com', '123456');
@@ -1320,20 +1320,33 @@ function IOInitImageUpload(box) {
       var image = new Image();
       image.src = e.target.result;
       image.onload = function () {
+        thumb.innerHTML = '';
         thumb.style.backgroundImage = 'url(' + e.target.result + ')';
       };
     };
     reader.readAsDataURL(file);
   } // Check Image Type
 
+  function previewVideo(file) {
+    var thumb = box.querySelector('.previewImage');
+    var videoUrl = URL.createObjectURL(file);
+    thumb.style.backgroundImage = 'none';
+    thumb.innerHTML = '<video src="' + videoUrl + '" controls muted playsinline preload="metadata" style="width:100%;height:100%;object-fit:contain;background:#000;border-radius:inherit;"></video>';
+  }
   function checkType(file) {
     var imageType = /image.*/;
-    if (!file.type.match(imageType)) {
-      throw 'File Type is not match.';
-    } else if (!file) {
+    var videoType = /video.*/;
+    if (!file) {
       throw 'File not found.';
-    } else {
+    } else if (file.type.match(imageType)) {
       previewImage(file);
+    } else if (file.type.match(videoType)) {
+      previewVideo(file);
+    } else {
+      uploadField.value = '';
+      if (typeof displayErrorMessage === 'function') {
+        displayErrorMessage('Unsupported file type.');
+      }
     }
   }
 } // every load initialize the Image component on document load
@@ -1366,6 +1379,12 @@ window.IOInitSidebar = function () {
     $('body').toggleClass('collapsed-menu');
   }); // for responsive sidebar
 
+  $(document).on('show.bs.collapse', '.aside-submenu', function () {
+    $(this).closest('.aside-item-collapse').addClass('collapse-submenu');
+  });
+  $(document).on('hide.bs.collapse', '.aside-submenu', function () {
+    $(this).closest('.aside-item-collapse').removeClass('collapse-submenu');
+  });
   $(window).resize(function () {
     if ($(window).width() > 1200) {
       $('.aside-collapse-btn').click(function () {
@@ -1444,6 +1463,18 @@ function loadPhoneNumberCountry() {
   var input = document.querySelector('#phoneNumber'),
     errorMsg = document.querySelector('#error-msg'),
     validMsg = document.querySelector('#valid-msg');
+  var normalizePhoneNumber = function normalizePhoneNumber() {
+    input.value = input.value.replace(/\D/g, '').slice(0, 11);
+    return input.value;
+  };
+  var preserveLocalPhoneNumber = function preserveLocalPhoneNumber(callback) {
+    var localPhoneNumber = normalizePhoneNumber();
+    callback();
+    if (localPhoneNumber !== '') {
+      input.value = localPhoneNumber;
+    }
+    normalizePhoneNumber();
+  };
   var errorMap = [Lang.get('js.invalid_number'), Lang.get('js.invalid_country_code'), Lang.get('js.too_short'), Lang.get('js.too_long'), Lang.get('js.invalid_number')];
 
   // initialise plugin
@@ -1469,9 +1500,7 @@ function loadPhoneNumberCountry() {
   $('#prefix_code').val(getCode);
   // }
 
-  var getPhoneNumber = $('#phoneNumber').val();
-  var removeSpacePhoneNumber = getPhoneNumber.replace(/\s/g, '');
-  $('#phoneNumber').val(removeSpacePhoneNumber);
+  normalizePhoneNumber();
   var reset = function reset() {
     input.classList.remove('error');
     errorMsg.innerHTML = '';
@@ -1479,6 +1508,7 @@ function loadPhoneNumberCountry() {
     validMsg.classList.add('d-none');
   };
   input.addEventListener('blur', function () {
+    normalizePhoneNumber();
     reset();
     if (input.value.trim()) {
       if (intl.isValidNumber()) {
@@ -1493,8 +1523,15 @@ function loadPhoneNumberCountry() {
   });
 
   // on keyup / change flag: reset
-  input.addEventListener('change', reset);
-  input.addEventListener('keyup', reset);
+  input.addEventListener('change', function () {
+    normalizePhoneNumber();
+    reset();
+  });
+  input.addEventListener('keyup', function () {
+    normalizePhoneNumber();
+    reset();
+  });
+  input.addEventListener('input', normalizePhoneNumber);
   if (typeof phoneNo != 'undefined' && phoneNo !== '') {
     setTimeout(function () {
       $('#phoneNumber').trigger('change');
@@ -1506,14 +1543,19 @@ function loadPhoneNumberCountry() {
       $('.iti__selected-flag>.iti__flag').addClass(flagClassLocal);
       $('.iti__selected-dial-code').text(dialCodeValLocal);
       var phoneEleVal = $('#phoneNumber').val();
-      intl.setNumber(dialCodeValLocal + phoneEleVal);
+      preserveLocalPhoneNumber(function () {
+        intl.setNumber(dialCodeValLocal + phoneEleVal);
+      });
     }
   }
   $('#phoneNumber').on('blur keyup change countrychange', function () {
     if (typeof phoneNo != 'undefined' && phoneNo !== '') {
-      intl.setNumber('+' + phoneNo);
+      preserveLocalPhoneNumber(function () {
+        intl.setNumber('+' + phoneNo);
+      });
       phoneNo = '';
     }
+    normalizePhoneNumber();
     var getCode = intl.selectedCountryData['dialCode'];
     $('#prefix_code').val(getCode);
   });
@@ -1534,12 +1576,63 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
 function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 document.addEventListener('DOMContentLoaded', loadFrontRegisterData);
+window.addEventListener('load', function () {
+  var employerForm = document.getElementById('addEmployerNewForm');
+  var email = document.getElementById('employerEmail');
+  if (!employerForm || !email) {
+    return;
+  }
+  window.setTimeout(function () {
+    var previouslyFocusedField = document.activeElement;
+    email.focus({
+      preventScroll: true
+    });
+    if (previouslyFocusedField && previouslyFocusedField !== email && employerForm.contains(previouslyFocusedField)) {
+      previouslyFocusedField.classList.remove('is-invalid');
+    }
+    email.classList.remove('is-invalid');
+  }, 0);
+});
+document.addEventListener('click', function (event) {
+  var toggle = event.target.closest('.employer-register-password-toggle');
+  if (!toggle) {
+    return;
+  }
+  var input = document.getElementById(toggle.dataset.passwordToggle);
+  if (!input) {
+    return;
+  }
+  var showPassword = input.type === 'password';
+  input.type = showPassword ? 'text' : 'password';
+  var icon = toggle.querySelector('i');
+  if (icon) {
+    icon.classList.toggle('fa-eye', showPassword);
+    icon.classList.toggle('fa-eye-slash', !showPassword);
+  }
+  toggle.setAttribute('aria-label', showPassword ? 'Hide password' : 'Show password');
+  toggle.setAttribute('aria-pressed', showPassword ? 'true' : 'false');
+});
 function visitRegisterRedirect(url) {
   if (window.Turbo && typeof window.Turbo.visit === 'function') {
     window.Turbo.visit(url);
     return;
   }
   window.location.href = url;
+}
+var registerPasswordMismatchMessage = 'Passwords do not match';
+function updateRegistrationPasswordMatch(password, confirmPassword, feedback) {
+  if (!password || !confirmPassword || !feedback) {
+    return true;
+  }
+  var mismatch = confirmPassword.value !== '' && password.value !== confirmPassword.value;
+  confirmPassword.setCustomValidity(mismatch ? registerPasswordMismatchMessage : '');
+  if (mismatch) {
+    confirmPassword.classList.add('is-invalid');
+  } else if (confirmPassword.checkValidity()) {
+    confirmPassword.classList.remove('is-invalid');
+  }
+  feedback.textContent = mismatch ? registerPasswordMismatchMessage : '';
+  return !mismatch;
 }
 function loadFrontRegisterData() {
   if (!$('#addEmployerNewForm').length && !$('#addCandidateNewForm').length) {
@@ -1567,12 +1660,84 @@ function loadFrontRegisterData() {
     resetModalForm('#employeeForm', '#employerValidationErrBox');
   });
   loadEmployerRegistrationForm();
+  loadCandidateRegistrationForm();
+}
+function loadCandidateRegistrationForm() {
+  var form = document.getElementById('addCandidateNewForm');
+  if (!form) {
+    return;
+  }
+  form.addEventListener('blur', function (e) {
+    if (e.target && e.target.hasAttribute('required')) {
+      if (!e.target.value || !e.target.value.trim() || !e.target.checkValidity()) {
+        e.target.classList.add('is-invalid');
+      } else {
+        e.target.classList.remove('is-invalid');
+      }
+    }
+  }, true);
+  form.addEventListener('input', function (e) {
+    if (e.target && e.target.classList.contains('is-invalid')) {
+      if (e.target.value && e.target.value.trim() && e.target.checkValidity()) {
+        e.target.classList.remove('is-invalid');
+      }
+    }
+  });
+  form.addEventListener('change', function (e) {
+    if (e.target && e.target.classList.contains('is-invalid')) {
+      if (e.target.checkValidity()) {
+        e.target.classList.remove('is-invalid');
+      }
+    }
+  });
+  var password = document.getElementById('candidatePassword');
+  var confirmPassword = document.getElementById('candidateConfirmPassword');
+  var confirmPasswordFeedback = document.getElementById('candidateConfirmPasswordFeedback');
+  if (password && confirmPassword && confirmPasswordFeedback) {
+    password.addEventListener('input', function () {
+      updateRegistrationPasswordMatch(password, confirmPassword, confirmPasswordFeedback);
+    });
+    confirmPassword.addEventListener('input', function () {
+      updateRegistrationPasswordMatch(password, confirmPassword, confirmPasswordFeedback);
+    });
+  }
 }
 function loadEmployerRegistrationForm() {
   var form = document.getElementById('addEmployerNewForm');
   if (!form) {
     return;
   }
+  form.addEventListener('blur', function (e) {
+    if (e.target && e.target.hasAttribute('required')) {
+      if (!e.target.value || !e.target.value.trim() || !e.target.checkValidity()) {
+        e.target.classList.add('is-invalid');
+      } else {
+        e.target.classList.remove('is-invalid');
+      }
+    }
+  }, true);
+  form.addEventListener('input', function (e) {
+    if (e.target && e.target.classList.contains('is-invalid')) {
+      if (e.target.value && e.target.value.trim() && e.target.checkValidity()) {
+        e.target.classList.remove('is-invalid');
+      }
+    }
+  });
+  form.addEventListener('change', function (e) {
+    if (e.target && e.target.classList.contains('is-invalid')) {
+      if (e.target.checkValidity()) {
+        e.target.classList.remove('is-invalid');
+      }
+    }
+    if (e.target && e.target.name === 'employee_range') {
+      var options = form.querySelector('.employer-company-employee-options');
+      if (options) options.classList.remove('is-invalid');
+    }
+    if (e.target && e.target.closest('#registerIndustryOptions')) {
+      var _options = document.getElementById('registerIndustryOptions');
+      if (_options) _options.classList.remove('is-invalid');
+    }
+  });
   var username = document.getElementById('employerUsername');
   var usernameFeedback = document.getElementById('employerUsernameFeedback');
   var password = document.getElementById('employerPassword');
@@ -1585,17 +1750,13 @@ function loadEmployerRegistrationForm() {
     input.setCustomValidity(message || '');
     feedback.textContent = message || '';
   };
-  var validatePasswordMatch = function validatePasswordMatch() {
-    if (!password || !confirmPassword || !confirmPasswordFeedback) {
-      return true;
-    }
-    var mismatch = confirmPassword.value !== '' && password.value !== confirmPassword.value;
-    showLiveError(confirmPassword, confirmPasswordFeedback, mismatch ? 'Passwords do not match' : '');
-    return !mismatch;
-  };
   if (password && confirmPassword && confirmPasswordFeedback) {
-    password.addEventListener('input', validatePasswordMatch);
-    confirmPassword.addEventListener('input', validatePasswordMatch);
+    password.addEventListener('input', function () {
+      updateRegistrationPasswordMatch(password, confirmPassword, confirmPasswordFeedback);
+    });
+    confirmPassword.addEventListener('input', function () {
+      updateRegistrationPasswordMatch(password, confirmPassword, confirmPasswordFeedback);
+    });
   }
   if (username && usernameFeedback) {
     form.dataset.usernameAvailable = 'unchecked';
@@ -1648,6 +1809,7 @@ function loadEmployerRegistrationForm() {
   var country = document.getElementById('registerCountryId');
   var state = document.getElementById('registerStateId');
   var city = document.getElementById('registerCityId');
+  var thana = document.getElementById('registerThanaId');
   var countryFlag = document.querySelector('.employer-register-bd-flag');
   var fillSelect = function fillSelect(select, items, placeholder, selectedValue) {
     select.innerHTML = '';
@@ -1660,10 +1822,33 @@ function loadEmployerRegistrationForm() {
     });
     select.disabled = false;
   };
-  var loadCities = function loadCities(stateId, selectedCity) {
+  var loadThanas = function loadThanas(cityId, selectedThana) {
+    if (!thana) {
+      return;
+    }
+    if (!cityId) {
+      fillSelect(thana, {}, 'Select Thana');
+      thana.disabled = true;
+      return;
+    }
+    thana.disabled = true;
+    fetch(route('register.thanas') + '?city_id=' + encodeURIComponent(cityId), {
+      headers: {
+        'Accept': 'application/json'
+      }
+    }).then(function (response) {
+      return response.json();
+    }).then(function (result) {
+      return fillSelect(thana, result.data, 'Select Thana', selectedThana);
+    })["catch"](function () {
+      return fillSelect(thana, {}, 'Select Thana');
+    });
+  };
+  var loadCities = function loadCities(stateId, selectedCity, selectedThana) {
     if (!stateId) {
-      fillSelect(city, {}, 'Select Thana');
+      fillSelect(city, {}, 'Select District');
       city.disabled = true;
+      loadThanas(null);
       return;
     }
     city.disabled = true;
@@ -1674,9 +1859,10 @@ function loadEmployerRegistrationForm() {
     }).then(function (response) {
       return response.json();
     }).then(function (result) {
-      return fillSelect(city, result.data, 'Select Thana', selectedCity);
+      fillSelect(city, result.data, 'Select District', selectedCity);
+      loadThanas(city.value, selectedThana);
     })["catch"](function () {
-      return fillSelect(city, {}, 'Select Thana');
+      return fillSelect(city, {}, 'Select District');
     });
   };
   if (country && state && city) {
@@ -1689,6 +1875,9 @@ function loadEmployerRegistrationForm() {
       updateCountryFlag();
       state.disabled = true;
       city.disabled = true;
+      if (thana) {
+        thana.disabled = true;
+      }
       fetch(route('register.states') + '?country_id=' + encodeURIComponent(this.value), {
         headers: {
           'Accept': 'application/json'
@@ -1696,22 +1885,25 @@ function loadEmployerRegistrationForm() {
       }).then(function (response) {
         return response.json();
       }).then(function (result) {
-        fillSelect(state, result.data, 'Select District');
-        fillSelect(city, {}, 'Select Thana');
+        fillSelect(state, result.data, 'Select Division');
+        fillSelect(city, {}, 'Select District');
         city.disabled = true;
+        loadThanas(null);
       })["catch"](function () {
-        return fillSelect(state, {}, 'Select District');
+        return fillSelect(state, {}, 'Select Division');
       });
     });
     state.addEventListener('change', function () {
       loadCities(this.value);
     });
+    city.addEventListener('change', function () {
+      loadThanas(this.value);
+    });
     updateCountryFlag();
     if (state.value) {
-      loadCities(state.value, city.dataset.oldCityId);
+      loadCities(state.value, city.dataset.oldCityId, thana ? thana.dataset.oldThanaId : null);
     }
   }
-  var industryType = document.getElementById('registerIndustryType');
   var industrySearch = document.getElementById('registerIndustrySearch');
   var industryOptions = document.getElementById('registerIndustryOptions');
   var industryMore = document.getElementById('registerIndustryMore');
@@ -1719,23 +1911,33 @@ function loadEmployerRegistrationForm() {
   var industryTags = document.getElementById('registerIndustryTags');
   var customIndustryInputs = document.getElementById('registerCustomIndustryInputs');
   var addIndustryTrigger = document.getElementById('registerAddIndustryTrigger');
-  var modalIndustryType = document.getElementById('registerModalIndustryType');
   var modalIndustryName = document.getElementById('registerModalIndustryName');
   var modalIndustryError = document.getElementById('registerIndustryModalError');
   var addIndustryButton = document.getElementById('registerAddIndustryButton');
+  var addIndustryModal = document.getElementById('registerAddIndustryModal');
   var customIndustrySequence = 0;
+  if (addIndustryModal && addIndustryModal.parentElement !== document.body) {
+    document.body.appendChild(addIndustryModal);
+  }
+  if (addIndustryModal) {
+    addIndustryModal.addEventListener('show.bs.modal', function () {
+      document.body.classList.add('employer-register-industry-modal-open');
+    });
+    addIndustryModal.addEventListener('hidden.bs.modal', function () {
+      document.body.classList.remove('employer-register-industry-modal-open');
+    });
+  }
   var refreshIndustries = function refreshIndustries(resetExpansion) {
-    if (!industryType || !industryOptions) {
+    if (!industryOptions) {
       return;
     }
     if (resetExpansion) {
       industryOptions.classList.remove('is-expanded');
     }
-    var typeId = industryType.value;
     var query = industrySearch.value.trim().toLowerCase();
     var matched = 0;
     industryOptions.querySelectorAll('label[data-industry-name]').forEach(function (option) {
-      var isMatch = (typeId === 'all' || option.dataset.industryTypeId === typeId) && (!query || option.dataset.industryName.includes(query));
+      var isMatch = !query || option.dataset.industryName.includes(query);
       option.classList.toggle('is-filtered-out', !isMatch);
       option.classList.remove('is-extra');
       if (isMatch) {
@@ -1771,28 +1973,20 @@ function loadEmployerRegistrationForm() {
       tag.append(removeIcon);
       industryTags.append(tag);
       if (checkbox.dataset.customIndustry === 'true') {
-        var typeInput = document.createElement('input');
-        typeInput.type = 'hidden';
-        typeInput.name = 'custom_industries[' + customInputIndex + '][industry_type_id]';
-        typeInput.value = option.dataset.industryTypeId;
         var nameInput = document.createElement('input');
         nameInput.type = 'hidden';
         nameInput.name = 'custom_industries[' + customInputIndex + '][name]';
         nameInput.value = option.querySelector('span').textContent.trim();
-        customIndustryInputs.append(typeInput, nameInput);
+        customIndustryInputs.append(nameInput);
         customInputIndex += 1;
       }
     });
   };
-  if (industryType && industrySearch && industryOptions) {
+  if (industrySearch && industryOptions) {
     industryOptions.addEventListener('change', function (event) {
       if (event.target.matches('input[type="checkbox"]')) {
         updateIndustryPicker();
       }
-    });
-    industryType.addEventListener('change', function () {
-      industrySearch.value = '';
-      refreshIndustries(true);
     });
     industrySearch.addEventListener('input', function () {
       refreshIndustries(true);
@@ -1820,34 +2014,41 @@ function loadEmployerRegistrationForm() {
       }
     });
   }
-  if (addIndustryTrigger && modalIndustryType && modalIndustryName && modalIndustryError) {
-    addIndustryTrigger.addEventListener('click', function () {
-      var selectedType = industryType ? industryType.value : '';
-      var selectedTypeExists = Array.from(modalIndustryType.options).some(function (option) {
-        return option.value === selectedType;
-      });
-      modalIndustryType.value = selectedTypeExists ? selectedType : modalIndustryType.options[0] ? modalIndustryType.options[0].value : '';
-      modalIndustryName.value = '';
-      modalIndustryError.classList.add('d-none');
-      modalIndustryError.textContent = '';
-      setTimeout(function () {
-        modalIndustryName.focus();
-      }, 350);
+  var showRegisterIndustryModal = function showRegisterIndustryModal() {
+    if (!addIndustryModal || !modalIndustryName || !modalIndustryError) {
+      return;
+    }
+    modalIndustryName.value = '';
+    modalIndustryError.classList.add('d-none');
+    modalIndustryError.textContent = '';
+    if (window.bootstrap && window.bootstrap.Modal) {
+      window.bootstrap.Modal.getOrCreateInstance(addIndustryModal).show();
+    } else if (window.$ && typeof window.$(addIndustryModal).modal === 'function') {
+      window.$(addIndustryModal).modal('show');
+    } else {
+      addIndustryModal.classList.add('show');
+      addIndustryModal.removeAttribute('aria-hidden');
+      addIndustryModal.style.display = 'block';
+      document.body.classList.add('modal-open', 'employer-register-industry-modal-open');
+    }
+    setTimeout(function () {
+      modalIndustryName.focus();
+    }, 350);
+  };
+  if (addIndustryTrigger) {
+    addIndustryTrigger.addEventListener('click', function (event) {
+      event.preventDefault();
+      showRegisterIndustryModal();
     });
   }
   var addRegistrationIndustry = function addRegistrationIndustry() {
-    if (!addIndustryButton || !industryOptions || !modalIndustryType || !modalIndustryName) {
+    if (!addIndustryButton || !industryOptions || !modalIndustryName) {
       return;
     }
     var industryName = modalIndustryName.value.trim();
     var normalizedName = industryName.toLowerCase();
     modalIndustryError.classList.add('d-none');
     modalIndustryError.textContent = '';
-    if (!modalIndustryType.value) {
-      modalIndustryError.textContent = 'Please select an industry type.';
-      modalIndustryError.classList.remove('d-none');
-      return;
-    }
     if (!industryName) {
       modalIndustryError.textContent = 'Please enter your industry name.';
       modalIndustryError.classList.remove('d-none');
@@ -1865,26 +2066,25 @@ function loadEmployerRegistrationForm() {
     customIndustrySequence += 1;
     var option = document.createElement('label');
     option.dataset.industryName = normalizedName;
-    option.dataset.industryTypeId = modalIndustryType.value;
+    option.dataset.industryTypeId = '';
     var checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.checked = true;
+    checkbox.disabled = true;
     checkbox.dataset.customIndustry = 'true';
     checkbox.dataset.optionKey = 'custom-' + customIndustrySequence;
     var labelText = document.createElement('span');
     labelText.textContent = industryName;
     option.append(checkbox, labelText);
-    industryOptions.append(option);
-    industryType.value = modalIndustryType.value;
+    industryOptions.prepend(option);
     industrySearch.value = '';
     updateIndustryPicker();
     refreshIndustries(true);
-    var modalElement = document.getElementById('registerAddIndustryModal');
-    var modalInstance = window.bootstrap && modalElement ? window.bootstrap.Modal.getInstance(modalElement) : null;
+    var modalInstance = window.bootstrap && addIndustryModal ? window.bootstrap.Modal.getInstance(addIndustryModal) : null;
     if (modalInstance) {
       modalInstance.hide();
-    } else if (modalElement) {
-      var closeButton = modalElement.querySelector('[data-bs-dismiss="modal"]');
+    } else if (addIndustryModal) {
+      var closeButton = addIndustryModal.querySelector('[data-bs-dismiss="modal"]');
       if (closeButton) {
         closeButton.click();
       }
@@ -1916,7 +2116,7 @@ function loadEmployerRegistrationForm() {
     };
     phoneInput.addEventListener('countrychange', syncRegionCode);
     phoneInput.addEventListener('input', function () {
-      this.value = this.value.replace(/\D/g, '');
+      this.value = this.value.replace(/\D/g, '').slice(0, 11);
     });
     syncRegionCode();
   }
@@ -1971,11 +2171,49 @@ function loadEmployerRegistrationForm() {
 }
 listenSubmit('#addCandidateNewForm', function (e) {
   e.preventDefault();
-  // if ($('#isGoogleReCaptchaEnabled').val()) {
-  //     if (!checkGoogleReCaptcha(1)) {
-  //         return true;
-  //     }
-  // }
+  var candidateForm = this;
+  candidateForm.querySelectorAll('.is-invalid').forEach(function (input) {
+    input.classList.remove('is-invalid');
+  });
+  var isValid = true;
+  var firstInvalidElement = null;
+  var requiredControls = candidateForm.querySelectorAll('input[required], select[required], textarea[required]');
+  requiredControls.forEach(function (control) {
+    if (control.disabled) return;
+    if (control.type === 'checkbox') {
+      if (!control.checked) {
+        isValid = false;
+        control.classList.add('is-invalid');
+        if (!firstInvalidElement) firstInvalidElement = control;
+      }
+    } else {
+      if (!control.value || !control.value.trim() || !control.checkValidity()) {
+        isValid = false;
+        control.classList.add('is-invalid');
+        if (!firstInvalidElement) firstInvalidElement = control;
+      }
+    }
+  });
+  var password = document.getElementById('candidatePassword');
+  var confirmPassword = document.getElementById('candidateConfirmPassword');
+  var confirmPasswordFeedback = document.getElementById('candidateConfirmPasswordFeedback');
+  if (!updateRegistrationPasswordMatch(password, confirmPassword, confirmPasswordFeedback)) {
+    isValid = false;
+    if (!firstInvalidElement) firstInvalidElement = confirmPassword;
+  }
+  if (!isValid) {
+    displayErrorMessage('Please fill in all required fields.');
+    if (firstInvalidElement) {
+      firstInvalidElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+      setTimeout(function () {
+        firstInvalidElement.focus();
+      }, 100);
+    }
+    return;
+  }
   processingBtn('#addCandidateNewForm', '#btnCandidateSave', 'loading');
   $.ajax({
     url: route('front.save.register'),
@@ -1983,15 +2221,31 @@ listenSubmit('#addCandidateNewForm', function (e) {
     data: $(this).serialize(),
     success: function success(result) {
       if (result.success) {
-        displaySuccessMessage(result.message);
+        if (!result.data || !result.data.candidateRegistration) {
+          displaySuccessMessage(result.message);
+        }
         setTimeout(function () {
-          var redirectUrl = result.data && result.data.redirect_url ? result.data.redirect_url : route('front.candidate.login');
-          visitRegisterRedirect(redirectUrl);
-        }, 1500);
+          window.location.href = result.data.redirectUrl;
+        }, result.data && result.data.candidateRegistration ? 300 : 1500);
       }
     },
     error: function error(result) {
-      displayErrorMessage(result.responseJSON.message);
+      var response = result.responseJSON || {};
+      var errors = response.errors || {};
+      var firstErrorKey = Object.keys(errors)[0];
+      var firstMessage = firstErrorKey && errors[firstErrorKey] ? errors[firstErrorKey][0] : response.message || 'Registration could not be completed. Please review the form.';
+      if (firstErrorKey) {
+        var field = candidateForm.querySelector('[name="' + firstErrorKey + '"]');
+        if (field) {
+          field.classList.add('is-invalid');
+          field.focus();
+          field.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }
+      }
+      displayErrorMessage(firstMessage);
     },
     complete: function complete() {
       processingBtn('#addCandidateNewForm', '#btnCandidateSave');
@@ -2004,6 +2258,8 @@ listenSubmit('#addEmployerNewForm', function (e) {
   var usernameInput = document.getElementById('employerUsername');
   var usernameFeedback = document.getElementById('employerUsernameFeedback');
   var confirmPasswordInput = document.getElementById('employerConfirmPassword');
+  var isValid = true;
+  var firstInvalidElement = null;
   employerForm.querySelectorAll('.employer-server-validation-message').forEach(function (message) {
     message.remove();
   });
@@ -2012,21 +2268,51 @@ listenSubmit('#addEmployerNewForm', function (e) {
       input.classList.remove('is-invalid');
     }
   });
+  var requiredControls = employerForm.querySelectorAll('input[required], select[required], textarea[required]');
+  requiredControls.forEach(function (control) {
+    if (control.disabled) return;
+    if (control.type === 'checkbox') {
+      if (!control.checked) {
+        isValid = false;
+        control.classList.add('is-invalid');
+        if (!firstInvalidElement) firstInvalidElement = control;
+      }
+    } else {
+      if (!control.value || !control.value.trim() || !control.checkValidity()) {
+        isValid = false;
+        control.classList.add('is-invalid');
+        if (!firstInvalidElement) firstInvalidElement = control;
+      }
+    }
+  });
   if (usernameInput && employerForm.dataset.usernameAvailable === 'false') {
+    isValid = false;
     showLiveRegistrationError(usernameInput, usernameFeedback, 'This Username already exists. Try another.');
-    usernameInput.focus();
-    return;
+    usernameInput.classList.add('is-invalid');
+    if (!firstInvalidElement) firstInvalidElement = usernameInput;
   }
   if (confirmPasswordInput && !confirmPasswordInput.checkValidity()) {
-    confirmPasswordInput.reportValidity();
-    return;
+    isValid = false;
+    confirmPasswordInput.classList.add('is-invalid');
+    if (!firstInvalidElement) firstInvalidElement = confirmPasswordInput;
   }
-  if (!document.querySelector('#registerIndustryOptions input[type="checkbox"]:checked')) {
-    displayErrorMessage('Please select at least one industry.');
-    document.getElementById('registerIndustryOptions').scrollIntoView({
-      behavior: 'smooth',
-      block: 'center'
-    });
+  var industryOptions = document.getElementById('registerIndustryOptions');
+  if (industryOptions && !industryOptions.querySelector('input[type="checkbox"]:checked')) {
+    isValid = false;
+    industryOptions.classList.add('is-invalid');
+    if (!firstInvalidElement) firstInvalidElement = industryOptions;
+  }
+  if (!isValid) {
+    displayErrorMessage('Please fill in all required fields.');
+    if (firstInvalidElement) {
+      firstInvalidElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+      setTimeout(function () {
+        firstInvalidElement.focus();
+      }, 100);
+    }
     return;
   }
   processingBtn('#addEmployerNewForm', '#btnEmployerSave', 'loading');
@@ -2044,8 +2330,7 @@ listenSubmit('#addEmployerNewForm', function (e) {
       if (result.success) {
         displaySuccessMessage(result.message);
         setTimeout(function () {
-          var redirectUrl = result.data && result.data.redirect_url ? result.data.redirect_url : route('front.employee.login');
-          visitRegisterRedirect(redirectUrl);
+          window.location.href = result.data.redirectUrl;
         }, 1500);
       }
     },
@@ -2084,10 +2369,10 @@ listenSubmit('#addEmployerNewForm', function (e) {
   });
 });
 function showLiveRegistrationError(input, feedback, message) {
-  input.classList.add('is-invalid');
-  input.setCustomValidity(message);
+  input.classList.toggle('is-invalid', Boolean(message));
+  input.setCustomValidity(message || '');
   if (feedback) {
-    feedback.textContent = message;
+    feedback.textContent = message || '';
   }
 }
 
@@ -2335,7 +2620,6 @@ function loadTestimonialSlider() {
 
 document.addEventListener('DOMContentLoaded', loadApplyJobData);
 function loadApplyJobData() {
-  $('#resumeId').select2();
   listenClick('.save-draft', function (e) {
     e.preventDefault();
     submitForm('#applyJobForm', 'draft', '#draftJobSave', '#applyJobSave', '#g-recaptcha');
@@ -2362,11 +2646,19 @@ function loadApplyJobData() {
           displaySuccessMessage(result.message);
           setTimeout(function () {
             window.location = route('front.job.details', result.data);
-          }, 3000);
+          }, 600);
         }
       },
       error: function error(result) {
-        displayErrorMessage(result.responseJSON.message);
+        if (result.responseJSON && result.responseJSON.data && result.responseJSON.data.profile_incomplete) {
+          if (typeof window.handleApplyClick === 'function') {
+            window.handleApplyClick(null, null, result.responseJSON.data.percentage, result.responseJSON.data.profile_url);
+          } else {
+            displayErrorMessage(result.responseJSON.message);
+          }
+        } else {
+          displayErrorMessage(result.responseJSON.message);
+        }
         processingBtn(formId, loadingBtnId, 'reset');
         $(disabledBtnId).prop('disabled', false);
       }
@@ -2404,10 +2696,9 @@ function loadJobDetailsData() {
         'jobId': jobId
       },
       success: function success(result) {
-        console.log('sd');
         if (result.success) {
           $('#favorite').empty();
-          result.data ? $('#favorite').html('<i class="fa-solid fa-bookmark text-primary featured"></i>') : $('#favorite').html('<i class="fa-regular fa-bookmark text-primary"></i>');
+          result.data ? $('#favorite').html('<i class="fa-solid fa-bookmark featured"></i>') : $('#favorite').html('<i class="fa-regular fa-bookmark"></i>');
           displaySuccessMessage(result.message);
         }
       },
@@ -2428,8 +2719,7 @@ listenSubmit('#reportJobAbuse', function (e) {
       if (result.success) {
         displaySuccessMessage(result.message);
         $('#reportJobAbuseModal').modal('hide');
-        $(".reportJobAbuse").attr('disabled', true);
-        $(".reportJobAbuse").text(Lang.get('js.already_reported'));
+        $(".reportJobAbuse").attr('disabled', true).attr('title', Lang.get('js.already_reported')).attr('aria-label', Lang.get('js.already_reported'));
         $('.modal-backdrop').remove();
         $('.close-modal').click();
       }
@@ -2484,195 +2774,206 @@ listenHiddenBsModal('#reportJobAbuseModal', function () {
 () {
 
 $(window).scrollTop(0);
-document.addEventListener('DOMContentLoaded', loadJobSearchData);
-function loadJobSearchData() {
-  var salaryFromSlider = $('#salaryFrom');
-  var salaryToSlider = $('#salaryTo');
-  if (!$('#salaryFrom').length && !$('#salaryTo').length) {
+document.addEventListener("DOMContentLoaded", loadJobSearchData);
+document.addEventListener("DOMContentLoaded", initJobSearchMobileFilterToggle);
+function initJobSearchMobileFilterToggle() {
+  var toggle = document.querySelector(".find-jobs-filter-mobile-toggle");
+  var panel = document.querySelector("#findJobsFilter");
+  if (!toggle || !panel) {
     return;
   }
-  var jobExperienceSlider = $('#jobExperience');
-  if (!salaryFromSlider.length && !salaryToSlider.length && !jobExperienceSlider.length) {
+  if (toggle.dataset.filterToggleInitialized === "true") {
     return;
   }
-  $('#searchCategories').select2();
-  $('#searchSkill').select2();
-  $('#searchGender').select2();
-  $('#searchCareerLevel').select2();
-  $('#searchFunctionalArea').select2();
-  var input = JSON.parse($('#input').val());
-  $('input[name=job-type]').prop('checked', false);
-  if ($('#jobExperience').length) {
-    var rangEle = $('#jobExperience').siblings()[1];
-    if (typeof rangEle !== "undefined") {
-      rangEle.remove();
+  toggle.dataset.filterToggleInitialized = "true";
+  toggle.addEventListener("click", function (event) {
+    if (window.innerWidth >= 992) {
+      return;
     }
-    $('#jobExperience').ionRangeSlider({
-      type: 'single',
-      min: 0,
-      step: 1,
-      max: 30,
-      max_postfix: '+',
-      onFinish: function onFinish(data) {
-        Livewire.dispatch('changeFilter', {
-          param: 'jobExperience',
-          value: data.from
-        });
-      }
-    });
-    $('#jobExperience').addClass('irs-hidden-input');
-  }
-  // $("#salaryFrom").ionRangeSlider({
-  //     min: 0,
-  //     max: 150000,
-  //     from: 0,
-  // });
-  if (salaryFromSlider.length) {
-    var rangEle = $('#salaryFrom').siblings()[1];
-    if (typeof rangEle !== "undefined") {
-      rangEle.remove();
-    }
-    $("#salaryFrom").ionRangeSlider({
-      type: 'single',
-      min: 0,
-      step: 100,
-      max: 150000,
-      max_postfix: '+',
-      onFinish: function onFinish(data) {
-        Livewire.dispatch('changeFilter', {
-          param: 'salaryFrom',
-          value: data.from
-        });
-      }
-    });
-    $('#salaryFrom').addClass('irs-hidden-input');
-  }
-  if (salaryToSlider.length) {
-    var rangEle = salaryToSlider.siblings()[1];
-    if (typeof rangEle !== "undefined") {
-      rangEle.remove();
-    }
-    salaryToSlider.ionRangeSlider({
-      type: 'single',
-      min: 0,
-      step: 100,
-      max: 150000,
-      max_postfix: '+',
-      onFinish: function onFinish(data) {
-        Livewire.dispatch('changeFilter', {
-          param: 'salaryTo',
-          value: data.from
-        });
-      }
-    });
-    salaryToSlider.addClass('irs-hidden-input');
-  }
-  if (input.length > 0 && input.location != '') {
-    $('#searchByLocation').val(input.location);
-    Livewire.dispatch('changeFilter', {
-      param: 'searchByLocation',
-      value: input.location
-    });
-  }
-  if (input.length > 0 && input.keywords != '') {
-    Livewire.dispatch('changeFilter', {
-      param: 'title',
-      value: input.keywords
-    });
-  }
-
-  // $(document).on('change', '.jobType',function () {
-  if ($(window).width() > 991) {
-    $('#search-jobs-filter').show();
-    $('#collapseBtn').hide();
-  } else {
-    $('.job-post-sidebar').hide();
-    $('#collapseBtn').click(function () {
-      $('.job-post-sidebar').show();
-    });
-  }
-  listenClick('.reset-filter', function (event) {
     event.preventDefault();
-    Livewire.dispatch('resetFilter');
-    salaryFromSlider.data('ionRangeSlider').update({
-      from: 0,
-      to: 0
-    });
-    salaryToSlider.data('ionRangeSlider').update({
-      from: 0,
-      to: 0
-    });
-    jobExperienceSlider.data('ionRangeSlider').update({
-      from: 0,
-      to: 0
-    });
-    $('#searchByLocation').val("");
-    $('#searchFunctionalArea').val('').trigger("change");
-    $('#searchCareerLevel').val('').trigger("change");
-    $('#searchGender').val('').val('').trigger("change");
-    $('#searchSkill').val('').val('').trigger("change");
-    $("#searchCategories").val('').trigger("change");
-    $('.jobType').prop('checked', false);
+    var isOpen = panel.classList.toggle("is-open");
+    toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
   });
 }
-listenChange('.jobType', function () {
+function initJobSearchSelects() {
+  ["#searchCategories", "#searchSkill", "#searchGender", "#searchCareerLevel", "#searchFunctionalArea"].forEach(function (selector) {
+    var field = $(selector);
+    if (field.length && !field.hasClass("select2-hidden-accessible")) {
+      field.select2({
+        width: "100%"
+      });
+    }
+  });
+}
+function loadJobSearchData() {
+  var salaryRangeSlider = $("#salaryRange");
+  var jobExperienceSlider = $("#jobExperience");
+  if (!salaryRangeSlider.length && !jobExperienceSlider.length) {
+    return;
+  }
+  initJobSearchSelects();
+  $(".find-jobs-filter__form").off("submit.jobSearch").on("submit.jobSearch", function (event) {
+    event.preventDefault();
+  });
+  var input = $("#input").val() ? JSON.parse($("#input").val()) : {};
+  var currentLanguage = typeof lancode !== "undefined" ? lancode : document.documentElement.lang || "en";
+  var localizeNumber = function localizeNumber(value) {
+    var number = String(value);
+    if (currentLanguage !== "bn") {
+      return number;
+    }
+    var banglaDigits = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
+    return number.replace(/\d/g, function (digit) {
+      return banglaDigits[digit];
+    });
+  };
+  var prettifyNumber = function prettifyNumber(value) {
+    return localizeNumber(String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+  };
+  if (jobExperienceSlider.length) {
+    var _input$jobExperience;
+    var maximumExperience = Math.max(1, Number(jobExperienceSlider.data("max")) || 30);
+    var hasExperienceRange = Object.prototype.hasOwnProperty.call(input, "jobExperienceFrom") || Object.prototype.hasOwnProperty.call(input, "jobExperienceTo");
+    var legacyExperience = (_input$jobExperience = input.jobExperience) !== null && _input$jobExperience !== void 0 ? _input$jobExperience : input.experience;
+    var selectedExperienceFrom = hasExperienceRange ? Number(input.jobExperienceFrom || 0) : 0;
+    var selectedExperienceTo = hasExperienceRange ? Number(input.jobExperienceTo || maximumExperience) : legacyExperience !== undefined ? Number(legacyExperience) : maximumExperience;
+    selectedExperienceFrom = Math.min(Math.max(0, selectedExperienceFrom), maximumExperience);
+    selectedExperienceTo = Math.min(Math.max(selectedExperienceFrom, selectedExperienceTo), maximumExperience);
+    var dispatchExperienceFilter = function dispatchExperienceFilter(from, to) {
+      Livewire.dispatch("changeExperienceRange", {
+        from: from,
+        to: to,
+        maximum: maximumExperience
+      });
+    };
+    $("#jobExperience").ionRangeSlider({
+      type: 'double',
+      min: 0,
+      from: selectedExperienceFrom,
+      to: selectedExperienceTo,
+      step: 1,
+      max: maximumExperience,
+      max_postfix: "+",
+      prettify: localizeNumber,
+      onFinish: function onFinish(data) {
+        dispatchExperienceFilter(data.from, data.to);
+      }
+    });
+    jobExperienceSlider.addClass("irs-hidden-input");
+  }
+  if (salaryRangeSlider.length) {
+    var salaryMaximum = Number(salaryRangeSlider.data("max")) || 150000;
+    salaryRangeSlider.ionRangeSlider({
+      type: 'double',
+      min: 0,
+      max: salaryMaximum,
+      from: 0,
+      to: salaryMaximum,
+      step: 1000,
+      max_postfix: "+",
+      prettify: prettifyNumber,
+      onFinish: function onFinish(data) {
+        Livewire.dispatch('changeSalaryRange', {
+          from: data.from,
+          to: data.to,
+          maximum: salaryMaximum
+        });
+      }
+    });
+    salaryRangeSlider.addClass("irs-hidden-input");
+  }
+  if (input.location) {
+    $("#searchByLocation").val(input.location);
+  }
+  listenClick(".reset-filter", function (event) {
+    event.preventDefault();
+    Livewire.dispatch("resetFilter");
+    var salaryInstance = salaryRangeSlider.data("ionRangeSlider");
+    var experienceInstance = jobExperienceSlider.data("ionRangeSlider");
+    if (salaryInstance) {
+      salaryInstance.update({
+        from: 0,
+        to: Number(salaryRangeSlider.data("max")) || 150000
+      });
+    }
+    if (experienceInstance) {
+      experienceInstance.update({
+        from: 0,
+        to: Number(jobExperienceSlider.data("max")) || 30
+      });
+    }
+    $("#searchByLocation").val("");
+    $("#searchFunctionalArea").val("").trigger("change");
+    $("#searchCareerLevel").val("").trigger("change");
+    $("#searchGender").val("").trigger("change");
+    $("#searchSkill").val("").trigger("change");
+    $("#searchCategories").val("").trigger("change");
+    $(".jobType").prop("checked", false);
+    $("#fresherJobs").prop("checked", false);
+  });
+}
+listenChange(".jobType", function () {
   var jobType = [];
-  $('input:checkbox[name=job-type]:checked').each(function () {
+  $(".jobType:checked").each(function () {
     jobType.push($(this).val());
   });
-  if (jobType.length > 0) {
-    Livewire.dispatch('changeFilter', {
-      param: 'types',
-      value: jobType
+  Livewire.dispatch("changeFilter", {
+    param: "types",
+    value: jobType
+  });
+});
+listenChange('#fresherJobs', function () {
+  Livewire.dispatch("changeFilter", {
+    param: "freshersOnly",
+    value: $(this).is(":checked")
+  });
+});
+document.addEventListener("livewire:load", function () {
+  $(document).off("click.jobSearchResults", "#jobsSearchResults ul li").on("click.jobSearchResults", "#jobsSearchResults ul li", function () {
+    $("#searchByLocation").val($(this).text());
+    $("#jobsSearchResults").fadeOut();
+  });
+});
+listenChange("#searchCategories", function () {
+  Livewire.dispatch("changeFilter", {
+    param: "category",
+    value: $(this).val()
+  });
+});
+listenChange("#searchSkill", function () {
+  Livewire.dispatch("changeFilter", {
+    param: "skill",
+    value: $(this).val()
+  });
+});
+listenChange("#searchGender", function () {
+  Livewire.dispatch("changeFilter", {
+    param: "gender",
+    value: $(this).val()
+  });
+});
+listenChange("#searchCareerLevel", function () {
+  Livewire.dispatch("changeFilter", {
+    param: "careerLevel",
+    value: $(this).val()
+  });
+});
+listenChange("#searchFunctionalArea", function () {
+  Livewire.dispatch("changeFilter", {
+    param: "functionalArea",
+    value: $(this).val()
+  });
+});
+var jobSearchInputTimer;
+listen("input", "#searchByLocation", function () {
+  var value = $(this).val();
+  clearTimeout(jobSearchInputTimer);
+  jobSearchInputTimer = setTimeout(function () {
+    Livewire.dispatch("changeFilter", {
+      param: "searchByLocation",
+      value: value
     });
-  } else {
-    Livewire.dispatch('resetFilter');
-  }
-});
-document.addEventListener('livewire:load', function () {
-  window.livewire.hook('message.processed', function () {
-    $(window).scrollTop(0);
-    $(document).on('click', '#jobsSearchResults ul li', function () {
-      $('#searchByLocation').val($(this).text());
-      $('#jobsSearchResults').fadeOut();
-    });
-  });
-});
-listenChange('#searchCategories', function () {
-  Livewire.dispatch('changeFilter', {
-    param: 'category',
-    value: $(this).val()
-  });
-});
-listenChange('#searchSkill', function () {
-  Livewire.dispatch('changeFilter', {
-    param: 'skill',
-    value: $(this).val()
-  });
-});
-listenChange('#searchGender', function () {
-  Livewire.dispatch('changeFilter', {
-    param: 'gender',
-    value: $(this).val()
-  });
-});
-listenChange('#searchCareerLevel', function () {
-  Livewire.dispatch('changeFilter', {
-    param: 'careerLevel',
-    value: $(this).val()
-  });
-});
-listenChange('#searchFunctionalArea', function () {
-  Livewire.dispatch('changeFilter', {
-    param: 'functionalArea',
-    value: $(this).val()
-  });
-});
-listenKeyup('#searchByLocation', function () {
-  Livewire.dispatch('changeFilter', {
-    param: 'searchByLocation',
-    value: $(this).val()
-  });
+  }, 300);
 });
 
 /***/ },
@@ -2847,7 +3148,7 @@ listenClick('.delete-comment-btn', function (event) {
     showCancelButton: true,
     closeOnConfirm: false,
     showLoaderOnConfirm: true
-  }, "showCancelButton", true), "confirmButtonText", Lang.get('js.ok')), "cancelButtonText", Lang.get('js.cancel')), "confirmButtonColor", '#1967d2'), "cancelButtonColor", '#d33'), function (isConfirmed) {
+  }, "showCancelButton", true), "confirmButtonText", Lang.get('js.ok')), "cancelButtonText", Lang.get('js.cancel')), "confirmButtonColor", '#209776'), "cancelButtonColor", '#d33'), function (isConfirmed) {
     if (isConfirmed) {
       $.ajaxSetup({
         headers: {
@@ -2871,7 +3172,7 @@ listenClick('.delete-comment-btn', function (event) {
             text: Lang.get('js.comment') + ' ' + Lang.get('js.has_been_deleted'),
             confirmButtonText: Lang.get('js.ok'),
             type: 'success',
-            confirmButtonColor: '#1967D2',
+            confirmButtonColor: '#209776',
             timer: 2000
           });
           // location.reload();
@@ -2990,6 +3291,74 @@ function loadwebCustomData() {
     loadCaptchaForCompanyRegistration();
   }, 500);
 }
+
+// Global Red Focus Form Validation System
+document.addEventListener('blur', function (e) {
+  if (e.target && e.target.hasAttribute && e.target.hasAttribute('required')) {
+    if (!e.target.value || !e.target.value.trim() || !e.target.checkValidity()) {
+      e.target.classList.add('is-invalid');
+    } else {
+      e.target.classList.remove('is-invalid');
+    }
+  }
+}, true);
+document.addEventListener('input', function (e) {
+  if (e.target && e.target.classList && e.target.classList.contains('is-invalid')) {
+    if (e.target.value && e.target.value.trim() && e.target.checkValidity()) {
+      e.target.classList.remove('is-invalid');
+    }
+  }
+});
+document.addEventListener('change', function (e) {
+  if (e.target && e.target.classList && e.target.classList.contains('is-invalid')) {
+    if (e.target.checkValidity()) {
+      e.target.classList.remove('is-invalid');
+    }
+  }
+});
+window.validateFormWithRedFocus = function (form) {
+  if (!form) return true;
+  var isValid = true;
+  var firstInvalid = null;
+  form.classList.add('was-validated');
+  var requiredControls = form.querySelectorAll('input[required], select[required], textarea[required]');
+  requiredControls.forEach(function (control) {
+    if (control.disabled) return;
+    if (control.type === 'radio') {
+      var name = control.name;
+      var checked = form.querySelector('input[name="' + name + '"]:checked');
+      if (!checked) {
+        isValid = false;
+        control.classList.add('is-invalid');
+        var container = control.closest('.employer-company-employee-options') || control.closest('.form-group') || control.parentElement;
+        if (container) container.classList.add('is-invalid');
+        if (!firstInvalid) firstInvalid = control;
+      }
+    } else if (control.type === 'checkbox') {
+      if (!control.checked) {
+        isValid = false;
+        control.classList.add('is-invalid');
+        if (!firstInvalid) firstInvalid = control;
+      }
+    } else {
+      if (!control.value || !control.value.trim() || !control.checkValidity()) {
+        isValid = false;
+        control.classList.add('is-invalid');
+        if (!firstInvalid) firstInvalid = control;
+      }
+    }
+  });
+  if (!isValid && firstInvalid) {
+    firstInvalid.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center'
+    });
+    setTimeout(function () {
+      firstInvalid.focus();
+    }, 100);
+  }
+  return isValid;
+};
 window.manageFrontAjaxErrors = function (data) {
   var errorDivId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'editValidationErrorsBox';
   if (data.status == 404) {

@@ -26,7 +26,7 @@
                             <div class="row">
                                 <div class="col-sm-12 mb-5">
                                     {{ Form::label('template_name',__('messages.email_template.template_name').(':'), ['class' => 'form-label']) }}
-                                    {{ Form::text('template_name', null, ['id'=>'editEmailTemplate','class' => 'form-control']) }}
+                                    {{ Form::text('template_name', null, ['id'=>'editEmailTemplate','class' => 'form-control','readonly']) }}
                                 </div>
                                 <div class="col-sm-12 mb-5">
                                     {{ Form::label('subject',__('messages.email_template.subject').(':'), ['class' => 'form-label']) }}

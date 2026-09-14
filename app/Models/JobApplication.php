@@ -94,6 +94,7 @@ class JobApplication extends Model
         'notes',
         'status',
         'job_stage_id',
+        'archived_at',
     ];
 
     /**
@@ -109,6 +110,7 @@ class JobApplication extends Model
         'expected_salary' => 'double',
         'notes' => 'string',
         'job_stage_id' => 'integer',
+        'archived_at' => 'datetime',
     ];
 
     /**

@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Company;
 use App\Models\CompanySize;
+use App\Models\ConsultationLead;
 use App\Models\FavouriteCompany;
 use App\Models\Industry;
 use App\Models\IndustryType;
@@ -22,6 +23,8 @@ use Hash;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 use PragmaRX\Countries\Package\Countries;
 use Spatie\Permission\Models\Role;
@@ -77,7 +80,9 @@ class CompanyRepository extends BaseRepository
         $data['industries'] = $data['industryRecords']->pluck('name', 'id');
         $data['industryTypes'] = IndustryType::orderBy('sort_order')->pluck('name', 'id');
         $data['ownerShipTypes'] = OwnerShipType::pluck('name', 'id');
-        $data['companySize'] = CompanySize::pluck('size', 'id');
+        $data['companySize'] = CompanySize::all()
+            ->sortBy(fn (CompanySize $companySize) => CompanySize::parseRange($companySize->size)[0] ?? PHP_INT_MAX)
+            ->pluck('size', 'id');
         $data['countries'] = getCountries();
 
         return $data;
@@ -90,9 +95,16 @@ class CompanyRepository extends BaseRepository
     {
         try {
             DB::beginTransaction();
+            $input = $this->normalizeEmployerInput($input);
             $input['unique_id'] = getUniqueCompanyId();
+            if (Auth::check() && ! Auth::user()->hasRole('Employer')) {
+                $input['last_change'] = Auth::id();
+            }
             $input['company_name'] = $input['name'];
             $input['contact_person_designation'] = $input['ceo'] ?? null;
+            if (Schema::hasColumn('companies', 'created_by')) {
+                $input['created_by'] = Company::CREATED_BY_ADMIN;
+            }
             $company = $this->create(Arr::only($input, (new Company())->getFillable()));
 
             // Create User
@@ -103,8 +115,8 @@ class CompanyRepository extends BaseRepository
             $input['is_verified'] = isset($input['is_verified']) ? 1 : 0;
             $userInput = Arr::only($input,
                 [
-                    'first_name', 'email', 'phone', 'password', 'owner_id', 'owner_type', 'country_id', 'state_id',
-                    'city_id', 'is_active', 'dob', 'gender',
+                    'username', 'first_name', 'email', 'phone', 'password', 'owner_id', 'owner_type', 'country_id', 'state_id',
+                    'city_id', 'thana_id', 'is_active', 'dob', 'gender',
                     'facebook_url', 'twitter_url', 'linkedin_url', 'google_plus_url', 'pinterest_url', 'is_verified',
                     'is_default', 'region_code',
                 ]);
@@ -114,6 +126,7 @@ class CompanyRepository extends BaseRepository
             $companyRole = Role::whereName('Employer')->first();
             $user->assignRole($companyRole);
             $company->update(['user_id' => $user->id]);
+            $this->createEmployerLead($company, $user);
 
             if ((isset($input['image']))) {
                 $user->addMedia($input['image'])
@@ -161,18 +174,9 @@ class CompanyRepository extends BaseRepository
         try {
             DB::beginTransaction();
 
-            if (array_key_exists('has_disability_facilities', $input)) {
-                if (! (bool) $input['has_disability_facilities']) {
-                    $input['disability_inclusion_policy'] = null;
-                    $input['disability_inclusion_support'] = null;
-                    $input['disability_inclusion_training'] = null;
-                    $input['disability_facilities'] = [];
-                } else {
-                    if ((bool) ($input['disability_inclusion_policy'] ?? false)) {
-                        $input['disability_inclusion_support'] = null;
-                    }
-                    $input['disability_facilities'] = array_values(array_unique($input['disability_facilities'] ?? []));
-                }
+            $input = $this->normalizeEmployerInput($input);
+            if (Auth::check() && ! Auth::user()->hasRole('Employer')) {
+                $input['last_change'] = Auth::id();
             }
 
             $input['company_name'] = $input['name'];
@@ -181,9 +185,12 @@ class CompanyRepository extends BaseRepository
             $company->update($input);
 
             $input['first_name'] = $input['name'];
+            if (!empty($input['password'])) {
+                $input['password'] = Hash::make($input['password']);
+            }
             $userInput = Arr::only($input,
                 [
-                    'first_name', 'email', 'phone', 'country_id', 'state_id', 'city_id', 'is_active',
+                    'username', 'password', 'first_name', 'email', 'phone', 'country_id', 'state_id', 'city_id', 'thana_id', 'is_active',
                     'facebook_url', 'twitter_url', 'linkedin_url', 'google_plus_url', 'pinterest_url', 'region_code',
                 ]);
             /** @var User $user */
@@ -191,10 +198,15 @@ class CompanyRepository extends BaseRepository
             $user->phone = preparePhoneNumber($user->phone, $user->region_code);
             $user->update($userInput);
 
-            if ((isset($input['image']))) {
-                $user->clearMediaCollection(User::PROFILE);
-                $user->addMedia($input['image'])
+            if (($input['image'] ?? null) instanceof UploadedFile && $input['image']->isValid()) {
+                $newLogo = $user->addMedia($input['image'])
                     ->toMediaCollection(User::PROFILE, config('app.media_disc'));
+
+                // Delete the previous logo only after the new file has been
+                // stored successfully, so a failed upload cannot remove it.
+                $user->getMedia(User::PROFILE)
+                    ->where('id', '!=', $newLogo->id)
+                    ->each->delete();
             }
 
             DB::commit();
@@ -205,6 +217,85 @@ class CompanyRepository extends BaseRepository
 
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
+    }
+
+    private function normalizeEmployerInput(array $input): array
+    {
+        $industryIds = collect($input['industry_ids'] ?? (filled($input['industry_id'] ?? null) ? [$input['industry_id']] : []))
+            ->filter(fn ($id) => filled($id))
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->values()
+            ->all();
+
+        if ($industryIds !== []) {
+            $input['industry_ids'] = $industryIds;
+            $input['industry_id'] = $industryIds[0];
+        }
+
+        if (filled($input['employee_range'] ?? null)) {
+            $input['company_size_id'] = CompanySize::where('size', $input['employee_range'])->value('id');
+        } elseif (filled($input['company_size_id'] ?? null)) {
+            $input['employee_range'] = CompanySize::whereKey($input['company_size_id'])->value('size');
+        }
+
+        $input['company_name'] = $input['name'] ?? $input['company_name'] ?? null;
+        $input['ceo'] = $input['ceo'] ?? $input['contact_person_designation'] ?? null;
+        $input['contact_person_designation'] = $input['contact_person_designation'] ?? $input['ceo'] ?? null;
+        $input['billing_address'] = $input['billing_address'] ?? $input['location'] ?? null;
+        $input['billing_phone'] = $input['billing_phone'] ?? $input['phone'] ?? null;
+        $input['billing_region_code'] = $input['billing_region_code'] ?? $input['region_code'] ?? null;
+        $input['billing_email'] = $input['billing_email'] ?? $input['email'] ?? null;
+
+        if (array_key_exists('has_disability_facilities', $input)) {
+            $input['has_disability_facilities'] = (bool) $input['has_disability_facilities'];
+
+            if (! $input['has_disability_facilities']) {
+                $input['disability_inclusion_policy'] = null;
+                $input['disability_inclusion_support'] = null;
+                $input['disability_inclusion_training'] = null;
+                $input['disability_facilities'] = [];
+            } else {
+                if ((bool) ($input['disability_inclusion_policy'] ?? false)) {
+                    $input['disability_inclusion_support'] = null;
+                }
+
+                $input['disability_facilities'] = array_values(array_unique($input['disability_facilities'] ?? []));
+            }
+        }
+
+        return $input;
+    }
+
+    private function createEmployerLead(Company $company, User $user): void
+    {
+        if (! Schema::hasTable('consultation_leads') || ! Schema::hasColumn('consultation_leads', 'lead_from')) {
+            return;
+        }
+
+        $companySize = $company->company_size_id
+            ? CompanySize::query()->find($company->company_size_id)
+            : null;
+
+        ConsultationLead::query()->updateOrCreate(
+            [
+                'lead_from' => ConsultationLead::LEAD_FROM_EMPLOYER,
+                'employer_id' => $company->id,
+            ],
+            [
+                'name' => $user->full_name ?: $user->first_name ?: $company->company_name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'company_name' => $company->company_name,
+                'designation' => $company->contact_person_designation,
+                'company_website' => $company->website,
+                'company_size_id' => $company->company_size_id,
+                'company_category_id' => $companySize?->company_category_id,
+                'consultation_type' => '',
+                'source_page' => getSettingValue('application_name') ?: config('app.name'),
+                'status' => ConsultationLead::STATUS_NEW,
+            ]
+        );
     }
 
     /**
@@ -233,7 +324,7 @@ class CompanyRepository extends BaseRepository
     public function getCompanyDetail($companyId)
     {
         $data['companyDetail'] = Company::with('user','ownerShipType','companySize')->findOrFail($companyId);
-        $data['jobDetails'] = Job::with('jobShift','jobsSkill','company', 'jobCategory')
+        $data['jobDetails'] = Job::with('jobShift','jobsSkill','company', 'jobCategory', 'jobCategories')
             ->whereDate('job_expiry_date', '>=', Carbon::now()->toDateString())
             ->where('is_suspended', '===', Job::NOT_SUSPENDED)
             ->where([

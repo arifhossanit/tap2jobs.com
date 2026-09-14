@@ -87,11 +87,11 @@
                                         <td>{{ $registeredEmployers->created_at->diffForhumans() }}</td>
                                         <td>
                                             @if ($registeredEmployers->website !== null)
-                                                <a href="{{ !str_contains($registeredEmployers->website, 'https://')
-                                                    ? 'https://' . $registeredEmployers->website
-                                                    : $registeredEmployers->website }}"
+                                                <a href="{{ Str::startsWith($registeredEmployers->website, ['http://', 'https://'])
+                                                    ? $registeredEmployers->website
+                                                    : 'https://' . $registeredEmployers->website }}"
                                                     class="text-decoration-none"
-                                                    target="_blank">{{ Str::limit($registeredEmployers->website, 25, '...') }}</a>
+                                                    target="_blank" rel="noopener noreferrer">{{ Str::limit($registeredEmployers->website, 25, '...') }}</a>
                                             @else
                                             {{__('messages.n/a')}}
                                             @endif

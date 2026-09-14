@@ -56,7 +56,7 @@ class EmailTemplateController extends Controller
      */
     public function update(UpdateEMailTemplateRequest $request, EmailTemplate $emailTemplate): RedirectResponse
     {
-        $input = $request->all();
+        $input = $request->validated();
 
         $this->emailTemplateRepository->update($input, $emailTemplate->id);
 

@@ -21,9 +21,8 @@
                     </div>
                     <div class="col-sm-12 mb-5">
                         {{ Form::label('description', __('messages.job_tag.description').(':'),['class' => 'form-label']) }}
-                        <span class="required"></span>
-                        <div id="editStageDescription"></div>
-                        {{ Form::hidden('description', null, ['id' => 'edit_job_stage_desc']) }}
+                        <textarea name="description" id="editStageDescription" class="form-control" rows="4"
+                                  placeholder="{{ __('messages.job_tag.description') }}"></textarea>
                     </div>
                 </div>
             </div>

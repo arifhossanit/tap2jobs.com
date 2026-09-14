@@ -1,4 +1,4 @@
-@if (!$row->hasResumeAvailable)
+@if (!empty($row->resume_id))
     <a href="{{url('employer/resume-download', $row->id)}}" class="text-decoration-none" >
      {{__('messages.common.download')}}
     </a>

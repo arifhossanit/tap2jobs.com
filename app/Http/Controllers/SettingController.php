@@ -61,7 +61,7 @@ class SettingController extends AppBaseController
      */
     public function update(UpdateSettingRequest $request): RedirectResponse
     {
-        $this->settingRepository->updateSetting($request->all());
+        $this->settingRepository->updateSetting($request->validated());
         $language = $request->default_language;
         // if(!empty($language)){
         //     Session::put('languageName', $language);

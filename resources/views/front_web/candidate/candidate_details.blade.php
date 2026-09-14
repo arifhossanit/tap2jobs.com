@@ -152,14 +152,16 @@
                                 <h4 class="text-secondary lh-base mb-2">
                                     {{ html_entity_decode($candidateDetails->user->full_name) }}</h4>
                                 <div class="hero-desc d-md-flex">
-                                    <div class="desc d-flex {{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
-                                        <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
-                                            <img src="{{ asset('img_template/briefcase.svg') }}" class="w-100" />
+                                    @if (!empty($candidateDetails->functionalArea?->name))
+                                        <div class="desc d-flex {{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
+                                            <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
+                                                <img src="{{ asset('img_template/briefcase.svg') }}" class="w-100" />
+                                            </div>
+                                            <p class="fs-14 text-gray mb-0">
+                                                {{ $candidateDetails->functionalArea->name }}
+                                            </p>
                                         </div>
-                                        <p class="fs-14 text-gray mb-0">
-                                            {{ !empty($candidateDetails->functionalArea->name) ? $candidateDetails->functionalArea->name : __('messages.n/a') }}
-                                        </p>
-                                    </div>
+                                    @endif
                                     @if (!empty($candidateDetails->user->country_name))
                                         <div class="desc d-flex {{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
                                             <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
@@ -175,18 +177,19 @@
                                             </p>
                                         </div>
                                     @endif
-                                    <div class="desc d-flex {{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
-                                        <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
-                                            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path
-                                                    d="M20.9062 4.78125H1.09375C0.650389 4.78125 0.28125 5.15039 0.28125 5.59375V16.4062C0.28125 16.8496 0.650389 17.2188 1.09375 17.2188H20.9062C21.3496 17.2188 21.7188 16.8496 21.7188 16.4062V5.59375C21.7188 5.15039 21.3496 4.78125 20.9062 4.78125ZM1.5 5.59375L11 11.4688L20.5 5.59375V16.4062H1.5V5.59375ZM11 9.53125L1.96875 4.78125H20.0312L11 9.53125Z"
-                                                    fill="#777a7c" />
-                                            </svg>
-
+                                    @if (!empty($candidateDetails->user->email))
+                                        <div class="desc d-flex {{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
+                                            <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
+                                                <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M20.9062 4.78125H1.09375C0.650389 4.78125 0.28125 5.15039 0.28125 5.59375V16.4062C0.28125 16.8496 0.650389 17.2188 1.09375 17.2188H20.9062C21.3496 17.2188 21.7188 16.8496 21.7188 16.4062V5.59375C21.7188 5.15039 21.3496 4.78125 20.9062 4.78125ZM1.5 5.59375L11 11.4688L20.5 5.59375V16.4062H1.5V5.59375ZM11 9.53125L1.96875 4.78125H20.0312L11 9.53125Z"
+                                                        fill="#777a7c" />
+                                                </svg>
+                                            </div>
+                                            <a href="#" class="fs-14 text-gray text-break">{{ $candidateDetails->user->email }}</a>
                                         </div>
-                                        <a href="#" class="fs-14 text-gray text-break">{{ $candidateDetails->user->email }}</a>
-                                    </div>
+                                    @endif
                                     @if ($candidateDetails->user->dob)
                                         <div class="desc d-flex {{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
                                             <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">

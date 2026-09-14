@@ -1,8 +1,3 @@
-@php
-    $blogSidebarLeftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT, \App\Models\Ad::PAGE_BLOG);
-    $blogSidebarRightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT, \App\Models\Ad::PAGE_BLOG);
-    $blogSidebarAds = $blogSidebarAds ?? $blogSidebarLeftAds->merge($blogSidebarRightAds);
-@endphp
 
 <div class="col-lg-4">
     <div class="Categories br-10 px-20 bg-light mb-40">
@@ -40,9 +35,4 @@
             </div>
         @endforeach
     </div>
-    @if ($blogSidebarAds->isNotEmpty())
-        <div class="blog-sidebar-ads mt-40">
-            @include('front_web.common.register_side_ad', ['ads' => $blogSidebarAds])
-        </div>
-    @endif
 </div>

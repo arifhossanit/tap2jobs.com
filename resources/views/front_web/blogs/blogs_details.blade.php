@@ -6,6 +6,18 @@
 {{--    <link href="{{asset('front_web/scss/blog-details.css')}}" rel="stylesheet" type="text/css"> --}}
 {{-- @endsection --}}
 @section('content')
+    <style>
+        .visit-link,
+        .visit-link a {
+            color: #0f6dfa;
+            transition: color 0.2s ease;
+        }
+
+        .visit-link:hover,
+        .visit-link:hover a {
+            color: #0d6efd;
+        }
+    </style>
     <div class="Blog Detail-page">
         <!-- start hero section -->
         <section class="hero-section position-relative bg-gradient pt-15 pb-40">
@@ -37,14 +49,15 @@
 
         <!-- start-blog-details-section -->
         <section class="blog-detail-section py-60">
-            <div class="container">
-                <div class="row">
-                    @php
-                        $leftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT, \App\Models\Ad::PAGE_BLOG_DETAILS);
-                        $rightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT, \App\Models\Ad::PAGE_BLOG_DETAILS);
-                    @endphp                   
+            @php
+                $leftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT, \App\Models\Ad::PAGE_BLOG_DETAILS);
+                $rightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT, \App\Models\Ad::PAGE_BLOG_DETAILS);
+            @endphp
+            <x-front.side-ad-layout :left-ads="$leftAds" :right-ads="$rightAds">
+            <div class="container px-0">
+                <div class="row justify-content-center">
 
-                    <div class="col-lg-8 blog-detail-content">
+                    <div class="col-lg-12 blog-detail-content">
                         <div class="blog-detail">
                             <h5 class="fs-4 mb-3 text-secondary">
                                 {{ html_entity_decode($blog->title) }}
@@ -65,7 +78,10 @@
                                         @lang('web.web_blog.comments')</p>
                                 </div>
                             </div>
-                            @role('Candidate')
+                            <p class="fs-16 mb-3 visit-link">
+                                <strong>Visit:&nbsp;</strong><a href="https://www.tap2jobs.com/" target="_blank" rel="noopener noreferrer"><strong>www.tap2jobs.com</strong></a>
+                            </p>
+                            {{-- @role('Candidate')
                                 <div class="designer-details d-flex flex-wrap pb-3">
                                     <a href="{{ $url['facebook'] }}" title="@lang('web.web_jobs.facebook')" target="_blank"
                                         class="d-flex me-2">
@@ -97,7 +113,7 @@
                                         </div>
                                     </a>
                                 </div>
-                            @endrole
+                            @endrole --}}
                             <div class="blog-img mb-40">
                                 <img
                                     src="{{ !empty($blog->blog_image_url) ? $blog->blog_image_url : asset('web/img/blog_default_image.jpg') }}">
@@ -119,6 +135,9 @@
                                     {!! html_entity_decode($blog->description) !!}
                                 </p>
                             </div>
+                        <p class="fs-16 mb-3 visit-link">
+                            <strong>Visit:&nbsp;</strong><a href="https://www.tap2jobs.com/" target="_blank" rel="noopener noreferrer"><strong>www.tap2jobs.com</strong></a>
+                        </p>
                         <div class="blog-share d-sm-flex justify-content-between align-items-center bg-light py-4 px-3 mb-40 br-10">
                             <div class="d-flex mb-sm-0 mb-3 align-items-center">
                                 <h5 class="fs-18 text-secondary mb-0 {{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }}">
@@ -305,16 +324,9 @@
                     </div>{{-- /.blog-detail --}}
                     </div>{{-- /.blog-detail-content --}}
 
-                    <div class="col-lg-4 blog-detail-right-ads">
-                        @if ($leftAds->count() > 0)
-                            @include('front_web.common.register_side_ad', ['ads' => $leftAds])
-                        @endif
-                        @if ($rightAds->count() > 0)
-                            @include('front_web.common.register_side_ad', ['ads' => $rightAds])
-                        @endif
-                    </div>
                 </div>
             </div>
+            </x-front.side-ad-layout>
         </section>
         <!-- end-blog-details-section -->
         @include('front_web.blogs.templates.templates')

@@ -41,6 +41,10 @@
         aria-labelledby="actionDropDown_{{ $row->id }}">
         <li>
             <input type="hidden" name="data-job-id" value="{{$this->jobId}}" id="dataJobId">
+            @if($row->archived_at)
+                <a href="javascript:void(0)" class="btn btn-sm dropdown-item job-application-action-restore"
+                   data-id="{{$row->id}}">{{__('messages.common.restore')}}</a>
+            @else
             @if(!$isCompleted && !$isRejected)
                 @if(!$isShortlisted)
                     <a href="javascript:void(0)" class="btn btn-sm dropdown-item job-application-short-list"
@@ -65,7 +69,8 @@
                 @endif
             @endif
             <a href="javascript:void(0)" class="btn btn-sm dropdown-item job-application-action-delete"
-               data-id="{{$row->id}}">{{__('messages.common.delete')}}</a>
+               data-id="{{$row->id}}">{{__('messages.common.remove')}}</a>
+            @endif
         </li>
     </ul>
 </div>

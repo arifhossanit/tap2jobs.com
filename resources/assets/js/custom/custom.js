@@ -144,9 +144,9 @@ function loadCustom() {
     source = null;
     jsrender = require("jsrender");
 
-    $('input:text:not([readonly="readonly"])')
-        .first()
-        .focus();
+    // $('input:text:not([readonly="readonly"])')
+    //     .first()
+    //     .focus();
 
     // infy loader js
     stopLoader();
@@ -247,52 +247,109 @@ window.manageAjaxErrors = function(data) {
             ? arguments[1]
             : "editValidationErrorsBox";
     if (data.status == 404) {
-        toastr.error({
-            title: "Error!",
-            message: data.responseJSON.message,
-            position: "topRight"
-        });
+        displayErrorMessage(data.responseJSON.message);
     } else {
         printErrorMessage("#" + errorDivId, data);
     }
 };
 
-var isRTL = lancode == "ar" ? true : false;
-if(isRTL){
-    toastr.options = {
-        rtl: true,
-        positionClass: "toast-top-left",
+window.displayAlertMessage = function(level, message, title) {
+    const normalizedLevel = level === 'danger' ? 'error' : level;
+    const isBn = typeof lancode !== 'undefined' && lancode === 'bn';
+    const defaultTitles = {
+        success: isBn ? 'সফল' : 'Successful',
+        error: isBn ? 'ত্রুটি' : 'Error',
+        warning: isBn ? 'সতর্কতা' : 'Warning',
+        info: isBn ? 'তথ্য' : 'Information'
     };
-}else{
-    toastr.options = {
-        positionClass: "toast-top-right",
-    };
-}
+    const icon = ['success', 'error', 'warning', 'info'].includes(normalizedLevel)
+        ? normalizedLevel
+        : 'info';
+    const alertTitle = title || defaultTitles[icon];
+    const alertMessage = message == null ? '' : String(message);
+    const translatedOk = typeof Lang !== 'undefined' ? Lang.get('js.ok') : 'js.ok';
+    const confirmText = translatedOk !== 'js.ok' ? translatedOk : (isBn ? 'ঠিক আছে' : 'OK');
+
+    if (typeof window.swal === 'function') {
+        return window.swal({
+            icon: icon,
+            title: alertTitle,
+            text: alertMessage,
+            button: confirmText
+        });
+    }
+
+    if (typeof window.Swal !== 'undefined' && typeof window.Swal.fire === 'function') {
+        return window.Swal.fire({
+            icon: icon,
+            title: alertTitle,
+            text: alertMessage,
+            confirmButtonText: confirmText
+        });
+    }
+
+    window.alert([alertTitle, alertMessage].filter(Boolean).join('\n'));
+    return Promise.resolve();
+};
 
 window.displaySuccessMessage = function(message) {
-    let successTitle = Lang.get("js.success");
-    if (successTitle === "js.success") {
-        successTitle = typeof lancode !== 'undefined' && lancode === 'bn' ? 'সফল' : 'Successful';
-    }
-    toastr.success(message, successTitle);
+    return window.displayAlertMessage('success', message);
 };
 
 window.displayErrorMessage = function(message) {
-    let errorTitle = Lang.get("js.error");
-    if (errorTitle === "js.error") {
-        errorTitle = typeof lancode !== 'undefined' && lancode === 'bn' ? 'ত্রুটি' : 'Error';
-    }
-    toastr.error(message, errorTitle);
+    return window.displayAlertMessage('error', message);
 };
 
-window.deleteItem = function(url, header) {
-    var callFunction =
-        arguments.length > 3 && arguments[3] !== undefined
-            ? arguments[3]
-            : null;
+window.displayWarningMessage = function(message) {
+    return window.displayAlertMessage('warning', message);
+};
+
+window.displayInfoMessage = function(message) {
+    return window.displayAlertMessage('info', message);
+};
+window.displayDeleteSuccessMessage = function(message) {
     swal({
+        icon: "success",
+        title: Lang.get("js.deleted") + " !",
+        text: message,
+        buttons: {
+            confirm: Lang.get("js.ok")
+        },
+        reverseButtons: true,
+        confirmButtonColor: "#F62947",
+        timer: 2000
+    });
+};
+
+window.displayDeleteErrorMessage = function(message) {
+    swal({
+        title: Lang.get("js.error"),
+        icon: "error",
+        text: message,
+        type: "error",
+        buttons: {
+            confirm: Lang.get("js.ok")
+        },
+        reverseButtons: true,
+        confirmButtonColor: "#F62947",
+        timer: 4000
+    });
+};
+
+window.addEventListener("bulk-action-feedback", function(event) {
+    const feedback = event.detail || {};
+
+    if (feedback.type === "success") {
+        window.displayDeleteSuccessMessage(feedback.message);
+    } else if (feedback.type === "error") {
+        window.displayDeleteErrorMessage(feedback.message);
+    }
+});
+
+window.confirmDeleteAction = function(message, onConfirm) {
+    return swal({
         title: Lang.get("js.delete") + " !",
-        text: Lang.get("js.are_you_sure") + ' "' + header + '" ?',
+        text: message,
         buttons: {
             confirm: Lang.get("js.yes_delete"),
             cancel: Lang.get("js.no_cancel")
@@ -302,10 +359,23 @@ window.deleteItem = function(url, header) {
         cancelButtonColor: "#ADB5BD",
         icon: "warning"
     }).then(function(willDelete) {
-        if (willDelete) {
-            deleteItemAjax(url, header, callFunction);
+        if (willDelete && typeof onConfirm === "function") {
+            onConfirm();
         }
     });
+};
+
+window.deleteItem = function(url, header) {
+    var callFunction =
+        arguments.length > 3 && arguments[3] !== undefined
+            ? arguments[3]
+            : null;
+    window.confirmDeleteAction(
+        Lang.get("js.are_you_sure") + ' "' + header + '" ?',
+        function() {
+            deleteItemAjax(url, header, callFunction);
+        }
+    );
 };
 
 function deleteItemAjax(url, header, callFunction = null) {
@@ -319,34 +389,15 @@ function deleteItemAjax(url, header, callFunction = null) {
                 Livewire.dispatch("refresh");
                 Livewire.dispatch('resetPage');
             }
-            swal({
-                icon: "success",
-                title: Lang.get("js.deleted") + " !",
-                text: header + " " + Lang.get("js.has_been_deleted"),
-                buttons: {
-                    confirm: Lang.get("js.ok")
-                },
-                reverseButtons: true,
-                confirmButtonColor: "#F62947",
-                timer: 2000
-            });
+            window.displayDeleteSuccessMessage(
+                header + " " + Lang.get("js.has_been_deleted")
+            );
             if (callFunction) {
                 eval(callFunction);
             }
         },
         error: function(data) {
-            swal({
-                title: Lang.get("js.error"),
-                icon: "error",
-                text: data.responseJSON.message,
-                type: "error",
-                buttons: {
-                    confirm: Lang.get("js.ok")
-                },
-                reverseButtons: true,
-                confirmButtonColor: "#F62947",
-                timer: 4000
-            });
+            window.displayDeleteErrorMessage(data.responseJSON.message);
         }
     });
 }
@@ -478,115 +529,132 @@ window.urlValidation = function(value, regex) {
     return true;
 };
 
-function closeFrontLanguageDropdowns (restoreFocus) {
-    $(".language-dropdown.is-open").each(function () {
-        const dropdown = $(this);
-        dropdown.removeClass("is-open");
-        dropdown.find(".language-dropdown-btn").attr("aria-expanded", "false");
+const adminNotificationList = $("#adminNotificationList");
 
-        if (restoreFocus) {
-            dropdown.find(".language-dropdown-btn").trigger("focus");
+function escapeNotificationText(value) {
+    return $("<div>").text(value || "").html();
+}
+
+function adminNotificationEmptyState() {
+    return (
+        '<div class="admin-notification-empty d-flex flex-column align-items-center justify-content-center text-center py-8" data-height="400">' +
+        '<i class="fa-regular fa-bell-slash text-gray-500 fs-1 mb-3"></i>' +
+        '<p class="fs-6 fw-semibold text-gray-700 mb-0">No notification found</p>' +
+        "</div>"
+    );
+}
+
+function renderAdminNotifications(notificationData) {
+    if (!adminNotificationList.length || !notificationData) {
+        return;
+    }
+
+    let notifications = notificationData.notifications || [];
+    let notificationCount = notificationData.count || 0;
+
+    $("#counter")
+        .text(notificationCount)
+        .toggleClass("d-none", notificationCount === 0);
+
+    if (notifications.length === 0) {
+        adminNotificationList.html(adminNotificationEmptyState());
+
+        return;
+    }
+
+    let notificationItems = notifications
+        .map(function(notification) {
+            let isRead = notification.is_read;
+            let itemStyle = isRead
+                ? "background: transparent; opacity: 0.7;"
+                : "background: rgba(101, 113, 255, 0.08);";
+
+            return (
+                '<div class="admin-notification-item ' +
+                (isRead ? "admin-notification-read" : "admin-notification-unread") +
+                ' d-flex position-relative mb-3 p-3 rounded readNotification cursor-pointer" style="' +
+                itemStyle +
+                '" data-id="' +
+                notification.id +
+                '" data-url="' +
+                escapeNotificationText(notification.url) +
+                '" data-read="' +
+                (isRead ? "1" : "0") +
+                '">' +
+                '<span class="me-5 text-primary fs-2 icon-label"><i class="' +
+                escapeNotificationText(notification.icon) +
+                '"></i></span>' +
+                "<div>" +
+                '<h5 class="text-gray-900 fs-6 mb-2">' +
+                escapeNotificationText(notification.title) +
+                "</h5>" +
+                '<h6 class="text-gray-600 fs-small fw-light mb-0">' +
+                escapeNotificationText(notification.created_at) +
+                "</h6>" +
+                "</div>" +
+                "</div>"
+            );
+        })
+        .join("");
+
+    adminNotificationList.html(notificationItems);
+}
+
+function refreshAdminNotifications() {
+    if (!adminNotificationList.length || typeof route !== "function") {
+        return;
+    }
+
+    $.ajax({
+        type: "GET",
+        url: route("notifications.latest"),
+        success: function(response) {
+            renderAdminNotifications(response.data);
         }
     });
 }
 
-listenClick(".language-dropdown-btn", function(e) {
-    e.preventDefault();
-    e.stopPropagation();
+if (adminNotificationList.length) {
+    setInterval(refreshAdminNotifications, 30000);
+}
 
-    const dropdown = $(this).closest(".language-dropdown");
-    const willOpen = !dropdown.hasClass("is-open");
-    closeFrontLanguageDropdowns(false);
-    dropdown.toggleClass("is-open", willOpen);
-    $(this).attr("aria-expanded", willOpen ? "true" : "false");
-});
-
-listenClick(".languageSelection", function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-
-    let languageName = $(this).data("prefix-value");
-    let languageUrl = $(this).closest(".language-dropdown").data("language-url");
-    closeFrontLanguageDropdowns(false);
-    refreshCsrfToken();
-    $.ajax({
-        type: "POST",
-        url: languageUrl,
-        data: { languageName: languageName },
-        success: function() {
-            location.reload();
-        },
-        error: function(result) {
-            if (typeof displayErrorMessage === "function") {
-                displayErrorMessage(result.responseJSON && result.responseJSON.message
-                    ? result.responseJSON.message
-                    : "Unable to change language.");
-            }
-        }
-    });
-});
-
-listenWithOutTarget("click", function(e) {
-    if (!$(e.target).closest(".language-dropdown").length) {
-        closeFrontLanguageDropdowns(false);
-    }
-});
-
-listenWithOutTarget("keydown", function(e) {
-    if (e.key === "Escape") {
-        closeFrontLanguageDropdowns(true);
-    }
-});
-
-listenClick("#readNotification", function(e) {
+listenClick(".readNotification", function(e) {
     e.preventDefault();
     let notificationId = $(this).data("id");
+    let notificationUrl = $(this).data("url");
     let notification = $(this);
+    let wasUnread = String(notification.data("read")) !== "1";
     $.ajax({
         type: "POST",
         url: route("read-notification", notificationId),
         data: { notificationId: notificationId },
-        success: function() {
-            displaySuccessMessage(Lang.get("js.notification_read"));
-            notification.remove();
-            let notificationCounter = document.getElementsByClassName(
-                "readNotification"
-            ).length;
+        success: function(response) {
+            notificationUrl = notificationUrl || (response.data ? response.data.url : "");
+            notification
+                .removeClass("admin-notification-unread")
+                .css({
+                    background: "transparent",
+                    opacity: 0.7
+                });
+            notification.attr("data-read", "1").data("read", "1");
+            let notificationCounter = parseInt($("#counter").text(), 10) || 0;
+            notificationCounter = wasUnread
+                ? Math.max(notificationCounter - 1, 0)
+                : notificationCounter;
             $("#counter").text(notificationCounter);
             if (notificationCounter == 0) {
-                $(".empty-state").removeClass("d-none");
                 $(".notification-count").addClass("d-none");
                 $("#counter").text(notificationCounter);
-                $("#readAllNotification")
-                    .parents("div")
-                    .first()
-                    .remove();
             }
-        },
-        error: function(error) {
-            manageAjaxErrors(error);
-        }
-    });
-});
 
-listenClick("#readAllNotification", function(e) {
-    e.preventDefault();
-    $.ajax({
-        type: "POST",
-        url: route("read-all-notification"),
-        success: function() {
-            displaySuccessMessage(Lang.get("js.all_notification_read"));
-            $(".readNotification").remove();
-            let notificationCounter = document.getElementsByClassName(
-                "notification"
-            ).length;
-            $(".empty-state").removeClass("d-none");
-            $(".notification-count").addClass("d-none");
-            $("#counter").text(notificationCounter);
-            $("#readAllNotification")
-                .parents("div")
-                .first()
-                .remove();
+            if (notificationUrl) {
+                setTimeout(function() {
+                    window.location.href = notificationUrl;
+                }, 140);
+                return;
+            }
+
+            displaySuccessMessage(Lang.get("js.notification_read"));
         },
         error: function(error) {
             manageAjaxErrors(error);
@@ -683,7 +751,7 @@ window.isOnlyContainWhiteSpace = function(value) {
     return value.trim().replace(/ \r\n\t/g, "") === "";
 };
 
-let defaultAvatarImageUrl = "asset('assets/img/infyom-logo.png')";
+let defaultAvatarImageUrl = "asset('assets/img/user.png')";
 window.defaultImagePreview = function(imagePreviewSelector, id = null) {
     if (id == 1) {
         $(imagePreviewSelector).css(

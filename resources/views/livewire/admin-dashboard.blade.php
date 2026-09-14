@@ -97,7 +97,7 @@
                             </div>
                             <div class="text-end text-white">
                                 <h2 class="fs-1-xxl fw-bolder text-white">
-                                    {{ numberFormatShort($dashboardData['featuredJobsIncomes']) }}</h2>
+                                    {{ $dashboardData['featuredJobsIncomes'] }}</h2>
                                 <h3 class="mb-0 fs-4 fw-light">
                                     {{ __('messages.admin_dashboard.featured_jobs_incomes') }}</h3>
                             </div>
@@ -112,7 +112,7 @@
                             </div>
                             <div class="text-end text-white">
                                 <h2 class="fs-1-xxl fw-bolder text-light">
-                                    {{ numberFormatShort($dashboardData['featuredCompanysIncomes']) }}</h2>
+                                    {{ $dashboardData['featuredCompanysIncomes'] }}</h2>
                                 <h3 class="mb-0 fs-4 fw-light text-light">
                                     {{ __('messages.admin_dashboard.featured_employers_incomes') }}</h3>
                             </div>
@@ -128,7 +128,7 @@
                                 </div>
                                 <div class="text-end text-white">
                                     <h2 class="fs-1-xxl fw-bolder text-white">
-                                        {{ numberFormatShort($dashboardData['subscriptionIncomes']) }}</h2>
+                                        {{ $dashboardData['subscriptionIncomes'] }}</h2>
                                     <h3 class="mb-0 fs-4 fw-light">
                                         {{ __('messages.admin_dashboard.subscription_incomes') }}</h3>
                                 </div>

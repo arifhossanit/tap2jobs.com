@@ -17,7 +17,7 @@
         <section class="hero-section position-relative bg-gradient pt-15 pb-40">
             <div class="container">
                 <div class="row align-items-center justify-content-center">
-                    <div class="col-lg-6  text-center mb-lg-0 mb-md-5 mb-sm-4 ">
+                    <div class="col-lg-6 text-center mb-lg-0 mb-md-5 mb-sm-4 ">
                         <div class="hero-content">
                             <h1 class=" text-secondary mb-3">
                                 @lang('web.web_jobs.find_jobs')
@@ -38,16 +38,14 @@
         </section>
 
         <section class="latest-job-section py-60">
-            <div class="container">
-                @php
-                    $rightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT, \App\Models\Ad::PAGE_JOBS);
-                    if ($rightAds->isEmpty()) {
-                        $rightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT, \App\Models\Ad::PAGE_JOBS);
-                    }
-                @endphp
-
+            @php
+                $leftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT, \App\Models\Ad::PAGE_JOBS);
+                $rightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT, \App\Models\Ad::PAGE_JOBS);
+            @endphp
+            <x-front.side-ad-layout :left-ads="$leftAds" :right-ads="$rightAds">
+                <div class="container px-0">
                 <div class="row g-4 align-items-start">
-                    <div class="{{ $rightAds->isNotEmpty() ? 'col-lg-3 col-12' : 'col-lg-4 col-12' }} find-jobs-filter-column">
+                    <div class="col-lg-4 col-12 find-jobs-filter-column">
                         <button class="find-jobs-filter-mobile-toggle d-lg-none" type="button"
                                 aria-expanded="false" aria-controls="findJobsFilter">
                             <span><i class="fa-solid fa-sliders" aria-hidden="true"></i>{{ __('messages.common.filters') }}</span>
@@ -64,20 +62,14 @@
                             :input="$input"
                         />
                     </div>
-                    <div class="{{ $rightAds->isNotEmpty() ? 'col-lg-6 col-12' : 'col-lg-8 col-12' }} px-lg-3">
+                    <div class="col-lg-8 col-12">
                         <div class="job-card">
                             @livewire('job-search')
                         </div>
                     </div>
-                    @if ($rightAds->isNotEmpty())
-                        <div class="col-lg-3 col-12 find-jobs-right-ads-column">
-                            <div class="find-jobs-right-ads sticky-top" style="top: 20px;">
-                                @include('front_web.common.register_side_ad', ['ads' => $rightAds])
-                            </div>
-                        </div>
-                    @endif
                 </div>
-            </div>
+                </div>
+            </x-front.side-ad-layout>
         </section>
     </div>
     {{ Form::hidden('jobType', json_encode($input), ['id' => 'input']) }}

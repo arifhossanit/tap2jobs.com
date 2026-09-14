@@ -1,4 +1,46 @@
 document.addEventListener('DOMContentLoaded', loadFrontRegisterData);
+window.addEventListener('load', function () {
+    const employerForm = document.getElementById('addEmployerNewForm');
+    const email = document.getElementById('employerEmail');
+    if (!employerForm || !email) {
+        return;
+    }
+
+    window.setTimeout(function () {
+        const previouslyFocusedField = document.activeElement;
+        email.focus({ preventScroll: true });
+
+        if (previouslyFocusedField &&
+            previouslyFocusedField !== email &&
+            employerForm.contains(previouslyFocusedField)) {
+            previouslyFocusedField.classList.remove('is-invalid');
+        }
+        email.classList.remove('is-invalid');
+    }, 0);
+});
+document.addEventListener('click', function (event) {
+    const toggle = event.target.closest('.employer-register-password-toggle');
+    if (!toggle) {
+        return;
+    }
+
+    const input = document.getElementById(toggle.dataset.passwordToggle);
+    if (!input) {
+        return;
+    }
+
+    const showPassword = input.type === 'password';
+    input.type = showPassword ? 'text' : 'password';
+
+    const icon = toggle.querySelector('i');
+    if (icon) {
+        icon.classList.toggle('fa-eye', showPassword);
+        icon.classList.toggle('fa-eye-slash', !showPassword);
+    }
+
+    toggle.setAttribute('aria-label', showPassword ? 'Hide password' : 'Show password');
+    toggle.setAttribute('aria-pressed', showPassword ? 'true' : 'false');
+});
 
 function visitRegisterRedirect (url) {
     if (window.Turbo && typeof window.Turbo.visit === 'function') {
@@ -7,6 +49,25 @@ function visitRegisterRedirect (url) {
     }
 
     window.location.href = url;
+}
+
+const registerPasswordMismatchMessage = 'Passwords do not match';
+
+function updateRegistrationPasswordMatch (password, confirmPassword, feedback) {
+    if (!password || !confirmPassword || !feedback) {
+        return true;
+    }
+
+    const mismatch = confirmPassword.value !== '' && password.value !== confirmPassword.value;
+    confirmPassword.setCustomValidity(mismatch ? registerPasswordMismatchMessage : '');
+    if (mismatch) {
+        confirmPassword.classList.add('is-invalid');
+    } else if (confirmPassword.checkValidity()) {
+        confirmPassword.classList.remove('is-invalid');
+    }
+    feedback.textContent = mismatch ? registerPasswordMismatchMessage : '';
+
+    return !mismatch;
 }
 
 function loadFrontRegisterData () {
@@ -37,6 +98,53 @@ function loadFrontRegisterData () {
     });
 
     loadEmployerRegistrationForm();
+    loadCandidateRegistrationForm();
+}
+
+function loadCandidateRegistrationForm () {
+    const form = document.getElementById('addCandidateNewForm');
+    if (!form) {
+        return;
+    }
+
+    form.addEventListener('blur', function (e) {
+        if (e.target && e.target.hasAttribute('required')) {
+            if (!e.target.value || !e.target.value.trim() || !e.target.checkValidity()) {
+                e.target.classList.add('is-invalid');
+            } else {
+                e.target.classList.remove('is-invalid');
+            }
+        }
+    }, true);
+
+    form.addEventListener('input', function (e) {
+        if (e.target && e.target.classList.contains('is-invalid')) {
+            if (e.target.value && e.target.value.trim() && e.target.checkValidity()) {
+                e.target.classList.remove('is-invalid');
+            }
+        }
+    });
+
+    form.addEventListener('change', function (e) {
+        if (e.target && e.target.classList.contains('is-invalid')) {
+            if (e.target.checkValidity()) {
+                e.target.classList.remove('is-invalid');
+            }
+        }
+    });
+
+    const password = document.getElementById('candidatePassword');
+    const confirmPassword = document.getElementById('candidateConfirmPassword');
+    const confirmPasswordFeedback = document.getElementById('candidateConfirmPasswordFeedback');
+
+    if (password && confirmPassword && confirmPasswordFeedback) {
+        password.addEventListener('input', function () {
+            updateRegistrationPasswordMatch(password, confirmPassword, confirmPasswordFeedback);
+        });
+        confirmPassword.addEventListener('input', function () {
+            updateRegistrationPasswordMatch(password, confirmPassword, confirmPasswordFeedback);
+        });
+    }
 }
 
 function loadEmployerRegistrationForm () {
@@ -44,6 +152,40 @@ function loadEmployerRegistrationForm () {
     if (!form) {
         return;
     }
+
+    form.addEventListener('blur', function (e) {
+        if (e.target && e.target.hasAttribute('required')) {
+            if (!e.target.value || !e.target.value.trim() || !e.target.checkValidity()) {
+                e.target.classList.add('is-invalid');
+            } else {
+                e.target.classList.remove('is-invalid');
+            }
+        }
+    }, true);
+
+    form.addEventListener('input', function (e) {
+        if (e.target && e.target.classList.contains('is-invalid')) {
+            if (e.target.value && e.target.value.trim() && e.target.checkValidity()) {
+                e.target.classList.remove('is-invalid');
+            }
+        }
+    });
+
+    form.addEventListener('change', function (e) {
+        if (e.target && e.target.classList.contains('is-invalid')) {
+            if (e.target.checkValidity()) {
+                e.target.classList.remove('is-invalid');
+            }
+        }
+        if (e.target && e.target.name === 'employee_range') {
+            const options = form.querySelector('.employer-company-employee-options');
+            if (options) options.classList.remove('is-invalid');
+        }
+        if (e.target && e.target.closest('#registerIndustryOptions')) {
+            const options = document.getElementById('registerIndustryOptions');
+            if (options) options.classList.remove('is-invalid');
+        }
+    });
 
     const username = document.getElementById('employerUsername');
     const usernameFeedback = document.getElementById('employerUsernameFeedback');
@@ -59,24 +201,13 @@ function loadEmployerRegistrationForm () {
         feedback.textContent = message || '';
     };
 
-    const validatePasswordMatch = function () {
-        if (!password || !confirmPassword || !confirmPasswordFeedback) {
-            return true;
-        }
-
-        const mismatch = confirmPassword.value !== '' && password.value !== confirmPassword.value;
-        showLiveError(
-            confirmPassword,
-            confirmPasswordFeedback,
-            mismatch ? 'Passwords do not match' : ''
-        );
-
-        return !mismatch;
-    };
-
     if (password && confirmPassword && confirmPasswordFeedback) {
-        password.addEventListener('input', validatePasswordMatch);
-        confirmPassword.addEventListener('input', validatePasswordMatch);
+        password.addEventListener('input', function () {
+            updateRegistrationPasswordMatch(password, confirmPassword, confirmPasswordFeedback);
+        });
+        confirmPassword.addEventListener('input', function () {
+            updateRegistrationPasswordMatch(password, confirmPassword, confirmPasswordFeedback);
+        });
     }
 
     if (username && usernameFeedback) {
@@ -144,6 +275,7 @@ function loadEmployerRegistrationForm () {
     const country = document.getElementById('registerCountryId');
     const state = document.getElementById('registerStateId');
     const city = document.getElementById('registerCityId');
+    const thana = document.getElementById('registerThanaId');
     const countryFlag = document.querySelector('.employer-register-bd-flag');
 
     const fillSelect = function (select, items, placeholder, selectedValue) {
@@ -155,10 +287,31 @@ function loadEmployerRegistrationForm () {
         select.disabled = false;
     };
 
-    const loadCities = function (stateId, selectedCity) {
+    const loadThanas = function (cityId, selectedThana) {
+        if (!thana) {
+            return;
+        }
+
+        if (!cityId) {
+            fillSelect(thana, {}, 'Select Thana');
+            thana.disabled = true;
+            return;
+        }
+
+        thana.disabled = true;
+        fetch(route('register.thanas') + '?city_id=' + encodeURIComponent(cityId), {
+            headers: { 'Accept': 'application/json' }
+        })
+            .then(response => response.json())
+            .then(result => fillSelect(thana, result.data, 'Select Thana', selectedThana))
+            .catch(() => fillSelect(thana, {}, 'Select Thana'));
+    };
+
+    const loadCities = function (stateId, selectedCity, selectedThana) {
         if (!stateId) {
-            fillSelect(city, {}, 'Select Thana');
+            fillSelect(city, {}, 'Select District');
             city.disabled = true;
+            loadThanas(null);
             return;
         }
 
@@ -167,8 +320,11 @@ function loadEmployerRegistrationForm () {
             headers: { 'Accept': 'application/json' }
         })
             .then(response => response.json())
-            .then(result => fillSelect(city, result.data, 'Select Thana', selectedCity))
-            .catch(() => fillSelect(city, {}, 'Select Thana'));
+            .then(result => {
+                fillSelect(city, result.data, 'Select District', selectedCity);
+                loadThanas(city.value, selectedThana);
+            })
+            .catch(() => fillSelect(city, {}, 'Select District'));
     };
 
     if (country && state && city) {
@@ -182,29 +338,35 @@ function loadEmployerRegistrationForm () {
             updateCountryFlag();
             state.disabled = true;
             city.disabled = true;
+            if (thana) {
+                thana.disabled = true;
+            }
             fetch(route('register.states') + '?country_id=' + encodeURIComponent(this.value), {
                 headers: { 'Accept': 'application/json' }
             })
                 .then(response => response.json())
                 .then(result => {
-                    fillSelect(state, result.data, 'Select District');
-                    fillSelect(city, {}, 'Select Thana');
+                    fillSelect(state, result.data, 'Select Division');
+                    fillSelect(city, {}, 'Select District');
                     city.disabled = true;
+                    loadThanas(null);
                 })
-                .catch(() => fillSelect(state, {}, 'Select District'));
+                .catch(() => fillSelect(state, {}, 'Select Division'));
         });
 
         state.addEventListener('change', function () {
             loadCities(this.value);
         });
 
+        city.addEventListener('change', function () {
+            loadThanas(this.value);
+        });
+
         updateCountryFlag();
         if (state.value) {
-            loadCities(state.value, city.dataset.oldCityId);
+            loadCities(state.value, city.dataset.oldCityId, thana ? thana.dataset.oldThanaId : null);
         }
     }
-
-    const industryType = document.getElementById('registerIndustryType');
     const industrySearch = document.getElementById('registerIndustrySearch');
     const industryOptions = document.getElementById('registerIndustryOptions');
     const industryMore = document.getElementById('registerIndustryMore');
@@ -212,28 +374,38 @@ function loadEmployerRegistrationForm () {
     const industryTags = document.getElementById('registerIndustryTags');
     const customIndustryInputs = document.getElementById('registerCustomIndustryInputs');
     const addIndustryTrigger = document.getElementById('registerAddIndustryTrigger');
-    const modalIndustryType = document.getElementById('registerModalIndustryType');
     const modalIndustryName = document.getElementById('registerModalIndustryName');
     const modalIndustryError = document.getElementById('registerIndustryModalError');
     const addIndustryButton = document.getElementById('registerAddIndustryButton');
+    const addIndustryModal = document.getElementById('registerAddIndustryModal');
     let customIndustrySequence = 0;
 
+    if (addIndustryModal && addIndustryModal.parentElement !== document.body) {
+        document.body.appendChild(addIndustryModal);
+    }
+
+    if (addIndustryModal) {
+        addIndustryModal.addEventListener('show.bs.modal', function () {
+            document.body.classList.add('employer-register-industry-modal-open');
+        });
+        addIndustryModal.addEventListener('hidden.bs.modal', function () {
+            document.body.classList.remove('employer-register-industry-modal-open');
+        });
+    }
+
     const refreshIndustries = function (resetExpansion) {
-        if (!industryType || !industryOptions) {
+        if (!industryOptions) {
             return;
         }
 
         if (resetExpansion) {
             industryOptions.classList.remove('is-expanded');
         }
-
-        const typeId = industryType.value;
         const query = industrySearch.value.trim().toLowerCase();
         let matched = 0;
 
         industryOptions.querySelectorAll('label[data-industry-name]').forEach(function (option) {
-            const isMatch = (typeId === 'all' || option.dataset.industryTypeId === typeId) &&
-                (!query || option.dataset.industryName.includes(query));
+            const isMatch = (!query || option.dataset.industryName.includes(query));
             option.classList.toggle('is-filtered-out', !isMatch);
             option.classList.remove('is-extra');
             if (isMatch) {
@@ -279,31 +451,22 @@ function loadEmployerRegistrationForm () {
             industryTags.append(tag);
 
             if (checkbox.dataset.customIndustry === 'true') {
-                const typeInput = document.createElement('input');
-                typeInput.type = 'hidden';
-                typeInput.name = 'custom_industries[' + customInputIndex + '][industry_type_id]';
-                typeInput.value = option.dataset.industryTypeId;
-
                 const nameInput = document.createElement('input');
                 nameInput.type = 'hidden';
                 nameInput.name = 'custom_industries[' + customInputIndex + '][name]';
                 nameInput.value = option.querySelector('span').textContent.trim();
 
-                customIndustryInputs.append(typeInput, nameInput);
+                customIndustryInputs.append(nameInput);
                 customInputIndex += 1;
             }
         });
     };
 
-    if (industryType && industrySearch && industryOptions) {
+    if (industrySearch && industryOptions) {
         industryOptions.addEventListener('change', function (event) {
             if (event.target.matches('input[type="checkbox"]')) {
                 updateIndustryPicker();
             }
-        });
-        industryType.addEventListener('change', function () {
-            industrySearch.value = '';
-            refreshIndustries(true);
         });
         industrySearch.addEventListener('input', function () {
             refreshIndustries(true);
@@ -335,26 +498,40 @@ function loadEmployerRegistrationForm () {
             }
         });
     }
+    const showRegisterIndustryModal = function () {
+        if (!addIndustryModal || !modalIndustryName || !modalIndustryError) {
+            return;
+        }
 
-    if (addIndustryTrigger && modalIndustryType && modalIndustryName && modalIndustryError) {
-        addIndustryTrigger.addEventListener('click', function () {
-            const selectedType = industryType ? industryType.value : '';
-            const selectedTypeExists = Array.from(modalIndustryType.options)
-                .some(option => option.value === selectedType);
-            modalIndustryType.value = selectedTypeExists
-                ? selectedType
-                : (modalIndustryType.options[0] ? modalIndustryType.options[0].value : '');
-            modalIndustryName.value = '';
-            modalIndustryError.classList.add('d-none');
-            modalIndustryError.textContent = '';
-            setTimeout(function () {
-                modalIndustryName.focus();
-            }, 350);
+        modalIndustryName.value = '';
+        modalIndustryError.classList.add('d-none');
+        modalIndustryError.textContent = '';
+
+        if (window.bootstrap && window.bootstrap.Modal) {
+            window.bootstrap.Modal.getOrCreateInstance(addIndustryModal).show();
+        } else if (window.$ && typeof window.$(addIndustryModal).modal === 'function') {
+            window.$(addIndustryModal).modal('show');
+        } else {
+            addIndustryModal.classList.add('show');
+            addIndustryModal.removeAttribute('aria-hidden');
+            addIndustryModal.style.display = 'block';
+            document.body.classList.add('modal-open', 'employer-register-industry-modal-open');
+        }
+
+        setTimeout(function () {
+            modalIndustryName.focus();
+        }, 350);
+    };
+
+    if (addIndustryTrigger) {
+        addIndustryTrigger.addEventListener('click', function (event) {
+            event.preventDefault();
+            showRegisterIndustryModal();
         });
     }
 
     const addRegistrationIndustry = function () {
-        if (!addIndustryButton || !industryOptions || !modalIndustryType || !modalIndustryName) {
+        if (!addIndustryButton || !industryOptions || !modalIndustryName) {
             return;
         }
 
@@ -362,12 +539,6 @@ function loadEmployerRegistrationForm () {
         const normalizedName = industryName.toLowerCase();
         modalIndustryError.classList.add('d-none');
         modalIndustryError.textContent = '';
-
-        if (!modalIndustryType.value) {
-            modalIndustryError.textContent = 'Please select an industry type.';
-            modalIndustryError.classList.remove('d-none');
-            return;
-        }
 
         if (!industryName) {
             modalIndustryError.textContent = 'Please enter your industry name.';
@@ -387,32 +558,31 @@ function loadEmployerRegistrationForm () {
         customIndustrySequence += 1;
         const option = document.createElement('label');
         option.dataset.industryName = normalizedName;
-        option.dataset.industryTypeId = modalIndustryType.value;
+        option.dataset.industryTypeId = '';
 
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.checked = true;
+        checkbox.disabled = true;
         checkbox.dataset.customIndustry = 'true';
         checkbox.dataset.optionKey = 'custom-' + customIndustrySequence;
 
         const labelText = document.createElement('span');
         labelText.textContent = industryName;
         option.append(checkbox, labelText);
-        industryOptions.append(option);
+        industryOptions.prepend(option);
 
-        industryType.value = modalIndustryType.value;
         industrySearch.value = '';
         updateIndustryPicker();
         refreshIndustries(true);
 
-        const modalElement = document.getElementById('registerAddIndustryModal');
-        const modalInstance = window.bootstrap && modalElement
-            ? window.bootstrap.Modal.getInstance(modalElement)
+        const modalInstance = window.bootstrap && addIndustryModal
+            ? window.bootstrap.Modal.getInstance(addIndustryModal)
             : null;
         if (modalInstance) {
             modalInstance.hide();
-        } else if (modalElement) {
-            const closeButton = modalElement.querySelector('[data-bs-dismiss="modal"]');
+        } else if (addIndustryModal) {
+            const closeButton = addIndustryModal.querySelector('[data-bs-dismiss="modal"]');
             if (closeButton) {
                 closeButton.click();
             }
@@ -446,7 +616,7 @@ function loadEmployerRegistrationForm () {
         };
         phoneInput.addEventListener('countrychange', syncRegionCode);
         phoneInput.addEventListener('input', function () {
-            this.value = this.value.replace(/\D/g, '');
+            this.value = this.value.replace(/\D/g, '').slice(0, 11);
         });
         syncRegionCode();
     }
@@ -512,11 +682,53 @@ function loadEmployerRegistrationForm () {
 
 listenSubmit('#addCandidateNewForm', function (e) {
     e.preventDefault();
-    // if ($('#isGoogleReCaptchaEnabled').val()) {
-    //     if (!checkGoogleReCaptcha(1)) {
-    //         return true;
-    //     }
-    // }
+
+    const candidateForm = this;
+    candidateForm.querySelectorAll('.is-invalid').forEach(function (input) {
+        input.classList.remove('is-invalid');
+    });
+
+    let isValid = true;
+    let firstInvalidElement = null;
+
+    const requiredControls = candidateForm.querySelectorAll('input[required], select[required], textarea[required]');
+    requiredControls.forEach(function (control) {
+        if (control.disabled) return;
+
+        if (control.type === 'checkbox') {
+            if (!control.checked) {
+                isValid = false;
+                control.classList.add('is-invalid');
+                if (!firstInvalidElement) firstInvalidElement = control;
+            }
+        } else {
+            if (!control.value || !control.value.trim() || !control.checkValidity()) {
+                isValid = false;
+                control.classList.add('is-invalid');
+                if (!firstInvalidElement) firstInvalidElement = control;
+            }
+        }
+    });
+
+    const password = document.getElementById('candidatePassword');
+    const confirmPassword = document.getElementById('candidateConfirmPassword');
+    const confirmPasswordFeedback = document.getElementById('candidateConfirmPasswordFeedback');
+    if (!updateRegistrationPasswordMatch(password, confirmPassword, confirmPasswordFeedback)) {
+        isValid = false;
+        if (!firstInvalidElement) firstInvalidElement = confirmPassword;
+    }
+
+    if (!isValid) {
+        displayErrorMessage('Please fill in all required fields.');
+        if (firstInvalidElement) {
+            firstInvalidElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(function () {
+                firstInvalidElement.focus();
+            }, 100);
+        }
+        return;
+    }
+
     processingBtn('#addCandidateNewForm', '#btnCandidateSave', 'loading');
 
     $.ajax({
@@ -525,18 +737,32 @@ listenSubmit('#addCandidateNewForm', function (e) {
         data: $(this).serialize(),
         success: function (result) {
             if (result.success) {
-                displaySuccessMessage(result.message);
+                if (!result.data || !result.data.candidateRegistration) {
+                    displaySuccessMessage(result.message);
+                }
                 setTimeout(function () {
-                    const redirectUrl = result.data && result.data.redirect_url
-                        ? result.data.redirect_url
-                        : route('front.candidate.login');
-
-                    visitRegisterRedirect(redirectUrl);
-                }, 1500);
+                    window.location.href = result.data.redirectUrl;
+                }, result.data && result.data.candidateRegistration ? 300 : 1500);
             }
         },
         error: function (result) {
-            displayErrorMessage(result.responseJSON.message);
+            const response = result.responseJSON || {};
+            const errors = response.errors || {};
+            const firstErrorKey = Object.keys(errors)[0];
+            const firstMessage = firstErrorKey && errors[firstErrorKey]
+                ? errors[firstErrorKey][0]
+                : (response.message || 'Registration could not be completed. Please review the form.');
+
+            if (firstErrorKey) {
+                const field = candidateForm.querySelector('[name="' + firstErrorKey + '"]');
+                if (field) {
+                    field.classList.add('is-invalid');
+                    field.focus();
+                    field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+
+            displayErrorMessage(firstMessage);
         },
         complete: function () {
             processingBtn('#addCandidateNewForm', '#btnCandidateSave');
@@ -552,6 +778,9 @@ listenSubmit('#addEmployerNewForm', function (e) {
     const usernameFeedback = document.getElementById('employerUsernameFeedback');
     const confirmPasswordInput = document.getElementById('employerConfirmPassword');
 
+    let isValid = true;
+    let firstInvalidElement = null;
+
     employerForm.querySelectorAll('.employer-server-validation-message').forEach(function (message) {
         message.remove();
     });
@@ -561,24 +790,57 @@ listenSubmit('#addEmployerNewForm', function (e) {
         }
     });
 
+    const requiredControls = employerForm.querySelectorAll('input[required], select[required], textarea[required]');
+    requiredControls.forEach(function (control) {
+        if (control.disabled) return;
+
+        if (control.type === 'checkbox') {
+            if (!control.checked) {
+                isValid = false;
+                control.classList.add('is-invalid');
+                if (!firstInvalidElement) firstInvalidElement = control;
+            }
+        } else {
+            if (!control.value || !control.value.trim() || !control.checkValidity()) {
+                isValid = false;
+                control.classList.add('is-invalid');
+                if (!firstInvalidElement) firstInvalidElement = control;
+            }
+        }
+    });
+
     if (usernameInput && employerForm.dataset.usernameAvailable === 'false') {
+        isValid = false;
         showLiveRegistrationError(
             usernameInput,
             usernameFeedback,
             'This Username already exists. Try another.'
         );
-        usernameInput.focus();
-        return;
+        usernameInput.classList.add('is-invalid');
+        if (!firstInvalidElement) firstInvalidElement = usernameInput;
     }
 
     if (confirmPasswordInput && !confirmPasswordInput.checkValidity()) {
-        confirmPasswordInput.reportValidity();
-        return;
+        isValid = false;
+        confirmPasswordInput.classList.add('is-invalid');
+        if (!firstInvalidElement) firstInvalidElement = confirmPasswordInput;
     }
 
-    if (!document.querySelector('#registerIndustryOptions input[type="checkbox"]:checked')) {
-        displayErrorMessage('Please select at least one industry.');
-        document.getElementById('registerIndustryOptions').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const industryOptions = document.getElementById('registerIndustryOptions');
+    if (industryOptions && !industryOptions.querySelector('input[type="checkbox"]:checked')) {
+        isValid = false;
+        industryOptions.classList.add('is-invalid');
+        if (!firstInvalidElement) firstInvalidElement = industryOptions;
+    }
+
+    if (!isValid) {
+        displayErrorMessage('Please fill in all required fields.');
+        if (firstInvalidElement) {
+            firstInvalidElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(function () {
+                firstInvalidElement.focus();
+            }, 100);
+        }
         return;
     }
 
@@ -597,11 +859,7 @@ listenSubmit('#addEmployerNewForm', function (e) {
             if (result.success) {
                 displaySuccessMessage(result.message);
                 setTimeout(function () {
-                    const redirectUrl = result.data && result.data.redirect_url
-                        ? result.data.redirect_url
-                        : route('front.employee.login');
-
-                    visitRegisterRedirect(redirectUrl);
+                    window.location.href = result.data.redirectUrl;
                 }, 1500);
             }
         },
@@ -644,9 +902,12 @@ listenSubmit('#addEmployerNewForm', function (e) {
 });
 
 function showLiveRegistrationError (input, feedback, message) {
-    input.classList.add('is-invalid');
-    input.setCustomValidity(message);
+    input.classList.toggle('is-invalid', Boolean(message));
+    input.setCustomValidity(message || '');
     if (feedback) {
-        feedback.textContent = message;
+        feedback.textContent = message || '';
     }
 }
+
+
+

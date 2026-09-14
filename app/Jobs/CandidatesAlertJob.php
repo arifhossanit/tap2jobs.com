@@ -39,12 +39,17 @@ class CandidatesAlertJob implements ShouldQueue
         $users = User::whereIn('id', $userIds)->get();
 
         $templateBody = EmailTemplate::whereTemplateName('Job Alert')->first();
+        if (! $templateBody) {
+            return;
+        }
+
         foreach ($users as $user) {
             $job->name = $user->full_name;
-            $keyVariable = ['{{job_name}}', '{{job_url}}', '{{job_title}}', '{{from_name}}'];
-            $value = [$job->name, asset('/job-details/'.$job->job_id), $job->job_title, config('app.name')];
+            $keyVariable = ['{{candidate_name}}', '{{job_name}}', '{{job_url}}', '{{job_title}}', '{{from_name}}'];
+            $value = [$job->name, $job->name, asset('/job-details/'.$job->job_id), $job->job_title, config('app.name')];
             $body = str_replace($keyVariable, $value, $templateBody->body);
             $data['body'] = $body;
+            $data['subject'] = str_replace($keyVariable, $value, $templateBody->subject);
 
             $data['data'] = $data;
             $data['email'] = $user->email;

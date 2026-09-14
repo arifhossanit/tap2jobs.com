@@ -96,13 +96,11 @@
 
         @if ($jobTypes->isNotEmpty())
             <div class="form-group find-jobs-filter__group find-jobs-filter__types">
-                <button class="find-jobs-filter__toggle" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#jobTypeFilterOptions" aria-expanded="{{ $selectedType !== '' ? 'true' : 'false' }}"
-                        aria-controls="jobTypeFilterOptions">
+                <div class="find-jobs-filter__toggle" aria-expanded="true">
                     <span>@lang('web.job_menu.type')</span>
                     <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
-                </button>
-                <div class="collapse {{ $selectedType !== '' ? 'show' : '' }}" id="jobTypeFilterOptions">
+                </div>
+                <div class="collapse show" id="jobTypeFilterOptions">
                     <div class="find-jobs-filter__type-options">
                         @foreach ($jobTypes as $jobType)
                             @continue($jobType->jobs_count <= 0)

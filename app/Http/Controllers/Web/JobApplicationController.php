@@ -120,6 +120,7 @@ class JobApplicationController extends AppBaseController
                 asset('/candidate-details/'.$candidateUniqueId), $job->job_title, config('app.name'),
             ];
             $data['body'] = str_replace($keyVariable, $value, $templateBody->body);
+            $data['subject'] = str_replace($keyVariable, $value, $templateBody->subject);
 
             $recipientEmail = $job->company->user->email;
             $jobId = $job->id;

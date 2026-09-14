@@ -1,43 +1,18 @@
 document.addEventListener('DOMContentLoaded', loadJobStagesData);
+document.addEventListener('livewire:navigated', loadJobStagesData);
+document.addEventListener('turbo:load', loadJobStagesData);
+
+let jobStageListenersRegistered = false;
 
 function loadJobStagesData() {
     if (!$('#jobStageDescription').length && !$('#editStageDescription').length) {
         return;
     }
-    if ($('#jobStageDescription').length) {
-        window.employerJobStageQuill = new AppTextEditor('#jobStageDescription', {
-            modules: {
-                toolbar: [
-                    ['bold', 'italic', 'underline', 'strike'],
-                    ['clean'],
-                ],
-                keyboard: {
-                    bindings: {
-                        tab: 'disabled',
-                    }
-                }
-            },
-            placeholder: Lang.get('js.enter_description'),
-            theme: 'snow',
-        });
+    if (jobStageListenersRegistered) {
+        return;
     }
-    if ($('#editStageDescription').length) {
-        window.editEmployerJobStageQuill = new AppTextEditor('#editStageDescription', {
-            modules: {
-                toolbar: [
-                    ['bold', 'italic', 'underline', 'strike'],
-                    ['clean'],
-                ],
-                keyboard: {
-                    bindings: {
-                        tab: 'disabled',
-                    }
-                }
-            },
-            placeholder: Lang.get('js.enter_description'),
-            theme: 'snow',
-        });
-    }
+    jobStageListenersRegistered = true;
+
     // $('#jobStageName').addClass('p-7');
 
     listenClick('.job-stage-edit-btn', function (event) {
@@ -57,8 +32,7 @@ function loadJobStagesData() {
                     $('#jobStageId').val(result.data.id);
                     $('#editName').val(element.value);
                     element.innerHTML = result.data.description;
-                    editEmployerJobStageQuill.root.innerHTML = element.value;
-                    // $('#editStageDescription').summernote('code', result.data.description);
+                    $('#editStageDescription').val(element.value);
                     $('#editJobStageModal').appendTo('body').modal('show');
                     ajaxCallCompleted();
                 }
@@ -72,8 +46,6 @@ function loadJobStagesData() {
 
     listenHiddenBsModal('#addJobStageModal', function () {
         resetModalForm('#addJobStageForm', '#jobStageValidationErrorsBox');
-        employerJobStageQuill.setContents([{insert: ''}]);
-        editEmployerJobStageQuill.setContents([{insert: ''}]);
     });
 
     listenClick('.addJobStageModal', function () {
@@ -182,14 +154,6 @@ function loadJobStagesData() {
 // });
 listenSubmit('#addJobStageForm', function (e) {
     e.preventDefault();
-    let editor_content = employerJobStageQuill.root.innerHTML;
-
-    if (employerJobStageQuill.getText().trim().length === 0) {
-        displayErrorMessage(Lang.get('js.description_required'));
-        return false;
-    }
-    let input = JSON.stringify(editor_content);
-    $('#job_stage_desc').val(input.replace(/"/g, ''));
     processingBtn('#addJobStageForm', '#jobStageBtnSave', 'loading');
     $.ajax({
         url: route('job.stage.store'),
@@ -213,15 +177,6 @@ listenSubmit('#addJobStageForm', function (e) {
 
 listenSubmit('#editJobStageForm', function (event) {
     event.preventDefault();
-    let editor_content1 = editEmployerJobStageQuill.root.innerHTML;
-
-    if (editEmployerJobStageQuill.getText().trim().length === 0) {
-        displayErrorMessage(Lang.get('js.description_required'));
-        return false;
-    }
-    let input = JSON.stringify(editor_content1);
-    $('#edit_job_stage_desc').val(input.replace(/"/g, ""));
-
     processingBtn('#editJobStageForm', '#jobStageEditSaveBtn', 'loading');
     // if (!checkSummerNoteEmpty('#editStageDescription',
     //     'Description field is required.')) {
