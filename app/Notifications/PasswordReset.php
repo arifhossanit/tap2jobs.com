@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\EmailTemplate;
+use App\Support\MailLogo;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -53,6 +54,7 @@ class PasswordReset extends Notification
         $value = [url('password/reset', $this->token), config('app.name'), config('auth.passwords.users.expire', 60)];
         $body = str_replace($keyVariable, $value, $templateBody->body);
         $data['body'] = $body;
+        $data = array_merge($data, MailLogo::data());
 
         return (new MailMessage)
             ->subject(str_replace($keyVariable, $value, $templateBody->subject))

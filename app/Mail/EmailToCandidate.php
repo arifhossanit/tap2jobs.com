@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Support\MailLogo;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -27,6 +28,8 @@ class EmailToCandidate extends Mailable
      */
     public function build(): self
     {
+        $this->data = array_merge($this->data, MailLogo::data());
+
         return $this->from(config('mail.from.address'))
             ->subject($this->data['subject'] ?? 'New Job Alert')->markdown('emails.jobs.email_candidate');
     }

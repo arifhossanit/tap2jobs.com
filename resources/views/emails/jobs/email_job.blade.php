@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
     <style type="text/css">
+        body { font-family: Poppins, Arial, sans-serif; }
         .table-class {
             width: 100%;
             max-width: 570px;
@@ -19,7 +20,7 @@
         }
 
         .text-blue-color {
-            color: #009ef7;
+            color: #209776;
         }
 
         .company-name {
@@ -28,7 +29,7 @@
             padding: 0 !important;
             margin-top: -5px !important;
             min-width: unset !important;
-            color: #009ef7 !important;
+            color: #209776 !important;
         }
     </style>
 </head>
@@ -40,9 +41,7 @@
                 <table width="100%">
                     <tr>
                         <td>
-                            <img width="100" style="display: block; width: 100px; max-width: 100px; height: auto; margin: 10px auto 20px; text-align: center;" src="{{ ! empty($data['logo_path']) && isset($message) ? $message->embed($data['logo_path']) : getLogoUrl() }}"
-                                 alt="company logo"
-                                 class="img-fluid main-logo">
+                            @include('emails.partials.logo')
                         </td>
                     </tr>
                 </table>
@@ -69,6 +68,7 @@
                                                       class="company-name">{{ getAppName() }}</a>.</strong>
                                 {{__('messages.all_rights_reserved')}}.
                             </p>
+                        </td>
                     </tr>
                 </table>
             </td>

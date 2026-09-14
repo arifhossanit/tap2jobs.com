@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
     <style type="text/css">
+        body { font-family: Poppins, Arial, sans-serif; }
         .table-class {
             width: 100%;
             max-width: 570px;
@@ -66,9 +67,7 @@
                 <table width="100%">
                     <tr>
                         <td>
-                            <img width="100" style="display: block; width: 100px; max-width: 100px; height: auto; margin: 10px auto 20px; text-align: center;" src='{{ getLogoUrl() }}'
-                                 alt="company logo"
-                                 class="img-fluid main-logo">
+                            @include('emails.partials.logo')
                         </td>
                     </tr>
                 </table>
@@ -90,11 +89,12 @@
                 <table width="100%">
                     <tr>
                         <td>
-                            <p style="margin-bottom: 0;text-align: center; font-size: 13px;font-family: Circular Std, sans-serif !important;">
+                            <p style="margin-bottom: 0;text-align: center; font-size: 13px;">
                                 <strong>&copy;{{ date('Y') }} <a href="{{ config('app.url') }}"
                                                       class="company-name">{{ getAppName() }}</a>.</strong>
                                 {{__('messages.all_rights_reserved')}}.
                             </p>
+                        </td>
                     </tr>
                 </table>
             </td>
