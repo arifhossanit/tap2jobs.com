@@ -107,7 +107,7 @@
                             data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="image image-circle image-mini d-flex align-items-center {{ checkLanguageSession() == 'ar' ? 'ms-sm-3' : 'me-sm-3' }}">
                             <img src="{{ $loggedInEmployer->avatar }}"
-                                 class="img-fluid" alt="{{ $employerHeaderName }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;">
+                                 class="img-fluid" alt="{{ $employerHeaderName }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 0;">
                         </div>
                     </button>
                     <div class="dropdown-menu border p-4 pb-4 employer-user-dropdown-menu" aria-labelledby="employerUserDropdown"
