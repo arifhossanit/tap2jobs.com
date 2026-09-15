@@ -22,7 +22,9 @@
                 </div>
                 <div class="mb-5">
                     {{ Form::label('sort_order', 'Sort Order:', ['class' => 'form-label']) }}
-                    {{ Form::number('sort_order', 0, ['id'=>'profileReferenceSortOrder', 'class' => 'form-control', 'min' => 0]) }}
+                    <span class="required"></span>
+                    {{ Form::select('sort_order', $availableSortOrders, array_key_first($availableSortOrders), ['id'=>'profileReferenceSortOrder', 'class' => 'form-select', 'required']) }}
+                    <div class="form-text">Only available sort numbers are shown.</div>
                 </div>
                 <div class="form-check form-switch">
                     {{ Form::checkbox('is_active', '1', true, ['id'=>'profileReferenceIsActive', 'class' => 'form-check-input']) }}

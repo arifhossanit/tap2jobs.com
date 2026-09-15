@@ -15,32 +15,32 @@
         </button>
         <div class="candidate-profile-menu__top">
             <a class="candidate-profile-menu__main-link {{ $sectionName == 'personal-information' ? 'active' : '' }}"
-               href="{{ route('candidate.profile', ['section' => 'personal-information']) }}">
+               href="{{ route('candidate.profile', array_filter(['section' => 'personal-information', 'return_to' => $data['profileReturnUrl'] ?? null])) }}">
                 <i class="fa-regular fa-user"></i>
                 <span>{{ __('messages.candidate_profile.personal_information') }}</span>
             </a>
             <a class="candidate-profile-menu__main-link {{ $sectionName == 'education-training' ? 'active' : '' }}"
-               href="{{ route('candidate.profile', ['section' => 'education-training']) }}">
+               href="{{ route('candidate.profile', array_filter(['section' => 'education-training', 'return_to' => $data['profileReturnUrl'] ?? null])) }}">
                 <i class="fa-solid fa-graduation-cap"></i>
                 <span>{{ __('messages.candidate_profile.education_training') }}</span>
             </a>
             <a class="candidate-profile-menu__main-link {{ $sectionName == 'employment' ? 'active' : '' }}"
-               href="{{ route('candidate.profile', ['section' => 'employment']) }}">
+               href="{{ route('candidate.profile', array_filter(['section' => 'employment', 'return_to' => $data['profileReturnUrl'] ?? null])) }}">
                 <i class="fa-solid fa-briefcase"></i>
                 <span>{{ __('messages.candidate_profile.employment') }}</span>
             </a>
             <a class="candidate-profile-menu__main-link {{ $sectionName == 'other-information' ? 'active' : '' }}"
-               href="{{ route('candidate.profile', ['section' => 'other-information']) }}">
+               href="{{ route('candidate.profile', array_filter(['section' => 'other-information', 'return_to' => $data['profileReturnUrl'] ?? null])) }}">
                 <i class="fa-solid fa-table-cells-large"></i>
                 <span>{{ __('messages.candidate_profile.other_information') }}</span>
             </a>
             <a class="candidate-profile-menu__main-link {{ $sectionName == 'accomplishment' ? 'active' : '' }}"
-               href="{{ route('candidate.profile', ['section' => 'accomplishment']) }}">
+               href="{{ route('candidate.profile', array_filter(['section' => 'accomplishment', 'return_to' => $data['profileReturnUrl'] ?? null])) }}">
                 <i class="fa-solid fa-award"></i>
                 <span>{{ __('messages.candidate_profile.accomplishment') }}</span>
             </a>
             <a class="candidate-profile-menu__main-link {{ $sectionName == 'resume' ? 'active' : '' }}"
-               href="{{ route('candidate.profile', ['section' => 'resume']) }}">
+               href="{{ route('candidate.profile', array_filter(['section' => 'resume', 'return_to' => $data['profileReturnUrl'] ?? null])) }}">
                 <i class="fa-regular fa-file-lines"></i>
                 <span>{{ __('messages.candidate_profile.resume') }}</span>
             </a>

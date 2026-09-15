@@ -161,6 +161,7 @@ class CandidateController extends AppBaseController
         ];
         abort_unless(in_array($sectionName, $allowedSections, true), 404);
         $data['sectionName'] = $sectionName;
+        $data['profileReturnUrl'] = $this->profileReturnUrl($request->query('return_to'));
         if ($sectionName == 'personal-information') {
             $states = $presentCountryId ? getStates($presentCountryId) : [];
             if (! empty($user->state_id)) {
@@ -355,6 +356,11 @@ class CandidateController extends AppBaseController
         $query = parse_url(url()->previous(), PHP_URL_QUERY);
         parse_str((string) $query, $params);
 
+        $returnUrl = $this->profileReturnUrl($params['return_to'] ?? null);
+        if ($returnUrl !== null) {
+            return redirect($returnUrl);
+        }
+
         $section = $this->normalizeProfileSection($params['section'] ?? null)
             ?? $this->normalizeProfileSection($fallback)
             ?? 'personal-information';
@@ -362,6 +368,15 @@ class CandidateController extends AppBaseController
         return redirect(route('candidate.profile', ['section' => $section]));
     }
 
+
+    private function profileReturnUrl(?string $url): ?string
+    {
+        if ($url === null || ! preg_match('#^/candidate/apply-job/[^/?\\#]+$#', $url)) {
+            return null;
+        }
+
+        return $url;
+    }
     private function candidateProfilePercentage(?\App\Models\Candidate $candidate): int
     {
         if (! $candidate) {

@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\ProfileReferenceOption;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use Throwable;
 
@@ -32,7 +33,7 @@ class ProfileReferenceOptionTable extends LivewireTableComponent
     public function configure(): void
     {
         $this->setPrimaryKey('id');
-        $this->setDefaultSort('label', 'asc');
+        $this->setDefaultSort('sort_order', 'asc');
         $this->setTableAttributes([
             'default' => false,
             'class' => 'table table-striped',
@@ -116,12 +117,55 @@ class ProfileReferenceOptionTable extends LivewireTableComponent
         return view('livewire_lazy_load/listing-skeleton');
     }
 
+    public function moveSortOrder(int $id, string $direction): void
+    {
+        if (! in_array($direction, ['up', 'down'], true)) {
+            return;
+        }
+
+        $table = ProfileReferenceOption::tableFor($this->type);
+
+        DB::transaction(function () use ($id, $direction, $table) {
+            $records = (new ProfileReferenceOption())
+                ->setTable($table)
+                ->newQuery()
+                ->where('scope', $this->scope)
+                ->orderBy('sort_order')
+                ->orderBy('id')
+                ->lockForUpdate()
+                ->get();
+
+            $currentIndex = $records->search(fn ($record) => (int) $record->id === $id);
+
+            if ($currentIndex === false) {
+                return;
+            }
+
+            $targetIndex = $direction === 'up' ? $currentIndex - 1 : $currentIndex + 1;
+
+            if (! $records->has($targetIndex)) {
+                return;
+            }
+
+            $current = $records[$currentIndex];
+            $records[$currentIndex] = $records[$targetIndex];
+            $records[$targetIndex] = $current;
+
+            foreach ($records->values() as $index => $record) {
+                $record->update(['sort_order' => $index + 1]);
+            }
+        });
+    }
+
     public function columns(): array
     {
         return [
             Column::make(__('messages.common.name'), 'label')
                 ->sortable()
                 ->searchable(),
+            Column::make('Sort Order', 'sort_order')
+                ->sortable()
+                ->view('profile_reference_options.table-components.sort_order'),
             Column::make(__('messages.common.action'), 'id')
                 ->view('profile_reference_options.table-components.action_button'),
         ];

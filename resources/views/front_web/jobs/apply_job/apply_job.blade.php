@@ -90,7 +90,10 @@
                                         </div>                                        
                                         <div class="apply-job-selected-cv__actions {{ $selectedResume ? '' : 'd-none' }}">
                                             <a class="apply-job-selected-cv__edit"
-                                               href="{{ route('candidate.profile', ['section' => 'resume']) }}">
+                                               href="{{ route('candidate.profile', [
+                                                   'section' => 'resume',
+                                                   'return_to' => route('show.apply-job-form', $job->job_id, false),
+                                               ]) }}">
                                                 <i class="fa-regular fa-pen-to-square"></i><span>{{ __('messages.common.edit') }}</span>
                                             </a>
                                             <a class="apply-job-selected-cv__preview"

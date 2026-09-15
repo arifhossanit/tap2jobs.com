@@ -24,6 +24,17 @@ class ProfileReferenceOptionController extends AppBaseController
             return redirect()->route($dedicatedRouteName.'.index');
         }
 
+        $options = ProfileReferenceOption::records($type, $scope);
+        $usedSortOrders = $options->pluck('sort_order')
+            ->map(fn ($sortOrder) => (int) $sortOrder)
+            ->filter(fn ($sortOrder) => $sortOrder > 0)
+            ->unique();
+        $highestSortOrder = max((int) $usedSortOrders->max(), $options->count());
+        $availableSortOrders = collect(range(1, $highestSortOrder + 1))
+            ->reject(fn ($sortOrder) => $usedSortOrders->contains($sortOrder))
+            ->mapWithKeys(fn ($sortOrder) => [$sortOrder => $sortOrder])
+            ->all();
+
         return view('profile_reference_options.index', [
             'typeLabels' => ProfileReferenceOption::typeLabels(),
             'scopeLabels' => ProfileReferenceOption::scopeLabels(),
@@ -31,7 +42,8 @@ class ProfileReferenceOptionController extends AppBaseController
             'type' => $type,
             'dedicatedRouteName' => $dedicatedRouteName,
             'title' => (ProfileReferenceOption::scopeLabels()[$scope] ?? $scope).' - '.(ProfileReferenceOption::typeLabels()[$type] ?? $type),
-            'options' => ProfileReferenceOption::records($type, $scope),
+            'options' => $options,
+            'availableSortOrders' => $availableSortOrders,
         ]);
     }
 
