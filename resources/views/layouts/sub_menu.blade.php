@@ -214,22 +214,6 @@
        href="{{ route('settings.index') }}">{{ __('messages.settings') }}</a>
 </li>
 
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/testimonials*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/testimonials*') ? 'active' : '' }}"
-       href="{{ route('testimonials.index') }}">{{ __('messages.testimonials') }}</a>
-</li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/branding-sliders*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/branding-sliders*') ? 'active' : '' }}"
-       href="{{ route('branding.sliders.index') }}">{{ __('messages.branding_sliders') }}</a>
-</li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/header-sliders*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/header-sliders*') ? 'active' : '' }}"
-       href="{{ route('header.sliders.index') }}">{{ __('messages.header_sliders') }}</a>
-</li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/image-sliders*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/image-sliders*') ? 'active' : '' }}"
-       href="{{ route('image-sliders.index') }}">{{ __('messages.image_sliders') }}</a>
-</li>
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/ads*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/ads*') ? 'active' : '' }}"
        href="{{ route('ads.index') }}">{{ __('messages.ads') }}</a>

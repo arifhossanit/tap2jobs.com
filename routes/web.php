@@ -38,22 +38,18 @@ use App\Http\Controllers\CmsServicesController;
 use App\Http\Controllers\CompanyCategoryController;
 use App\Http\Controllers\CompanySizeController;
 use App\Http\Controllers\ConsultationLeadController;
-use App\Http\Controllers\ImageSliderController;
 use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\NoticeboardController;
 use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\HeaderSliderController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PostCategoryController;
 use App\Http\Controllers\SalaryPeriodController;
 use App\Http\Controllers\SubscriptionController;
-use App\Http\Controllers\TestimonialsController;
 use App\Http\Controllers\EmailTemplateController;
 use App\Http\Controllers\FrontSettingsController;
 use App\Http\Controllers\MaritalStatusController;
 use App\Http\Controllers\OwnerShipTypeController;
 use App\Http\Controllers\PrivacyPolicyController;
-use App\Http\Controllers\BrandingSliderController;
 use App\Http\Controllers\AdController;
 use App\Http\Controllers\FunctionalAreaController;
 use App\Http\Controllers\JobApplicationController;
@@ -533,64 +529,6 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
                   [CandidateController::class, 'changeIsEmailVerified']
          )->name('candidate.changeIsEmailVerified');
          Route::post('candidates/{candidate}/resend-email-verification', [CandidateController::class, 'resendEmailVerification'])->name('candidate.resendEmailVerification');
-
-         //Testimonials  routes
-         Route::get('testimonials', [TestimonialsController::class, 'index'])->name('testimonials.index');
-         Route::post('testimonials', [TestimonialsController::class, 'store'])->name('testimonials.store');
-         Route::get('testimonials/{testimonial}/edit', [TestimonialsController::class, 'edit'])->name('testimonials.edit');
-         Route::get('testimonials/{testimonial}', [TestimonialsController::class, 'show'])->name('testimonials.show');
-         Route::post('testimonials/{testimonial}/update', [TestimonialsController::class, 'update'])->name('testimonials.update');
-         Route::delete('testimonials/{testimonial}', [TestimonialsController::class, 'destroy'])->name('testimonials.destroy');
-         Route::get('/download-image/{testimonial?}', [TestimonialsController::class, 'downloadImage'])->name('download.image');
-
-         //Front Image Slider Routes
-         Route::get('image-sliders', [ImageSliderController::class, 'index'])->name('image-sliders.index');
-         Route::post('image-sliders', [ImageSliderController::class, 'store'])->name('image-sliders.store');
-         Route::get('image-sliders/{image_slider}/edit', [ImageSliderController::class, 'edit'])->name('image-sliders.edit');
-         Route::post('image-sliders/{image_slider}/update', [ImageSliderController::class, 'update'])->name('image-sliders.update');
-         Route::delete('image-sliders/{image_slider}', [ImageSliderController::class, 'destroy'])->name('image-sliders.destroy');
-         Route::get('image-sliders/{image_slider}', [ImageSliderController::class, 'show'])->name('image-sliders.show');
-         Route::post('image-sliders/{image_slider}/change-is-active', [ImageSliderController::class, 'changeIsActive'])->name('image-slider-change-is-active');
-         Route::post(
-                  'image-sliders/change-full-slider',
-                  [ImageSliderController::class, 'changeFullSlider']
-         )->name('image-sliders.change-full-slider');
-         Route::post(
-                  'image-sliders/change-slider-active',
-                  [ImageSliderController::class, 'changeSliderActive']
-         )->name('image-sliders.change-slider-active');
-
-         //Front Header Slider Routes
-         Route::get('header-sliders', [HeaderSliderController::class, 'index'])->name('header.sliders.index');
-         Route::post('header-sliders', [HeaderSliderController::class, 'store'])->name('header.sliders.store');
-         Route::get('header-sliders/{header_slider}/edit', [HeaderSliderController::class, 'edit'])->name('header.sliders.edit');
-         Route::post(
-                  'header-sliders/{header_slider}/update',
-                  [HeaderSliderController::class, 'update']
-         )->name('header.sliders.update');
-         Route::delete('header-sliders/{header_slider}', [HeaderSliderController::class, 'destroy'])->name('header.sliders.destroy');
-         Route::post('header-sliders/{header_slider}/change-is-active', [HeaderSliderController::class, 'changeIsActive'])->name('header-slider-change-is-active');
-         Route::post(
-                  'header-sliders/change-search-disable',
-                  [HeaderSliderController::class, 'changeSearchDisable']
-         )->name('header.sliders.change-search-disable');
-
-         //Front Branding Slider Routes
-         Route::get('branding-sliders', [BrandingSliderController::class, 'index'])->name('branding.sliders.index');
-         Route::post('branding-sliders', [BrandingSliderController::class, 'store'])->name('branding.sliders.store');
-         Route::get(
-                  'branding-sliders/{brandingSlider}/edit',
-                  [BrandingSliderController::class, 'edit']
-         )->name('branding.sliders.edit');
-         Route::post(
-                  'branding-sliders/{brandingSlider}/update',
-                  [BrandingSliderController::class, 'update']
-         )->name('branding.sliders.update');
-         Route::delete(
-                  'branding-sliders/{brandingSlider}',
-                  [BrandingSliderController::class, 'destroy']
-         )->name('branding.sliders.destroy');
-         Route::post('branding-sliders/{brandingSlider}/change-is-active', [BrandingSliderController::class, 'changeIsActive'])->name('branding-slider-change-is-active');
 
          // Ads Routes
          Route::get('ads', [AdController::class, 'index'])->name('ads.index');

@@ -54,7 +54,7 @@
         || (Request::routeIs('consultation-leads.archived') && request('lead_from') !== AppModelsConsultationLead::LEAD_FROM_EMPLOYER);
     $leadsActive = $employerLeadsActive || $consultationLeadsActive;
     $cmsActive = Request::is('admin/noticeboards*', 'admin/faqs*', 'admin/inquires*', 'admin/privacy-policy*', 'admin/front-settings*');
-    $cmsSlidersActive = Request::is('admin/testimonials*', 'admin/branding-sliders*', 'admin/header-sliders*', 'admin/image-sliders*', 'admin/ads*');
+    $cmsSlidersActive = Request::is('admin/ads*');
     $frontCmsActive = Request::is('admin/cms-services*', 'admin/cms-about-us*');
     $systemSettingsActive = Request::is('admin/notification-settings*', 'admin/email-template*', 'admin/settings*')
         && ! Request::is('admin/front-settings*');
@@ -588,7 +588,7 @@
 
 <!-- SECTION: CONTENT & CMS -->
 <li class="sidebar-section-header px-4 pt-4 pb-1 text-uppercase text-muted fw-bold fs-8 d-flex align-items-center" style="letter-spacing: 0.08em; font-size: 11px;">
-    <span>CONTENT & CMS</span>
+    <span>CONTENT MANAGEMENT</span>
     <span class="flex-grow-1 ms-3 border-bottom"></span>
 </li>
 
@@ -625,7 +625,7 @@
     <a class="nav-link d-flex align-items-center py-3" data-bs-toggle="collapse" href="#asideCmsMenu"
        role="button" aria-expanded="{{ $cmsActive ? 'true' : 'false' }}" aria-controls="asideCmsMenu">
         <span class="aside-menu-icon {{ $iconPad }}"><i class="fas fa-sticky-note"></i></span>
-        <span class="aside-menu-title">{{ __('messages.cms') }}</span>
+        <span class="aside-menu-title">Content & Communication</span>
         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
     </a>
     <ul class="aside-submenu nav flex-column collapse {{ $cmsActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideCmsMenu">
@@ -666,34 +666,10 @@
     <a class="nav-link d-flex align-items-center py-3" data-bs-toggle="collapse" href="#asideCmsSlidersMenu"
        role="button" aria-expanded="{{ $cmsSlidersActive ? 'true' : 'false' }}" aria-controls="asideCmsSlidersMenu">
         <span class="aside-menu-icon {{ $iconPad }}"><i class="fas fa-images"></i></span>
-        <span class="aside-menu-title">{{ __('messages.cms_sliders') }}</span>
+        <span class="aside-menu-title">Media & Promotions</span>
         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
     </a>
     <ul class="aside-submenu nav flex-column collapse {{ $cmsSlidersActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideCmsSlidersMenu">
-        <li class="nav-item {{ Request::is('admin/testimonials*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('testimonials.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.testimonials') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/branding-sliders*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('branding.sliders.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.branding_sliders') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/header-sliders*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('header.sliders.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.header_sliders') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/image-sliders*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('image-sliders.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.image_sliders') }}</span>
-            </a>
-        </li>
         <li class="nav-item {{ Request::is('admin/ads*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('ads.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
@@ -707,7 +683,7 @@
     <a class="nav-link d-flex align-items-center py-3" data-bs-toggle="collapse" href="#asideFrontCmsMenu"
        role="button" aria-expanded="{{ $frontCmsActive ? 'true' : 'false' }}" aria-controls="asideFrontCmsMenu">
         <span class="aside-menu-icon {{ $iconPad }}"><i class="fas fa-desktop"></i></span>
-        <span class="aside-menu-title">{{ __('messages.front_cms') }}</span>
+        <span class="aside-menu-title">Website Content</span>
         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
     </a>
     <ul class="aside-submenu nav flex-column collapse {{ $frontCmsActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideFrontCmsMenu">
@@ -728,7 +704,7 @@
 
 <!-- SECTION: SYSTEM SETTINGS -->
 <li class="sidebar-section-header px-4 pt-4 pb-1 text-uppercase text-muted fw-bold fs-8 d-flex align-items-center" style="letter-spacing: 0.08em; font-size: 11px;">
-    <span>SYSTEM SETTINGS</span>
+    <span>WEBSITE & SYSTEM SETTINGS</span>
     <span class="flex-grow-1 ms-3 border-bottom"></span>
 </li>
 

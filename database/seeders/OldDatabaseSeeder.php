@@ -47,8 +47,6 @@ class OldDatabaseSeeder extends Seeder
         $this->call(CreateNotificationSettingSeeder::class);
         $this->call(NotificationSettingModuleSeeder::class);
         $this->call(UpdateTypeNotificationSettingSeeder::class);
-        $this->call(AddIsFullSliderSettingSeeder::class);
-        $this->call(AddIsSliderActiveDeactiveSeeder::class);
         $this->call(PrivacyPolicySeeder::class);
         $this->call(AddRecordNotificationSetting::class);
         $this->call(UpdateNotificationSettingAdminTypeSeeder::class);

@@ -47,7 +47,7 @@ class HomeController extends AppBaseController
                 ->whereDate('job_expiry_date', '>=', Carbon::tomorrow()->toDateString());
         };
 
-        $data['testimonials'] = $this->homeRepository->getTestimonials();
+        // $data['testimonials'] = $this->homeRepository->getTestimonials();
         $data['dataCounts'] = $this->homeRepository->getDataCounts();
         $data['latestJobs'] = $this->homeRepository->getLatestJobs()->take(4);
         $data['stateJobCounts'] = State::query()
@@ -135,11 +135,11 @@ class HomeController extends AppBaseController
         $data['allCompanies'] = $this->homeRepository->getAllCompanies();
         $data['featuredJobs'] = $this->homeRepository->getFeaturedJobs();
         $data['notices'] = $this->homeRepository->getNotices();
-        [$data['imageSliders'], $data['settings'], $data['slider'], $data['imageSliderActive'], $data['headerSliders']] = $this->homeRepository->getImageSlider();
+        // [$data['imageSliders'], $data['settings'], $data['slider'], $data['imageSliderActive'], $data['headerSliders']] = $this->homeRepository->getImageSlider();
         $data['latestJobsEnable'] = $this->homeRepository->getLatestJobsEnable();
         $data['plans'] = $this->homeRepository->getPlans();
         $data['plansArray'] = array_chunk($data['plans']->toArray(), 3);
-        $data['branding'] = $this->homeRepository->getBranding();
+        // $data['branding'] = $this->homeRepository->getBranding();
         $data['recentBlog'] = $this->homeRepository->getRecentBlog();
         $data['cmsServices'] = CmsServices::pluck('value', 'key')->toArray();
         $data['color'] = Setting::COLOR;
