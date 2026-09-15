@@ -240,7 +240,7 @@
 <!--end::Head-->
 <!--begin::Body-->
 
-<body class="overflow-x-hidden">
+<body class="admin-shell overflow-x-hidden">
     <div class="d-flex flex-column flex-root vh-100">
         <div class="d-flex flex-row flex-column-fluid">
             @include('layouts.sidebar')

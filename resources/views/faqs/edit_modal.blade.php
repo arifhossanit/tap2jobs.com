@@ -32,14 +32,12 @@
                 <div class="mb-5">
                     {{ Form::label('description_en', __('messages.faq.description').' (English):', ['class' => 'form-label']) }}
                     <span class="required"></span>
-                    <x-text-editor id="editFaqDescriptionEnQuillData" />
-                    {{ Form::hidden('description_en', null, ['id' => 'edit_faqs_desc_en']) }}
+                    {{ Form::textarea('description_en', null, ['id' => 'edit_faqs_desc_en', 'class' => 'form-control', 'rows' => 4, 'required', 'placeholder' => 'Enter English description']) }}
                 </div>
                 <div class="mb-5">
                     {{ Form::label('description_bn', __('messages.faq.description').' (বাংলা):', ['class' => 'form-label']) }}
                     <span class="required"></span>
-                    <x-text-editor id="editFaqDescriptionBnQuillData" />
-                    {{ Form::hidden('description_bn', null, ['id' => 'edit_faqs_desc_bn']) }}
+                    {{ Form::textarea('description_bn', null, ['id' => 'edit_faqs_desc_bn', 'class' => 'form-control', 'rows' => 4, 'required', 'placeholder' => 'Enter Bangla description']) }}
                 </div>
             </div>
             <div class="modal-footer pt-0">

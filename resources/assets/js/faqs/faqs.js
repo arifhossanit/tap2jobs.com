@@ -50,8 +50,7 @@ function requireQuillContent(editor) {
 }
 
 function loadFaqsData () {
-    if (!$('#addFaqDescriptionEnQuillData').length &&
-        !$('#editFaqDescriptionEnQuillData').length) {
+    if (!$('#addFAQsForm').length && !$('#editFAQsForm').length) {
         return;
     }
 
@@ -71,8 +70,8 @@ function loadFaqsData () {
                     $('#editFaqCategoryId').val(result.data.faq_category_id || '');
                     $('#editFaqTitleEn').val(decodeHtml(result.data.title_en || result.data.title));
                     $('#editFaqTitleBn').val(decodeHtml(result.data.title_bn || ''));
-                    setQuillValue(editFaqDescriptionEnQuill, result.data.description_en || result.data.description);
-                    setQuillValue(editFaqDescriptionBnQuill, result.data.description_bn || '');
+                    $('#edit_faqs_desc_en').val(decodeHtml(result.data.description_en || result.data.description));
+                    $('#edit_faqs_desc_bn').val(decodeHtml(result.data.description_bn || ''));
                     $('#editFAQsModal').appendTo('body').modal('show');
                 }
             },
@@ -127,13 +126,13 @@ listenHiddenBsModal('#editFAQsModal', function () {
 listenSubmit('#addFAQsForm', function (e) {
     e.preventDefault();
 
-    if (!requireQuillContent(addFaqDescriptionEnQuill) || !requireQuillContent(addFaqDescriptionBnQuill)) {
+    if (!$('#faqs_desc_en').val().trim() || !$('#faqs_desc_bn').val().trim()) {
         displayErrorMessage(Lang.get('js.description_required'));
         return false;
     }
 
-    $('#faqs_desc_en').val(getQuillHtml(addFaqDescriptionEnQuill));
-    $('#faqs_desc_bn').val(getQuillHtml(addFaqDescriptionBnQuill));
+    $('#faqs_desc_en').val($('#faqs_desc_en').val().trim());
+    $('#faqs_desc_bn').val($('#faqs_desc_bn').val().trim());
     processingBtn('#addFAQsForm', '#addFaqSaveBtn', 'loading');
     $.ajax({
         url: route('faqs.store'),
@@ -160,13 +159,13 @@ listenSubmit('#addFAQsForm', function (e) {
 listenSubmit('#editFAQsForm', function (event) {
     event.preventDefault();
 
-    if (!requireQuillContent(editFaqDescriptionEnQuill) || !requireQuillContent(editFaqDescriptionBnQuill)) {
+    if (!$('#edit_faqs_desc_en').val().trim() || !$('#edit_faqs_desc_bn').val().trim()) {
         displayErrorMessage(Lang.get('js.description_required'));
         return false;
     }
 
-    $('#edit_faqs_desc_en').val(getQuillHtml(editFaqDescriptionEnQuill));
-    $('#edit_faqs_desc_bn').val(getQuillHtml(editFaqDescriptionBnQuill));
+    $('#edit_faqs_desc_en').val($('#edit_faqs_desc_en').val().trim());
+    $('#edit_faqs_desc_bn').val($('#edit_faqs_desc_bn').val().trim());
     processingBtn('#editFAQsForm', '#editFaqSaveBtn', 'loading');
     const updateFaqId = $('#faqId').val();
     $.ajax({

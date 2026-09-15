@@ -1,3 +1,10 @@
+// Consultation type long-press sorting
+.consultation-type-drag-handle { cursor: grab; touch-action: manipulation; }
+.consultation-type-drag-handle:active,
+.consultation-type-row-selected .consultation-type-drag-handle { cursor: grabbing; }
+.consultation-type-row-selected { background-color: rgba(13, 110, 253, 0.08) !important; }
+.consultation-type-row-placeholder { opacity: 0.35; }
+
 .iti {
     display: block !important;
 }
@@ -7547,4 +7554,15 @@ html[dir="rtl"] {
 .candidate-profile-section .candidate-profile-field-invalid [data-education-custom-select-toggle] {
     border: 1px solid #f04438 !important;
     box-shadow: 0 0 0 2px rgba(240, 68, 56, .12) !important;
+}
+
+.consultation-type-sortable th:nth-child(2),
+.consultation-type-sortable th:nth-child(3),
+.consultation-type-sortable td:nth-child(2),
+.consultation-type-sortable td:nth-child(3) {
+    text-align: center !important;
+}
+
+.consultation-type-sortable th:nth-child(2) > .d-flex {
+    justify-content: center;
 }

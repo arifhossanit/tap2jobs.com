@@ -2,6 +2,7 @@
     <span class="badge bg-light-primary text-primary fs-6 min-w-30px">
         {{ $row->sort_order }}
     </span>
+    @if($this->type !== \App\Models\ProfileReferenceOption::TYPE_CONSULTATION_TYPE)
     <div class="btn-group btn-group-sm" role="group" aria-label="Change sort order">
         <button type="button"
                 class="btn btn-light-primary px-2"
@@ -18,4 +19,5 @@
             <i class="fa-solid fa-chevron-down"></i>
         </button>
     </div>
+    @endif
 </div>

@@ -66,6 +66,7 @@ mix.js([
     'resources/assets/js/custom/helpers.js',
     'resources/assets/js/custom/custom.js',
     'resources/assets/js/custom/app-text-editor.js',
+    'resources/assets/js/profile_reference_options/consultation-type-sortable.js',
     'resources/assets/js/pending_jobs/pending_jobs.js',
     'resources/assets/js/job_categories/job_categories.js',
     'resources/assets/js/settings/settings.js',

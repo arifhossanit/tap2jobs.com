@@ -29,6 +29,7 @@ class AppTextEditor {
 
         this.editor = null;
         this.callbacks = [];
+        this.isPlainTextarea = Boolean(source.closest('.admin-shell .modal'));
         this.html = source.value || source.innerHTML || '';
         this.container = this.prepareTarget(source);
         this.root = {};
@@ -38,6 +39,18 @@ class AppTextEditor {
         });
         this.clipboard = { dangerouslyPasteHTML: (...args) => this.setHtml(args.at(-1)) };
 
+
+        if (this.isPlainTextarea) {
+            this.container.classList.remove('app-text-editor');
+            if (!this.container.hasAttribute('rows')) this.container.rows = 4;
+            this.html = appEditorText(this.html);
+            this.container.value = this.html;
+            this.container.addEventListener('input', () => {
+                this.html = this.container.value;
+                this.callbacks.forEach((callback) => callback(null, null, 'user'));
+            });
+            return;
+        }
         tinymce.init({
             ...appTextEditorConfig,
             target: this.container,
@@ -63,9 +76,9 @@ class AppTextEditor {
         return textarea;
     }
 
-    getHtml() { return this.editor ? this.editor.getContent() : this.html; }
+    getHtml() { return this.isPlainTextarea ? this.container.value : (this.editor ? this.editor.getContent() : this.html); }
     setHtml(html) {
-        this.html = html || '';
+        this.html = this.isPlainTextarea ? appEditorText(html) : (html || '');
         this.container.value = this.html;
         if (this.editor) this.editor.setContent(this.html);
     }
