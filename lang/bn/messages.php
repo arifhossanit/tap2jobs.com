@@ -318,6 +318,9 @@ return [
         'featured_employers_incomes' => 'বৈশিষ্ট্যযুক্ত নিয়োগকর্তার আয়',
         'subscription_incomes' => 'সাবস্ক্রিপশন আয়',
         'weekly_users' => 'সাপ্তাহিক ব্যবহারকারী',
+        'blogs' => 'ব্লগ',
+        'new_jobs_7_days' => 'নতুন চাকরি (৭ দিন)',
+        'expire_in_7_days' => '৭ দিনের মধ্যে মেয়াদ শেষ',
         'post_statistics' => 'পোস্ট পরিসংখ্যান',
     ],
     'job_category' => [

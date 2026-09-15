@@ -8,11 +8,20 @@
 @section('content')
     @php
         $dashboardEmployer = getLoggedInUser();
+        $dashboardCompany = $dashboardEmployer->company;
         $dashboardEmployerName = $dashboardEmployer->company?->contact_person_name ?: $dashboardEmployer->full_name;
+        $dashboardCompanyName = app()->getLocale() === 'bn' && filled($dashboardCompany?->company_name_bn)
+            ? $dashboardCompany->company_name_bn
+            : ($dashboardCompany?->company_name ?: $dashboardEmployer->full_name);
+        $dashboardCompanyLogo = $dashboardCompany?->company_url ?: asset('assets/img/employer-image.png');
     @endphp
     <div class="employer-dashboard-hero">
         <div>
-            <span class="employer-dashboard-hero__eyebrow">{{ __('messages.employer_dashboard.dashboard') }}</span>
+            <span class="employer-dashboard-hero__eyebrow">
+                <img src="{{ $dashboardCompanyLogo }}" alt="{{ $dashboardCompanyName }}"
+                     class="employer-dashboard-hero__logo">
+                <span>{{ $dashboardCompanyName }}</span>
+            </span>
             <h1>{{ __('messages.common.hello') }}, {{ $dashboardEmployerName }}</h1>
             {{-- <p>{{ __('messages.employer_dashboard.manage_jobs') }}</p> --}}
         </div>

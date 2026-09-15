@@ -216,6 +216,7 @@ return [
 
     //Post keys
     'post_menu' => [
+        'send_message' => 'Ücretsiz Danışmanlık',
         'post' => 'Gönderi',
         'posts' => 'Gönderiler',
         'read_more' => 'Devamını Oku',

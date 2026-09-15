@@ -209,6 +209,7 @@ return [
 
     //Post keys
     'post_menu' => [
+        'send_message' => 'استشارة مجانية',
         'post' => 'بريد',
         'posts' => 'المشاركات',
         'read_more' => 'قراءة المزيد',

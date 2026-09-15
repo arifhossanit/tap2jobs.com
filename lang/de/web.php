@@ -218,6 +218,7 @@ return [
     'post_menu' => [
         'post' => 'post',
         'posts' => 'Beiträge',
+        'send_message' => 'Kostenlose Beratung',
         'read_more' => 'Weiterlesen',
         'popular_post' => 'Beliebte Beiträge',
         'Newsletter' => 'Newsletter',

@@ -218,6 +218,7 @@ return [
 
     //Post keys
     'post_menu' => [
+        'send_message' => '免费咨询',
         'post' => '发布',
         'posts' => '帖子',
         'read_more' => '阅读更多',

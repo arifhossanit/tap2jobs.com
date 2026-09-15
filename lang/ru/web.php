@@ -216,6 +216,7 @@ return [
 
     //Post keys
     'post_menu' => [
+        'send_message' => 'Бесплатная консультация',
         'post' => 'Опубликовать',
         'posts' => 'Записи',
         'read_more' => 'Подробнее',

@@ -115,8 +115,9 @@
                                                 <span class="text-danger">*</span>
                                             </label>
                                             <select name="consultation_type" class="form-select fs-14 text-gray br-10" required>
+                                                <option value="">{{ __('web.consultation.select_consultation_type') }}</option>
                                                 @foreach ($consultationTypes as $value => $label)
-                                                    <option value="{{ $value }}" {{ old('consultation_type', 'job_posting') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                                                    <option value="{{ $value }}" {{ old('consultation_type') === $value ? 'selected' : '' }}>{{ $label }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -131,15 +132,11 @@
                                                 <option value="">{{ __('web.consultation.select_company_size') }}</option>
                                                 @foreach ($companySizes as $companySize)
                                                     <option value="{{ $companySize->id }}"
-                                                            data-category-name="{{ $companySize->companyCategory?->name ?? '' }}"
                                                         {{ (string) old('company_size_id') === (string) $companySize->id ? 'selected' : '' }}>
                                                         {{ $companySize->size }}
                                                     </option>
                                                 @endforeach
                                             </select>
-                                            <div class="fs-14 text-gray mt-2">
-                                                {{ __('web.consultation.category') }}: <span class="text-primary" id="consultationCategoryPreview">{{ __('web.consultation.not_selected') }}</span>
-                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6 mb-4">
@@ -184,21 +181,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var sizeSelect = document.getElementById('consultationCompanySize');
-            var categoryPreview = document.getElementById('consultationCategoryPreview');
-            var notMappedLabel = @json(__('web.consultation.not_mapped'));
-
-            function syncCategoryPreview() {
-                var selectedOption = sizeSelect.options[sizeSelect.selectedIndex];
-                var categoryName = selectedOption ? selectedOption.getAttribute('data-category-name') : '';
-                categoryPreview.textContent = categoryName || notMappedLabel;
-            }
-
-            if (sizeSelect && categoryPreview) {
-                sizeSelect.addEventListener('change', syncCategoryPreview);
-                syncCategoryPreview();
-            }
-
             if (typeof flatpickr !== 'undefined') {
                 flatpickr('#consultationPreferredContactTime', {
                     enableTime: true,

@@ -8,9 +8,6 @@ use App\Models\FavouriteCompany;
 use App\Models\Job;
 use App\Models\JobApplication;
 use App\Models\Post;
-use App\Models\SalaryCurrency;
-use App\Models\Subscription;
-use App\Models\Transaction;
 use App\Models\User;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -39,34 +36,20 @@ class DashboardRepository
         $data['totalActiveJobs'] = Job::whereDate('job_expiry_date', '>=', Carbon::now())->whereStatus(Job::STATUS_OPEN)->where('is_suspended', Job::NOT_SUSPENDED)->count();
         $data['totalVerifiedUsers'] = User::where('is_verified', true)->count();
         $data['todayJobs'] = Job::whereDate('created_at', Carbon::today())->count();
-        $data['featuredJobs'] = Job::has('activeFeatured')->where('job_expiry_date', '>=', Carbon::now())->count();
-        $data['featuredEmployers'] = Company::has('activeFeatured')->count();
-        $data['featuredJobsIncomes'] = $this->getApprovedIncomeBreakdown(Job::class);
-        $data['featuredCompanysIncomes'] = $this->getApprovedIncomeBreakdown(Company::class);
-        $data['subscriptionIncomes'] = $this->getApprovedIncomeBreakdown(Subscription::class);
+        $data['totalBlogs'] = Post::count();
+        $data['newJobs'] = Job::where('created_at', '>=', Carbon::today()->subDays(6))->count();
+        $data['pendingJobs'] = Job::where('status', Job::SELECT_PANDING)->count();
+        $data['expiringJobs'] = Job::whereDate('job_expiry_date', '>=', Carbon::today())
+            ->whereDate('job_expiry_date', '<=', Carbon::today()->addDays(7))
+            ->where('status', Job::STATUS_OPEN)
+            ->where('is_suspended', Job::NOT_SUSPENDED)
+            ->count();
+        $data['weeklyUsers'] = User::whereIn('owner_type', [Candidate::class, Company::class])
+            ->where('is_active', User::ACTIVE)
+            ->where('created_at', '>=', Carbon::today()->subDays(6))
+            ->count();
 
         return $data;
-    }
-
-    private function getApprovedIncomeBreakdown(string $ownerType): string
-    {
-        $totals = Transaction::query()
-            ->leftJoin('salary_currencies', 'salary_currencies.id', '=', 'transactions.plan_currency_id')
-            ->where('transactions.owner_type', $ownerType)
-            ->where('transactions.is_approved', Transaction::APPROVED)
-            ->selectRaw('salary_currencies.currency_code, SUM(transactions.amount) as total')
-            ->groupBy('transactions.plan_currency_id', 'salary_currencies.currency_code')
-            ->get();
-
-        if ($totals->isEmpty()) {
-            $defaultCurrency = SalaryCurrency::where('is_default', true)->value('currency_code') ?? 'USD';
-
-            return numberFormatShort(0).' '.$defaultCurrency;
-        }
-
-        return $totals->map(function ($income): string {
-            return numberFormatShort((float) $income->total).' '.($income->currency_code ?? 'N/A');
-        })->implode(' / ');
     }
     public function getWeeklyChartData(array $input): array
     {

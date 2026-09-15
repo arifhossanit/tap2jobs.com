@@ -216,6 +216,7 @@ return [
 
     //Post keys
     'post_menu' => [
+        'send_message' => 'Consultation gratuite',
         'post' => 'Publier',
         'posts' => 'Messages',
         'read_more' => 'Lire la suite',

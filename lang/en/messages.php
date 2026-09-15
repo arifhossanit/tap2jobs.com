@@ -321,6 +321,9 @@ return [
         'featured_employers_incomes' => 'Featured Employers Incomes',
         'subscription_incomes' => 'Subscription Incomes',
         'weekly_users' => 'Weekly Users',
+        'blogs' => 'Blogs',
+        'new_jobs_7_days' => 'New Jobs (7 Days)',
+        'expire_in_7_days' => 'Expire in 7 Days',
         'post_statistics' => 'Posts Statistics',
     ],
     'job_category' => [

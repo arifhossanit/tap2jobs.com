@@ -305,15 +305,6 @@ class ProfileReferenceOption extends Model
                     'workstation_adaptations' => 'Workstation adaptations',
                 ],
             ],
-            self::TYPE_CONSULTATION_TYPE => [
-                self::SCOPE_EMPLOYER => [
-                    'job_posting' => 'Job Posting',
-                    'employer_branding' => 'Employer Branding',
-                    'recruitment_support' => 'Recruitment Support',
-                    'advertising' => 'Advertising',
-                    'other' => 'Other',
-                ],
-            ],
             self::TYPE_CONSULTATION_CONTACT_METHOD => [
                 self::SCOPE_EMPLOYER => [
                     'phone' => 'Phone',

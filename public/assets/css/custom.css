@@ -368,11 +368,21 @@ body:has(#candidateResumePreviewModal.show) .modal-backdrop.show {
 }
 
 .employer-dashboard-hero__eyebrow {
+  align-items: center;
   color: #0b6fae;
-  display: block;
-  font-size: 13px;
+  display: inline-flex;
+  font-size: 15px;
   font-weight: 600;
+  gap: 8px;
   margin-bottom: 6px;
+}
+
+.employer-dashboard-hero__logo {
+  background: #fff;
+  height: 32px;
+  -o-object-fit: contain;
+     object-fit: contain;
+  width: 32px;
 }
 
 .employer-dashboard-hero h1 {
