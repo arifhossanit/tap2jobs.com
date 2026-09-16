@@ -877,6 +877,8 @@ Route::middleware('auth', 'role:Employer', 'xss', 'verified.user')->prefix('empl
          Route::post('cancel-subscription', [SubscriptionController::class, 'cancelSubscription'])->name('cancel-subscription');
          Route::get('invoices/{invoiceId}', [TransactionController::class, 'getTransactionInvoice'])->name('get-transaction-invoice');
 });
+Route::get('/job-details/{uniqueId}/og-image', [Web\JobController::class, 'jobOgImage'])->name('front.job.og-image');
+
 // web routes (i.e landing pages)
 Route::middleware('xss', 'setLanguage')->group(function () {
          Route::get('/', [Web\HomeController::class, 'index'])->name('front.home');
@@ -884,7 +886,6 @@ Route::middleware('xss', 'setLanguage')->group(function () {
          Route::get('/search-jobs', [Web\JobController::class, 'index'])->name('front.search.jobs');
          Route::get('/government-jobs', [\App\Http\Controllers\GovernmentJobController::class, 'publicIndex'])->name('front.government-jobs.index');
          Route::get('/government-jobs/{governmentJob}', [\App\Http\Controllers\GovernmentJobController::class, 'publicShow'])->name('front.government-jobs.show');
-         Route::get('/job-details/{uniqueId}/og-image', [Web\JobController::class, 'jobOgImage'])->name('front.job.og-image');
          Route::get('/job-details/{uniqueId?}', [Web\JobController::class, 'jobDetails'])->name('front.job.details');
          Route::get('/company-lists', [Web\CompanyController::class, 'getCompaniesLists'])->name('front.company.lists');
          Route::get(

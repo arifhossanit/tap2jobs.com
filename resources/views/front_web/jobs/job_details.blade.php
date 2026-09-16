@@ -5,7 +5,6 @@
 
 @section('meta_tags')
     <link rel="canonical" href="{{ $share['url'] }}">
-    <meta name="description" content="{{ $share['description'] }}">
     <meta property="og:type" content="article">
     <meta property="og:locale" content="{{ str_replace('-', '_', app()->getLocale()) }}">
     <meta property="og:site_name" content="{{ getAppName() }}">
