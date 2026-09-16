@@ -156,15 +156,15 @@ class JobController extends AppBaseController
         $image->rectangle(0, 0, 1200, 630, function ($draw) {
             $draw->background('#209776');
         });
-        $image->rectangle(42, 42, 1158, 588, function ($draw) {
+        $image->rectangle(21, 21, 1179, 609, function ($draw) {
             $draw->background('#ffffff');
         });
-        $image->text('TAP2JOBS', 90, 105, function ($font) use ($boldFontPath) {
+        $image->text('TAP2JOBS', 65, 85, function ($font) use ($boldFontPath) {
             $font->file($boldFontPath);
             $font->size(28);
             $font->color('#209776');
         });
-        $image->text('JOB OPPORTUNITY', 90, 155, function ($font) use ($boldFontPath) {
+        $image->text('JOB OPPORTUNITY', 65, 135, function ($font) use ($boldFontPath) {
             $font->file($boldFontPath);
             $font->size(22);
             $font->color('#6b7280');
@@ -172,7 +172,7 @@ class JobController extends AppBaseController
 
         $titleLines = $this->wrapOgText($title, 34);
         foreach ($titleLines as $index => $line) {
-            $image->text($line, 90, 225 + ($index * 52), function ($font) use ($boldFontPath) {
+            $image->text($line, 65, 205 + ($index * 52), function ($font) use ($boldFontPath) {
                 $font->file($boldFontPath);
                 $font->size(38);
                 $font->color('#172b24');
@@ -186,7 +186,7 @@ class JobController extends AppBaseController
             'Deadline: '.$deadline,
         ]);
         foreach ($details as $index => $detail) {
-            $image->text($detail, 90, 405 + ($index * 35), function ($font) use ($fontPath) {
+            $image->text($detail, 65, 385 + ($index * 35), function ($font) use ($fontPath) {
                 $font->file($fontPath);
                 $font->size(21);
                 $font->color('#4b5563');
