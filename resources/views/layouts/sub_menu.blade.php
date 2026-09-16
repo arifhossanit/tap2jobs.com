@@ -181,10 +181,6 @@
        href="{{ route('languages.index') }}">{{ __('messages.languages') }}</a>
 </li>
 
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/noticeboards*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/noticeboards*') ? 'active' : '' }}"
-       href="{{ route('noticeboards.index') }}">{{ __('messages.noticeboards') }}</a>
-</li>
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/faqs*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/faqs*') ? 'active' : '' }}"
        href="{{ route('faqs.index') }}">{{ __('messages.faq.faq') }}</a>
@@ -217,12 +213,4 @@
 <li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/ads*') ? 'd-none' : '' }}">
     <a class="nav-link p-0 {{ Request::is('admin/ads*') ? 'active' : '' }}"
        href="{{ route('ads.index') }}">{{ __('messages.ads') }}</a>
-</li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/cms-services*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/cms-services*') ? 'active' : '' }}"
-       href="{{ route('cms.services.index') }}">{{ __('messages.cms_services') }}</a>
-</li>
-<li class="nav-item position-relative mx-xl-3 mb-3 mb-xl-0 {{ !Request::is('admin/cms-about-us*') ? 'd-none' : '' }}">
-    <a class="nav-link p-0 {{ Request::is('admin/cms-about-us*') ? 'active' : '' }}"
-       href="{{ route('cms.about-us.service') }}">{{ __('messages.about_us_services') }}</a>
 </li>

@@ -134,7 +134,7 @@ class HomeController extends AppBaseController
         $data['featuredCompanies'] = $this->homeRepository->getFeaturedCompanies();
         $data['allCompanies'] = $this->homeRepository->getAllCompanies();
         $data['featuredJobs'] = $this->homeRepository->getFeaturedJobs();
-        $data['notices'] = $this->homeRepository->getNotices();
+        // $data['notices'] = $this->homeRepository->getNotices();
         // [$data['imageSliders'], $data['settings'], $data['slider'], $data['imageSliderActive'], $data['headerSliders']] = $this->homeRepository->getImageSlider();
         $data['latestJobsEnable'] = $this->homeRepository->getLatestJobsEnable();
         $data['plans'] = $this->homeRepository->getPlans();

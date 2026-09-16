@@ -614,7 +614,7 @@
     }
 
     .bd-government-jobs__slide {
-        min-height: 112px;
+        min-height: 42px;
     }
 
     #governmentJobsCarousel .carousel-item-next:not(.carousel-item-start) {
@@ -1404,7 +1404,7 @@
                     @if(($governmentJobs ?? collect())->isNotEmpty())
                         <div id="governmentJobsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3500" data-bs-wrap="true" data-bs-keyboard="false" data-bs-touch="false">
                             <div class="carousel-inner">
-                                @foreach($governmentJobs->chunk(3) as $slideIndex => $jobSlide)
+                                @foreach($governmentJobs->chunk(1) as $slideIndex => $jobSlide)
                                     <div class="carousel-item {{ $slideIndex === 0 ? 'active' : '' }}">
                                         <div class="bd-government-jobs__slide">
                                             @foreach($jobSlide as $governmentJob)

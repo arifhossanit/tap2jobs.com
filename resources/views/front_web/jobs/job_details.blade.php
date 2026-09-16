@@ -1,8 +1,53 @@
 @extends('front_web.layouts.app')
 @section('title')
-    {{ __('messages.front_job_details.job_details') }}
+    {{ $share['title'] }}
 @endsection
 
+@section('meta_tags')
+    <link rel="canonical" href="{{ $share['url'] }}">
+    <meta name="description" content="{{ $share['description'] }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ getAppName() }}">
+    <meta property="og:title" content="{{ $share['title'] }}">
+    <meta property="og:description" content="{{ $share['description'] }}">
+    <meta property="og:url" content="{{ $share['url'] }}">
+    <meta property="og:image" content="{{ $share['image'] }}">
+    <meta property="og:image:alt" content="{{ $share['title'] }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $share['title'] }}">
+    <meta name="twitter:description" content="{{ $share['description'] }}">
+    <meta name="twitter:image" content="{{ $share['image'] }}">
+@endsection
+
+@section('page_scripts')
+    <script>
+        async function shareJobToInstagram(event) {
+            event.preventDefault();
+
+            const shareData = {
+                title: @json($share['title']),
+                text: @json($share['title']),
+                url: @json($share['url'])
+            };
+
+            if (navigator.share) {
+                try {
+                    await navigator.share(shareData);
+                    return;
+                } catch (error) {
+                    if (error.name === 'AbortError') return;
+                }
+            }
+
+            try {
+                await navigator.clipboard.writeText(shareData.url);
+                displaySuccessMessage(Lang.get('js.link_copy'));
+            } catch (error) {
+                window.prompt('Copy this job link:', shareData.url);
+            }
+        }
+    </script>
+@endsection
 @section('content')
     @include('layouts.flash-toasts')
     <div class="job-details-page">
@@ -250,27 +295,27 @@
                             <div class="share-this-job mb-lg-5 mb-5">
                                 <h5 class="fs-18 text-secondary mb-4">@lang('messages.front_job_details.share_this_job'):</h5>
                                 <div class="icon-box d-flex">
-                                    <a href="{{ $url['facebook'] }}" target="_blank" class="social-icon facebook me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.facebook')">
+                                    <a href="{{ $url['facebook'] }}" target="_blank" rel="noopener noreferrer" class="social-icon facebook me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.facebook')">
                                         <div class="icon d-flex">
                                             <i class="fa-brands fa-facebook-f text-white"></i>
                                         </div>
                                     </a>
-                                    <a href="https://www.linkedin.com/shareArticle/?url={{ rawurlencode(URL::to('/job-details/' . $job->job_id)) }}" target="_blank" class="social-icon linkedin me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.linkedin')">
+                                    <a href="{{ $url['linkedin'] }}" target="_blank" rel="noopener noreferrer" class="social-icon linkedin me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.linkedin')">
                                         <div class="icon d-flex">
                                             <i class="fa-brands fa-linkedin-in text-white"></i>
                                         </div>
                                     </a>
-                                    <a href="{{ $url['twitter'] }}" target="_blank" class="social-icon twitter me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.twitter')">
+                                    <button type="button" onclick="shareJobToInstagram(event)" class="social-icon instagram me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="Share via Instagram" aria-label="Share via Instagram">
                                         <div class="icon d-flex">
-                                            <i class="fa-brands fa-twitter text-white"></i>
+                                            <i class="fa-brands fa-instagram text-white"></i>
+                                        </div>
+                                    </button>
+                                    <a href="{{ $url['whatsapp'] }}" target="_blank" rel="noopener noreferrer" class="social-icon google me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="WhatsApp">
+                                        <div class="icon d-flex">
+                                            <i class="fa-brands fa-whatsapp text-white"></i>
                                         </div>
                                     </a>
-                                    <a href="{{ $url['gmail'] }}" target="_blank" class="social-icon google me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.google')">
-                                        <div class="icon d-flex">
-                                            <i class="fa-brands fa-google-plus-g text-white"></i>
-                                        </div>
-                                    </a>
-                                    <a href="{{ $url['pinterest'] }}" target="_blank" class="social-icon pinterest me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.pinterest')">
+                                    <a href="{{ $url['pinterest'] }}" target="_blank" rel="noopener noreferrer" class="social-icon pinterest me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.pinterest')">
                                         <div class="icon d-flex">
                                             <i class="fa-brands fa-pinterest-p text-white"></i>
                                         </div>

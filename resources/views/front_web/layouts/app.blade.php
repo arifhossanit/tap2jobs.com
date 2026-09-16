@@ -10,6 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title') | {{ getAppName() }}</title>
+    @yield('meta_tags')
     <link rel="shortcut icon" href="{{ getSettingValue('favicon') }}" type="image/x-icon">
     <link rel="icon" href="{{ getSettingValue('favicon') }}" type="image/x-icon">
     <link href="{{ asset('assets/css/all.min.css') }}" rel="stylesheet" type="text/css">

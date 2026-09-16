@@ -53,9 +53,8 @@
     $consultationLeadsActive = Request::routeIs('consultation-leads.consultation', 'consultation-leads.index')
         || (Request::routeIs('consultation-leads.archived') && request('lead_from') !== AppModelsConsultationLead::LEAD_FROM_EMPLOYER);
     $leadsActive = $employerLeadsActive || $consultationLeadsActive;
-    $cmsActive = Request::is('admin/noticeboards*', 'admin/faqs*', 'admin/inquires*', 'admin/privacy-policy*', 'admin/front-settings*');
+    $cmsActive = Request::is('admin/faqs*', 'admin/inquires*', 'admin/privacy-policy*', 'admin/front-settings*');
     $cmsSlidersActive = Request::is('admin/ads*');
-    $frontCmsActive = Request::is('admin/cms-services*', 'admin/cms-about-us*');
     $systemSettingsActive = Request::is('admin/notification-settings*', 'admin/email-template*', 'admin/settings*')
         && ! Request::is('admin/front-settings*');
 @endphp
@@ -629,12 +628,6 @@
         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
     </a>
     <ul class="aside-submenu nav flex-column collapse {{ $cmsActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideCmsMenu">
-        <li class="nav-item {{ Request::is('admin/noticeboards*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('noticeboards.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.noticeboards') }}</span>
-            </a>
-        </li>
         <li class="nav-item {{ Request::is('admin/faqs*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('faqs.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
@@ -674,29 +667,6 @@
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('ads.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.ads') }}</span>
-            </a>
-        </li>
-    </ul>
-</li>
-
-<li class="nav-item aside-item-collapse {{ $frontCmsActive ? 'active collapse-submenu' : '' }}">
-    <a class="nav-link d-flex align-items-center py-3" data-bs-toggle="collapse" href="#asideFrontCmsMenu"
-       role="button" aria-expanded="{{ $frontCmsActive ? 'true' : 'false' }}" aria-controls="asideFrontCmsMenu">
-        <span class="aside-menu-icon {{ $iconPad }}"><i class="fas fa-desktop"></i></span>
-        <span class="aside-menu-title">Website Content</span>
-        <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
-    </a>
-    <ul class="aside-submenu nav flex-column collapse {{ $frontCmsActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideFrontCmsMenu">
-        <li class="nav-item {{ Request::is('admin/cms-services*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('cms.services.index') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.cms_services') }}</span>
-            </a>
-        </li>
-        <li class="nav-item {{ Request::is('admin/cms-about-us*') ? 'active' : '' }}">
-            <a class="nav-link d-flex align-items-center py-2" href="{{ route('cms.about-us.service') }}">
-                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
-                <span class="aside-menu-title">{{ __('messages.about_us_services') }}</span>
             </a>
         </li>
     </ul>
