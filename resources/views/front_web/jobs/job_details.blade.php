@@ -5,16 +5,22 @@
 
 @section('meta_tags')
     <link rel="canonical" href="{{ $share['url'] }}">
-    <meta name="description" content="{{ $share['description'] }}">
     <meta property="og:type" content="article">
     <meta property="og:locale" content="{{ str_replace('-', '_', app()->getLocale()) }}">
     <meta property="og:site_name" content="{{ getAppName() }}">
     <meta property="og:title" content="{{ $share['title'] }}">
     <meta property="og:description" content="{{ $share['description'] }}">
     <meta property="og:url" content="{{ $share['url'] }}">
+    <meta property="og:image" content="{{ $share['image'] }}">
+    <meta property="og:image:secure_url" content="{{ $share['image'] }}">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="600">
+    <meta property="og:image:height" content="600">
+    <meta property="og:image:alt" content="{{ $share['title'] }}">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="{{ $share['title'] }}">
     <meta name="twitter:description" content="{{ $share['description'] }}">
+    <meta name="twitter:image" content="{{ $share['image'] }}">
 @endsection
 
 

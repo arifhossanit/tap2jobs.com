@@ -121,7 +121,7 @@ class JobController extends AppBaseController
             'url' => $shareUrl,
             'title' => $shareTitle,
             'description' => $shareDescription,
-
+            'image' => asset('assets/img/social-share-square.png'),
             'message' => $shareMessage,
         ];
         $url = [
