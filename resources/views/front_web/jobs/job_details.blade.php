@@ -57,18 +57,11 @@
                                                         </span>
                                                     </button>
                                                 @endif
-                                                <button type="button" class="btn job-header-action emailJobToFriend"
+                                                <button type="button" class="btn job-header-action shareJobModalTrigger"
                                                     data-bs-toggle="modal" data-bs-target="#emailJobToFriendModal"
-                                                    title="{{ __('messages.front_job_details.email_to_friend') }}"
-                                                    aria-label="{{ __('messages.front_job_details.email_to_friend') }}">
+                                                    title="{{ __('messages.front_job_details.share_this_job') }}"
+                                                    aria-label="{{ __('messages.front_job_details.share_this_job') }}">
                                                     <i class="fa-solid fa-share-nodes"></i>
-                                                </button>
-                                                <button type="button" class="btn job-header-action reportJobAbuse"
-                                                    @if ($isJobReportedAsAbuse) disabled @endif
-                                                    data-bs-toggle="modal" data-bs-target="#reportJobAbuseModal"
-                                                    title="{{ $isJobReportedAsAbuse ? __('messages.candidate.already_reported') : __('messages.front_job_details.report_abuse') }}"
-                                                    aria-label="{{ $isJobReportedAsAbuse ? __('messages.candidate.already_reported') : __('messages.front_job_details.report_abuse') }}">
-                                                    <i class="fa-regular fa-flag"></i>
                                                 </button>
                                             </span>
                                         @endrole
@@ -287,7 +280,7 @@
                                             <i class="fa-brands fa-instagram text-white"></i>
                                         </div>
                                     </a>
-                                    <a href="{{ $url['whatsapp'] }}" target="_blank" rel="noopener noreferrer" class="social-icon google me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="WhatsApp">
+                                    <a href="{{ $url['whatsapp'] }}" target="_blank" rel="noopener noreferrer" class="social-icon whatsapp me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="WhatsApp">
                                         <div class="icon d-flex">
                                             <i class="fa-brands fa-whatsapp text-white"></i>
                                         </div>
@@ -694,7 +687,6 @@
     </div>
     @role('Candidate')
         @include('front_web.jobs.email_to_friend')
-        @include('front_web.jobs.report_job_modal')
     @endrole
     {{ Form::hidden('isJobAddedToFavourite', $isJobAddedToFavourite, ['id' => 'isJobAddedToFavourite']) }}
     {{ Form::hidden('removeFromFavorite', __('messages.front_job_details.remove_from_favorite'), ['id' => 'removeFromFavorite']) }}

@@ -1,42 +1,38 @@
-<div class="modal fade job-action-modal" id="emailJobToFriendModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade job-action-modal job-share-modal" id="emailJobToFriendModal" tabindex="-1"
+     aria-labelledby="jobShareModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header border-bottom-0">
-                <h5 class="modal-title" id="exampleModalLongTitle">{{ __('messages.job.email_to_friend') }}</h5>
+            <div class="modal-header">
+                <h5 class="modal-title" id="jobShareModalTitle">@lang('messages.front_job_details.share_this_job')</h5>
                 <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form name="frm" id="emailJobToFriend">
-                <div class="modal-body">
-                    @csrf
-                    <input type="hidden" name="user_id"
-                           value="{{ (getLoggedInUserId() !== null) ? getLoggedInUserId() : null }}">
-                    <input type="hidden" name="job_id" value="{{ $job->id }}">
-                    <div class="form-group mb-md-4 mb-3 ">
-                        <label for="" class="fs-16 text-secondary mb-3" for="jobUrl">{{ __('messages.job.job_url') }}</label>
-                        <input type="text" class="form-control fs-14 text-gray bg-white  br-10 p-3"
-                        name="job_url" id="jobUrl" readonly>
-                    </div>
-
-                    <div class="form-group mb-md-4 mb-3">
-                        <label class="fs-16 text-secondary mb-2" for="friendName">{{ __('messages.job.friend_name') }}</label>
-                        <span class="text-primary">*</span>
-                        <input type="text" class="form-control fs-14 text-gray bg-white  br-10 p-3  " name="friend_name" id="friendName" required>
-                    </div>
-
-                    <div class="form-group mb-md-4 mb-3">
-                        <label class="fs-16 text-secondary mb-2" for="friendEmail">{{ __('messages.job.friend_email') }}</label>
-                        <span class="text-primary">*</span>
-                        <input type="email" class="form-control fs-14 text-gray bg-white  br-10 p-3" name="friend_email" id="friendEmail" required>
-                    </div>
+            <div class="modal-body py-4">
+                <div class="job-share-modal__icons">
+                    <a href="{{ $url['facebook'] }}" target="_blank" rel="noopener noreferrer"
+                       onclick="if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return true; var popup = window.open('about:blank', '_blank', 'width=800,height=600'); if (!popup) return true; popup.opener = null; popup.location.replace(this.href); return false;"
+                       class="social-icon facebook" title="@lang('messages.front_job_details.facebook')" aria-label="@lang('messages.front_job_details.facebook')">
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+                    <a href="{{ $url['linkedin'] }}" target="_blank" rel="noopener noreferrer"
+                       class="social-icon linkedin" title="@lang('messages.front_job_details.linkedin')" aria-label="@lang('messages.front_job_details.linkedin')">
+                        <i class="fa-brands fa-linkedin-in"></i>
+                    </a>
+                    <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer"
+                       data-share-title="{{ $share['title'] }}" data-share-description="{{ $share['description'] }}" data-share-url="{{ $share['url'] }}"
+                       onclick="if (navigator.clipboard) navigator.clipboard.writeText(this.dataset.shareTitle + String.fromCharCode(10) + this.dataset.shareDescription + String.fromCharCode(10) + this.dataset.shareUrl);"
+                       class="social-icon instagram" title="Share via Instagram" aria-label="Share via Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="{{ $url['whatsapp'] }}" target="_blank" rel="noopener noreferrer"
+                       class="social-icon whatsapp" title="WhatsApp" aria-label="WhatsApp">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </a>
+                    <a href="{{ $url['gmail'] }}" target="_blank" rel="noopener noreferrer"
+                       class="social-icon gmail" title="Share via Gmail" aria-label="Share via Gmail">
+                        <i class="fa-brands fa-google"></i>
+                    </a>
                 </div>
-                <div class="modal-footer border-top-0">
-                    <button type="button" class="btn btn-primary"
-                            data-bs-dismiss="modal">{{ __('messages.common.close') }}</button>
-                    <button type="submit" class="btn btn-primary "
-                            data-loading-text="<span class='spinner-border spinner-border-sm me-2'></span> Sending"
-                            id="btnSendToFriend">{{ __('web.job_details.send_to_friend') }}</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>

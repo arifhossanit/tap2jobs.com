@@ -96,8 +96,7 @@
 
                                         <div class="job-search-result-card__footer">
                                             <div class="job-search-result-card__detail">
-                                                <i class="fa-solid {{ $job->is_pdf ? 'fa-file-pdf' : 'fa-image' }}" aria-hidden="true"></i>
-                                                <span>{{ $job->is_pdf ? 'PDF Circular' : 'Image Circular' }}</span>
+
                                             </div>
                                             <div class="job-search-result-card__deadline">
                                                 <span>{{ __('messages.job.deadline') }}:</span>
