@@ -5,7 +5,6 @@
 
 @section('meta_tags')
     <link rel="canonical" href="{{ $share['url'] }}">
-    <meta name="description" content="{{ $share['description'] }}">
     <meta property="og:type" content="article">
     <meta property="og:locale" content="{{ str_replace('-', '_', app()->getLocale()) }}">
     <meta property="og:site_name" content="{{ getAppName() }}">
@@ -689,18 +688,18 @@
 @endsection
 @section('page_scripts')
     <script>
-        const facebookLinks = document.querySelectorAll('.facebook');
+        // const facebookLinks = document.querySelectorAll('.facebook');
 
-        facebookLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
+        // facebookLinks.forEach(link => {
+        //     link.addEventListener('click', function(e) {
+        //         e.preventDefault();
                 
-                // Get the href attribute of the clicked element
-                const url = this.getAttribute('href');
+        //         // Get the href attribute of the clicked element
+        //         const url = this.getAttribute('href');
                 
-                // Open the share window (using encodeURIComponent is highly recommended for URLs)
-                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`);
-            });
-        });
+        //         // Open the share window (using encodeURIComponent is highly recommended for URLs)
+        //         window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`);
+        //     });
+        // });
     </script>
 @endsection

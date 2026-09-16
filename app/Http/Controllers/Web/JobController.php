@@ -15,7 +15,6 @@ use App\Http\Controllers\AppBaseController;
 use App\Http\Requests\EmailJobToFriendRequest;
 use Illuminate\Contracts\Foundation\Application;
 use App\Models\Skill;
-use Illuminate\Support\Facades\Session;
 use Intervention\Image\ImageManagerStatic as InterventionImage;
 
 
@@ -117,12 +116,13 @@ class JobController extends AppBaseController
             $job->job_expiry_date ? 'Deadline: '.$job->job_expiry_date->format('d M Y') : null,
         ]));
         $shareMessage = $shareText."\n".$shareDescription."\n".$shareUrl;
+        $shareImage = $this->ensureOgImage($job);
 
         $share = [
             'url' => $shareUrl,
             'title' => $shareTitle,
             'description' => $shareDescription,
-            'image' => route('front.job.og-image', $job->job_id),
+            'image' => asset('uploads/og-images/'.basename($shareImage)),
             'message' => $shareMessage,
         ];
         $url = [
@@ -147,6 +147,28 @@ class JobController extends AppBaseController
         $job = Job::with(['company.user', 'degreeLevel', 'degreeTitle'])
             ->whereJobId($uniqueJobId)
             ->firstOrFail();
+
+        $imagePath = $this->ensureOgImage($job);
+
+        return response()->file($imagePath, [
+            'Content-Type' => 'image/jpeg',
+            'Cache-Control' => 'public, max-age=31536000, immutable',
+        ]);
+    }
+
+    private function ensureOgImage(Job $job): string
+    {
+        $directory = public_path('uploads/og-images');
+        $filename = 'job-'.$job->job_id.'-'.($job->updated_at?->timestamp ?: $job->created_at->timestamp).'.jpg';
+        $imagePath = $directory.DIRECTORY_SEPARATOR.$filename;
+
+        if (is_file($imagePath)) {
+            return $imagePath;
+        }
+
+        if (! is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
 
         $companyName = trim(implode(' ', array_filter([
             $job->company?->user?->first_name,
@@ -194,12 +216,16 @@ class JobController extends AppBaseController
         foreach ($details as $index => $detail) {
             $image->text($detail, 65, 385 + ($index * 35), function ($font) use ($fontPath) {
                 $font->file($fontPath);
-                $font->size(21);
+                $font->size(24);
                 $font->color('#4b5563');
             });
         }
 
-        return $image->response('jpg', 90)->header('Cache-Control', 'public, max-age=86400');
+        $temporaryPath = $imagePath.'.'.uniqid('', true).'.tmp';
+        $image->save($temporaryPath, 90, 'jpg');
+        rename($temporaryPath, $imagePath);
+
+        return $imagePath;
     }
 
     private function wrapOgText(string $text, int $length): array
