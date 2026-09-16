@@ -693,7 +693,8 @@
         <!-- end job-details section -->
     </div>
     <script>
-        $('.facebook').on('click', function() {
+        $('.facebook').on('click', function(e) {
+            e.preventDefault();
             var url = $(this).attr('href');
             window.open(
                 'https://www.facebook.com/sharer/sharer.php?u=' + url
