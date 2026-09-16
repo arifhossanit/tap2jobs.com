@@ -1,19 +1,6 @@
 @extends('front_web.layouts.app')
 @section('title', 'Government Jobs')
 
-@section('page_css')
-    <style>
-        .government-job-filter .btn-primary { width: 100%; }
-        .government-job-card { background: #fff; border: 1px solid #e4e9ee; border-radius: 10px; box-shadow: 0 4px 14px rgba(24, 38, 60, .06); padding: 24px; transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease; }
-        .government-job-card:hover { border-color: rgba(22, 129, 24, .35); box-shadow: 0 8px 22px rgba(24, 38, 60, .1); transform: translateY(-2px); }
-        .government-job-card__title { color: #dc3545; font-size: 20px; line-height: 1.4; }
-        .government-job-card__organization { color: #343a40; font-size: 16px; font-weight: 600; }
-        .government-job-card__meta { color: #6c757d; display: flex; flex-wrap: wrap; gap: 12px 24px; font-size: 14px; }
-        .government-job-card__meta i { color: #168118; margin-right: 7px; width: 16px; }
-        .government-job-card__deadline { margin-left: auto; }
-        @media (max-width: 575.98px) { .government-job-card { padding: 18px; } .government-job-card__title { font-size: 18px; } .government-job-card__deadline { margin-left: 0; width: 100%; } }
-    </style>
-@endsection
 
 @section('content')
     <div class="Find Jobs-page">
@@ -90,30 +77,39 @@
                         </div>
 
                         <div class="col-lg-8 col-12">
-                            <div class="d-flex justify-content-between align-items-center mb-4 gap-3">
-                                <h2 class="fs-4 text-secondary mb-0">Latest Government Jobs</h2>
-                                <span class="text-muted fs-14 flex-shrink-0">{{ $governmentJobs->total() }} jobs found</span>
-                            </div>
-                            <div class="d-grid gap-4">
+                            <div>
                                 @forelse ($governmentJobs as $job)
-                                    <article class="government-job-card">
-                                        <a href="{{ route('front.government-jobs.show', $job) }}" class="text-decoration-none">
-                                            <h3 class="government-job-card__title mb-2">{{ $job->title }}</h3>
-                                        </a>
-                                        <div class="government-job-card__organization mb-3">{{ $job->organization_name }}</div>
-                                        <div class="government-job-card__meta">
-                                            @if ($job->source_name)
-                                                <span><i class="fas fa-newspaper" aria-hidden="true"></i>{{ $job->source_name }}</span>
-                                            @endif
-                                            @if ($job->published_at)
-                                                <span><i class="fas fa-calendar" aria-hidden="true"></i>Published: {{ $job->published_at->format('d M Y') }}</span>
-                                            @endif
-                                            @if ($job->application_deadline)
-                                                <span class="government-job-card__deadline"><i class="fas fa-calendar-check" aria-hidden="true"></i><strong>Deadline:</strong> {{ $job->application_deadline->format('d M Y') }}</span>
-                                            @endif
+                                    <a href="{{ route('front.government-jobs.show', $job) }}" class="job-search-result-card text-decoration-none">
+                                        <h2 class="job-search-result-card__title">{{ $job->title }}</h2>
+                                        <p class="job-search-result-card__company">{{ $job->organization_name }}</p>
+
+                                        <div class="job-search-result-card__details">
+                                            <div class="job-search-result-card__detail">
+                                                <i class="fa-solid fa-newspaper" aria-hidden="true"></i>
+                                                <span>{{ $job->source_name ?: 'Government Circular' }}</span>
+                                            </div>
+                                            <div class="job-search-result-card__detail">
+                                                <i class="fa-solid fa-calendar" aria-hidden="true"></i>
+                                                <span>Published: {{ $job->published_at ? $job->published_at->format('d M Y') : __('messages.n/a') }}</span>
+                                            </div>
                                         </div>
-                                    </article>
-                                @empty
+
+                                        <div class="job-search-result-card__footer">
+                                            <div class="job-search-result-card__detail">
+                                                <i class="fa-solid {{ $job->is_pdf ? 'fa-file-pdf' : 'fa-image' }}" aria-hidden="true"></i>
+                                                <span>{{ $job->is_pdf ? 'PDF Circular' : 'Image Circular' }}</span>
+                                            </div>
+                                            <div class="job-search-result-card__deadline">
+                                                <span>{{ __('messages.job.deadline') }}:</span>
+                                                <i class="fa-solid fa-calendar-day" aria-hidden="true"></i>
+                                                @if ($job->application_deadline)
+                                                    <time datetime="{{ $job->application_deadline->toDateString() }}">{{ $job->application_deadline->format('d M Y') }}</time>
+                                                @else
+                                                    <span>{{ __('messages.n/a') }}</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </a>                                @empty
                                     <div class="bg-white border rounded p-5 text-center text-muted">No government job circulars found.</div>
                                 @endforelse
                             </div>

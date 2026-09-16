@@ -647,7 +647,7 @@
     .bd-government-jobs__item strong {
         color: #dc3545;
         display: block;
-        font-size: 12px;
+        font-size: 15px;
         font-weight: 500;
         line-height: normal;
         overflow: hidden;
@@ -658,7 +658,7 @@
     .bd-government-jobs__item span {
         color: #74786f;
         display: block;
-        font-size: 10px;
+        font-size: 13px;
         line-height: normal;
         overflow: hidden;
         text-overflow: ellipsis;
