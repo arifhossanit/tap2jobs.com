@@ -834,6 +834,7 @@ Route::middleware('auth', 'role:Employer', 'xss', 'verified.user')->prefix('empl
          // Jobs
          Route::get('jobs', [JobController::class, 'index'])->name('job.index');
          Route::get('jobs/create', [JobController::class, 'create'])->name('job.create');
+         Route::get('jobs/create', [JobController::class, 'create'])->name('employer.job.create');
          Route::post('jobs', [JobController::class, 'store'])->name('job.store');
          Route::get('jobs/{job}', [JobController::class, 'show'])->name('job.show');
          Route::get('jobs/{job}/edit', [JobController::class, 'edit'])->name('job.edit');
