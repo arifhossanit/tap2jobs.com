@@ -16,6 +16,7 @@ use App\Http\Requests\EmailJobToFriendRequest;
 use Illuminate\Contracts\Foundation\Application;
 use App\Models\Skill;
 use Illuminate\Support\Facades\Session;
+use Intervention\Image\ImageManagerStatic as InterventionImage;
 
 
 class JobController extends AppBaseController
@@ -121,7 +122,7 @@ class JobController extends AppBaseController
             'url' => $shareUrl,
             'title' => $shareTitle,
             'description' => $shareDescription,
-            'image' => asset('assets/img/social-share-thumbnail-200.png'),
+            'image' => route('front.job.og-image', $job->job_id),
             'message' => $shareMessage,
         ];
         $url = [
@@ -133,6 +134,89 @@ class JobController extends AppBaseController
         ];
 
         return view('front_web.jobs.job_details', compact('job', 'url', 'share'))->with($data);
+    }
+
+    public function jobOgImage(string $uniqueJobId)
+    {
+        $job = Job::with(['company.user', 'degreeLevel', 'degreeTitle'])
+            ->whereJobId($uniqueJobId)
+            ->firstOrFail();
+
+        $companyName = trim(implode(' ', array_filter([
+            $job->company?->user?->first_name,
+            $job->company?->user?->last_name,
+        ])));
+        $title = html_entity_decode(strip_tags($job->job_title), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $location = $job->district_thana_location ?: 'Location not specified';
+        $deadline = $job->job_expiry_date ? $job->job_expiry_date->format('d M Y') : 'Not specified';
+        $fontPath = public_path('fonts/Poppins-Regular.ttf');
+        $boldFontPath = public_path('fonts/Poppins-Bold.ttf');
+
+        $image = InterventionImage::canvas(1200, 630, '#f5fbf8');
+        $image->rectangle(0, 0, 1200, 630, function ($draw) {
+            $draw->background('#209776');
+        });
+        $image->rectangle(21, 21, 1179, 609, function ($draw) {
+            $draw->background('#ffffff');
+        });
+        $image->text('TAP2JOBS', 65, 85, function ($font) use ($boldFontPath) {
+            $font->file($boldFontPath);
+            $font->size(28);
+            $font->color('#209776');
+        });
+        $image->text('JOB OPPORTUNITY', 65, 135, function ($font) use ($boldFontPath) {
+            $font->file($boldFontPath);
+            $font->size(22);
+            $font->color('#6b7280');
+        });
+
+        $titleLines = $this->wrapOgText($title, 34);
+        foreach ($titleLines as $index => $line) {
+            $image->text($line, 65, 205 + ($index * 52), function ($font) use ($boldFontPath) {
+                $font->file($boldFontPath);
+                $font->size(38);
+                $font->color('#172b24');
+            });
+        }
+
+        $details = array_filter([
+            $companyName !== '' ? 'Company: '.$companyName : null,
+            'Location: '.$location,
+            $job->formatted_experience ? 'Experience: '.$job->formatted_experience : null,
+            'Deadline: '.$deadline,
+        ]);
+        foreach ($details as $index => $detail) {
+            $image->text($detail, 65, 385 + ($index * 35), function ($font) use ($fontPath) {
+                $font->file($fontPath);
+                $font->size(21);
+                $font->color('#4b5563');
+            });
+        }
+
+        return $image->response('jpg', 90)->header('Cache-Control', 'public, max-age=86400');
+    }
+
+    private function wrapOgText(string $text, int $length): array
+    {
+        $words = preg_split('/\s+/', trim($text));
+        $lines = [];
+        $line = '';
+
+        foreach ($words as $word) {
+            $candidate = trim($line.' '.$word);
+            if ($line !== '' && mb_strlen($candidate) > $length) {
+                $lines[] = $line;
+                $line = $word;
+            } else {
+                $line = $candidate;
+            }
+        }
+
+        if ($line !== '') {
+            $lines[] = $line;
+        }
+
+        return array_slice($lines, 0, 3);
     }
 
     public function saveFavouriteJob(Request $request): JsonResponse
