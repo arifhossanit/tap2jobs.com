@@ -272,7 +272,7 @@
                             <div class="share-this-job mb-lg-5 mb-5">
                                 <h5 class="fs-18 text-secondary mb-4">@lang('messages.front_job_details.share_this_job'):</h5>
                                 <div class="icon-box d-flex">
-                                    <a href="{{ $url['facebook'] }}" target="_blank" rel="noopener noreferrer" class="social-icon facebook me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.facebook')">
+                                    <a href="{{ $url['facebook'] }}?v={{ time() }}" target="_blank" rel="noopener noreferrer" class="social-icon facebook me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.facebook')">
                                         <div class="icon d-flex">
                                             <i class="fa-brands fa-facebook-f text-white"></i>
                                         </div>
