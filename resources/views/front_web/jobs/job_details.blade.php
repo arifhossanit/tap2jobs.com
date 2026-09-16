@@ -19,35 +19,7 @@
     <meta name="twitter:image" content="{{ $share['image'] }}">
 @endsection
 
-@section('page_scripts')
-    <script>
-        async function shareJobToInstagram(event) {
-            event.preventDefault();
 
-            const shareData = {
-                title: @json($share['title']),
-                text: @json($share['title']),
-                url: @json($share['url'])
-            };
-
-            if (navigator.share) {
-                try {
-                    await navigator.share(shareData);
-                    return;
-                } catch (error) {
-                    if (error.name === 'AbortError') return;
-                }
-            }
-
-            try {
-                await navigator.clipboard.writeText(shareData.url);
-                displaySuccessMessage(Lang.get('js.link_copy'));
-            } catch (error) {
-                window.prompt('Copy this job link:', shareData.url);
-            }
-        }
-    </script>
-@endsection
 @section('content')
     @include('layouts.flash-toasts')
     <div class="job-details-page">
@@ -305,11 +277,11 @@
                                             <i class="fa-brands fa-linkedin-in text-white"></i>
                                         </div>
                                     </a>
-                                    <button type="button" onclick="shareJobToInstagram(event)" class="social-icon instagram me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="Share via Instagram" aria-label="Share via Instagram">
+                                    <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" data-share-url="{{ $share['url'] }}" onclick="if (navigator.clipboard) navigator.clipboard.writeText(this.dataset.shareUrl);" class="social-icon instagram me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="Share via Instagram" aria-label="Share via Instagram">
                                         <div class="icon d-flex">
                                             <i class="fa-brands fa-instagram text-white"></i>
                                         </div>
-                                    </button>
+                                    </a>
                                     <a href="{{ $url['whatsapp'] }}" target="_blank" rel="noopener noreferrer" class="social-icon google me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="WhatsApp">
                                         <div class="icon d-flex">
                                             <i class="fa-brands fa-whatsapp text-white"></i>
