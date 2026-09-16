@@ -101,30 +101,33 @@ class JobController extends AppBaseController
             })
             ->whereDate('job_expiry_date', '>=', Carbon::now()->toDateString());
         $data['getRelatedJobs'] = $relatedJobs->whereNotIn('id', [$job->id])->orderByDesc('created_at')->take(6)->get();
-        $shareUrl = route('front.job.details', $job->job_id);
+        $shareUrl = url()->current();
         $companyName = trim(implode(' ', array_filter([
             $job->company?->user?->first_name,
             $job->company?->user?->last_name,
         ])));
         $shareTitle = html_entity_decode(strip_tags($job->job_title), ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        $shareDescription = Str::limit(
-            preg_replace('/\s+/u', ' ', html_entity_decode(strip_tags($job->description), ENT_QUOTES | ENT_HTML5, 'UTF-8')),
-            200
-        );
         $shareText = $companyName !== '' ? $shareTitle.' - '.$companyName : $shareTitle;
+        $location = trim((string) $job->district_thana_location);
+        $shareDescription = 'Apply for '.$shareTitle;
+        $shareDescription .= $companyName !== '' ? ' at '.$companyName : '';
+        $shareDescription .= $location !== '' ? ' in '.$location : '';
+        $shareDescription = Str::limit($shareDescription.'. View job requirements, responsibilities and apply online on '.getAppName().'.', 200);
+        $shareMessage = $shareText."\n".$shareDescription."\n".$shareUrl;
 
         $share = [
             'url' => $shareUrl,
             'title' => $shareTitle,
             'description' => $shareDescription,
-            'image' => $job->company?->company_url ?: asset('assets/img/employer-image.png'),
+            'image' => asset(getSettingValue('logo') ?: 'assets/img/article-image.png'),
+            'message' => $shareMessage,
         ];
         $url = [
             'facebook' => 'https://www.facebook.com/sharer/sharer.php?'.http_build_query(['u' => $shareUrl], '', '&', PHP_QUERY_RFC3986),
             'linkedin' => 'https://www.linkedin.com/sharing/share-offsite/?'.http_build_query(['url' => $shareUrl], '', '&', PHP_QUERY_RFC3986),
 
-            'whatsapp' => 'https://wa.me/?'.http_build_query(['text' => $shareText."\n".$shareUrl], '', '&', PHP_QUERY_RFC3986),
-            'pinterest' => 'https://www.pinterest.com/pin/create/button/?'.http_build_query(['url' => $shareUrl, 'media' => $share['image'], 'description' => $shareText], '', '&', PHP_QUERY_RFC3986),
+            'whatsapp' => 'https://wa.me/?'.http_build_query(['text' => $shareMessage], '', '&', PHP_QUERY_RFC3986),
+            'pinterest' => 'https://www.pinterest.com/pin/create/button/?'.http_build_query(['url' => $shareUrl, 'media' => $share['image'], 'description' => $shareDescription], '', '&', PHP_QUERY_RFC3986),
         ];
 
         return view('front_web.jobs.job_details', compact('job', 'url', 'share'))->with($data);
