@@ -132,6 +132,12 @@ class JobController extends AppBaseController
             'linkedin' => 'https://www.linkedin.com/sharing/share-offsite/?'.http_build_query(['url' => $shareUrl], '', '&', PHP_QUERY_RFC3986),
 
             'whatsapp' => 'https://wa.me/?'.http_build_query(['text' => $shareMessage], '', '&', PHP_QUERY_RFC3986),
+            'gmail' => 'https://mail.google.com/mail/?'.http_build_query([
+                'view' => 'cm',
+                'fs' => '1',
+                'su' => 'Job Opportunity: '.$shareTitle,
+                'body' => $shareMessage,
+            ], '', '&', PHP_QUERY_RFC3986),
 
         ];
 

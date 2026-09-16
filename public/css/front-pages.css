@@ -14289,8 +14289,8 @@ html[dir="rtl"]
     -webkit-appearance: none;
 }
 
-.job-details-section .share-this-job .icon-box .social-icon.google {
-    background-color: #db4a39;
+.job-details-section .share-this-job .icon-box .social-icon.whatsapp {
+    background-color: #25d366;
 }
 
 
@@ -14407,6 +14407,35 @@ html[dir="rtl"]
 body:has(.job-action-modal.show) .modal-backdrop {
     z-index: 100000 !important;
 }
+.job-share-modal__icons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+}
+
+.job-share-modal__icons .social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 22px;
+}
+
+.job-share-modal__icons .social-icon:hover,
+.job-share-modal__icons .social-icon:focus {
+    color: #fff;
+    opacity: .9;
+}
+
+.job-share-modal__icons .facebook { background-color: #3a5ba0; }
+.job-share-modal__icons .linkedin { background-color: #0a66c2; }
+.job-share-modal__icons .instagram { background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); }
+.job-share-modal__icons .whatsapp { background-color: #25d366; }
+.job-share-modal__icons .gmail { background-color: #db4a39; }
 
 @media (max-width: 575px) {
     .job-details-page .job-hero-title {
