@@ -12,9 +12,13 @@
     <meta property="og:title" content="{{ $share['title'] }}">
     <meta property="og:description" content="{{ $share['description'] }}">
     <meta property="og:url" content="{{ $share['url'] }}">
+    <meta property="og:image" content="{{ $share['image'] }}">
+    <meta property="og:image:secure_url" content="{{ $share['image'] }}">
+    <meta property="og:image:alt" content="{{ $share['title'] }}">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="{{ $share['title'] }}">
     <meta name="twitter:description" content="{{ $share['description'] }}">
+    <meta name="twitter:image" content="{{ $share['image'] }}">
 @endsection
 
 
@@ -285,11 +289,7 @@
                                             <i class="fa-brands fa-whatsapp text-white"></i>
                                         </div>
                                     </a>
-                                    <a href="{{ $url['pinterest'] }}" target="_blank" rel="noopener noreferrer" class="social-icon pinterest me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.pinterest')">
-                                        <div class="icon d-flex">
-                                            <i class="fa-brands fa-pinterest-p text-white"></i>
-                                        </div>
-                                    </a>
+
                                 </div>
                             </div>
                         </div>

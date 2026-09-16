@@ -115,13 +115,21 @@ class JobController extends AppBaseController
             $job->formatted_experience ? 'Experience: '.$job->formatted_experience : null,
             $job->job_expiry_date ? 'Deadline: '.$job->job_expiry_date->format('d M Y') : null,
         ]));
+        $favicon = (string) getSettingValue('favicon');
+        $socialImageUrl = $favicon !== ''
+            ? (filter_var($favicon, FILTER_VALIDATE_URL) ? $favicon : asset(ltrim($favicon, '/')))
+            : asset('assets/img/article-image.png');
+        $socialImageUrl .= (str_contains($socialImageUrl, '?') ? '&' : '?').http_build_query([
+            'job' => $job->job_id,
+            'v' => $job->updated_at?->timestamp ?? time(),
+        ], '', '&', PHP_QUERY_RFC3986);
         $shareMessage = $shareText."\n".$shareDescription."\n".$shareUrl;
 
         $share = [
             'url' => $shareUrl,
             'title' => $shareTitle,
             'description' => $shareDescription,
-
+            'image' => $socialImageUrl,
             'message' => $shareMessage,
         ];
         $url = [
@@ -129,7 +137,7 @@ class JobController extends AppBaseController
             'linkedin' => 'https://www.linkedin.com/sharing/share-offsite/?'.http_build_query(['url' => $shareUrl], '', '&', PHP_QUERY_RFC3986),
 
             'whatsapp' => 'https://wa.me/?'.http_build_query(['text' => $shareMessage], '', '&', PHP_QUERY_RFC3986),
-            'pinterest' => 'https://www.pinterest.com/pin/create/button/?'.http_build_query(['url' => $shareUrl, 'description' => $shareDescription], '', '&', PHP_QUERY_RFC3986),
+
         ];
 
         return view('front_web.jobs.job_details', compact('job', 'url', 'share'))->with($data);
