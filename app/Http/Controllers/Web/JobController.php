@@ -115,21 +115,13 @@ class JobController extends AppBaseController
             $job->formatted_experience ? 'Experience: '.$job->formatted_experience : null,
             $job->job_expiry_date ? 'Deadline: '.$job->job_expiry_date->format('d M Y') : null,
         ]));
-        $favicon = (string) getSettingValue('favicon');
-        $socialImageUrl = $favicon !== ''
-            ? (filter_var($favicon, FILTER_VALIDATE_URL) ? $favicon : asset(ltrim($favicon, '/')))
-            : asset('assets/img/article-image.png');
-        $socialImageUrl .= (str_contains($socialImageUrl, '?') ? '&' : '?').http_build_query([
-            'job' => $job->job_id,
-            'v' => $job->updated_at?->timestamp ?? time(),
-        ], '', '&', PHP_QUERY_RFC3986);
         $shareMessage = $shareText."\n".$shareDescription."\n".$shareUrl;
 
         $share = [
             'url' => $shareUrl,
             'title' => $shareTitle,
             'description' => $shareDescription,
-            'image' => $socialImageUrl,
+
             'message' => $shareMessage,
         ];
         $url = [
