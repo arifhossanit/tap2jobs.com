@@ -692,15 +692,6 @@
         </section>
         <!-- end job-details section -->
     </div>
-    <script>
-        $('.facebook').on('click', function(e) {
-            e.preventDefault();
-            var url = $(this).attr('href');
-            window.open(
-                'https://www.facebook.com/sharer/sharer.php?u=' + url
-            );
-        });
-    </script>
     @role('Candidate')
         @include('front_web.jobs.email_to_friend')
         @include('front_web.jobs.report_job_modal')
@@ -708,4 +699,21 @@
     {{ Form::hidden('isJobAddedToFavourite', $isJobAddedToFavourite, ['id' => 'isJobAddedToFavourite']) }}
     {{ Form::hidden('removeFromFavorite', __('messages.front_job_details.remove_from_favorite'), ['id' => 'removeFromFavorite']) }}
     {{ Form::hidden('addToFavorites', __('messages.front_job_details.add_to_favorite'), ['id' => 'addToFavorites']) }}
+@endsection
+@section('page_scripts')
+    <script>
+        const facebookLinks = document.querySelectorAll('.facebook');
+
+        facebookLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Get the href attribute of the clicked element
+                const url = this.getAttribute('href');
+                
+                // Open the share window (using encodeURIComponent is highly recommended for URLs)
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`);
+            });
+        });
+    </script>
 @endsection
