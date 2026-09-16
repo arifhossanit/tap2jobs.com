@@ -13,9 +13,9 @@
     <meta property="og:url" content="{{ $share['url'] }}">
     <meta property="og:image" content="{{ $share['image'] }}">
     <meta property="og:image:secure_url" content="{{ $share['image'] }}">
-    <meta property="og:image:type" content="image/png">
-    <meta property="og:image:width" content="600">
-    <meta property="og:image:height" content="600">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="{{ $share['title'] }}">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="{{ $share['title'] }}">
