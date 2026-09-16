@@ -58,23 +58,44 @@ class GovernmentJobController extends AppBaseController
 
     public function publicIndex(Request $request): View
     {
+        $organizations = GovernmentJob::query()
+            ->where('is_published', true)
+            ->whereNotNull('organization_name')
+            ->distinct()
+            ->orderBy('organization_name')
+            ->pluck('organization_name');
+
+        $sources = GovernmentJob::query()
+            ->where('is_published', true)
+            ->whereNotNull('source_name')
+            ->where('source_name', '!=', '')
+            ->distinct()
+            ->orderBy('source_name')
+            ->pluck('source_name');
+
         $governmentJobs = GovernmentJob::query()
             ->where('is_published', true)
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = trim((string) $request->input('search'));
                 $query->where(function ($query) use ($search) {
                     $query->where('title', 'like', "%{$search}%")
-                        ->orWhere('organization_name', 'like', "%{$search}%");
+                        ->orWhere('organization_name', 'like', "%{$search}%")
+                        ->orWhere('source_name', 'like', "%{$search}%");
                 });
             })
+            ->when($request->filled('organization'), fn ($query) => $query->where('organization_name', $request->string('organization')->trim()))
+            ->when($request->filled('source'), fn ($query) => $query->where('source_name', $request->string('source')->trim()))
+            ->when($request->input('deadline') === 'active', fn ($query) => $query->where(function ($query) {
+                $query->whereNull('application_deadline')->orWhereDate('application_deadline', '>=', today());
+            }))
+            ->when($request->input('deadline') === 'expired', fn ($query) => $query->whereDate('application_deadline', '<', today()))
             ->orderByDesc('published_at')
             ->latest('id')
             ->paginate(12)
             ->withQueryString();
 
-        return view('front_web.government_jobs.index', compact('governmentJobs'));
+        return view('front_web.government_jobs.index', compact('governmentJobs', 'organizations', 'sources'));
     }
-
     public function publicShow(GovernmentJob $governmentJob): View
     {
         abort_unless($governmentJob->is_published, 404);

@@ -645,7 +645,7 @@
     }
 
     .bd-government-jobs__item strong {
-        color: #3b403a;
+        color: #dc3545;
         display: block;
         font-size: 12px;
         font-weight: 500;
