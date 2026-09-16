@@ -8,7 +8,7 @@
 
 <div {{ $attributes->class(['front-side-ad-layout', 'front-side-ad-layout--empty' => ! $hasAds]) }}>
     @if ($hasAds)
-        <aside class="front-side-ad-layout__aside front-side-ad-layout__aside--left d-none d-xxl-block">
+        <aside class="front-side-ad-layout__aside front-side-ad-layout__aside--left">
             @include('front_web.common.register_side_ad', ['ads' => $leftAds])
         </aside>
     @endif
@@ -18,11 +18,11 @@
     </div>
 
     @if ($hasAds)
-        <aside class="front-side-ad-layout__aside front-side-ad-layout__aside--right d-none d-xxl-block">
+        <aside class="front-side-ad-layout__aside front-side-ad-layout__aside--right">
             @include('front_web.common.register_side_ad', ['ads' => $rightAds])
         </aside>
 
-        <div class="front-side-ad-layout__mobile d-xxl-none">
+        <div class="front-side-ad-layout__mobile">
             @if ($leftAds->isNotEmpty())
                 <div>@include('front_web.common.register_side_ad', ['ads' => $leftAds])</div>
             @endif
