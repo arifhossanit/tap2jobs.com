@@ -14,8 +14,8 @@
     <meta property="og:image" content="{{ $share['image'] }}">
     <meta property="og:image:secure_url" content="{{ $share['image'] }}">
     <meta property="og:image:type" content="image/png">
-    <meta property="og:image:width" content="600">
-    <meta property="og:image:height" content="600">
+    <meta property="og:image:width" content="200">
+    <meta property="og:image:height" content="200">
     <meta property="og:image:alt" content="{{ $share['title'] }}">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="{{ $share['title'] }}">
@@ -271,7 +271,7 @@
                             <div class="share-this-job mb-lg-5 mb-5">
                                 <h5 class="fs-18 text-secondary mb-4">@lang('messages.front_job_details.share_this_job'):</h5>
                                 <div class="icon-box d-flex">
-                                    <a href="{{ $url['facebook'] }}" target="_blank" rel="noopener noreferrer" class="social-icon facebook me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.facebook')">
+                                    <a href="{{ $url['facebook'] }}" target="_blank" rel="noopener noreferrer" onclick="if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return true; var popup = window.open('about:blank', '_blank', 'width=800,height=600'); if (!popup) return true; popup.opener = null; popup.location.replace(this.href); return false;" class="social-icon facebook me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.facebook')">
                                         <div class="icon d-flex">
                                             <i class="fa-brands fa-facebook-f text-white"></i>
                                         </div>
