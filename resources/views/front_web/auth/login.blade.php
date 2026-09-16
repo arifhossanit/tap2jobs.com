@@ -100,6 +100,20 @@
                                 <button type="submit"
                                     class="btn btn-secondary btn-secondary-login">{{ __('web.login') }}</button>
                             </div>
+                            <div class="border-top pt-4 text-center">
+                                <p class="text-secondary mb-3">
+                                    {{ __("web.login_menu.don't_have_an_account") }}
+                                    <span class="fw-semibold">{{ __('web.register_menu.create_account') }}</span>
+                                </p>
+                                <div class="d-flex flex-column flex-sm-row gap-3">
+                                    <a href="{{ route('candidate.register') }}" class="btn btn-outline-primary flex-fill">
+                                        <i class="fas fa-user me-2" aria-hidden="true"></i>{{ __('web.register_menu.candidate') }}
+                                    </a>
+                                    <a href="{{ route('employer.register') }}" class="btn btn-outline-primary flex-fill">
+                                        <i class="fas fa-building me-2" aria-hidden="true"></i>{{ __('web.register_menu.employer') }}
+                                    </a>
+                                </div>
+                            </div>
                         </form>
                     </div>
                     @if ($hasRegisterSideAds)
