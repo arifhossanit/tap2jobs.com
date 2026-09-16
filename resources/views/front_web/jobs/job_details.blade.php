@@ -5,6 +5,7 @@
 
 @section('meta_tags')
     <link rel="canonical" href="{{ $share['url'] }}">
+    <meta name="description" content="{{ $share['description'] }}">
     <meta property="og:type" content="article">
     <meta property="og:locale" content="{{ str_replace('-', '_', app()->getLocale()) }}">
     <meta property="og:site_name" content="{{ getAppName() }}">
@@ -691,6 +692,15 @@
         </section>
         <!-- end job-details section -->
     </div>
+    <script>
+        $('.facebook').on('click', function(e) {
+            e.preventDefault();
+            var url = $(this).attr('href');
+            window.open(
+                'https://www.facebook.com/sharer/sharer.php?u=' + url
+            );
+        });
+    </script>
     @role('Candidate')
         @include('front_web.jobs.email_to_friend')
         @include('front_web.jobs.report_job_modal')
