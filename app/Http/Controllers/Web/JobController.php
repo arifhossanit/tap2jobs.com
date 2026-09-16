@@ -16,7 +16,6 @@ use App\Http\Requests\EmailJobToFriendRequest;
 use Illuminate\Contracts\Foundation\Application;
 use App\Models\Skill;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Str;
 
 
 class JobController extends AppBaseController
@@ -47,7 +46,7 @@ class JobController extends AppBaseController
      */
     public function jobDetails(string $uniqueJobId)
     {
-        $job = Job::with(['jobsTag', 'company.user', 'jobCategory', 'jobCategories'])->whereJobId($uniqueJobId)->first();
+        $job = Job::with(['jobsTag', 'company.user', 'jobCategory', 'jobCategories', 'degreeLevel', 'degreeTitle'])->whereJobId($uniqueJobId)->first();
         $skill = Job::with('jobCategory', 'jobCategories', 'jobShift', 'jobsSkill', 'company')->whereJobId($uniqueJobId)
             ->orderByDesc('created_at')->get();
         $valuee = [];
@@ -108,15 +107,21 @@ class JobController extends AppBaseController
         ])));
         $shareTitle = html_entity_decode(strip_tags($job->job_title), ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $shareText = $companyName !== '' ? $shareTitle.' - '.$companyName : $shareTitle;
-        // Temporary hard-coded description for social preview testing.
-        $shareDescription = 'This is a test job description from TAP2JOBS. Explore the full job details, requirements and apply online today.';
+        $education = collect([$job->degreeLevel?->name, $job->degreeTitle?->name])->filter()->implode(', ');
+        $shareDescription = implode(' | ', array_filter([
+            $companyName !== '' ? 'Company: '.$companyName : null,
+            $job->district_thana_location ? 'Location: '.$job->district_thana_location : null,
+            $education !== '' ? 'Education: '.$education : null,
+            $job->formatted_experience ? 'Experience: '.$job->formatted_experience : null,
+            $job->job_expiry_date ? 'Deadline: '.$job->job_expiry_date->format('d M Y') : null,
+        ]));
         $shareMessage = $shareText."\n".$shareDescription."\n".$shareUrl;
 
         $share = [
             'url' => $shareUrl,
             'title' => $shareTitle,
             'description' => $shareDescription,
-            'image' => asset(getSettingValue('logo') ?: 'assets/img/article-image.png'),
+
             'message' => $shareMessage,
         ];
         $url = [
@@ -124,7 +129,7 @@ class JobController extends AppBaseController
             'linkedin' => 'https://www.linkedin.com/sharing/share-offsite/?'.http_build_query(['url' => $shareUrl], '', '&', PHP_QUERY_RFC3986),
 
             'whatsapp' => 'https://wa.me/?'.http_build_query(['text' => $shareMessage], '', '&', PHP_QUERY_RFC3986),
-            'pinterest' => 'https://www.pinterest.com/pin/create/button/?'.http_build_query(['url' => $shareUrl, 'media' => $share['image'], 'description' => $shareDescription], '', '&', PHP_QUERY_RFC3986),
+            'pinterest' => 'https://www.pinterest.com/pin/create/button/?'.http_build_query(['url' => $shareUrl, 'description' => $shareDescription], '', '&', PHP_QUERY_RFC3986),
         ];
 
         return view('front_web.jobs.job_details', compact('job', 'url', 'share'))->with($data);

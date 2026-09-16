@@ -12,13 +12,9 @@
     <meta property="og:title" content="{{ $share['title'] }}">
     <meta property="og:description" content="{{ $share['description'] }}">
     <meta property="og:url" content="{{ $share['url'] }}">
-    <meta property="og:image" content="{{ $share['image'] }}">
-    <meta property="og:image:secure_url" content="{{ $share['image'] }}">
-    <meta property="og:image:alt" content="{{ $share['title'] }}">
-    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="{{ $share['title'] }}">
     <meta name="twitter:description" content="{{ $share['description'] }}">
-    <meta name="twitter:image" content="{{ $share['image'] }}">
 @endsection
 
 
