@@ -109,9 +109,17 @@ class JobController extends AppBaseController
         $shareTitle = html_entity_decode(strip_tags($job->job_title), ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $shareText = $companyName !== '' ? $shareTitle.' - '.$companyName : $shareTitle;
         $location = trim((string) $job->district_thana_location);
+        $shareRequirements = collect([$job->description, $job->key_responsibilities])
+            ->filter()
+            ->map(function ($content) {
+                return preg_replace('/\s+/', ' ', trim(html_entity_decode(strip_tags($content), ENT_QUOTES | ENT_HTML5, 'UTF-8')));
+            })
+            ->filter()
+            ->implode(' ');
         $shareDescription = 'Apply for '.$shareTitle;
         $shareDescription .= $companyName !== '' ? ' at '.$companyName : '';
         $shareDescription .= $location !== '' ? ' in '.$location : '';
+        $shareDescription .= $shareRequirements !== '' ? '. '.$shareRequirements : '';
         $shareDescription = Str::limit($shareDescription.'. View job requirements, responsibilities and apply online on '.getAppName().'.', 200);
         $shareMessage = $shareText."\n".$shareDescription."\n".$shareUrl;
 
