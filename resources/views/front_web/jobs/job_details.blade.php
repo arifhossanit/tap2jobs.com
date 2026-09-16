@@ -265,7 +265,7 @@
                             <div class="share-this-job mb-lg-5 mb-5">
                                 <h5 class="fs-18 text-secondary mb-4">@lang('messages.front_job_details.share_this_job'):</h5>
                                 <div class="icon-box d-flex">
-                                    <a href="{{ $url['facebook'] }}?v={{ time() }}" target="_blank" rel="noopener noreferrer" class="social-icon facebook me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.facebook')">
+                                    <a href="{{ $url['facebook'] }}" target="_blank" rel="noopener noreferrer" onclick="if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return true; var popup = window.open('about:blank', '_blank', 'width=800,height=600'); if (!popup) return true; popup.opener = null; popup.location.replace(this.href); return false;" class="social-icon facebook me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.facebook')">
                                         <div class="icon d-flex">
                                             <i class="fa-brands fa-facebook-f text-white"></i>
                                         </div>
@@ -691,4 +691,21 @@
     {{ Form::hidden('isJobAddedToFavourite', $isJobAddedToFavourite, ['id' => 'isJobAddedToFavourite']) }}
     {{ Form::hidden('removeFromFavorite', __('messages.front_job_details.remove_from_favorite'), ['id' => 'removeFromFavorite']) }}
     {{ Form::hidden('addToFavorites', __('messages.front_job_details.add_to_favorite'), ['id' => 'addToFavorites']) }}
+@endsection
+@section('page_scripts')
+    <script>
+        const facebookLinks = document.querySelectorAll('.facebook');
+
+        facebookLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Get the href attribute of the clicked element
+                const url = this.getAttribute('href');
+                
+                // Open the share window (using encodeURIComponent is highly recommended for URLs)
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`);
+            });
+        });
+    </script>
 @endsection
