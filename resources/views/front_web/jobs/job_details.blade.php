@@ -274,11 +274,6 @@
                                             <i class="fa-brands fa-linkedin-in text-white"></i>
                                         </div>
                                     </a>
-                                    <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" data-share-title="{{ $share['title'] }}" data-share-description="{{ $share['description'] }}" data-share-url="{{ $share['url'] }}" onclick="if (navigator.clipboard) navigator.clipboard.writeText(this.dataset.shareTitle + String.fromCharCode(10) + this.dataset.shareDescription + String.fromCharCode(10) + this.dataset.shareUrl);" class="social-icon instagram me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="Share via Instagram" aria-label="Share via Instagram">
-                                        <div class="icon d-flex">
-                                            <i class="fa-brands fa-instagram text-white"></i>
-                                        </div>
-                                    </a>
                                     <a href="{{ $url['whatsapp'] }}" target="_blank" rel="noopener noreferrer" class="social-icon whatsapp me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="WhatsApp">
                                         <div class="icon d-flex">
                                             <i class="fa-brands fa-whatsapp text-white"></i>
