@@ -16,6 +16,8 @@ use App\Http\Requests\EmailJobToFriendRequest;
 use Illuminate\Contracts\Foundation\Application;
 use App\Models\Skill;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Intervention\Image\ImageManagerStatic as InterventionImage;
 
 
@@ -136,64 +138,180 @@ class JobController extends AppBaseController
         return view('front_web.jobs.job_details', compact('job', 'url', 'share'))->with($data);
     }
 
+    // public function jobOgImage(string $uniqueJobId)
+    // {
+    //     $job = Job::with(['company.user', 'degreeLevel', 'degreeTitle'])
+    //         ->whereJobId($uniqueJobId)
+    //         ->firstOrFail();
+
+    //     $companyName = trim(implode(' ', array_filter([
+    //         $job->company?->user?->first_name,
+    //         $job->company?->user?->last_name,
+    //     ])));
+    //     $title = html_entity_decode(strip_tags($job->job_title), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    //     $location = $job->district_thana_location ?: 'Location not specified';
+    //     $deadline = $job->job_expiry_date ? $job->job_expiry_date->format('d M Y') : 'Not specified';
+    //     $fontPath = public_path('fonts/Poppins-Regular.ttf');
+    //     $boldFontPath = public_path('fonts/Poppins-Bold.ttf');
+
+    //     $image = InterventionImage::canvas(1200, 630, '#f5fbf8');
+    //     $image->rectangle(0, 0, 1200, 630, function ($draw) {
+    //         $draw->background('#209776');
+    //     });
+    //     $image->rectangle(21, 21, 1179, 609, function ($draw) {
+    //         $draw->background('#ffffff');
+    //     });
+    //     $image->text('TAP2JOBS', 65, 85, function ($font) use ($boldFontPath) {
+    //         $font->file($boldFontPath);
+    //         $font->size(28);
+    //         $font->color('#209776');
+    //     });
+    //     $image->text('JOB OPPORTUNITY', 65, 135, function ($font) use ($boldFontPath) {
+    //         $font->file($boldFontPath);
+    //         $font->size(22);
+    //         $font->color('#6b7280');
+    //     });
+
+    //     $titleLines = $this->wrapOgText($title, 34);
+    //     foreach ($titleLines as $index => $line) {
+    //         $image->text($line, 65, 205 + ($index * 52), function ($font) use ($boldFontPath) {
+    //             $font->file($boldFontPath);
+    //             $font->size(38);
+    //             $font->color('#172b24');
+    //         });
+    //     }
+
+    //     $details = array_filter([
+    //         $companyName !== '' ? 'Company: '.$companyName : null,
+    //         'Location: '.$location,
+    //         $job->formatted_experience ? 'Experience: '.$job->formatted_experience : null,
+    //         'Deadline: '.$deadline,
+    //     ]);
+    //     foreach ($details as $index => $detail) {
+    //         $image->text($detail, 65, 385 + ($index * 35), function ($font) use ($fontPath) {
+    //             $font->file($fontPath);
+    //             $font->size(24);
+    //             $font->color('#4b5563');
+    //         });
+    //     }
+
+    //     return $image->response('jpg', 90)->header('Cache-Control', 'public, max-age=86400');
+    // }
+
     public function jobOgImage(string $uniqueJobId)
     {
-        $job = Job::with(['company.user', 'degreeLevel', 'degreeTitle'])
-            ->whereJobId($uniqueJobId)
-            ->firstOrFail();
+        $cacheKey  = "og-images/job-{$uniqueJobId}.jpg";
+        $disk      = Storage::disk('public');
 
-        $companyName = trim(implode(' ', array_filter([
-            $job->company?->user?->first_name,
-            $job->company?->user?->last_name,
-        ])));
-        $title = html_entity_decode(strip_tags($job->job_title), ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        $location = $job->district_thana_location ?: 'Location not specified';
-        $deadline = $job->job_expiry_date ? $job->job_expiry_date->format('d M Y') : 'Not specified';
-        $fontPath = public_path('fonts/Poppins-Regular.ttf');
-        $boldFontPath = public_path('fonts/Poppins-Bold.ttf');
+        // 1. Serve cached version if it exists
+        if ($disk->exists($cacheKey)) {
+            return response($disk->get($cacheKey), 200)
+                ->header('Content-Type', 'image/jpeg')
+                ->header('Cache-Control', 'public, max-age=86400');
+        }
 
-        $image = InterventionImage::canvas(1200, 630, '#f5fbf8');
-        $image->rectangle(0, 0, 1200, 630, function ($draw) {
-            $draw->background('#209776');
-        });
-        $image->rectangle(21, 21, 1179, 609, function ($draw) {
-            $draw->background('#ffffff');
-        });
-        $image->text('TAP2JOBS', 65, 85, function ($font) use ($boldFontPath) {
-            $font->file($boldFontPath);
-            $font->size(28);
-            $font->color('#209776');
-        });
-        $image->text('JOB OPPORTUNITY', 65, 135, function ($font) use ($boldFontPath) {
-            $font->file($boldFontPath);
-            $font->size(22);
-            $font->color('#6b7280');
-        });
+        try {
+            $job = Job::with(['company.user', 'degreeLevel', 'degreeTitle'])
+                ->whereJobId($uniqueJobId)
+                ->firstOrFail();
 
-        $titleLines = $this->wrapOgText($title, 34);
-        foreach ($titleLines as $index => $line) {
-            $image->text($line, 65, 205 + ($index * 52), function ($font) use ($boldFontPath) {
+            $fontPath     = public_path('fonts/Poppins-Regular.ttf');
+            $boldFontPath = public_path('fonts/Poppins-Bold.ttf');
+
+            // Guard against missing fonts (deploy race / missing shared dir)
+            if (!is_file($fontPath) || !is_file($boldFontPath)) {
+                throw new \RuntimeException("OG image fonts missing at {$fontPath}");
+            }
+
+            $companyName = trim(implode(' ', array_filter([
+                $job->company?->user?->first_name,
+                $job->company?->user?->last_name,
+            ])));
+            $title    = html_entity_decode(strip_tags($job->job_title), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            $location = $job->district_thana_location ?: 'Location not specified';
+            $deadline = $job->job_expiry_date ? $job->job_expiry_date->format('d M Y') : 'Not specified';
+
+            $image = InterventionImage::canvas(1200, 630, '#f5fbf8');
+
+            $image->rectangle(0, 0, 1200, 630, function ($draw) {
+                $draw->background('#209776');
+            });
+            $image->rectangle(21, 21, 1179, 609, function ($draw) {
+                $draw->background('#ffffff');
+            });
+
+            $image->text('TAP2JOBS', 65, 85, function ($font) use ($boldFontPath) {
                 $font->file($boldFontPath);
-                $font->size(38);
-                $font->color('#172b24');
+                $font->size(28);
+                $font->color('#209776');
             });
-        }
 
-        $details = array_filter([
-            $companyName !== '' ? 'Company: '.$companyName : null,
-            'Location: '.$location,
-            $job->formatted_experience ? 'Experience: '.$job->formatted_experience : null,
-            'Deadline: '.$deadline,
-        ]);
-        foreach ($details as $index => $detail) {
-            $image->text($detail, 65, 385 + ($index * 35), function ($font) use ($fontPath) {
-                $font->file($fontPath);
-                $font->size(21);
-                $font->color('#4b5563');
+            $image->text('JOB OPPORTUNITY', 65, 135, function ($font) use ($boldFontPath) {
+                $font->file($boldFontPath);
+                $font->size(22);
+                $font->color('#6b7280');
             });
-        }
 
-        return $image->response('jpg', 90)->header('Cache-Control', 'public, max-age=86400');
+            $titleLines = $this->wrapOgText($title, 34);
+            // Cap lines so long titles can't overflow the canvas / overlap details
+            $titleLines = array_slice($titleLines, 0, 3);
+
+            foreach ($titleLines as $index => $line) {
+                $image->text($line, 65, 205 + ($index * 52), function ($font) use ($boldFontPath) {
+                    $font->file($boldFontPath);
+                    $font->size(38);
+                    $font->color('#172b24');
+                });
+            }
+
+            $detailsStartY = 205 + (count($titleLines) * 52) + 30;
+
+            $details = array_values(array_filter([
+                $companyName !== '' ? 'Company: '.$companyName : null,
+                'Location: '.$location,
+                $job->formatted_experience ? 'Experience: '.$job->formatted_experience : null,
+                'Deadline: '.$deadline,
+            ]));
+
+            foreach ($details as $index => $detail) {
+                $image->text($detail, 65, $detailsStartY + ($index * 35), function ($font) use ($fontPath) {
+                    $font->file($fontPath);
+                    $font->size(24);
+                    $font->color('#4b5563');
+                });
+            }
+
+            $encodedContent = (string) $image->encode('jpg', 90);
+
+            // 2. Cache it so future requests (and crawlers) hit disk, not GD
+            $disk->put($cacheKey, $encodedContent);
+
+            return response($encodedContent, 200)
+                ->header('Content-Type', 'image/jpeg')
+                ->header('Cache-Control', 'public, max-age=86400');
+
+        } catch (\Throwable $e) {
+            Log::error('OG image generation failed', [
+                'job_id' => $uniqueJobId,
+                'error'  => $e->getMessage(),
+            ]);
+
+            // 3. Always return *something* — never a 500 to a crawler
+            $fallback = public_path('uploads/settings/127/article-image.png');
+
+            if (is_file($fallback)) {
+                return response()->file($fallback, [
+                    'Content-Type'  => 'image/jpeg',
+                    'Cache-Control' => 'public, max-age=3600',
+                ]);
+            }
+
+            // Last-resort: minimal in-memory fallback if even the static file is missing
+            $blank = InterventionImage::canvas(1200, 630, '#209776');
+            return response((string) $blank->encode('jpg', 90), 200)
+                ->header('Content-Type', 'image/jpeg')
+                ->header('Cache-Control', 'no-store');
+        }
     }
 
     private function wrapOgText(string $text, int $length): array
