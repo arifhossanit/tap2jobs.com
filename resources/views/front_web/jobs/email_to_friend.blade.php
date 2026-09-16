@@ -17,19 +17,18 @@
                        class="social-icon linkedin" title="@lang('messages.front_job_details.linkedin')" aria-label="@lang('messages.front_job_details.linkedin')">
                         <i class="fa-brands fa-linkedin-in"></i>
                     </a>
-                    <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer"
-                       data-share-title="{{ $share['title'] }}" data-share-description="{{ $share['description'] }}" data-share-url="{{ $share['url'] }}"
-                       onclick="if (navigator.clipboard) navigator.clipboard.writeText(this.dataset.shareTitle + String.fromCharCode(10) + this.dataset.shareDescription + String.fromCharCode(10) + this.dataset.shareUrl);"
-                       class="social-icon instagram" title="Share via Instagram" aria-label="Share via Instagram">
-                        <i class="fa-brands fa-instagram"></i>
-                    </a>
                     <a href="{{ $url['whatsapp'] }}" target="_blank" rel="noopener noreferrer"
                        class="social-icon whatsapp" title="WhatsApp" aria-label="WhatsApp">
                         <i class="fa-brands fa-whatsapp"></i>
                     </a>
                     <a href="{{ $url['gmail'] }}" target="_blank" rel="noopener noreferrer"
                        class="social-icon gmail" title="Share via Gmail" aria-label="Share via Gmail">
-                        <i class="fa-brands fa-google"></i>
+                        <svg class="gmail-icon" viewBox="0 0 24 20" role="img" aria-hidden="true">
+                            <path d="M2.5 18V5.5L12 12.5L21.5 5.5V18" fill="none" stroke="#4285f4" stroke-width="3.5" stroke-linejoin="round" />
+                            <path d="M2.5 5.5L12 12.5L21.5 5.5" fill="none" stroke="#ea4335" stroke-width="3.5" stroke-linejoin="round" />
+                            <path d="M21.5 5.5V18" fill="none" stroke="#34a853" stroke-width="3.5" />
+                            <path d="M2.5 18V5.5" fill="none" stroke="#4285f4" stroke-width="3.5" />
+                        </svg>
                     </a>
                 </div>
             </div>
