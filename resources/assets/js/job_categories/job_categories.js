@@ -1,4 +1,9 @@
+import Tagify from '@yaireo/tagify';
+
 document.addEventListener('DOMContentLoaded', loadJobCategoryData);
+
+let addJobCategorySearchTags;
+let editJobCategorySearchTags;
 
 Livewire.hook("element.init", ({ component }) => {
     if (!$('#indexJobCategoryData').length) {
@@ -16,6 +21,7 @@ function loadJobCategoryData() {
     $('#jobCategoryFilter').select2();
 
     initAddJobCategorySlug();
+    initJobCategorySearchTags();
 
     var defaultDocumentImageUrl = $('#defaultDocumentImageUrl').val();
 
@@ -91,12 +97,7 @@ function loadJobCategoryData() {
                     $('#editJobCategorySlug').val(result.data.slug || '');
                     $('#editJobCategorySeoTitle').val(result.data.seo_title || '');
                     $('#editJobCategoryMetaDescription').val(result.data.meta_description || '');
-                    const editSearchTagValue = document.getElementById('editJobCategorySearchTags');
-                    if (editSearchTagValue) {
-                        editSearchTagValue.value = Array.isArray(result.data.search_tags)
-                            ? result.data.search_tags.join(', ')
-                            : String(result.data.search_tags || '');
-                    }
+                    setJobCategorySearchTags(editJobCategorySearchTags, result.data.search_tags || []);
                     element.innerHTML = result.data.description;
                     editJobCategoryDescriptionQuill.root.innerHTML = element.value;
                     (result.data.is_featured == 1) ? $('#editIsFeatured').
@@ -161,6 +162,7 @@ function loadJobCategoryData() {
         $('#previewImage').css('background-image', 'url("' + defaultDocumentImageUrl + '")');
         const addSlugInput = document.getElementById('addJobCategorySlug');
         if (addSlugInput) addSlugInput.dataset.manuallyEdited = 'false';
+        setJobCategorySearchTags(addJobCategorySearchTags, []);
     })
 
     listenHiddenBsModal('#jobCategoryEditModal', function () {
@@ -203,6 +205,42 @@ function makeJobCategorySlug(value) {
         .replace(/-{2,}/g, '-')
         .substring(0, 180)
         .replace(/-+$/g, '');
+}
+
+function initJobCategorySearchTags() {
+    const options = {
+        delimiters: ',|\\n|\\r',
+        duplicates: false,
+        trim: true,
+        pasteAsTags: true,
+        validate: function (tagData) {
+            return String(tagData.value || '').trim().length <= 60 || 'Maximum 60 characters';
+        },
+        originalInputValueFormat: function (values) {
+            return values.map(function (item) { return item.value; }).join(',');
+        },
+    };
+
+    const addInput = document.getElementById('addJobCategorySearchTags');
+    const editInput = document.getElementById('editJobCategorySearchTags');
+
+    if (addInput && !addJobCategorySearchTags) {
+        addJobCategorySearchTags = new Tagify(addInput, options);
+        addJobCategorySearchTags.DOM.scope.classList.add('job-category-tagify');
+    }
+
+    if (editInput && !editJobCategorySearchTags) {
+        editJobCategorySearchTags = new Tagify(editInput, options);
+        editJobCategorySearchTags.DOM.scope.classList.add('job-category-tagify');
+    }
+}
+
+function setJobCategorySearchTags(tagify, tags) {
+    if (!tagify) return;
+
+    tagify.removeAllTags();
+    const normalizedTags = Array.isArray(tags) ? tags : String(tags || '').split(/[,\r\n]+/);
+    tagify.addTags(normalizedTags.filter(Boolean));
 }
 
 listenChange('.isFeaturedJobCategory', function (event) {

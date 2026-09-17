@@ -40,8 +40,8 @@
                 </div>
                 <div class="mb-5">
                     {{ Form::label('search_tags', 'Search Tags:', ['class' => 'form-label']) }}
-                    {{ Form::textarea('search_tags', null, ['class' => 'form-control', 'id' => 'editJobCategorySearchTags', 'rows' => 3, 'placeholder' => 'Bangladesh Jobs, Accounting Jobs, Finance Jobs']) }}
-                    <div class="form-text">Separate tags with commas or new lines. Tags are stored as page metadata and are not shown in the category page content.</div>
+                    {{ Form::textarea('search_tags', null, ['class' => 'form-control job-category-search-tags', 'id' => 'editJobCategorySearchTags', 'rows' => 3, 'placeholder' => 'Type or paste comma-separated tags']) }}
+                    <div class="form-text">Type a tag and press Enter/comma, or paste comma-separated tags.</div>
                 </div>
                 <div class="col-xl-6 col-md-6 col-sm-12 mb-5" io-image-input="true">
                     <label for="category_image" class="form-label">
