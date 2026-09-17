@@ -9,6 +9,18 @@
         $unreadCount = $notifications ? $notifications->count() : 0;
     }
 @endphp
+<style>
+    /* Desktop guest actions live outside the collapsible navigation. */
+    @media (max-width: 991.98px) {
+        header #navbarNav {
+            border: 1px solid #e5e7eb;
+        }
+
+        header .navbar > .container > .front-desktop-auth-actions {
+            display: none !important;
+        }
+    }
+</style>
 <header class="bg-gradient">
     <nav class="navbar navbar-expand-lg">
         <div class="container">
@@ -16,7 +28,30 @@
                 <img src="{{ asset($settings['logo']) }}" alt="" class="d-inline-block img-fluid h-100" />
             </a>
             <div class="front-mobile-actions d-flex d-lg-none align-items-center">
-                @auth
+                @guest
+                    <div class="front-mobile-auth-actions d-flex align-items-center">
+                        <div class="front-mobile-register-dropdown register_btn position-relative">
+                            <a href="{{ route('candidate.register') }}" class="btn front-mobile-register-btn"
+                               aria-expanded="false" aria-controls="mobileRegisterMenu">{{ __('web.register') }}</a>
+                            <ul class="nav submenu front-mobile-register-menu" id="mobileRegisterMenu">
+                                <li class="nav-item">
+                                    <a href="{{ route('candidate.register') }}"
+                                       class="nav-link text-gray {{ request()->routeIs('candidate.register') ? 'active' : '' }}">
+                                        {{ __('messages.notification_settings.candidate') }}
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('employer.register') }}"
+                                       class="nav-link text-gray {{ request()->routeIs('employer.register') ? 'active' : '' }}">
+                                        {{ __('messages.company.employer') }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <a href="{{ route('front.user.login') }}"
+                           class="btn front-mobile-login-btn">{{ __('web.login') }}</a>
+                    </div>
+                @else
                     <div class="dropdown front-user-dropdown d-lg-none">
                         <button class="btn dropdown-toggle front-user-dropdown-toggle front-mobile-notification-toggle d-flex align-items-center justify-content-center position-relative"
                                 type="button" id="mobileNotificationDropdown" aria-expanded="false" style="border:none; background:transparent;">
@@ -58,7 +93,7 @@
                             </div>
                         </div>
                     </div>
-                @endauth
+                @endguest
                 <button class="navbar-toggler border-0 p-0" type="button"
                         id="mobileNavbarToggler"
                         aria-controls="navbarNav"
@@ -106,35 +141,7 @@
                             </div>
                         </li>
 
-                        @if (!Auth::check())
-                            <li class="nav-item front-auth-actions d-flex align-items-center gap-xl-4 gap-3 mt-lg-0 mt-2 ms-xl-3 ms-lg-2">
-                                <ul class="navbar-nav d-flex flex-row align-items-center py-2 py-lg-0">
-                                    <li class="nav-item login_btn">
-                                        <a href="{{ route('front.user.login') }}"
-                                            class="nav-link btn btn-secondary btn-secondary-login {{ getFrontSelectLanguage() == 'ar' ? 'ms-2' : 'me-2' }} mb-3 mb-lg-0 nav-link">{{ __('web.login') }}</a>
-
-                                    </li>
-                                    <li class="nav-item register_btn">
-                                        <a href="{{ route('candidate.register') }}"
-                                            class="btn btn-primary mb-3 mb-lg-0">{{ __('web.register') }}</a>
-                                        <ul class="nav submenu">
-                                            <li class="nav-item mb-3 mt-2 ">
-                                                <a href="{{ route('candidate.register') }}"
-                                                    class="nav-link text-gray d-flex align-items-center {{ request()->routeIs('candidate.register') ? ' active' : '' }}">
-                                                    {{ __('messages.notification_settings.candidate') }}
-                                                </a>
-                                            </li>
-                                            <li class="nav-item mb-2">
-                                                <a href="{{ route('employer.register') }}"
-                                                    class="nav-link text-gray d-flex align-items-center {{ request()->routeIs('employer.register') ? ' active' : '' }}">
-                                                    {{ __('messages.company.employer') }}
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                        @else
+                        @if (Auth::check())
                             <li class="nav-item front-auth-actions d-flex align-items-center gap-xl-4 gap-3 mt-lg-0 mt-2 ms-xl-3 ms-lg-2">
                                 <ul class="navbar-nav align-items-center py-2 py-lg-0 front-user-nav d-flex flex-row align-items-center gap-2">
                                     @auth
@@ -291,6 +298,35 @@
                          @endif
                      </ul>
              </div>
+            @guest
+                <div class="front-desktop-auth-actions d-none d-lg-flex align-items-center ms-lg-3">
+                                <ul class="navbar-nav d-flex flex-row align-items-center py-2 py-lg-0">
+                                    <li class="nav-item login_btn">
+                                        <a href="{{ route('front.user.login') }}"
+                                            class="nav-link btn btn-secondary btn-secondary-login {{ getFrontSelectLanguage() == 'ar' ? 'ms-2' : 'me-2' }} mb-3 mb-lg-0 nav-link">{{ __('web.login') }}</a>
+
+                                    </li>
+                                    <li class="nav-item register_btn">
+                                        <a href="{{ route('candidate.register') }}"
+                                            class="btn btn-primary mb-3 mb-lg-0">{{ __('web.register') }}</a>
+                                        <ul class="nav submenu">
+                                            <li class="nav-item mb-3 mt-2 ">
+                                                <a href="{{ route('candidate.register') }}"
+                                                    class="nav-link text-gray d-flex align-items-center {{ request()->routeIs('candidate.register') ? ' active' : '' }}">
+                                                    {{ __('messages.notification_settings.candidate') }}
+                                                </a>
+                                            </li>
+                                            <li class="nav-item mb-2">
+                                                <a href="{{ route('employer.register') }}"
+                                                    class="nav-link text-gray d-flex align-items-center {{ request()->routeIs('employer.register') ? ' active' : '' }}">
+                                                    {{ __('messages.company.employer') }}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                </div>
+            @endguest
          </div>
      </nav>
 </header>
@@ -334,7 +370,7 @@
     }
 
     function closeAuthDropdowns(exceptDropdown) {
-        header.querySelectorAll('#navbarNav .login_btn.is-open, #navbarNav .register_btn.is-open').forEach(function (dropdown) {
+        header.querySelectorAll('.login_btn.is-open, .register_btn.is-open').forEach(function (dropdown) {
             if (dropdown !== exceptDropdown) {
                 dropdown.classList.remove('is-open');
                 const button = dropdown.querySelector(':scope > a');
@@ -343,30 +379,30 @@
         });
     }
 
-    function closeMobileNavbar() {
-        if (window.innerWidth >= 992) return;
+    function setMobileNavbarOpen(isOpen) {
+        // Use natural content height; Bootstrap's measured-height transition
+        // includes padding and can snap when the inline height is removed.
+        navbar.classList.remove('collapsing');
+        navbar.classList.add('collapse');
+        navbar.style.removeProperty('height');
+        navbar.classList.toggle('show', isOpen);
+        toggler.classList.toggle('collapsed', !isOpen);
+        toggler.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        if (togglerIcon) togglerIcon.classList.toggle('open', isOpen);
+    }
 
-        if (typeof bootstrap !== 'undefined' && bootstrap.Collapse) {
-            bootstrap.Collapse.getOrCreateInstance(navbar, { toggle: false }).hide();
-        } else {
-            navbar.classList.remove('show');
-            toggler.classList.add('collapsed');
-            toggler.setAttribute('aria-expanded', 'false');
-            if (togglerIcon) togglerIcon.classList.remove('open');
-        }
+    function closeMobileNavbar() {
+        setMobileNavbarOpen(false);
+        closeLanguageDropdowns(false);
+        closeUserDropdowns(false);
+        closeAuthDropdowns();
     }
 
     function toggleMobileNavbar() {
-        if (typeof bootstrap !== 'undefined' && bootstrap.Collapse) {
-            bootstrap.Collapse.getOrCreateInstance(navbar, { toggle: false }).toggle();
-            return;
-        }
-
+        if (window.innerWidth >= 992) return;
         const willOpen = !navbar.classList.contains('show');
-        navbar.classList.toggle('show', willOpen);
-        toggler.classList.toggle('collapsed', !willOpen);
-        toggler.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
-        if (togglerIcon) togglerIcon.classList.toggle('open', willOpen);
+        closeMobileNavbar();
+        setMobileNavbarOpen(willOpen);
     }
 
     function updateNotificationBadges(count) {
@@ -446,19 +482,6 @@
         }).catch(function () {});
     }
 
-    navbar.addEventListener('shown.bs.collapse', function () {
-        toggler.setAttribute('aria-expanded', 'true');
-        if (togglerIcon) togglerIcon.classList.add('open');
-    });
-
-    navbar.addEventListener('hidden.bs.collapse', function () {
-        toggler.setAttribute('aria-expanded', 'false');
-        if (togglerIcon) togglerIcon.classList.remove('open');
-        closeLanguageDropdowns(false);
-        closeUserDropdowns(false);
-        closeAuthDropdowns();
-    });
-
     toggler.addEventListener('click', function (event) {
         event.preventDefault();
         event.stopPropagation();
@@ -487,6 +510,7 @@
             const dropdown = userButton.closest('.front-user-dropdown');
             const menu = dropdown.querySelector('.front-user-dropdown-menu');
             const willOpen = !dropdown.classList.contains('is-open');
+            if (!navbar.contains(userButton)) closeMobileNavbar();
             closeUserDropdowns(false);
             closeLanguageDropdowns(false);
             closeAuthDropdowns();
@@ -496,7 +520,7 @@
             return;
         }
 
-        const authButton = event.target.closest('#navbarNav .login_btn > a, #navbarNav .register_btn > a');
+        const authButton = event.target.closest('#navbarNav .login_btn > a, #navbarNav .register_btn > a, .front-mobile-actions .register_btn > a');
         if (authButton && window.innerWidth < 992) {
             const dropdown = authButton.closest('.login_btn, .register_btn');
             const submenu = dropdown ? dropdown.querySelector('.submenu') : null;
@@ -505,6 +529,7 @@
                 event.preventDefault();
                 event.stopPropagation();
                 const willOpen = !dropdown.classList.contains('is-open');
+                closeMobileNavbar();
                 closeLanguageDropdowns(false);
                 closeUserDropdowns(false);
                 closeAuthDropdowns(dropdown);
@@ -597,6 +622,9 @@
     });
 
     document.addEventListener('click', function (event) {
+        if (!navbar.contains(event.target) && !toggler.contains(event.target)) {
+            closeMobileNavbar();
+        }
         if (!event.target.closest('.language-dropdown')) closeLanguageDropdowns(false);
         if (!event.target.closest('.front-user-dropdown')) closeUserDropdowns(false);
         if (!event.target.closest('.login_btn, .register_btn')) closeAuthDropdowns();
@@ -604,11 +632,17 @@
 
     document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape') {
+            const wasOpen = navbar.classList.contains('show');
             closeLanguageDropdowns(true);
             closeUserDropdowns(true);
             closeAuthDropdowns();
             closeMobileNavbar();
+            if (wasOpen && window.innerWidth < 992) toggler.focus();
         }
+    });
+
+    window.matchMedia('(min-width: 992px)').addEventListener('change', function () {
+        closeMobileNavbar();
     });
 
     if (header.querySelector('#frontNotificationDropdown')) {

@@ -603,7 +603,7 @@
                                 @foreach ($getRelatedJobs as $relatedJob)
                                     @if ($relatedJob->status == \App\Models\Job::STATUS_OPEN && $relatedJob->is_suspended == \App\Models\Job::NOT_SUSPENDED)
                                         <div class="col-lg-4 col-md-6 px-xl-3 mb-40">
-                                            <div class="card py-30">
+                                            <div class="card py-30 border">
                                                 @if (Str::length($relatedJob['job_title']) < 35)
                                                     <a href="{{ route('front.job.details', $relatedJob['job_id']) }}"
                                                         class="text-secondary primary-link-hover">

@@ -13196,9 +13196,12 @@ html[dir='rtl'] .register-page .input-password-hide {
 }
 
 .front-side-ad-layout {
-    display: block;
+    display: grid;
+    grid-template-columns: minmax(0, 310px) minmax(0, 900px) minmax(0, 310px);
+    gap: 90px;
     width: 100%;
-    padding: 0 12px;
+    padding: 0 24px;
+    justify-content: center;
 }
 
 .front-side-ad-layout--empty {
@@ -13210,7 +13213,6 @@ html[dir='rtl'] .register-page .input-password-hide {
 }
 
 .front-side-ad-layout__aside {
-    display: none;
     min-width: 0;
     width: 100%;
     max-width: 310px;
@@ -13229,47 +13231,45 @@ html[dir='rtl'] .register-page .input-password-hide {
 }
 
 .front-side-ad-layout__mobile {
+    grid-column: 1 / -1;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 310px));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
-    justify-content: center;
     margin-top: 24px;
 }
 
-@media (min-width: 1200px) {
+@media (max-width: 1899.98px) {
     .front-side-ad-layout {
-        display: grid;
-        grid-template-columns: minmax(180px, 310px) minmax(0, 900px) minmax(180px, 310px);
-        gap: 24px;
-        justify-content: center;
+        display: block;
+        padding: 0 12px;
     }
 
     .front-side-ad-layout__aside {
-        display: block;
+        display: none !important;
     }
 
     .front-side-ad-layout__mobile {
-        display: none;
+        display: grid !important;
     }
 }
 
 @media (min-width: 1900px) {
-    .front-side-ad-layout {
-        grid-template-columns: minmax(0, 310px) minmax(0, 900px) minmax(0, 310px);
-        gap: 90px;
-        padding: 0 24px;
+    .front-side-ad-layout__aside {
+        min-width: 0;
+        max-width: 310px;
     }
 
-    .front-side-ad-layout__aside {
-        max-width: 310px;
+    .front-side-ad-layout__mobile {
+        display: none !important;
     }
 }
 
 @media (max-width: 575.98px) {
     .front-side-ad-layout__mobile {
-        grid-template-columns: minmax(0, 310px);
+        grid-template-columns: 1fr;
     }
 }
+
 .find-jobs-right-ads .register-side-ad {
     margin-bottom: 0;
     border-radius: 5px;
@@ -14279,20 +14279,13 @@ html[dir="rtl"]
     background-color: #0077b5;
 }
 
-.job-details-section .share-this-job .icon-box .social-icon.instagram {
-    background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
-    border: 0;
-    padding: 0;
-    line-height: 1;
-    cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
+.job-details-section .share-this-job .icon-box .social-icon.google {
+    background-color: #db4a39;
 }
 
-.job-details-section .share-this-job .icon-box .social-icon.whatsapp {
-    background-color: #25d366;
+.job-details-section .share-this-job .icon-box .social-icon.pinterest {
+    background-color: #e60023;
 }
-
 
 .job-details-section .share-this-job .icon-box .social-icon .icon i {
     font-size: 22px
@@ -14406,44 +14399,6 @@ html[dir="rtl"]
 
 body:has(.job-action-modal.show) .modal-backdrop {
     z-index: 100000 !important;
-}
-.job-share-modal__icons {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 16px;
-}
-
-.job-share-modal__icons .social-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 48px;
-    height: 48px;
-    border-radius: 6px;
-    color: #fff;
-    font-size: 22px;
-}
-
-.job-share-modal__icons .social-icon:hover,
-.job-share-modal__icons .social-icon:focus {
-    color: #fff;
-    opacity: .9;
-}
-
-.job-share-modal__icons .facebook { background-color: #3a5ba0; }
-.job-share-modal__icons .linkedin { background-color: #0a66c2; }
-.job-share-modal__icons .instagram { background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); }
-.job-share-modal__icons .whatsapp { background-color: #25d366; }
-.job-share-modal__icons .gmail {
-    background-color: #fff;
-    border: 1px solid #dadce0;
-}
-
-.job-share-modal__icons .gmail-icon {
-    display: block;
-    width: 26px;
-    height: 22px;
 }
 
 @media (max-width: 575px) {
@@ -15034,6 +14989,89 @@ html[dir='rtl'] header .front-user-menu-icon {
         padding-right: 2px;
     }
 
+    header .front-mobile-auth-actions {
+        gap: 6px;
+    }
+
+    header .front-mobile-auth-actions .btn {
+        align-items: center;
+        border-radius: 7px;
+        display: inline-flex;
+        font-size: 12px;
+        font-weight: 600;
+        height: 36px;
+        justify-content: center;
+        line-height: 1;
+        padding: 0 10px;
+        white-space: nowrap;
+    }
+
+    header .front-mobile-register-btn {
+        background: #fff;
+        border: 1px solid #209776;
+        color: #209776;
+    }
+
+    header .front-mobile-login-btn,
+    header .front-mobile-login-btn:hover,
+    header .front-mobile-login-btn:focus {
+        background: #209776;
+        border: 1px solid #209776;
+        color: #fff;
+    }
+
+    header .front-mobile-register-btn:hover,
+    header .front-mobile-register-btn:focus {
+        background: rgba(32, 151, 118, .08);
+        color: #16765e;
+    }
+
+    header .front-mobile-register-menu {
+        background: #fff;
+        border: 1px solid #dbeafe;
+        box-shadow: 0 10px 26px rgba(15, 23, 42, .12);
+        display: none;
+        min-width: 170px;
+        padding: 7px;
+        position: absolute;
+        right: 0;
+        top: calc(100% + 8px);
+        z-index: 1060;
+    }
+
+    header .front-mobile-register-dropdown.is-open > .front-mobile-register-menu {
+        display: block;
+    }
+
+    header .front-mobile-register-menu .nav-item {
+        margin: 0 !important;
+        width: 100%;
+    }
+
+    header .front-mobile-register-menu .nav-link {
+        border-radius: 7px;
+        display: block;
+        font-size: 13px;
+        padding: 9px 10px !important;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    header .front-mobile-register-menu .nav-link:hover,
+    header .front-mobile-register-menu .nav-link.active {
+        background: rgba(32, 151, 118, .08);
+        color: #209776 !important;
+    }
+
+    html[dir='rtl'] header .front-mobile-register-menu {
+        left: 0;
+        right: auto;
+    }
+
+    html[dir='rtl'] header .front-mobile-register-menu .nav-link {
+        text-align: right;
+    }
+
     header .front-mobile-actions > .front-user-dropdown {
         flex: 0 0 34px !important;
         max-width: 34px !important;
@@ -15115,6 +15153,31 @@ html[dir='rtl'] header .front-user-menu-icon {
         top: 9px;
     }
 
+    @media(max-width: 374px) {
+        header .navbar .navbar-brand {
+            max-width: 92px;
+        }
+
+        header .front-mobile-actions {
+            gap: 5px;
+        }
+
+        header .front-mobile-auth-actions {
+            gap: 4px;
+        }
+
+        header .front-mobile-auth-actions .btn {
+            font-size: 11px;
+            height: 34px;
+            padding: 0 7px;
+        }
+
+        header .navbar-toggler {
+            height: 34px;
+            width: 34px;
+        }
+    }
+
     header #navbarNav .navbar-nav {
         align-items: center !important;
         text-align: center;
@@ -15137,6 +15200,10 @@ html[dir='rtl'] header .front-user-menu-icon {
         border-top: 1px solid #e5e7eb !important;
         margin-left: 0 !important;
         padding-top: 18px !important;
+    }
+
+    header #navbarNav .front-guest-auth-actions {
+        display: none !important;
     }
 
     header #navbarNav .front-auth-actions > .navbar-nav {
