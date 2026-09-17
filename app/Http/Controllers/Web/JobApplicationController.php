@@ -33,6 +33,13 @@ class JobApplicationController extends AppBaseController
      */
     public function showApplyJobForm(string $jobId)
     {
+        $job = Job::whereJobId($jobId)->firstOrFail();
+        if (! $job->isApplyable()) {
+            return redirect()
+                ->route('front.job.details', $job->job_id)
+                ->with('warning', __('messages.front_job_details.job_not_accepting_applications'));
+        }
+
         if (auth()->check() && auth()->user()->hasRole('Candidate')) {
             $user = auth()->user();
             $candidate = $user->candidate ?: Candidate::find($user->owner_id);
@@ -67,6 +74,15 @@ class JobApplicationController extends AppBaseController
     public function applyJob(ApplyJobRequest $request)
     {
         $input = $request->all();
+        /** @var Job $job */
+        $job = Job::with('company.user')->findOrFail($input['job_id']);
+
+        if (! $job->isApplyable()) {
+            return $this->sendError(
+                __('messages.front_job_details.job_not_accepting_applications'),
+                422
+            );
+        }
 
         if (auth()->check() && auth()->user()->hasRole('Candidate')) {
             $user = auth()->user();
@@ -91,8 +107,6 @@ class JobApplicationController extends AppBaseController
 
         $this->jobApplicationRepository->store($input);
 
-        /** @var Job $job */
-        $job = Job::with('company.user')->findOrFail($input['job_id']);
         if ($input['application_type'] === 'draft') {
             return $this->sendResponse($job->job_id, __('messages.flash.job_application_draft'));
         }

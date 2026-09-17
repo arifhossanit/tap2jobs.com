@@ -117,6 +117,29 @@ class PostRepository extends BaseRepository
         $data['popularBlogs'] = Post::with('media')->whereNotIn('id',
             [$blog->id])->orderByDesc('created_at')->take(3)->get();
 
+        $categoryIds = $data['blog']->postAssignCategories->pluck('id');
+        $relatedBlogs = Post::with(['media', 'postAssignCategories'])
+            ->whereKeyNot($blog->id)
+            ->when($categoryIds->isNotEmpty(), function (Builder $query) use ($categoryIds) {
+                $query->whereHas('postAssignCategories', fn (Builder $categoryQuery) =>
+                    $categoryQuery->whereIn('post_categories.id', $categoryIds)
+                );
+            })
+            ->latest('created_at')
+            ->take(3)
+            ->get();
+        if ($relatedBlogs->count() < 3) {
+            $relatedBlogs = $relatedBlogs->merge(
+                Post::with(['media', 'postAssignCategories'])
+                    ->whereKeyNot($blog->id)
+                    ->whereNotIn('id', $relatedBlogs->pluck('id'))
+                    ->latest('created_at')
+                    ->take(3 - $relatedBlogs->count())
+                    ->get()
+            );
+        }
+        $data['relatedBlogs'] = $relatedBlogs;
+
         $data['comments'] = PostComment::with('user')->wherePostId($blog->id)->orderBy('id', 'DESC')->get();
         $data['prevPost'] = Post::where('id', '>', $blog->id)->orderBy('id', 'asc')->first();
         $data['nextPost'] = Post::where('id', '<', $blog->id)->orderBy('id', 'desc')->first();

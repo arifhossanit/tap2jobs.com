@@ -83,6 +83,7 @@ class Notification extends Model
         self::MARK_COMPANY_FEATURED_ADMIN => 'MARK COMPANY FEATURED',
         self::MARK_JOB_FEATURED_ADMIN => 'MARK JOB FEATURED',
         self::JOB_EXPIRY_ALERT_ADMIN => 'JOB EXPIRY ALERT',
+        self::NEW_CONSULTATION_LEAD => 'NEW CONSULTATION LEAD',
     ];
 
     const JOB_APPLICATION_SUBMITTED = 1;
@@ -118,6 +119,8 @@ class Notification extends Model
     const SUSPENDED = 16;
 
     const JOB_EXPIRY_ALERT_ADMIN = 17;
+
+    const NEW_CONSULTATION_LEAD = 18;
 
     public function getNotificationForTextAttribute(): string
     {

@@ -71,7 +71,7 @@
                 <ul class="p-0 front-footer-accordion__body">
                     <li>
                         <a href="{{ route('front.search.jobs') }}"
-                            class="text-decoration-none {{ Request::is('search-jobs') || Request::is('job-details*') ? 'footer-navbar-color-active text-dark' : 'text-gray' }} mb-3 d-block fs-14">{{ __('web.find_jobs') }}</a>
+                            class="text-decoration-none {{ request()->routeIs('front.search.jobs', 'front.job-categories.show') || Request::is('job-details*') ? 'footer-navbar-color-active text-dark' : 'text-gray' }} mb-3 d-block fs-14">{{ __('web.find_jobs') }}</a>
                     </li>
                     <li>
                         <a href="{{ route('front.candidate.login') }}"
@@ -199,7 +199,7 @@
         </div>
         <span>@lang('web.home')</span>
     </a>
-    <a href="{{ route('front.search.jobs') }}" class="bd-mobile-footer-item {{ Request::is('search-jobs') || Request::is('job-details*') ? 'active' : '' }}">
+    <a href="{{ route('front.search.jobs') }}" class="bd-mobile-footer-item {{ request()->routeIs('front.search.jobs', 'front.job-categories.show') || Request::is('job-details*') ? 'active' : '' }}">
         <div class="bd-mobile-footer-icon">
             <i class="fa-solid fa-briefcase"></i>
         </div>

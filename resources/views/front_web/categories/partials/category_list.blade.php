@@ -9,7 +9,7 @@
                                 alt="{{ html_entity_decode($jobCategory->name) }}">
                         </div>
                         <div class="category-card__content">
-                            <a href="{{ route('front.search.jobs', ['categories' => $jobCategory->id]) }}"
+                            <a href="{{ route('front.job-categories.show', $jobCategory) }}"
                                 class="text-secondary primary-link-hover">
                                 <h5 class="category-card__title">{{ html_entity_decode($jobCategory->name) }}</h5>
                             </a>
@@ -32,7 +32,7 @@
                                 {{ __('web.no_positions') }}
                             </span>
                         @else
-                            <a href="{{ route('front.search.jobs', ['categories' => $jobCategory->id]) }}"
+                            <a href="{{ route('front.job-categories.show', $jobCategory) }}"
                                 class="jobs-position category-card__action">
                                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
                                 {{ __('web.open_positions') }}

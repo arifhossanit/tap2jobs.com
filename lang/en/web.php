@@ -342,7 +342,15 @@ return [
         'view_company_profile' => 'View company profile',
         'founded_in' => 'Founded in',
         'phone' => 'Phone',
-        'Skill_Experience' => 'Skill'
+        'Skill_Experience' => 'Skill',
+        'category_jobs_title' => ':category Jobs in Bangladesh',
+        'category_meta_description' => 'Find the latest :category jobs in Bangladesh. Browse vacancies, employer details, requirements and application deadlines on :app.',
+        'about_category_jobs' => 'About :category Jobs in Bangladesh',
+        'category_intro' => 'Explore the latest :category jobs in Bangladesh. Compare current vacancies, employer information, experience requirements, education requirements, and application deadlines to find a suitable opportunity.',
+        'explore_related_categories' => 'Explore related job categories',
+        'related_categories_label' => 'Related job categories',
+        'named_jobs' => ':name Jobs',
+        'search_tags' => 'Related job searches',
     ],
 
     'web_company' => [
@@ -378,6 +386,9 @@ return [
 
     'web_blog' => [
         'share_this_post' => 'Share This Post',
+        'related_career_articles' => 'Related career articles',
+        'view_all_articles' => 'View all articles',
+        'read_article' => 'Read article',
         'comments' => 'Comments',
         'recent_posts' => 'Recent Posts',
         'your_name' => 'Enter Your Name',

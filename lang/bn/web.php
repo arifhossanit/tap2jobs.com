@@ -342,7 +342,15 @@ return [
         'view_company_profile' => 'কোম্পানির প্রোফাইল দেখুন',
         'founded_in' => 'প্রতিষ্ঠিত',
         'phone' => 'ফোন',
-        'Skill_Experience' => 'দক্ষতা ও অভিজ্ঞতা'
+        'Skill_Experience' => 'দক্ষতা ও অভিজ্ঞতা',
+        'category_jobs_title' => 'বাংলাদেশে :category চাকরি',
+        'category_meta_description' => 'বাংলাদেশে সর্বশেষ :category চাকরি খুঁজুন। :app-এ শূন্যপদ, নিয়োগকর্তার তথ্য, যোগ্যতা এবং আবেদনের সময়সীমা দেখুন।',
+        'about_category_jobs' => 'বাংলাদেশে :category চাকরি সম্পর্কে',
+        'category_intro' => 'বাংলাদেশে সর্বশেষ :category চাকরি দেখুন। উপযুক্ত সুযোগ খুঁজতে বর্তমান শূন্যপদ, নিয়োগকর্তার তথ্য, অভিজ্ঞতা, শিক্ষাগত যোগ্যতা এবং আবেদনের সময়সীমা তুলনা করুন।',
+        'explore_related_categories' => 'সম্পর্কিত চাকরির বিভাগ দেখুন',
+        'related_categories_label' => 'সম্পর্কিত চাকরির বিভাগ',
+        'named_jobs' => ':name চাকরি',
+        'search_tags' => 'সম্পর্কিত চাকরির অনুসন্ধান',
     ],
 
     'web_company' => [
@@ -378,6 +386,9 @@ return [
 
     'web_blog' => [
         'share_this_post' => 'পোস্টটি শেয়ার করুন',
+        'related_career_articles' => 'সম্পর্কিত ক্যারিয়ার নিবন্ধ',
+        'view_all_articles' => 'সব নিবন্ধ দেখুন',
+        'read_article' => 'নিবন্ধ পড়ুন',
         'comments' => 'মন্তব্য',
         'recent_posts' => 'সাম্প্রতিক পোস্ট',
         'your_name' => 'আপনার নাম লিখুন',

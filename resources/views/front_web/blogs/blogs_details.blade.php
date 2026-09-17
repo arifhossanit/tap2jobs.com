@@ -1,6 +1,31 @@
 @extends('front_web.layouts.app')
-@section('title')
-    {{ __('messages.post.post_details') }}
+@php
+    $blogTitle = html_entity_decode(strip_tags($blog->title), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $blogDescription = \Illuminate\Support\Str::limit(
+        preg_replace('/\s+/u', ' ', trim(strip_tags(html_entity_decode($blog->description, ENT_QUOTES | ENT_HTML5, 'UTF-8')))),
+        160,
+        ''
+    );
+    $blogCanonical = route('front.posts.details', $blog);
+    $blogBreadcrumbSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => __('web.home'), 'item' => route('front.home')],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => __('messages.post.blog'), 'item' => route('front.blogs')],
+            ['@type' => 'ListItem', 'position' => 3, 'name' => $blogTitle, 'item' => $blogCanonical],
+        ],
+    ];
+@endphp
+@section('title', $blogTitle)
+@section('meta_description', $blogDescription)
+@section('canonical_url', $blogCanonical)
+@section('og_type', 'article')
+@section('og_title', $blogTitle)
+@section('og_description', $blogDescription)
+@section('og_image', $blog->blog_image_url)
+@section('meta_tags')
+    <script type="application/ld+json">{!! json_encode($blogBreadcrumbSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
 @endsection
 {{-- @section('page_css') --}}
 {{--    <link href="{{asset('front_web/scss/blog-details.css')}}" rel="stylesheet" type="text/css"> --}}
@@ -25,18 +50,18 @@
                 <div class="row align-items-center justify-content-center">
                     <div class="col-lg-6 text-center mb-lg-0 mb-md-5 mb-sm-4">
                         <div class="hero-content">
-                            <h1 class="text-secondary mb-2">@lang('web.blog_detail')</h1>
+                            <h2 class="text-secondary mb-2">@lang('web.blog_detail')</h2>
                             <nav aria-label="breadcrumb">
                                 <ol class="breadcrumb justify-content-center mb-0">
                                     <li class="breadcrumb-item">
                                         <a href="{{ route('front.home') }}" class="fs-18 text-gray">@lang('web.home')
                                         </a>
                                     </li>
-                                    <li class="breadcrumb-item text-primary fs-18" aria-current="page">
-                                        {{ __('messages.post.blog') }}
+                                    <li class="breadcrumb-item fs-18">
+                                        <a href="{{ route('front.blogs') }}" class="text-gray">{{ __('messages.post.blog') }}</a>
                                     </li>
                                     <li class="breadcrumb-item text-primary fs-18" aria-current="page">
-                                        @lang('web.blog_detail')
+                                        {{ \Illuminate\Support\Str::limit($blogTitle, 40) }}
                                     </li>
                                 </ol>
                             </nav>
@@ -59,9 +84,9 @@
 
                     <div class="col-lg-12 blog-detail-content">
                         <div class="blog-detail">
-                            <h5 class="fs-4 mb-3 text-secondary">
+                            <h1 class="fs-4 mb-3 text-secondary">
                                 {{ html_entity_decode($blog->title) }}
-                            </h5>
+                            </h1>
                             <div class="designer-details d-flex mb-40">
                                 <div class="img {{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }}">
                                     <img src="{{ isset($blog->user->avatar) ? $blog->user->avatar : asset('front_web/images/job-categories.png') }}"
@@ -118,16 +143,14 @@
                                 <img
                                     src="{{ !empty($blog->blog_image_url) ? $blog->blog_image_url : asset('web/img/blog_default_image.jpg') }}">
                             </div>
-                            @php
-                                $assignCategories = $blog->postAssignCategories->pluck('name')->toArray();
-                            @endphp
-                            @if (count($assignCategories) > 0)
+                            @if ($blog->postAssignCategories->isNotEmpty())
                                 <div class="designer-details d-flex flex-wrap mb-3">
-                                    @forelse($assignCategories as $categoryBadges)
-                                        <span class="p-2 m-1 badge bg-{{ getJobOtherColor($loop->index) }}">{{ $categoryBadges }}</span>
-                                    @empty
-                                        <span> {{ __('messages.employer_menu.no_data_available') }} </span>
-                                    @endforelse
+                                    @foreach ($blog->postAssignCategories as $categoryBadge)
+                                        <a href="{{ route('front.blog.category', $categoryBadge) }}"
+                                           class="p-2 m-1 badge bg-{{ getJobOtherColor($loop->index) }}">
+                                            {{ html_entity_decode($categoryBadge->name) }}
+                                        </a>
+                                    @endforeach
                                 </div>
                             @endif
                             <div class="blog-desc mt-40 mb-40">
@@ -217,6 +240,38 @@
                                 </div>
                             </div>
                         </div>
+                        @if (($relatedBlogs ?? collect())->isNotEmpty())
+                            <section class="blog-related-content mb-40" aria-labelledby="relatedArticlesHeading">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h2 id="relatedArticlesHeading" class="fs-4 text-secondary mb-0">{{ __('web.web_blog.related_career_articles') }}</h2>
+                                    <a href="{{ route('front.blogs') }}" class="text-primary primary-link-hover">{{ __('web.web_blog.view_all_articles') }}</a>
+                                </div>
+                                <div class="row g-3">
+                                    @foreach ($relatedBlogs as $relatedBlog)
+                                        <div class="col-lg-4 col-md-6">
+                                            <article class="blog-related-card h-100">
+                                                <a href="{{ route('front.posts.details', $relatedBlog) }}" class="blog-related-card__image">
+                                                    <img src="{{ $relatedBlog->blog_image_url }}"
+                                                         alt="{{ html_entity_decode(strip_tags($relatedBlog->title)) }}">
+                                                </a>
+                                                <div class="blog-related-card__body">
+                                                    <div class="blog-related-card__categories">
+                                                        {{ $relatedBlog->postAssignCategories->pluck('name')->take(2)->implode(' · ') }}
+                                                    </div>
+                                                    <h3>
+                                                        <a href="{{ route('front.posts.details', $relatedBlog) }}">
+                                                            {{ html_entity_decode($relatedBlog->title) }}
+                                                        </a>
+                                                    </h3>
+                                                    <a href="{{ route('front.posts.details', $relatedBlog) }}"
+                                                       class="blog-related-card__link">{{ __('web.web_blog.read_article') }} <span aria-hidden="true">→</span></a>
+                                                </div>
+                                            </article>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </section>
+                        @endif
                         <div class="comments py-60">
                             <h5 class="comment-lable fs-4 mb-3 text-secondary @if (count($comments) == 0) d-none @endif">@lang('web.web_blog.comments') <span class="comment-count"
                                     id="post-comment">({{ count($comments) }})</span></h5>

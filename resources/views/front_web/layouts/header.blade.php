@@ -113,7 +113,7 @@
                                 aria-current="page" href="{{ route('front.home') }}">{{ __('web.home') }}</a>
                         </li>
                         <li class="nav-item mb-2 mb-lg-0">
-                            <a class="header-navbar-color text-gray nav-link px-2 px-lg-0 {{ Request::is('search-jobs') || Request::is('job-details*') ? 'header-navbar-color-active' : '' }}"
+                            <a class="header-navbar-color text-gray nav-link px-2 px-lg-0 {{ request()->routeIs('front.search.jobs', 'front.job-categories.show') || Request::is('job-details*') ? 'header-navbar-color-active' : '' }}"
                                 href="{{ route('front.search.jobs') }}">{{ __('web.jobs') }}</a>
                         </li>
 

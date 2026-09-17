@@ -12560,6 +12560,7 @@ function loadJobCategoryData() {
     return;
   }
   $('#jobCategoryFilter').select2();
+  initAddJobCategorySlug();
   var defaultDocumentImageUrl = $('#defaultDocumentImageUrl').val();
   if ($('#addJobCategoryDescriptionQuillData').length) {
     window.addJobCategoryDescriptionQuill = new AppTextEditor('#addJobCategoryDescriptionQuillData', {
@@ -12617,6 +12618,13 @@ function loadJobCategoryData() {
           element.innerHTML = result.data.name;
           $('#jobCategoryId').val(result.data.id);
           $('#editName').val(element.value);
+          $('#editJobCategorySlug').val(result.data.slug || '');
+          $('#editJobCategorySeoTitle').val(result.data.seo_title || '');
+          $('#editJobCategoryMetaDescription').val(result.data.meta_description || '');
+          var editSearchTagValue = document.getElementById('editJobCategorySearchTags');
+          if (editSearchTagValue) {
+            editSearchTagValue.value = Array.isArray(result.data.search_tags) ? result.data.search_tags.join(', ') : String(result.data.search_tags || '');
+          }
           element.innerHTML = result.data.description;
           editJobCategoryDescriptionQuill.root.innerHTML = element.value;
           result.data.is_featured == 1 ? $('#editIsFeatured').prop('checked', true) : $('#editIsFeatured').prop('checked', false);
@@ -12666,6 +12674,8 @@ function loadJobCategoryData() {
       insert: ''
     }]);
     $('#previewImage').css('background-image', 'url("' + defaultDocumentImageUrl + '")');
+    var addSlugInput = document.getElementById('addJobCategorySlug');
+    if (addSlugInput) addSlugInput.dataset.manuallyEdited = 'false';
   });
   listenHiddenBsModal('#jobCategoryEditModal', function () {
     resetModalForm('#editJobCategoryForm', '#editValidationErrorsBox');
@@ -12673,6 +12683,24 @@ function loadJobCategoryData() {
   listenClick('#resetFilter', function () {
     $('#filterFeatured').val('').trigger('change');
   });
+}
+function initAddJobCategorySlug() {
+  var nameInput = document.getElementById('addJobCategoryName');
+  var slugInput = document.getElementById('addJobCategorySlug');
+  if (!nameInput || !slugInput || slugInput.dataset.slugInitialized === 'true') return;
+  slugInput.dataset.slugInitialized = 'true';
+  slugInput.dataset.manuallyEdited = slugInput.value.trim() ? 'true' : 'false';
+  nameInput.addEventListener('input', function () {
+    if (slugInput.dataset.manuallyEdited !== 'true') {
+      slugInput.value = makeJobCategorySlug(nameInput.value);
+    }
+  });
+  slugInput.addEventListener('input', function () {
+    slugInput.dataset.manuallyEdited = slugInput.value.trim() ? 'true' : 'false';
+  });
+}
+function makeJobCategorySlug(value) {
+  return String(value || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').replace(/-{2,}/g, '-').substring(0, 180).replace(/-+$/g, '');
 }
 listenChange('.isFeaturedJobCategory', function (event) {
   var isFeaturedJobCategoryId = $(event.currentTarget).attr('data-id');

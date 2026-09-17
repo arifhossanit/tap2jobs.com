@@ -1,15 +1,20 @@
 @php
     $settings = settings();
     $lang = session()->get('languageName');
+    $authTitle = trim($__env->yieldContent('title')) ?: getAppName();
+    $authFullTitle = $authTitle === getAppName() ? $authTitle : $authTitle.' | '.getAppName();
 @endphp
 <!DOCTYPE html>
-<html lang="en" {{ checkLanguageSession() == 'ar' ? 'dir=rtl' : '' }}>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" {{ checkLanguageSession() == 'ar' ? 'dir=rtl' : '' }}>
 <!--begin::Head-->
 <head>
     <base href="../../../">
-    <title>@yield('title') | {{ getAppName() }}</title>
+    <title>{{ $authFullTitle }}</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="Secure account access for {{ getAppName() }} users.">
+    <meta name="robots" content="noindex,nofollow">
+    <link rel="canonical" href="{{ url()->current() }}">
     <link rel="shortcut icon" href="{{ getSettingValue('favicon') }}" type="image/x-icon">
     <!--begin::Fonts-->
     <meta name="csrf-token" content="{{ csrf_token() }}">

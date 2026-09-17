@@ -16,27 +16,6 @@
             min-height: 120px;
         }
 
-        #consultationLeadForm .consultation-type-select + .select2-container .select2-selection--single {
-            height: 58px;
-            border: 1px solid #ced4da;
-            border-radius: 10px;
-        }
-
-        #consultationLeadForm .consultation-type-select + .select2-container .select2-selection__rendered {
-            padding: 14px 48px 14px 20px;
-            line-height: 28px;
-        }
-
-        #consultationLeadForm .consultation-type-select + .select2-container .select2-selection__arrow {
-            height: 56px;
-            right: 12px;
-        }
-
-        .consultation-type-dropdown .select2-results__options {
-            max-height: 240px !important;
-            overflow-y: auto !important;
-        }
-
         .contact-img img {
             max-width: 100%;
             height: auto;
@@ -135,7 +114,7 @@
                                             <label class="fs-16 text-secondary mb-2">{{ __('web.consultation.consultation_type') }}:
                                                 <span class="text-danger">*</span>
                                             </label>
-                                            <select name="consultation_type" class="form-select fs-14 text-gray br-10 consultation-type-select" required>
+                                            <select name="consultation_type" class="form-select fs-14 text-gray br-10" required>
                                                 <option value="">{{ __('web.consultation.select_consultation_type') }}</option>
                                                 @foreach ($consultationTypes as $value => $label)
                                                     <option value="{{ $value }}" {{ old('consultation_type') === $value ? 'selected' : '' }}>{{ $label }}</option>
@@ -202,15 +181,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const consultationType = $('.consultation-type-select');
-            if (consultationType.length && typeof consultationType.select2 === 'function') {
-                consultationType.select2({
-                    width: '100%',
-                    minimumResultsForSearch: Infinity,
-                    dropdownCssClass: 'consultation-type-dropdown',
-                });
-            }
-
             if (typeof flatpickr !== 'undefined') {
                 flatpickr('#consultationPreferredContactTime', {
                     enableTime: true,

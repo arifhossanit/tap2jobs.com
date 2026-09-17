@@ -878,15 +878,24 @@ Route::middleware('auth', 'role:Employer', 'xss', 'verified.user')->prefix('empl
          Route::get('invoices/{invoiceId}', [TransactionController::class, 'getTransactionInvoice'])->name('get-transaction-invoice');
 });
 Route::get('/job-details/{uniqueId}/og-image', [Web\JobController::class, 'jobOgImage'])->name('front.job.og-image');
+Route::get('/sitemap.xml', [Web\SeoController::class, 'sitemapIndex'])->name('seo.sitemap.index');
+Route::get('/sitemaps/{type}-{page}.xml', [Web\SeoController::class, 'sitemapSection'])
+         ->whereIn('type', ['pages', 'job-categories', 'jobs', 'government-jobs', 'posts'])
+         ->whereNumber('page')
+         ->name('seo.sitemap.section');
+Route::get('/robots.txt', [Web\SeoController::class, 'robots'])->name('seo.robots');
 
 // web routes (i.e landing pages)
 Route::middleware('xss', 'setLanguage')->group(function () {
          Route::get('/', [Web\HomeController::class, 'index'])->name('front.home');
          Route::get('/get-jobs-search', [Web\HomeController::class, 'getJobsSearch'])->name('get.jobs.search');
-         Route::get('/search-jobs', [Web\JobController::class, 'index'])->name('front.search.jobs');
+         Route::get('/jobs', [Web\JobController::class, 'index'])->name('front.search.jobs');
+         Route::get('/search-jobs', function (\Illuminate\Http\Request $request) {
+                  return redirect()->route('front.search.jobs', $request->query(), 301);
+         })->name('front.search.jobs.legacy');
          Route::get('/government-jobs', [\App\Http\Controllers\GovernmentJobController::class, 'publicIndex'])->name('front.government-jobs.index');
          Route::get('/government-jobs/{governmentJob}', [\App\Http\Controllers\GovernmentJobController::class, 'publicShow'])->name('front.government-jobs.show');
-         Route::get('/job-details/{uniqueId?}', [Web\JobController::class, 'jobDetails'])->name('front.job.details');
+         Route::get('/job-details/{slug}', [Web\JobController::class, 'jobDetails'])->name('front.job.details');
          Route::get('/company-lists', [Web\CompanyController::class, 'getCompaniesLists'])->name('front.company.lists');
          Route::get(
                   '/candidate-lists',
@@ -897,6 +906,11 @@ Route::middleware('xss', 'setLanguage')->group(function () {
          Route::get('/candidate-faq', [Web\AboutUsController::class, 'candidateFaq'])->name('candidate.faq');
          Route::get('/employer-faq', [Web\AboutUsController::class, 'employerFaq'])->name('employer.faq');
          Route::get('/categories', [Web\CategoriesController::class, 'index'])->name('front.categories');
+         Route::get('/jobs/category/{jobCategory:slug}', [Web\CategoriesController::class, 'show'])
+                  ->name('front.job-categories.show');
+         Route::get('/search-jobs/category/{jobCategory:slug}', function (\App\Models\JobCategory $jobCategory) {
+                  return redirect()->route('front.job-categories.show', $jobCategory, 301);
+         })->name('front.job-categories.legacy');
          Route::get('/front-register', [Web\RegisterController::class, 'candidateRegister'])->name('front.register');
          Route::get('/candidate-register', [Web\RegisterController::class, 'candidateRegister'])->name('candidate.register');
          Route::get('/employer-register', [Web\RegisterController::class, 'employerRegister'])->name('employer.register');

@@ -22,6 +22,8 @@ class JobSearch extends Component
 
     public $category = '';
 
+    public $initialCategory = '';
+
     public $salaryFrom = '';
 
     public $salaryTo = '';
@@ -67,8 +69,9 @@ class JobSearch extends Component
         return 'livewire.custom-pagination-jobs';
     }
 
-    public function mount(Request $request)
+    public function mount(Request $request, $initialCategory = '')
     {
+        $this->initialCategory = $initialCategory;
         if (! empty($request->get('keywords'))) {
             $this->title = $request->get('keywords');
         }
@@ -77,6 +80,8 @@ class JobSearch extends Component
         }
         if (! empty($request->get('categories'))) {
             $this->category = $request->get('categories');
+        } elseif ($this->initialCategory !== '') {
+            $this->category = $this->initialCategory;
         }
         if (! empty($request->get('company'))) {
             $this->company = $request->get('company');
@@ -156,7 +161,10 @@ class JobSearch extends Component
 
     public function resetFilter()
     {
+        $initialCategory = $this->initialCategory;
         $this->reset();
+        $this->initialCategory = $initialCategory;
+        $this->category = $initialCategory;
     }
 
     private function candidateMatchingJobIds(): array
@@ -379,12 +387,10 @@ class JobSearch extends Component
             });
         });
 
-        $minimumExpiryDate = $this->matchingOnly ? Carbon::now()->toDateString() : Carbon::tomorrow()->toDateString();
-
         $query->whereStatus(Job::STATUS_OPEN)
             ->where('status', '!=', Job::STATUS_DRAFT)
             ->whereIsSuspended(Job::NOT_SUSPENDED)
-            ->whereDate('job_expiry_date', '>=', $minimumExpiryDate)
+            ->whereDate('job_expiry_date', '>=', Carbon::now()->toDateString())
             ->latest();
 
         $all = $query->paginate($this->perPage)->onEachSide(1);

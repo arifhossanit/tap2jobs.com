@@ -10,7 +10,7 @@
                     ->unique()
                     ->implode(', ');
             @endphp
-            <a href="{{ route('front.job.details', $job->job_id) }}"
+            <a href="{{ $job->front_url }}"
                class="job-search-result-card text-decoration-none">
                 <h2 class="job-search-result-card__title">{{ html_entity_decode($job->job_title) }}</h2>
                 <p class="job-search-result-card__company">{{ $companyName ?: __('messages.n/a') }}</p>

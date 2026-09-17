@@ -13196,12 +13196,9 @@ html[dir='rtl'] .register-page .input-password-hide {
 }
 
 .front-side-ad-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 310px) minmax(0, 900px) minmax(0, 310px);
-    gap: 90px;
+    display: block;
     width: 100%;
-    padding: 0 24px;
-    justify-content: center;
+    padding: 0 12px;
 }
 
 .front-side-ad-layout--empty {
@@ -13213,6 +13210,7 @@ html[dir='rtl'] .register-page .input-password-hide {
 }
 
 .front-side-ad-layout__aside {
+    display: none;
     min-width: 0;
     width: 100%;
     max-width: 310px;
@@ -13231,43 +13229,74 @@ html[dir='rtl'] .register-page .input-password-hide {
 }
 
 .front-side-ad-layout__mobile {
-    grid-column: 1 / -1;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 310px));
     gap: 16px;
+    justify-content: center;
     margin-top: 24px;
 }
 
-@media (max-width: 1899.98px) {
+@media (min-width: 1200px) {
     .front-side-ad-layout {
-        display: block;
-        padding: 0 12px;
+        display: grid;
+        grid-template-columns: minmax(180px, 310px) minmax(0, 900px) minmax(180px, 310px);
+        gap: 24px;
+        justify-content: center;
     }
 
     .front-side-ad-layout__aside {
-        display: none !important;
+        display: block;
     }
 
     .front-side-ad-layout__mobile {
-        display: grid !important;
+        display: none;
     }
 }
 
 @media (min-width: 1900px) {
-    .front-side-ad-layout__aside {
-        min-width: 0;
-        max-width: 310px;
+    .front-side-ad-layout {
+        grid-template-columns: minmax(0, 310px) minmax(0, 900px) minmax(0, 310px);
+        gap: 90px;
+        padding: 0 24px;
     }
 
-    .front-side-ad-layout__mobile {
-        display: none !important;
+    .front-side-ad-layout__aside {
+        max-width: 310px;
     }
 }
 
 @media (max-width: 575.98px) {
     .front-side-ad-layout__mobile {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 310px);
     }
+}
+
+/* Jobs needs room for both the filter sidebar and the results column. */
+@media (min-width: 1200px) and (max-width: 1599.98px) {
+    .Jobs-page .front-side-ad-layout {
+        display: block;
+    }
+
+    .Jobs-page .front-side-ad-layout__aside {
+        display: none;
+    }
+
+    .Jobs-page .front-side-ad-layout__mobile {
+        display: grid;
+    }
+}
+
+.Jobs-page .find-jobs-filter__header {
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.Jobs-page .find-jobs-filter {
+    min-width: 0;
+}
+
+.Jobs-page .find-jobs-filter .select2-container {
+    max-width: 100%;
 }
 
 .find-jobs-right-ads .register-side-ad {

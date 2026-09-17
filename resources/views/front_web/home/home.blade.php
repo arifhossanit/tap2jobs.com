@@ -729,7 +729,7 @@
         align-items: center;
         justify-content: space-between;
         padding: 0;
-        margin-bottom: 8px;
+        margin-bottom: 14px;
         color: #0a0a0a;
         font-weight: bold;
         font-size: 16px;
@@ -1249,6 +1249,116 @@
             font-size: 16px !important;
         }
     }
+    .bd-category-grid.bd-category-boxes {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .bd-category-boxes a.bd-category-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-width: 0;
+        padding: 11px 14px;
+        border: 1px solid #e4e4ff;
+        border-radius: 4px;
+        background: #fff;
+        text-align: center;
+        text-decoration: none;
+        transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .bd-category-boxes a.bd-category-box::before {
+        content: none;
+    }
+
+    .bd-category-boxes a.bd-category-box:hover,
+    .bd-category-boxes a.bd-category-box:focus-visible {
+        border-color: #419b82;
+        box-shadow: 0 0 16px rgba(12, 223, 64, 0.221);
+        transform: none;
+    }
+
+    .bd-category-box__name {
+        max-width: 100%;
+        color: #252d38;
+        font-size: 15px;
+        font-weight: 600;
+        line-height: 1.5;
+    }
+
+    .bd-category-box__count {
+        color: #858585;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .bd-category-box__count strong {
+        color: #252d38;
+        font-weight: 600;
+        margin-inline-end: 5px;
+    }
+
+    @media (min-width: 1400px) {
+        .bd-category-grid.bd-category-boxes {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 991.98px) {
+        .bd-directory__layout {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .bd-category-grid.bd-category-boxes {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .bd-category-boxes a.bd-category-box {
+            width: 100%;
+            padding: 16px 10px;
+        }
+
+        .bd-category-box__name {
+            width: 100%;
+            white-space: normal;
+            overflow-wrap: anywhere;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .bd-directory .bd-shell {
+            width: calc(100% - 24px);
+        }
+
+        .bd-category-grid.bd-category-boxes {
+            gap: 10px;
+        }
+
+        .bd-category-boxes a.bd-category-box {
+            gap: 6px;
+            padding: 12px 8px;
+        }
+
+        .bd-category-box__name {
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        .bd-category-box__count {
+            font-size: 11px;
+            overflow-wrap: normal;
+        }
+    }
+
+    @media (max-width: 374.98px) {
+        .bd-category-grid.bd-category-boxes {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 @endsection
 
@@ -1257,7 +1367,6 @@
     $visibleCategoryLimit = 500;
     $mobileCategoryLimit = 8;
     $visibleCategories = $jobCategories->take($visibleCategoryLimit)->values();
-    $categoryColumns = $visibleCategories->chunk((int) ceil(max($visibleCategories->count(), 1) / 3));
     $typeColumns = $jobTypes->take(45)->values()->chunk((int) ceil(max($jobTypes->take(45)->count(), 1) / 3));
 @endphp
 <main class="bd-home">
@@ -1350,25 +1459,15 @@
                     </div>
                 </div>
                 <div class="bd-directory-panel" data-bd-panel="category">
-                    <div class="bd-category-grid">
-                        @php $categoryIndex = 0; @endphp
-                        @foreach($categoryColumns as $column)
-                        <div>
-                            @foreach($column as $category)
-                            @php $categoryIndex++; @endphp
-                            <a class="{{ $categoryIndex > $mobileCategoryLimit ? 'bd-category-link--mobile-extra' : '' }}"
-                               href="{{ route('front.search.jobs', ['categories' => $category->id]) }}">{{ html_entity_decode($category->name) }} ({{ $category->jobs_count }})</a>
-                            @endforeach
-                        </div>
+                    <div class="bd-category-grid bd-category-boxes">
+                        @foreach($visibleCategories as $category)
+                            <a class="bd-category-box"
+                               href="{{ route('front.job-categories.show', $category) }}">
+                                <span class="bd-category-box__name">{{ html_entity_decode($category->name) }}</span>
+                                <span class="bd-category-box__count"><strong>{{ $category->jobs_count }}</strong>{{ __('web.open_positions') }}</span>
+                            </a>
                         @endforeach
                     </div>
-                    @if($visibleCategories->count() > $mobileCategoryLimit)
-                        <button type="button" class="bd-more bd-category-more" data-category-more aria-expanded="false"
-                                data-more-label="{{ __('web.home_page.more') }}" data-less-label="{{ __('web.home_page.less') }}">
-                            <span data-category-more-label>@lang('web.home_page.more')</span>&nbsp;
-                            <span data-category-more-symbol>+</span>
-                        </button>
-                    @endif
                 </div>
                 <div class="bd-directory-panel" data-bd-panel="type" hidden>
                     <div class="bd-category-grid">

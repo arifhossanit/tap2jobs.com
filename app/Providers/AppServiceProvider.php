@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Job;
+use App\Observers\JobObserver;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Cashier\Cashier;
@@ -47,6 +49,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Job::observe(JobObserver::class);
         \Illuminate\Pagination\Paginator::useBootstrap();
         Schema::defaultStringLength(191);
         app()->useLangPath(base_path('lang'));

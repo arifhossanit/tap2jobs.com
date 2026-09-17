@@ -3,24 +3,25 @@
     {{ $share['title'] }}
 @endsection
 
+@section('meta_description', $share['description'])
+@section('meta_keywords', $metaKeywords)
+@section('canonical_url', $share['url'])
+@section('og_type', 'article')
+@section('og_title', $share['title'])
+@section('og_description', $share['description'])
+@section('og_image', $share['image'])
+@section('robots', $shouldIndexJob ? 'index,follow' : 'noindex,follow')
+
 @section('meta_tags')
-    <link rel="canonical" href="{{ $share['url'] }}">
-    <meta property="og:type" content="article">
-    <meta property="og:locale" content="{{ str_replace('-', '_', app()->getLocale()) }}">
-    <meta property="og:site_name" content="{{ getAppName() }}">
-    <meta property="og:title" content="{{ $share['title'] }}">
-    <meta property="og:description" content="{{ $share['description'] }}">
-    <meta property="og:url" content="{{ $share['url'] }}">
-    <meta property="og:image" content="{{ $share['image'] }}">
     <meta property="og:image:secure_url" content="{{ $share['image'] }}">
     <meta property="og:image:type" content="image/jpeg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="{{ $share['title'] }}">
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="{{ $share['title'] }}">
-    <meta name="twitter:description" content="{{ $share['description'] }}">
-    <meta name="twitter:image" content="{{ $share['image'] }}">
+    @if ($jobPostingSchema)
+        <script type="application/ld+json">{!! json_encode($jobPostingSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+    @endif
+    <script type="application/ld+json">{!! json_encode($jobBreadcrumbSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
 @endsection
 
 
@@ -139,7 +140,7 @@
                                 <div class="hero-desc d-flex flex-wrap align-items-center gap-2">
                                     <div class="desc me-2 pe-2 mb-sm-0 mb-2">
                                         @if (!$isApplied && !$isJobApplicationRejected && !$isJobApplicationCompleted && !$isJobApplicationShortlisted)
-                                            @if ($isActive && !$job->is_suspended && \Carbon\Carbon::today()->toDateString() < $job->job_expiry_date->toDateString())
+                                            @if ($isJobApplyable)
                                                 @php
                                                     $completionPct = isset($profileCompletion) ? ($profileCompletion['percentage'] ?? 100) : 100;
                                                 @endphp
@@ -170,7 +171,7 @@
                                 </div>
                             @endrole
                         @else
-                            @if ($isActive && !$job->is_suspended && \Carbon\Carbon::today()->toDateString() < $job->job_expiry_date->toDateString())
+                            @if ($isJobApplyable)
                                 <div class="hero-desc d-flex flex-wrap">
                                     {{-- <div class="desc d-flex pe-2">
                                         <button class="btn btn-primary  mb-3"
@@ -194,7 +195,12 @@
 
         <!-- start job-details section -->
         <section class="job-details-section py-60">
-            <div class="container">
+            @php
+                $leftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT, \App\Models\Ad::PAGE_JOB_DETAILS);
+                $rightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT, \App\Models\Ad::PAGE_JOB_DETAILS);
+            @endphp
+            <x-front.side-ad-layout :left-ads="$leftAds" :right-ads="$rightAds">
+            <div class="container px-0">
                 <div class="job-card">
                     <div class="row">
                         @if ($job->is_suspended || !$isActive)
@@ -603,16 +609,16 @@
                                 @foreach ($getRelatedJobs as $relatedJob)
                                     @if ($relatedJob->status == \App\Models\Job::STATUS_OPEN && $relatedJob->is_suspended == \App\Models\Job::NOT_SUSPENDED)
                                         <div class="col-lg-4 col-md-6 px-xl-3 mb-40">
-                                            <div class="card py-30 border">
+                                            <div class="card py-30">
                                                 @if (Str::length($relatedJob['job_title']) < 35)
-                                                    <a href="{{ route('front.job.details', $relatedJob['job_id']) }}"
+                                                    <a href="{{ $relatedJob->front_url }}"
                                                         class="text-secondary primary-link-hover">
                                                         <h5 class="card-title fs-20 mb-2">
                                                             {{ html_entity_decode($relatedJob['job_title']) }}
                                                         </h5>
                                                     </a>
                                                 @else
-                                                    <a href="{{ route('front.job.details', $relatedJob['job_id']) }}"
+                                                    <a href="{{ $relatedJob->front_url }}"
                                                         data-toggle="tooltip" data-placement="bottom" class="text-secondary primary-link-hover hover-color"
                                                         title="{{ html_entity_decode($relatedJob['job_title']) }}">
                                                         <h5 class="card-title fs-20 mb-2">
@@ -665,7 +671,8 @@
                                 @if ($getRelatedJobs->count() > 0)
                                     <div class="row justify-content-center">
                                         <div class="col-8 text-center">
-                                            <a href="{{ route('front.search.jobs', ['categories' => $relatedJob->selected_job_categories->first()?->id ?? $relatedJob->job_category_id]) }}"
+                                            @php($relatedCategory = $relatedJob->selected_job_categories->first() ?: $relatedJob->jobCategory)
+                                            <a href="{{ $relatedCategory ? route('front.job-categories.show', $relatedCategory) : route('front.categories') }}"
                                                 class="btn btn-primary">
                                                 @lang('messages.front_job_details.show_all')</a>
                                         </div>
@@ -676,6 +683,7 @@
                     </div>
                 </div>
             </div>
+            </x-front.side-ad-layout>
         </section>
         <!-- end job-details section -->
     </div>

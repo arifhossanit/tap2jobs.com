@@ -48,31 +48,9 @@ class JobCategoryController extends AppBaseController
      */
     public function store(CreateJobCategoryRequest $request)
     {
-        $rawNames = str_replace(["\r\n", "\n", "\r"], ',', $request->name);
-        $names = array_values(array_unique(array_filter(array_map('trim', explode(',', $rawNames)))));
+        $jobCategory = $this->jobCategoryRepository->store($request->validated());
 
-        $lastCategory = null;
-        $createdCount = 0;
-
-        foreach ($names as $name) {
-            if (empty($name)) {
-                continue;
-            }
-
-            $exists = JobCategory::where('name', $name)->exists();
-            if (! $exists) {
-                $input = $request->all();
-                $input['name'] = $name;
-                $lastCategory = $this->jobCategoryRepository->store($input);
-                $createdCount++;
-            }
-        }
-
-        if ($createdCount === 0 && ! empty($names)) {
-            $lastCategory = JobCategory::where('name', $names[0])->first();
-        }
-
-        return $this->sendResponse($lastCategory, __('messages.flash.job_category_save'));
+        return $this->sendResponse($jobCategory, __('messages.flash.job_category_save'));
     }
 
     /**

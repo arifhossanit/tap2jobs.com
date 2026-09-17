@@ -1,15 +1,81 @@
 @php
     $settings = settings();
     $lang = session()->get('languageName');
+
+    $seoTitle = trim($__env->yieldContent('title')) ?: getAppName();
+    $seoFullTitle = $seoTitle === getAppName() ? $seoTitle : $seoTitle.' | '.getAppName();
+    $seoDescription = trim($__env->yieldContent('meta_description'));
+    if ($seoDescription === '') {
+        $seoDescription = config('seo.default_description');
+    }
+    $seoDescription = \Illuminate\Support\Str::limit(
+        preg_replace('/\s+/u', ' ', trim(strip_tags(html_entity_decode($seoDescription, ENT_QUOTES | ENT_HTML5, 'UTF-8')))),
+        160,
+        ''
+    );
+
+    $routeName = request()->route()?->getName();
+    $queryKeys = array_keys(request()->query());
+    $indexableQueryParameters = config('seo.indexable_query_parameters', ['page']);
+    $trackingQueryParameters = config('seo.tracking_query_parameters', []);
+    $facetedQueryParameters = array_diff($queryKeys, $indexableQueryParameters, $trackingQueryParameters);
+    $isFacetedRoute = in_array($routeName, config('seo.faceted_routes', []), true);
+    $hasFacetedQuery = $isFacetedRoute && count($facetedQueryParameters) > 0;
+    $hasNoindexQuery = collect(config('seo.noindex_query_parameters', []))
+        ->contains(fn ($parameter) => request()->has($parameter));
+
+    $explicitCanonical = trim($__env->yieldContent('canonical_url'));
+    $seoCanonical = $explicitCanonical ?: url()->current();
+    $pageNumber = max(1, (int) request()->query('page', 1));
+    if ($explicitCanonical === '' && !$hasFacetedQuery && !$hasNoindexQuery && $pageNumber > 1) {
+        $seoCanonical .= '?page='.$pageNumber;
+    }
+
+    $seoRobots = trim($__env->yieldContent('robots'));
+    if ($seoRobots === '') {
+        $isNoindexRoute = collect(config('seo.noindex_routes', []))
+            ->contains(fn ($pattern) => $routeName && \Illuminate\Support\Str::is($pattern, $routeName));
+        $seoRobots = ($isNoindexRoute || $hasNoindexQuery || $hasFacetedQuery)
+            ? 'noindex,follow'
+            : 'index,follow';
+    }
+
+    $seoOgTitle = trim($__env->yieldContent('og_title')) ?: $seoTitle;
+    $seoOgDescription = trim($__env->yieldContent('og_description')) ?: $seoDescription;
+    $seoOgType = trim($__env->yieldContent('og_type')) ?: 'website';
+    $seoOgImage = trim($__env->yieldContent('og_image')) ?: getSettingValue('logo');
 @endphp
 <!DOCTYPE html>
-<html lang="en" {{ getFrontSelectLanguage() == 'ar' ? 'dir=rtl' : '' }}>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" {{ getFrontSelectLanguage() == 'ar' ? 'dir=rtl' : '' }}>
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title') | {{ getAppName() }}</title>
+    <title>{{ $seoFullTitle }}</title>
+    <meta name="description" content="{{ $seoDescription }}">
+    @hasSection('meta_keywords')
+        <meta name="keywords" content="{{ trim($__env->yieldContent('meta_keywords')) }}">
+    @endif
+    <meta name="robots" content="{{ $seoRobots }}">
+    <link rel="canonical" href="{{ $seoCanonical }}">
+
+    <meta property="og:type" content="{{ $seoOgType }}">
+    <meta property="og:locale" content="{{ str_replace('-', '_', app()->getLocale()) }}">
+    <meta property="og:site_name" content="{{ getAppName() }}">
+    <meta property="og:title" content="{{ $seoOgTitle }}">
+    <meta property="og:description" content="{{ $seoOgDescription }}">
+    <meta property="og:url" content="{{ $seoCanonical }}">
+    @if ($seoOgImage)
+        <meta property="og:image" content="{{ $seoOgImage }}">
+    @endif
+
+    <meta name="twitter:card" content="{{ $seoOgImage ? 'summary_large_image' : 'summary' }}">
+    <meta name="twitter:title" content="{{ $seoOgTitle }}">
+    <meta name="twitter:description" content="{{ $seoOgDescription }}">
+    @if ($seoOgImage)
+        <meta name="twitter:image" content="{{ $seoOgImage }}">
+    @endif
     @yield('meta_tags')
     <link rel="shortcut icon" href="{{ getSettingValue('favicon') }}" type="image/x-icon">
     <link rel="icon" href="{{ getSettingValue('favicon') }}" type="image/x-icon">
@@ -154,9 +220,6 @@
     {{-- <script src="{{ asset('assets/js/custom/custom.js') }}"></script> --}}
 
     @yield('page_scripts')
-    @foreach (googleJobSchema() as $jobSchema)
-        {!! nl2br($jobSchema) !!}
-    @endforeach
     <script src="{{ mix('js/front_pages.js') }}"></script>
 </head>
 

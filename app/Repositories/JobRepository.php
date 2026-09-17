@@ -84,7 +84,7 @@ class JobRepository extends BaseRepository
             $q->whereStatus(Job::STATUS_OPEN)
                 ->where('status', '!=', Job::STATUS_DRAFT)
                 ->whereIsSuspended(Job::NOT_SUSPENDED)
-                ->whereDate('job_expiry_date', '>=', Carbon::tomorrow()->toDateString());
+                ->whereDate('job_expiry_date', '>=', Carbon::now()->toDateString());
         }])->toBase()->get();
         $data['jobCategories'] = JobCategory::where('status', JobCategory::STATUS_ACTIVE)->toBase()->pluck('name', 'id');
         $data['jobSkills'] = Skill::toBase()->pluck('name', 'id');
@@ -94,7 +94,7 @@ class JobRepository extends BaseRepository
         $data['maximumExperience'] = max(1, (int) Job::whereStatus(Job::STATUS_OPEN)
             ->where('status', '!=', Job::STATUS_DRAFT)
             ->whereIsSuspended(Job::NOT_SUSPENDED)
-            ->whereDate('job_expiry_date', '>=', Carbon::tomorrow()->toDateString())
+            ->whereDate('job_expiry_date', '>=', Carbon::now()->toDateString())
             ->max('experience'));
         $data['advertise_image'] = FrontSetting::where('key', '=', 'advertise_image')->toBase()->first();
 

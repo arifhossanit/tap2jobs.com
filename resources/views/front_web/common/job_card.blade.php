@@ -81,7 +81,7 @@
                                 </h5>
                             </a>
                         @else
-                            <a href="{{ route('front.job.details', $job->job_id) }}"
+                            <a href="{{ $job->front_url }}"
                                 class="text-secondary primary-link-hover"
                                 title="{{ html_entity_decode($job->job_title) }}">
                                 <h5 class="card-title fs-18 mb-0 d-inline-block">
@@ -129,14 +129,14 @@
                 </div>
             </div>
             <div class="desc d-flex">
-                <a href="{{ route('front.job.details', $job->job_id) }}" class="btn btn-primary"
+                <a href="{{ $job->front_url }}" class="btn btn-primary"
                     style="padding:5px 15px !important;">{{ __('messages.view_details') }}</a>
             </div>
         </div>
         <div class=" col-12 d-sm-none d-block">
             <div class="card-body p-0 ps-xl-3">
                 @if (Str::length($job->job_title) < 35)
-                    <a href="{{ route('front.job.details', $job->job_id) }}" class="text-secondary primary-link-hover"
+                    <a href="{{ $job->front_url }}" class="text-secondary primary-link-hover"
                         title="{{ html_entity_decode($job->job_title) }}">
                         <h5 class="card-title fs-18 mb-0 d-inline-block">
                             {{ html_entity_decode($job->job_title) }}
@@ -144,7 +144,7 @@
                         </h5>
                     </a>
                 @else
-                    <a href="{{ route('front.job.details', $job->job_id) }}" class="text-secondary primary-link-hover"
+                    <a href="{{ $job->front_url }}" class="text-secondary primary-link-hover"
                         title="{{ html_entity_decode($job->job_title) }}">
                         <h5 class="card-title fs-18 mb-0 d-inline-block">
                             {{ Str::limit(html_entity_decode($job->job_title), 30, '...') }}
@@ -188,7 +188,7 @@
                 <div class="">
                     <div class="card-body p-0">
                         @if (Str::length($job->job_title) < 35)
-                            <a href="{{ route('front.job.details', $job->job_id) }}"
+                            <a href="{{ $job->front_url }}"
                                 class="text-secondary primary-link-hover"
                                 title="{{ html_entity_decode($job->job_title) }}">
                                 <h5 class="card-title fs-18 mb-0 d-inline-block">
@@ -197,7 +197,7 @@
                                 </h5>
                             </a>
                         @else
-                            <a href="{{ route('front.job.details', $job->job_id) }}"
+                            <a href="{{ $job->front_url }}"
                                 class="text-secondary primary-link-hover"
                                 title="{{ html_entity_decode($job->job_title) }}">
                                 <h5 class="card-title fs-18 mb-0 d-inline-block">

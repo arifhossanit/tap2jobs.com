@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
 /**
  * App\Models\Job
@@ -341,6 +342,7 @@ class Job extends Model
     public $casts = [
         'id' => 'integer',
         'job_id' => 'string',
+        'slug' => 'string',
         'job_title' => 'string',
         'company_id' => 'integer',
         'job_category_id' => 'integer',
@@ -514,6 +516,25 @@ class Job extends Model
         return $query->where('status', $status);
     }
 
+    public function scopeAvailableForPublic(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_OPEN)
+            ->where('is_suspended', self::NOT_SUSPENDED)
+            ->whereDate('job_expiry_date', '>=', now()->toDateString());
+    }
+
+    public function isExpired(): bool
+    {
+        return ! $this->job_expiry_date || $this->job_expiry_date->copy()->endOfDay()->isPast();
+    }
+
+    public function isApplyable(): bool
+    {
+        return (int) $this->status === self::STATUS_OPEN
+            && (int) $this->is_suspended === self::NOT_SUSPENDED
+            && ! $this->isExpired();
+    }
+
     public function currency(): BelongsTo
     {
         return $this->belongsTo(SalaryCurrency::class, 'currency_id');
@@ -599,6 +620,33 @@ class Job extends Model
 
         return collect($primaryCategory ? [$primaryCategory] : []);
     }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Job $job) {
+            $job->slug = static::makeUniqueSlug($job->job_title);
+        });
+    }
+
+    public static function makeUniqueSlug(string $title): string
+    {
+        $baseSlug = Str::slug(html_entity_decode(strip_tags($title), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $baseSlug = Str::limit($baseSlug ?: 'job', 180, '');
+        $slug = $baseSlug;
+        $suffix = 2;
+
+        while (static::query()->where('slug', $slug)->exists()) {
+            $slug = Str::limit($baseSlug, 180, '').'-'.$suffix++;
+        }
+
+        return $slug;
+    }
+
+    public function getFrontUrlAttribute(): string
+    {
+        return route('front.job.details', ['slug' => $this->slug]);
+    }
+
     public function getFullLocationAttribute(): string
     {
         if ($this->anywhere_in_bangladesh) {

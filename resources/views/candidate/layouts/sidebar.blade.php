@@ -6,7 +6,7 @@
                 {{ __('messages.candidate.dashboard') }}
             </a>
         </li>
-        <li class="nav-item {{ Request::is('search-jobs*') ? 'active' : '' }}">
+        <li class="nav-item {{ request()->routeIs('front.search.jobs', 'front.job-categories.show') ? 'active' : '' }}">
             <a class="nav-link header-navbar-color text-gray py-3" aria-current="page"
                href="{{ route('front.search.jobs') }}">
                 {{ __('web.web_home.find_jobs') }}

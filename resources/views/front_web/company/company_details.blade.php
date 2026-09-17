@@ -116,7 +116,7 @@
                             <div class="job-card">
                                 @foreach ($jobDetails as $job)
                                     <div class="mb-40">
-                                        <a href="{{ route('front.job.details', $job['job_id']) }}"
+                                        <a href="{{ $job->front_url }}"
                                             class="card py-30 border-0">
                                             <div class="d-sm-flex position-relative">
                                                 <div class="mb-sm-0 mb-3 {{ getFrontSelectLanguage() == 'ar' ? 'ms-sm-4' : 'me-sm-4' }}">

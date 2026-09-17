@@ -2110,6 +2110,8 @@ return [
         'already_applied' => 'Already Applied',
         'register_to_apply' => 'Register to Apply',
         'job_is' => 'Job is',
+        'job_expired' => 'This job has expired and is no longer accepting applications.',
+        'job_not_accepting_applications' => 'This job is no longer accepting applications.',
         'click_here' => 'Click Here',
         'to_upload_resume' => 'to upload resume',
         'job_description' => 'Requirements',

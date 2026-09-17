@@ -14,7 +14,7 @@
                 <div class="mb-5">
                     {{ Form::label('name',__('messages.job_category.name').':', ['class' => 'form-label']) }}
                     <span class="required"></span>
-                    {{ Form::textarea('name', null, ['class' => 'form-control', 'rows' => 3, 'placeholder' => 'Enter name or multiple names (separated by commas or new lines)']) }}
+                    {{ Form::textarea('name', null, ['class' => 'form-control', 'required', 'id' => 'addJobCategoryName', 'rows' => 3, 'placeholder' => __('messages.job_category.name')]) }}
                 </div>
                 <div class="mb-5 h-100">
                     {{ Form::label('description',__('messages.job_category.description').':', ['class' =>'form-label']) }}
@@ -22,6 +22,24 @@
                     {{--                        {{ Form::textarea('description', null, ['class' => 'form-control','id' => 'jobCategoryDescription', 'rows' => '5']) }}--}}
                     <x-text-editor id="addJobCategoryDescriptionQuillData" />
                     {{ Form::hidden('description', null, ['id' => 'jobCategoryDescriptionValue']) }}
+                </div>
+                <div class="mb-5">
+                    {{ Form::label('slug', 'SEO URL Slug:', ['class' => 'form-label']) }}
+                    {{ Form::text('slug', null, ['class' => 'form-control', 'id' => 'addJobCategorySlug', 'maxlength' => 180, 'placeholder' => 'accounting-finance', 'autocomplete' => 'off']) }}
+                    <div class="form-text">Automatically generated from the category name. You can customize it before saving.</div>
+                </div>
+                <div class="mb-5">
+                    {{ Form::label('seo_title', 'SEO Title:', ['class' => 'form-label']) }}
+                    {{ Form::text('seo_title', null, ['class' => 'form-control', 'maxlength' => 180, 'placeholder' => 'Accounting & Finance Jobs in Bangladesh']) }}
+                </div>
+                <div class="mb-5">
+                    {{ Form::label('meta_description', 'Meta Description:', ['class' => 'form-label']) }}
+                    {{ Form::textarea('meta_description', null, ['class' => 'form-control', 'rows' => 3, 'maxlength' => 255]) }}
+                </div>
+                <div class="mb-5">
+                    {{ Form::label('search_tags', 'Search Tags:', ['class' => 'form-label']) }}
+                    {{ Form::textarea('search_tags', null, ['class' => 'form-control', 'rows' => 3, 'placeholder' => 'Bangladesh Jobs, Accounting Jobs, Finance Jobs']) }}
+                    <div class="form-text">Separate tags with commas or new lines. Tags are stored as page metadata and are not shown in the category page content.</div>
                 </div>
                 <div class="col-xl-6 col-md-6 col-sm-12 mb-5" io-image-input="true">
                     <label for="category_image" class="form-label">

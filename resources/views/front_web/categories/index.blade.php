@@ -1,7 +1,11 @@
 @extends('front_web.layouts.app')
 @section('title')
-    {{ __('web.job_seekers') }}
+    {{ __('web.post_menu.categories') }}
 @endsection
+@section('meta_description', 'Browse job categories in Bangladesh and discover current career opportunities from trusted employers on '.getAppName().'.')
+@section('canonical_url', route('front.categories'))
+@section('og_title', __('web.post_menu.categories'))
+@section('og_description', 'Browse job categories in Bangladesh and discover current career opportunities from trusted employers on '.getAppName().'.')
 @section('page_css')
     <style>
         .popular-job-categories-section {

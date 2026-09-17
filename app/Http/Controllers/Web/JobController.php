@@ -44,10 +44,22 @@ class JobController extends AppBaseController
     /**
      * @return Application|Factory|View
      */
-    public function jobDetails(string $uniqueJobId)
+    public function jobDetails(string $slug)
     {
-        $job = Job::with(['jobsTag', 'company.user', 'jobCategory', 'jobCategories', 'degreeLevel', 'degreeTitle'])->whereJobId($uniqueJobId)->first();
-        $skill = Job::with('jobCategory', 'jobCategories', 'jobShift', 'jobsSkill', 'company')->whereJobId($uniqueJobId)
+        $job = Job::with([
+            'jobsTag', 'jobsSkill', 'company.user', 'jobCategory', 'jobCategories', 'degreeLevel', 'degreeTitle',
+            'jobType', 'currency', 'salaryPeriod', 'country', 'state', 'city', 'thana',
+            'locations.country', 'locations.state', 'locations.city', 'locations.thana',
+        ])->where('slug', $slug)->first();
+
+        if (! $job) {
+            $legacyJob = Job::whereJobId($slug)->first();
+            if ($legacyJob) {
+                return redirect()->to($legacyJob->front_url, 301);
+            }
+        }
+
+        $skill = Job::with('jobCategory', 'jobCategories', 'jobShift', 'jobsSkill', 'company')->where('slug', $slug)
             ->orderByDesc('created_at')->get();
         $valuee = [];
         $counter = 1;
@@ -66,7 +78,7 @@ class JobController extends AppBaseController
             return redirect()->back();
         }
 
-        if ($job->status == Job::STATUS_DRAFT && Auth::user()->hasRole('Candidate')) {
+        if ($job->status == Job::STATUS_DRAFT && (! Auth::check() || Auth::user()->hasRole('Candidate'))) {
             abort(404);
         }
 
@@ -87,6 +99,9 @@ class JobController extends AppBaseController
 
         // check job status is active or not
         $data['isActive'] = ($job->status == Job::STATUS_OPEN) ? true : false;
+        $data['isJobExpired'] = $job->isExpired();
+        $data['isJobApplyable'] = $job->isApplyable();
+        $data['shouldIndexJob'] = $job->isApplyable();
 
         $relatedCategoryIds = $job->selected_job_categories->pluck('id')->filter()->values()->toArray();
         $relatedJobs = Job::with('jobCategory', 'jobCategories', 'jobShift', 'jobsSkill', 'company')
@@ -100,7 +115,7 @@ class JobController extends AppBaseController
             })
             ->whereDate('job_expiry_date', '>=', Carbon::now()->toDateString());
         $data['getRelatedJobs'] = $relatedJobs->whereNotIn('id', [$job->id])->orderByDesc('created_at')->take(6)->get();
-        $shareUrl = url()->current();
+        $shareUrl = $job->front_url;
         $companyName = trim(implode(' ', array_filter([
             $job->company?->user?->first_name,
             $job->company?->user?->last_name,
@@ -118,12 +133,49 @@ class JobController extends AppBaseController
         $shareMessage = $shareText."\n".$shareDescription."\n".$shareUrl;
         $shareImage = $this->ensureOgImage($job);
 
+        $data['metaKeywords'] = collect([$shareTitle, $companyName, $job->district_thana_location])
+            ->merge($job->selected_job_categories->pluck('name'))
+            ->merge($job->selected_job_categories->flatMap(fn ($category) => $category->search_tags ?? []))
+            ->merge($job->jobsTag->pluck('name'))
+            ->merge($job->jobsSkill->pluck('name'))
+            ->map(fn ($keyword) => trim(strip_tags(html_entity_decode((string) $keyword, ENT_QUOTES | ENT_HTML5, 'UTF-8'))))
+            ->filter()
+            ->unique(fn ($keyword) => mb_strtolower($keyword))
+            ->values()
+            ->implode(', ');
+
         $share = [
             'url' => $shareUrl,
             'title' => $shareTitle,
             'description' => $shareDescription,
             'image' => asset('uploads/og-images/'.basename($shareImage)),
             'message' => $shareMessage,
+        ];
+        $data['jobPostingSchema'] = $data['shouldIndexJob']
+            ? $this->buildJobPostingSchema($job, $shareUrl, $shareDescription)
+            : null;
+        $breadcrumbCategory = $job->selected_job_categories
+            ->first(fn ($category) => (int) $category->status === \App\Models\JobCategory::STATUS_ACTIVE && filled($category->slug));
+        $data['breadcrumbCategory'] = $breadcrumbCategory;
+        $data['jobBreadcrumbSchema'] = [
+            '@context' => 'https://schema.org',
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => array_values(array_filter([
+                ['@type' => 'ListItem', 'position' => 1, 'name' => __('web.home'), 'item' => route('front.home')],
+                ['@type' => 'ListItem', 'position' => 2, 'name' => __('web.jobs'), 'item' => route('front.search.jobs')],
+                $breadcrumbCategory ? [
+                    '@type' => 'ListItem',
+                    'position' => 3,
+                    'name' => html_entity_decode(strip_tags($breadcrumbCategory->name), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                    'item' => route('front.job-categories.show', $breadcrumbCategory),
+                ] : null,
+                [
+                    '@type' => 'ListItem',
+                    'position' => $breadcrumbCategory ? 4 : 3,
+                    'name' => $shareTitle,
+                    'item' => $shareUrl,
+                ],
+            ])),
         ];
         $url = [
             'facebook' => 'https://www.facebook.com/sharer/sharer.php?'.http_build_query(['u' => $shareUrl], '', '&', PHP_QUERY_RFC3986),
@@ -140,6 +192,135 @@ class JobController extends AppBaseController
         ];
 
         return view('front_web.jobs.job_details', compact('job', 'url', 'share'))->with($data);
+    }
+
+    private function buildJobPostingSchema(Job $job, string $url, string $fallbackDescription): array
+    {
+        $companyName = trim((string) ($job->company?->company_name ?: $job->company?->user?->full_name));
+        $descriptionParts = array_filter([
+            $job->description,
+            $job->key_responsibilities,
+            $job->compensation_and_other_benefits,
+        ]);
+        $description = preg_replace(
+            '/\s+/u',
+            ' ',
+            trim(strip_tags(html_entity_decode(implode(' ', $descriptionParts), ENT_QUOTES | ENT_HTML5, 'UTF-8')))
+        );
+
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'JobPosting',
+            'title' => html_entity_decode(strip_tags($job->job_title), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+            'description' => $description ?: $fallbackDescription,
+            'identifier' => [
+                '@type' => 'PropertyValue',
+                'name' => $companyName ?: getAppName(),
+                'value' => $job->job_id,
+            ],
+            'datePosted' => $job->created_at?->toAtomString(),
+            'validThrough' => $job->job_expiry_date?->copy()->endOfDay()->toAtomString(),
+            'url' => $url,
+            'hiringOrganization' => array_filter([
+                '@type' => 'Organization',
+                'name' => $companyName ?: getAppName(),
+                'sameAs' => $job->company?->website ?: ($job->company?->unique_id
+                    ? route('front.company.details', $job->company->unique_id)
+                    : null),
+                'logo' => $job->company?->company_url,
+            ]),
+        ];
+
+        $employmentType = $this->schemaEmploymentType($job);
+        if ($employmentType) {
+            $schema['employmentType'] = $employmentType;
+        }
+
+        $isFullyRemote = $job->work_from_home && ! $job->work_from_office && ! $job->hybrid;
+        if ($isFullyRemote) {
+            $schema['jobLocationType'] = 'TELECOMMUTE';
+            $countryCode = strtoupper((string) ($job->country?->short_code ?: 'BD'));
+            $schema['applicantLocationRequirements'] = [
+                '@type' => 'Country',
+                'name' => $countryCode,
+            ];
+        } else {
+            $locations = $job->locations->map(function ($location) {
+                return [
+                    '@type' => 'Place',
+                    'address' => array_filter([
+                        '@type' => 'PostalAddress',
+                        'streetAddress' => $location->address ?: $location->city_village_name,
+                        'addressLocality' => $location->city?->name,
+                        'addressRegion' => $location->state?->name,
+                        'addressCountry' => strtoupper((string) $location->country?->short_code),
+                    ]),
+                ];
+            })->values()->all();
+
+            if (empty($locations)) {
+                $locations[] = [
+                    '@type' => 'Place',
+                    'address' => array_filter([
+                        '@type' => 'PostalAddress',
+                        'streetAddress' => $job->address ?: $job->city_village_name,
+                        'addressLocality' => $job->city?->name,
+                        'addressRegion' => $job->state?->name,
+                        'addressCountry' => strtoupper((string) $job->country?->short_code),
+                    ]),
+                ];
+            }
+
+            $schema['jobLocation'] = count($locations) === 1 ? $locations[0] : $locations;
+        }
+
+        if (! $job->hide_salary && ($job->salary_from > 0 || $job->salary_to > 0) && $job->currency?->currency_code) {
+            $salaryValue = ['@type' => 'QuantitativeValue'];
+            if ($job->salary_from > 0) {
+                $salaryValue['minValue'] = $job->salary_from;
+            }
+            if ($job->salary_to > 0) {
+                $salaryValue['maxValue'] = $job->salary_to;
+            }
+            $salaryValue['unitText'] = $this->schemaSalaryUnit($job->salaryPeriod?->period);
+            $schema['baseSalary'] = [
+                '@type' => 'MonetaryAmount',
+                'currency' => strtoupper($job->currency->currency_code),
+                'value' => $salaryValue,
+            ];
+        }
+
+        return array_filter($schema, fn ($value) => $value !== null && $value !== '');
+    }
+
+    private function schemaEmploymentType(Job $job): ?string
+    {
+        $status = strtolower((string) $job->employment_status);
+        $type = strtolower((string) $job->jobType?->name);
+        $value = $status.' '.$type;
+
+        return match (true) {
+            str_contains($value, 'part') => 'PART_TIME',
+            str_contains($value, 'intern') => 'INTERN',
+            str_contains($value, 'freelance') => 'CONTRACTOR',
+            str_contains($value, 'contract'), str_contains($value, 'project') => 'CONTRACTOR',
+            str_contains($value, 'temporary') => 'TEMPORARY',
+            str_contains($value, 'full'), str_contains($value, 'permanent') => 'FULL_TIME',
+            default => null,
+        };
+    }
+
+    private function schemaSalaryUnit(?string $period): string
+    {
+        $period = strtolower((string) $period);
+
+        return match (true) {
+            str_contains($period, 'hour') => 'HOUR',
+            str_contains($period, 'day') => 'DAY',
+            str_contains($period, 'week') => 'WEEK',
+            str_contains($period, 'year'), str_contains($period, 'annual') => 'YEAR',
+            default => 'MONTH',
+        };
     }
 
     public function jobOgImage(string $uniqueJobId)

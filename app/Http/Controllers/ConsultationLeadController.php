@@ -8,6 +8,9 @@ use App\Http\Requests\UpdateConsultationLeadRequest;
 use App\Models\Ad;
 use App\Models\CompanySize;
 use App\Models\ConsultationLead;
+use App\Models\Notification;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use App\Models\ProfileReferenceOption;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\Eloquent\Builder;
@@ -60,7 +63,25 @@ class ConsultationLeadController extends AppBaseController
         $input['source_page'] = $input['source_page'] ?? url()->previous();
         $input['clicked_url'] = $input['clicked_url'] ?? $request->fullUrl();
 
-        ConsultationLead::query()->create($input);
+        $input['lead_from'] = ConsultationLead::LEAD_FROM_CONSULTATION_FORM;
+
+        DB::transaction(function () use ($input) {
+            $lead = ConsultationLead::query()->create($input);
+
+            foreach (User::role('Admin')->pluck('id') as $adminId) {
+                Notification::create([
+                    'type' => Notification::NEW_CONSULTATION_LEAD,
+                    'notification_for' => Notification::ADMIN,
+                    'user_id' => $adminId,
+                    'title' => 'New consultation request from '.$lead->name,
+                    'text' => 'A new consultation form has been submitted.',
+                    'meta' => [
+                        'lead_id' => $lead->id,
+                        'url' => route('consultation-leads.consultation'),
+                    ],
+                ]);
+            }
+        });
 
         return redirect()
             ->route('consultation.create', $request->only(['ad_id', 'utm_source', 'utm_medium', 'utm_campaign']))

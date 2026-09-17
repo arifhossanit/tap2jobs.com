@@ -44,7 +44,7 @@ class HomeController extends AppBaseController
         $openJobs = static function ($query) {
             return $query->whereStatus(Job::STATUS_OPEN)
                 ->whereIsSuspended(Job::NOT_SUSPENDED)
-                ->whereDate('job_expiry_date', '>=', Carbon::tomorrow()->toDateString());
+                ->whereDate('job_expiry_date', '>=', Carbon::now()->toDateString());
         };
 
         // $data['testimonials'] = $this->homeRepository->getTestimonials();

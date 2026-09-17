@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -47,7 +48,11 @@ class JobCategory extends Model implements HasMedia
 
     public $fillable = [
         'name',
+        'slug',
         'description',
+        'seo_title',
+        'meta_description',
+        'search_tags',
         'is_featured',
         'status',
         'is_default',
@@ -97,7 +102,11 @@ class JobCategory extends Model implements HasMedia
     protected $casts = [
         'id' => 'integer',
         'name' => 'string',
+        'slug' => 'string',
         'description' => 'string',
+        'seo_title' => 'string',
+        'meta_description' => 'string',
+        'search_tags' => 'array',
         'is_featured' => 'boolean',
         'status' => 'boolean',
         'is_default' => 'boolean',
@@ -111,5 +120,34 @@ class JobCategory extends Model implements HasMedia
     public function jobs(): BelongsToMany
     {
         return $this->belongsToMany(Job::class, 'job_assigned_categories', 'job_category_id', 'job_id');
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (JobCategory $category) {
+            $category->slug = static::uniqueSlug($category->slug ?: $category->name);
+        });
+
+        static::updating(function (JobCategory $category) {
+            if ($category->isDirty('slug')) {
+                $category->slug = static::uniqueSlug($category->slug ?: $category->name, $category->id);
+            }
+        });
+    }
+
+    private static function uniqueSlug(string $value, ?int $ignoreId = null): string
+    {
+        $baseSlug = Str::slug($value) ?: 'job-category';
+        $slug = $baseSlug;
+        $suffix = 2;
+
+        while (static::query()
+            ->where('slug', $slug)
+            ->when($ignoreId, fn ($query) => $query->whereKeyNot($ignoreId))
+            ->exists()) {
+            $slug = $baseSlug.'-'.$suffix++;
+        }
+
+        return $slug;
     }
 }

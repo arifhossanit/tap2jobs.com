@@ -16,6 +16,9 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command(DeleteExpiredFeaturedCompany::class)->daily();
         $schedule->command(SendJobExpiryAdminAlerts::class)->dailyAt('08:00');
+        $schedule->command('seo:index-jobs --type=expired')
+            ->dailyAt('00:15')
+            ->when(fn () => (bool) config('seo.indexing_api.enabled'));
     }
 
     /**
