@@ -68,7 +68,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
                 <div class="me-4">
-                    <img src="{{ $job->company->company_url }}" class="card-img" alt="..." />
+                    <img src="{{ $job->company->company_url }}" class="card-img" alt="{{ $job->company->company_name ?: $job->company->user?->full_name }} logo" />
                 </div>
                 <div class="">
                     <div class="card-body p-0">
@@ -183,7 +183,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
                 <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
-                    <img src="{{ $job->company->company_url }}" class="card-img" alt="..." />
+                    <img src="{{ $job->company->company_url }}" class="card-img" alt="{{ $job->company->company_name ?: $job->company->user?->full_name }} logo" />
                 </div>
                 <div class="">
                     <div class="card-body p-0">
@@ -226,7 +226,7 @@
             <div class="desc">
                 <div class="d-flex mb-1">
                     <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
-                        <img src="{{ asset('img_template/briefcase.svg') }}" class="w-100" />
+                        <img src="{{ asset('img_template/briefcase.svg') }}" class="w-100" alt="" aria-hidden="true" />
                     </div>
                     <p class="fs-14 text-gray mb-0">
                         {{ $job->selected_job_categories->pluck('name')->implode(', ') }}
@@ -234,7 +234,7 @@
                 </div>
                 <div class="d-flex mb-2">
                     <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
-                        <img src=" {{ asset('img_template/location.svg') }} " class="w-100" />
+                        <img src=" {{ asset('img_template/location.svg') }} " class="w-100" alt="" aria-hidden="true" />
                     </div>
 
                     <p class="fs-14 text-gray mb-0">

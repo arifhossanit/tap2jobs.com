@@ -4,7 +4,7 @@
             <div class="col-xxl-3 col-xl-3 col-lg-4 col-md-12 mb-lg-0 mb-4">
                 <div class="footer-logo mb-4">
                     <a href="{{ route('front.home') }}">
-                        <img src="{{ asset($settings['footer_logo']) }}" alt="jobs-landing" class="img-fluid"
+                        <img src="{{ asset($settings['footer_logo']) }}" alt="{{ getAppName() }}" class="img-fluid"
                             style="width: 80px" />
                     </a>
                 </div>
@@ -212,7 +212,7 @@
         <a href="{{ $panelUrl }}" class="bd-mobile-footer-item {{ Request::is('candidate*') || Request::is('dashboard*') || Request::is('employer*') ? 'active' : '' }}">
             <div class="bd-mobile-footer-icon">
                 @if(!empty(Auth::user()->avatar))
-                    <img src="{{ Auth::user()->avatar }}" alt="profile" class="bd-mobile-user-avatar">
+                    <img src="{{ Auth::user()->avatar }}" alt="{{ Auth::user()->full_name }}" class="bd-mobile-user-avatar">
                 @else
                     <i class="fa-solid fa-user"></i>
                 @endif

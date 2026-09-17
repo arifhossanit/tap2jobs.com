@@ -37,7 +37,7 @@
                             <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
                                 <div class="hero-img" style="width: auto; height: auto; min-width: auto;">
                                     <img src="{{ $job->company->company_url }}"
-                                        class="img-fluid new-logo-image" alt="company-details" style="width: auto; max-width: 100%; max-height: 80px; object-fit: contain; border:1px solid #dee2e6; padding: 8px; border-radius: 5px;" />
+                                        class="img-fluid new-logo-image" alt="{{ $job->company->company_name ?: $job->company->user?->full_name }} logo" style="width: auto; max-width: 100%; max-height: 80px; object-fit: contain; border:1px solid #dee2e6; padding: 8px; border-radius: 5px;" />
                                 </div>
                             </div>
                             <div class="">
@@ -72,7 +72,7 @@
                                     <div class="hero-desc job-hero-meta d-flex flex-wrap align-items-center">
                                         <div class="desc d-flex align-items-center">
                                             <div class="job-hero-meta-icon w-20">
-                                                <img src="{{ asset('img_template/briefcase.svg') }}" class="w-100" />
+                                                <img src="{{ asset('img_template/briefcase.svg') }}" class="w-100" alt="" aria-hidden="true" />
                                             </div>
                                             <p class="fs-14 text-gray mb-0">
                                                 {{ html_entity_decode($job->selected_job_categories->pluck('name')->implode(', ')) }}
@@ -80,13 +80,13 @@
                                         </div>
                                         <div class="desc d-flex align-items-center">
                                             <div class="job-hero-meta-icon w-20">
-                                                <img src="{{ asset('img_template/clock.svg') }}" class="w-100" />
+                                                <img src="{{ asset('img_template/clock.svg') }}" class="w-100" alt="" aria-hidden="true" />
                                             </div>
                                             <p class="fs-14 text-gray mb-0">{{ $job->created_at->diffForHumans() }}</p>
                                         </div>
                                         <div class="desc d-flex align-items-center">
                                             <div class="job-hero-meta-icon w-20">
-                                                <img src="{{ asset('img_template/money.svg') }}" class="w-100" />
+                                                <img src="{{ asset('img_template/money.svg') }}" class="w-100" alt="" aria-hidden="true" />
                                             </div>
                                             <span class="fs-14 text-gray">
                                                 @if (!$job->hide_salary)
@@ -536,7 +536,7 @@
                                             <p class="fs-15 text-secondary mb-0">
                                                 {{ $companyName ?: __('messages.common.n/a') }}
                                             </p>
-                                            <a href="{{ route('front.company.details', $company->unique_id) }}"
+                                            <a href="{{ route('front.company.details', $company->slug) }}"
                                                 class="fs-14 text-primary">@lang('messages.front_job_details.view_company_profile')</a>
                                         </div>
                                     </div>
@@ -558,7 +558,7 @@
                                             {{ $company->location ?: __('messages.front_job_details.location_information_not_available') }}
                                         </p>
                                     </div>
-                                    <a href="{{ route('front.company.details', $company->unique_id) }}"
+                                    <a href="{{ route('front.company.details', $company->slug) }}"
                                         class="jobs-position col-12 btn btn-light">
                                         {{ __('messages.front_job_details.open_jobs') }} : {{ $jobsCount ?: 0 }}
                                     </a>
@@ -637,12 +637,12 @@
                                                     <div class="d-flex align-items-center">
                                                         <div class="me-2 flex-shrink-0" style="width: auto; height: auto;">
                                                             <img src="{{ $relatedJob->company->company_url }}"
-                                                                class="img-fluid new-logo-image" alt="company logo" style="width: auto; max-width: 40px; border: 1px solid #dee2e6; padding: 3px; max-height: 40px; object-fit: contain;" />
+                                                                class="img-fluid new-logo-image" alt="{{ $relatedJob->company->company_name ?: $relatedJob->company->user?->full_name }} logo" style="width: auto; max-width: 40px; border: 1px solid #dee2e6; padding: 3px; max-height: 40px; object-fit: contain;" />
                                                         </div>
                                                         <div class="">
                                                             <div class="card-body p-0">
                                                                 <a
-                                                                    href="{{ route('front.company.details', $relatedJob->company->unique_id) }}">
+                                                                    href="{{ route('front.company.details', $relatedJob->company->slug) }}">
                                                                     <p class="card-title fs-14 mb-0 text-primary">
                                                                         {{ $relatedJob->company->user->first_name }}</p>
                                                                 </a>
@@ -656,7 +656,7 @@
                                                         <div class="d-flex align-items-center mb-1">
                                                             <div class="me-2 w-20 flex-shrink-0 d-flex align-items-center">
                                                                 <img src="{{ asset('img_template/briefcase.svg') }}"
-                                                                    class="w-100 d-block" />
+                                                                    class="w-100 d-block" alt="" aria-hidden="true" />
                                                             </div>
                                                             <p class="fs-14 text-gray mb-0">
                                                                 {{ $relatedJob->selected_job_categories->pluck('name')->implode(', ') }}

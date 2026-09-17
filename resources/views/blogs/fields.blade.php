@@ -5,6 +5,18 @@
         {{ Form::text('title', null, ['class' => 'form-control','required', 'placeholder' => __('messages.post.title')]) }}
     </div>
     <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+        {{ Form::label('slug', 'SEO URL Slug:', ['class' => 'form-label']) }}
+        {{ Form::text('slug', null, ['class' => 'form-control', 'maxlength' => 180, 'placeholder' => 'Auto-generated from title when empty']) }}
+    </div>
+    <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
+        {{ Form::label('meta_title', 'SEO Title:', ['class' => 'form-label']) }}
+        {{ Form::text('meta_title', null, ['class' => 'form-control', 'maxlength' => 180, 'placeholder' => 'Defaults to article title']) }}
+    </div>
+    <div class="col-12 mb-5">
+        {{ Form::label('meta_description', 'Meta Description:', ['class' => 'form-label']) }}
+        {{ Form::textarea('meta_description', null, ['class' => 'form-control', 'rows' => 3, 'maxlength' => 255, 'placeholder' => 'Defaults to a summary of the article']) }}
+    </div>
+    <div class="col-xl-6 col-md-6 col-sm-12 mb-5">
         {{ Form::label('blog_category_id', __('messages.post_category.post_category').':', ['class' => 'form-label ']) }}
         <span class="text-danger">*</span>
         {{Form::select('blogCategories[]', $blogCategories, isset($post)?$selectedBlogCategories:null, ['class' => 'form-select','id'=>'blog_category_id','multiple'=>true,'required']) }}

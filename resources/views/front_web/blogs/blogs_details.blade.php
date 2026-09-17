@@ -1,12 +1,12 @@
 @extends('front_web.layouts.app')
 @php
-    $blogTitle = html_entity_decode(strip_tags($blog->title), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $blogTitle = html_entity_decode(strip_tags($blog->meta_title ?: $blog->title), ENT_QUOTES | ENT_HTML5, 'UTF-8');
     $blogDescription = \Illuminate\Support\Str::limit(
-        preg_replace('/\s+/u', ' ', trim(strip_tags(html_entity_decode($blog->description, ENT_QUOTES | ENT_HTML5, 'UTF-8')))),
+        preg_replace('/\s+/u', ' ', trim(strip_tags(html_entity_decode($blog->meta_description ?: $blog->description, ENT_QUOTES | ENT_HTML5, 'UTF-8')))),
         160,
         ''
     );
-    $blogCanonical = route('front.posts.details', $blog);
+    $blogCanonical = route('front.posts.details', $blog->slug);
     $blogBreadcrumbSchema = [
         '@context' => 'https://schema.org',
         '@type' => 'BreadcrumbList',
@@ -15,6 +15,18 @@
             ['@type' => 'ListItem', 'position' => 2, 'name' => __('messages.post.blog'), 'item' => route('front.blogs')],
             ['@type' => 'ListItem', 'position' => 3, 'name' => $blogTitle, 'item' => $blogCanonical],
         ],
+    ];
+    $blogArticleSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'Article',
+        'headline' => $blogTitle,
+        'description' => $blogDescription,
+        'image' => [$blog->blog_image_url],
+        'datePublished' => $blog->created_at?->toAtomString(),
+        'dateModified' => $blog->updated_at?->toAtomString(),
+        'mainEntityOfPage' => ['@type' => 'WebPage', '@id' => $blogCanonical],
+        'author' => ['@type' => 'Person', 'name' => $blog->user?->full_name ?: getAppName()],
+        'publisher' => ['@type' => 'Organization', 'name' => getAppName(), 'logo' => ['@type' => 'ImageObject', 'url' => getSettingValue('logo')]],
     ];
 @endphp
 @section('title', $blogTitle)
@@ -26,6 +38,7 @@
 @section('og_image', $blog->blog_image_url)
 @section('meta_tags')
     <script type="application/ld+json">{!! json_encode($blogBreadcrumbSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+    <script type="application/ld+json">{!! json_encode($blogArticleSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
 @endsection
 {{-- @section('page_css') --}}
 {{--    <link href="{{asset('front_web/scss/blog-details.css')}}" rel="stylesheet" type="text/css"> --}}
@@ -90,6 +103,7 @@
                             <div class="designer-details d-flex mb-40">
                                 <div class="img {{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }}">
                                     <img src="{{ isset($blog->user->avatar) ? $blog->user->avatar : asset('front_web/images/job-categories.png') }}"
+                                        alt="{{ $blog->user?->full_name ?: getAppName() }}"
                                         style="border-radius: 50%;height: 45px;width: 45px;object-fit: cover;" />
 
                                 </div>
@@ -141,7 +155,8 @@
                             @endrole --}}
                             <div class="blog-img mb-40">
                                 <img
-                                    src="{{ !empty($blog->blog_image_url) ? $blog->blog_image_url : asset('web/img/blog_default_image.jpg') }}">
+                                    src="{{ !empty($blog->blog_image_url) ? $blog->blog_image_url : asset('web/img/blog_default_image.jpg') }}"
+                                    alt="{{ html_entity_decode(strip_tags($blog->title)) }}">
                             </div>
                             @if ($blog->postAssignCategories->isNotEmpty())
                                 <div class="designer-details d-flex flex-wrap mb-3">
@@ -218,7 +233,7 @@
                                 <div class="col-sm-6 {{ getFrontSelectLanguage() == 'ar' ? 'text-end border-end' : 'border-end' }} mb-sm-0 mb-3">
                                     @if ($prevPost)
                                         <div class="next-post">
-                                            <a href="{{ route('front.posts.details', $prevPost->id) }}"
+                                            <a href="{{ route('front.posts.details', $prevPost->slug) }}"
                                                 class="fs-16 text-primary mb-1 primary-link-hover">
                                                 <small><i class="fa fa-angle-left"></i></small> {{ __('messages.post.previous_post') }}
                                             </a>
@@ -228,7 +243,7 @@
                                 <div class="col-sm-6 text-sm-end {{ getFrontSelectLanguage() == 'ar' ? 'text-start' : 'text-end' }}">
                                     @if ($nextPost)
                                         <div class="prev-post">
-                                            <a href="{{ route('front.posts.details', $nextPost->id) }}"
+                                            <a href="{{ route('front.posts.details', $nextPost->slug) }}"
                                                 class="fs-16 text-primary mb-1 primary-link-hover">
 
                                                     {{ __('messages.post.next_post') }} <small><i
@@ -250,7 +265,7 @@
                                     @foreach ($relatedBlogs as $relatedBlog)
                                         <div class="col-lg-4 col-md-6">
                                             <article class="blog-related-card h-100">
-                                                <a href="{{ route('front.posts.details', $relatedBlog) }}" class="blog-related-card__image">
+                                                <a href="{{ route('front.posts.details', $relatedBlog->slug) }}" class="blog-related-card__image">
                                                     <img src="{{ $relatedBlog->blog_image_url }}"
                                                          alt="{{ html_entity_decode(strip_tags($relatedBlog->title)) }}">
                                                 </a>
@@ -259,11 +274,11 @@
                                                         {{ $relatedBlog->postAssignCategories->pluck('name')->take(2)->implode(' · ') }}
                                                     </div>
                                                     <h3>
-                                                        <a href="{{ route('front.posts.details', $relatedBlog) }}">
+                                                        <a href="{{ route('front.posts.details', $relatedBlog->slug) }}">
                                                             {{ html_entity_decode($relatedBlog->title) }}
                                                         </a>
                                                     </h3>
-                                                    <a href="{{ route('front.posts.details', $relatedBlog) }}"
+                                                    <a href="{{ route('front.posts.details', $relatedBlog->slug) }}"
                                                        class="blog-related-card__link">{{ __('web.web_blog.read_article') }} <span aria-hidden="true">→</span></a>
                                                 </div>
                                             </article>
@@ -283,11 +298,11 @@
                                                 <div class="card-img {{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
                                                     @if (isset($commentRecord->user_id))
                                                         <img class="card-img" src="{{ $commentRecord->user->avatar }}"
-                                                            alt="user-image">
+                                                            alt="{{ $commentRecord->user->full_name }}">
                                                     @else
                                                         <img class="card-img"
                                                             src="{{ asset('front_web/images/job-categories.png') }}"
-                                                            alt="user-image">
+                                                            alt="{{ $commentRecord->name }}">
                                                     @endif
                                                 </div>
                                                 <div class="">

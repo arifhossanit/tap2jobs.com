@@ -45,7 +45,7 @@ class PostRepository extends BaseRepository
         try {
             /** @var Post $post */
             $input['created_by'] = getLoggedInUserId();
-            $blogInput = Arr::only($input, ['title', 'description', 'created_by', 'is_default']);
+            $blogInput = Arr::only($input, ['title', 'slug', 'meta_title', 'meta_description', 'description', 'created_by', 'is_default']);
             $post = $this->create($blogInput);
 
             if (isset($input['image']) && ! empty($input['image'])) {

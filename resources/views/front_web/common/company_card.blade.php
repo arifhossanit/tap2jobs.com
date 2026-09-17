@@ -13,11 +13,11 @@
         </div>
         <div class="row d-flex flex-xl-column align-items-center">
             <div class="col-3">
-                <img src="{{ $company->company_url }}" class="card-img img-border" alt="">
+                <img src="{{ $company->company_url }}" class="card-img img-border" alt="{{ $company->company_name ?: $company->user?->full_name }} logo">
             </div>
             <div class="col-9 px-3">
                 <div class="card-body p-0">
-                    <a href="{{ route('front.company.details', $company->unique_id) }}"
+                    <a href="{{ route('front.company.details', $company->slug) }}"
                        class="text-secondary primary-link-hover">
                         <h5 class="card-title   fs-20 mb-0">
                             {!! $company->user->first_name !!}</h5>
@@ -49,7 +49,7 @@
             @else
                 <div class="card-desc mt-3">
                     <div class="desc  d-flex mt-2">
-                        <a href="{{ route('front.company.details', $company->unique_id) }}"
+                        <a href="{{ route('front.company.details', $company->slug) }}"
                            class="jobs-position  fs-14 mb-0 me-3">
                             {{ $open_jobs }} {{__('web.open_positions')}}
                         </a>
@@ -65,10 +65,10 @@
         <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
                 <div class="me-4">
-                    <img src="{{ $company->company_url }}" class="card-img" alt="..." />
+                    <img src="{{ $company->company_url }}" class="card-img" alt="{{ $company->company_name ?: $company->user?->full_name }} logo" />
                 </div>
                 <div class="">
-                    <a href="{{ route('front.company.details', $company->unique_id) }}"
+                    <a href="{{ route('front.company.details', $company->slug) }}"
                         class="text-secondary primary-link-hover" >
                         <div class="card-body p-0">
                             <h5 class="card-title fs-18 mb-0">{!! $company->user->first_name !!}</h5>
@@ -104,7 +104,7 @@
                         {{ __('web.no_positions') }}
                     </p>
                 @else
-                    <a href="{{ route('front.company.details', $company->unique_id) }}"
+                    <a href="{{ route('front.company.details', $company->slug) }}"
                         class="jobs-position text text-primary fs-14 mb-0 me-3">
                         {{ $open_jobs }} {{ __('web.open_positions') }}
                     </a>
@@ -121,11 +121,11 @@
         <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
                 <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
-                    <img src="{{ $company->company_url }}" class="card-img" alt="..." />
+                    <img src="{{ $company->company_url }}" class="card-img" alt="{{ $company->company_name ?: $company->user?->full_name }} logo" />
                 </div>
                 <div class="">
                     <div class="card-body p-0">
-                        <a href="{{ route('front.company.details', $company->unique_id) }}"
+                        <a href="{{ route('front.company.details', $company->slug) }}"
                             class="text-secondary primary-link-hover">
                             <h5 class="card-title fs-18 mb-0">
                                 {!! $company->user->first_name !!}</h5>
@@ -139,7 +139,7 @@
                 @if (!empty($company->industry?->name))
                     <div class="d-flex mb-2">
                         <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
-                            <img src="{{ asset('img_template/briefcase.svg') }}" class="w-100" />
+                            <img src="{{ asset('img_template/briefcase.svg') }}" class="w-100" alt="" aria-hidden="true" />
                         </div>
 
                         <p class="fs-14 text-gray mb-0">
@@ -161,7 +161,7 @@
                 @if ($companyLocation !== '')
                     <div class="d-flex mb-2">
                         <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
-                            <img src=" {{ asset('img_template/location.svg') }} " class="w-100" />
+                            <img src=" {{ asset('img_template/location.svg') }} " class="w-100" alt="" aria-hidden="true" />
                         </div>
                         <p class="fs-14 text-gray mb-0">
                             {{ $companyLocation }}
@@ -179,7 +179,7 @@
                     {{ __('web.no_positions') }}
                 </p>
             @else
-                <a href="{{ route('front.company.details', $company->unique_id) }}"
+                <a href="{{ route('front.company.details', $company->slug) }}"
                     class="text text-primary fs-14 mb-0 me-3">
                     {{  __('web.home_menu.opened_jobs') }} {{'-'}} {{ $open_jobs }}
                 </a>

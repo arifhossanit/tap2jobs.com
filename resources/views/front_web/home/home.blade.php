@@ -1322,6 +1322,14 @@
             padding: 16px 10px;
         }
 
+        .bd-category-boxes a.bd-category-link--mobile-extra {
+            display: none;
+        }
+
+        .bd-directory-panel--expanded .bd-category-boxes a.bd-category-link--mobile-extra {
+            display: flex;
+        }
+
         .bd-category-box__name {
             width: 100%;
             white-space: normal;
@@ -1365,7 +1373,7 @@
 @section('content')
 @php
     $visibleCategoryLimit = 500;
-    $mobileCategoryLimit = 8;
+    $mobileCategoryLimit = 14;
     $visibleCategories = $jobCategories->take($visibleCategoryLimit)->values();
     $typeColumns = $jobTypes->take(45)->values()->chunk((int) ceil(max($jobTypes->take(45)->count(), 1) / 3));
 @endphp
@@ -1461,13 +1469,21 @@
                 <div class="bd-directory-panel" data-bd-panel="category">
                     <div class="bd-category-grid bd-category-boxes">
                         @foreach($visibleCategories as $category)
-                            <a class="bd-category-box"
+                            <a class="bd-category-box {{ $loop->iteration > $mobileCategoryLimit ? 'bd-category-link--mobile-extra' : '' }}"
                                href="{{ route('front.job-categories.show', $category) }}">
                                 <span class="bd-category-box__name">{{ html_entity_decode($category->name) }}</span>
                                 <span class="bd-category-box__count"><strong>{{ $category->jobs_count }}</strong>{{ __('web.open_positions') }}</span>
                             </a>
                         @endforeach
                     </div>
+                    @if($visibleCategories->count() > $mobileCategoryLimit)
+                        <button type="button" class="bd-more bd-category-more" data-category-more aria-expanded="false"
+                                data-more-label="{{ __('web.home_page.more') }}"
+                                data-less-label="{{ __('web.home_page.less') }}">
+                            <span data-category-more-label>@lang('web.home_page.more')</span>&nbsp;
+                            <span data-category-more-symbol>+</span>
+                        </button>
+                    @endif
                 </div>
                 <div class="bd-directory-panel" data-bd-panel="type" hidden>
                     <div class="bd-category-grid">
@@ -1484,20 +1500,7 @@
             </div>
             <!-- <aside class="bd-sidebar"></aside> -->
             <aside class="bd-sidebar">
-                <div class="bd-quick-links ">
-                <h2>@lang('web.home_page.quick_links')</h2>
-                <div class="bd-quick-links-grid">
-                    {{-- <a href="{{ route('front.company.lists') }}">Employer List ({{ $quickLinkCounts['employer_list'] ?? 0 }})</a>
-                    <a href="{{ route('front.search.jobs', ['filter' => 'new']) }}">New Jobs ({{ $quickLinkCounts['new_jobs'] ?? 0 }})</a> --}}
-                    <a href="{{ route('front.search.jobs', ['filter' => 'deadline_tomorrow']) }}">Deadline Tomorrow ({{ $quickLinkCounts['deadline_tomorrow'] ?? 0 }})</a>
-                    <a href="{{ route('front.search.jobs', ['job_type' => $quickJobTypeIds['internship'] ?? '']) }}">Internship Opportunity ({{ $quickLinkCounts['internship'] ?? 0 }})</a>
-                    <a href="{{ route('front.search.jobs', ['job_type' => $quickJobTypeIds['contractual'] ?? '']) }}">Contractual Jobs ({{ $quickLinkCounts['contractual'] ?? 0 }})</a>
-                    <a href="{{ route('front.search.jobs', ['job_type' => $quickJobTypeIds['part_time'] ?? '']) }}">Part time Jobs ({{ $quickLinkCounts['part_time'] ?? 0 }})</a>
-                    <a href="{{ route('front.search.jobs', ['overseas' => 1]) }}">Overseas Jobs ({{ $quickLinkCounts['overseas'] ?? 0 }})</a>
-                    <a href="{{ route('front.search.jobs', ['work_from_home' => 1]) }}">Work From Home ({{ $quickLinkCounts['work_from_home'] ?? 0 }})</a>
-                    <a href="{{ route('front.search.jobs', ['is_fresher' => 1]) }}">Fresher Jobs ({{ $quickLinkCounts['fresher_jobs'] ?? 0 }})</a>
-                </div>
-                </div>
+                
                 <div class="bd-government-jobs">
                     <h2 class="bd-government-jobs__title">Government Jobs</h2>
                     @if(($governmentJobs ?? collect())->isNotEmpty())
@@ -1529,6 +1532,20 @@
                             </div>
                         @endif --}}
                     </div>
+                </div>
+                <div class="bd-quick-links ">
+                <h2>@lang('web.home_page.quick_links')</h2>
+                <div class="bd-quick-links-grid">
+                    {{-- <a href="{{ route('front.company.lists') }}">Employer List ({{ $quickLinkCounts['employer_list'] ?? 0 }})</a>
+                    <a href="{{ route('front.search.jobs', ['filter' => 'new']) }}">New Jobs ({{ $quickLinkCounts['new_jobs'] ?? 0 }})</a> --}}
+                    <a href="{{ route('front.search.jobs', ['filter' => 'deadline_tomorrow']) }}">Deadline Tomorrow ({{ $quickLinkCounts['deadline_tomorrow'] ?? 0 }})</a>
+                    <a href="{{ route('front.search.jobs', ['job_type' => $quickJobTypeIds['internship'] ?? '']) }}">Internship Opportunity ({{ $quickLinkCounts['internship'] ?? 0 }})</a>
+                    <a href="{{ route('front.search.jobs', ['job_type' => $quickJobTypeIds['contractual'] ?? '']) }}">Contractual Jobs ({{ $quickLinkCounts['contractual'] ?? 0 }})</a>
+                    <a href="{{ route('front.search.jobs', ['job_type' => $quickJobTypeIds['part_time'] ?? '']) }}">Part time Jobs ({{ $quickLinkCounts['part_time'] ?? 0 }})</a>
+                    <a href="{{ route('front.search.jobs', ['overseas' => 1]) }}">Overseas Jobs ({{ $quickLinkCounts['overseas'] ?? 0 }})</a>
+                    <a href="{{ route('front.search.jobs', ['work_from_home' => 1]) }}">Work From Home ({{ $quickLinkCounts['work_from_home'] ?? 0 }})</a>
+                    <a href="{{ route('front.search.jobs', ['is_fresher' => 1]) }}">Fresher Jobs ({{ $quickLinkCounts['fresher_jobs'] ?? 0 }})</a>
+                </div>
                 </div>
             </aside>
         </div>

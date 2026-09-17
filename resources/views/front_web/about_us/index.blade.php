@@ -59,7 +59,7 @@
                             <div class="row justify-content-center position-relative">
                                 <div class="col-lg-4 text-center px-xl-5 px-lg-4 mb-40">
                                     <div class="img bg-white mx-auto d-flex justify-content-center align-items-center mb-4">
-                                        <img src="{{ $settings['about_image_one'] }}" />
+                                        <img src="{{ $settings['about_image_one'] }}" alt="{{ $settings['about_title_one'] }}" />
                                     </div>
                                     <div class="card-body p-0 pt-lg-2">
                                         <h5 class="fs-18 text-secondary">{{ $settings['about_title_one'] }}</h5>
@@ -70,7 +70,7 @@
                                 </div>
                                 <div class="col-lg-4 text-center px-xl-5 px-lg-4 mb-40">
                                     <div class="img bg-white mx-auto d-flex justify-content-center align-items-center mb-4">
-                                        <img src="{{ $settings['about_image_two'] }}" />
+                                        <img src="{{ $settings['about_image_two'] }}" alt="{{ $settings['about_title_two'] }}" />
                                     </div>
                                     <div class="card-body p-0 pt-lg-2">
                                         <h5 class="fs-18 text-secondary">{{ $settings['about_title_two'] }}</h5>
@@ -81,7 +81,7 @@
                                 </div>
                                 <div class="col-lg-4 text-center px-xl-5 px-lg-4 mb-40">
                                     <div class="img bg-white mx-auto d-flex justify-content-center align-items-center mb-4">
-                                        <img src="{{ $settings['about_image_three'] }}" />
+                                        <img src="{{ $settings['about_image_three'] }}" alt="{{ $settings['about_title_three'] }}" />
                                     </div>
                                     <div class="card-body p-0 pt-lg-2">
                                         <h5 class="fs-18 text-secondary">{{ $settings['about_title_three'] }}</h5>
@@ -91,10 +91,10 @@
                                     </div>
                                 </div>
                                 <div class="arrow1 position-absolute d-lg-block d-none">
-                                    <img src="{{ asset('img_template/arrow-1.png') }}" />
+                                    <img src="{{ asset('img_template/arrow-1.png') }}" alt="" aria-hidden="true" />
                                 </div>
                                 <div class="arrow2 position-absolute d-lg-block d-none">
-                                    <img src="{{ asset('img_template/arrow-2.png') }}" />
+                                    <img src="{{ asset('img_template/arrow-2.png') }}" alt="" aria-hidden="true" />
                                 </div>
                             </div>
                         </div>

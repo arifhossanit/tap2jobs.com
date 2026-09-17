@@ -11,6 +11,7 @@ use App\Repositories\PostRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class PostController extends AppBaseController
@@ -48,6 +49,11 @@ class PostController extends AppBaseController
         ];
 
         return view('front_web.blogs.blogs_details', compact('url'))->with($data);
+    }
+
+    public function redirectLegacyBlog(int $postId): RedirectResponse
+    {
+        return redirect()->route('front.posts.details', Post::findOrFail($postId)->slug, 301);
     }
 
     /**

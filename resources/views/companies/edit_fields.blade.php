@@ -199,6 +199,19 @@
             {{ Form::text('pinterest_url', old('pinterest_url', isset($company->user->pinterest_url) ? $company->user->pinterest_url : null), ['class' => 'form-control','id'=>'pinterestUrl','placeholder'=>'https://www.pinterest.com']) }}
         </div>
     </div>
+    <div class="col-12 border-top my-4"></div>
+    <div class="col-xl-4 col-md-6 col-sm-12 mb-5">
+        {{ Form::label('slug', 'SEO URL Slug:', ['class' => 'form-label']) }}
+        {{ Form::text('slug', old('slug', $company->slug), ['class' => 'form-control', 'maxlength' => 180]) }}
+    </div>
+    <div class="col-xl-4 col-md-6 col-sm-12 mb-5">
+        {{ Form::label('seo_title', 'SEO Title:', ['class' => 'form-label']) }}
+        {{ Form::text('seo_title', old('seo_title', $company->seo_title), ['class' => 'form-control', 'maxlength' => 180]) }}
+    </div>
+    <div class="col-xl-4 col-md-12 col-sm-12 mb-5">
+        {{ Form::label('meta_description', 'Meta Description:', ['class' => 'form-label']) }}
+        {{ Form::textarea('meta_description', old('meta_description', $company->meta_description), ['class' => 'form-control', 'rows' => 3, 'maxlength' => 255]) }}
+    </div>
     <div class="col-xl-3 col-md-3 col-sm-12 mb-5" io-image-input="true">
         <label for="company_logo" class="form-label">
             {{__('messages.company.company_logo').':'}}

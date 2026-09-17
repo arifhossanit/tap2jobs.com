@@ -25,7 +25,7 @@
     <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="{{ url('/') }}">
-                <img src="{{ asset($settings['logo']) }}" alt="" class="d-inline-block img-fluid h-100" />
+                <img src="{{ asset($settings['logo']) }}" alt="{{ getAppName() }} logo" class="d-inline-block img-fluid h-100" />
             </a>
             <div class="front-mobile-actions d-flex d-lg-none align-items-center">
                 @guest

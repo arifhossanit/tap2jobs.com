@@ -549,7 +549,7 @@
                                                     </fieldset>
                                                 </div>
                                                 <div class="employer-register-disability-illustration" aria-hidden="true">
-                                                    <img src="{{ asset('assets/img/disability.svg') }}" alt="">
+                                                    <img src="{{ asset('assets/img/disability.svg') }}" alt="" aria-hidden="true">
                                                 </div>
                                             </div>
 

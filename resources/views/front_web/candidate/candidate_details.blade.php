@@ -144,7 +144,7 @@
                         <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
                             <div class="hero-img">
                                 <img src="{{ !empty($candidateDetails->user->avatar) ? $candidateDetails->user->avatar : asset('assets/img/infyom-logo.png') }}"
-                                    class="w-100 h-100 rounded-circle object-fit-cover" alt="company-details" />
+                                    class="w-100 h-100 rounded-circle object-fit-cover" alt="{{ $candidateDetails->user?->full_name ?? __('messages.common.candidate') }}" />
                             </div>
                         </div>
                         <div class="">
@@ -155,7 +155,7 @@
                                     @if (!empty($candidateDetails->functionalArea?->name))
                                         <div class="desc d-flex {{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
                                             <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
-                                                <img src="{{ asset('img_template/briefcase.svg') }}" class="w-100" />
+                                                <img src="{{ asset('img_template/briefcase.svg') }}" class="w-100" alt="" aria-hidden="true" />
                                             </div>
                                             <p class="fs-14 text-gray mb-0">
                                                 {{ $candidateDetails->functionalArea->name }}
@@ -165,7 +165,7 @@
                                     @if (!empty($candidateDetails->user->country_name))
                                         <div class="desc d-flex {{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
                                             <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
-                                                <img src="{{ asset('img_template/location.svg') }}" class="w-100">
+                                                <img src="{{ asset('img_template/location.svg') }}" class="w-100" alt="" aria-hidden="true">
                                             </div>
                                             <p class="fs-14 text-gray mb-0">
                                                 {{ collect([

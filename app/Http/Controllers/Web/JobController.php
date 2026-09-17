@@ -225,7 +225,7 @@ class JobController extends AppBaseController
                 '@type' => 'Organization',
                 'name' => $companyName ?: getAppName(),
                 'sameAs' => $job->company?->website ?: ($job->company?->unique_id
-                    ? route('front.company.details', $job->company->unique_id)
+                    ? route('front.company.details', $job->company->slug)
                     : null),
                 'logo' => $job->company?->company_url,
             ]),

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\GovernmentJob;
+use App\Models\Company;
 use App\Models\Job;
 use App\Models\JobCategory;
 use App\Models\Post;
@@ -22,6 +23,7 @@ class SeoController extends Controller
             'jobs' => Job::query()->availableForPublic()->count(),
             'government-jobs' => $this->governmentJobQuery()->count(),
             'posts' => Post::query()->count(),
+            'companies' => Company::query()->whereNotNull('slug')->where('slug', '!=', '')->count(),
         ])->flatMap(function (int $count, string $type) {
             $pages = max(1, (int) ceil($count / self::URLS_PER_SITEMAP));
 
@@ -43,6 +45,7 @@ class SeoController extends Controller
             'jobs' => $this->jobEntries($page),
             'government-jobs' => $this->governmentJobEntries($page),
             'posts' => $this->postEntries($page),
+            'companies' => $this->companyEntries($page),
             default => abort(404),
         };
 
@@ -145,13 +148,29 @@ class SeoController extends Controller
     private function postEntries(int $page)
     {
         return Post::query()
-            ->select(['id', 'updated_at'])
+            ->select(['id', 'slug', 'updated_at'])
             ->orderBy('id')
             ->forPage($page, self::URLS_PER_SITEMAP)
             ->get()
             ->map(fn (Post $post) => [
-                'loc' => route('front.posts.details', $post),
+                'loc' => route('front.posts.details', $post->slug),
                 'lastmod' => $post->updated_at?->toAtomString(),
+            ]);
+    }
+
+    private function companyEntries(int $page)
+    {
+        return Company::query()
+            ->without('user')
+            ->whereNotNull('slug')
+            ->where('slug', '!=', '')
+            ->select(['id', 'slug', 'updated_at'])
+            ->orderBy('id')
+            ->forPage($page, self::URLS_PER_SITEMAP)
+            ->get()
+            ->map(fn (Company $company) => [
+                'loc' => route('front.company.details', $company->slug),
+                'lastmod' => $company->updated_at?->toAtomString(),
             ]);
     }
 

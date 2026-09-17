@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -166,6 +167,9 @@ class Company extends Model implements HasMedia
         'fax',
         'user_id',
         'unique_id',
+        'slug',
+        'seo_title',
+        'meta_description',
         'last_change',
         'created_by',
     ];
@@ -210,6 +214,9 @@ class Company extends Model implements HasMedia
         'fax' => 'string',
         'user_id' => 'integer',
         'unique_id' => 'string',
+        'slug' => 'string',
+        'seo_title' => 'string',
+        'meta_description' => 'string',
         'last_change' => 'integer',
         'created_by' => 'string',
     ];
@@ -239,9 +246,20 @@ class Company extends Model implements HasMedia
 
     protected static function booted(): void
     {
+        static::saving(function (Company $company) {
+            $source = filled($company->slug) ? $company->slug : ($company->company_name ?: optional($company->user)->full_name);
+            $base = Str::slug((string) $source) ?: 'company';
+            $slug = $base;
+            $suffix = 2;
+            while (static::where('slug', $slug)->when($company->exists, fn ($query) => $query->whereKeyNot($company->getKey()))->exists()) {
+                $slug = $base.'-'.$suffix++;
+            }
+            $company->slug = $slug;
+        });
         static::saved(fn () => Cache::forget(self::JOB_FORM_COMPANIES_CACHE_KEY));
         static::deleted(fn () => Cache::forget(self::JOB_FORM_COMPANIES_CACHE_KEY));
     }
+
     public function getCountryNameAttribute()
     {
         if (! empty($this->user->country)) {

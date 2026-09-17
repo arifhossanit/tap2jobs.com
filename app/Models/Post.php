@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -62,6 +63,9 @@ class Post extends Model implements HasMedia
         'title' => 'required|max:180',
         'description' => 'required',
         'image' => 'nullable|mimes:png,jpg,jepg',
+        'slug' => 'nullable|string|max:180|unique:posts,slug',
+        'meta_title' => 'nullable|string|max:180',
+        'meta_description' => 'nullable|string|max:255',
     ];
 
     /**
@@ -69,6 +73,9 @@ class Post extends Model implements HasMedia
      */
     public $fillable = [
         'title',
+        'slug',
+        'meta_title',
+        'meta_description',
         'description',
         'created_by',
         'is_default',
@@ -82,10 +89,36 @@ class Post extends Model implements HasMedia
     protected $casts = [
         'id' => 'integer',
         'title' => 'string',
+        'slug' => 'string',
+        'meta_title' => 'string',
+        'meta_description' => 'string',
         'description' => 'string',
         'created_by' => 'integer',
         'is_default' => 'boolean',
     ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (Post $post) {
+            if (! filled($post->slug)) {
+                $post->slug = $post->makeUniqueSlug($post->title);
+            } else {
+                $post->slug = $post->makeUniqueSlug($post->slug);
+            }
+        });
+    }
+
+    private function makeUniqueSlug(string $value): string
+    {
+        $base = Str::slug(html_entity_decode(strip_tags($value))) ?: 'blog';
+        $slug = $base;
+        $suffix = 2;
+        while (static::where('slug', $slug)->when($this->exists, fn ($query) => $query->whereKeyNot($this->getKey()))->exists()) {
+            $slug = $base.'-'.$suffix++;
+        }
+
+        return $slug;
+    }
 
     /**
      * @return mixed

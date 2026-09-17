@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Post;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdatePostRequest extends FormRequest
 {
@@ -21,6 +22,7 @@ class UpdatePostRequest extends FormRequest
     public function rules(): array
     {
         $rules = Post::$rules;
+        $rules['slug'] = ['nullable', 'string', 'max:180', Rule::unique('posts', 'slug')->ignore($this->route('post'))];
 
         return $rules;
     }

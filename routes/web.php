@@ -880,7 +880,7 @@ Route::middleware('auth', 'role:Employer', 'xss', 'verified.user')->prefix('empl
 Route::get('/job-details/{uniqueId}/og-image', [Web\JobController::class, 'jobOgImage'])->name('front.job.og-image');
 Route::get('/sitemap.xml', [Web\SeoController::class, 'sitemapIndex'])->name('seo.sitemap.index');
 Route::get('/sitemaps/{type}-{page}.xml', [Web\SeoController::class, 'sitemapSection'])
-         ->whereIn('type', ['pages', 'job-categories', 'jobs', 'government-jobs', 'posts'])
+         ->whereIn('type', ['pages', 'job-categories', 'jobs', 'government-jobs', 'posts', 'companies'])
          ->whereNumber('page')
          ->name('seo.sitemap.section');
 Route::get('/robots.txt', [Web\SeoController::class, 'robots'])->name('seo.robots');
@@ -901,7 +901,8 @@ Route::middleware('xss', 'setLanguage')->group(function () {
                   '/candidate-lists',
                   [Web\CandidateController::class, 'getCandidatesLists']
          )->name('front.candidate.lists')->middleware('role:Admin|Employer');
-         Route::get('/company-details/{uniqueId?}', [Web\CompanyController::class, 'getCompaniesDetails'])->name('front.company.details');
+         Route::get('/companies/{company:slug}', [Web\CompanyController::class, 'getCompaniesDetails'])->name('front.company.details');
+         Route::get('/company-details/{uniqueId}', [Web\CompanyController::class, 'redirectLegacyCompany'])->name('front.company.details.legacy');
          Route::get('/about-us', [Web\AboutUsController::class, 'FAQLists'])->name('front.about.us');
          Route::get('/candidate-faq', [Web\AboutUsController::class, 'candidateFaq'])->name('candidate.faq');
          Route::get('/employer-faq', [Web\AboutUsController::class, 'employerFaq'])->name('employer.faq');
@@ -939,7 +940,8 @@ Route::middleware('xss', 'setLanguage')->group(function () {
          //Blog Listing
          Route::get('/posts', [Web\PostController::class, 'getBlogLists'])->name('front.post.lists');
          Route::get('/blogs', [Web\PostController::class, 'getBlogLists'])->name('front.blogs');
-         Route::get('/posts/details/{post}', [Web\PostController::class, 'getBlogDetails'])->name('front.posts.details');
+         Route::get('/blogs/{post:slug}', [Web\PostController::class, 'getBlogDetails'])->name('front.posts.details');
+         Route::get('/posts/details/{postId}', [Web\PostController::class, 'redirectLegacyBlog'])->whereNumber('postId')->name('front.posts.details.legacy');
          Route::get(
                   '/posts/category/{postCategory}',
                   [Web\PostController::class, 'getBlogDetailsByCategory']

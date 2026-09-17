@@ -16,10 +16,10 @@
                                 <div class="col-md-3 col-sm-6 col-8 d-flex justify-content-center">
                                     <div class="position-relative">
                                         <div class="testimonial-img">
-                                            <img src="{{ isset($testimonial->customer_image_url)? $testimonial->customer_image_url:asset('assets/img/infyom-logo.png') }}" alt="profile">
+                                            <img src="{{ isset($testimonial->customer_image_url)? $testimonial->customer_image_url:asset('assets/img/infyom-logo.png') }}" alt="{{ $testimonial->customer_name ?? __('messages.testimonial.testimonial') }}">
                                         </div>
                                         <div class="comma position-absolute">
-                                            <img src="{{asset('front_web/images/comma.png')}}" alt="comma">
+                                            <img src="{{asset('front_web/images/comma.png')}}" alt="" aria-hidden="true">
                                         </div>
                                     </div>
                                 </div>

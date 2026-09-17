@@ -9,6 +9,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class CompanyController extends AppBaseController
@@ -34,13 +35,16 @@ class CompanyController extends AppBaseController
     /**
      * @return Application|Factory|View
      */
-    public function getCompaniesDetails($uniqueId): View
+    public function getCompaniesDetails(Company $company): View
     {
-        $company = Company::whereUniqueId($uniqueId)->first();
-
         $data = $this->companyRepository->getCompanyDetail($company->id);
 
         return view('front_web.company.company_details')->with($data);
+    }
+
+    public function redirectLegacyCompany(string $uniqueId): RedirectResponse
+    {
+        return redirect()->route('front.company.details', Company::whereUniqueId($uniqueId)->firstOrFail()->slug, 301);
     }
 
     /**

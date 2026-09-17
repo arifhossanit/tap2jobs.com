@@ -4,7 +4,7 @@
     <div class="d-flex flex-sm-row justify-content-between align-items-start">
         <div class="d-flex align-items-center me-2">
             <div class="card-img me-4">
-                <img class="card-img" src="{{:image}}" alt="user-image">
+                <img class="card-img" src="{{:image}}" alt="{{:commentName}}">
             </div>
             <div class="">
                 <div class="card-body p-0">

@@ -47,15 +47,15 @@
                                     <div class="card d-flex flex-md-row">
                                         <div class="card-img-top position-relative">
                                             <img src="{{ !empty($blog->blog_image_url) ? $blog->blog_image_url : asset('front_web/images/blog-1.png') }}"
-                                                class="card-img-top" alt="Employee Motivation" />
+                                                class="card-img-top" alt="{{ html_entity_decode(strip_tags($blog->title)) }}" />
                                             <div class="overlay position-absolute">
-                                                <a href="{{ route('front.posts.details', $blog->id) }}"
+                                                <a href="{{ route('front.posts.details', $blog->slug) }}"
                                                     class="btn text-white fs-16">
                                                     {{ __('web.post_menu.read_more') }}
                                                 </a>
                                             </div>
                                         </div>
-                                        <a href="{{ route('front.posts.details', $blog->id) }}" class="w-100">
+                                        <a href="{{ route('front.posts.details', $blog->slug) }}" class="w-100">
                                             <div class="card-body py-30 my-auto">
                                                 <h5 class="card-title fs-18 text-secondary">
                                                     {{ html_entity_decode($blog->title) }}

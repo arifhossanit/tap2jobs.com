@@ -1,6 +1,29 @@
 @extends('front_web.layouts.app')
-@section('title')
-    {{ __('web.company_details.company_details') }}
+@php
+    $companyName = html_entity_decode(strip_tags($companyDetail->company_name ?: $companyDetail->user?->full_name ?: getAppName()), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $companyTitle = $companyDetail->seo_title ?: $companyName;
+    $companyDescription = $companyDetail->meta_description ?: ($companyDetail->company_summary ?: $companyDetail->details);
+    $companyDescription = \Illuminate\Support\Str::limit(preg_replace('/\s+/u', ' ', trim(strip_tags((string) $companyDescription))), 160, '');
+    $companyCanonical = route('front.company.details', $companyDetail->slug);
+    $companySchema = array_filter([
+        '@context' => 'https://schema.org',
+        '@type' => 'Organization',
+        'name' => $companyName,
+        'url' => $companyCanonical,
+        'logo' => $companyDetail->company_url,
+        'description' => $companyDescription,
+        'address' => $companyDetail->location ? ['@type' => 'PostalAddress', 'streetAddress' => $companyDetail->location] : null,
+        'sameAs' => $companyDetail->website ? [$companyDetail->website] : null,
+    ]);
+@endphp
+@section('title', $companyTitle)
+@section('meta_description', $companyDescription)
+@section('canonical_url', $companyCanonical)
+@section('og_title', $companyTitle)
+@section('og_description', $companyDescription)
+@section('og_image', $companyDetail->company_url)
+@section('meta_tags')
+    <script type="application/ld+json">{!! json_encode($companySchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
 @endsection
 {{-- @section('page_css') --}}
 {{--    <link href="{{asset('front_web/scss/company-details.css')}}" rel="stylesheet" type="text/css"> --}}
@@ -17,7 +40,7 @@
                             <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
                                 <div class="hero-img" style="width: auto; height: auto; min-width: auto;">
                                     <img src="{{ !empty($companyDetail->company_url) ? $companyDetail->company_url : asset('assets/img/infyom-logo.png') }}"
-                                        class="img-fluid new-logo-image" alt="company-details" style="width: auto; max-width: 100%; max-height: 80px; object-fit: contain;" />
+                                        class="img-fluid new-logo-image" alt="{{ $companyName }} logo" style="width: auto; max-width: 100%; max-height: 80px; object-fit: contain;" />
                                 </div>
                             </div>
                             <div class="">
@@ -27,7 +50,7 @@
                                     <div class="hero-desc d-md-flex flex-wrap">
                                         <div class="desc d-flex mb-1 {{ getFrontSelectLanguage() == 'ar' ? 'ms-5' : 'me-5' }}">
                                             <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
-                                                <img src="{{ asset('img_template/briefcase.svg') }}" class="w-100" />
+                                                <img src="{{ asset('img_template/briefcase.svg') }}" class="w-100" alt="" aria-hidden="true" />
                                             </div>
                                             <p class="text-gray mb-0">
                                                 {{ !empty($companyDetail->industry->name) ? $companyDetail->industry->name : __('messages.n/a') }}
@@ -35,7 +58,7 @@
                                         </div>
                                         <div class="desc d-flex mb-1 {{ getFrontSelectLanguage() == 'ar' ? 'ms-5' : 'me-5' }}">
                                             <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
-                                                <img src="{{ asset('img_template/location.svg') }}" class="w-100" />
+                                                <img src="{{ asset('img_template/location.svg') }}" class="w-100" alt="" aria-hidden="true" />
                                             </div>
                                             <p class="text-gray mb-0">
                                                 {{ collect([
@@ -49,7 +72,7 @@
                                         @isset($companyDetail->user->phone)
                                             <div class="desc d-flex mb-1 {{ getFrontSelectLanguage() == 'ar' ? 'ms-5' : 'me-5' }}">
                                                 <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
-                                                    <img src="{{ asset('img_template/contact.svg') }}" class="w-100" />
+                                                    <img src="{{ asset('img_template/contact.svg') }}" class="w-100" alt="" aria-hidden="true" />
                                                 </div>
                                                 <p class="text-gray mb-0">
                                                     {{ $companyDetail->user->phone }}
@@ -58,7 +81,7 @@
                                         @endisset
                                         <div class="desc d-flex mb-1 {{ getFrontSelectLanguage() == 'ar' ? 'ms-5' : 'me-5' }}">
                                             <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
-                                                <img src="{{ asset('img_template/email.svg') }}" class="w-100" />
+                                                <img src="{{ asset('img_template/email.svg') }}" class="w-100" alt="" aria-hidden="true" />
                                             </div>
                                             <a href="#"
                                                 class="text-gray text-break">{{ $companyDetail->user->email }}</p></a>
@@ -121,7 +144,7 @@
                                             <div class="d-sm-flex position-relative">
                                                 <div class="mb-sm-0 mb-3 {{ getFrontSelectLanguage() == 'ar' ? 'ms-sm-4' : 'me-sm-4' }}">
                                                     <img src="{{ $job->company->company_url }}" class="card-img"
-                                                        alt="">
+                                                        alt="{{ $companyName }} logo">
                                                 </div>
                                                 <div class="">
                                                     <div class="card-body p-0">
@@ -133,7 +156,7 @@
                                                                 <div class="desc d-flex {{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
                                                                     <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
                                                                         <img src="{{ asset('img_template/briefcase.svg') }}"
-                                                                            class="w-100" />
+                                                                            class="w-100" alt="" aria-hidden="true" />
                                                                     </div>
                                                                     <p class="fs-14 text-gray mb-2">
                                                                         {{ $job->selected_job_categories->pluck('name')->implode(', ') }}
@@ -142,7 +165,7 @@
                                                                 <div class="desc d-flex {{ getFrontSelectLanguage() == 'ar' ? 'ms-4' : 'me-4' }}">
                                                                     <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-3' : 'me-3' }} w-20">
                                                                         <img src="{{ asset('img_template/location.svg') }}"
-                                                                            class="w-100" />
+                                                                            class="w-100" alt="" aria-hidden="true" />
                                                                     </div>
                                                                     <p class="fs-14 text-gray mb-2">
                                                                         {{ !empty($job->full_location) ? $job->full_location : 'Location Info. not available.' }}

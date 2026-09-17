@@ -112,6 +112,9 @@ class UpdateCompanyRequest extends FormRequest
         $rules['disability_inclusion_training'] = 'required_if:has_disability_facilities,1|nullable|boolean';
         $rules['disability_facilities'] = 'nullable|array';
         $rules['disability_facilities.*'] = 'string|in:accessible_documentation,accessible_washrooms,adapted_transport,assistive_software,flexible_shifts,work_from_home,ramps_lifts,reasonable_accommodation,warning_indicators,workstation_adaptations';
+        $rules['slug'] = ['nullable', 'string', 'max:180', Rule::unique('companies', 'slug')->ignore($company)];
+        $rules['seo_title'] = 'nullable|string|max:180';
+        $rules['meta_description'] = 'nullable|string|max:255';
 
         if ($this->routeIs('company.update.form')) {
             unset($rules['ownership_type_id'], $rules['company_size_id'], $rules['no_of_offices']);

@@ -18,12 +18,13 @@
         @foreach ($popularBlogs as $popularBlog)
             <div class="recent-post d-flex mb-40">
                 <div class="img">
-                    <a href="{{ route('front.posts.details', $popularBlog->id) }}">
+                    <a href="{{ route('front.posts.details', $popularBlog->slug) }}">
                         <img src="{{ !empty($popularBlog->blog_image_url) ? $popularBlog->blog_image_url : asset('assets/img/infyom-logo.png') }}"
+                             alt="{{ html_entity_decode(strip_tags($popularBlog->title)) }}"
                             class="recent-post-img">
                     </a>
                 </div>
-                <a href="{{ route('front.posts.details', $popularBlog->id) }}" class="fs-14 text-secondary">
+                <a href="{{ route('front.posts.details', $popularBlog->slug) }}" class="fs-14 text-secondary">
                     <div class="desc {{ getFrontSelectLanguage() == 'ar' ? 'me-4' : 'ms-4' }}">
                         <p class="fs-14 text-secondary mb-0">
                             {{ html_entity_decode($popularBlog->title) }}

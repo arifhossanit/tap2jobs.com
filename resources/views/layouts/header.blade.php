@@ -17,6 +17,11 @@
     </nav>
     <ul class="nav align-items-center">
         <li class="px-sm-3 px-2 d-none d-lg-block">
+            <a href="{{ route('consultation-leads.consultation') }}" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2">
+                Consultation Leads
+            </a>
+        </li>
+        <li class="px-sm-3 px-2 d-none d-lg-block">
             <a href="{{ route('admin.PendingJobs.index') }}" class="btn btn-outline-warning btn-sm d-flex align-items-center gap-2">
                 Pending Jobs
                 @if($pendingJobsCount > 0)
@@ -36,6 +41,7 @@
                 @endif
             </a>
         </li>
+        
         @if(getLoggedInUser()->theme_mode)
             <li class="px-sm-3 px-2">
                 <a  href="{{ route('theme.mode') }}" title="Switch to Light Mode">

@@ -218,6 +218,19 @@
         </div>
     </div>
 
+    <div class="col-12 border-top my-4"></div>
+    <div class="col-xl-4 col-md-6 col-sm-12 mb-5">
+        {{ Form::label('slug', 'SEO URL Slug:', ['class' => 'form-label']) }}
+        {{ Form::text('slug', old('slug'), ['class' => 'form-control', 'maxlength' => 180, 'placeholder' => 'Auto-generated from company name']) }}
+    </div>
+    <div class="col-xl-4 col-md-6 col-sm-12 mb-5">
+        {{ Form::label('seo_title', 'SEO Title:', ['class' => 'form-label']) }}
+        {{ Form::text('seo_title', old('seo_title'), ['class' => 'form-control', 'maxlength' => 180, 'placeholder' => 'Defaults to company name']) }}
+    </div>
+    <div class="col-xl-4 col-md-12 col-sm-12 mb-5">
+        {{ Form::label('meta_description', 'Meta Description:', ['class' => 'form-label']) }}
+        {{ Form::textarea('meta_description', old('meta_description'), ['class' => 'form-control', 'rows' => 3, 'maxlength' => 255, 'placeholder' => 'Defaults to company summary']) }}
+    </div>
     <div class="col-xl-3 col-md-3 col-sm-12 mb-5">
         <label class='form-label '>{{ __('messages.common.status').':' }}</label><br>
         <div class="form-check form-switch mb-3">
