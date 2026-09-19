@@ -2,6 +2,7 @@
 @php($notificationCount = $notifications->whereNull('read_at')->count())
 @php($pendingJobsCount = \App\Models\Job::where('status', \App\Models\Job::SELECT_PANDING)->count())
 @php($expireIn7DaysCount = \App\Models\Job::whereDate('job_expiry_date', '<=', \Carbon\Carbon::today()->addDays(7)->toDateString())->whereDate('job_expiry_date', '>=', \Carbon\Carbon::today()->toDateString())->where('status', \App\Models\Job::STATUS_OPEN)->where('is_suspended', \App\Models\Job::NOT_SUSPENDED)->count())
+@php($newConsultationLeadsCount = \App\Models\ConsultationLead::where('lead_from', \App\Models\ConsultationLead::LEAD_FROM_CONSULTATION_FORM)->where('status', \App\Models\ConsultationLead::STATUS_NEW)->count())
 <header class='d-flex align-items-center justify-content-between flex-grow-1 header px-4 px-lg-7 px-xl-0'>
     <button type="button" class="btn px-0 aside-menu-container__aside-menubar d-block d-xl-none sidebar-btn">
         <i class="fa-solid fa-bars fs-1"></i>
@@ -19,6 +20,11 @@
         <li class="px-sm-3 px-2 d-none d-lg-block">
             <a href="{{ route('consultation-leads.consultation') }}" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2">
                 Consultation Leads
+                @if($newConsultationLeadsCount > 0)
+                    <span class="badge bg-danger text-white rounded-pill border border-light">
+                        {{ $newConsultationLeadsCount }}
+                    </span>
+                @endif
             </a>
         </li>
         <li class="px-sm-3 px-2 d-none d-lg-block">

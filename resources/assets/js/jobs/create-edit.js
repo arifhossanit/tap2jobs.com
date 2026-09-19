@@ -443,7 +443,7 @@ function loadEmployeeCreateEditData() {
     }
 
     initializeJobSelect2(
-        "#jobTypeId,#jobShiftId,#countryId,#stateId,#cityId,#thanaId,#salaryPeriodsId,#requiredDegreeLevelId",
+        "#jobTypeId,#jobShiftId,#stateId,#cityId,#thanaId,#salaryPeriodsId,#requiredDegreeLevelId",
         $.extend({ width: "calc(100% - 44px)" }, jobSelect2SearchOptions)
     );
 

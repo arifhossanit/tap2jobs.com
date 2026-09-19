@@ -148,11 +148,22 @@ class JobController extends AppBaseController
         $data['jobSkills'] = $job->jobsSkill()->pluck('skill_id')->toArray();
         $data['jobCategories'] = $job->jobCategories()->pluck('job_categories.id')->toArray() ?: [$job->job_category_id];
         $firstCountryId = array_key_first($data['countries']);
-        $selectedCountryId = old('country_id', $job->country_id ?: ($data['default_country_id'] ?: $firstCountryId));
-        $selectedStateId = old('state_id', $job->state_id);
-        $selectedCityId = old('city_id', $job->city_id);
+        $primaryLocation = $job->locations()->where('is_primary', true)->first();
+        $selectedStateId = old('state_id', $job->state_id ?: $primaryLocation?->state_id);
+        $selectedCityId = old('city_id', $job->city_id ?: $primaryLocation?->city_id);
+        $selectedCountryId = old(
+            'country_id',
+            $job->country_id
+                ?: $primaryLocation?->country_id
+                ?: ($selectedStateId ? State::whereKey($selectedStateId)->value('country_id') : null)
+                ?: $data['default_country_id']
+                ?: $firstCountryId
+        );
 
         $data['selected_country_id'] = $selectedCountryId;
+        $data['selected_state_id'] = $selectedStateId;
+        $data['selected_city_id'] = $selectedCityId;
+        $data['selected_thana_id'] = old('thana_id', $job->thana_id ?: $primaryLocation?->thana_id);
         $states = $selectedCountryId ? getStates($selectedCountryId) : [];
         $cities = $selectedStateId ? getCities($selectedStateId) : [];
         $thanas = $selectedCityId ? getThanas($selectedCityId) : [];
@@ -325,18 +336,25 @@ class JobController extends AppBaseController
         $data['jobTags'] = $job->jobsTag()->pluck('tag_id')->toArray();
         $data['jobSkills'] = $job->jobsSkill()->pluck('skill_id')->toArray();
         $data['jobCategories'] = $job->jobCategories()->pluck('job_categories.id')->toArray() ?: [$job->job_category_id];
-        $data['selected_country_id'] = old('country_id', $job->country_id);
-        $states = $cities = null;
-        if (isset($job->country_id)) {
-            $states = getStates($job->country_id);
-        }
-        if (isset($job->state_id)) {
-            $cities = getCities($job->state_id);
-        }
-        $thanas = null;
-        if (isset($job->city_id)) {
-            $thanas = getThanas($job->city_id);
-        }
+        $primaryLocation = $job->locations()->where('is_primary', true)->first();
+        $selectedStateId = old('state_id', $job->state_id ?: $primaryLocation?->state_id);
+        $selectedCityId = old('city_id', $job->city_id ?: $primaryLocation?->city_id);
+        $selectedCountryId = old(
+            'country_id',
+            $job->country_id
+                ?: $primaryLocation?->country_id
+                ?: ($selectedStateId ? State::whereKey($selectedStateId)->value('country_id') : null)
+                ?: $data['default_country_id']
+                ?: array_key_first($data['countries'])
+        );
+
+        $data['selected_country_id'] = $selectedCountryId;
+        $data['selected_state_id'] = $selectedStateId;
+        $data['selected_city_id'] = $selectedCityId;
+        $data['selected_thana_id'] = old('thana_id', $job->thana_id ?: $primaryLocation?->thana_id);
+        $states = $selectedCountryId ? getStates($selectedCountryId) : [];
+        $cities = $selectedStateId ? getCities($selectedStateId) : [];
+        $thanas = $selectedCityId ? getThanas($selectedCityId) : [];
         $countries = $data['countries'];
 
         return view('jobs.edit', compact('data', 'job', 'cities', 'states', 'countries', 'thanas'));

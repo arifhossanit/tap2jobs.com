@@ -7,6 +7,7 @@ use App\Models\Job;
 use App\Models\State;
 use App\Models\Company;
 use App\Models\GovernmentJob;
+use App\Models\JobLocation;
 use App\Models\JobType;
 use App\Models\Setting;
 use Carbon\Carbon;
@@ -54,7 +55,17 @@ class HomeController extends AppBaseController
             ->whereHas('country', function ($q) {
                 $q->where('short_code', 'BD');
             })
-            ->withCount(['jobs' => $openJobs])
+            ->select('states.*')
+            ->selectSub(
+                JobLocation::query()
+                    ->selectRaw('COUNT(DISTINCT job_locations.job_id)')
+                    ->join('jobs', 'jobs.id', '=', 'job_locations.job_id')
+                    ->whereColumn('job_locations.state_id', 'states.id')
+                    ->where('jobs.status', Job::STATUS_OPEN)
+                    ->where('jobs.is_suspended', Job::NOT_SUSPENDED)
+                    ->whereDate('jobs.job_expiry_date', '>=', Carbon::now()->toDateString()),
+                'jobs_count'
+            )
             ->orderBy('name')
             ->get();
         $data['quickJobTypes'] = JobType::query()

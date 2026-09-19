@@ -14015,7 +14015,7 @@ function loadEmployeeCreateEditData() {
   if (countrySelect.length && !countrySelect.val()) {
     countrySelect.val(countrySelect.find("option").first().val());
   }
-  initializeJobSelect2("#jobTypeId,#jobShiftId,#countryId,#stateId,#cityId,#thanaId,#salaryPeriodsId,#requiredDegreeLevelId", $.extend({
+  initializeJobSelect2("#jobTypeId,#jobShiftId,#stateId,#cityId,#thanaId,#salaryPeriodsId,#requiredDegreeLevelId", $.extend({
     width: "calc(100% - 44px)"
   }, jobSelect2SearchOptions));
   var $jobDegreeTitle = $("#jobDegreeTitleId");

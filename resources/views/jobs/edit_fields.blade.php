@@ -116,21 +116,21 @@
                     <div class="col-xl-2 col-md-4 col-sm-12 mb-5">
         {{ Form::label('country', __('messages.company.country').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{ Form::select('country_id', $data['countries'], $data['selected_country_id'], ['id' => 'countryId', 'class' => 'form-select', 'data-control' => 'select2', 'required']) }}
+        {{ Form::select('country_id', $data['countries'], $data['selected_country_id'], ['id' => 'countryId', 'class' => 'form-select', 'required']) }}
     </div>
     <div class="col-xl-2 col-md-4 col-sm-12 mb-5">
         {{ Form::label('state', __('messages.job.state').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{ Form::select('state_id', $states ?? [], old('state_id', $job->state_id), ['id' => 'stateId', 'class' => 'form-select', 'data-control' => 'select2', 'placeholder' => __('messages.company.select_state'), 'required']) }}
+        {{ Form::select('state_id', $states ?? [], old('state_id', $data['selected_state_id'] ?? $job->state_id), ['id' => 'stateId', 'class' => 'form-select', 'data-control' => 'select2', 'placeholder' => __('messages.company.select_state'), 'required']) }}
     </div>
     <div class="col-xl-2 col-md-4 col-sm-12 mb-5">
         {{ Form::label('city', __('messages.job.city').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{ Form::select('city_id', $cities ?? [], old('city_id', $job->city_id), ['id' => 'cityId', 'class' => 'form-select', 'placeholder' => __('messages.company.select_city'), 'data-control' => 'select2', 'required']) }}
+        {{ Form::select('city_id', $cities ?? [], old('city_id', $data['selected_city_id'] ?? $job->city_id), ['id' => 'cityId', 'class' => 'form-select', 'placeholder' => __('messages.company.select_city'), 'data-control' => 'select2', 'required']) }}
     </div>
     <div class="col-xl-2 col-md-4 col-sm-12 mb-5">
         {{ Form::label('thana', __('messages.thana.thana_name').':', ['class' => 'form-label']) }}
-        {{ Form::select('thana_id', $thanas ?? [], old('thana_id', $job->thana_id), ['id' => 'thanaId', 'class' => 'form-select', 'placeholder' => __('messages.company.select_thana'), 'data-control' => 'select2']) }}
+        {{ Form::select('thana_id', $thanas ?? [], old('thana_id', $data['selected_thana_id'] ?? $job->thana_id), ['id' => 'thanaId', 'class' => 'form-select', 'placeholder' => __('messages.company.select_thana'), 'data-control' => 'select2']) }}
     </div>
     <div class="col-xl-4 col-md-4 col-sm-12 mb-5">
         {{ Form::label('city_village_name', __('messages.city_village.city_villages').':', ['class' => 'form-label']) }}

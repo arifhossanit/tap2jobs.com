@@ -115,7 +115,7 @@
                     <div class="col-xl-2 col-md-4 col-sm-12 mb-5">
         {{ Form::label('country', __('messages.company.country').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{ Form::select('country_id', $data['countries'], old('country_id'), ['id' => 'countryId', 'class' => 'form-select', 'placeholder' => __('messages.company.select_country'), 'data-control' => 'select2', 'required']) }}
+        {{ Form::select('country_id', $data['countries'], old('country_id', $data['selected_country_id'] ?? null), ['id' => 'countryId', 'class' => 'form-select', 'placeholder' => __('messages.company.select_country'), 'required']) }}
     </div>
     <div class="col-xl-2 col-md-4 col-sm-12 mb-5">
         {{ Form::label('state', __('messages.company.state').':', ['class' => 'form-label']) }}
