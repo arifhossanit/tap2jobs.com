@@ -101,13 +101,6 @@
     </ul>
 </li>
 
-<li class="nav-item {{ Request::is('admin/admin*') ? 'active' : '' }}">
-    <a class="nav-link d-flex align-items-center py-3" aria-current="page" href="{{ route('admin.index') }}">
-        <span class="aside-menu-icon {{ $iconPad }}"><i class="fa-solid fa-user-tie"></i></span>
-        <span class="aside-menu-title">{{ __('messages.candidate.admins') }}</span>
-    </a>
-</li>
-
 <li class="nav-item aside-item-collapse {{ $candidatesActive ? 'active collapse-submenu' : '' }}">
     <a class="nav-link d-flex align-items-center py-3" data-bs-toggle="collapse" href="#asideCandidatesMenu"
        role="button" aria-expanded="{{ $candidatesActive ? 'true' : 'false' }}" aria-controls="asideCandidatesMenu">
@@ -142,6 +135,14 @@
         </li>
     </ul>
 </li>
+
+<li class="nav-item {{ Request::is('admin/admin*') ? 'active' : '' }}">
+    <a class="nav-link d-flex align-items-center py-3" aria-current="page" href="{{ route('admin.index') }}">
+        <span class="aside-menu-icon {{ $iconPad }}"><i class="fa-solid fa-user-tie"></i></span>
+        <span class="aside-menu-title">{{ __('messages.candidate.admins') }}</span>
+    </a>
+</li>
+
 
 <li class="nav-item aside-item-collapse {{ $jobsActive ? 'active collapse-submenu' : '' }}">
     <a class="nav-link d-flex align-items-center py-3" data-bs-toggle="collapse" href="#asideJobsMenu"
