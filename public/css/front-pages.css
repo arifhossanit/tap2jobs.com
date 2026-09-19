@@ -13155,7 +13155,7 @@ html[dir='rtl'] .register-page .input-password-hide {
     .login-page .front-auth-ad-layout,
     .register-page .front-auth-ad-layout {
         display: grid;
-        grid-template-columns: minmax(0, 310px) minmax(0, 1100px) minmax(0, 310px);
+        grid-template-columns: minmax(0, 310px) minmax(0, 900px) minmax(0, 310px);
         gap: 90px;
         width: 100%;
         margin: 0;

@@ -10,6 +10,11 @@
     }
 @endphp
 <style>
+    header .navbar-brand,
+    header .navbar-brand img {
+        color: #1f2937 !important;
+    }
+
     /* Desktop guest actions live outside the collapsible navigation. */
     @media (max-width: 991.98px) {
         header #navbarNav {
@@ -25,7 +30,8 @@
     <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="{{ url('/') }}">
-                <img src="{{ asset($settings['logo']) }}" alt="{{ getAppName() }} logo" class="d-inline-block img-fluid h-100" />
+                <img src="{{ asset($settings['logo']) }}" alt="{{ getAppName() }}"
+                     class="d-inline-block img-fluid h-100" />
             </a>
             <div class="front-mobile-actions d-flex d-lg-none align-items-center">
                 @guest

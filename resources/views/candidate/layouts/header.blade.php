@@ -24,7 +24,7 @@
            class="text-decoration-none horizontal-sidebar-logo d-flex align-items-center">
             <div class="image {{ checkLanguageSession() == 'ar' ? 'ms-3' : 'me-3' }}">
                 <img src="{{getLogoUrl()}}"
-                     class="img-fluid new-logo-image" alt="profile image" style="width: auto; max-width: 100%; max-height: 45px; object-fit: contain;">
+                     class="img-fluid new-logo-image" alt="{{ getAppName() }}" style="width: auto; max-width: 100%; max-height: 45px; object-fit: contain;">
             </div>
             <!-- <span class="text-gray-900 fs-4 d-none d-sm-block"> {{ getAppName() }}</span> -->
         </a>
