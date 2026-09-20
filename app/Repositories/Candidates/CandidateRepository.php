@@ -255,6 +255,13 @@ class CandidateRepository extends BaseRepository
                     'pinterest_url', 'google_plus_url', 'region_code',
                 ]);
 
+            $emailChanged = isset($userInput['email'])
+                && strcasecmp((string) $user->email, (string) $userInput['email']) !== 0;
+
+            if ($emailChanged) {
+                $userInput['email_verified_at'] = null;
+            }
+
             $user->update($userInput);
 
             if ((isset($input['image']))) {
@@ -280,6 +287,10 @@ class CandidateRepository extends BaseRepository
 
             DB::commit();
 
+            if ($emailChanged) {
+                $user->sendEmailVerificationNotification();
+            }
+
             return true;
         } catch (Exception $e) {
             DB::rollBack();
@@ -301,7 +312,7 @@ class CandidateRepository extends BaseRepository
             /** @var User $user */
             $user = Auth::user();
 
-            $user->update(Arr::only($input, [
+            $userInput = Arr::only($input, [
                 'first_name',
                 'last_name',
                 'email',
@@ -309,7 +320,16 @@ class CandidateRepository extends BaseRepository
                 'region_code',
                 'gender',
                 'dob',
-            ]));
+            ]);
+
+            $emailChanged = isset($userInput['email'])
+                && strcasecmp((string) $user->email, (string) $userInput['email']) !== 0;
+
+            if ($emailChanged) {
+                $userInput['email_verified_at'] = null;
+            }
+
+            $user->update($userInput);
 
             if (isset($input['image'])) {
                 $user->clearMediaCollection(User::PROFILE);
@@ -335,6 +355,10 @@ class CandidateRepository extends BaseRepository
             ]));
 
             DB::commit();
+
+            if ($emailChanged) {
+                $user->sendEmailVerificationNotification();
+            }
 
             return true;
         } catch (Exception $e) {

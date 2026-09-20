@@ -11,6 +11,8 @@
     {{ $faqPageTitle ?? __('messages.faq.candidate_faq') }}
 @endsection
 
+@section('meta_description', ($faqPageTitle ?? '') === __('messages.faq.employer_faq') ? __('web.seo.employer_faq_description') : __('web.seo.candidate_faq_description'))
+
 @section('page_css')
     <style>
         .candidate-faq-page {

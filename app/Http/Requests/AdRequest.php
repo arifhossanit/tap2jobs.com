@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Ad;
+use App\Models\ProfileReferenceOption;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -29,6 +30,14 @@ abstract class AdRequest extends FormRequest
             'description' => ['nullable', 'string', 'max:500'],
             'link_url' => ['nullable', 'url', 'max:255'],
             'cta_text' => ['nullable', 'string', 'max:50'],
+            'consultation_type' => [
+                'nullable',
+                'string',
+                Rule::in(ProfileReferenceOption::values(
+                    ProfileReferenceOption::TYPE_CONSULTATION_TYPE,
+                    [ProfileReferenceOption::SCOPE_EMPLOYER]
+                )),
+            ],
             'position' => ['required', Rule::in(array_keys(Ad::POSITIONS))],
             'page' => ['required', 'array', 'min:1'],
             'page.*' => ['string', Rule::in(array_keys(Ad::PAGES))],

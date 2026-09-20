@@ -313,8 +313,21 @@ class CandidateController extends AppBaseController
      */
     public function updateProfile(CandidateUpdateProfileRequest $request): RedirectResponse
     {
-        $this->candidateRepository->updateProfile($request->validated());
+        $input = $request->validated();
+        $emailChanged = isset($input['email'])
+            && strcasecmp((string) Auth::user()->email, (string) $input['email']) !== 0;
+
+        $this->candidateRepository->updateProfile($input);
         $this->applicationCvService->ensure(Auth::user()->candidate->fresh(), true);
+
+        if ($emailChanged) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('front.candidate.login')
+                ->with('verification_required_message', __('messages.flash.email_changed_verify'));
+        }
 
         Flash::success(__('messages.flash.candidate_profile'));
 
@@ -424,6 +437,8 @@ class CandidateController extends AppBaseController
     public function updatePersonalDetails(CandidateUpdatePersonalDetailsRequest $request)
     {
         $input = $request->validated();
+        $emailChanged = isset($input['email'])
+            && strcasecmp((string) Auth::user()->email, (string) $input['email']) !== 0;
         $beforePercentage = $this->candidateProfilePercentage(Auth::user()->candidate);
 
         if ($request->hasFile('image')) {
@@ -432,6 +447,22 @@ class CandidateController extends AppBaseController
 
         $this->candidateRepository->updatePersonalDetails($input);
         $this->flashProfileCompletion(Auth::user()->candidate?->fresh(), $beforePercentage);
+
+        if ($emailChanged) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return $this->sendResponse(
+                    ['redirectUrl' => route('front.candidate.login')],
+                    __('messages.flash.email_changed_verify')
+                );
+            }
+
+            return redirect()->route('front.candidate.login')
+                ->with('verification_required_message', __('messages.flash.email_changed_verify'));
+        }
 
         if ($request->ajax() || $request->wantsJson()) {
             return $this->sendResponse(

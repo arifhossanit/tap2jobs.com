@@ -97,6 +97,11 @@
                     </div>
 
                     <div class="col-sm-6 mb-5">
+                        {{ Form::label('consultation_type', __('web.consultation.consultation_type') . ':', ['class' => 'form-label']) }}
+                        {{ Form::select('consultation_type', $consultationTypes, null, ['class' => 'form-select', 'id' => 'consultationType', 'placeholder' => __('web.consultation.select_consultation_type')]) }}
+                    </div>
+
+                    <div class="col-sm-6 mb-5">
                         {{ Form::label('sort_order', __('messages.ad.sort_order') . ':', ['class' => 'form-label']) }}
                         {{ Form::number('sort_order', 0, ['class' => 'form-control', 'id' => 'sortOrder', 'min' => 0]) }}
                     </div>

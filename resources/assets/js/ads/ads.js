@@ -49,6 +49,7 @@ function adRenderData(editAdId) {
                 $("#editDescription").val(result.data.description || "");
                 $("#editLinkUrl").val(result.data.link_url || "");
                 $("#editCtaText").val(result.data.cta_text || "");
+                $("#editConsultationType").val(result.data.consultation_type || "");
                 $("#editSortOrder").val(result.data.sort_order || 0);
 
                 let targetPages = result.data.page_array ||

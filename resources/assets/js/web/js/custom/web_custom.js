@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', loadwebCustomData);
 
 function loadwebCustomData () {
-    $('.alert').delay(5000).slideUp(300);
+    $('.alert').delay(30000).slideUp(300);
     $('#gRecaptchaContainerCompanyRegistration').empty()
     setTimeout(function () {
         loadCaptchaForCompanyRegistration()

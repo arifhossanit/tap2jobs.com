@@ -42,7 +42,7 @@
                             </div>
                             <div class="">
                                 <div class="hero-content">
-                                    <h4 class="job-hero-title text-secondary lh-base mb-2 d-flex align-items-center flex-wrap">
+                                    <h1 class="job-hero-title text-secondary lh-base mb-2 d-flex align-items-center flex-wrap">
                                         <span>{{ html_entity_decode(Str::limit($job->job_title, 50, '...')) }}</span>
                                         @role('Candidate')
                                             <span class="job-header-actions d-inline-flex align-items-center ms-3">
@@ -65,10 +65,10 @@
                                                 </button>
                                             </span>
                                         @endrole
-                                    </h4>
-                                    <h5 class="fs-16 text-primary mb-3">
+                                    </h1>
+                                    <p class="fs-16 text-primary mb-3">
                                         {{ $job->company->user->first_name }} {{ $job->company->user->last_name }}
-                                    </h5>
+                                    </p>
                                     <div class="hero-desc job-hero-meta d-flex flex-wrap align-items-center">
                                         <div class="desc d-flex align-items-center">
                                             <div class="job-hero-meta-icon w-20">
@@ -227,7 +227,7 @@
                         @endif
                         <div class="col-lg-8">
                             <div class="Job Description mb-lg-5 mb-4">
-                                <h5 class="fs-18 text-secondary mb-4">Requirements</h5>
+                                <h2 class="fs-18 text-secondary mb-4">Requirements</h2>
                                 @if ($job->description)
                                     <div class="job-description job-editor-content">
                                         {!! $job->description !!}
@@ -237,7 +237,7 @@
                                 @endif
                             </div>
                             <div class="key-responsibilities mb-lg-5 mb-4">
-                                <h5 class="fs-18 text-secondary mb-4">@lang('messages.front_job_details.key_responsibilities')</h5>
+                                <h2 class="fs-18 text-secondary mb-4">@lang('messages.front_job_details.key_responsibilities')</h2>
                                 @if ($job->key_responsibilities)
                                     <div class="key-responsibilities job-editor-content">
                                         {!! $job->key_responsibilities !!}
@@ -249,14 +249,14 @@
                             </div>
                             @if ($job->compensation_and_other_benefits)
                             <div class="compensation-and-benefits mb-lg-5 mb-4">
-                                <h5 class="fs-18 text-secondary mb-4">Compensation and other benefits</h5>
+                                <h2 class="fs-18 text-secondary mb-4">Compensation and other benefits</h2>
                                 <div class="compensation-and-benefits job-editor-content">
                                     {!! $job->compensation_and_other_benefits !!}
                                 </div>
                             </div>
                             @endif
                             <div class="skill-experience mb-lg-5 mb-4">
-                                <h5 class="fs-18 text-secondary mb-4">@lang('messages.front_job_details.skill_experience')</h5>
+                                <h2 class="fs-18 text-secondary mb-4">@lang('messages.front_job_details.skill_experience')</h2>
                                 @if (!empty($skills))
                                 <ul>
                                     @foreach ($skills as $id => $skill)
@@ -268,7 +268,7 @@
                                 @endif
                             </div>
                             <div class="share-this-job mb-lg-5 mb-5">
-                                <h5 class="fs-18 text-secondary mb-4">@lang('messages.front_job_details.share_this_job'):</h5>
+                                <h2 class="fs-18 text-secondary mb-4">@lang('messages.front_job_details.share_this_job'):</h2>
                                 <div class="icon-box d-flex">
                                     <a href="{{ $url['facebook'] }}" target="_blank" rel="noopener noreferrer" onclick="if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return true; var popup = window.open('about:blank', '_blank', 'width=800,height=600'); if (!popup) return true; popup.opener = null; popup.location.replace(this.href); return false;" class="social-icon facebook me-sm-4 me-3 d-flex align-items-center justify-content-center flex-shrink-0" title="@lang('messages.front_job_details.facebook')">
                                         <div class="icon d-flex">
@@ -292,7 +292,7 @@
                         <div class="col-lg-4">
                             <div class="job-desc-right br-10 px-40 bg-light mb-40">
                                 <div class="pb-2">
-                                    <h5 class="fs-18 text-dark mb-4">@lang('messages.front_job_details.job_overview')</h5>
+                                    <h2 class="fs-18 text-dark mb-4">@lang('messages.front_job_details.job_overview')</h2>
                                     {{-- <div class="desc-box d-flex justify-content-between mb-4">
                                         <div class="desc d-flex">
                                             <div class="{{ getFrontSelectLanguage() == 'ar' ? 'ms-2' : 'me-2' }} w-20">
@@ -577,9 +577,9 @@
                             </div> --}}
                         </div>
                         <div class="col-12">
-                            <section class="job-safety-notice" aria-labelledby="job-safety-heading" lang="bn">
+                            <section class="job-safety-notice" aria-labelledby="job-safety-heading" lang="{{ app()->getLocale() }}">
                                 <div class="job-safety-notice__header">
-                                    <h5 id="job-safety-heading">Report this Job / Company (রিপোর্ট)</h5>
+                                    <h1 id="job-safety-heading">{{ __('web.job_safety.heading') }}</h1>
                                     {{-- @role('Candidate')
                                         <button type="button" class="btn btn-outline-danger reportJobAbuse"
                                             @if ($isJobReportedAsAbuse) disabled @endif
@@ -595,7 +595,7 @@
                                         @endguest
                                     @endrole --}}
                                 </div>
-                                <p><strong>সতর্কতা:</strong> এই চাকরির জন্য কোনো ব্যক্তি/প্রতিষ্ঠান আপনার কাছে অর্থ দাবি করলে, নিয়োগ প্রক্রিয়ার সময় কোনো ধরনের হয়রানি, প্রতারণা বা অনৈতিক আচরণ করলে অনুগ্রহ করে দ্রুত আমাদের জানান অথবা সংশ্লিষ্ট চাকরিটি রিপোর্ট করুন। চাকরি পাওয়ার আশায় কোনো ব্যক্তি বা প্রতিষ্ঠানকে অর্থ প্রদান করবেন না। নিয়োগ প্রক্রিয়া বা চাকরিতে যোগদানের পর শারীরিক, মানসিক কিংবা অন্য কোনো ধরনের হয়রানির আশঙ্কা থাকলে সতর্ক থাকুন এবং প্রয়োজনীয় ব্যবস্থা গ্রহণ করুন। কোনো ধরনের অর্থ লেনদেন, প্রতারণা বা নিয়োগকর্তার অনৈতিক/হয়রানিমূলক আচরণের জন্য TAP2JOBS দায়ী থাকবে না। চাকরিতে আবেদন বা যোগদানের আগে নিয়োগদাতা ও চাকরির তথ্য যথাযথভাবে যাচাই করে নিন।</p>
+                                <p><strong>{{ __('web.job_safety.warning') }}:</strong> {{ __('web.job_safety.notice') }}</p>
                                 <p>
                                     <i class="fa-regular fa-envelope me-1" aria-hidden="true"></i><strong>complain@tap2jobs.com</strong>
                                 </p>
@@ -603,9 +603,9 @@
                         </div>
                         @if (count($getRelatedJobs) > 0)
                             <div class="row job-details-related-jobs our-latest-jobs">
-                                <h5 class="fs-18 text-secondary mt-5 mb-4 pb-2">
+                                <h2 class="fs-18 text-secondary mt-5 mb-4 pb-2">
                                     @lang('messages.front_job_details.related_jobs')
-                                </h5>
+                                </h2>
                                 @foreach ($getRelatedJobs as $relatedJob)
                                     @if ($relatedJob->status == \App\Models\Job::STATUS_OPEN && $relatedJob->is_suspended == \App\Models\Job::NOT_SUSPENDED)
                                         <div class="col-lg-4 col-md-6 px-xl-3 mb-40">
@@ -613,17 +613,17 @@
                                                 @if (Str::length($relatedJob['job_title']) < 35)
                                                     <a href="{{ $relatedJob->front_url }}"
                                                         class="text-secondary primary-link-hover">
-                                                        <h5 class="card-title fs-16 mb-2">
+                                                        <h3 class="card-title fs-16 mb-2">
                                                             {{ html_entity_decode($relatedJob['job_title']) }}
-                                                        </h5>
+                                                        </h3>
                                                     </a>
                                                 @else
                                                     <a href="{{ $relatedJob->front_url }}"
                                                         data-toggle="tooltip" data-placement="bottom" class="text-secondary primary-link-hover hover-color"
                                                         title="{{ html_entity_decode($relatedJob['job_title']) }}">
-                                                        <h5 class="card-title fs-16 mb-2">
+                                                        <h3 class="card-title fs-16 mb-2">
                                                             {{ Str::limit(html_entity_decode($relatedJob['job_title']), 30, '...') }}
-                                                        </h5>
+                                                        </h3>
                                                     </a>
                                                 @endif
                                                 {{-- <div class="mt-2 d-flex flex-wrap align-items-center">

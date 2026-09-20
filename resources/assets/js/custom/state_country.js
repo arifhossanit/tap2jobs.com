@@ -1,4 +1,4 @@
-listenChange('#countryId', function (){
+listenChange('#countryId, #jobPrimaryCountryId', function (){
     const selectedCountry = $(this).val();
     const selectedState = $('#stateId').val();
     const selectedCity = $('#cityId').val();
@@ -74,7 +74,7 @@ function loadCities(stateId, selectedCity = null, selectedThana = null) {
         dataType: 'json',
         data: {
             state: stateId,
-            country: $('#countryId').val(),
+            country: $('#jobPrimaryCountryId').length ? $('#jobPrimaryCountryId').val() : $('#countryId').val(),
         },
         success: function (data) {
             $.each(data.data || {}, function (i, v) {

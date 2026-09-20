@@ -14619,6 +14619,10 @@ body:has(.job-action-modal.show) .modal-backdrop {
     margin-top: 28px;
     color: #555;
 }
+.job-details-page .job-hero-title {
+    font-size: 30px;
+    line-height: 1.25 !important;
+}
 .job-safety-notice__header {
     display: flex;
     flex-wrap: wrap;
@@ -14627,9 +14631,15 @@ body:has(.job-action-modal.show) .modal-backdrop {
     gap: 12px;
     margin-bottom: 12px;
 }
-.job-safety-notice h5 { color: #cf2626; font-size: 16px; margin: 0; }
+.job-safety-notice h1 { color: #cf2626; font-size: 15px; line-height: 1.35; margin: 0; }
 .job-safety-notice p { font-size: 15px; line-height: 1.85; margin: 0; }
 .job-safety-notice .btn { white-space: nowrap; border-radius: 4px; }
+
+@media (max-width: 575px) {
+    .job-details-page .job-hero-title { font-size: 24px; }
+    .job-safety-notice h1 { font-size: 14px; }
+}
+
 .job-details-section .share-this-job .icon-box { flex-wrap: wrap; gap: 10px 0; }
 .job-details-section .share-this-job .icon-box .social-icon { width: 40px; height: 40px; border-radius: 4px; }
 

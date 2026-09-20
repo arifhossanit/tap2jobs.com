@@ -13,6 +13,13 @@ return [
 
     //header keys
     'home' => 'Home',
+    'seo' => [
+        'home_description' => 'Find jobs, career opportunities, government vacancies, and trusted employers across Bangladesh with Tap2Jobs.',
+        'jobs_description' => 'Search current jobs in Bangladesh by category, skill, location, experience, salary, and job type on Tap2Jobs.',
+        'consultation_description' => 'Request a free consultation with Tap2Jobs for HR, recruitment, and business software solutions tailored to your organization.',
+        'candidate_faq_description' => 'Find answers to common Tap2Jobs candidate questions about accounts, job search, applications, profiles, and support.',
+        'employer_faq_description' => 'Find answers to common Tap2Jobs employer questions about company accounts, job posting, candidate management, and support.',
+    ],
     'jobs' => 'Jobs',
     'find_jobs' => 'Find Jobs',
     'companies' => 'Companies',
@@ -427,5 +434,31 @@ return [
         'industry' => 'Industry',
         'more' => 'More',
         'less' => 'Less',
+    ],
+
+    'job_safety' => [
+        'heading' => 'Report this Job / Company',
+        'warning' => 'Warning',
+        'notice' => 'If any person or organization asks you for money for this job, harasses you during the recruitment process, commits fraud, or behaves unethically, please notify us promptly or report the job. Do not pay money to anyone in the hope of getting a job. Verify the employer and job information carefully before applying or joining. TAP2JOBS is not responsible for financial transactions, fraud, or unethical or harassing conduct by an employer.',
+    ],
+
+    'government_jobs' => [
+        'title' => 'Government Jobs',
+        'list' => 'Government Job List',
+        'keyword' => 'Keyword',
+        'keyword_placeholder' => 'Job title or organization',
+        'organization' => 'Organization',
+        'all_organizations' => 'All Organizations',
+        'source' => 'Source',
+        'all_sources' => 'All Sources',
+        'all_jobs' => 'All Jobs',
+        'active_jobs' => 'Active Jobs',
+        'expired_jobs' => 'Expired Jobs',
+        'apply_filter' => 'Apply Filter',
+        'circular' => 'Government Circular',
+        'published' => 'Published',
+        'empty' => 'No government job circulars found.',
+        'application_deadline' => 'Application Deadline',
+        'open_circular' => 'Open Circular',
     ],
 ];

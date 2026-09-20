@@ -118,6 +118,7 @@ Route::any('subscription-update', [SubscriptionController::class, 'updateSubscri
 Route::middleware('setLanguage')->group(function () {
     Route::post('news-letter', [Web\WebController::class, 'newsLetter'])->name('news-letter.create');
     Route::get('consultation', [ConsultationLeadController::class, 'create'])->name('consultation.create');
+    Route::get('consultation/{ad:slug}', [ConsultationLeadController::class, 'create'])->name('consultation.ad');
     Route::post('consultation', [ConsultationLeadController::class, 'store'])->name('consultation.store');
 });
 
@@ -886,7 +887,7 @@ Route::get('/sitemaps/{type}-{page}.xml', [Web\SeoController::class, 'sitemapSec
 Route::get('/robots.txt', [Web\SeoController::class, 'robots'])->name('seo.robots');
 
 // web routes (i.e landing pages)
-Route::middleware('xss', 'setLanguage')->group(function () {
+Route::middleware('xss', 'setLanguage', 'redirectLocalizedUrl', 'urlLocale:en')->group(function () {
          Route::get('/', [Web\HomeController::class, 'index'])->name('front.home');
          Route::get('/get-jobs-search', [Web\HomeController::class, 'getJobsSearch'])->name('get.jobs.search');
          Route::get('/jobs', [Web\JobController::class, 'index'])->name('front.search.jobs');
@@ -950,6 +951,35 @@ Route::middleware('xss', 'setLanguage')->group(function () {
          //Change language
          Route::post('/change-language', [Web\HomeController::class, 'changeLanguage'])
                   ->name('front.change-language');
+});
+
+// Crawlable Bangla equivalents for public pages. English remains the default
+// unprefixed URL, while these routes provide stable URLs for hreflang.
+Route::prefix('bn')->as('bn.')->middleware('xss', 'setLanguage', 'urlLocale:bn')->group(function () {
+         Route::get('/', [Web\HomeController::class, 'index'])->name('front.home');
+         Route::get('/jobs', [Web\JobController::class, 'index'])->name('front.search.jobs');
+         Route::get('/government-jobs', [\App\Http\Controllers\GovernmentJobController::class, 'publicIndex'])->name('front.government-jobs.index');
+         Route::get('/government-jobs/{governmentJob}', [\App\Http\Controllers\GovernmentJobController::class, 'publicShow'])->name('front.government-jobs.show');
+         Route::get('/job-details/{slug}', [Web\JobController::class, 'jobDetails'])->name('front.job.details');
+         Route::get('/company-lists', [Web\CompanyController::class, 'getCompaniesLists'])->name('front.company.lists');
+         Route::get('/companies/{company:slug}', [Web\CompanyController::class, 'getCompaniesDetails'])->name('front.company.details');
+         Route::get('/about-us', [Web\AboutUsController::class, 'FAQLists'])->name('front.about.us');
+         Route::get('/candidate-faq', [Web\AboutUsController::class, 'candidateFaq'])->name('candidate.faq');
+         Route::get('/employer-faq', [Web\AboutUsController::class, 'employerFaq'])->name('employer.faq');
+         Route::get('/categories', [Web\CategoriesController::class, 'index'])->name('front.categories');
+         Route::get('/jobs/category/{jobCategory:slug}', [Web\CategoriesController::class, 'show'])->name('front.job-categories.show');
+         Route::get('/consultation', [ConsultationLeadController::class, 'create'])->name('consultation.create');
+         Route::get('/consultation/{ad:slug}', [ConsultationLeadController::class, 'create'])->name('consultation.ad');
+         Route::get('/front-register', [Web\RegisterController::class, 'candidateRegister'])->name('front.register');
+         Route::get('/candidate-register', [Web\RegisterController::class, 'candidateRegister'])->name('candidate.register');
+         Route::get('/employer-register', [Web\RegisterController::class, 'employerRegister'])->name('employer.register');
+         Route::get('/privacy-policy-list', [Web\PrivacyPolicyController::class, 'showPrivacyPolicy'])->name('privacy.policy.list');
+         Route::get('/terms-conditions-list', [Web\PrivacyPolicyController::class, 'showTermsConditions'])->name('terms.conditions.list');
+         Route::get('/contact-us', fn () => view('front_web.contact.index'))->name('front.contact');
+         Route::get('/posts', [Web\PostController::class, 'getBlogLists'])->name('front.post.lists');
+         Route::get('/blogs', [Web\PostController::class, 'getBlogLists'])->name('front.blogs');
+         Route::get('/blogs/{post:slug}', [Web\PostController::class, 'getBlogDetails'])->name('front.posts.details');
+         Route::get('/posts/category/{postCategory}', [Web\PostController::class, 'getBlogDetailsByCategory'])->name('front.blog.category');
 });
 
 Route::middleware('auth', 'role:Admin|Employer', 'xss', 'verified.user', 'setLanguage')->group(function () {

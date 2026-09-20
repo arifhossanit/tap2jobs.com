@@ -1802,6 +1802,7 @@ return [
         'enter_key_responsibilities' => 'Enter Key Responsibilities',
         'success_verify' => 'You have successfully verified your email. Please login !',
         'candidate_profile' => 'Candidate profile updated successfully.',
+        'email_changed_verify' => 'Your email address has been updated. We sent a verification link to the new address. Please verify it before signing in again.',
         'candidate_retrieved' => 'Candidate retrieved successfully.',
         'candidate_save' => 'Candidate saved successfully.',
         'candidate_update' => 'Candidate updated successfully.',

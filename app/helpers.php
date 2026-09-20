@@ -451,15 +451,15 @@ if (! function_exists('checkLanguageSession')) {
     function checkLanguageSession()
     {
 
-        if (Auth::user()) {
-            $language = Language::whereIsoCode(Auth::user()->language)->first();
+        if (Session::has('languageName')) {
+            $language = Language::whereIsoCode(Session::get('languageName'))->first();
+
             if ($language) {
                 return $language['iso_code'];
             }
         }
-        elseif (Session::has('languageName')) {
-            $language = Language::whereIsoCode(Session::get('languageName'))->first();
-
+        elseif (Auth::user()) {
+            $language = Language::whereIsoCode(Auth::user()->language)->first();
             if ($language) {
                 return $language['iso_code'];
             }
@@ -1209,15 +1209,15 @@ if (! function_exists('getFrontSelectLanguage')) {
         // }
 
         // return $langId;
-        if (Auth::user()) {
-            $language = Language::whereIsoCode(Auth::user()->language)->first();
+        if (Session::has('languageName')) {
+            $language = Language::whereIsoCode(Session::get('languageName'))->first();
+
             if ($language) {
                 return $language['iso_code'];
             }
         }
-        elseif (Session::has('languageName')) {
-            $language = Language::whereIsoCode(Session::get('languageName'))->first();
-
+        elseif (Auth::user()) {
+            $language = Language::whereIsoCode(Auth::user()->language)->first();
             if ($language) {
                 return $language['iso_code'];
             }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth\Front;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Auth;
 use Illuminate\Contracts\View\Factory;
@@ -10,6 +11,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
@@ -122,5 +124,22 @@ class LoginController extends Controller
                 ->withCookie(\Cookie::forget('email'))
                 ->withCookie(\Cookie::forget('password'))
                 ->withCookie(\Cookie::forget('remember'));
+    }
+
+    /**
+     * Show a registration prompt only when the submitted email does not exist.
+     * Registered users with a wrong password keep the standard credentials error.
+     *
+     * @throws ValidationException
+     */
+    protected function sendFailedLoginResponse(Request $request): void
+    {
+        $email = trim((string) $request->input($this->username()));
+        $isRegistered = User::query()->where('email', $email)->exists();
+        $message = $isRegistered ? __('auth.failed') : __('auth.not_registered');
+
+        throw ValidationException::withMessages([
+            $this->username() => [$message],
+        ]);
     }
 }

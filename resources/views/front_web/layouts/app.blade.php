@@ -24,8 +24,9 @@
     $hasNoindexQuery = collect(config('seo.noindex_query_parameters', []))
         ->contains(fn ($parameter) => request()->has($parameter));
 
+    $isBanglaUrl = request()->segment(1) === 'bn';
     $explicitCanonical = trim($__env->yieldContent('canonical_url'));
-    $seoCanonical = $explicitCanonical ?: url()->current();
+    $seoCanonical = $isBanglaUrl ? url()->current() : ($explicitCanonical ?: url()->current());
     $pageNumber = max(1, (int) request()->query('page', 1));
     if ($explicitCanonical === '' && !$hasFacetedQuery && !$hasNoindexQuery && $pageNumber > 1) {
         $seoCanonical .= '?page='.$pageNumber;
@@ -44,6 +45,24 @@
     $seoOgDescription = trim($__env->yieldContent('og_description')) ?: $seoDescription;
     $seoOgType = trim($__env->yieldContent('og_type')) ?: 'website';
     $seoOgImage = trim($__env->yieldContent('og_image')) ?: getSettingValue('logo');
+    $localizedPath = '/'.ltrim(request()->path(), '/');
+    $englishPath = $isBanglaUrl ? preg_replace('#^/bn(?:/|$)#', '/', $localizedPath) : $localizedPath;
+    $banglaPath = '/bn'.($englishPath === '/' ? '/' : $englishPath);
+    $hreflangQuery = request()->getQueryString();
+    $englishAlternateUrl = url($englishPath).($hreflangQuery ? '?'.$hreflangQuery : '');
+    $banglaAlternateUrl = url($banglaPath).($hreflangQuery ? '?'.$hreflangQuery : '');
+    $localizedRouteName = request()->route()?->getName();
+    $hasLocalizedAlternate = $localizedRouteName && ($isBanglaUrl
+        ? \Illuminate\Support\Facades\Route::has(preg_replace('/^bn\./', '', $localizedRouteName))
+        : \Illuminate\Support\Facades\Route::has('bn.'.$localizedRouteName));
+    $websiteSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'WebSite',
+        '@id' => url('/').'#website',
+        'url' => url('/'),
+        'name' => getAppName(),
+        'inLanguage' => str_replace('_', '-', app()->getLocale()),
+    ];
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" {{ getFrontSelectLanguage() == 'ar' ? 'dir=rtl' : '' }}>
@@ -59,6 +78,11 @@
     @endif
     <meta name="robots" content="{{ $seoRobots }}">
     <link rel="canonical" href="{{ $seoCanonical }}">
+    @if ($hasLocalizedAlternate)
+        <link rel="alternate" hreflang="en" href="{{ $englishAlternateUrl }}">
+        <link rel="alternate" hreflang="bn" href="{{ $banglaAlternateUrl }}">
+        <link rel="alternate" hreflang="x-default" href="{{ $englishAlternateUrl }}">
+    @endif
 
     <meta property="og:type" content="{{ $seoOgType }}">
     <meta property="og:locale" content="{{ str_replace('-', '_', app()->getLocale()) }}">
@@ -76,6 +100,7 @@
     @if ($seoOgImage)
         <meta name="twitter:image" content="{{ $seoOgImage }}">
     @endif
+    <script type="application/ld+json">{!! json_encode($websiteSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
     @yield('meta_tags')
     <link rel="shortcut icon" href="{{ getSettingValue('favicon') }}" type="image/x-icon">
     <link rel="icon" href="{{ getSettingValue('favicon') }}" type="image/x-icon">

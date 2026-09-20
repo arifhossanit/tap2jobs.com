@@ -644,6 +644,10 @@ class Job extends Model
 
     public function getFrontUrlAttribute(): string
     {
+        if (request()->segment(1) === 'bn' && \Illuminate\Support\Facades\Route::has('bn.front.job.details')) {
+            return route('bn.front.job.details', ['slug' => $this->slug]);
+        }
+
         return route('front.job.details', ['slug' => $this->slug]);
     }
 

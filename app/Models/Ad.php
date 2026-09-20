@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Spatie\Image\Manipulations;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -125,9 +126,11 @@ class Ad extends Model implements HasMedia
 
     public $fillable = [
         'title',
+        'slug',
         'description',
         'link_url',
         'cta_text',
+        'consultation_type',
         'position',
         'page',
         'is_active',
@@ -140,9 +143,11 @@ class Ad extends Model implements HasMedia
     protected $casts = [
         'id' => 'integer',
         'title' => 'string',
+        'slug' => 'string',
         'description' => 'string',
         'link_url' => 'string',
         'cta_text' => 'string',
+        'consultation_type' => 'string',
         'position' => 'string',
         'page' => 'array',
         'is_active' => 'boolean',
@@ -151,6 +156,25 @@ class Ad extends Model implements HasMedia
     ];
 
     protected $appends = ['ad_image_url', 'ad_media_url', 'ad_media_type', 'ad_media_ready', 'page_array'];
+
+    protected static function booted(): void
+    {
+        static::creating(function (Ad $ad) {
+            if (! empty($ad->slug)) {
+                return;
+            }
+
+            $baseSlug = Str::slug((string) $ad->title) ?: 'ad-'.Str::lower(Str::random(8));
+            $slug = $baseSlug;
+            $suffix = 2;
+
+            while (static::query()->where('slug', $slug)->exists()) {
+                $slug = $baseSlug.'-'.$suffix++;
+            }
+
+            $ad->slug = $slug;
+        });
+    }
 
     public function getPageArrayAttribute(): array
     {
@@ -228,11 +252,7 @@ class Ad extends Model implements HasMedia
 
     public function getClickUrlAttribute(): string
     {
-        return route('consultation.create', [
-            'ad_id' => $this->id,
-            'utm_source' => 'ad',
-            'utm_medium' => $this->position,
-        ]);
+        return route('consultation.ad', ['ad' => $this->slug]);
     }
 
     public function registerMediaConversions(Media $media = null): void

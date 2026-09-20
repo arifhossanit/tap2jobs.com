@@ -150,12 +150,21 @@
             function initSelects(scope) {
                 $(scope).find('.job-location-country, .job-location-state, .job-location-city, .job-location-thana').each(function () {
                     var select = $(this);
+                    var selectedValue = select.val();
+                    if (!select.data('job-location-initialized')) {
+                        var savedOption = select.find('option[selected]').first();
+                        if (savedOption.length) {
+                            selectedValue = savedOption.val();
+                        }
+                    }
 
                     if (select.hasClass('select2-hidden-accessible')) {
                         select.select2('destroy');
                     }
 
                     select.select2({ width: '100%' });
+                    select.val(selectedValue).trigger('change.select2');
+                    select.data('job-location-initialized', true);
                 });
             }
 
@@ -267,7 +276,8 @@
                     loadThanas($(this).closest('.job-location-row'), $(this).val());
                 });
 
-            initSelects(container);
+            // Initialize the primary country and additional locations through the same path.
+            initSelects($(container).closest('.job-location-container'));
             toggleLocationFields();
         });
     </script>

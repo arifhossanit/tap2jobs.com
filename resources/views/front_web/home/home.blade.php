@@ -1,6 +1,7 @@
 @extends('front_web.layouts.app')
 
 @section('title', __('web.home'))
+@section('meta_description', __('web.seo.home_description'))
 
 @section('page_css')
 <style>

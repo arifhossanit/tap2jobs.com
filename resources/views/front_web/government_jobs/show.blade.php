@@ -1,6 +1,9 @@
 @extends('front_web.layouts.app')
 @section('title', $governmentJob->title)
 @section('content')
+    @php
+        $frontRoutePrefix = request()->segment(1) === 'bn' ? 'bn.' : '';
+    @endphp
     <section class="py-5 bg-light">
         <div class="container-fluid px-0">
             @php
@@ -20,11 +23,11 @@
                     <div class="col-xl-12 col-lg-12">
                     <article class="bg-white border rounded shadow-sm p-3 p-md-4">
                         <div class="d-flex flex-wrap gap-3 justify-content-between align-items-center border-bottom pb-3 mb-4">
-                            <a href="{{ route('front.government-jobs.index') }}" class="text-decoration-none">
-                                <i class="fas fa-chevron-left me-2"></i>Government Job List
+                            <a href="{{ route($frontRoutePrefix.'front.government-jobs.index') }}" class="text-decoration-none">
+                                <i class="fas fa-chevron-left me-2"></i>{{ __('web.government_jobs.list') }}
                             </a>
                             <div class="text-md-end fs-14">
-                                <strong>Source:</strong> {{ $governmentJob->source_name ?: 'Government Circular' }}
+                                <strong>{{ __('web.government_jobs.source') }}:</strong> {{ $governmentJob->source_name ?: __('web.government_jobs.circular') }}
                                 @if ($governmentJob->published_at)
                                     ({{ $governmentJob->published_at->format('l, F d, Y') }})
                                 @endif
@@ -49,13 +52,13 @@
                         <div class="d-flex flex-wrap gap-3 justify-content-between align-items-center border-top pt-4 mt-4">
                             <div>
                                 @if ($governmentJob->application_deadline)
-                                    <strong>Application Deadline:</strong>
+                                    <strong>{{ __('web.government_jobs.application_deadline') }}:</strong>
                                     {{ $governmentJob->application_deadline->format('d M Y') }}
                                 @endif
                             </div>
                             <div class="d-flex flex-wrap gap-2">
                                 <a href="{{ $governmentJob->circular_url }}" target="_blank" class="btn btn-outline-primary">
-                                    <i class="fas fa-download me-2"></i>Open Circular
+                                    <i class="fas fa-download me-2"></i>{{ __('web.government_jobs.open_circular') }}
                                 </a>
                                 {{-- @if ($governmentJob->application_url)
                                     <a href="{{ $governmentJob->application_url }}" target="_blank" rel="noopener"

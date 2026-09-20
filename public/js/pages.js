@@ -113,6 +113,7 @@ function adRenderData(editAdId) {
         $("#editDescription").val(result.data.description || "");
         $("#editLinkUrl").val(result.data.link_url || "");
         $("#editCtaText").val(result.data.cta_text || "");
+        $("#editConsultationType").val(result.data.consultation_type || "");
         $("#editSortOrder").val(result.data.sort_order || 0);
         var targetPages = result.data.page_array || result.data.page || ["all"];
         if (typeof targetPages === "string") {
@@ -3806,6 +3807,12 @@ $(document).on("submit", "#candidateProfileUpdate", function (e) {
       },
       success: function success(result) {
         displaySuccessMessage(result.message);
+        if (result.data && result.data.redirectUrl) {
+          setTimeout(function () {
+            window.location.href = result.data.redirectUrl;
+          }, 1200);
+          return;
+        }
         var panel = submitter.closest('.candidate-profile-section__collapse');
         window.refreshCandidateProfileSection('personal-information', panel.id);
       },
@@ -9252,7 +9259,7 @@ function loadPhoneNumberCountry() {
   \*****************************************************/
 () {
 
-listenChange('#countryId', function () {
+listenChange('#countryId, #jobPrimaryCountryId', function () {
   var selectedCountry = $(this).val();
   var selectedState = $('#stateId').val();
   var selectedCity = $('#cityId').val();
@@ -9310,7 +9317,7 @@ function loadCities(stateId) {
     dataType: 'json',
     data: {
       state: stateId,
-      country: $('#countryId').val()
+      country: $('#jobPrimaryCountryId').length ? $('#jobPrimaryCountryId').val() : $('#countryId').val()
     },
     success: function success(data) {
       $.each(data.data || {}, function (i, v) {
@@ -14011,10 +14018,13 @@ function loadEmployeeCreateEditData() {
       }
     });
   }
-  var countrySelect = $("#countryId");
+  var countrySelect = $("#jobPrimaryCountryId");
   if (countrySelect.length && !countrySelect.val()) {
     countrySelect.val(countrySelect.find("option").first().val());
   }
+
+  // Job location countries are initialized together by the locations partial.
+
   initializeJobSelect2("#jobTypeId,#jobShiftId,#stateId,#cityId,#thanaId,#salaryPeriodsId,#requiredDegreeLevelId", $.extend({
     width: "calc(100% - 44px)"
   }, jobSelect2SearchOptions));
@@ -14281,7 +14291,7 @@ function loadEmployeeCreateEditData() {
 
   // state
   listenClick(".createStateModal", function () {
-    var country = $("#countryId").val();
+    var country = $("#jobPrimaryCountryId").val();
     $("#jobCountryID").val(country).trigger("change");
     $("#createStateModal").appendTo("body").modal("show");
   });
@@ -14345,7 +14355,7 @@ function loadEmployeeCreateEditData() {
   //         ['para', ['paragraph']]],
   // });
 
-  // $('#countryId').on('change', function () {
+  // $('#jobPrimaryCountryId').on('change', function () {
   //     $.ajax({
   //         url: route('states-list'),
   //         type: 'get',
@@ -14374,7 +14384,7 @@ function loadEmployeeCreateEditData() {
   //         dataType: 'json',
   //         data: {
   //             state: $(this).val(),
-  //             country: $('#countryId').val(),
+  //             country: $('#jobPrimaryCountryId').val(),
   //         },
   //         success: function (data) {
   //             $('#cityId').empty();
@@ -14591,7 +14601,7 @@ listenSubmit("#createCountryForm", function () {
           text: result.data.name
         };
         var newOption = new Option(data.text, data.id, false, true);
-        $("#countryId").append(newOption).trigger("change");
+        $("#jobPrimaryCountryId").append(newOption).trigger("change");
         var newCountry = new Option(data.text, data.id, false, true);
         $("#jobCountryID").append(newCountry).trigger("change");
       }
@@ -14976,7 +14986,7 @@ function prepareJobFormForSubmissionWithOptions(formSelector) {
       select.val(select.prop("multiple") ? selectedIds : selectedIds[0]);
     }
   });
-  var countrySelect = $(form).find("#countryId");
+  var countrySelect = $(form).find("#jobPrimaryCountryId");
   if (countrySelect.length && !countrySelect.val()) {
     countrySelect.val(countrySelect.find("option").first().val()).trigger("change.select2");
   }

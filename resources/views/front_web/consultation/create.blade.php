@@ -4,6 +4,8 @@
     {{ __('web.consultation.title') }}
 @endsection
 
+@section('meta_description', __('web.seo.consultation_description'))
+
 @section('page_css')
     <style>
         #consultationLeadForm .form-control,
@@ -69,8 +71,8 @@
                                 <input type="hidden" name="ad_id" value="{{ old('ad_id', $ad?->id ?? request('ad_id')) }}">
                                 <input type="hidden" name="source_page" value="{{ old('source_page', url()->previous()) }}">
                                 <input type="hidden" name="clicked_url" value="{{ old('clicked_url', request()->fullUrl()) }}">
-                                <input type="hidden" name="utm_source" value="{{ old('utm_source', request('utm_source')) }}">
-                                <input type="hidden" name="utm_medium" value="{{ old('utm_medium', request('utm_medium')) }}">
+                                <input type="hidden" name="utm_source" value="{{ old('utm_source', $utmSource) }}">
+                                <input type="hidden" name="utm_medium" value="{{ old('utm_medium', $utmMedium) }}">
                                 <input type="hidden" name="utm_campaign" value="{{ old('utm_campaign', request('utm_campaign')) }}">
 
                                 <div class="row">
@@ -117,7 +119,7 @@
                                             <select name="consultation_type" class="form-select fs-14 text-gray br-10" required>
                                                 <option value="">{{ __('web.consultation.select_consultation_type') }}</option>
                                                 @foreach ($consultationTypes as $value => $label)
-                                                    <option value="{{ $value }}" {{ old('consultation_type') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                                                    <option value="{{ $value }}" {{ $selectedConsultationType === $value ? 'selected' : '' }}>{{ $label }}</option>
                                                 @endforeach
                                             </select>
                                         </div>

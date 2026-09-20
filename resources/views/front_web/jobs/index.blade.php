@@ -33,6 +33,9 @@
     ] : null;
 @endphp
 @section('title', $seoPageTitle)
+@if (! $isCategoryLandingPage)
+    @section('meta_description', __('web.seo.jobs_description'))
+@endif
 @if ($isCategoryLandingPage)
     @section('meta_description', $categoryMetaDescription)
     @if (! empty($seoCategory->search_tags))

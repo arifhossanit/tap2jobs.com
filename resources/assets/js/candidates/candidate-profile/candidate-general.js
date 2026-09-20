@@ -1283,6 +1283,14 @@ $(document).on("submit", "#candidateProfileUpdate", function (e) {
             },
             success: function (result) {
                 displaySuccessMessage(result.message);
+
+                if (result.data && result.data.redirectUrl) {
+                    setTimeout(function () {
+                        window.location.href = result.data.redirectUrl;
+                    }, 1200);
+                    return;
+                }
+
                 const panel = submitter.closest('.candidate-profile-section__collapse');
                 window.refreshCandidateProfileSection('personal-information', panel.id);
             },

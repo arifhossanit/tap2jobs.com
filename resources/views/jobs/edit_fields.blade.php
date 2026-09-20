@@ -116,7 +116,7 @@
                     <div class="col-xl-2 col-md-4 col-sm-12 mb-5">
         {{ Form::label('country', __('messages.company.country').':', ['class' => 'form-label']) }}
         <span class="required"></span>
-        {{ Form::select('country_id', $data['countries'], $data['selected_country_id'], ['id' => 'countryId', 'class' => 'form-select', 'required']) }}
+{{ Form::select('country_id', $data['countries'], $data['selected_country_id'], ['id' => 'jobPrimaryCountryId', 'class' => 'form-select job-location-country', 'placeholder' => __('messages.company.select_country'), 'required']) }}
     </div>
     <div class="col-xl-2 col-md-4 col-sm-12 mb-5">
         {{ Form::label('state', __('messages.job.state').':', ['class' => 'form-label']) }}

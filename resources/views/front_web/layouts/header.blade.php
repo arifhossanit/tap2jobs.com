@@ -8,6 +8,7 @@
         }
         $unreadCount = $notifications ? $notifications->count() : 0;
     }
+    $frontRoutePrefix = request()->segment(1) === 'bn' ? 'bn.' : '';
 @endphp
 <style>
     header .navbar-brand,
@@ -116,16 +117,18 @@
                     <ul class="navbar-nav d-flex justify-content-end align-items-lg-center w-100">
                         <li class="nav-item mb-2 mb-lg-0">
                             <a class="header-navbar-color text-gray nav-link px-2 px-lg-0 {{ Request::is('/') ? 'header-navbar-color-active' : '' }}"
-                                aria-current="page" href="{{ route('front.home') }}">{{ __('web.home') }}</a>
+                                aria-current="page" href="{{ route($frontRoutePrefix.'front.home') }}">{{ __('web.home') }}</a>
                         </li>
                         <li class="nav-item mb-2 mb-lg-0">
                             <a class="header-navbar-color text-gray nav-link px-2 px-lg-0 {{ request()->routeIs('front.search.jobs', 'front.job-categories.show') || Request::is('job-details*') ? 'header-navbar-color-active' : '' }}"
-                                href="{{ route('front.search.jobs') }}">{{ __('web.jobs') }}</a>
+                                href="{{ route($frontRoutePrefix.'front.search.jobs') }}">{{ __('web.jobs') }}</a>
                         </li>
 
                         <li class="nav-item mb-2 mb-lg-0">
                             <div class="dropdown language-dropdown"
-                                 data-language-url="{{ route('front.change-language') }}">
+                                 data-language-url="{{ route('front.change-language') }}"
+                                 data-current-path="{{ request()->path() }}"
+                                 data-current-query="{{ request()->getQueryString() }}">
                                 <a href="#" class="nav-link text-gray dropdown-toggle language-dropdown-btn px-2 px-lg-0"
                                    id="frontLanguageToggle" role="button" aria-expanded="false"
                                    aria-controls="frontLanguageMenu">
@@ -553,6 +556,12 @@
             const languageName = languageOption.dataset.prefixValue;
             if (!languageUrl || !languageName) return;
 
+            const currentPath = dropdown.dataset.currentPath || '';
+            const currentQuery = dropdown.dataset.currentQuery || '';
+            const englishPath = currentPath.replace(/^bn(?:\/|$)/, '');
+            const localizedPath = languageName === 'bn' ? `/bn/${englishPath}` : `/${englishPath}`;
+            const destination = localizedPath.replace(/\/{2,}/g, '/') + (currentQuery ? `?${currentQuery}` : '');
+
             fetch(languageUrl, {
                 method: 'POST',
                 credentials: 'same-origin',
@@ -564,7 +573,7 @@
                 body: new URLSearchParams({ languageName: languageName }).toString()
             }).then(function (response) {
                 if (!response.ok) throw new Error('Unable to change language.');
-                window.location.reload();
+                window.location.assign(destination);
             }).catch(function (error) {
                 if (typeof displayErrorMessage === 'function') {
                     displayErrorMessage(error.message);

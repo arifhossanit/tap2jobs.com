@@ -10,7 +10,8 @@ class CandidateProfileMassAssignmentTest extends TestCase
     {
         $controller = file_get_contents(app_path('Http/Controllers/Candidates/CandidateController.php'));
 
-        $this->assertStringContainsString('updateProfile($request->validated())', $controller);
+        $this->assertStringContainsString('$input = $request->validated();', $controller);
+        $this->assertStringContainsString('updateProfile($input)', $controller);
         $this->assertSame(2, substr_count($controller, 'updateGeneralInformation($request->validated())'));
         $this->assertStringContainsString('$input = $request->validated();', $controller);
         $this->assertStringNotContainsString('updateGeneralInformation($request->all())', $controller);
@@ -29,5 +30,18 @@ class CandidateProfileMassAssignmentTest extends TestCase
         $this->assertStringNotContainsString("'owner_id'", $profileUpdate);
         $this->assertStringNotContainsString("'password'", $profileUpdate);
         $this->assertStringNotContainsString('$user->candidate->update($input)', $generalUpdate);
+    }
+
+    public function test_candidate_email_change_requires_fresh_verification(): void
+    {
+        $controller = file_get_contents(app_path('Http/Controllers/Candidates/CandidateController.php'));
+        $repository = file_get_contents(app_path('Repositories/Candidates/CandidateRepository.php'));
+        $javascript = file_get_contents(resource_path('assets/js/candidates/candidate-profile/candidate-general.js'));
+
+        $this->assertStringContainsString("\$userInput['email_verified_at'] = null;", $repository);
+        $this->assertStringContainsString('$user->sendEmailVerificationNotification();', $repository);
+        $this->assertStringContainsString('Auth::logout();', $controller);
+        $this->assertStringContainsString("['redirectUrl' => route('front.candidate.login')]", $controller);
+        $this->assertStringContainsString('result.data.redirectUrl', $javascript);
     }
 }

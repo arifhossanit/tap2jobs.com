@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateAdRequest;
 use App\Http\Requests\UpdateAdRequest;
 use App\Models\Ad;
+use App\Models\ProfileReferenceOption;
 use App\Repositories\AdRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
@@ -30,7 +31,12 @@ class AdController extends AppBaseController
 
         $positionTargetPages = Ad::POSITION_TARGET_PAGES;
 
-        return view('ads.index', compact('positions', 'pages', 'positionTargetPages'));
+        $consultationTypes = ProfileReferenceOption::localizedOptions(
+            ProfileReferenceOption::TYPE_CONSULTATION_TYPE,
+            [ProfileReferenceOption::SCOPE_EMPLOYER]
+        );
+
+        return view('ads.index', compact('positions', 'pages', 'positionTargetPages', 'consultationTypes'));
     }
 
     public function store(CreateAdRequest $request): JsonResponse

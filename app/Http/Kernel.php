@@ -68,6 +68,8 @@ class Kernel extends HttpKernel
         'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
         'xss' => XSS::class,
         'setLanguage' => SetLanguage::class,
+        'urlLocale' => \App\Http\Middleware\SetUrlLocale::class,
+        'redirectLocalizedUrl' => \App\Http\Middleware\RedirectToLocalizedUrl::class,
         'verified.user' => CheckUserIsVerified::class,
     ];
 }

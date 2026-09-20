@@ -133,16 +133,23 @@ class JobController extends AppBaseController
         $shareMessage = $shareText."\n".$shareDescription."\n".$shareUrl;
         $shareImage = $this->ensureOgImage($job);
 
+        // Meta keywords are not a ranking signal, so keep them concise and relevant.
+        // This prevents a large tag/skill list from producing keyword-stuffed markup.
         $data['metaKeywords'] = collect([$shareTitle, $companyName, $job->district_thana_location])
             ->merge($job->selected_job_categories->pluck('name'))
             ->merge($job->selected_job_categories->flatMap(fn ($category) => $category->search_tags ?? []))
             ->merge($job->jobsTag->pluck('name'))
             ->merge($job->jobsSkill->pluck('name'))
-            ->map(fn ($keyword) => trim(strip_tags(html_entity_decode((string) $keyword, ENT_QUOTES | ENT_HTML5, 'UTF-8'))))
+            ->map(fn ($keyword) => mb_substr(trim(strip_tags(html_entity_decode((string) $keyword, ENT_QUOTES | ENT_HTML5, 'UTF-8'))), 0, 60))
             ->filter()
             ->unique(fn ($keyword) => mb_strtolower($keyword))
+            ->take(10)
             ->values()
-            ->implode(', ');
+            ->reduce(function (string $keywords, string $keyword): string {
+                $candidate = $keywords === '' ? $keyword : $keywords.', '.$keyword;
+
+                return mb_strlen($candidate) <= 180 ? $candidate : $keywords;
+            }, '');
 
         $share = [
             'url' => $shareUrl,

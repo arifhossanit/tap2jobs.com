@@ -25,10 +25,9 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ConsultationLeadController extends AppBaseController
 {
-    public function create(Request $request): View
+    public function create(Request $request, ?Ad $ad = null): View
     {
-        $ad = null;
-        if ($request->filled('ad_id')) {
+        if (! $ad && $request->filled('ad_id')) {
             $ad = Ad::query()->find($request->integer('ad_id'));
         }
 
@@ -46,7 +45,19 @@ class ConsultationLeadController extends AppBaseController
             [ProfileReferenceOption::SCOPE_EMPLOYER]
         );
 
-        return view('front_web.consultation.create', compact('ad', 'companySizes', 'consultationTypes', 'contactMethods'));
+        $selectedConsultationType = old('consultation_type', $ad?->consultation_type);
+        $utmSource = $ad ? 'ad' : $request->query('utm_source');
+        $utmMedium = $ad?->position ?: $request->query('utm_medium');
+
+        return view('front_web.consultation.create', compact(
+            'ad',
+            'companySizes',
+            'consultationTypes',
+            'contactMethods',
+            'selectedConsultationType',
+            'utmSource',
+            'utmMedium'
+        ));
     }
 
     public function store(StoreConsultationLeadRequest $request): RedirectResponse
@@ -83,9 +94,12 @@ class ConsultationLeadController extends AppBaseController
             }
         });
 
-        return redirect()
-            ->route('consultation.create', $request->only(['ad_id', 'utm_source', 'utm_medium', 'utm_campaign']))
-            ->with('success', __('web.consultation.success'));
+        $ad = ! empty($input['ad_id']) ? Ad::query()->find($input['ad_id']) : null;
+        $redirect = $ad
+            ? redirect()->route('consultation.ad', ['ad' => $ad->slug])
+            : redirect()->route('consultation.create', $request->only(['utm_source', 'utm_medium', 'utm_campaign']));
+
+        return $redirect->with('success', __('web.consultation.success'));
     }
 
     public function index(): RedirectResponse
