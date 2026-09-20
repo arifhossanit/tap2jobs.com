@@ -9,11 +9,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RedirectToLocalizedUrl
 {
-    /**
-     * Redirect an unprefixed public URL to its Bangla equivalent after the
-     * visitor has chosen Bangla. This also keeps legacy Blade links that use
-     * an English route name inside the selected locale.
-     */
     public function handle(Request $request, Closure $next): Response
     {
         if (! $request->isMethod('GET') && ! $request->isMethod('HEAD')) {

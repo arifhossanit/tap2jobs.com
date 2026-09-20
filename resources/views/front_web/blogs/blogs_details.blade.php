@@ -45,6 +45,108 @@
 {{-- @endsection --}}
 @section('content')
     <style>
+        /* Keep editor content and related cards inside the article column. */
+        .blog-detail-section .blog-detail,
+        .blog-detail-section .blog-desc,
+        .blog-detail-section .blog-related-content {
+            min-width: 0;
+            max-width: 100%;
+        }
+
+        .blog-detail-section .blog-img {
+            overflow: hidden;
+            border-radius: .35rem;
+        }
+
+        .blog-detail-section .blog-img img {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .blog-related-card {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            height: 100%;
+            overflow: hidden;
+            border: 1px solid #e6ebf0;
+            border-radius: .5rem;
+            background: #fff;
+        }
+
+        .blog-related-card__image {
+            display: block;
+            aspect-ratio: 16 / 10;
+            overflow: hidden;
+            background: #f3f6f8;
+        }
+
+        .blog-related-card__image img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            object-fit: cover;
+        }
+
+        .blog-related-card__body {
+            display: flex;
+            flex: 1 1 auto;
+            flex-direction: column;
+            min-width: 0;
+            padding: 1rem;
+        }
+
+        .blog-related-card__categories {
+            margin-bottom: .45rem;
+            color: #209776;
+            font-size: .75rem;
+            font-weight: 600;
+        }
+
+        .blog-related-card h3 {
+            margin: 0 0 .75rem;
+            font-size: 1rem;
+            line-height: 1.4;
+            overflow-wrap: anywhere;
+        }
+
+        .blog-related-card__body a {
+            color: #2052db !important;
+        }
+
+        .blog-related-card h3 a {
+            color: #272727 !important;
+        }
+
+        .blog-related-card__link {
+            margin-top: auto;
+            font-size: .875rem;
+        }
+
+        .blog-detail-section .blog-desc img,
+        .blog-detail-section .blog-desc video,
+        .blog-detail-section .blog-desc iframe {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .blog-detail-section .blog-desc table {
+            display: block;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        @media (max-width: 575.98px) {
+            .blog-related-card__image {
+                aspect-ratio: 16 / 9;
+            }
+        }
+
         .visit-link,
         .visit-link a {
             color: #0f6dfa;
@@ -169,9 +271,9 @@
                                 </div>
                             @endif
                             <div class="blog-desc mt-40 mb-40">
-                                <p class="fs-16 text-gray text-break">
+                                <div class="fs-16 text-gray text-break">
                                     {!! html_entity_decode($blog->description) !!}
-                                </p>
+                                </div>
                             </div>
                         <p class="fs-16 mb-3 visit-link">
                             <strong>Visit:&nbsp;</strong><a href="https://www.tap2jobs.com/" target="_blank" rel="noopener noreferrer"><strong>www.tap2jobs.com</strong></a>
