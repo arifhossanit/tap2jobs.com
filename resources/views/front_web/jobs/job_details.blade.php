@@ -195,11 +195,6 @@
 
         <!-- start job-details section -->
         <section class="job-details-section py-60">
-            @php
-                $leftAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_LEFT, \App\Models\Ad::PAGE_JOB_DETAILS);
-                $rightAds = getActiveAdsByPosition(\App\Models\Ad::POSITION_REGISTER_RIGHT, \App\Models\Ad::PAGE_JOB_DETAILS);
-            @endphp
-            <x-front.side-ad-layout :left-ads="$leftAds" :right-ads="$rightAds">
             <div class="container px-0">
                 <div class="job-card">
                     <div class="row">
@@ -677,7 +672,6 @@
                     </div>
                 </div>
             </div>
-            </x-front.side-ad-layout>
         </section>
         <!-- end job-details section -->
     </div>

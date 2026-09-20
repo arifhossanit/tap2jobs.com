@@ -11,6 +11,7 @@
                     ->implode(', ');
             @endphp
             <a href="{{ $job->front_url }}"
+               target="_blank" rel="noopener noreferrer"
                class="job-search-result-card text-decoration-none">
                 <h2 class="job-search-result-card__title">{{ html_entity_decode($job->job_title) }}</h2>
                 <p class="job-search-result-card__company">{{ $companyName ?: __('messages.n/a') }}</p>
