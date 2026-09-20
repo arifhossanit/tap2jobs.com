@@ -14425,6 +14425,65 @@ html[dir="rtl"]
     transform: translateY(-1px);
 }
 
+/* Keep long titles, company names and category lists inside related-job cards. */
+.job-details-page .job-details-related-jobs > [class*="col-"] {
+    display: flex;
+}
+
+.job-details-page .job-details-related-jobs .card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    overflow: hidden;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.job-details-page .job-details-related-jobs .card a,
+.job-details-page .job-details-related-jobs .card-body,
+.job-details-page .job-details-related-jobs .card-desc,
+.job-details-page .job-details-related-jobs .desc,
+.job-details-page .job-details-related-jobs .d-flex {
+    min-width: 0;
+}
+
+.job-details-page .job-details-related-jobs .card-title,
+.job-details-page .job-details-related-jobs .card-desc p {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    white-space: normal;
+}
+
+.job-details-page .job-details-related-jobs .related-job-company-name {
+    font-size: 13px;
+    line-height: 18px;
+}
+
+.job-details-page .job-details-related-jobs .related-job-company-row {
+    width: 100%;
+}
+
+.job-details-page .job-details-related-jobs .related-job-company-logo,
+.job-details-page .job-details-related-jobs .related-job-company-image {
+    width: 30px;
+    height: 30px;
+}
+
+.job-details-page .job-details-related-jobs .related-job-company-image {
+    display: block;
+    border: 1px solid #dee2e6;
+    padding: 3px;
+    object-fit: contain;
+}
+
+.job-details-page .job-details-related-jobs .card-desc {
+    margin-top: auto !important;
+    padding-top: 14px;
+}
+
 /* Keep the share/report dialogs and their backdrop above the top announcement banner. */
 .job-action-modal.modal {
     z-index: 100005 !important;
@@ -14531,13 +14590,14 @@ body:has(.job-action-modal.show) .modal-backdrop {
         margin-bottom: 8px !important;
     }
 
-    .job-details-page .job-details-related-jobs .new-logo-image {
-        max-width: 32px !important;
-        max-height: 32px !important;
+    .job-details-page .job-details-related-jobs .related-job-company-logo,
+    .job-details-page .job-details-related-jobs .related-job-company-image {
+        width: 30px;
+        height: 30px;
     }
 
     .job-details-page .job-details-related-jobs .card-desc {
-        margin-top: 12px !important;
+        padding-top: 12px;
     }
 
     .job-details-page .job-details-related-jobs .card-desc .w-20 {
@@ -14572,6 +14632,7 @@ body:has(.job-action-modal.show) .modal-backdrop {
 .job-safety-notice .btn { white-space: nowrap; border-radius: 4px; }
 .job-details-section .share-this-job .icon-box { flex-wrap: wrap; gap: 10px 0; }
 .job-details-section .share-this-job .icon-box .social-icon { width: 40px; height: 40px; border-radius: 4px; }
+
 header .navbar {
     padding: 20px 0
 }

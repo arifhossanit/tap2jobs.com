@@ -613,7 +613,7 @@
                                                 @if (Str::length($relatedJob['job_title']) < 35)
                                                     <a href="{{ $relatedJob->front_url }}"
                                                         class="text-secondary primary-link-hover">
-                                                        <h5 class="card-title fs-20 mb-2">
+                                                        <h5 class="card-title fs-16 mb-2">
                                                             {{ html_entity_decode($relatedJob['job_title']) }}
                                                         </h5>
                                                     </a>
@@ -621,7 +621,7 @@
                                                     <a href="{{ $relatedJob->front_url }}"
                                                         data-toggle="tooltip" data-placement="bottom" class="text-secondary primary-link-hover hover-color"
                                                         title="{{ html_entity_decode($relatedJob['job_title']) }}">
-                                                        <h5 class="card-title fs-20 mb-2">
+                                                        <h5 class="card-title fs-16 mb-2">
                                                             {{ Str::limit(html_entity_decode($relatedJob['job_title']), 30, '...') }}
                                                         </h5>
                                                     </a>
@@ -633,25 +633,19 @@
                                                         </span>
                                                     @endif
                                                 </div> --}}
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="me-2 flex-shrink-0" style="width: auto; height: auto;">
+                                                <div class="related-job-company-row d-flex align-items-center">
+                                                    <div class="related-job-company-logo me-2 flex-shrink-0">
                                                             <img src="{{ $relatedJob->company->company_url }}"
-                                                                class="img-fluid new-logo-image" alt="{{ $relatedJob->company->company_name ?: $relatedJob->company->user?->full_name }} logo" style="width: auto; max-width: 40px; border: 1px solid #dee2e6; padding: 3px; max-height: 40px; object-fit: contain;" />
-                                                        </div>
-                                                        <div class="">
-                                                            <div class="card-body p-0">
-                                                                <a
-                                                                    href="{{ route('front.company.details', $relatedJob->company->slug) }}">
-                                                                    <p class="card-title fs-14 mb-0 text-primary">
-                                                                        {{ $relatedJob->company->user->first_name }}</p>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </div>                                                   
+                                                                class="related-job-company-image" alt="{{ $relatedJob->company->company_name ?: $relatedJob->company->user?->full_name }} logo" />
+                                                    </div>
+                                                    <div class="card-body p-0">
+                                                        <a href="{{ route('front.company.details', $relatedJob->company->slug) }}">
+                                                            <p class="card-title related-job-company-name mb-0 text-primary">
+                                                                {{ $relatedJob->company->user->first_name }}</p>
+                                                        </a>
+                                                    </div>
                                                 </div>
-                                                <div
-                                                    class="card-desc d-flex flex-column justify-content-between h-100 mt-4">
+                                                <div class="card-desc mt-3">
                                                     <div class="desc">
                                                         <div class="d-flex align-items-center mb-1">
                                                             <div class="me-2 w-20 flex-shrink-0 d-flex align-items-center">
@@ -659,7 +653,7 @@
                                                                     class="w-100 d-block" alt="" aria-hidden="true" />
                                                             </div>
                                                             <p class="fs-14 text-gray mb-0">
-                                                                {{ $relatedJob->selected_job_categories->pluck('name')->implode(', ') }}
+                                                                {{ \Illuminate\Support\Str::limit($relatedJob->selected_job_categories->pluck('name')->implode(', '), 45, '...') }}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -668,7 +662,7 @@
                                         </div>
                                     @endif
                                 @endforeach
-                                @if ($getRelatedJobs->count() > 0)
+                                {{-- @if ($getRelatedJobs->count() > 0)
                                     <div class="row justify-content-center">
                                         <div class="col-8 text-center">
                                             @php($relatedCategory = $relatedJob->selected_job_categories->first() ?: $relatedJob->jobCategory)
@@ -677,7 +671,7 @@
                                                 @lang('messages.front_job_details.show_all')</a>
                                         </div>
                                     </div>
-                                @endif
+                                @endif --}}
                             </div>
                         @endif
                     </div>
