@@ -18,6 +18,9 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    // Google Analytics 4 Measurement ID (for example: G-XXXXXXXXXX)
+    'ga4_measurement_id' => env('GA4_MEASUREMENT_ID'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

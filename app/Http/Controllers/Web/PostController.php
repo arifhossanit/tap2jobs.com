@@ -40,12 +40,19 @@ class PostController extends AppBaseController
     public function getBlogDetails(Post $post): View
     {
         $data = $this->postRepository->getBlogDetails($post);
+        $shareUrl = url()->current();
+        $shareTitle = html_entity_decode(strip_tags($post->title), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $shareMessage = $shareTitle.' - '.$shareUrl;
         $url = [
-            'gmail' => 'https://plus.google.com/share?url='.url()->current(),
-            'twitter' => 'https://twitter.com/intent/tweet?url='.url()->current(),
-            'facebook' => 'https://www.facebook.com/sharer/sharer.php?u='.url()->current(),
-            'pinterest' => 'http://pinterest.com/pin/create/button/?url='.url()->current(),
-            'linkedin' => 'https://www.linkedin.com/shareArticle/?url='.url()->current(),
+            'facebook' => 'https://www.facebook.com/sharer/sharer.php?'.http_build_query(['u' => $shareUrl], '', '&', PHP_QUERY_RFC3986),
+            'linkedin' => 'https://www.linkedin.com/sharing/share-offsite/?'.http_build_query(['url' => $shareUrl], '', '&', PHP_QUERY_RFC3986),
+            'whatsapp' => 'https://wa.me/?'.http_build_query(['text' => $shareMessage], '', '&', PHP_QUERY_RFC3986),
+            'gmail' => 'https://mail.google.com/mail/?'.http_build_query([
+                'view' => 'cm',
+                'fs' => '1',
+                'su' => 'Blog: '.$shareTitle,
+                'body' => $shareMessage,
+            ], '', '&', PHP_QUERY_RFC3986),
         ];
 
         return view('front_web.blogs.blogs_details', compact('url'))->with($data);

@@ -1,6 +1,6 @@
 @php($notifications = getNotification(\App\Models\Notification::CANDIDATE))
 @php($notificationCount = $notifications->count())
-@php($isCandidateUserDropdownActive = Request::is('candidate/profile*', 'candidate/favourite-companies*', 'candidate/change-password*'))
+@php($isCandidateUserDropdownActive = Request::is('candidate/profile*', 'candidate/favourite-companies*', 'candidate/change-password*', 'bn/candidate/profile*', 'bn/candidate/favourite-companies*', 'bn/candidate/change-password*'))
 <style>
     .candidate-user-dropdown-menu .dropdown-item.active,
     .candidate-user-dropdown-menu .dropdown-item.active .dropdown-icon {
@@ -133,16 +133,16 @@
                         </div>
                         <ul class="pt-4 pe-0">
                             <li>
-                                <a href="{{ route('candidate.profile') }}"
-                                   class="dropdown-item text-gray-900 {{ Request::is('candidate/profile*') ? 'active' : '' }} {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}">
+                                <a href="{{ checkLanguageSession() === 'bn' ? route('bn.candidate.profile') : route('candidate.profile') }}"
+                                   class="dropdown-item text-gray-900 {{ Request::is('candidate/profile*', 'bn/candidate/profile*') ? 'active' : '' }} {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}">
                                      <span class="dropdown-icon {{ checkLanguageSession() == 'ar' ? 'ms-4' : 'me-4' }} text-gray-600">
                                         <i class="fa-solid fa-user"></i>
                                      </span> {{ __('messages.user.edit_profile') }}</a>
                             </li>
                             
                             <li>
-                                <a class="dropdown-item text-gray-900 {{ Request::is('candidate/change-password*') ? 'active' : '' }} {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}"
-                                   href="{{ route('candidate.change-password.form') }}">
+                                <a class="dropdown-item text-gray-900 {{ Request::is('candidate/change-password*', 'bn/candidate/change-password*') ? 'active' : '' }} {{ checkLanguageSession() == 'ar' ? 'text-end' : '' }}"
+                                   href="{{ checkLanguageSession() === 'bn' ? route('bn.candidate.change-password.form') : route('candidate.change-password.form') }}">
                                     <span class="dropdown-icon {{ checkLanguageSession() == 'ar' ? 'ms-4' : 'me-4' }} text-gray-600">
                                         <i class="fa-solid fa-lock"></i>
                                     </span> {{ (Str::limit(__('messages.user.change_password'),20,'...')) }}

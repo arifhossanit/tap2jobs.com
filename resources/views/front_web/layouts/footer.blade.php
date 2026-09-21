@@ -55,8 +55,8 @@
                             class="text-decoration-none mb-3 d-block {{ Request::is('contact-us') ? 'footer-navbar-color-active text-dark' : 'text-gray' }} fs-14">{{ __('web.contact_us') }}</a>
                     </li>
                     <li>
-                        <a href="{{ route('front.post.lists') }}"
-                            class="text-decoration-none mb-3 d-block {{ Request::is('posts*') ? 'footer-navbar-color-active text-dark' : 'text-gray' }} fs-14">{{ __('messages.post.blog') }}</a>
+                        <a href="{{ route('front.blogs') }}"
+                            class="text-decoration-none mb-3 d-block {{ Request::is('blogs*') ? 'footer-navbar-color-active text-dark' : 'text-gray' }} fs-14">{{ __('messages.post.blog') }}</a>
                     </li>
                 </ul>
             </div>

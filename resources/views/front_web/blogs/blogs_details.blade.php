@@ -303,27 +303,22 @@
                                     @lang('web.web_blog.share_this_post') :</h5>
                                 <ul class="d-flex mb-0">
                                     <li>
-                                        <a href="{{ $url['facebook'] }}" target="_blank" title="Share on Facebook" class="me-3">
+                                        <a href="{{ $url['facebook'] }}" target="_blank" rel="noopener noreferrer" title="Share on Facebook" class="me-3">
                                             <i class="fa-brands fa-facebook-f fs-18 text-primary"></i>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="{{ $url['twitter'] }}" target="_blank" title="Share on Twitter" class="me-3">
-                                            <i class="fa-brands fa-twitter fs-18 text-primary"></i>
+                                        <a href="{{ $url['whatsapp'] }}" target="_blank" rel="noopener noreferrer" title="Share on WhatsApp" class="me-3">
+                                            <i class="fa-brands fa-whatsapp fs-18 text-primary"></i>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="{{ $url['gmail'] }}" target="_blank" title="Share on Google" class="me-3">
+                                        <a href="{{ $url['gmail'] }}" target="_blank" rel="noopener noreferrer" title="Share by email" class="me-3">
                                             <i class="fa-brands fa-google fs-18 text-primary"></i>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="{{ $url['pinterest'] }}" target="_blank" title="Share on Pinterest" class="me-3">
-                                            <i class="fa-brands fa-pinterest fs-18 text-primary"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ $url['linkedin'] }}" target="_blank" title="Share on Linkedin">
+                                        <a href="{{ $url['linkedin'] }}" target="_blank" rel="noopener noreferrer" title="Share on LinkedIn">
                                             <i class="fa-brands fa-linkedin-in fs-18 text-primary"></i>
                                         </a>
                                     </li>

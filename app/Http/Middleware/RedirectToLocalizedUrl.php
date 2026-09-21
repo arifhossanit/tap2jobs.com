@@ -16,7 +16,13 @@ class RedirectToLocalizedUrl
         }
 
         $routeName = $request->route()?->getName();
-        if (session('languageName') !== 'bn' || ! $routeName || ! Route::has('bn.'.$routeName)) {
+        $localizedRouteExists = $routeName && (
+            Route::has('bn.'.$routeName) ||
+            Route::has('bn.candidate.'.$routeName) ||
+            Route::has('bn.employer.'.$routeName)
+        );
+
+        if (session('languageName') !== 'bn' || ! $localizedRouteExists) {
             return $next($request);
         }
 

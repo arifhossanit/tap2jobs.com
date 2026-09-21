@@ -40,7 +40,11 @@
                         <input id="password" class="form-control form-control-solid {{ $errors->has('password') ? ' is-invalid': '' }}"
                                type="password"
                                name="password"
-                               required autocomplete="off"/>
+                               required autocomplete="off" style="padding-right: 3rem;"/>
+                        <button type="button" class="btn btn-sm btn-icon position-absolute top-50 end-0 translate-middle-y me-2 password-visibility-toggle"
+                                data-password-target="password" aria-label="Show password" aria-pressed="false">
+                            <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                        </button>
                     </div>
                     <div class="invalid-feedback">
                         {{ $errors->first('password') }}
@@ -51,7 +55,13 @@
                 <div class="fv-row mb-5">
                     <label class="form-label "
                            for="password_confirmation">Confirm Password</label>
-                    <input class="form-control  form-control-solid {{ $errors->has('password_confirmation') ? ' is-invalid': '' }}" type="password" id="password_confirmation" name="password_confirmation" autocomplete="off"/>
+                    <div class="position-relative">
+                        <input class="form-control form-control-solid {{ $errors->has('password_confirmation') ? ' is-invalid': '' }}" type="password" id="password_confirmation" name="password_confirmation" autocomplete="off" style="padding-right: 3rem;"/>
+                        <button type="button" class="btn btn-sm btn-icon position-absolute top-50 end-0 translate-middle-y me-2 password-visibility-toggle"
+                                data-password-target="password_confirmation" aria-label="Show password" aria-pressed="false">
+                            <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                        </button>
+                    </div>
                     <div class="invalid-feedback">
                         {{ $errors->first('password_confirmation') }}
                     </div>
@@ -66,4 +76,20 @@
                 </div>
             </form>
         </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.password-visibility-toggle').forEach(function (button) {
+            button.addEventListener('click', function () {
+                const input = document.getElementById(button.dataset.passwordTarget);
+                const showPassword = input.type === 'password';
+
+                input.type = showPassword ? 'text' : 'password';
+                button.setAttribute('aria-pressed', showPassword ? 'true' : 'false');
+                button.setAttribute('aria-label', showPassword ? 'Hide password' : 'Show password');
+                button.querySelector('i').classList.toggle('fa-eye', !showPassword);
+                button.querySelector('i').classList.toggle('fa-eye-slash', showPassword);
+            });
+        });
+    </script>
 @endsection

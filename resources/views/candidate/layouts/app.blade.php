@@ -6,6 +6,7 @@
 <html lang="{{ checkLanguageSession() }}" {{ checkLanguageSession() == 'ar' ? 'dir=rtl' : '' }}>
 
 <head>
+    @include('google_analytics')
     <base href="../">
     <title>@yield('title') | {{ getAppName() }}</title>
     <meta charset="utf-8" />

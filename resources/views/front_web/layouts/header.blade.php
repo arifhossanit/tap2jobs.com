@@ -233,6 +233,12 @@
                                                      </a>
                                                  </li>
                                                  <li>
+                                                     <a href="{{ checkLanguageSession() === 'bn' ? route('bn.candidate.change-password.form') : route('candidate.change-password.form') }}" class="dropdown-item py-2 px-2 d-flex align-items-center gap-2 rounded">
+                                                         <span class="front-user-menu-icon text-muted" style="width: 20px;"><i class="fa-solid fa-lock"></i></span>
+                                                         <span>{{ __('messages.user.change_password') }}</span>
+                                                     </a>
+                                                 </li>
+                                                 <li>
                                                      <a href="{{ route('favourite.jobs') }}" class="dropdown-item py-2 px-2 d-flex align-items-center gap-2 rounded">
                                                          <span class="front-user-menu-icon text-muted" style="width: 20px;"><i class="fa-solid fa-heart"></i></span>
                                                          <span>{{ __('messages.favourite_jobs') }}</span>

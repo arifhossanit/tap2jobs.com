@@ -783,7 +783,7 @@ Route::middleware('auth', 'role:Admin|Employer|Candidate', 'xss', 'verified.user
     )->name('company-failed-payment');
 });
 
-Route::middleware('auth', 'role:Employer', 'xss', 'verified.user')->prefix('employer')->group(function () {
+Route::middleware('auth', 'role:Employer', 'xss', 'verified.user', 'redirectLocalizedUrl')->prefix('employer')->group(function () {
          // TODO:: need to change this
          Route::get('/employer', function () {
                   return view('employer.layouts.app');
@@ -939,7 +939,9 @@ Route::middleware('xss', 'setLanguage', 'redirectLocalizedUrl', 'urlLocale:en')-
          Route::put('/post-comments/{postComment}/edit', [Web\PostController::class, 'blogCommentUpdate'])->name('blog.update.comment');
 
          //Blog Listing
-         Route::get('/posts', [Web\PostController::class, 'getBlogLists'])->name('front.post.lists');
+         Route::get('/posts', function (\Illuminate\Http\Request $request) {
+                  return redirect()->route('front.blogs', $request->query(), 301);
+         })->name('front.post.lists');
          Route::get('/blogs', [Web\PostController::class, 'getBlogLists'])->name('front.blogs');
          Route::get('/blogs/{post:slug}', [Web\PostController::class, 'getBlogDetails'])->name('front.posts.details');
          Route::get('/posts/details/{postId}', [Web\PostController::class, 'redirectLegacyBlog'])->whereNumber('postId')->name('front.posts.details.legacy');
@@ -976,11 +978,52 @@ Route::prefix('bn')->as('bn.')->middleware('xss', 'setLanguage', 'urlLocale:bn')
          Route::get('/privacy-policy-list', [Web\PrivacyPolicyController::class, 'showPrivacyPolicy'])->name('privacy.policy.list');
          Route::get('/terms-conditions-list', [Web\PrivacyPolicyController::class, 'showTermsConditions'])->name('terms.conditions.list');
          Route::get('/contact-us', fn () => view('front_web.contact.index'))->name('front.contact');
-         Route::get('/posts', [Web\PostController::class, 'getBlogLists'])->name('front.post.lists');
+         Route::get('/posts', function (\Illuminate\Http\Request $request) {
+                  return redirect()->route('bn.front.blogs', $request->query(), 301);
+         })->name('front.post.lists');
          Route::get('/blogs', [Web\PostController::class, 'getBlogLists'])->name('front.blogs');
          Route::get('/blogs/{post:slug}', [Web\PostController::class, 'getBlogDetails'])->name('front.posts.details');
          Route::get('/posts/category/{postCategory}', [Web\PostController::class, 'getBlogDetailsByCategory'])->name('front.blog.category');
 });
+
+// Localized candidate account pages that are linked from the public Bangla header.
+Route::middleware('auth', 'role:Candidate', 'xss', 'verified.user', 'setLanguage', 'urlLocale:bn')
+         ->prefix('bn/candidate')->as('bn.candidate.')
+         ->group(function () {
+             Route::get('profile', [Candidates\CandidateController::class, 'editProfile'])
+                      ->name('profile');
+             Route::get('dashboard', [Candidates\DashboardController::class, 'dashboard'])
+                      ->name('dashboard');
+             Route::get('favourite-jobs', [Candidates\CandidateController::class, 'showFavouriteJobs'])
+                      ->name('favourite.jobs');
+             Route::get('favourite-companies', [Candidates\CandidateController::class, 'showFavouriteCompanies'])
+                      ->name('favourite.companies');
+             Route::get('applied-jobs', [Candidates\CandidateController::class, 'showCandidateAppliedJob'])
+                      ->name('applied.job');
+             Route::get('job-alerts', [Candidates\CandidateController::class, 'editJobAlert'])
+                      ->name('job.alert');
+             Route::get('edit-profile', [Candidates\CandidateController::class, 'editCandidateProfile'])
+                      ->name('edit.profile');
+             Route::get('change-password', [Candidates\CandidateController::class, 'showChangePassword'])
+                      ->name('change-password.form');
+         });
+
+// Crawlable Bangla equivalents for employer dashboard GET pages.
+Route::middleware('auth', 'role:Employer', 'xss', 'verified.user', 'setLanguage', 'urlLocale:bn')
+         ->prefix('bn/employer')->as('bn.employer.')
+         ->group(function () {
+             Route::get('dashboard', [DashboardController::class, 'employerDashboard'])->name('employer.dashboard');
+             Route::get('employer-profile', [EmployerController::class, 'editProfile'])->name('employer-edit-profile');
+             Route::get('jobs', [JobController::class, 'index'])->name('job.index');
+             Route::get('jobs/create', [JobController::class, 'create'])->name('job.create');
+             Route::get('jobs/{job}/edit', [JobController::class, 'edit'])->name('job.edit');
+             Route::get('jobs/{jobId}/applications', [JobApplicationController::class, 'index'])->name('job-applications');
+             Route::get('job-stages', [JobStageController::class, 'index'])->name('job.stage.index');
+             Route::get('followers', [CompanyController::class, 'getFollowers'])->name('followers.index');
+             Route::get('{company}/edit', [CompanyController::class, 'editCompany'])->name('company.edit.form');
+             Route::get('transactions', [TransactionController::class, 'index'])->name('transactions.index');
+             Route::get('manage-subscription', [SubscriptionController::class, 'index'])->name('manage-subscription.index');
+         });
 
 Route::middleware('auth', 'role:Admin|Employer', 'xss', 'verified.user', 'setLanguage')->group(function () {
     Route::get(
@@ -989,7 +1032,7 @@ Route::middleware('auth', 'role:Admin|Employer', 'xss', 'verified.user', 'setLan
     )->name('front.candidate.details');
 });
 
-Route::middleware('auth', 'role:Candidate', 'xss', 'verified.user')->prefix('candidate')->group(function () {
+Route::middleware('auth', 'role:Candidate', 'xss', 'verified.user', 'redirectLocalizedUrl')->prefix('candidate')->group(function () {
     //dashboard
     Route::get('dashboard', [Candidates\DashboardController::class, 'dashboard'])->name('dashboard');
 
@@ -1111,7 +1154,7 @@ Route::middleware('auth', 'role:Candidate', 'xss', 'verified.user')->prefix('can
 });
 
 // candidates route without name space
-Route::middleware('auth', 'role:Candidate', 'xss', 'verified.user', 'setLanguage')->prefix('candidate')->group(function () {
+Route::middleware('auth', 'role:Candidate', 'xss', 'verified.user', 'setLanguage', 'redirectLocalizedUrl')->prefix('candidate')->group(function () {
     // Read notification
     //    Route::post('/notification/{notification}/read',
     //        [NotificationController::class, 'readNotification'])->name('read-notification');
