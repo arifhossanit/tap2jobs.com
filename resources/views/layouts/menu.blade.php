@@ -603,6 +603,7 @@
     <span class="flex-grow-1 ms-3 border-bottom"></span>
 </li>
 
+@can('admin.manage_blogs')
 <li class="nav-item aside-item-collapse {{ $blogsActive ? 'active collapse-submenu' : '' }}">
     <a class="nav-link d-flex align-items-center py-3" data-bs-toggle="collapse" href="#asideBlogsMenu"
        role="button" aria-expanded="{{ $blogsActive ? 'true' : 'false' }}" aria-controls="asideBlogsMenu">
@@ -631,7 +632,9 @@
         </li>
     </ul>
 </li>
+@endcan
 
+@canany(['admin.manage_faqs', 'admin.manage_inquiries', 'admin.manage_legal_pages', 'admin.send_bulk_email', 'admin.manage_front_settings'])
 <li class="nav-item aside-item-collapse {{ $cmsActive ? 'active collapse-submenu' : '' }}">
     <a class="nav-link d-flex align-items-center py-3" data-bs-toggle="collapse" href="#asideCmsMenu"
        role="button" aria-expanded="{{ $cmsActive ? 'true' : 'false' }}" aria-controls="asideCmsMenu">
@@ -640,24 +643,30 @@
         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
     </a>
     <ul class="aside-submenu nav flex-column collapse {{ $cmsActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideCmsMenu">
+        @can('admin.manage_faqs')
         <li class="nav-item {{ Request::is('admin/faqs*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('faqs.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.faq.faq') }}</span>
             </a>
         </li>
+        @endcan
+        @can('admin.manage_inquiries')
         <li class="nav-item {{ Request::is('admin/inquires*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('inquires.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.inquires') }}</span>
             </a>
         </li>
+        @endcan
+        @can('admin.manage_legal_pages')
         <li class="nav-item {{ Request::is('admin/privacy-policy*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('privacy.policy.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.setting.privacy_policy') }}</span>
             </a>
         </li>
+        @endcan
         @can('admin.send_bulk_email')
         <li class="nav-item {{ Request::is('admin/bulk-email*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('bulk-email.index') }}">
@@ -666,13 +675,15 @@
             </a>
         </li>
         @endcan
+        @can('admin.manage_legal_pages')
         <li class="nav-item {{ Request::is('admin/terms-conditions*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('terms.conditions.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.setting.terms_conditions') }}</span>
             </a>
         </li>
-        @can('admin.manage_settings')
+        @endcan
+        @can('admin.manage_front_settings')
         <li class="nav-item {{ Request::is('admin/front-settings*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('front.settings.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
@@ -682,7 +693,9 @@
         @endcan
     </ul>
 </li>
+@endcanany
 
+@can('admin.manage_ads')
 <li class="nav-item aside-item-collapse {{ $cmsSlidersActive ? 'active collapse-submenu' : '' }}">
     <a class="nav-link d-flex align-items-center py-3" data-bs-toggle="collapse" href="#asideCmsSlidersMenu"
        role="button" aria-expanded="{{ $cmsSlidersActive ? 'true' : 'false' }}" aria-controls="asideCmsSlidersMenu">
@@ -699,9 +712,10 @@
         </li>
     </ul>
 </li>
+@endcan
 
 <!-- SECTION: SYSTEM SETTINGS -->
-@can('admin.manage_settings')
+@canany(['admin.manage_settings', 'admin.manage_notification_settings', 'admin.manage_email_templates'])
 <li class="sidebar-section-header px-4 pt-4 pb-1 text-uppercase text-muted fw-bold fs-8 d-flex align-items-center" style="letter-spacing: 0.08em; font-size: 11px;">
     <span>WEBSITE & SYSTEM SETTINGS</span>
     <span class="flex-grow-1 ms-3 border-bottom"></span>
@@ -715,24 +729,30 @@
         <span class="aside-menu-collapse-icon ms-auto"><i class="fas fa-angle-right"></i></span>
     </a>
     <ul class="aside-submenu nav flex-column collapse {{ $systemSettingsActive ? 'show' : '' }} ps-4 ms-2 border-start opacity-75" id="asideSystemSettingsMenu">
+        @can('admin.manage_settings')
         <li class="nav-item {{ Request::is('admin/settings*') && !Request::is('admin/notification-settings*', 'admin/front-settings*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('settings.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.settings') }}</span>
             </a>
         </li>
+        @endcan
+        @can('admin.manage_notification_settings')
         <li class="nav-item {{ Request::is('admin/notification-settings*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('notification.settings.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.setting.notification_settings') }}</span>
             </a>
         </li>
+        @endcan
+        @can('admin.manage_email_templates')
         <li class="nav-item {{ Request::is('admin/email-template*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('email.template.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.email_templates') }}</span>
             </a>
         </li>
+        @endcan
     </ul>
 </li>
-@endcan
+@endcanany
