@@ -61,7 +61,7 @@ class AdminTable extends LivewireTableComponent
     }
     public function columns(): array
     {
-        $this->isSuperAdmin = getSuperAdmin()->id == getLoggedInUserId();
+        $this->isSuperAdmin = Auth::user()->can('admin.manage_admins');
         if ($this->isSuperAdmin) {
             $columnsArr = [
                 Column::make(__('messages.common.name'), 'first_name')
@@ -108,6 +108,8 @@ class AdminTable extends LivewireTableComponent
 
     public function changeStatus($id)
     {
+        abort_unless(Auth::user()->can('admin.manage_admins'), 403);
+
         $user = User::findOrFail($id);
 
         $user->update([

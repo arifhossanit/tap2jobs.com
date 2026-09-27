@@ -15,6 +15,9 @@ class DefaultRoleSeeder extends Seeder
     {
         $roles = [
             [
+                'name' => 'Super Admin',
+            ],
+            [
                 'name' => 'Admin',
             ],
             [
@@ -25,15 +28,18 @@ class DefaultRoleSeeder extends Seeder
             ],
         ];
         foreach ($roles as $role) {
-            Role::create($role);
+            Role::firstOrCreate($role + ['guard_name' => 'web']);
         }
         /** @var Role $adminRole */
         $adminRole = Role::whereName('Admin')->first();
+        $superAdminRole = Role::whereName('Super Admin')->first();
 
         /** @var User $user */
         $user = User::whereEmail('admin@gmail.com')->first();
         if ($user) {
-            $user->assignRole($adminRole);
+            $user->syncRoles([$superAdminRole, $adminRole]);
         }
+
+        $this->call(RolePermissionSeeder::class);
     }
 }

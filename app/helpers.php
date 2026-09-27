@@ -1149,9 +1149,15 @@ if (! function_exists('googleJobSchema')) {
 if (! function_exists('getSuperAdmin')) {
     function getSuperAdmin()
     {
+        $superAdminRole = \Spatie\Permission\Models\Role::where('name', 'Super Admin')->first();
+
+        if ($superAdminRole && $superAdminRole->users->isNotEmpty()) {
+            return $superAdminRole->users->first();
+        }
+
         $adminRole = \Spatie\Permission\Models\Role::where('name', 'Admin')->first();
 
-        return $adminRole->users->first();
+        return $adminRole?->users->first();
     }
 }
 

@@ -163,7 +163,12 @@
   font-weight: 600;
 }
 
-.candidate-profile-completion__content a,
+.candidate-profile-completion__content a {
+  color: #e73922;
+  font-weight: 700;
+  text-decoration: none;
+}
+
 .candidate-dashboard-link,
 .candidate-match-card__footer a {
   color: #209776;
@@ -174,7 +179,7 @@
 .candidate-profile-completion__content a {
   align-items: center;
   display: inline-flex;
-  font-size: 15px;
+  font-size: 26px;
   gap: 6px;
   width: -moz-fit-content;
   width: fit-content;

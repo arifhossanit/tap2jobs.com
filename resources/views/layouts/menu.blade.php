@@ -53,7 +53,7 @@
     $consultationLeadsActive = Request::routeIs('consultation-leads.consultation', 'consultation-leads.index')
         || (Request::routeIs('consultation-leads.archived') && request('lead_from') !== AppModelsConsultationLead::LEAD_FROM_EMPLOYER);
     $leadsActive = $employerLeadsActive || $consultationLeadsActive;
-    $cmsActive = Request::is('admin/faqs*', 'admin/inquires*', 'admin/privacy-policy*', 'admin/terms-conditions*', 'admin/front-settings*');
+    $cmsActive = Request::is('admin/faqs*', 'admin/inquires*', 'admin/privacy-policy*', 'admin/terms-conditions*', 'admin/front-settings*', 'admin/bulk-email*');
     $cmsSlidersActive = Request::is('admin/ads*');
     $systemSettingsActive = Request::is('admin/notification-settings*', 'admin/email-template*', 'admin/settings*')
         && ! Request::is('admin/front-settings*');
@@ -136,12 +136,23 @@
     </ul>
 </li>
 
+@can('admin.manage_admins')
 <li class="nav-item {{ Request::is('admin/admin*') ? 'active' : '' }}">
     <a class="nav-link d-flex align-items-center py-3" aria-current="page" href="{{ route('admin.index') }}">
         <span class="aside-menu-icon {{ $iconPad }}"><i class="fa-solid fa-user-tie"></i></span>
         <span class="aside-menu-title">{{ __('messages.candidate.admins') }}</span>
     </a>
 </li>
+@endcan
+
+@can('admin.manage_roles')
+<li class="nav-item {{ Request::is('admin/roles-permissions*') ? 'active' : '' }}">
+    <a class="nav-link d-flex align-items-center py-3" href="{{ route('roles-permissions.index') }}">
+        <span class="aside-menu-icon {{ $iconPad }}"><i class="fa-solid fa-user-shield"></i></span>
+        <span class="aside-menu-title">Roles &amp; Permissions</span>
+    </a>
+</li>
+@endcan
 
 
 <li class="nav-item aside-item-collapse {{ $jobsActive ? 'active collapse-submenu' : '' }}">
@@ -647,18 +658,28 @@
                 <span class="aside-menu-title">{{ __('messages.setting.privacy_policy') }}</span>
             </a>
         </li>
+        @can('admin.send_bulk_email')
+        <li class="nav-item {{ Request::is('admin/bulk-email*') ? 'active' : '' }}">
+            <a class="nav-link d-flex align-items-center py-2" href="{{ route('bulk-email.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
+                <span class="aside-menu-title">Bulk Email</span>
+            </a>
+        </li>
+        @endcan
         <li class="nav-item {{ Request::is('admin/terms-conditions*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('terms.conditions.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.setting.terms_conditions') }}</span>
             </a>
         </li>
+        @can('admin.manage_settings')
         <li class="nav-item {{ Request::is('admin/front-settings*') ? 'active' : '' }}">
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('front.settings.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.setting.front_settings') }}</span>
             </a>
         </li>
+        @endcan
     </ul>
 </li>
 
@@ -680,6 +701,7 @@
 </li>
 
 <!-- SECTION: SYSTEM SETTINGS -->
+@can('admin.manage_settings')
 <li class="sidebar-section-header px-4 pt-4 pb-1 text-uppercase text-muted fw-bold fs-8 d-flex align-items-center" style="letter-spacing: 0.08em; font-size: 11px;">
     <span>WEBSITE & SYSTEM SETTINGS</span>
     <span class="flex-grow-1 ms-3 border-bottom"></span>
@@ -713,3 +735,4 @@
         </li>
     </ul>
 </li>
+@endcan

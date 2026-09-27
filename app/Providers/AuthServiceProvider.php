@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Providers\SocialAuthProviders\FacebookAuthProvider;
 use App\Providers\SocialAuthProviders\GoogleAuthProvider;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 use Socialite;
 
 class AuthServiceProvider extends ServiceProvider
@@ -23,6 +24,10 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Gate::before(function ($user) {
+            return $user->hasRole('Super Admin') ? true : null;
+        });
+
         Socialite::extend('google', function ($app) {
             $config = $this->app['config']['services.google'];
             $clientId =  !empty(getEnvSetting()['google_client_id']) ? getEnvSetting()['google_client_id'] : config('services.google.client_id');

@@ -61,6 +61,8 @@ use App\Http\Controllers\RequiredDegreeLevelController;
 use App\Http\Controllers\NotificationSettingsController;
 use App\Http\Controllers\FeaturedJobSubscriptionController;
 use App\Http\Controllers\FeaturedCompanySubscriptionController;
+use App\Http\Controllers\BulkEmailController;
+use App\Http\Controllers\RolePermissionController;
 use Illuminate\Support\Facades\Artisan;
 
 /*
@@ -122,7 +124,14 @@ Route::middleware('setLanguage')->group(function () {
     Route::post('consultation', [ConsultationLeadController::class, 'store'])->name('consultation.store');
 });
 
-Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')->group(function () {
+Route::middleware('auth', 'role:Super Admin|Admin', 'admin.permission', 'xss', 'verified.user')->prefix('admin')->group(function () {
+         Route::get('roles-permissions', [RolePermissionController::class, 'index'])->name('roles-permissions.index');
+         Route::post('roles-permissions', [RolePermissionController::class, 'store'])->name('roles-permissions.store');
+         Route::put('roles-permissions/{role}', [RolePermissionController::class, 'update'])->name('roles-permissions.update');
+         Route::get('bulk-email', [BulkEmailController::class, 'index'])->name('bulk-email.index');
+         Route::get('bulk-email/users', [BulkEmailController::class, 'users'])->name('bulk-email.users');
+         Route::post('bulk-email', [BulkEmailController::class, 'send'])->name('bulk-email.send');
+         Route::post('bulk-email/upload', [BulkEmailController::class, 'upload'])->name('bulk-email.upload');
          // dashboard route
          Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
          Route::get('/dashboard-chart-data', [DashboardController::class, 'dashboardChartData'])->name('dashboard.chart.data');
@@ -749,7 +758,7 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
         //  )->name('translation-manager.update');
 });
 
-Route::middleware('auth', 'role:Admin|Employer|Candidate', 'xss', 'verified.user')->group(function () {
+Route::middleware('auth', 'role:Super Admin|Admin|Employer|Candidate', 'xss', 'verified.user')->group(function () {
     Route::get('states-list', [JobController::class, 'getStates'])->name('states-list');
     Route::get('cities-list', [JobController::class, 'getCities'])->name('cities-list');
     Route::get('city-villages-list', [JobController::class, 'getCityVillages'])->name('city-villages-list');
@@ -903,7 +912,7 @@ Route::middleware('xss', 'setLanguage', 'redirectLocalizedUrl', 'urlLocale:en')-
          Route::get(
                   '/candidate-lists',
                   [Web\CandidateController::class, 'getCandidatesLists']
-         )->name('front.candidate.lists')->middleware('role:Admin|Employer');
+         )->name('front.candidate.lists')->middleware('role:Super Admin|Admin|Employer');
          Route::get('/companies/{company:slug}', [Web\CompanyController::class, 'getCompaniesDetails'])->name('front.company.details');
          Route::get('/company-details/{uniqueId}', [Web\CompanyController::class, 'redirectLegacyCompany'])->name('front.company.details.legacy');
          Route::get('/about-us', [Web\AboutUsController::class, 'FAQLists'])->name('front.about.us');
@@ -1027,7 +1036,7 @@ Route::middleware('auth', 'role:Employer', 'xss', 'verified.user', 'setLanguage'
              Route::get('manage-subscription', [SubscriptionController::class, 'index'])->name('manage-subscription.index');
          });
 
-Route::middleware('auth', 'role:Admin|Employer', 'xss', 'verified.user', 'setLanguage')->group(function () {
+Route::middleware('auth', 'role:Super Admin|Admin|Employer', 'xss', 'verified.user', 'setLanguage')->group(function () {
     Route::get(
         'candidate-details/{uniqueId}',
         [Web\CandidateController::class, 'getCandidateDetails']

@@ -55,7 +55,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <a href="{{ route('front.user.login', ['show_login_info' => 1]) }}"
+                        <a href="{{ route('front.user.login') }}"
                            class="btn front-mobile-login-btn">{{ __('web.login') }}</a>
                     </div>
                 @else
@@ -317,7 +317,7 @@
                 <div class="front-desktop-auth-actions d-none d-lg-flex align-items-center ms-lg-3">
                                 <ul class="navbar-nav d-flex flex-row align-items-center py-2 py-lg-0">
                                     <li class="nav-item login_btn">
-                                        <a href="{{ route('front.user.login', ['show_login_info' => 1]) }}"
+                                        <a href="{{ route('front.user.login') }}"
                                             class="nav-link btn btn-secondary btn-secondary-login {{ getFrontSelectLanguage() == 'ar' ? 'ms-2' : 'me-2' }} mb-3 mb-lg-0 nav-link">{{ __('web.login') }}</a>
 
                                     </li>
