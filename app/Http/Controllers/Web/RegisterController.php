@@ -112,14 +112,18 @@ class RegisterController extends AppBaseController
     {
         $input = $request->all();
         $user = $this->webRegisterRepository->store($input);
-        Auth::login($user);
 
         if ((int) $input['type'] === 1) {
             session()->forget('url.intended');
-            $redirectUrl = route('candidate.profile');
-            session()->flash('candidate_registration_success', true);
+            $redirectUrl = route('front.candidate.login');
+            session()->flash(
+                'registration_verification_message',
+                __('messages.flash.verify_email')
+            );
+            // Show only the verification popup after redirecting to login.
             $suppressFlashMessage = true;
         } else {
+            Auth::login($user);
             session()->forget('url.intended');
             $redirectUrl = route('employer.dashboard');
             $suppressFlashMessage = false;

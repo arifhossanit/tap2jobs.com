@@ -53,7 +53,7 @@
     $consultationLeadsActive = Request::routeIs('consultation-leads.consultation', 'consultation-leads.index')
         || (Request::routeIs('consultation-leads.archived') && request('lead_from') !== AppModelsConsultationLead::LEAD_FROM_EMPLOYER);
     $leadsActive = $employerLeadsActive || $consultationLeadsActive;
-    $cmsActive = Request::is('admin/faqs*', 'admin/inquires*', 'admin/privacy-policy*', 'admin/front-settings*');
+    $cmsActive = Request::is('admin/faqs*', 'admin/inquires*', 'admin/privacy-policy*', 'admin/terms-conditions*', 'admin/front-settings*');
     $cmsSlidersActive = Request::is('admin/ads*');
     $systemSettingsActive = Request::is('admin/notification-settings*', 'admin/email-template*', 'admin/settings*')
         && ! Request::is('admin/front-settings*');
@@ -645,6 +645,12 @@
             <a class="nav-link d-flex align-items-center py-2" href="{{ route('privacy.policy.index') }}">
                 <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
                 <span class="aside-menu-title">{{ __('messages.setting.privacy_policy') }}</span>
+            </a>
+        </li>
+        <li class="nav-item {{ Request::is('admin/terms-conditions*') ? 'active' : '' }}">
+            <a class="nav-link d-flex align-items-center py-2" href="{{ route('terms.conditions.index') }}">
+                <i class="fa-solid fa-circle me-2" style="font-size: 7px;"></i>
+                <span class="aside-menu-title">{{ __('messages.setting.terms_conditions') }}</span>
             </a>
         </li>
         <li class="nav-item {{ Request::is('admin/front-settings*') ? 'active' : '' }}">

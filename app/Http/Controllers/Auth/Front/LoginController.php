@@ -110,6 +110,10 @@ class LoginController extends Controller
         }
 
         $redirectUrl = resolveIntendedRedirectUrl($this->redirectPath(), Auth::user());
+        $showCandidateProfileBoost = $request->session()->pull('candidate_profile_boost_after_login', false);
+        if ($showCandidateProfileBoost) {
+            $request->session()->flash('candidate_profile_boost_popup', true);
+        }
 
         if (isset($request->remember)) {
             return $this->authenticated($request, $this->guard()->user())

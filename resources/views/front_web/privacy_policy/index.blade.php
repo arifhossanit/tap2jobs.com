@@ -37,9 +37,9 @@
         <div class="container">
             <div class="about-infyjob">
                 <h5 class="fs-18 text-secondary mb-3">{{ __('messages.setting.privacy_policy') }}</h5>
-                <p class="fs-16 text-gray mb-0">
-                    {!! nl2br($privacyPolicy['value']) !!}
-                </p>
+                <div class="fs-16 text-gray mb-0">
+                    {!! $privacyPolicy['value'] !!}
+                </div>
             </div>
         </div>
     </div>

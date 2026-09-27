@@ -264,7 +264,7 @@
     </style>
 @endsection
 
-@if (! $errors->any())
+@if (! $errors->any() && ! session()->has('registration_verification_message') && request()->boolean('show_login_info'))
     @section('page_scripts')
         <script>
         (function () {

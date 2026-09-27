@@ -31,9 +31,9 @@
         <div class="container">
             <div class="about-infyjob">
                 <h5 class="fs-18 text-secondary mb-3">{{ __('messages.setting.terms_conditions') }}</h5>
-                <p class="fs-16 text-gray mb-0">
-                    {!! nl2br($termsConditions['value']) !!}
-                </p>
+                <div class="fs-16 text-gray mb-0">
+                    {!! $termsConditions['value'] !!}
+                </div>
             </div>
         </div>
     </div>

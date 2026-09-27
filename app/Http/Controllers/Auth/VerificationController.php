@@ -59,6 +59,9 @@ class VerificationController extends Controller
         } else {
             $userRole = $user->roles()->first()->name;
             if ($userRole == 'Candidate') {
+                // Show the profile completion prompt only after the candidate
+                // has verified the email and subsequently logs in.
+                session()->put('candidate_profile_boost_after_login', true);
                 Flash::success(__('messages.flash.success_verify'));
 
                 return route('front.candidate.login');

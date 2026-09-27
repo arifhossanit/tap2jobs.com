@@ -159,6 +159,8 @@ Route::middleware('auth', 'role:Admin', 'xss', 'verified.user')->prefix('admin')
          Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
          Route::get('privacy-policy', [PrivacyPolicyController::class, 'index'])->name('privacy.policy.index');
          Route::post('privacy-policy', [PrivacyPolicyController::class, 'update'])->name('privacy.policy.update');
+         Route::get('terms-conditions', [PrivacyPolicyController::class, 'termsConditions'])->name('terms.conditions.index');
+         Route::post('terms-conditions', [PrivacyPolicyController::class, 'update'])->name('terms.conditions.update');
 
          // Profile Reference Options
          Route::get('profile-references/{scope}/{type}', [ProfileReferenceOptionController::class, 'index'])->name('profileReferenceOptions.index');

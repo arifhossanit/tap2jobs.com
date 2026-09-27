@@ -35,18 +35,28 @@ class PrivacyPolicyController extends AppBaseController
     public function index(Request $request): View
     {
         $privacyPolicy = Setting::pluck('value', 'key')->toArray();
-//        $sectionName = ($request->section === null) ? 'privacy_policy' : $request->section;
+        $sectionName = 'privacy_policy';
 
-//        return view("privacy_policy.$sectionName", compact('privacyPolicy', 'sectionName'));
+        return view('privacy_policy.index', compact('privacyPolicy', 'sectionName'));
+    }
 
-        return view('privacy_policy.index', compact('privacyPolicy'));
+    public function termsConditions(): View
+    {
+        $privacyPolicy = Setting::pluck('value', 'key')->toArray();
+        $sectionName = 'terms_conditions';
+
+        return view('privacy_policy.index', compact('privacyPolicy', 'sectionName'));
     }
 
     public function update(Request $request): RedirectResponse
     {
-        $input = $request->all();
+        $input = $request->only(['privacy_policy', 'terms_conditions']);
         foreach ($input as $key => $value) {
-            Setting::where('key', $key)->update(['value' => $value]);
+            $setting = Setting::where('key', $key)->first();
+            if ($setting) {
+                $setting->value = $value;
+                $setting->save();
+            }
         }
 
         Flash::success(__('messages.flash.policy_update'));

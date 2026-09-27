@@ -16805,11 +16805,13 @@ listenClick('.post-comment-show-btn', function (event) {
 
 document.addEventListener('DOMContentLoaded', loadPrivacyPolicy);
 function loadPrivacyPolicy() {
-  if (!$('#addTermConditionDescriptionQuillData').length) {
+  var hasTermsEditor = $('#addTermConditionDescriptionQuillData').length;
+  var hasPrivacyEditor = $('#addPrivacyPolicyDescriptionQuillData').length;
+  if (!hasTermsEditor && !hasPrivacyEditor) {
     return;
   }
-  var termConditionData = $('#termConditionData').val();
-  var privacyPolicyData = $('#privacyPolicyData').val();
+  var termConditionData = $('#termConditionData').val() || '';
+  var privacyPolicyData = $('#privacyPolicyData').val() || '';
   // $('#descriptionTerms').summernote({
   //     minHeight: 200,
   //     height: 200,
@@ -16821,49 +16823,54 @@ function loadPrivacyPolicy() {
   //     ],
   // });
 
-  window.addTermConditionDescriptionQuill = new AppTextEditor('#addTermConditionDescriptionQuillData', {
-    modules: {
-      toolbar: [['bold', 'italic', 'underline', 'strike'], ['clean']],
-      keyboard: {
-        bindings: {
-          tab: 'disabled'
+  if (hasTermsEditor) {
+    window.addTermConditionDescriptionQuill = new AppTextEditor('#addTermConditionDescriptionQuillData', {
+      modules: {
+        toolbar: [['bold', 'italic', 'underline', 'strike'], ['clean']],
+        keyboard: {
+          bindings: {
+            tab: 'disabled'
+          }
         }
+      },
+      placeholder: Lang.get('js.terms_conditions'),
+      theme: 'snow' // or 'bubble'
+    });
+    addTermConditionDescriptionQuill.on('text-change', function () {
+      if (addTermConditionDescriptionQuill.getText().trim().length === 0) {
+        addTermConditionDescriptionQuill.setContents([{
+          insert: ''
+        }]);
       }
-    },
-    placeholder: Lang.get('js.terms_conditions'),
-    theme: 'snow' // or 'bubble'
-  });
-  addTermConditionDescriptionQuill.on('text-change', function (delta, oldDelta, source) {
-    if (addTermConditionDescriptionQuill.getText().trim().length === 0) {
-      addTermConditionDescriptionQuill.setContents([{
-        insert: ''
-      }]);
-    }
-  });
-  window.addPrivacyPolicyDescriptionQuill = new AppTextEditor('#addPrivacyPolicyDescriptionQuillData', {
-    modules: {
-      toolbar: [['bold', 'italic', 'underline', 'strike'], ['clean']],
-      keyboard: {
-        bindings: {
-          tab: 'disabled'
+    });
+    var termElement = document.createElement('textarea');
+    termElement.innerHTML = termConditionData;
+    addTermConditionDescriptionQuill.root.innerHTML = termElement.value;
+  }
+  if (hasPrivacyEditor) {
+    window.addPrivacyPolicyDescriptionQuill = new AppTextEditor('#addPrivacyPolicyDescriptionQuillData', {
+      modules: {
+        toolbar: [['bold', 'italic', 'underline', 'strike'], ['clean']],
+        keyboard: {
+          bindings: {
+            tab: 'disabled'
+          }
         }
+      },
+      placeholder: Lang.get('js.privacy_policy'),
+      theme: 'snow' // or 'bubble'
+    });
+    addPrivacyPolicyDescriptionQuill.on('text-change', function () {
+      if (addPrivacyPolicyDescriptionQuill.getText().trim().length === 0) {
+        addPrivacyPolicyDescriptionQuill.setContents([{
+          insert: ''
+        }]);
       }
-    },
-    placeholder: Lang.get('js.privacy_policy'),
-    theme: 'snow' // or 'bubble'
-  });
-  addPrivacyPolicyDescriptionQuill.on('text-change', function (delta, oldDelta, source) {
-    if (addPrivacyPolicyDescriptionQuill.getText().trim().length === 0) {
-      addPrivacyPolicyDescriptionQuill.setContents([{
-        insert: ''
-      }]);
-    }
-  });
-  var element = document.createElement('textarea');
-  element.innerHTML = termConditionData;
-  addTermConditionDescriptionQuill.root.innerHTML = element.value;
-  element.innerHTML = privacyPolicyData;
-  addPrivacyPolicyDescriptionQuill.root.innerHTML = element.value;
+    });
+    var privacyElement = document.createElement('textarea');
+    privacyElement.innerHTML = privacyPolicyData;
+    addPrivacyPolicyDescriptionQuill.root.innerHTML = privacyElement.value;
+  }
 
   // $('#privacyPolicy').submit(function (e) {
   //     if (!checkSummerNoteEmpty('#description',
@@ -16900,22 +16907,25 @@ function loadPrivacyPolicy() {
   // });
 }
 listenSubmit('#policyTerms', function () {
-  var element = document.createElement('textarea');
-  var addTermConditionsEditorContent = addTermConditionDescriptionQuill.root.innerHTML;
-  element.innerHTML = addTermConditionsEditorContent;
-  var addPrivacyEditorContent = addPrivacyPolicyDescriptionQuill.root.innerHTML;
-  if (addTermConditionDescriptionQuill.getText().trim().length === 0) {
-    displayErrorMessage(Lang.get('js.terms_conditions_required'));
-    return false;
+  if (window.tinymce) {
+    tinymce.triggerSave();
   }
-  if (addPrivacyPolicyDescriptionQuill.getText().trim().length === 0) {
-    displayErrorMessage(Lang.get('js.privacy_policy_required'));
-    return false;
+  if ($('#addTermConditionDescriptionQuillData').length) {
+    if (addTermConditionDescriptionQuill.getText().trim().length === 0) {
+      displayErrorMessage(Lang.get('js.terms_conditions_required'));
+      return false;
+    }
+    $('#termData').val(addTermConditionDescriptionQuill.root.innerHTML);
+    $('#addTermConditionDescriptionQuillData').val(addTermConditionDescriptionQuill.root.innerHTML);
   }
-  var dataTerm = JSON.stringify(addTermConditionsEditorContent);
-  var dataPrivacy = JSON.stringify(addPrivacyEditorContent);
-  $('#termData').val(dataTerm.replace(/"/g, ''));
-  $('#privacyData').val(dataPrivacy.replace(/"/g, ''));
+  if ($('#addPrivacyPolicyDescriptionQuillData').length) {
+    if (addPrivacyPolicyDescriptionQuill.getText().trim().length === 0) {
+      displayErrorMessage(Lang.get('js.privacy_policy_required'));
+      return false;
+    }
+    $('#privacyData').val(addPrivacyPolicyDescriptionQuill.root.innerHTML);
+    $('#addPrivacyPolicyDescriptionQuillData').val(addPrivacyPolicyDescriptionQuill.root.innerHTML);
+  }
 });
 
 /***/ },

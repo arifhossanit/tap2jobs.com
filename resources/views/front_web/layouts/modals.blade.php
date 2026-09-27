@@ -155,8 +155,8 @@
     };
 
     window.showCandidateRegistrationSuccessModal = function (retryCount) {
-        var titleText = "অভিনন্দন! Registration সফল হয়েছে।";
-        var descText = "আপনার Profile- যত বেশি তথ্য পূরণ করবেন, আপনার জন্য তত বেশি ও নির্ভুল Job Matching পাওয়ার সম্ভাবনা বাড়বে। আপনার Profile সম্পূর্ণ করুন এবং আরও বেশি চাকরির সুযোগ পান।";
+        var titleText = "🎯 Boost Your Job Opportunities!";
+        var descText = "Complete your Profile + CV to earn more points and unlock better job matches.<br><br>⭐ More Details = More Points<br>🎯 More Points = More Matching Jobs<br>🚀 More Matching Jobs = More Possibilities<br><br>Complete your profile and get job-ready!";
 
         var htmlContent = `
             <div style="font-family: inherit; padding: 14px 0 8px 0; text-align: center;">
@@ -169,7 +169,10 @@
         `;
 
         window.showTap2JobsModal(htmlContent, {
-            confirmText: false
+            confirmText: 'GET STARTED',
+            onConfirm: function () {
+                window.location.href = @json(route('candidate.profile'));
+            }
         });
     };
 
@@ -215,9 +218,11 @@
         pointer-events: auto;
     }
     .tap2jobs-system-modal__backdrop {
-        background: rgba(15, 23, 42, 0.45);
+        background: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(8px);
         inset: 0;
         position: absolute;
+        -webkit-backdrop-filter: blur(8px);
     }
     .tap2jobs-system-modal__dialog {
         background: #ffffff;
@@ -372,6 +377,24 @@
     </script>
 @endif
 
+@if (session()->has('candidate_profile_boost_popup'))
+    <script>
+        (function () {
+            function triggerCandidateProfileBoostModal() {
+                if (typeof window.showCandidateRegistrationSuccessModal === 'function') {
+                    window.showCandidateRegistrationSuccessModal();
+                }
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', triggerCandidateProfileBoostModal, { once: true });
+            } else {
+                triggerCandidateProfileBoostModal();
+            }
+        })();
+    </script>
+@endif
+
 @if (session()->has('registration_verification_message'))
     <script>
         (function () {
@@ -382,7 +405,7 @@
 
                 window.swal({
                     icon: 'success',
-                    title: @json(__('messages.common.success')),
+                    title: @json(__('messages.common.registration_success')),
                     text: @json(session('registration_verification_message')),
                     button: @json(__('messages.common.ok')),
                     closeOnClickOutside: false,

@@ -573,11 +573,11 @@
                                 <div class="shadow rounded border mt-4">
                                     <section class="employer-pricing-policy-card" id="employerPricingPolicyCard">
                                         <div class="employer-pricing-policy-header">
-                                            <h2>{{ __('messages.employer_register.pricing_policy', ['name' => getAppName()]) }}</h2>
+                                            <h2>{{ __('messages.employer_register.privacy_policy_title', ['name' => getAppName()]) }}</h2>
                                             <button type="button" class="employer-pricing-policy-toggle"
                                                     id="employerPricingPolicyToggle" aria-expanded="true"
                                                     aria-controls="employerPricingPolicyContent"
-                                                    aria-label="{{ __('messages.employer_register.toggle_pricing_policy') }}">
+                                                    aria-label="{{ __('messages.employer_register.toggle_privacy_policy') }}">
                                                 <i class="fa-solid fa-chevron-down"></i>
                                             </button>
                                         </div>
