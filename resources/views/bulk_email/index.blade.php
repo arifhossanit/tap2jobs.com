@@ -196,6 +196,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     tinymce.init({
         base_url: '/tinymce', suffix: '.min', license_key: 'gpl', target: document.getElementById('body'),
+        // Email links and images need full URLs outside the admin page.
+        relative_urls: false,
+        remove_script_host: false,
         height: 380, menubar: false, branding: false, promotion: false,
         plugins: 'link image lists table code',
         toolbar: 'undo redo | blocks | bold italic underline strikethrough | bullist numlist | link image insertfile table | removeformat code',
