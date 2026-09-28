@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\AppBaseController;
 use App\Http\Requests\WebRegisterRequest;
-use App\Providers\RouteServiceProvider;
 use App\Models\CompanySize;
 use App\Models\Country;
 use App\Models\Industry;
@@ -14,7 +13,6 @@ use App\Repositories\WebRegisterRepository;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class RegisterController extends AppBaseController
@@ -111,11 +109,11 @@ class RegisterController extends AppBaseController
     public function register(WebRegisterRequest $request): JsonResponse
     {
         $input = $request->all();
-        $user = $this->webRegisterRepository->store($input);
+        $this->webRegisterRepository->store($input);
 
         if ((int) $input['type'] === 1) {
             session()->forget('url.intended');
-            $redirectUrl = route('front.candidate.login');
+            $redirectUrl = route('front.user.login');
             session()->flash(
                 'registration_verification_message',
                 __('messages.flash.verify_email')
@@ -123,13 +121,12 @@ class RegisterController extends AppBaseController
             // Show only the verification popup after redirecting to login.
             $suppressFlashMessage = true;
         } else {
-            Auth::login($user);
             session()->forget('url.intended');
-            $redirectUrl = route('employer.dashboard');
-            $suppressFlashMessage = false;
+            $redirectUrl = route('front.user.login');
+            $suppressFlashMessage = true;
             session()->flash(
                 'registration_verification_message',
-                __('messages.flash.register_success_mail_active')
+                __('messages.flash.verify_email')
             );
         }
 
