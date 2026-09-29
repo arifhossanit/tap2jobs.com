@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\DispatchBulkEmail;
+use App\Jobs\ImportBulkEmailCsv;
 use App\Models\User;
+use App\Services\BulkEmailCsvReader;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -47,13 +50,14 @@ class BulkEmailController extends Controller
             ]));
     }
 
-    public function send(Request $request): RedirectResponse
+    public function send(Request $request, BulkEmailCsvReader $csvReader): RedirectResponse
     {
         $data = $request->validate([
-            'target_type' => ['required', Rule::in(['candidate', 'employer', 'existing', 'custom'])],
+            'target_type' => ['required', Rule::in(['candidate', 'employer', 'existing', 'custom', 'csv'])],
             'candidate_profile_filter' => ['nullable', Rule::in(['all', 'below_30', '30_to_below_80', '80_plus'])],
             'recipients' => ['required_if:target_type,existing,custom', 'array', 'max:1000'],
             'recipients.*' => ['required', 'string', 'max:255'],
+            'csv_file' => ['required_if:target_type,csv', 'nullable', 'file', 'mimes:csv,txt', 'max:51200'],
             'schedule_at' => ['nullable', 'date_format:Y-m-d\TH:i', 'after:now'],
             'subject' => ['required', 'string', 'max:255'],
             'body' => ['required', 'string', 'max:200000'],
@@ -93,6 +97,24 @@ class BulkEmailController extends Controller
             ? ($data['candidate_profile_filter'] ?? 'all')
             : 'all';
 
+        if ($data['target_type'] === 'csv') {
+            $emailColumn = $csvReader->emailColumn($request->file('csv_file')->getRealPath());
+            if ($emailColumn === null) {
+                return back()->withInput()->withErrors([
+                    'csv_file' => 'The CSV must contain an email column in its first row.',
+                ]);
+            }
+
+            $path = $request->file('csv_file')->store('bulk-email-imports', 'local');
+            ImportBulkEmailCsv::dispatch((string) Str::uuid(), $path, $data['subject'], $data['body'])
+                ->onConnection('database')
+                ->delay($scheduleAt);
+
+            return redirect()->route('bulk-email.index')->with('bulk_email_success', $scheduleAt
+                ? 'CSV email import scheduled. Recipients will be validated and queued at the selected time.'
+                : 'CSV uploaded. Recipients are being validated and queued in the background.');
+        }
+
         DispatchBulkEmail::dispatch(
             $data['target_type'],
             $recipients,
@@ -121,4 +143,5 @@ class BulkEmailController extends Controller
             'name' => $request->file('file')->getClientOriginalName(),
         ]);
     }
+
 }

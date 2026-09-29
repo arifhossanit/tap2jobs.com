@@ -12,7 +12,7 @@
             @if ($errors->any())
                 <div class="alert alert-danger"><ul class="mb-0">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
             @endif
-            <form id="bulkEmailForm" action="{{ route('bulk-email.send') }}" method="POST">
+            <form id="bulkEmailForm" action="{{ route('bulk-email.send') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="row g-4 mb-5">
                     <div class="col-md-6">
@@ -22,6 +22,7 @@
                             <option value="employer" @selected(old('target_type') === 'employer')>All employers</option>
                             <option value="existing" @selected(old('target_type') === 'existing')>Select existing user emails</option>
                             <option value="custom" @selected(old('target_type') === 'custom')>Custom emails</option>
+                            <option value="csv" @selected(old('target_type') === 'csv')>Import emails from CSV</option>
                         </select>
                     </div>
                     <div class="col-md-6" id="candidateFilterGroup">
@@ -39,6 +40,11 @@
                         <input class="form-control" id="recipientInput" placeholder="Search name or email" autocomplete="off">
                         <div class="form-text" id="recipientHint"></div>
                         <div id="recipientHidden"></div>
+                    </div>
+                    <div class="col-md-6" id="csvGroup" hidden>
+                        <label class="form-label required" for="csv_file">CSV File</label>
+                        <input class="form-control" type="file" id="csv_file" name="csv_file" accept=".csv,text/csv,text/plain">
+                        <div class="form-text">Maximum 50 MB. The first row must contain an <code>email</code> column. Invalid and duplicate addresses are skipped automatically.</div>
                     </div>
                 </div>
                 <div class="mb-5">
@@ -81,6 +87,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('bulkEmailForm');
     const type = document.getElementById('target_type');
     const recipientGroup = document.getElementById('recipientGroup');
+    const csvGroup = document.getElementById('csvGroup');
+    const csvInput = document.getElementById('csv_file');
     const candidateFilterGroup = document.getElementById('candidateFilterGroup');
     const candidateProfileFilter = document.getElementById('candidate_profile_filter');
     const recipientInput = document.getElementById('recipientInput');
@@ -118,6 +126,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const selected = type.value;
         const visible = selected === 'existing' || selected === 'custom';
         recipientGroup.hidden = !visible;
+        csvGroup.hidden = selected !== 'csv';
+        csvInput.disabled = selected !== 'csv';
+        csvInput.required = selected === 'csv';
         candidateFilterGroup.hidden = selected !== 'candidate';
         candidateProfileFilter.disabled = selected !== 'candidate';
         tags.removeAllTags();
