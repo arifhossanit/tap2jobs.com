@@ -15,7 +15,6 @@ yarn-error.log
 branch_structure.json
 temp_auto_push.bat
 temp_interactive_push.bat
-/.vscode
 /.cursor
 tests/Unit/*
 !tests/Unit/CandidateCvPrivacyTest.php
@@ -28,3 +27,4 @@ tests/Unit/*
 !tests/Unit/CandidateResumeFileSecurityTest.php
 !tests/Unit/CandidateResumePrivateStorageTest.php
 !tests/Unit/CandidateUniqueIdTest.php
+.gitignore
