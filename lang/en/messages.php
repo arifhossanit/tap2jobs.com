@@ -1801,7 +1801,7 @@ return [
     'flash' => [
         'pending_manual_purchase' => 'Your manual transaction request is pending.',
         'enter_key_responsibilities' => 'Enter Key Responsibilities',
-        'success_verify' => 'You have successfully verified your email. Please login !',
+        'success_verify' => 'You have successfully verified your email. Please login and Complete your profile.',
         'candidate_profile' => 'Candidate profile updated successfully.',
         'email_changed_verify' => 'Your email address has been updated. We sent a verification link to the new address. Please verify it before signing in again.',
         'candidate_retrieved' => 'Candidate retrieved successfully.',
@@ -2094,7 +2094,7 @@ return [
         'note_required' => 'The Note Field is required',
         'resume_field_required' => 'The Resume Field is Required.',
         'verify_google_recaptcha' => 'You must verify google recaptcha.',
-        'verify_email' => 'Please verify your email address.',
+        'verify_email' => 'Please verify your email. Check your inbox.',
         'account_not_active' => 'Your account is not active. Please contact the administrator.',
         'profile_incomplete_warning' => 'Your profile is :percentage% complete. Please complete at least 50% of your profile to apply for jobs.',
     ],
