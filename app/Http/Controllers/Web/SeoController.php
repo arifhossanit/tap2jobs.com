@@ -10,9 +10,12 @@ use App\Models\JobCategory;
 use App\Models\Post;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
+use Illuminate\Support\Collection;
 
 class SeoController extends Controller
 {
+    private const BASE_URL = 'https://tap2jobs.com';
+
     private const URLS_PER_SITEMAP = 45000;
 
     public function sitemapIndex(): Response
@@ -31,6 +34,7 @@ class SeoController extends Controller
                 'loc' => route('seo.sitemap.section', ['type' => $type, 'page' => $page]),
             ]);
         });
+        $sections = $this->canonicalizeLocations($sections);
 
         return $this->xmlResponse('front_web.seo.sitemap-index', compact('sections'));
     }
@@ -50,6 +54,7 @@ class SeoController extends Controller
         };
 
         abort_if($entries->isEmpty() && $page > 1, 404);
+        $entries = $this->canonicalizeLocations($entries);
 
         return $this->xmlResponse('front_web.seo.sitemap', compact('entries'));
     }
@@ -64,7 +69,7 @@ class SeoController extends Controller
             'Disallow: /employer/',
             'Disallow: /get-jobs-search',
             '',
-            'Sitemap: '.route('seo.sitemap.index'),
+            'Sitemap: '.self::BASE_URL.'/sitemap.xml',
             '',
         ]);
 
@@ -179,5 +184,17 @@ class SeoController extends Controller
         return response()
             ->view($view, $data)
             ->header('Content-Type', 'application/xml; charset=UTF-8');
+    }
+
+    private function canonicalizeLocations(Collection $items): Collection
+    {
+        return $items->map(function (array $item): array {
+            $path = parse_url($item['loc'], PHP_URL_PATH);
+
+            return [
+                ...$item,
+                'loc' => self::BASE_URL.'/'.ltrim(is_string($path) ? $path : '/', '/'),
+            ];
+        });
     }
 }
