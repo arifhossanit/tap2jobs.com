@@ -398,6 +398,16 @@
         let getLoggedInUserLang = '{{ getCurrentLanguageCode() }}';
         let defaultCountryCodeValue = "{{ getSettingValue('default_country_code') }}"
     </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BXEHYE5PRD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-BXEHYE5PRD');
+    </script>
     <!--end::Page Custom Javascript-->
     <!--end::Javascript-->
 </body>
