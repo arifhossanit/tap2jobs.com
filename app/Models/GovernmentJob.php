@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -50,6 +51,23 @@ class GovernmentJob extends Model
     {
         return 'slug';
     }
+
+    public function scopeVisibleToPublic(Builder $query): Builder
+    {
+        return $query
+            ->where('is_published', true)
+            ->where(function (Builder $query) {
+                $query->whereNull('application_deadline')
+                    ->orWhereDate('application_deadline', '>=', today());
+            });
+    }
+
+    public function isVisibleToPublic(): bool
+    {
+        return $this->is_published
+            && ($this->application_deadline === null || $this->application_deadline->isToday() || $this->application_deadline->isFuture());
+    }
+
     public function getCircularUrlAttribute(): string
     {
         return Storage::disk('public')->url($this->circular_path);

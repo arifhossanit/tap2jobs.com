@@ -59,14 +59,14 @@ class GovernmentJobController extends AppBaseController
     public function publicIndex(Request $request): View
     {
         $organizations = GovernmentJob::query()
-            ->where('is_published', true)
+            ->visibleToPublic()
             ->whereNotNull('organization_name')
             ->distinct()
             ->orderBy('organization_name')
             ->pluck('organization_name');
 
         $sources = GovernmentJob::query()
-            ->where('is_published', true)
+            ->visibleToPublic()
             ->whereNotNull('source_name')
             ->where('source_name', '!=', '')
             ->distinct()
@@ -74,7 +74,7 @@ class GovernmentJobController extends AppBaseController
             ->pluck('source_name');
 
         $governmentJobs = GovernmentJob::query()
-            ->where('is_published', true)
+            ->visibleToPublic()
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = trim((string) $request->input('search'));
                 $query->where(function ($query) use ($search) {
@@ -85,10 +85,6 @@ class GovernmentJobController extends AppBaseController
             })
             ->when($request->filled('organization'), fn ($query) => $query->where('organization_name', $request->string('organization')->trim()))
             ->when($request->filled('source'), fn ($query) => $query->where('source_name', $request->string('source')->trim()))
-            ->when($request->input('deadline') === 'active', fn ($query) => $query->where(function ($query) {
-                $query->whereNull('application_deadline')->orWhereDate('application_deadline', '>=', today());
-            }))
-            ->when($request->input('deadline') === 'expired', fn ($query) => $query->whereDate('application_deadline', '<', today()))
             ->orderByDesc('published_at')
             ->latest('id')
             ->paginate(12)
@@ -98,7 +94,7 @@ class GovernmentJobController extends AppBaseController
     }
     public function publicShow(GovernmentJob $governmentJob): View
     {
-        abort_unless($governmentJob->is_published, 404);
+        abort_unless($governmentJob->isVisibleToPublic(), 404);
 
         return view('front_web.government_jobs.show', compact('governmentJob'));
     }

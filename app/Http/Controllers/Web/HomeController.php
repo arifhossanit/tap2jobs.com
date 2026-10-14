@@ -87,7 +87,7 @@ class HomeController extends AppBaseController
         ];
 
         $data['governmentJobs'] = GovernmentJob::query()
-            ->where('is_published', true)
+            ->visibleToPublic()
             ->orderByDesc('published_at')
             ->latest('id')
             ->take(12)
@@ -97,7 +97,7 @@ class HomeController extends AppBaseController
             'employer_list' => Company::whereHas('user', function ($q) {
                 $q->where('is_active', 1);
             })->count(),
-            'government_jobs' => GovernmentJob::where('is_published', true)->count(),
+            'government_jobs' => GovernmentJob::query()->visibleToPublic()->count(),
             'new_jobs' => $openJobs(Job::query())
                 ->where('created_at', '>=', Carbon::now()->subDays(7))
                 ->count(),

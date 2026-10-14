@@ -66,14 +66,6 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="form-group find-jobs-filter__group">
-                                        <label for="governmentJobDeadline">{{ __('messages.job.deadline') }}</label>
-                                        <select id="governmentJobDeadline" name="deadline" class="form-select">
-                                            <option value="">{{ __('web.government_jobs.all_jobs') }}</option>
-                                            <option value="active" @selected(request('deadline') === 'active')>{{ __('web.government_jobs.active_jobs') }}</option>
-                                            <option value="expired" @selected(request('deadline') === 'expired')>{{ __('web.government_jobs.expired_jobs') }}</option>
-                                        </select>
-                                    </div>
                                     <button type="submit" class="btn btn-primary">{{ __('web.government_jobs.apply_filter') }}</button>
                                 </form>
                             </aside>

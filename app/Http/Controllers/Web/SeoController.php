@@ -101,8 +101,7 @@ class SeoController extends Controller
     private function governmentJobQuery(): Builder
     {
         return GovernmentJob::query()
-            ->where('is_published', true)
-            ->whereDate('application_deadline', '>=', now()->toDateString());
+            ->visibleToPublic();
     }
 
     private function categoryEntries(int $page)
