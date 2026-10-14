@@ -20,7 +20,7 @@
     "Twitter, Inc."
   ],
   "scripts": {
-    "start": "npm-run-all --parallel watch docs-serve",
+    "start": "node init && npm-run-all --parallel watch docs-serve",
     "bundlewatch": "bundlewatch --config .bundlewatch.config.json",
     "css": "npm-run-all css-compile css-prefix css-rtl css-minify",
     "css-compile": "sass --style expanded --source-map --embed-sources --no-error-css scss/:dist/css/",
