@@ -125,6 +125,14 @@ class CandidateController extends AppBaseController
     public function show(Candidate $candidate): View
     {
         $currency = SalaryCurrency::pluck('currency_name', 'id');
+        $candidate->loadMissing([
+            'user.candidateSkill',
+            'user.candidateLanguage',
+            'maritalStatus',
+            'careerLevel',
+            'industry',
+            'functionalArea',
+        ]);
 
         return view('candidates.show', compact('currency'))->with('candidate', $candidate);
     }

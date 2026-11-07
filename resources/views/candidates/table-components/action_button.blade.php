@@ -1,4 +1,8 @@
 <div class="d-flex justify-content-center">
+    <a href="{{ route('candidates.show', $row->id) }}" title="{{ __('messages.common.view') }}"
+       class="btn px-2 text-info fs-3 {{ checkLanguageSession() == 'ar' ? 'pe-0' : 'ps-0' }}" data-bs-toggle="tooltip">
+        <i class="fa-solid fa-eye"></i>
+    </a>
     <a href="{{route('candidates.edit', $row->id)}}" title="{{__('messages.common.edit') }}"
        class="btn px-2 text-primary fs-3 {{ checkLanguageSession() == 'ar' ? 'pe-0' : 'ps-0' }} candidates-edit-btn" data-bs-toggle="tooltip">
         <i class="fa-solid fa-pen-to-square"></i>

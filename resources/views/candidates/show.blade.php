@@ -16,17 +16,7 @@
 @endsection
 @section('content')
     <div class="container-fluid">
-        <div class="d-flex flex-column">
-            <div class="row">
-                <div class="col-12">
-                    @include('layouts.errors')
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-body">
-                    @include('candidates.show_fields')
-                </div>
-            </div>
-        </div>
+        @include('layouts.errors')
+        @include('candidates.show_fields')
     </div>
 @endsection

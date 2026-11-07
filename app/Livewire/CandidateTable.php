@@ -103,6 +103,9 @@ protected $listeners = ['resetPage', 'refreshDatatable' => '$refresh', 'changeSt
             Column::make(__('messages.common.last_change_by'), 'last_change')
                 ->sortable()
                 ->view('candidates.table-components.last_change'),
+            Column::make(__('messages.job.created_at'), 'created_at')
+                ->sortable()
+                ->view('candidates.table-components.created_at'),
             Column::make(__('messages.common.action'), 'id')
                 ->view('candidates.table-components.action_button'),
         ];
