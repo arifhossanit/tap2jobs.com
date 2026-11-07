@@ -2,7 +2,6 @@
 /storage/*.key
 /vendor
 .playwright-mcp/
-.env
 .env.backup
 /.phpunit.cache
 Homestead.json
@@ -28,3 +27,4 @@ tests/Unit/*
 !tests/Unit/CandidateResumePrivateStorageTest.php
 !tests/Unit/CandidateUniqueIdTest.php
 .gitignore
+config.bat
